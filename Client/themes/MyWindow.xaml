@@ -196,4 +196,14 @@
 				</Setter.Value>
 			</Setter>
 		</Style>
+
+
+    <DataTemplate x:Key="ButtonIconTemplate">
+        <DockPanel Height="Auto" LastChildFill="False">
+            <Border Width="{Binding Range.Width}" Height="{Binding Range.Height}" ClipToBounds="True" Margin="0">
+                <Image Source="{Binding Path = Icon}" Margin="{Binding Thick}" Stretch="None" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+            </Border>
+            <TextBlock DockPanel.Dock="Left" Text="{Binding Content}" Height="20"  Margin="5,0,0,0"/>
+        </DockPanel>
+    </DataTemplate>
 </ResourceDictionary>
