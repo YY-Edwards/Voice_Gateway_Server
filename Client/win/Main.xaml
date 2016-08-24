@@ -1,0 +1,11 @@
+﻿<src:MyWindow x:Class="TrboX.Main"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:src="clr-namespace:TrboX"
+        Style="{StaticResource MyWindowStyle}"   
+        Icon="/TrboX;component/themes/resource/Logo.png"  
+        Title="TrboX" Height="300" Width="300" Closed="MyWindow_Closed" WindowStartupLocation="CenterScreen">
+    <Grid>
+        
+    </Grid>
+</src:MyWindow>
