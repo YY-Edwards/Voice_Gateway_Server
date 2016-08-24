@@ -3,4 +3,7 @@
   <PropertyGroup>
     <ProjectView>ProjectFiles</ProjectView>
   </PropertyGroup>
+  <PropertyGroup>
+    <ReferencePath>E:\Home\Projects\TrboX 3.0\Prj\Trbox\Debug\core\</ReferencePath>
+  </PropertyGroup>
 </Project>

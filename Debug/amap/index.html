@@ -1,0 +1,283 @@
+<!DOCTYPE HTML>
+<!-- saved from url=(0016)http://localhost -->
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>地图显示</title>
+	<style type="text/css">
+		body{
+			margin:0;
+			height:100%;
+			width:100%;
+			position:absolute;
+			font-size:12px;
+		}
+		#mapContainer{
+			position: absolute;
+			top:0;
+			left: 0;
+			right:0;
+			bottom:0;
+			height:100%
+		}
+		
+		html{
+			margin:0;
+			height:100%;
+			font-size:12px;
+		}
+
+		
+		#tip{
+			position:absolute;
+			bottom:20px;
+			right:0;
+			height:80px;
+			font-size:12px;
+		}
+		
+		#tip input[type='button']{
+			margin-top:10px;
+			height:28px;
+			line-height:28px;
+			outline:none;
+			text-align:center;
+			padding-left:5px;
+			padding-right:5px;
+			color:#FFF;
+			background-color:#0D9BF2;
+			border:0;
+			border-radius: 3px;
+			margin-top:5px;
+			margin-left:5px;
+			cursor:pointer;
+			margin-right:10px;
+		}
+	</style>
+</head>
+<body  scroll=no oncontextmenu="return false" ondragstart='return false' onselectstart ='return false'  > 
+
+<div id="mapContainer" style="position:absolute;top:0px; left:0px;width:100%; height:100%" ></div>	
+	<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=cb329fb597007fda9c34a767b620e3bc"></script>
+	<script type="text/javascript" src="trace.js"></script>	
+	<script type="text/javascript">
+		var map;
+		var mgLat = 39.918124;
+		var mgLon = 116.396964;
+		
+		var  pi = 3.14159265358979324;
+        var a = 6378245.0;
+        var ee = 0.00669342162296594323;
+		
+		var polyline;
+		var windowsArr = new Array();  
+		var marker = new Array();
+		
+		(function(exports){
+			
+			if((GetQueryString('lng') != "") && (GetQueryString('lat') != ""))
+			{
+				var lng = GetQueryString('lng');			
+				var lat = GetQueryString('lat');			
+			}
+			
+			if((GetQueryString('mlon') != "") && (GetQueryString('mlat') != ""))
+			{
+				mgLon = GetQueryString('mlon');			
+				mgLat = GetQueryString('mlat');			
+			}
+						
+			map = new AMap.Map('mapContainer', {
+				//resizeEnable: true,
+				//rotateEnable: true,
+				//dragEnable: true,
+				//zoomEnable: true,
+				//设置可缩放的级别
+				//zooms: [3,18],
+				//传入2D视图，设置中心点和缩放级别
+				view: new AMap.View2D({
+					center: new AMap.LngLat(mgLon,mgLat),
+					zoom: 15
+				})
+			});	
+			
+			if(GetQueryString('trace') =="1")
+			{
+				addLine();
+				map.setZoom(15);
+			}
+			else if(GetQueryString('pos') =="1")
+			{
+				if((GetQueryString('lng') != "") && (GetQueryString('lat') != ""))
+				{
+					var lng = GetQueryString('mlon');			
+					var lat = GetQueryString('mlat');
+					
+					//transform( lat, lng);	
+					DisPosPoint(
+					GetQueryString("id"),
+					GetQueryString("type"),
+					lng,
+					lat,
+					GetQueryString("alt"),
+					GetQueryString("speed"),
+					GetQueryString("date"),
+					GetQueryString("time"),
+					mgLon,
+					mgLat,
+					GetQueryString("name"),
+					GetQueryString("groupid"),
+					GetQueryString("group")
+					);	
+
+					map.setZoom(15);					
+				}
+				
+				
+			}
+
+			
+		})(window);
+				
+		
+		function addLine() {			
+			for(var i = 0; i<pos.count; i++)
+			{
+			   var lineArr = new Array();
+			   for(var j = 0; j<pos.position[i].count; j++)
+			   {				
+					//if((j == 0) || (j == (pos.position[i].count - 1)))
+					DisPosPoint(
+					pos.position[i].id,
+					pos.position[i].type,
+					pos.position[i].map[j].lng,
+					pos.position[i].map[j].lat,
+					pos.position[i].map[j].alt,
+					pos.position[i].map[j].speed,
+					pos.position[i].map[j].date,
+					pos.position[i].map[j].time,
+					pos.position[i].map[j].mlon,
+					pos.position[i].map[j].mlat,
+					pos.position[i].name,
+					pos.position[i].groupid,
+					pos.position[i].group
+					);
+					
+					lineArr.push(new AMap.LngLat(pos.position[i].map[j].mlon+0.0000060,pos.position[i].map[j].mlat-0.000015));
+			   }
+			   
+			   polyline = new AMap.Polyline({ 
+				   path:lineArr, //设置线覆盖物路径
+				   strokeColor:pos.position[i].color, //线颜色
+				   strokeOpacity:1, //线透明度 
+				   strokeWeight:3, //线宽
+				   strokeStyle:"solid", //线样式
+				   strokeDasharray:[10,5] //补充线样式 
+			   }); 
+			   polyline.setMap(map);
+		   }
+		}
+				
+		function GetQueryString(name) {
+			var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)", "i");
+			var r = window.location.search.substr(1).match(reg);
+
+			if (r != null) return unescape(r[2]);
+			return "";
+		}
+		
+		var inforWindow;
+		
+		function DisPosPoint(id,type,lng,lat,alt,speed,date,time,mlng,mlat,name, groupid, group){
+		    var resultStr="";
+
+			
+			
+		    var markerOption = {
+		        map:map,						
+		        icon:"pos.png",  
+		        position:new AMap.LngLat(mlng, mlat)  
+		    }; 
+			
+		    var mar =new AMap.Marker(markerOption); 
+		    marker.push(new AMap.LngLat(mlng, mlat));
+		
+		    map.setCenter(mar.getPosition());  
+		    var aa = function(e){			
+				inforWindow = new AMap.InfoWindow({  
+					isCustom:true,
+					content:InfoWindow(id,type,lng,lat,alt,speed,date,time,name, groupid, group) , //设置content内容为调用InfoWindow()方法的返回值
+					autoMove:true, 
+					offset:{x:25, y:-15}
+				});
+						
+				inforWindow.open(map,new AMap.LngLat(mlng, mlat));	
+			}; 
+			
+		    AMap.event.addListener(mar, "mouseover", aa);		     
+		}
+		
+		function closeinfowin()
+		{
+			inforWindow.close();
+		}
+		
+		function InfoWindow(id,type,lng,lat,alt,speed,date,time,name, groupid, group){
+			var info ="" + 
+			"<div   style='height:160px;width:180px;background-image:url(info.png);'>"+
+			"<div style='height:5px'></div><div><table style='width:100%;'><tr >";
+			if(type ==0 )
+			{
+				info += "<td align='center' style='width:60px;'>　<img src='radio.png' height='50' width='40'></td><td valign='bottom'><div style='height:20px'><font face='黑体' size='3.5' color='#333333'>对讲机";
+			}
+			else
+			{
+				info += "<td align='right' style='width:60px;height:45px'><img src='vehicle.png' height='30' width='50'></td><td valign='bottom'><div style='height:20px'><font face='黑体' size='3.5' color='#333333'>车载台";
+			}		
+			info += "</font></div><font face='黑体' color='#333333'><div style='height:15px'>"+name+"("+id+")</div><div>组："+ group+"</div></font></td>"+
+			"<td align='left' valign='top' style='width:30px;' onclick='closeinfowin()'><img src='close.png' height='20' width='20'></td>"+
+			"</tr></table>"+
+			"<table style='width:100%;height:1px'><tr>"+
+			"<td align='center' style='width:10px;'></td>"+
+			"<td bgcolor='#bbbbbb' ></td>"+
+			"<td style='width:10px;'></td>"+
+			"</tr></table></div><div style='height:3px'></div><font face='微软雅黑' color='#333333'>"+
+			" 　　日期：" + date+
+			"<br/>　　时间：" + time+
+			"<br/>　　经度：" + formatnumber(lng,7)+
+			"<br/>　　纬度：" + formatnumber(lat,7)+		
+			"</font></div>";
+			
+			return info;
+		}
+		
+		function formatnumber(value, num) {  
+			var a, b, c, i;  
+			a = value.toString();  
+			b = a.indexOf(".");  
+			c = a.length;  
+			if (num == 0) {  
+				if (b != -1) {  
+					a = a.substring(0, b);  
+				}  
+			} else {  
+				if (b == -1) {  
+					a = a + ".";  
+					for (i = 1; i <= num; i++) {  
+						a = a + "0";  
+					}  
+				} else {  
+					a = a.substring(0, b + num + 1);  
+					for (i = c; i <= b + num; i++) {  
+						a = a + "0";  
+					}  
+				}  
+			}  
+			return a;  
+		}
+		
+		
+		
+	</script>
+</body>
+</html>
