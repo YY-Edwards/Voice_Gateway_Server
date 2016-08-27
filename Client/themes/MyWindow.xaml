@@ -28,12 +28,13 @@
                     <Border BorderBrush="Black" BorderThickness="1" Margin="0,0,0,1" DockPanel.Dock="Top" Height="30">
                         <Grid x:Name="grd_Header" Margin="0" Height="30" VerticalAlignment="Top">
 
-                            <Button x:Name="btn_Header"  Style="{StaticResource ButtonStyleHdr}"></Button>
-                            <DockPanel LastChildFill="False" Margin="0" Height="30" HorizontalAlignment="Left">
+                            
+                            <DockPanel LastChildFill="False" Margin="3,0,0,0" Height="30" HorizontalAlignment="Left">
                                 <Image Source="{TemplateBinding Icon}" Height="20" Width="20" Margin="5,0,0,0"/>
                                 <Label x:Name="lab_Title" Content="{TemplateBinding Title}" Margin="2,0,0,0" FontSize="16" HorizontalAlignment="Left" />
+                                <Label x:Name="lab_SubTitle" Content="" Margin="5,0,0,0" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
                             </DockPanel>
-
+                            <Button x:Name="btn_Header"  Style="{StaticResource ButtonStyleHdr}"></Button>
                             <DockPanel LastChildFill="False" Margin="0, 0, 5, 0"  HorizontalAlignment="Right"  VerticalAlignment="Center">
 
                                 <Border Width="16" Height="16" ClipToBounds="True" DockPanel.Dock="Right"  VerticalAlignment="Top" Background="red" Margin="0,0">
@@ -203,7 +204,7 @@
             <Border Width="{Binding Range.Width}" Height="{Binding Range.Height}" ClipToBounds="True" Margin="0">
                 <Image Source="{Binding Path = Icon}" Margin="{Binding Thick}" Stretch="None" HorizontalAlignment="Left" VerticalAlignment="Top"/>
             </Border>
-            <TextBlock DockPanel.Dock="Left" Text="{Binding Content}" Height="20"  Margin="5,0,0,0"/>
+            <TextBlock DockPanel.Dock="Left" Text="{Binding Content}" Height="Auto"  Margin="5,0,0,0"  VerticalAlignment="Center"/>
         </DockPanel>
     </DataTemplate>
 </ResourceDictionary>

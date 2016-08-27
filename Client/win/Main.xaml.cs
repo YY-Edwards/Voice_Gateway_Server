@@ -19,32 +19,84 @@ namespace TrboX
     /// </summary>
     public partial class Main : MyWindow
     {
-        MyWebBrowse Map = new MyWebBrowse("http://www.baidu.com");
+        MainView m_View;
+
+
+        DataTst json = new DataTst();
+        
+        MyWebBrowse Map = new MyWebBrowse("file:///E:/Home/Projects/TrboX 3.0/Prj/TrboX/Debug/amap/index.html");
         public Main()
         {
             InitializeComponent();
-            WindowsFormsHost host = new WindowsFormsHost();
+            this.Loaded += delegate
+            {
+                this.WindowState = WindowState.Maximized;
+                m_View = new MainView(this);
+
+                MyWebGrid.Children.Insert(0, Map);
+            };
+            this.Closed += delegate
+            {
+                Environment.Exit(0);
+            };
         }
 
-        private void MyWindow_Closed(object sender, EventArgs e)
+        public override void OnMouseL_R_Prssed()
         {
-            Environment.Exit(0);
-        }
-
-        private void MyWindow_Loaded(object sender, RoutedEventArgs e)
-        {
-
-           
-
-            
-
-            MyWebGrid.Children.Insert(0,Map);
-            
+            m_View.On_Mouse_Pressed();
         }
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             Map.View("file:///E:/Home/Projects/TrboX 3.0/Prj/TrboX/Debug/amap/index.html");
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            TesTitle win = new TesTitle();
+            win.Show();
+        }
+
+        //About
+        private void menu_Help_About_Click(object sender, RoutedEventArgs e)
+        {
+            About aboutwin = new About();
+            aboutwin.Show();
+        }
+
+        private void btn_About_Click(object sender, RoutedEventArgs e)
+        {
+            About aboutwin = new About();
+            aboutwin.Show();
+        }
+
+        private void btn_Tool_PTT_Click(object sender, RoutedEventArgs e)
+        {
+            OperateWin Operate = new OperateWin();
+            Operate.Show();
+        }
+
+        private void btn_Tool_Msg_Click(object sender, RoutedEventArgs e)
+        {
+            OperateWin Operate = new OperateWin();
+            Operate.Show();
+        }
+
+        private void btn_Tool_Position_Click(object sender, RoutedEventArgs e)
+        {
+            OperateWin Operate = new OperateWin();
+            Operate.Show();
+        }
+
+        private void btn_Tool_Job_Click(object sender, RoutedEventArgs e)
+        {
+            OperateWin Operate = new OperateWin();
+            Operate.Show();
         }
     }
 }

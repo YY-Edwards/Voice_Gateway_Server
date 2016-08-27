@@ -21,23 +21,19 @@ namespace TrboX
         IntPtr retInt = IntPtr.Zero;
         public double relativeClip = 4;
 
-        public string Title = "hello";
-
+        public string SubTitle { set { SetSubTitle(value); } get { return SubTitle; } }
+       //public string SubTitle { set;}
         public MyWindow():base()
         {
            // InitializeComponent();
-
             this.Loaded += delegate
             {
                 InitializeEvent();
             };
 
             this.SourceInitialized += new EventHandler(MyWindow_SourceInitialized);
-
         }
-
  
-
         private void MyWindow_SourceInitialized(object sender, EventArgs e)
         {
             hs = PresentationSource.FromVisual((Visual)sender) as HwndSource;
@@ -61,7 +57,20 @@ namespace TrboX
                     {
                         OnMyWindow_Hide();
                     }
+                    break;
+                case 0x0201://WM_LBUTTON_DWON
+                case 0x0204://WM_RBUTTON_DWON
+                    OnMouseL_R_Prssed();
+
+                    break;
+                case 0x0202://WM_LBUTTON_UP
+                case 0x0205://WM_RBUTTON_UP
+                    OnMouseL_Released();
                                            
+                    break;
+
+                case 0x03 ://WM_MOVE = 0x03
+
                     break;
                 default: break;
             }
@@ -70,6 +79,12 @@ namespace TrboX
         }
         #region
 
+        public virtual void OnMouseL_R_Prssed()
+        { 
+        
+        }
+        public virtual void OnMouseL_Released()
+        { }
         public virtual void OnMyWindow_Show()
         {
         }
@@ -218,6 +233,14 @@ namespace TrboX
             this.WindowState = WindowState.Normal;
         }
 
+        public string  SetSubTitle(string title)
+        {
+            ControlTemplate baseWindowTemplate = this.Template;
+            Label lab_SubTitle = (Label)baseWindowTemplate.FindName("lab_SubTitle", this);
+            lab_SubTitle.Content = title;
+            return title;
+        }
+       
         private void InitializeEvent()
         {     
             ControlTemplate baseWindowTemplate = this.Template; //(ControlTemplate)App.Current.Resources["MyWindowTemplate"];
@@ -240,6 +263,7 @@ namespace TrboX
             {
                 this.DragMove();
             };
+
 
             btn_Header.PreviewMouseDoubleClick += delegate
             {

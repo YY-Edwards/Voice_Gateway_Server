@@ -47,9 +47,14 @@
     <Reference Include="CefSharp.Wpf">
       <HintPath>..\DLLS\CefSharp.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\DLLS\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -74,6 +79,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="class\DataTst.cs" />
     <Compile Include="ctrl\MaskLoading.xaml.cs">
       <DependentUpon>MaskLoading.xaml</DependentUpon>
     </Compile>
@@ -81,6 +87,9 @@
     <Compile Include="themes\layout.cs" />
     <Compile Include="themes\MyWindow.cs">
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="win\About.xaml.cs">
+      <DependentUpon>About.xaml</DependentUpon>
     </Compile>
     <Compile Include="win\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
@@ -92,6 +101,14 @@
     </Compile>
     <Compile Include="ctrl\MyWebBrowse.xaml.cs">
       <DependentUpon>MyWebBrowse.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="win\MainView.cs" />
+    <Compile Include="win\OperateWin.xaml.cs">
+      <DependentUpon>OperateWin.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="win\OpView.cs" />
+    <Compile Include="win\TesTitle.xaml.cs">
+      <DependentUpon>TesTitle.xaml</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -119,9 +136,7 @@
     </None>
     <AppDesigner Include="Properties\" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="class\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Resource Include="themes\resource\Logo.png" />
     <Resource Include="themes\resource\sys-1.jpg" />
@@ -140,6 +155,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="win\About.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="win\Login.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -149,6 +168,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ctrl\MyWebBrowse.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="win\OperateWin.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="win\TesTitle.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
