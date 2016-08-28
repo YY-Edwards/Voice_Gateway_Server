@@ -5,16 +5,16 @@
 					xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" 
                     
                    >
-    
+
     <Style x:Key="ButtonStyleHdr" TargetType="{x:Type Button}" BasedOn="{x:Null}">
         <Setter Property="FocusVisualStyle" Value="{DynamicResource SimpleButtonFocusVisual}"/>
         <Setter Property="Background" Value="{DynamicResource NormalBrush}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type Button}">                   
+                <ControlTemplate TargetType="{x:Type Button}">
                     <Grid x:Name="Grid">
-                        <Border x:Name="Border" Padding="{TemplateBinding Padding}" Background="#00000000"/>  
+                        <Border x:Name="Border" Padding="{TemplateBinding Padding}" Background="#00000000"/>
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>
@@ -23,12 +23,15 @@
 
     <ControlTemplate x:Key="MyWindowTemplate" TargetType="{x:Type Window}">
         <Grid>
-		<Border x:Name="bdr_win" BorderBrush="Black" BorderThickness="1" Padding="1"  Background="White">
-			<DockPanel Margin="0">
-                    <Border BorderBrush="Black" BorderThickness="1" Margin="0,0,0,1" DockPanel.Dock="Top" Height="30">
+            <Border x:Name="bdr_win" BorderBrush="#FF97C5F7"  BorderThickness="1" Margin="10"  Background="#FF97C5F7">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" Direction="315" BlurRadius="10" ShadowDepth="5" Opacity="0.7" />
+                </Border.Effect>
+                <DockPanel Margin="0">
+                    <Border BorderBrush="Black" BorderThickness="0" Margin="0,0,0,0" DockPanel.Dock="Top" Height="30">
                         <Grid x:Name="grd_Header" Margin="0" Height="30" VerticalAlignment="Top">
 
-                            
+
                             <DockPanel LastChildFill="False" Margin="3,0,0,0" Height="30" HorizontalAlignment="Left">
                                 <Image Source="{TemplateBinding Icon}" Height="20" Width="20" Margin="5,0,0,0"/>
                                 <Label x:Name="lab_Title" Content="{TemplateBinding Title}" Margin="2,0,0,0" FontSize="16" HorizontalAlignment="Left" />
@@ -53,15 +56,13 @@
 
 
                         </Grid>
-                    </Border>                  
-				<AdornerDecorator>
-                    <ContentPresenter />
-                </AdornerDecorator>
-		
-			</DockPanel>
-		</Border>
+                    </Border>
+                    <AdornerDecorator>
+                        <ContentPresenter />
+                    </AdornerDecorator>
 
-        
+                </DockPanel>
+            </Border>
         </Grid>
     </ControlTemplate>
 
@@ -71,6 +72,63 @@
         <Setter Property="WindowStyle" Value="None" />
         <Setter Property="AllowsTransparency" Value="True" />
         <Setter Property="Template" Value="{StaticResource MyWindowTemplate}" />
+    </Style>
+
+
+    <ControlTemplate x:Key="LoginWindowTemplate" TargetType="{x:Type Window}">
+        <Grid>
+            <Border x:Name="bdr_LoginWin" Margin="10" BorderBrush="#FF97C5F7" BorderThickness="1">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" Direction="315" BlurRadius="10" ShadowDepth="5" Opacity="0.7" />
+                </Border.Effect>
+                <Grid>
+                    <Image x:Name="img_LoginWin" Source="/TrboX;component/themes/resource/loginbk.jpg" Margin="0,0, 0, 0" Stretch="Fill"></Image>
+                <DockPanel Margin="0">
+                    
+                    <!--<Border BorderBrush="Black" BorderThickness="1" Margin="0,0,0,1" DockPanel.Dock="Top" Height="30">
+                        <Grid x:Name="grd_Header" Margin="0" Height="30" VerticalAlignment="Top">
+                            <DockPanel LastChildFill="False" Margin="3,0,0,0" Height="30" HorizontalAlignment="Left">
+                                <Image Source="{TemplateBinding Icon}" Height="20" Width="20" Margin="5,0,0,0"/>
+                                <Label x:Name="lab_Title" Content="{TemplateBinding Title}" Margin="2,0,0,0" FontSize="16" HorizontalAlignment="Left" />
+                                <Label x:Name="lab_SubTitle" Content="" Margin="5,0,0,0" FontSize="12" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+                            </DockPanel>
+                            <Button x:Name="btn_Header"  Style="{StaticResource ButtonStyleHdr}"></Button>-->
+                            
+                            <DockPanel LastChildFill="False" Margin="0,5,5,0"  HorizontalAlignment="Right"  VerticalAlignment="Center" DockPanel.Dock="Top">
+
+                                <Border Width="16" Height="16" ClipToBounds="True" DockPanel.Dock="Right"  VerticalAlignment="Top" Background="red" Margin="0,0">
+                                    <Image x:Name="img_SysClose" Source="/TrboX;component/themes/resource/sys-1.jpg" Margin="-106, -6, 0, 0" Stretch="None"></Image>
+                                </Border>
+                                <!--<Border Width="16" Height="16" ClipToBounds="True" DockPanel.Dock="Right"  VerticalAlignment="Top" Background="red" Margin="5,0">
+                                    <Grid>
+                                        <Image x:Name="img_SysRestore" Source="/TrboX;component/themes/resource/sys-2.jpg" Margin="-63, -4, 0, 0" Stretch="None"></Image>
+                                        <Image x:Name="img_SysMax" Source="/TrboX;component/themes/resource/sys-1.jpg" Margin="-62, -6, 0, 0" Stretch="None"></Image>
+                                    </Grid>
+                                </Border>-->
+                                <Border Width="16" Height="16" ClipToBounds="True" DockPanel.Dock="Right"  VerticalAlignment="Top" Background="red" Margin="0,0,5,0">
+                                    <Image x:Name="img_SysMin" Source="/TrboX;component/themes/resource/sys-1.jpg" Margin="-18, -6, 0, 0" Stretch="None"></Image>
+                                </Border>
+                            </DockPanel>
+
+
+                        <!--</Grid>
+                    </Border>-->
+                    <AdornerDecorator DockPanel.Dock="Top">
+                        <ContentPresenter />
+                    </AdornerDecorator>
+
+                </DockPanel>
+                    </Grid>
+            </Border>
+        </Grid>
+    </ControlTemplate>
+
+
+    <Style x:Key="LoginWindowStyle" TargetType="Window">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="WindowStyle" Value="None" />
+        <Setter Property="AllowsTransparency" Value="True" />
+        <Setter Property="Template" Value="{StaticResource LoginWindowTemplate}" />
     </Style>
 
 
@@ -102,16 +160,15 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Button}">
-                    <Border x:Name="border" BorderBrush="{x:Null}" BorderThickness="1" Height="Auto" Width="Auto">
-                        <Border x:Name="border1" BorderBrush="Black" BorderThickness="1" Height="Auto">
+                    <Border x:Name="border" BorderBrush="Black" BorderThickness="1" Height="Auto" Width="Auto">
+                        <Border x:Name="border1" BorderBrush="{x:Null}" BorderThickness="1" Height="Auto">
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="0" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
                         </Border>
                     </Border>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsMouseOver" Value="True">
                             <Setter Property="Foreground" Value="#FFFFFF" />
-                            <Setter Property="Background" TargetName="border1" Value="Black"/>
-                            <Setter Property="VerticalAlignment" TargetName="border1" Value="Stretch"/>
+                            <Setter Property="Background" TargetName="border" Value="Black"/>
 
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="false">
@@ -123,80 +180,80 @@
                             <Setter Property="Foreground" Value="#FFFFFF" />
                             <Setter Property="Background" TargetName="border" Value="{x:Null}"/>
                             <Setter Property="BorderBrush" TargetName="border" Value="Black"/>
-                            <Setter Property="BorderBrush" TargetName="border1" Value="White"/>
                             <Setter Property="Background" TargetName="border1" Value="Black"/>
+                            <Setter Property="BorderBrush" TargetName="border1" Value="White"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-	<Style x:Key="TextBoxStyleNormal" TargetType="{x:Type TextBox}">
-			<Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
-			<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-			<Setter Property="AllowDrop" Value="true"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type TextBox}">
-						<Grid>
-							<Border x:Name="Border" Background="{DynamicResource WindowBackgroundBrush}" BorderBrush="Black" BorderThickness="1" Padding="2" CornerRadius="0">
-							
-							<!-- 实现时会将 Content 置于 ScrollViewer 中。必须将其命名为 PART_ContentHost，控件才能起作用 -->
-								<ScrollViewer Margin="0" x:Name="PART_ContentHost" Style="{DynamicResource SimpleScrollViewer}" Background="{TemplateBinding Background}"/>
-						
-							</Border>
-						</Grid>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsEnabled" Value="False">
-								<Setter Property="Background" Value="{DynamicResource DisabledBackgroundBrush}" TargetName="Border"/>
-								<Setter Property="Foreground" Value="{DynamicResource DisabledForegroundBrush}"/>
-								<Setter Property="BorderBrush" TargetName="Border" Value="#FF888888"/>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-		<LinearGradientBrush x:Key="TextBoxBorder" EndPoint="0,20" MappingMode="Absolute" StartPoint="0,0">
-			<GradientStop Color="#ABADB3" Offset="0.05"/>
-			<GradientStop Color="#E2E3EA" Offset="0.07"/>
-			<GradientStop Color="#E3E9EF" Offset="1"/>
-		</LinearGradientBrush>
-		<Style x:Key="PasswordBoxStyleNormal" TargetType="{x:Type PasswordBox}">
-			<Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
-			<Setter Property="BorderBrush" Value="{StaticResource TextBoxBorder}"/>
-			<Setter Property="FontFamily" Value="Times New Roman"/>
-			<Setter Property="PasswordChar" Value="●"/>
-			<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-			<Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
-			<Setter Property="BorderThickness" Value="1"/>
-			<Setter Property="HorizontalContentAlignment" Value="Left"/>
-			<Setter Property="Padding" Value="1"/>
-			<Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-			<Setter Property="AllowDrop" Value="true"/>
-			<Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
-			<Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type PasswordBox}">
-						<Grid Height="Auto" Width="Auto">
-							<Border x:Name="border" BorderBrush="Black" BorderThickness="1">
-								<Themes:ListBoxChrome x:Name="Bd" BorderThickness="{TemplateBinding BorderThickness}" RenderMouseOver="{TemplateBinding IsMouseOver}" RenderFocused="{TemplateBinding IsKeyboardFocusWithin}" SnapsToDevicePixels="true" Margin="0">
-									<ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-								</Themes:ListBoxChrome>
-							</Border>
-						</Grid>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsEnabled" Value="false">
-								<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
-								<Setter Property="Background" TargetName="border" Value="{x:Null}"/>
-								<Setter Property="BorderBrush" TargetName="border" Value="#FF888888"/>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
+    <Style x:Key="TextBoxStyleNormal" TargetType="{x:Type TextBox}">
+        <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="AllowDrop" Value="true"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TextBox}">
+                    <Grid>
+                        <Border x:Name="Border" Background="{DynamicResource WindowBackgroundBrush}" BorderBrush="Black" BorderThickness="1" Padding="2" CornerRadius="0">
+
+                            <!-- 实现时会将 Content 置于 ScrollViewer 中。必须将其命名为 PART_ContentHost，控件才能起作用 -->
+                            <ScrollViewer Margin="0" x:Name="PART_ContentHost" Style="{DynamicResource SimpleScrollViewer}" Background="{TemplateBinding Background}"/>
+
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Background" Value="{DynamicResource DisabledBackgroundBrush}" TargetName="Border"/>
+                            <Setter Property="Foreground" Value="{DynamicResource DisabledForegroundBrush}"/>
+                            <Setter Property="BorderBrush" TargetName="Border" Value="#FF888888"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <LinearGradientBrush x:Key="TextBoxBorder" EndPoint="0,20" MappingMode="Absolute" StartPoint="0,0">
+        <GradientStop Color="#ABADB3" Offset="0.05"/>
+        <GradientStop Color="#E2E3EA" Offset="0.07"/>
+        <GradientStop Color="#E3E9EF" Offset="1"/>
+    </LinearGradientBrush>
+    <Style x:Key="PasswordBoxStyleNormal" TargetType="{x:Type PasswordBox}">
+        <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource TextBoxBorder}"/>
+        <Setter Property="FontFamily" Value="Times New Roman"/>
+        <Setter Property="PasswordChar" Value="●"/>
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="Padding" Value="1"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="AllowDrop" Value="true"/>
+        <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+        <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type PasswordBox}">
+                    <Grid Height="Auto" Width="Auto">
+                        <Border x:Name="border" BorderBrush="Black" BorderThickness="1">
+                            <Themes:ListBoxChrome x:Name="Bd" BorderThickness="{TemplateBinding BorderThickness}" RenderMouseOver="{TemplateBinding IsMouseOver}" RenderFocused="{TemplateBinding IsKeyboardFocusWithin}" SnapsToDevicePixels="true" Margin="0">
+                                <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Themes:ListBoxChrome>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            <Setter Property="Background" TargetName="border" Value="{x:Null}"/>
+                            <Setter Property="BorderBrush" TargetName="border" Value="#FF888888"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
 
 
     <DataTemplate x:Key="ButtonIconTemplate">

@@ -19,7 +19,7 @@ namespace TrboX
         public const int WM_LBUTTONUP = 0x0202;
         private HwndSource hs;
         IntPtr retInt = IntPtr.Zero;
-        public double relativeClip = 4;
+        public double relativeClip = 14;
 
         public string SubTitle { set { SetSubTitle(value); } get { return SubTitle; } }
        //public string SubTitle { set;}
@@ -237,6 +237,7 @@ namespace TrboX
         {
             ControlTemplate baseWindowTemplate = this.Template;
             Label lab_SubTitle = (Label)baseWindowTemplate.FindName("lab_SubTitle", this);
+            if (null == lab_SubTitle) return "";
             lab_SubTitle.Content = title;
             return title;
         }
@@ -245,64 +246,94 @@ namespace TrboX
         {     
             ControlTemplate baseWindowTemplate = this.Template; //(ControlTemplate)App.Current.Resources["MyWindowTemplate"];
             Border borderClip = (Border)baseWindowTemplate.FindName("bdr_win", this);
-            borderClip.MouseMove += delegate
-            {
-                DisplayResizeCursor(null, null);
-            };
-            borderClip.PreviewMouseDown += delegate
-            {
-                Resize(null, null);
-            };
-            this.PreviewMouseMove += delegate
-            {
-                ResetCursor(null, null);
-            };
 
-            Button btn_Header = (Button)baseWindowTemplate.FindName("btn_Header", this);           
-            btn_Header.PreviewMouseLeftButtonDown += delegate
+            if (null != borderClip)
             {
-                this.DragMove();
-            };
-
-
-            btn_Header.PreviewMouseDoubleClick += delegate
-            {
-                if (this.WindowState == WindowState.Maximized)
+                borderClip.MouseMove += delegate
                 {
-                    this.WindowState = WindowState.Normal;
-                }
-                else
+                    DisplayResizeCursor(null, null);
+                };
+                borderClip.PreviewMouseDown += delegate
                 {
-                    this.WindowState = WindowState.Maximized;
-                }
+                    Resize(null, null);
+                };
+                this.PreviewMouseMove += delegate
+                {
+                    ResetCursor(null, null);
+                };
+            }
 
-            };
+            Image img_LoginWin = (Image)baseWindowTemplate.FindName("img_LoginWin", this);
+            if (null != img_LoginWin)
+           {
+               img_LoginWin.PreviewMouseLeftButtonDown += delegate
+               {
+                   this.DragMove();
+               };
+           }
+
+            
+
+            Button btn_Header = (Button)baseWindowTemplate.FindName("btn_Header", this);
+
+            if (null != btn_Header)
+            {
+                btn_Header.PreviewMouseLeftButtonDown += delegate
+                {
+                    this.DragMove();
+                };
+
+
+
+                btn_Header.PreviewMouseDoubleClick += delegate
+                {
+                    if (this.WindowState == WindowState.Maximized)
+                    {
+                        this.WindowState = WindowState.Normal;
+                    }
+                    else
+                    {
+                        this.WindowState = WindowState.Maximized;
+                    }
+
+                };
+            }
 
 
             Image img_SysClose = (Image)baseWindowTemplate.FindName("img_SysClose", this);
-            img_SysClose.PreviewMouseLeftButtonUp += delegate
+
+            if (null != img_SysClose)
             {
-                OnMyWindow_Btn_Close_Click();
-            };
+                img_SysClose.PreviewMouseLeftButtonUp += delegate
+                {
+                    OnMyWindow_Btn_Close_Click();
+                };
+            }
 
             Image img_SysMin = (Image)baseWindowTemplate.FindName("img_SysMin", this);
-            img_SysMin.PreviewMouseLeftButtonUp += delegate
+            if (null != img_SysMin)
             {
-                OnMyWindow_Btn_Min_Click();
-            };
+                img_SysMin.PreviewMouseLeftButtonUp += delegate
+                {
+                    OnMyWindow_Btn_Min_Click();
+                };
+            }
 
             Image img_SysMax = (Image)baseWindowTemplate.FindName("img_SysMax", this);
             Image img_SysRestore = (Image)baseWindowTemplate.FindName("img_SysRestore", this);
 
-            img_SysMax.PreviewMouseLeftButtonUp += delegate
+            if ((null != img_SysMax) && (null != img_SysRestore))
             {
-                OnMyWindow_Btn_Max_Click();
-            };
-            
-            img_SysRestore.PreviewMouseLeftButtonUp += delegate
-            {
-                OnMyWindow_Btn_Restore_Click();
-            };
+                img_SysMax.PreviewMouseLeftButtonUp += delegate
+                {
+                    OnMyWindow_Btn_Max_Click();
+                };
+
+                img_SysRestore.PreviewMouseLeftButtonUp += delegate
+                {
+                    OnMyWindow_Btn_Restore_Click();
+                };
+            }
 
             this.SizeChanged += delegate
             {
@@ -310,11 +341,17 @@ namespace TrboX
                 {
                     img_SysMax.Visibility = Visibility.Collapsed;
                     img_SysRestore.Visibility = Visibility.Visible;
+
+                    if (null != borderClip) borderClip.Margin = new Thickness(0);
+                    relativeClip = -1;
+
                 }
                 else
                 {
                     img_SysMax.Visibility = Visibility.Visible;
                     img_SysRestore.Visibility = Visibility.Collapsed;
+                    if (null != borderClip) borderClip.Margin = new Thickness(10);
+                    relativeClip = 14;
                 }
             };
         }

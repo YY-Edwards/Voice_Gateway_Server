@@ -489,7 +489,8 @@ namespace TrboX
             Point ep = m_mainWin.exp_New.TranslatePoint(new Point(m_mainWin.exp_New.ActualWidth, 0), (UIElement)m_mainWin);
             Point mp = Mouse.GetPosition((UIElement)m_mainWin);
 
-            if ((mp.X < ep.X) || (mp.X > ep.X + m_mainWin.exp_New.ActualWidth) || (mp.Y < ep.Y) || (mp.Y > ep.Y + m_mainWin.exp_New.ActualHeight))
+            //doglle button width :20
+            if ((mp.X < ep.X + 20) || (mp.X > ep.X + m_mainWin.exp_New.ActualWidth) || (mp.Y < ep.Y) || (mp.Y > ep.Y + m_mainWin.exp_New.ActualHeight))
             {
                 if (true == m_mainWin.exp_New.IsExpanded) m_mainWin.exp_New.IsExpanded = false;
             }
