@@ -1,0 +1,59 @@
+﻿<src:MyWindow x:Class="TrboX.NewOperate"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:src="clr-namespace:TrboX"
+        xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" 
+        Icon="/TrboX;component/themes/resource/Logo.png"        
+        Style="{StaticResource MyWindowStyle}"  
+        Title="新建操作" Height="360" Width="600" WindowStyle="None" WindowStartupLocation="CenterScreen">
+    <DockPanel Margin="5,0,5,5">
+        <DockPanel LastChildFill="False" Width="80">
+            <Border BorderBrush="Black" BorderThickness="1,1,0,0" DockPanel.Dock="Top">
+                <DockPanel LastChildFill="False">
+                    <RadioButton x:Name="rad_CreateCall" Content="呼叫" Height="30" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" DockPanel.Dock="Top" GroupName="CreateType"/>
+                    <RadioButton x:Name="rad_CreateMsg" Content="短消息" Height="30" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" DockPanel.Dock="Top" GroupName="CreateType"/>
+                    <RadioButton x:Name="rad_CreatePosition" Content="位置查询" Height="30" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" DockPanel.Dock="Top" GroupName="CreateType"/>
+                    <RadioButton x:Name="rad_CreateCtrl" Content="命令控制" Height="30" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" DockPanel.Dock="Top" GroupName="CreateType"/>
+                    <RadioButton x:Name="rad_CreateJob" Content="工单" Height="30" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" DockPanel.Dock="Top" GroupName="CreateType"/>
+                    <RadioButton x:Name="rad_CreateTracker" Content="巡更任务" Height="30" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" DockPanel.Dock="Top" GroupName="CreateType"/>
+                </DockPanel>
+            </Border>
+        </DockPanel>
+        <Border BorderBrush="Black" BorderThickness="1">
+            <Border x:Name="bdr_MaskCreateTab" BorderBrush="Black" BorderThickness="0" Margin="0">
+                <TabControl x:Name="tab_NewType" Margin="0,-22,0,0" Style="{DynamicResource TabControlStyleNormal}" BorderThickness="0">
+                    <TabItem Header="" Margin="-2,-3.5,-2,1.5">
+                        <Grid Background="#FFE5E5E5">
+                            <Label Content="新建呼叫" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="" Margin="0,-1.5,0,1.5">
+                        <Grid Background="#FFE5E5E5">
+                            <Label Content="新建短消息" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="" Margin="-2,-3.5,0,-0.5">
+                        <Grid Background="#FFE5E5E5">
+                            <Label Content="新建位置查询" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="" Margin="-2,-3.5,0,-0.5">
+                        <Grid Background="#FFE5E5E5">
+                            <Label Content="新建命令控制" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="" Margin="-2,-3.5,0,-0.5">
+                        <Grid Background="#FFE5E5E5">
+                            <Label Content="新建工单" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        </Grid>
+                    </TabItem>
+                    <TabItem Header="" Margin="-2,-3.5,0,-0.5">
+                        <Grid Background="#FFE5E5E5">
+                            <Label Content="新建巡更" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </Border>
+        </Border>
+    </DockPanel>
+</src:MyWindow>

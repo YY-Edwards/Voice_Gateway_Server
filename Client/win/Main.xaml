@@ -9,261 +9,6 @@
         Title="TrboX" Height="640" Width="1024" WindowStartupLocation="CenterScreen" >
     <local:MyWindow.Resources>
         <!-- Simple TextBox -->
-        <Style x:Key="TextBoxStyleNormal" TargetType="{x:Type TextBox}">
-            <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="AllowDrop" Value="true"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type TextBox}">
-                        <Grid>
-                            <Border x:Name="Border" Background="{DynamicResource WindowBackgroundBrush}" BorderBrush="Black" BorderThickness="1" Padding="2" CornerRadius="0">
-
-                                <!-- 实现时会将 Content 置于 ScrollViewer 中。必须将其命名为 PART_ContentHost，控件才能起作用 -->
-                                <ScrollViewer Margin="0" x:Name="PART_ContentHost" Style="{DynamicResource SimpleScrollViewer}" Background="{TemplateBinding Background}"/>
-
-                            </Border>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="Background" Value="{DynamicResource DisabledBackgroundBrush}" TargetName="Border"/>
-                                <Setter Property="Foreground" Value="{DynamicResource DisabledForegroundBrush}"/>
-                                <Setter Property="BorderBrush" TargetName="Border" Value="#FF888888"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <LinearGradientBrush x:Key="TextBoxBorder" EndPoint="0,20" MappingMode="Absolute" StartPoint="0,0">
-            <GradientStop Color="#ABADB3" Offset="0.05"/>
-            <GradientStop Color="#E2E3EA" Offset="0.07"/>
-            <GradientStop Color="#E3E9EF" Offset="1"/>
-        </LinearGradientBrush>
-        <Style x:Key="PasswordBoxStyleNormal" TargetType="{x:Type PasswordBox}">
-            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource TextBoxBorder}"/>
-            <Setter Property="FontFamily" Value="Times New Roman"/>
-            <Setter Property="PasswordChar" Value="●"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-            <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="HorizontalContentAlignment" Value="Left"/>
-            <Setter Property="Padding" Value="1"/>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-            <Setter Property="AllowDrop" Value="true"/>
-            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
-            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type PasswordBox}">
-                        <Grid Height="Auto" Width="Auto">
-                            <Border x:Name="border" BorderBrush="Black" BorderThickness="1">
-                                <Themes:ListBoxChrome x:Name="Bd" BorderThickness="{TemplateBinding BorderThickness}" RenderMouseOver="{TemplateBinding IsMouseOver}" RenderFocused="{TemplateBinding IsKeyboardFocusWithin}" SnapsToDevicePixels="true" Margin="0">
-                                    <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
-                                </Themes:ListBoxChrome>
-                            </Border>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
-                                <Setter Property="Background" TargetName="border" Value="{x:Null}"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="#FF888888"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="MenuStyleNormal" TargetType="{x:Type Menu}">
-            <Setter Property="Background" Value="{DynamicResource LightBrush}"/>
-            <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}"/>
-            <Setter Property="SnapsToDevicePixels" Value="True"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Menu}">
-                        <Grid>
-                            <Border Margin="1" x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"/>
-                            <StackPanel IsItemsHost="True" ClipToBounds="True" Orientation="Horizontal"/>
-                        </Grid>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsEnabled" Value="False">
-                                <Setter Property="BorderBrush" Value="{DynamicResource DisabledBorderBrush}" TargetName="Border"/>
-                                <Setter Property="Background" TargetName="Border" Value="{x:Null}"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="MenuItemStyleNormal" TargetType="{x:Type MenuItem}">
-            <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-            <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.MenuTextBrushKey}}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type MenuItem}">
-                        <Border x:Name="Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="1">
-                            <Grid x:Name="grid">
-
-                                <!-- Grid 用于结合 Icon、Content、Glyph 复选标记和 Arrow 的列，以显示下一个级别
-							 Grid 中采用大小共享方式，以便将每个 MenuItem 的 Icon、Content 和 Arrow 一起对齐 -->
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition MinWidth="17" Width="Auto" SharedSizeGroup="MenuItemIconColumnGroup"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="Auto" SharedSizeGroup="MenuItemIGTColumnGroup"/>
-                                    <ColumnDefinition Width="14"/>
-                                </Grid.ColumnDefinitions>
-
-                                <!-- ContentPresenter 用来显示 Icon (如果需要) -->
-                                <ContentPresenter Margin="4,0,6,0" x:Name="Icon" VerticalAlignment="Center" ContentSource="Icon"/>
-
-                                <!-- Glyph 是一个复选标记(如果可选中的菜单需要) -->
-                                <Grid Visibility="Hidden" Margin="4,0,6,0" x:Name="GlyphPanel" VerticalAlignment="Center">
-                                    <Path x:Name="GlyphPanelpath" VerticalAlignment="Center" Fill="{TemplateBinding Foreground}" Data="M0,2 L0,4.8 L2.5,7.4 L7.1,2.8 L7.1,0 L2.5,4.6 z" FlowDirection="LeftToRight"/>
-                                </Grid>
-
-                                <!-- 菜单文本等内容 -->
-                                <ContentPresenter Grid.Column="1" x:Name="HeaderHost" RecognizesAccessKey="True" ContentSource="Header" Margin="6,0" VerticalAlignment="Center"/>
-
-                                <!-- 箭头绘制的路径，该路径指向菜单的下一个级别 -->
-                                <Grid Grid.Column="3" Margin="4,0,6,0" x:Name="ArrowPanel" VerticalAlignment="Center">
-                                    <Path x:Name="ArrowPanelPath" VerticalAlignment="Center" Fill="{TemplateBinding Foreground}" Data="M0,0 L0,8 L4,4 z"/>
-                                </Grid>
-
-                                <!-- Popup 是向下展开或横向展开(具体取决于该项所处的级别)的菜单的主体 -->
-                                <Popup IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" Placement="Right" x:Name="SubMenuPopup" Focusable="false" AllowsTransparency="true" PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}" VerticalOffset="-3">
-                                    <Grid x:Name="SubMenu">
-                                        <Border x:Name="SubMenuBorder" Background="{DynamicResource WindowBackgroundBrush}" BorderBrush="#000000" BorderThickness="1"/>
-
-                                        <!-- StackPanel 保留菜单的子级。这是通过 IsItemsHost=True 来设置的 -->
-                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
-                                    </Grid>
-                                </Popup>
-
-                            </Grid>
-                        </Border>
-
-                        <!-- 这些触发器通过 Role 重新配置 MenuItem 的四种排列方式以显示不同级别的菜单 -->
-                        <ControlTemplate.Triggers>
-
-                            <Trigger Property="ButtonBase.Command" Value="{x:Null}"/>
-
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" TargetName="Border" Value="{x:Null}"/>
-                                <Setter Property="BorderBrush" TargetName="Border" Value="Black"/>
-                                <Setter Property="Background" TargetName="grid" Value="Black"/>
-                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
-                            </Trigger>
-
-                            <!-- Role = TopLevelHeader: 这是菜单中的根菜单项；Popup 向下展开 -->
-                            <Trigger Property="Role" Value="TopLevelHeader">
-                                <Setter Property="Margin" Value="0,1,0,1"/>
-                                <Setter Property="Padding" Value="6,3,6,3"/>
-                                <Setter Property="Grid.IsSharedSizeScope" Value="true"/>
-                                <Setter Property="Placement" Value="Bottom" TargetName="SubMenuPopup"/>
-                                <Setter Property="Visibility" Value="Collapsed" TargetName="ArrowPanel"/>
-                            </Trigger>
-                            <EventTrigger RoutedEvent="FrameworkElement.Loaded"/>
-
-                            <!-- Role = TopLevelItem:  这是没有任何子项的顶级菜单的子菜单项-->
-                            <Trigger Property="Role" Value="TopLevelItem">
-                                <Setter Property="Margin" Value="0,1,0,1"/>
-                                <Setter Property="Padding" Value="6,3,6,3"/>
-                                <Setter Property="Visibility" Value="Collapsed" TargetName="ArrowPanel"/>
-                            </Trigger>
-
-                            <!-- Role = SubMenuHeader: 这是不包含子级的子菜单项 -->
-                            <Trigger Property="Role" Value="SubmenuHeader">
-                                <Setter Property="DockPanel.Dock" Value="Top"/>
-                                <Setter Property="Padding" Value="0,2,0,2"/>
-                                <Setter Property="Grid.IsSharedSizeScope" Value="true"/>
-                            </Trigger>
-
-                            <!-- Role = SubMenuItem: 这是包含子级的子菜单项-->
-                            <Trigger Property="Role" Value="SubmenuItem">
-                                <Setter Property="DockPanel.Dock" Value="Top"/>
-                                <Setter Property="Padding" Value="0,2,0,2"/>
-                                <Setter Property="Visibility" Value="Collapsed" TargetName="ArrowPanel"/>
-                            </Trigger>
-                            <Trigger Property="IsSuspendingPopupAnimation" Value="true">
-                                <Setter Property="PopupAnimation" Value="None" TargetName="SubMenuPopup"/>
-                            </Trigger>
-
-                            <!-- 如果不存在 Icon，我们会折叠 Icon Content -->
-                            <Trigger Property="Icon" Value="{x:Null}">
-                                <Setter Property="Visibility" Value="Collapsed" TargetName="Icon"/>
-                            </Trigger>
-
-                            <!-- GlyphPanel 包含 CheckMark -->
-                            <Trigger Property="IsChecked" Value="true">
-                                <Setter Property="Visibility" Value="Visible" TargetName="GlyphPanel"/>
-                                <Setter Property="Visibility" Value="Collapsed" TargetName="Icon"/>
-                            </Trigger>
-
-                            <Trigger Property="AllowsTransparency" SourceName="SubMenuPopup" Value="true">
-                                <Setter Property="Margin" Value="0,0,3,3" TargetName="SubMenu"/>
-                                <Setter Property="SnapsToDevicePixels" Value="true" TargetName="SubMenu"/>
-                                <!--<Setter Property="BitmapEffect" Value="{DynamicResource PopupDropShadow}" TargetName="SubMenuBorder"/> -->
-                            </Trigger>
-
-                            <!-- 对 Menu Highlight 和 IsEnabled 使用系统颜色-->
-                            <Trigger Property="IsHighlighted" Value="true">
-                                <Setter Property="Background" TargetName="Border" Value="{x:Null}"/>
-                                <Setter Property="BorderBrush" TargetName="Border" Value="Black"/>
-                                <Setter Property="Background" TargetName="grid" Value="Black"/>
-                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
-                            </Trigger>
-                            <!--
-							<Trigger Property="IsMouseOver" Value="True">
-								<Setter Property="Background" TargetName="Border" Value="Black"/>
-								<Setter Property="BorderBrush" TargetName="Border" Value="{x:Null}"/>
-								<Setter Property="Background" TargetName="grid" Value="{x:Null}"/>
-								<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
-							</Trigger>
-							-->
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="ButtonStyleIcon" TargetType="{x:Type Button}">
-            <Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}"/>
-            <Setter Property="Background" Value="{StaticResource ButtonNormalBackground}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource ButtonNormalBorder}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="1"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border x:Name="border" BorderBrush="{x:Null}" BorderThickness="1" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto">
-                            <ContentPresenter HorizontalAlignment="Stretch" Margin="0" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Stretch"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsPressed" Value="True">
-                                <Setter Property="Background" TargetName="border" Value="Black"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="BorderThickness" TargetName="border" Value="1"/>
-                                <Setter Property="BorderBrush" TargetName="border" Value="Black"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Foreground" Value="#ADADAD"/>
-                                <Setter Property="OpacityMask" TargetName="border" Value="#7F000000"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-
     </local:MyWindow.Resources>
 
     <local:MyWindow.Style>
@@ -281,6 +26,17 @@
                         <Label Content="当前账户：Admin" VerticalAlignment="Center"/>
                     </Grid>
                     <Menu Style="{DynamicResource MenuStyleNormal}">
+                        <MenuItem Header="文件" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top">
+                            <MenuItem Header="新建" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160">
+                                <MenuItem Header="语音调度" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160" IsEnabled="False"/>
+                                <MenuItem x:Name="menu_View_Tool_Base1" Header="短消息" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_View_Tool_Fast1" Header="位置查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_View_Tool_Ctrl1" Header="工单" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            </MenuItem>
+                            <MenuItem Header="保存" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <Separator Margin="0" Style="{DynamicResource SeparatorStyleNormal}"/>
+                            <MenuItem x:Name="menu_View_Event1" Header="退出TrboX" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                        </MenuItem>
                         <MenuItem Header="视图" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top">
                             <MenuItem Header="工具栏" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160">
                                 <MenuItem Header="标准" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160" IsChecked="True" IsEnabled="False"/>
@@ -319,227 +75,347 @@
                 </DockPanel>
             </Border>
             <Border BorderBrush="Black" BorderThickness="0" Height="30" DockPanel.Dock="Top" Margin="0">
-                <DockPanel LastChildFill="False">
-                    <Border BorderBrush="Black" BorderThickness="1,0" Margin="0,0,5,0">
-                        <DockPanel LastChildFill="False">
-                            <Expander x:Name="exp_New" Header="☎" Height="28" Style="{DynamicResource SimpleExpander}" VerticalAlignment="Center" FlowDirection="RightToLeft" ToolTip="新建呼叫" Margin="5,0,0,0"  >
-                            	<Grid Background="#FFE5E5E5" FlowDirection="LeftToRight">
-                            		<Popup AllowsTransparency="False" IsOpen="{Binding IsExpanded, ElementName=exp_New}" Placement="Bottom" Margin="0,2,0,0">
-                            			<Border BorderBrush="Black" BorderThickness="1" Height="107" Width="99.333" Background="White" FlowDirection="LeftToRight">
-                            				<ListBox Style="{DynamicResource SimpleListBox}" BorderThickness="0">
-                            					<ListBoxItem Content="新建呼叫"/>
-                            					<ListBoxItem Content="新建短消息"/>
-                            					<ListBoxItem Content="新建位置查询"/>
-                            					<ListBoxItem Content="新建指令控制"/>
-                            					<ListBoxItem Content="新建快速操作"/>
-                            				</ListBox>
-                            			</Border>         
-                            		</Popup>
-                            	</Grid>
-                            </Expander>
-                            <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="100,7,22,22" ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="24" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" Click="Button_Click_1" ToolTip="保存" />
-                            <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="131,86,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" Click="Button_Click" ToolTip="删除"/>
-                        </DockPanel>
-                    </Border>
-                    <Border x:Name="bdr_Tool_Base" BorderBrush="Black" BorderThickness="1,0" Height="28" VerticalAlignment="Top" Margin="0,0,5,0">
-                        <DockPanel LastChildFill="False" Margin="0">
-                            <Button x:Name="btn_Tool_PTT" local:CExIcon.Content="PTT"  ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="36" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="呼叫" Click="btn_Tool_PTT_Click" />
-                            <Button x:Name="btn_Tool_Msg" local:CExIcon.Content="✉"  Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="短消息" Click="btn_Tool_Msg_Click"/>
-                            <Button x:Name="btn_Tool_Position" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="313,249,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="位置查询" Click="btn_Tool_Position_Click"/>
-                            <Button x:Name="btn_Tool_Job" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="253,7,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="工单" Click="btn_Tool_Job_Click"/>
-                        </DockPanel>
-                    </Border>
-                    <Border x:Name="bdr_Tool_Fast" BorderBrush="Black" BorderThickness="1,0" Height="28" VerticalAlignment="Top" Margin="0,0,5,0">
-                        <DockPanel LastChildFill="False" Margin="0">
-                            <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="131,7,22,22" ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="24" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="添加常用联系人" />
-                            <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="161,7,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="添加常用组"/>
-                            <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="161,168,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="添加快速操作"/>
-                        </DockPanel>
-                    </Border>
-                    <Border x:Name="bdr_Tool_Ctrl" BorderBrush="Black" BorderThickness="1,0" Height="28" VerticalAlignment="Top" Margin="0,0,5,0">
-                        <DockPanel LastChildFill="False" Margin="0">
-                            <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="404,290,22,22" ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="24" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="遥毙" />
-                            <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="220,290,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="遥晕"/>
-                            <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="344,86,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="遥开"/>
-                            <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="190,290,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="在线检测"/>
-                            <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="7,330,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,2" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="远程监听"/>
-                        </DockPanel>
-                    </Border>
-                    <Border x:Name="bdr_Tool_Help" BorderBrush="Black" BorderThickness="1,0" Height="28" VerticalAlignment="Top" Margin="0,0,5,0">
-                    	<DockPanel LastChildFill="False" Margin="0">
-                    		<Button x:Name="btn_Help" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="282,127,22,22" ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="24" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="查看帮助" />
-                    		<Button x:Name="btn_About" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="7,168,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="关于TrboX" Click="btn_About_Click"/>
-                    	</DockPanel>
-                    </Border>
-                </DockPanel>
+                <Border BorderBrush="White" BorderThickness="0,1,0,0" HorizontalAlignment="Left" Background="#19FFFFFF" Margin="5,0,0,0">
+                    <DockPanel LastChildFill="False" Margin="0">
+                        <Border BorderBrush="#FFEEEEEE" BorderThickness="1,0" Margin="0" Padding="3,0">
+                            <DockPanel LastChildFill="False">
+                                <Expander x:Name="exp_New" Header="☎" Height="28" Style="{DynamicResource SimpleExpander}" VerticalAlignment="Center" FlowDirection="RightToLeft" ToolTip="新建呼叫" Margin="5,0,0,0"  >
+                                    <Grid Background="#FFE5E5E5" FlowDirection="LeftToRight">
+                                        <Popup AllowsTransparency="False" IsOpen="{Binding IsExpanded, ElementName=exp_New}" Placement="Bottom" Margin="0,2,0,0">
+                                            <Border BorderBrush="Black" BorderThickness="1" Height="132" Width="120" Background="White" FlowDirection="LeftToRight">
+                                                <ListBox x:Name="lst_Tool_New" Style="{DynamicResource SimpleListBox}" BorderThickness="0">
+                                                    <ListBoxItem Content="新建呼叫"/>
+                                                    <ListBoxItem Content="新建短消息"/>
+                                                    <ListBoxItem Content="新建位置查询"/>
+                                                    <ListBoxItem Content="新建指令控制"/>
+                                                    <ListBoxItem Content="新建工单"/>
+                                                    <ListBoxItem Content="新建巡更任务"/>
+                                                </ListBox>
+                                            </Border>
+                                        </Popup>
+                                    </Grid>
+                                </Expander>
+                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="131,86,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" Click="Button_Click" ToolTip="删除"/>
+                            </DockPanel>
+                        </Border>
+                        <Border x:Name="bdr_Tool_Base" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0">
+                            <DockPanel LastChildFill="False" Margin="0">
+                                <Button x:Name="btn_Tool_PTT" local:CExIcon.Content="PTT"  ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="36" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="呼叫" Click="btn_Tool_PTT_Click" />
+                                <Button x:Name="btn_Tool_Msg" local:CExIcon.Content="✉"  Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="短消息" Click="btn_Tool_Msg_Click"/>
+                                <Button x:Name="btn_Tool_Position" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="313,249,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="位置查询" Click="btn_Tool_Position_Click"/>
+                                <Button x:Name="btn_Tool_Job" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="253,7,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="工单" Click="btn_Tool_Job_Click"/>
+                            </DockPanel>
+                        </Border>
+                        <Border x:Name="bdr_Tool_Fast" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0">
+                            <DockPanel LastChildFill="False" Margin="0">
+                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="131,7,22,22" ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="24" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="添加常用联系人" />
+                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="161,7,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="添加常用组"/>
+                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="161,168,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="添加快速操作"/>
+                            </DockPanel>
+                        </Border>
+                        <Border x:Name="bdr_Tool_Ctrl" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0">
+                            <DockPanel LastChildFill="False" Margin="0">
+                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="404,290,22,22" ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="24" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="遥毙" />
+                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="220,290,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="遥晕"/>
+                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="344,86,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="遥开"/>
+                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="190,290,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="在线检测"/>
+                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="7,330,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,2" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="远程监听"/>
+                            </DockPanel>
+                        </Border>
+                        <Border x:Name="bdr_Tool_Help" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0">
+                            <DockPanel LastChildFill="False" Margin="0">
+                                <Button x:Name="btn_Help" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="282,127,22,22" ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="24" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="查看帮助" />
+                                <Button x:Name="btn_About" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="7,168,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="关于TrboX" Click="btn_About_Click"/>
+                            </DockPanel>
+                        </Border>
+                    </DockPanel>
+                </Border>
             </Border>
             <Border BorderBrush="Black" BorderThickness="0" Margin="0" DockPanel.Dock="Bottom" Height="30">
 
             </Border>
             <Grid Background="White" Margin="0">
-            	<Border BorderBrush="Black" BorderThickness="0" Margin="0" Padding="5">
-            		<Grid x:Name="grd_main">
-            			<Grid.ColumnDefinitions>
-            				<ColumnDefinition MinWidth="100" Width="240"/>
-            				<ColumnDefinition MinWidth="100"/>
-            				<ColumnDefinition MinWidth="100" Width="200"/>
-            			</Grid.ColumnDefinitions>
-            			<Grid x:Name="grd_Nav" Margin="0,0,5,0">
-            				<Grid.RowDefinitions>
-            					<RowDefinition x:Name="grd_Row_Mgr" MinHeight="31"/>
-            					<RowDefinition MinHeight="30"/>
-            				</Grid.RowDefinitions>
-            				<Border BorderBrush="Black" BorderThickness="1" Margin="0,0,0,5">
-            					<Grid>
-            						<TabControl  BorderThickness="0" Focusable="False" IsTabStop="True" SelectedIndex="0" IsSynchronizedWithCurrentItem="True" TabStripPlacement="Bottom">
-            							<TabItem x:Name="tab_Mgr_Org" Header="组织" Style="{DynamicResource SimpleTabItem}">
-            								<Grid>
-            									<TreeView Style="{DynamicResource SimpleTreeView}" BorderThickness="0">
-            										<TreeView.ContextMenu>
-            											<ContextMenu>
-            												<MenuItem Header="ADD+"/>
-            											</ContextMenu>
-            										</TreeView.ContextMenu>
-            										<TreeViewItem Header="调度组" IsExpanded="True">
-            											<TreeViewItem Header="张三（ID:1）"/>
-            											<TreeViewItem Header="李四（ID：2）"/>
-            											<TreeViewItem Header="川A12345（ID：3）"/>
-            											<TreeViewItem Header="川B23456（ID：4）"/>
-            											<TreeViewItem Header="ID：6"/>
-            											<TreeViewItem Header="ID：7"/>
-            										</TreeViewItem>
-            										<TreeViewItem Header="地勤组" IsExpanded="True">
-            											<TreeViewItem Header="王五（ID:8）" Width="199"/>
-            											<TreeViewItem Header="川A11223（ID：9）" Width="199"/>
-            											<TreeViewItem Header="川B99884（ID：10）" Width="199"/>
-            											<TreeViewItem Header="ID：11" Width="199"/>
-            											<TreeViewItem Header="ID：12" Width="199"/>
-            										</TreeViewItem>
-            										<TreeViewItem Header="未分组" IsExpanded="True">
-            											<TreeViewItem Header="川B12345（ID：13）"/>
-            											<TreeViewItem Header="ID：14"/>
-            											<TreeViewItem Header="ID：15"/>
-            										</TreeViewItem>
-            									</TreeView>
-            								</Grid>
-            							</TabItem>
-            							<TabItem x:Name="tab_Mgr_Group" Header="组" Style="{DynamicResource SimpleTabItem}">
-            								<Grid Background="#FFE5E5E5"/>
-            							</TabItem>
-            							<TabItem x:Name="tab_Mgr_Employee" Header="人员" Style="{DynamicResource SimpleTabItem}">
-            								<Grid Background="#FFE5E5E5"/>
-            							</TabItem>
-            							<TabItem x:Name="tab_Mgr_Vehicle" Header="车辆" Style="{DynamicResource SimpleTabItem}">
-            								<Grid Background="#FFE5E5E5"/>
-            							</TabItem>
-            							<TabItem x:Name="tab_Mgr_Device" Header="设备" Style="{DynamicResource SimpleTabItem}" Margin="0,0,-2,0">
-            								<Grid Background="#FFE5E5E5"/>
-            							</TabItem>
-            						</TabControl>
-            					</Grid>
-            				</Border>
-            				<Border BorderBrush="Black" BorderThickness="1" Grid.Row="1" Margin="0">
-            					<DockPanel LastChildFill="False">
-            						<RadioButton x:Name="rad_Nav_Dispatch" Content="语音调度" Style="{DynamicResource SimpleRadioButton}" DockPanel.Dock="Top" GroupName="MainTab" IsChecked="True"/>
-            						<RadioButton x:Name="rad_Nav_Map" Content="地图" Style="{DynamicResource SimpleRadioButton}" DockPanel.Dock="Top" GroupName="MainTab"/>
-            						<RadioButton x:Name="rad_Nav_Recording" Content="录音" Style="{DynamicResource SimpleRadioButton}" DockPanel.Dock="Top" GroupName="MainTab"/>
-            						<RadioButton x:Name="rad_Nav_Report" Content="报表" Style="{DynamicResource SimpleRadioButton}" DockPanel.Dock="Top" GroupName="MainTab"/>
-            					</DockPanel>
-            				</Border>
-            				<GridSplitter x:Name="grdspl_Mgs_Nav" HorizontalAlignment="Stretch" Height="5" VerticalAlignment="Bottom" Margin="0" Background="#4C0C0103"/>
-            			</Grid>
-            			<Grid x:Name="grd_Disptch" Grid.Column="1" Margin="0">
-            				<Grid.RowDefinitions>
-            					<RowDefinition MinHeight="30"/>
-            					<RowDefinition x:Name="grd_Row_Event" Height="200" MinHeight="31"/>
-            				</Grid.RowDefinitions>
+                <Border BorderBrush="Black" BorderThickness="0" Margin="0" Padding="5">
+                    <Grid x:Name="grd_main">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MinWidth="100" Width="240"/>
+                            <ColumnDefinition MinWidth="100"/>
+                            <ColumnDefinition MinWidth="100" Width="200"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid x:Name="grd_Nav" Margin="0,0,5,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition x:Name="grd_Row_Mgr" MinHeight="31"/>
+                                <RowDefinition Height="121" MaxHeight="121" MinHeight="30"/>
+                            </Grid.RowDefinitions>
+                            <Border BorderBrush="Black" BorderThickness="1" Margin="0,0,0,5">
+                                <DockPanel>
+                                    <Border BorderBrush="Black" BorderThickness="0,1,0,0" DockPanel.Dock="Bottom" Height="31">
+                                        <DockPanel LastChildFill="False">
+                                            <RadioButton x:Name="rad_Mgr_Org" Content="组织" Style="{DynamicResource RadioButtonMgr}" GroupName="radGroup_TragetList" IsChecked="True" Width="35" BorderThickness="0,0,1,0">
+                                                <RadioButton.BorderBrush>
+                                                    <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                                                        <GradientStop Color="#FFCCCCCC" Offset="0"/>
+                                                        <GradientStop Color="Black" Offset="1"/>
+                                                    </LinearGradientBrush>
+                                                </RadioButton.BorderBrush>
+                                            </RadioButton>
+                                            <RadioButton x:Name="rad_Mgr_Group" Content="组" Style="{DynamicResource RadioButtonMgr}" GroupName="radGroup_TragetList" Width="35" BorderThickness="0" BorderBrush="Black"/>
+                                            <RadioButton x:Name="rad_Mgr_Employee" Content="人员" Style="{DynamicResource RadioButtonMgr}" GroupName="radGroup_TragetList" Width="35" BorderThickness="0,0,1,0">
+                                                <RadioButton.BorderBrush>
+                                                    <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                                                        <GradientStop Color="#FFCCCCCC" Offset="0"/>
+                                                        <GradientStop Color="Black" Offset="1"/>
+                                                    </LinearGradientBrush>
+                                                </RadioButton.BorderBrush>
+                                            </RadioButton>
+                                            <RadioButton x:Name="rad_Mgr_Vehicle" Content="车辆" Style="{DynamicResource RadioButtonMgr}" Width="35" GroupName="radGroup_TragetList" BorderThickness="0,0,1,0">
+                                                <RadioButton.BorderBrush>
+                                                    <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                                                        <GradientStop Color="#FFCCCCCC" Offset="0"/>
+                                                        <GradientStop Color="Black" Offset="1"/>
+                                                    </LinearGradientBrush>
+                                                </RadioButton.BorderBrush>
+                                            </RadioButton>
+                                            <RadioButton x:Name="rad_Mgr_Device" Content="设备" Style="{DynamicResource RadioButtonMgr}" Width="35" GroupName="radGroup_TragetList" BorderThickness="0,0,1,0">
+                                                <RadioButton.BorderBrush>
+                                                    <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
+                                                        <GradientStop Color="#FFCCCCCC" Offset="0"/>
+                                                        <GradientStop Color="Black" Offset="1"/>
+                                                    </LinearGradientBrush>
+                                                </RadioButton.BorderBrush>
+                                            </RadioButton>
+                                        </DockPanel>
+                                    </Border>
+                                    <Border x:Name="bdr_MaskMgrTab" BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top">
+                                        <TabControl x:Name="tab_Mgr"  BorderThickness="0" Focusable="False" IsTabStop="True" SelectedIndex="0" IsSynchronizedWithCurrentItem="True" Margin="0,-22,0,0" Style="{DynamicResource TabControlStyleNormal}">
+                                            <TabItem x:Name="tab_Mgr_Org" Header="组织" Style="{DynamicResource SimpleTabItem}" Width="10">
+                                                <DockPanel>
+                                                    <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
+                                                        <Label Content="组织" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                    </Border>
+                                                    <TreeView Style="{DynamicResource SimpleTreeView}" BorderThickness="0" Margin="0,0,0,-305.52">
+                                                        <TreeView.ContextMenu>
+                                                            <ContextMenu>
+                                                                <MenuItem Header="ADD+"/>
+                                                            </ContextMenu>
+                                                        </TreeView.ContextMenu>
+                                                        <TreeViewItem Header="调度组" IsExpanded="True">
+                                                            <TreeViewItem Header="张三（ID:1）"/>
+                                                            <TreeViewItem Header="李四（ID：2）"/>
+                                                            <TreeViewItem Header="川A12345（ID：3）"/>
+                                                            <TreeViewItem Header="川B23456（ID：4）"/>
+                                                            <TreeViewItem Header="ID：6"/>
+                                                            <TreeViewItem Header="ID：7"/>
+                                                        </TreeViewItem>
+                                                        <TreeViewItem Header="地勤组" IsExpanded="True">
+                                                            <TreeViewItem Header="王五（ID:8）"/>
+                                                            <TreeViewItem Header="川A11223（ID：9）"/>
+                                                            <TreeViewItem Header="川B99884（ID：10）"/>
+                                                            <TreeViewItem Header="ID：11"/>
+                                                            <TreeViewItem Header="ID：12"/>
+                                                        </TreeViewItem>
+                                                        <TreeViewItem Header="未分组" IsExpanded="True">
+                                                            <TreeViewItem Header="川B12345（ID：13）"/>
+                                                            <TreeViewItem Header="ID：14"/>
+                                                            <TreeViewItem Header="ID：15"/>
+                                                        </TreeViewItem>
+                                                    </TreeView>
+                                                </DockPanel>
+                                            </TabItem>
+                                            <TabItem x:Name="tab_Mgr_Group" Header="组" Style="{DynamicResource SimpleTabItem}" Width="10">
+                                                <DockPanel>
+                                                    <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
+                                                        <Label Content="组" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                    </Border>
+                                                    <ListView BorderThickness="0">
+                                                        <ListView.View>
+                                                            <GridView>
+                                                                <GridViewColumn/>
+                                                            </GridView>
+                                                        </ListView.View>
+                                                    </ListView>
+                                                </DockPanel>
+                                            </TabItem>
+                                            <TabItem x:Name="tab_Mgr_Employee" Header="人员" Style="{DynamicResource SimpleTabItem}" Width="10">
+                                                <DockPanel>
+                                                    <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
+                                                        <Label Content="人员" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                    </Border>
+                                                    <ListView BorderThickness="0">
+                                                        <ListView.View>
+                                                            <GridView>
+                                                                <GridViewColumn/>
+                                                            </GridView>
+                                                        </ListView.View>
+                                                    </ListView>
+                                                </DockPanel>
+                                            </TabItem>
+                                            <TabItem x:Name="tab_Mgr_Vehicle" Header="车辆" Style="{DynamicResource SimpleTabItem}" Width="10">
+                                                <DockPanel>
+                                                    <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
+                                                        <Label Content="车辆" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                    </Border>
+                                                    <ListView BorderThickness="0">
+                                                        <ListView.View>
+                                                            <GridView>
+                                                                <GridViewColumn/>
+                                                            </GridView>
+                                                        </ListView.View>
+                                                    </ListView>
+                                                </DockPanel>
+                                            </TabItem>
+                                            <TabItem x:Name="tab_Mgr_Device" Header="设备" Style="{DynamicResource SimpleTabItem}" Margin="0,0,-2,0" Width="10">
+                                                <DockPanel>
+                                                    <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
+                                                        <Label Content="设备" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                    </Border>
+                                                    <ListView BorderThickness="0">
+                                                        <ListView.View>
+                                                            <GridView>
+                                                                <GridViewColumn/>
+                                                            </GridView>
+                                                        </ListView.View>
+                                                    </ListView>
+                                                </DockPanel>
+                                            </TabItem>
+                                        </TabControl>
+                                    </Border>
+                                </DockPanel>
+                            </Border>
+                            <Border BorderBrush="Black" BorderThickness="1" Grid.Row="1" Margin="0">
+                                <DockPanel LastChildFill="False">
+                                    <RadioButton x:Name="rad_Nav_Dispatch" Content="语音调度" Style="{DynamicResource RadioButtonStyleNav}" DockPanel.Dock="Top" GroupName="MainTab" IsChecked="True" Height="30"/>
+                                    <RadioButton x:Name="rad_Nav_Map" Content="地图" Style="{DynamicResource RadioButtonStyleNav}" DockPanel.Dock="Top" GroupName="MainTab" Height="30"/>
+                                    <RadioButton x:Name="rad_Nav_Recording" Content="录音" Style="{DynamicResource RadioButtonStyleNav}" DockPanel.Dock="Top" GroupName="MainTab" Height="30"/>
+                                    <RadioButton x:Name="rad_Nav_Report" Content="报表" Style="{DynamicResource RadioButtonStyleNav}" DockPanel.Dock="Top" GroupName="MainTab" Height="30"/>
+                                </DockPanel>
+                            </Border>
+                            <GridSplitter x:Name="grdspl_Mgs_Nav" HorizontalAlignment="Stretch" Height="5" VerticalAlignment="Bottom" Margin="0" Background="#4C0C0103"/>
+                        </Grid>
+                        <Grid x:Name="grd_Disptch" Grid.Column="1" Margin="0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition MinHeight="30"/>
+                                <RowDefinition x:Name="grd_Row_Event" Height="200" MinHeight="31"/>
+                            </Grid.RowDefinitions>
 
-            				<Border BorderBrush="Black" BorderThickness="1" Margin="0">
-            					<TabControl Style="{DynamicResource SimpleTabControl}" BorderThickness="0">
-            						<TabItem Header="起始页" Style="{DynamicResource SimpleTabItem}">
-            							<Grid Background="#FFE5E5E5" Margin="0"/>
-            						</TabItem>
-            						<TabItem Header="地图" Style="{DynamicResource SimpleTabItem}">
-            							<Grid Margin="0">
-            								<Grid  x:Name="MyWebGrid" Margin="0"/>
-            								<Label Content="主界面" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            							</Grid>
-            						</TabItem>
-            					</TabControl>
-            				</Border>
-            				<Border BorderBrush="Black" BorderThickness="1" Grid.Row="1" Margin="0,5,0,0">
-            					<Label Content="事件记录" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-            				</Border>
-            				<GridSplitter x:Name="grdspl_Main_Event" HorizontalAlignment="Stretch" Height="5" VerticalAlignment="Top" Margin="0" Background="#4C000000" Grid.Row="1"/>
-            			</Grid>
-            			<Grid x:Name="grd_Msg" Margin="5,0,0,0" Grid.Column="2">
-            				<Grid.RowDefinitions>
-            					<RowDefinition x:Name="grd_Row_Msg_Alarm" MinHeight="31"/>
-            					<RowDefinition x:Name="grd_Row_Msg_ShortMsg" Height="31" MinHeight="31" />
-            					<RowDefinition x:Name="grd_Row_Msg_Rx" Height="31" MinHeight="31" />
-            					<RowDefinition x:Name="grd_Row_Msg_Job" Height="31" MinHeight="31"/>
-            					<RowDefinition x:Name="grd_Row_Msg_Tracker" Height="30" MinHeight="30"/>
-            					<RowDefinition Height="0"/>
-            				</Grid.RowDefinitions>
-            				<Border  x:Name="bdr_Msg_Alarm" BorderBrush="Black" BorderThickness="0" Margin="0,0,0,1">
-            					<DockPanel>
-            						<Border BorderBrush="Black" BorderThickness="1" Height="30" VerticalAlignment="Top" DockPanel.Dock="Top">
-            							<DockPanel Margin="0">
-            								<CheckBox x:Name="chk_MsgExp_Alarm" Content="展开" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,0" IsChecked="True"/>
-            							</DockPanel>
-            						</Border>
-            						<Label Content="报警" DockPanel.Dock="Top" BorderThickness="1" BorderBrush="#FFDE2727" Margin="0" Panel.ZIndex="-4"/>
-            					</DockPanel>
-            				</Border>
-            				<Border  x:Name="bdr_Msg_ShortMsg" BorderBrush="Black" BorderThickness="0" Margin="0,0,0,1" Grid.Row="1">
-            					<DockPanel>
-            						<Border BorderBrush="Black" BorderThickness="1" Height="30" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0">
-            							<DockPanel Margin="0">
-            								<CheckBox  x:Name="chk_MsgExp_ShortMsg" Content="展开" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,0"/>
-            							</DockPanel>
-            						</Border>
-            						<Label Content="短消息" BorderThickness="1" BorderBrush="#FFDE2727" Margin="0"/>
-            					</DockPanel>
-            				</Border>
-            				<Border  x:Name="bdr_Msg_Rx" BorderBrush="Black" BorderThickness="0" Margin="0,0,0,1" Grid.Row="2">
-            					<DockPanel>
-            						<Border BorderBrush="Black" BorderThickness="1" Height="30" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0">
-            							<DockPanel Margin="0">
-            								<CheckBox  x:Name="chk_MsgExp_Rx" Content="展开" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,0"/>
-            							</DockPanel>
-            						</Border>
-            						<Label Content="被叫记录" BorderThickness="1" BorderBrush="#FFDE2727" Margin="0"/>
-            					</DockPanel>
-            				</Border>
-            				<Border  x:Name="bdr_Msg_Job" BorderBrush="Black" BorderThickness="0" Grid.Row="3" Margin="0,0,0,1">
-            					<DockPanel>
-            						<Border BorderBrush="Black" BorderThickness="1" Height="30" VerticalAlignment="Top" Margin="0" DockPanel.Dock="Top">
-            							<DockPanel Margin="0">
-            								<CheckBox  x:Name="chk_MsgExp_Job" Content="展开" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,0"/>
-            							</DockPanel>
-            						</Border>
-            						<Label Content="工单" BorderThickness="1" BorderBrush="#FFDE2727" Margin="0"/>
-            					</DockPanel>
-            				</Border>
-            				<Border x:Name="bdr_Msg_Tracker" BorderBrush="Black" BorderThickness="0" Grid.Row="4" Margin="0">
-            					<DockPanel>
-            						<Border BorderBrush="Black" BorderThickness="1" Height="30" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0">
-            							<DockPanel Margin="0">
-            								<CheckBox  x:Name="chk_MsgExp_Tracker" Content="展开" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,0"/>
-            							</DockPanel>
-            						</Border>
-            						<Label Content="巡更" BorderThickness="1" BorderBrush="#FFDE2727"/>
-            					</DockPanel>
-            				</Border>
-            				<GridSplitter x:Name="grdspl_Msg_Row0" HorizontalAlignment="Stretch" Height="5" VerticalAlignment="Bottom" Background="#4C000000" Margin="0,0,0,-2"/>
-            				<GridSplitter x:Name="grdspl_Msg_Row1" HorizontalAlignment="Stretch" Height="5" VerticalAlignment="Bottom" Grid.Row="1" Background="#4C000000" Margin="0,0,0,-2"/>
-            				<GridSplitter x:Name="grdspl_Msg_Row2" HorizontalAlignment="Stretch" Height="5" VerticalAlignment="Bottom" Grid.Row="2" Background="#4C000000" Margin="0,0,0,-2"/>
-            				<GridSplitter x:Name="grdspl_Msg_Row3" HorizontalAlignment="Stretch" Height="5" VerticalAlignment="Bottom" Grid.Row="3" Background="#4C000000" Margin="0,0,0,-2"/>
-            			</Grid>
-            			<GridSplitter x:Name="grdspl_Nav_Main" Width="5" Background="#4C110101" Margin="0"/>
-            			<GridSplitter x:Name="grdspl_Main_Msg" HorizontalAlignment="Left" Width="5" Grid.Column="2" Background="#4C110101" Margin="0" />
-            		</Grid>
-            	</Border>
+                            <Border BorderBrush="Black" BorderThickness="1" Margin="0" Padding="0">
+                                <Border x:Name="bdr_MaskMainTab" BorderBrush="Black" BorderThickness="0">
+                                    <TabControl x:Name="tab_main" BorderThickness="0" Margin="0,-22,0,0" ClipToBounds="True" Style="{DynamicResource TabControlStyleNormal}">
+                                        <TabItem Header="起始页" Style="{DynamicResource SimpleTabItem}" Width="10">
+                                            <DockPanel>
+                                                <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
+                                                    <Label Content="语音调度" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                </Border>
+                                                <DockPanel LastChildFill="False" DockPanel.Dock="Top"/>
+                                            </DockPanel>
+                                        </TabItem>
+                                        <TabItem Header="地图" Style="{DynamicResource SimpleTabItem}" Width="10">
+                                            <DockPanel>
+                                                <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
+                                                    <Label Content="地图" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                </Border>
+                                                <DockPanel DockPanel.Dock="Top">
+                                                    <Grid  x:Name="MyWebGrid" Margin="0"/>
+                                                </DockPanel>
+                                            </DockPanel>
+                                        </TabItem>
+                                        <TabItem Header="录音" Style="{DynamicResource SimpleTabItem}" Width="10">
+                                            <DockPanel>
+                                                <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
+                                                    <Label Content="录音" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                </Border>
+                                                <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top"/>
+                                            </DockPanel>
+                                        </TabItem>
+                                        <TabItem Header="报表" Style="{DynamicResource SimpleTabItem}" Width="10">
+                                            <DockPanel>
+                                                <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
+                                                    <Label Content="工单" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                </Border>
+                                                <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top"/>
+                                            </DockPanel>
+                                        </TabItem>
+                                    </TabControl>
+                                </Border>
+                            </Border>
+                            <Border BorderBrush="Black" BorderThickness="1" Grid.Row="1" Margin="0,5,0,0">
+                                <DockPanel>
+                                    <Border BorderBrush="Black" BorderThickness="0" Height="30" DockPanel.Dock="Top" Background="#FF97C5F7">
+                                        <Label Content="事件记录" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                                    </Border>
+                                    <DockPanel LastChildFill="False" DockPanel.Dock="Top"/>
+                                </DockPanel>
+                            </Border>
+                            <GridSplitter x:Name="grdspl_Main_Event" HorizontalAlignment="Stretch" Height="5" VerticalAlignment="Top" Margin="0" Background="#4C000000" Grid.Row="1"/>
+                        </Grid>
+                        <Grid x:Name="grd_Msg" Margin="5,0,0,0" Grid.Column="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition x:Name="grd_Row_Msg_Alarm" MinHeight="60"/>
+                                <RowDefinition x:Name="grd_Row_Msg_ShortMsg" Height="30" MinHeight="30" />
+                                <RowDefinition x:Name="grd_Row_Msg_Rx" Height="30" MinHeight="30" />
+                                <RowDefinition x:Name="grd_Row_Msg_Job" Height="30" MinHeight="30"/>
+                                <RowDefinition x:Name="grd_Row_Msg_Tracker" Height="30" MinHeight="30"/>
+                                <RowDefinition  MaxHeight="0"/>
+                            </Grid.RowDefinitions>
+                            <Border  x:Name="bdr_Msg_Alarm" BorderBrush="Black" BorderThickness="1" Margin="0">
+                                <DockPanel>
+                                    <Border BorderBrush="Black" BorderThickness="0" Height="30" DockPanel.Dock="Top">
+                                        <DockPanel Margin="0">
+                                            <CheckBox x:Name="chk_MsgExp_Alarm" Content="报警信息" Margin="0" IsChecked="True" Style="{DynamicResource CheckBoxStyleMsg}" BorderThickness="0"/>
+                                        </DockPanel>
+                                    </Border>
+                                    <Label Content="报警" DockPanel.Dock="Top" BorderThickness="1" BorderBrush="#FFDE2727" Margin="0" Panel.ZIndex="-4"/>
+                                </DockPanel>
+                            </Border>
+                            <Border  x:Name="bdr_Msg_ShortMsg" BorderBrush="Black" BorderThickness="1,0,1,1" Margin="0" Grid.Row="1">
+                                <DockPanel>
+                                    <Border BorderBrush="Black" BorderThickness="0" Height="30" DockPanel.Dock="Top" Margin="0">
+                                        <DockPanel Margin="0">
+                                            <CheckBox  x:Name="chk_MsgExp_ShortMsg" Content="短消息" Margin="0" Style="{DynamicResource CheckBoxStyleMsg}" BorderThickness="0"/>
+                                        </DockPanel>
+                                    </Border>
+                                    <Label Content="短消息" BorderThickness="1" BorderBrush="#FFDE2727" Margin="0"/>
+                                </DockPanel>
+                            </Border>
+                            <Border  x:Name="bdr_Msg_Rx" BorderBrush="Black" BorderThickness="1,0,1,1" Margin="0" Grid.Row="2">
+                                <DockPanel>
+                                    <Border BorderBrush="Black" BorderThickness="0" Height="30" DockPanel.Dock="Top" Margin="0">
+                                        <DockPanel Margin="0">
+                                            <CheckBox  x:Name="chk_MsgExp_Rx" Content="被叫记录" Margin="0" Style="{DynamicResource CheckBoxStyleMsg}" BorderThickness="0"/>
+                                        </DockPanel>
+                                    </Border>
+                                    <Label Content="被叫记录" BorderThickness="1" BorderBrush="#FFDE2727" Margin="0"/>
+                                </DockPanel>
+                            </Border>
+                            <Border  x:Name="bdr_Msg_Job" BorderBrush="Black" BorderThickness="1,0,1,1" Grid.Row="3" Margin="0">
+                                <DockPanel>
+                                    <Border BorderBrush="Black" BorderThickness="0" Height="30" Margin="0" DockPanel.Dock="Top">
+                                        <DockPanel Margin="0">
+                                            <CheckBox  x:Name="chk_MsgExp_Job" Content="工单" Margin="0" Style="{DynamicResource CheckBoxStyleMsg}" BorderThickness="0"/>
+                                        </DockPanel>
+                                    </Border>
+                                    <Label Content="工单" BorderThickness="1" BorderBrush="#FFDE2727" Margin="0"/>
+                                </DockPanel>
+                            </Border>
+                            <Border x:Name="bdr_Msg_Tracker" BorderBrush="Black" BorderThickness="1,0,1,1" Grid.Row="4" Margin="0">
+                                <DockPanel>
+                                    <Border BorderBrush="Black" BorderThickness="0" Height="30" DockPanel.Dock="Top" Margin="0">
+                                        <DockPanel Margin="0">
+                                            <CheckBox  x:Name="chk_MsgExp_Tracker" Content="巡更" Margin="0" Style="{DynamicResource CheckBoxStyleMsg}" BorderThickness="0" Background="{x:Null}"/>
+                                        </DockPanel>
+                                    </Border>
+                                    <Label Content="巡更" BorderThickness="1" BorderBrush="#FFDE2727"/>
+                                </DockPanel>
+                            </Border>
+                            <GridSplitter x:Name="grdspl_Msg_Row0" HorizontalAlignment="Stretch" Height="5" VerticalAlignment="Bottom" Background="#00000000" Margin="0,0,0,-2" Visibility="Hidden"/>
+                            <GridSplitter x:Name="grdspl_Msg_Row1" HorizontalAlignment="Stretch" Height="5" VerticalAlignment="Bottom" Grid.Row="1" Background="#00000000" Margin="0,0,0,-2" Visibility="Hidden"/>
+                            <GridSplitter x:Name="grdspl_Msg_Row2" HorizontalAlignment="Stretch" Height="5" VerticalAlignment="Bottom" Grid.Row="2" Background="#00000000" Margin="0,0,0,-2" Visibility="Hidden"/>
+                            <GridSplitter x:Name="grdspl_Msg_Row3" HorizontalAlignment="Stretch" Height="5" VerticalAlignment="Bottom" Grid.Row="3" Background="#00000000" Margin="0,0,0,-2" Visibility="Hidden"/>
+                        </Grid>
+                        <GridSplitter x:Name="grdspl_Nav_Main" Width="5" Background="#4C110101" Margin="0"/>
+                        <GridSplitter x:Name="grdspl_Main_Msg" HorizontalAlignment="Left" Width="5" Grid.Column="2" Background="#4C110101" Margin="0" />
+                    </Grid>
+                </Border>
             </Grid>
         </DockPanel>
 

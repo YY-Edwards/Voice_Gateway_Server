@@ -103,6 +103,13 @@
       <DependentUpon>MyWebBrowse.xaml</DependentUpon>
     </Compile>
     <Compile Include="win\MainView.cs" />
+    <Compile Include="win\newFast.xaml.cs">
+      <DependentUpon>newFast.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="win\NewOperate.xaml.cs">
+      <DependentUpon>NewOperate.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="win\NewOperateView.cs" />
     <Compile Include="win\OperateWin.xaml.cs">
       <DependentUpon>OperateWin.xaml</DependentUpon>
     </Compile>
@@ -141,9 +148,6 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="themes\resource\Logo.png" />
-    <Resource Include="themes\resource\sys-1.jpg" />
-    <Resource Include="themes\resource\sys-2.jpg" />
-    <Resource Include="win\Image1.png" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="ctrl\MaskLoading.xaml">
@@ -174,6 +178,14 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="win\newFast.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="win\NewOperate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="win\OperateWin.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -189,6 +201,14 @@
   <ItemGroup>
     <Resource Include="themes\resource\icon-1.png" />
     <Resource Include="themes\resource\icon-2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="themes\resource\HeaderLeft.png" />
+    <Resource Include="themes\resource\HeaderRight.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="themes\resource\sys-1.png" />
+    <Resource Include="themes\resource\sys-2.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -20,8 +20,6 @@ namespace TrboX
     public partial class Main : MyWindow
     {
         MainView m_View;
-
-
         DataTst json = new DataTst();
         
         MyWebBrowse Map = new MyWebBrowse("file:///E:/Home/Projects/TrboX 3.0/Prj/TrboX/Debug/amap/index.html");
@@ -66,13 +64,13 @@ namespace TrboX
         private void menu_Help_About_Click(object sender, RoutedEventArgs e)
         {
             About aboutwin = new About();
-            aboutwin.Show();
+            aboutwin.ShowDialog();
         }
 
         private void btn_About_Click(object sender, RoutedEventArgs e)
         {
             About aboutwin = new About();
-            aboutwin.Show();
+            aboutwin.ShowDialog();
         }
 
         private void btn_Tool_PTT_Click(object sender, RoutedEventArgs e)
@@ -98,5 +96,6 @@ namespace TrboX
             OperateWin Operate = new OperateWin();
             Operate.Show();
         }
+
     }
 }
