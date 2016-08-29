@@ -108,9 +108,9 @@
                         </Border>
                         <Border x:Name="bdr_Tool_Fast" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0">
                             <DockPanel LastChildFill="False" Margin="0">
-                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="131,7,22,22" ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="24" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="添加常用联系人" />
-                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="161,7,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="添加常用组"/>
-                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="161,168,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="添加快速操作"/>
+                                <Button x:Name="btn_Tool_NewContact" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="131,7,22,22" ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="24" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="添加常用联系人" />
+                                <Button x:Name="btn_Tool_NewGroup" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="161,7,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="添加常用组"/>
+                                <Button x:Name="btn_Tool_NewFastOperate" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="161,168,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="添加快速操作"/>
                             </DockPanel>
                         </Border>
                         <Border x:Name="bdr_Tool_Ctrl" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0">

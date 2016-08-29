@@ -106,6 +106,7 @@
     <Compile Include="win\newFast.xaml.cs">
       <DependentUpon>newFast.xaml</DependentUpon>
     </Compile>
+    <Compile Include="win\NewFastWindowView.cs" />
     <Compile Include="win\NewOperate.xaml.cs">
       <DependentUpon>NewOperate.xaml</DependentUpon>
     </Compile>

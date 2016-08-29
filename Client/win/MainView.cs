@@ -81,6 +81,7 @@ namespace TrboX
 
             SelectedMainTab();
 
+            CreateNewOperateWindow();
             CreateNewFastWindow();
         }
 
@@ -664,7 +665,7 @@ namespace TrboX
 
         }
 
-        private void CreateNewFastWindow()
+        private void CreateNewOperateWindow()
         {
 
             m_mainWin.exp_New.PreviewMouseLeftButtonUp += delegate
@@ -723,6 +724,30 @@ namespace TrboX
 
                 m_mainWin.lst_Tool_New.SelectedIndex = -1;
 
+            };
+        }
+
+        private void CreateNewFastWindow()
+        {
+            m_mainWin.btn_Tool_NewContact.Click += delegate
+            {
+                m_newFastWin.rad_CreateContact.IsChecked = true;
+                m_newFastWin.tab_CreatFast.SelectedIndex = 0;
+                m_newFastWin.ShowDialog();
+            };
+
+            m_mainWin.btn_Tool_NewGroup.Click += delegate
+            {
+                m_newFastWin.rad_CreateGroup.IsChecked = true;
+                m_newFastWin.tab_CreatFast.SelectedIndex = 1;
+                m_newFastWin.ShowDialog();
+            };
+
+            m_mainWin.btn_Tool_NewFastOperate.Click += delegate
+            {
+                m_newFastWin.rad_CreateFastOperate.IsChecked = true;
+                m_newFastWin.tab_CreatFast.SelectedIndex = 1;
+                m_newFastWin.ShowDialog();
             };
         }
     }
