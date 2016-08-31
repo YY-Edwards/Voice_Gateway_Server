@@ -5,15 +5,204 @@
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" 
         xmlns:local="clr-namespace:TrboX"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" 
-    x:Class="TrboX.Main"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" 
+        x:Class="TrboX.Main"   
         Icon="/TrboX;component/themes/resource/Logo.png" 
         Title="TrboX" Height="640" Width="1024" WindowStartupLocation="CenterScreen" Style="{DynamicResource MyWindowStyle}" 
     >
 	<local:MyWindow.Resources>
-<!--Simple Tree View - 这用来在 ScrollViewer 中对 TreeViewItems 进行布局 -->
- 
-	</local:MyWindow.Resources>
+        <!--Simple Tree View - 这用来在 ScrollViewer 中对 TreeViewItems 进行布局 -->
+        <local:IsNullValueConverter x:Key="IsObjNull" />
+        <GridView x:Key="GridView">
+            <GridView.Columns>
+                <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=name}"/>
+                <GridViewColumn Header="Sex" DisplayMemberBinding="{Binding Path=sex}"/>
+                <GridViewColumn Header="Age" DisplayMemberBinding="{Binding Path=age}"/>
+            </GridView.Columns>
+        </GridView>
+        <local:TileView x:Key="BkImageView">
+            <local:TileView.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel Width="240" Height="300" >
+                        <Border x:Name="bdr_PanelTitle" BorderThickness="0" Height="30" VerticalAlignment="Top" DockPanel.Dock="Top">
+                            <DockPanel LastChildFill="False">
+                                <Label x:Name="lab_PanelTitle" Content="Title" VerticalAlignment="Center"/>
+                                <Button x:Name="btn_PanelClose" Content="X" Height="30" VerticalAlignment="Top" Width="30" DockPanel.Dock="Right" Click="btn_PanelClose_Click"/>
+                            </DockPanel>
+                        </Border>
+                        <Border BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Top" ClipToBounds="True">
+                            <TabControl x:Name="tab_PanelType" BorderThickness="0" Margin="0,-22,0,0">
+                                <TabItem Header="TabItem">
+                                    <Grid>
+                                        <Border BorderBrush="Black" BorderThickness="1" Margin="0">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="52*"/>
+                                                    <ColumnDefinition Width="147*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <Grid.RowDefinitions>
+                                                    <RowDefinition Height="47*"/>
+                                                    <RowDefinition Height="9*"/>
+                                                </Grid.RowDefinitions>
+                                                <Border x:Name="bdr_TypeImg" BorderBrush="Black" BorderThickness="1" Height="50" Width="50" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="1.044,10,1.043,0">
+                                                    <Image VerticalAlignment="Top" Margin="0,0,-2,0"/>
+                                                </Border>
+                                                <DockPanel x:Name="dck_ContactInfo"  LastChildFill="False" Grid.Column="1">
+                                                    <TextBlock x:Name="txt_TargetTitle" TextWrapping="Wrap" Text="" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="5,3,5,0"/>
+                                                    <Separator x:Name="sep_Title" Margin="5,0" VerticalAlignment="Top" DockPanel.Dock="Top" Height="10"/>
+                                                    <TextBlock x:Name="txt_ContactName" TextWrapping="Wrap" Text="{Binding Path = m_Contact.employee.name,StringFormat='联系人：{0}'}" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="5,3,5,0" FontSize="9"/>
+                                                    <TextBlock x:Name="txt_GroupName"  TextWrapping="Wrap" Text="　　组：地勤（ID：12）" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="5,3,5,0" FontSize="9"/>
+                                                    <TextBlock x:Name="txt_VehicleNumber"  TextWrapping="Wrap" Text="　车辆：川A12345" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="5,3,5,0" FontSize="9"/>
+                                                    <TextBlock x:Name="txt_VehicleContact" TextWrapping="Wrap" Text="联系人：崔二胯子" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="5,3,5,0" FontSize="9"/>
+                                                    <TextBlock x:Name="txt_RadioName" TextWrapping="Wrap" Text="对讲机：123" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="5,3,5,0" FontSize="9"/>
+                                                    <Separator Margin="5,0" VerticalAlignment="Top" DockPanel.Dock="Top" Height="10"/>
+                                                    <TextBlock x:Name="txt_Part" TextWrapping="Wrap" Text="　部门：财务部" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="5,3,5,0" FontSize="9"/>
+                                                    <TextBlock x:Name="txt_ContactPhone" TextWrapping="Wrap" Text="　手机：12345678901" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="5,3,5,0" FontSize="9"/>
+                                                </DockPanel>
+                                                <DockPanel x:Name="dck_OperateButton" Grid.ColumnSpan="2" LastChildFill="False" Grid.Row="1" VerticalAlignment="Center" HorizontalAlignment="Center" Height="24" Margin="15.666,1.5,15.667,1.5" Width="168">
+                                                    <Button x:Name="btn_Check" Content="在线检测" Height="24" VerticalAlignment="Top" Width="24" ToolTip="在线检测"/>
+                                                    <Button x:Name="btn_Monitor" Content="远程监听" Height="24" VerticalAlignment="Top" Width="24" ToolTip="远程监听"/>
+                                                    <Button x:Name="btn_Dispatch" Content="呼叫" Height="24" VerticalAlignment="Top" Width="24" ToolTip="呼叫"/>
+                                                    <Button x:Name="btn_Message" Content="短信息" Height="24" VerticalAlignment="Top" Width="24" ToolTip="短信息"/>
+                                                    <Button x:Name="btn_Position" Content="位置查询" Height="24" VerticalAlignment="Top" Width="24" ToolTip="位置查询"/>
+                                                    <Button x:Name="btn_Control" Content="控制" Height="24" VerticalAlignment="Top" Width="24" ToolTip="控制"/>
+                                                    <Button x:Name="btn_JobTicker" Content="工单" Height="24" VerticalAlignment="Top" Width="24" ToolTip="工单"/>
+                                                </DockPanel>
+                                            </Grid>
+                                        </Border>
+                                    </Grid>
+                                </TabItem>
+                                <TabItem Header="TabItem">
+                                    <Grid Background="#FFE5E5E5">
+                                        <Border BorderBrush="Black" BorderThickness="1" Visibility="Collapsed" Margin="0,0,-226,-114.48"/>
+                                    </Grid>
+                                </TabItem>
+                            </TabControl>
+                        </Border>
+                    </DockPanel>
+
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding ="{Binding Path = m_Type}" Value="FastType_Contact" >
+                            <Setter TargetName="bdr_PanelTitle" Property="Background" Value="#FF97C5F7"/>
+                            <Setter TargetName="lab_PanelTitle" Property="Content" Value="常用联系人"/>
+                            <Setter TargetName="tab_PanelType" Property="SelectedIndex" Value="0"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding ="{Binding Path = m_Type}" Value="FastType_Operate" >
+                            <Setter TargetName="bdr_PanelTitle" Property="Background" Value="#FFD3EA84"/>
+                            <Setter TargetName="lab_PanelTitle" Property="Content" Value="快速操作"/>
+                            <Setter TargetName="tab_PanelType" Property="SelectedIndex" Value="1"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding ="{Binding Path = m_Contact.key}" Value="Type_Group" >
+                            <Setter TargetName="txt_ContactName" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_VehicleContact" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_VehicleNumber" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_Part" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_ContactPhone" Property="Visibility" Value="Collapsed"/>
+
+                            <Setter TargetName="btn_Monitor" Property="Visibility" Value="Collapsed"/>
+
+                            <Setter TargetName="txt_GroupName" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_GroupName" Property="Visibility" Value="Collapsed"/>
+
+                            <Setter TargetName="txt_TargetTitle" Property="Text" Value="{Binding Path = m_Contact.Header,StringFormat='组：{0}'}"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding ="{Binding Path = m_Contact.key}" Value="Type_Radio" >
+                            <Setter TargetName="txt_ContactName" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_VehicleContact" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_VehicleNumber" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_Part" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_ContactPhone" Property="Visibility" Value="Collapsed"/>
+
+                            <Setter TargetName="txt_RadioName" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_TargetTitle" Property="Text" Value="对讲机"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding ="{Binding Path = m_Contact.key}" Value="Type_Ride" >
+                            <Setter TargetName="txt_ContactName" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_VehicleContact" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_VehicleNumber" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_Part" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_ContactPhone" Property="Visibility" Value="Collapsed"/>
+
+                            <Setter TargetName="txt_RadioName" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_TargetTitle" Property="Text" Value="车载台"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding ="{Binding Path = m_Contact.key}" Value="Type_Employee" >
+                            <Setter TargetName="txt_VehicleContact" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_Part" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_ContactPhone" Property="Visibility" Value="Collapsed"/>
+
+                            <Setter TargetName="txt_ContactName" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_TargetTitle" Property="Text" Value="联系人"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding ="{Binding Path = m_Contact.key}" Value="Type_Vehicle" >
+                            <Setter TargetName="txt_VehicleContact" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_VehicleNumber" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_Part" Property="Visibility" Value="Collapsed"/>
+
+                            <Setter TargetName="txt_VehicleNumber" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_TargetTitle" Property="Text" Value="车辆"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding ="{Binding Path = m_Contact, Converter= {StaticResource IsObjNull}}" Value="true" >
+                            <Setter TargetName="bdr_TypeImg" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="dck_ContactInfo" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="dck_OperateButton" Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding ="{Binding Path = m_Contact.employee, Converter= {StaticResource IsObjNull}}" Value="true" >
+                            <Setter TargetName="txt_ContactName" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_VehicleContact" Property="Visibility" Value="Collapsed"/>
+                            <Setter TargetName="txt_ContactPhone" Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding ="{Binding Path = m_Contact.vehicle, Converter= {StaticResource IsObjNull}}" Value="true" >
+                            <Setter TargetName="txt_VehicleNumber" Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+
+                        <DataTrigger Binding ="{Binding Path = m_Contact.group, Converter= {StaticResource IsObjNull}}" Value="true" >
+                            <Setter TargetName="txt_GroupName" Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+
+
+                        <DataTrigger Binding ="{Binding Path = m_Contact.radio, Converter= {StaticResource IsObjNull}}" Value="true" >
+                            <Setter TargetName="txt_RadioName" Property="Visibility" Value="Collapsed"/>
+                        </DataTrigger>
+
+                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding ="{Binding Path = m_Contact.employee, Converter= {StaticResource IsObjNull}}" Value="true" />
+                                <Condition Binding ="{Binding Path = m_Contact.vehicle, Converter= {StaticResource IsObjNull} }" Value="true" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="txt_Part" Property="Visibility" Value="Collapsed"/>
+                        </MultiDataTrigger>
+
+
+
+
+
+                    </DataTemplate.Triggers>
+
+                </DataTemplate>
+            </local:TileView.ItemTemplate>
+        </local:TileView>
+  
+    <local:TileView x:Key="ImageView">
+            <local:TileView.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel Width="240" Height="300" >
+                        <local:FastPanel  PanelItem ="{Binding CurrentItem}"/>
+                    </DockPanel>
+                    
+                </DataTemplate>
+            </local:TileView.ItemTemplate>
+        </local:TileView>
+    </local:MyWindow.Resources>
 
     <Grid Margin="0">
         <Grid.RowDefinitions>
@@ -161,7 +350,7 @@
                                         </Popup>
                                     </Grid>
                                 </Expander>
-                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="131,86,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" Click="Button_Click" ToolTip="删除"/>
+                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="131,86,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="删除"/>
                             </DockPanel>
                         </Border>
                         <Border x:Name="bdr_Tool_Base" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0">
@@ -174,7 +363,7 @@
                         </Border>
                         <Border x:Name="bdr_Tool_Fast" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0">
                             <DockPanel LastChildFill="False" Margin="0">
-                                <Button x:Name="btn_Tool_NewContact" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="131,7,22,22" ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="24" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="添加常用联系人" />
+                                <Button x:Name="btn_Tool_NewContact" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="131,7,22,22" ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="24" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="添加常用联系人" Click="btn_Tool_NewContact_Click" />
                                 <Button x:Name="btn_Tool_NewGroup" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="161,7,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="添加常用组"/>
                                 <Button x:Name="btn_Tool_NewFastOperate" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="161,168,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="添加快速操作"/>
                             </DockPanel>
@@ -354,15 +543,21 @@
                             <Border BorderBrush="Black" BorderThickness="1" Margin="0" Padding="0">
                                 <Border x:Name="bdr_MaskMainTab" BorderBrush="Black" BorderThickness="0">
                                     <TabControl x:Name="tab_main" BorderThickness="0" Margin="0,-22,0,0" ClipToBounds="True" Style="{DynamicResource TabControlStyleNormal}">
-                                        <TabItem Header="起始页" Style="{DynamicResource SimpleTabItem}" Width="10">
+                                        <TabItem Header="起始页" Style="{DynamicResource SimpleTabItem}" Width="20">
                                             <DockPanel>
                                                 <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
                                                     <Label Content="语音调度" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                                 </Border>
-                                                <DockPanel LastChildFill="False" DockPanel.Dock="Top"/>
+                                                <DockPanel DockPanel.Dock="Top">
+                                                    <ListView x:Name="lst_dispatch"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" >
+                                                        <ListView.View>
+                                                            <local:TileView />
+                                                        </ListView.View>
+                                                    </ListView>
+                                                </DockPanel>
                                             </DockPanel>
                                         </TabItem>
-                                        <TabItem Header="地图" Style="{DynamicResource SimpleTabItem}" Width="10">
+                                        <TabItem Header="地图" Style="{DynamicResource SimpleTabItem}" Width="20">
                                             <DockPanel>
                                                 <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
                                                     <Label Content="地图" VerticalAlignment="Center" HorizontalAlignment="Left"/>
@@ -372,7 +567,7 @@
                                                 </DockPanel>
                                             </DockPanel>
                                         </TabItem>
-                                        <TabItem Header="录音" Style="{DynamicResource SimpleTabItem}" Width="10">
+                                        <TabItem Header="录音" Style="{DynamicResource SimpleTabItem}" Width="20">
                                             <DockPanel>
                                                 <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
                                                     <Label Content="录音" VerticalAlignment="Center" HorizontalAlignment="Left"/>
@@ -380,7 +575,7 @@
                                                 <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top"/>
                                             </DockPanel>
                                         </TabItem>
-                                        <TabItem Header="报表" Style="{DynamicResource SimpleTabItem}" Width="10">
+                                        <TabItem Header="报表" Style="{DynamicResource SimpleTabItem}" Width="20">
                                             <DockPanel>
                                                 <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
                                                     <Label Content="工单" VerticalAlignment="Center" HorizontalAlignment="Left"/>

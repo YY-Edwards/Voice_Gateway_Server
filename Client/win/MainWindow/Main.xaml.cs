@@ -14,15 +14,25 @@ using System.Windows.Forms.Integration;
 
 namespace TrboX
 {
+
+    public class itemstc
+    {
+        public string name { set; get; }
+        public bool sex { set; get; }
+        public int age { set; get; }
+    }
+    
     /// <summary>
     /// Main.xaml 的交互逻辑
     /// </summary>
     public partial class Main : MyWindow
     {
         MainView m_View;
-        DataTst json = new DataTst();
+        FastOperateWindow m_FastOperateWin;
 
+        
         public TargetMgr m_Target = new TargetMgr();
+
         
         MyWebBrowse Map = new MyWebBrowse("file:///E:/Home/Projects/TrboX 3.0/Prj/TrboX/Debug/amap/index.html");
         public Main()
@@ -32,12 +42,15 @@ namespace TrboX
             {
                 this.WindowState = WindowState.Maximized;
                 m_View = new MainView(this);
-                MyWebGrid.Children.Insert(0, Map);
+
+
+                
 
                 OnWindowLoaded();
             };
             this.Closed += delegate
             {
+                m_FastOperateWin.Save();
                 Environment.Exit(0);
             };
         }
@@ -50,18 +63,20 @@ namespace TrboX
 
         private void OnWindowLoaded()
         {
+           // organzation tree
             m_Target.UpdateTragetList();
             m_View.FillDataToOrgTreeView();
+
+            //dispatch
+            m_FastOperateWin = new FastOperateWindow(this);
+            lst_dispatch.View = (ViewBase)this.FindResource("BkImageView");
+
+            //map
+            MyWebGrid.Children.Insert(0, Map);
+
+           
+            
         }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -71,17 +86,6 @@ namespace TrboX
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
             Map.View("file:///E:/Home/Projects/TrboX 3.0/Prj/TrboX/Debug/amap/index.html");
-        }
-
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void Button_Click_2(object sender, RoutedEventArgs e)
-        {
-            TesTitle win = new TesTitle();
-            win.Show();
         }
 
         //About
@@ -121,5 +125,36 @@ namespace TrboX
             Operate.Show();
         }
 
+        private void lst_dispatch_Loaded(object sender, RoutedEventArgs e)
+        {
+            //itemstc it = new itemstc
+            //{
+            //    name = "AddItem"
+            //};
+
+            //btn_add.Content = it;
+            
+        }
+
+        private int index = 0;
+        private void btn_Tool_NewContact_Click(object sender, RoutedEventArgs e)
+        {
+
+            FastOperate op = new FastOperate()
+            {
+                m_Type = (index % 2 == 0) ? FastType.FastType_Contact : FastType.FastType_Operate,
+                m_Contact = new CRelationShipObj(OrgItemType.Type_Group, new CGroup() {id = 1, name = "地勤" }, null,null, null),
+            };
+
+            m_FastOperateWin.Add(op);
+            
+            index++;
+        }
+
+        private void btn_PanelClose_Click(object sender, RoutedEventArgs e)
+        {
+            FastOperate it = (FastOperate)((Button)sender).DataContext;
+            m_FastOperateWin.Remove(it);
+        }
     }
 }

@@ -8,19 +8,21 @@ using Newtonsoft.Json.Linq;
 
 namespace TrboX
 {
-
+    [Serializable]
     public class CEmployee
     {
         public int id{set; get;}
         public string name { set; get; } 
     }
 
+    [Serializable]
     public class CVehicle
     {
         public int id { set; get; }
         public string number { set; get; }
     }
 
+    [Serializable]
     public class CGroup
     {
         public int id { set; get; }
@@ -35,6 +37,7 @@ namespace TrboX
         RIDE
     };
 
+    [Serializable]
     public class CRadio
     {
         public int id { set; get; }
@@ -51,7 +54,7 @@ namespace TrboX
         public int radio { set; get; }
     }
 
-    public enum TreeItemType
+    public enum OrgItemType
     {
         Type_Group,
         Type_Employee,
@@ -60,31 +63,300 @@ namespace TrboX
         Type_Ride,
     };
 
+    [Serializable]
     public class CRelationShipObj
     {
+        public OrgItemType key { set; get; }
         public CGroup group{ set; get; }
         public CEmployee employee { set; get; }
         public CVehicle vehicle { set; get; }
         public CRadio radio { set; get; }
 
         public CRelationShipObj() { }
-        public CRelationShipObj(CGroup grp, CEmployee emp, CVehicle veh, CRadio rad)
+        public CRelationShipObj(OrgItemType k, CGroup grp, CEmployee emp, CVehicle veh, CRadio rad)
         {
+            key = k;
             group  = grp;
             employee = emp;
             vehicle = veh;
             radio = rad;
+        }
+
+        public string Header
+        {
+            get{return GetHeader(); }
+        }
+        public string KeyHeader
+        {
+            get
+            {
+                switch (key)
+                {
+                    case OrgItemType.Type_Employee:
+                        return GetHeaderByEmployee();
+                    case OrgItemType.Type_Vehicle:
+                        return GetHeaderByVehicle();
+                    default:
+                        break;
+                }
+                return GetHeader();
+            }
+        }
+
+        public string HeaderWithoutGroup
+        {
+            get { return GetHeaderWithoutGroup(); }
+        }
+
+        public string KeyHeaderWithoutGroup
+        {
+            get
+            {
+                switch (key)
+                {
+                    case OrgItemType.Type_Employee:
+                        return GetHeaderByEmployeeWithoutGroup();
+                    case OrgItemType.Type_Vehicle:
+                        return GetHeaderByVehicleWithoutGroup();
+                    default:
+                        break;
+                }
+                return GetHeaderWithoutGroup();
+            }
+        }
+
+        private string GetHeader()
+        {
+            if (null == employee)
+            {
+                if (null == vehicle)
+                {
+                    if (null == radio)
+                    {
+                        if (null == group) return "未分组";
+                        else return group.name + "（ID：" + group.group_id.ToString() + "）";
+                    }
+                    else
+                    {
+                        if (null == group) return "ID：" + radio.radio_id.ToString();
+                        else return "ID：" + radio.radio_id.ToString() + "（" + group.name + "：" + group.group_id.ToString() + "）";
+                    }
+                }
+                else
+                {
+                    if (null == radio)
+                    {
+                        if (null == group) return vehicle.number;
+                        else return vehicle.number + "（" + group.name + "：" + group.group_id.ToString() + "）";
+                    }
+                    else
+                    {
+                        if (null == group) return vehicle.number + "（RadioID：" + radio.radio_id.ToString() + "）";
+                        else return vehicle.number + "（" + group.name + "：" + group.group_id.ToString() + "，RadioID：" + radio.radio_id.ToString() + "）";
+                    }
+                }
+            }
+            else
+            {
+                if (null == vehicle)
+                {
+                    if (null == radio)
+                    {
+                        if (null == group) return employee.name;
+                        else return employee.name + "（" + group.name + "：" + group.group_id.ToString() + "）";
+                    }
+                    else
+                    {
+                        if (null == group) return employee.name + "（RadioID：" + radio.radio_id.ToString() + "）";
+                        else return employee.name + "（" + group.name + "：" + group.group_id.ToString() + "，RadioID：" + radio.radio_id.ToString() + "）";
+                    }
+                }
+                else
+                {
+                    if (null == radio)
+                    {
+                        if (null == group) return employee.name + "（" + vehicle.number + "）";
+                        else return employee.name + "（" + group.name + "：" + group.group_id.ToString() + "，" + vehicle.number +"）";
+                    }
+                    else
+                    {
+                        if (null == group) return employee.name + "（" + vehicle.number + "，RadioID：" + radio.radio_id.ToString() + "）";
+                        else return employee.name + "（"+ group.name + "：" + group.group_id.ToString() + "，RadioID：" + radio.radio_id.ToString() + "，" + vehicle.number + "）";
+                    }
+                }
+            }
+        }
+        private string GetHeaderByEmployee()
+        {
+            if (null == employee)
+            {
+                return GetHeader();
+            }
+            else
+            {
+                string header = employee.name;
+                bool hasheader = false;
+
+                if ((null == group) && (null == vehicle) && (null == radio)) return header;
+
+                header += "（";
+
+                if (null != group)
+                {
+                    header += group.name + "：" + group.group_id.ToString();
+                    hasheader = true;
+                }
+
+                if (null != vehicle)
+                {
+                    if (true == hasheader) header += "，";
+                    header += vehicle.number;
+                }
+
+                if (null != radio)
+                {
+                    if (true == hasheader) header += "，";
+                    header += "RadioID：" + radio.radio_id.ToString();
+                }
+
+                return header + "）";
+            }
+        }
+        private string GetHeaderByVehicle()
+        {
+            if (null == vehicle)
+            {
+                return GetHeader();
+            }
+            else
+            {
+                string header = vehicle.number;
+                bool hasheader = false;
+
+                if ((null == group) && (null == employee) && (null == radio)) return header;
+
+                header += "（";
+
+                if (null != group)
+                {
+                    header += group.name + "：" + group.group_id.ToString();
+                    hasheader = true;
+                }
+
+                if (null != employee)
+                {
+                    if (true == hasheader) header += "，";
+                    header += employee.name;
+                }
+
+                if (null != radio)
+                {
+                    if (true == hasheader) header += "，";
+                    header += "RadioID：" + radio.radio_id.ToString();
+                }
+
+                return header + "）";
+            }
+        }
+
+        private string GetHeaderWithoutGroup()
+        {
+            if (null == employee)
+            {
+                if(null == vehicle)
+                {
+                    if(null == radio) return "";                    
+                    else return "ID：" + radio.radio_id.ToString();
+                }
+                else
+                {
+                    if (null == radio)return vehicle.number;
+                    else return vehicle.number + "（RadioID：" + radio.radio_id.ToString()+ "）";
+                }
+            }
+            else
+            {
+                if (null == vehicle)
+                {
+                    if (null == radio) return employee.name;
+                    else return employee.name + "（RadioID：" + radio.radio_id.ToString() + "）";
+
+                }
+                else
+                {
+                    if (null == radio) return employee.name + "（" + vehicle.number + "）";
+                    else return employee.name + "（"+ vehicle.number + "，RadioID：" + radio.radio_id.ToString() + "）";
+                }
+            }
+        }
+        public string GetHeaderByEmployeeWithoutGroup()
+        {
+            if (null == vehicle)
+            {
+                return GetHeaderWithoutGroup();
+            }
+            else
+            {
+                string header = employee.name;
+                bool hasheader = false;
+
+                if ((null == vehicle) && (null == radio)) return header;
+
+                header += "（";
+
+                if (null != vehicle)
+                {
+                    header += vehicle.number;
+                    hasheader = true;
+                }
+
+                if (null != radio)
+                {
+                    if (true == hasheader) header += "，";
+                    header += "RadioID：" + radio.radio_id.ToString();
+                }
+
+                return header + "）";
+            }
+        }
+        public string GetHeaderByVehicleWithoutGroup()
+        {
+            if (null == vehicle)
+            {
+                return GetHeaderWithoutGroup();
+            }
+            else
+            {
+                string header = vehicle.number;
+                bool hasheader = false;
+
+                if ((null == employee) && (null == radio)) return header;
+
+                header += "（";
+
+                if (null != employee)
+                {
+                    header += employee.name;
+                    hasheader = true;
+                }
+
+                if (null != radio)
+                {
+                    if (true == hasheader) header += "，";
+                    header += "RadioID：" + radio.radio_id.ToString();
+                }
+
+                return header + "）";
+            }
         }
     }
 
     public class COrganization
     {
         public int index { set; get; }
-        public string header { set; get; }
         public CRelationShipObj target { set; get; }
 
         public bool is_exp { set; get; }
-        public TreeItemType type { set; get; }
     }
 
     public class TargetMgr
@@ -244,10 +516,8 @@ namespace TrboX
 
                 COrganization org = new COrganization{
                     index = count++,
-                    header = group.Value.name,
-                    target = new CRelationShipObj(g_GroupList[group.Value.id], null, null, null),
+                    target = new CRelationShipObj(OrgItemType.Type_Group, g_GroupList[group.Value.id], null, null, null),
                     is_exp = true,
-                    type = TreeItemType.Type_Group
                     };
 
                 GroupList.Add(group.Value.id, org);
@@ -260,10 +530,8 @@ namespace TrboX
                 {                  
                     COrganization org = new COrganization{
                          index = count++,
-                         header = "未分组",
-                         target = new CRelationShipObj(null, null, null, null),
+                         target = new CRelationShipObj(OrgItemType.Type_Group, null, null, null, null),
                          is_exp = true,
-                         type = TreeItemType.Type_Group
                     };
 
                     GroupList.Add(-1, org);
@@ -276,8 +544,6 @@ namespace TrboX
             {
                 bool isundefinedgroup = false;
 
-                string subheader = "";
-
                 if (null == employee.Value) continue;
                 foreach(CRelationship rela in g_RelationshipList)
                 {
@@ -285,35 +551,13 @@ namespace TrboX
                     {
                        isundefinedgroup = true;
 
-                       string vehiclenumber = (-1 == rela.vehicle) ? "" : g_VehicleList[rela.vehicle].number;
-                       string radioname = (-1 == rela.radio) ? "" : ("RadioId:" + g_RadioList[rela.radio].radio_id.ToString());
-
-                       if (("" != radioname) && ("" != vehiclenumber))
-                       {
-                           subheader = "(" + radioname + ", " + vehiclenumber + ")";
-                       }
-                       if (("" == radioname) && ("" != vehiclenumber))
-                       {
-                           subheader = "(" + vehiclenumber + ")";
-                       }
-
-                       if (("" != radioname) && ("" == vehiclenumber))
-                       {
-                           subheader = "(" + radioname + ")";
-                       }
-
-                       if (null == OrgList[GroupList[rela.group]])
-                       {
-                           OrgList[GroupList[rela.group]] = new List<COrganization>();
-                       }
+                       CRelationShipObj target = new CRelationShipObj(OrgItemType.Type_Employee,g_GroupList[rela.group], g_EmployeeList[rela.employee], g_VehicleList[rela.vehicle], g_RadioList[rela.radio]);
 
                        OrgList[GroupList[rela.group]].Add(new COrganization
                        {
                             index = count++,
-                            header = employee.Value.name + subheader,
-                            target = new CRelationShipObj(g_GroupList[rela.group], g_EmployeeList[rela.employee], g_VehicleList[rela.vehicle], g_RadioList[rela.radio]),
+                            target = target,
                             is_exp = true,
-                            type = TreeItemType.Type_Employee
                        });
 
                        break;
@@ -322,18 +566,13 @@ namespace TrboX
 
                 if (false == isundefinedgroup)
                 {
-                    if(null == OrgList[GroupList[-1]])
-                    {
-                        OrgList[GroupList[-1]] = new List<COrganization>();
-                    }
+                    CRelationShipObj target = new CRelationShipObj(OrgItemType.Type_Employee, null, g_EmployeeList[employee.Value.id], null, null);
 
                     OrgList[GroupList[-1]].Add(new COrganization
                     {
                         index = count++,
-                        header = employee.Value.name + subheader,
-                        target = new CRelationShipObj(null, g_EmployeeList[employee.Value.id], null, null),
+                        target = target,
                         is_exp = true,
-                        type = TreeItemType.Type_Employee
                     });
                 }
             }
@@ -343,45 +582,20 @@ namespace TrboX
             {
                 bool isundefinedgroup = false;
 
-                string subheader = "";
-
                 if (null == vehicle.Value) continue;
                 foreach (CRelationship rela in g_RelationshipList)
-                {
-                   
+                {                   
                     if (vehicle.Value.id == rela.vehicle)
                     {
                         isundefinedgroup = true;
 
-                        string employeename = (-1 == rela.employee) ? "" : g_EmployeeList[rela.employee].name;
-                        string radioname = (-1 == rela.radio) ? "" : ("RadioId:" + g_RadioList[rela.radio].radio_id.ToString());
-
-                        if (("" != radioname) && ("" != employeename))
-                        {
-                            subheader = "(" + radioname + ", " + employeename + ")";
-                        }
-                        if (("" == radioname) && ("" != employeename))
-                        {
-                            subheader = "(" + employeename + ")";
-                        }
-
-                        if (("" != radioname) && ("" == employeename))
-                        {
-                            subheader = "(" + radioname + ")";
-                        }
-
-                        if (null == OrgList[GroupList[rela.group]])
-                        {
-                            OrgList[GroupList[rela.group]] = new List<COrganization>();
-                        }
+                        CRelationShipObj target = new CRelationShipObj(OrgItemType.Type_Vehicle,g_GroupList[rela.group], g_EmployeeList[rela.employee], g_VehicleList[rela.vehicle], g_RadioList[rela.radio]);
 
                         OrgList[GroupList[rela.group]].Add(new COrganization
                         {
                             index = count++,
-                            header = vehicle.Value.number + subheader,
-                            target = new CRelationShipObj(g_GroupList[rela.group], g_EmployeeList[rela.employee], g_VehicleList[rela.vehicle], g_RadioList[rela.radio]),
+                            target = target,
                             is_exp = true,
-                            type = TreeItemType.Type_Vehicle
                         });
 
                         break;
@@ -390,18 +604,12 @@ namespace TrboX
 
                 if (false == isundefinedgroup)
                 {
-                    if (null == OrgList[GroupList[-1]])
-                    {
-                        OrgList[GroupList[-1]] = new List<COrganization>();
-                    }
-
+                    CRelationShipObj target = new CRelationShipObj(OrgItemType.Type_Vehicle,null, null, g_VehicleList[vehicle.Value.id], null);
                     OrgList[GroupList[-1]].Add(new COrganization
                     {
                         index = count++,
-                        header = vehicle.Value.number + subheader,
-                        target = new CRelationShipObj(null, null, g_VehicleList[vehicle.Value.id], null),
+                        target = target,
                         is_exp = true,
-                        type = TreeItemType.Type_Vehicle
                     });
                 }
             }
@@ -416,21 +624,14 @@ namespace TrboX
                     if (radio.Value.id == rela.radio)
                     {
                         isundefinedgroup = true;
-
                         if ((-1 != rela.vehicle) || (-1 != rela.employee)) break;
 
-                        if (null == OrgList[GroupList[rela.group]])
-                        {
-                            OrgList[GroupList[rela.group]] = new List<COrganization>();
-                        }
-
+                        CRelationShipObj target = new CRelationShipObj(g_RadioList[rela.radio].type == RadioType.RADIO ? OrgItemType.Type_Radio : OrgItemType.Type_Ride, g_GroupList[rela.group], g_EmployeeList[rela.employee], g_VehicleList[rela.vehicle], g_RadioList[rela.radio]);
                         OrgList[GroupList[rela.group]].Add(new COrganization
                         {
                             index = count++,
-                            header = "ID:" + radio.Value.radio_id.ToString(),
-                            target = new CRelationShipObj(g_GroupList[rela.group], g_EmployeeList[rela.employee], g_VehicleList[rela.vehicle], g_RadioList[rela.radio]),
+                            target = target,
                             is_exp = true,
-                            type = g_RadioList[rela.radio].type == RadioType.RADIO ? TreeItemType.Type_Radio : TreeItemType.Type_Ride
                         });
 
                         break;
@@ -439,18 +640,13 @@ namespace TrboX
 
                 if (false == isundefinedgroup)
                 {
-                    if (null == OrgList[GroupList[-1]])
-                    {
-                        OrgList[GroupList[-1]] = new List<COrganization>();
-                    }
+                    CRelationShipObj target = new CRelationShipObj(g_RadioList[radio.Value.id].type == RadioType.RADIO ? OrgItemType.Type_Radio : OrgItemType.Type_Ride, null, null, null, g_RadioList[radio.Value.id]);
 
                     OrgList[GroupList[-1]].Add(new COrganization
                     {
                         index = count++,
-                        header = "ID:" + radio.Value.radio_id.ToString(),
-                        target = new CRelationShipObj(null, null, null, g_RadioList[radio.Value.id]),
+                        target = target,
                         is_exp = true,
-                        type = g_RadioList[radio.Value.id].type == RadioType.RADIO ? TreeItemType.Type_Radio : TreeItemType.Type_Ride
                     });
                 }
             }

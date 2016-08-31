@@ -730,26 +730,26 @@ namespace TrboX
 
         private void CreateNewFastWindow()
         {
-            m_mainWin.btn_Tool_NewContact.Click += delegate
-            {
-                m_newFastWin.rad_CreateContact.IsChecked = true;
-                m_newFastWin.tab_CreatFast.SelectedIndex = 0;
-                m_newFastWin.ShowDialog();
-            };
+            //m_mainWin.btn_Tool_NewContact.Click += delegate
+            //{
+            //    m_newFastWin.rad_CreateContact.IsChecked = true;
+            //    m_newFastWin.tab_CreatFast.SelectedIndex = 0;
+            //    m_newFastWin.ShowDialog();
+            //};
 
-            m_mainWin.btn_Tool_NewGroup.Click += delegate
-            {
-                m_newFastWin.rad_CreateGroup.IsChecked = true;
-                m_newFastWin.tab_CreatFast.SelectedIndex = 1;
-                m_newFastWin.ShowDialog();
-            };
+            //m_mainWin.btn_Tool_NewGroup.Click += delegate
+            //{
+            //    m_newFastWin.rad_CreateGroup.IsChecked = true;
+            //    m_newFastWin.tab_CreatFast.SelectedIndex = 1;
+            //    m_newFastWin.ShowDialog();
+            //};
 
-            m_mainWin.btn_Tool_NewFastOperate.Click += delegate
-            {
-                m_newFastWin.rad_CreateFastOperate.IsChecked = true;
-                m_newFastWin.tab_CreatFast.SelectedIndex = 1;
-                m_newFastWin.ShowDialog();
-            };
+            //m_mainWin.btn_Tool_NewFastOperate.Click += delegate
+            //{
+            //    m_newFastWin.rad_CreateFastOperate.IsChecked = true;
+            //    m_newFastWin.tab_CreatFast.SelectedIndex = 1;
+            //    m_newFastWin.ShowDialog();
+            //};
         }
 
         private void OrgMenu_Click(object sender, RoutedEventArgs e)
@@ -788,7 +788,7 @@ namespace TrboX
 
             foreach(var group in OrgList)
             {
-                TreeViewItem itemGroup = new TreeViewItem() { Header = "♟♙" + group.Key.header };
+                TreeViewItem itemGroup = new TreeViewItem() { Header = "♟♙" + group.Key.target.KeyHeader };
                 itemGroup.Style = App.Current.Resources["TreeViewItemStyle2nd"] as Style;
                 itemGroup.IsExpanded = group.Key.is_exp;
 
@@ -813,19 +813,19 @@ namespace TrboX
                     foreach(var item in group.Value)
                     {
                         TreeViewItem childitem = new TreeViewItem();
-                        switch(item.type)
+                        switch(item.target.key)
                         {
-                            case TreeItemType.Type_Employee:
-                                childitem.Header = "☺" + item.header ;
+                            case OrgItemType.Type_Employee:
+                                childitem.Header = "☺" + item.target.KeyHeaderWithoutGroup;
                                 break;
-                            case TreeItemType.Type_Vehicle:
-                                 childitem.Header = "♜" + item.header ;
+                            case OrgItemType.Type_Vehicle:
+                                 childitem.Header = "♜" + item.target.KeyHeaderWithoutGroup ;
                                 break;
-                            case TreeItemType.Type_Radio:
-                                childitem.Header = "☏" + item.header;
+                            case OrgItemType.Type_Radio:
+                                childitem.Header = "☏" + item.target.KeyHeaderWithoutGroup;
                                 break;
-                            case TreeItemType.Type_Ride:
-                                childitem.Header = "◔" + item.header;
+                            case OrgItemType.Type_Ride:
+                                childitem.Header = "◔" + item.target.KeyHeaderWithoutGroup;
                                 break;
                             default: break;
                         }
