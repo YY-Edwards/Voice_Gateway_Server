@@ -69,7 +69,7 @@ namespace TrboX
 
             //dispatch
             m_FastOperateWin = new FastOperateWindow(this);
-            lst_dispatch.View = (ViewBase)this.FindResource("BkImageView");
+            lst_dispatch.View = (ViewBase)this.FindResource("ImageView");
 
             //map
             MyWebGrid.Children.Insert(0, Map);
@@ -151,9 +151,9 @@ namespace TrboX
             index++;
         }
 
-        private void btn_PanelClose_Click(object sender, RoutedEventArgs e)
+        private void FastPanel_Closing(object sender, RoutedEventArgs e)
         {
-            FastOperate it = (FastOperate)((Button)sender).DataContext;
+            FastOperate it = (FastOperate)((FastPanel)sender).DataContext;
             m_FastOperateWin.Remove(it);
         }
     }

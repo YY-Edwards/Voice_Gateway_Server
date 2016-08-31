@@ -9,7 +9,7 @@
         <Setter Property="BorderBrush" Value="Black"/>
         <Setter Property="BorderThickness" Value="0.5" />
         <Setter Property="Grid.IsSharedSizeScope" Value="True" />
-        
+
         <Setter Property="ItemsPanel">
             <Setter.Value>
                 <ItemsPanelTemplate>
@@ -22,7 +22,6 @@
     <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type local:TileView}, ResourceId = TileViewItem}" 
            TargetType="{x:Type ListViewItem}"
            BasedOn="{StaticResource {x:Type ListBoxItem}}">
-
         <Setter Property="Margin" Value="5,10"/>
         <Setter Property="Padding" Value="3"/>
         <Setter Property="HorizontalAlignment" Value="Center"/>

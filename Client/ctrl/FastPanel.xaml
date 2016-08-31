@@ -5,9 +5,12 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              mc:Ignorable="d" 
              xmlns:local="clr-namespace:TrboX"
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="300" Width="240">
     <UserControl.Resources>
         <local:FastPanelTypeConverter x:Key="TypeToColor" />
+		<local:FastPanelTitleConverter x:Key="TypeToTitle" />
+        <local:FastPanelItemConverter x:Key="TypeToItem" />
+       
     </UserControl.Resources>
         <!--Simple Tree View - 这用来在 ScrollViewer 中对 TreeViewItems 进行布局 -->
         
@@ -16,8 +19,56 @@
     		<RowDefinition Height="30"/>
     		<RowDefinition Height="*"/>
     	</Grid.RowDefinitions>
-        <Border Background="{Binding Path = m_Type, Converter= {StaticResource TypeToColor}}" BorderThickness="0"/>
-        <!--<Border  BorderThickness="0" Background="#FFCBA3A3"/>-->
-    	<DockPanel HorizontalAlignment="Left" LastChildFill="False" VerticalAlignment="Top" Grid.Row="1"/>
+        <Border Background="{Binding Path = m_Type, Converter= {StaticResource TypeToColor}}" BorderThickness="0">
+        	<DockPanel LastChildFill="False">
+                <Label Content="{Binding Path = m_Type, Converter= {StaticResource TypeToTitle}}" VerticalAlignment="Center"/>
+        		<Button Name="btn_Close" Content="x" VerticalAlignment="Center" DockPanel.Dock="Right" HorizontalAlignment="Center" Margin="0,0,5,0" Height="20" Width="20" Click="btn_Close_Click"/>
+        	</DockPanel>
+        </Border>
+        <Border BorderBrush="Black" BorderThickness="0" Grid.RowSpan="3" Grid.Row="1" ClipToBounds="True" Padding="10,0,10,10" Background="#FF21EEAD">
+            <TabControl SelectedIndex="{Binding Path = m_Type, Converter= {StaticResource TypeToItem}}" Style="{DynamicResource TabControlStyleNormal}" Margin="0,-22,0,0" BorderThickness="0">
+        		<TabItem Header="TabItem">
+        			<Grid>
+        				<Grid.RowDefinitions>
+        					<RowDefinition Height="100"/>
+        					<RowDefinition Height="29*"/>
+        				</Grid.RowDefinitions>
+        				<Grid.ColumnDefinitions>
+        					<ColumnDefinition Width="90"/>
+        					<ColumnDefinition Width="131*"/>
+        				</Grid.ColumnDefinitions>
+        				<Border BorderBrush="Black" BorderThickness="1" Height="80" VerticalAlignment="Top" Margin="0,10,0,0" Width="80" HorizontalAlignment="Left">
+        					<Border.Background>
+        						<ImageBrush ImageSource="/TrboX;component/themes/resource/Logo.png"/>
+        					</Border.Background>
+        				</Border>
+        				<Border BorderBrush="Black" BorderThickness="0" Grid.RowSpan="2" Grid.Column="1">
+        					<TabControl Style="{DynamicResource TabControlStyleNormal}" Margin="0,-22,0,0" BorderThickness="0">
+        						<TabItem Header="TabItem">
+        							<Grid Background="#FFE5E5E5"/>
+        						</TabItem>
+        						<TabItem Header="TabItem">
+        							<Grid Background="#FFE5E5E5"/>
+        						</TabItem>
+        					</TabControl>
+        				</Border>
+        				<DockPanel LastChildFill="False" Grid.Row="1" Width="80" HorizontalAlignment="Left">
+        					<Button Content="Button" Margin="0,0,0,3" DockPanel.Dock="Top"/>
+        					<Button Content="Button" Margin="0,0,0,3" DockPanel.Dock="Top"/>
+        					<Button Content="Button" Margin="0,0,0,3" DockPanel.Dock="Top"/>
+        					<Button Content="Button" Margin="0,0,0,3" DockPanel.Dock="Top"/>
+        					<Button Content="Button" Margin="0,0,0,3" DockPanel.Dock="Top"/>
+        					<Button Content="Button" Margin="0,0,0,3" DockPanel.Dock="Top"/>
+        					<Button Content="Button" Margin="0,0,0,3" DockPanel.Dock="Top"/>
+        				</DockPanel>
+        			</Grid>
+        		</TabItem>
+        		<TabItem Header="TabItem">
+        			<Grid Background="#FFE5E5E5">
+        				<Label Content="操作" HorizontalAlignment="Left" VerticalAlignment="Top"/>
+        			</Grid>
+        		</TabItem>
+        	</TabControl>
+        </Border>
     </Grid>
 </UserControl>
