@@ -21,6 +21,8 @@ namespace TrboX
     {
         MainView m_View;
         DataTst json = new DataTst();
+
+        public TargetMgr m_Target = new TargetMgr();
         
         MyWebBrowse Map = new MyWebBrowse("file:///E:/Home/Projects/TrboX 3.0/Prj/TrboX/Debug/amap/index.html");
         public Main()
@@ -30,8 +32,9 @@ namespace TrboX
             {
                 this.WindowState = WindowState.Maximized;
                 m_View = new MainView(this);
-
                 MyWebGrid.Children.Insert(0, Map);
+
+                OnWindowLoaded();
             };
             this.Closed += delegate
             {
@@ -43,6 +46,27 @@ namespace TrboX
         {
             m_View.On_Mouse_Pressed();
         }
+
+
+        private void OnWindowLoaded()
+        {
+            m_Target.UpdateTragetList();
+            m_View.FillDataToOrgTreeView();
+        }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {

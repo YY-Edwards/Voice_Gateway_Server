@@ -80,6 +80,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="class\DataTst.cs" />
+    <Compile Include="class\targetMgr.cs" />
     <Compile Include="ctrl\MaskLoading.xaml.cs">
       <DependentUpon>MaskLoading.xaml</DependentUpon>
     </Compile>

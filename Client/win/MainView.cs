@@ -5,6 +5,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace TrboX
 {
@@ -472,13 +473,13 @@ namespace TrboX
                     {
                         if (true == is_first_show)
                         {
-                            m_mainWin.grd_Msg.RowDefinitions[show_count].MinHeight = 31;
-                            m_mainWin.grd_Msg.RowDefinitions[show_count].Height = new GridLength(31);
+                            m_mainWin.grd_Msg.RowDefinitions[show_count].MinHeight = 32;
+                            m_mainWin.grd_Msg.RowDefinitions[show_count].Height = new GridLength(32);
                         }
                         else
                         {
-                            m_mainWin.grd_Msg.RowDefinitions[show_count].MinHeight = 30;
-                            m_mainWin.grd_Msg.RowDefinitions[show_count].Height = new GridLength(30);
+                            m_mainWin.grd_Msg.RowDefinitions[show_count].MinHeight = 31;
+                            m_mainWin.grd_Msg.RowDefinitions[show_count].Height = new GridLength(31);
                         }
 
                         if(1 <= show_count)message_grid_spl_list[show_count - 1].Visibility = Visibility.Hidden;
@@ -749,6 +750,122 @@ namespace TrboX
                 m_newFastWin.tab_CreatFast.SelectedIndex = 1;
                 m_newFastWin.ShowDialog();
             };
+        }
+
+        private void OrgMenu_Click(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = ((ContextMenu)((MenuItem)sender).Parent).PlacementTarget as TreeViewItem;
+        }
+        public void FillDataToOrgTreeView()
+        {
+            Dictionary<COrganization, List<COrganization>> OrgList = m_mainWin.m_Target.GetOrgList();
+
+            //right button menu 
+            
+
+
+            TreeViewItem itemOrg = new TreeViewItem() { Header = "用户/设备" };
+            itemOrg.Style = App.Current.Resources["TreeViewItemRoot"] as Style;
+            itemOrg.IsExpanded = true;
+
+            //menu
+            itemOrg.ContextMenu = new ContextMenu();
+            itemOrg.ContextMenu.Items.Add (new MenuItem() { Header = "在线检测", Width = 160, Tag = "check", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+            itemOrg.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
+            //itemOrg.ContextMenu.Items.Add (new MenuItem() { Header = "远程监听", Width = 160, Tag = "monitor", Style = App.Current.Resources["MenuItemStyleNormal"] as Style }); 
+            itemOrg.ContextMenu.Items.Add (new MenuItem() { Header = "语音调度", Width = 160, Tag = "dispatch", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+            itemOrg.ContextMenu.Items.Add (new MenuItem() { Header = "短消息", Width = 160, Tag = "message", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+            itemOrg.ContextMenu.Items.Add ( new MenuItem() { Header = "位置查询", Width = 160, Tag = "position", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+            itemOrg.ContextMenu.Items.Add (new MenuItem() { Header = "指令控制", Width = 160, Tag = "control", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+            itemOrg.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
+            itemOrg.ContextMenu.Items.Add (new MenuItem() { Header = "工单", Width = 160, Tag = "jobticker", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+
+            for (int i = 0; i < 8; i++ )
+                if((i != 6) && (i != 1))
+                ((MenuItem)itemOrg.ContextMenu.Items[i]).Click += new RoutedEventHandler(OrgMenu_Click);
+
+            if(null == itemOrg)return;
+
+            foreach(var group in OrgList)
+            {
+                TreeViewItem itemGroup = new TreeViewItem() { Header = "♟♙" + group.Key.header };
+                itemGroup.Style = App.Current.Resources["TreeViewItemStyle2nd"] as Style;
+                itemGroup.IsExpanded = group.Key.is_exp;
+
+                itemGroup.ContextMenu = new ContextMenu();
+                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "在线检测", Width = 160, Tag = "check", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                itemGroup.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
+                //itemOrg.ContextMenu.Items.Add (new MenuItem() { Header = "远程监听", Width = 160, Tag = "monitor", Style = App.Current.Resources["MenuItemStyleNormal"] as Style }); 
+                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "语音调度", Width = 160, Tag = "dispatch", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "短消息", Width = 160, Tag = "message", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "位置查询", Width = 160, Tag = "position", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "指令控制", Width = 160, Tag = "control", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                itemGroup.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
+                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "工单", Width = 160, Tag = "jobticker", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+
+                for (int i = 0; i < 8; i++)
+                    if ((i != 6) && (i != 1))
+                        ((MenuItem)itemGroup.ContextMenu.Items[i]).Click += new RoutedEventHandler(OrgMenu_Click);
+
+
+                if (null != group.Value)
+                {
+                    foreach(var item in group.Value)
+                    {
+                        TreeViewItem childitem = new TreeViewItem();
+                        switch(item.type)
+                        {
+                            case TreeItemType.Type_Employee:
+                                childitem.Header = "☺" + item.header ;
+                                break;
+                            case TreeItemType.Type_Vehicle:
+                                 childitem.Header = "♜" + item.header ;
+                                break;
+                            case TreeItemType.Type_Radio:
+                                childitem.Header = "☏" + item.header;
+                                break;
+                            case TreeItemType.Type_Ride:
+                                childitem.Header = "◔" + item.header;
+                                break;
+                            default: break;
+                        }
+
+                        if (null != item.target.radio)
+                        {
+                            if (true == item.target.radio.is_online)
+                            {
+                                childitem.Header = childitem.Header + "√";
+                            }
+                            else
+                            {
+                                childitem.Header = childitem.Header + "X";
+                            }
+                        }
+
+                        childitem.Style = App.Current.Resources["TreeViewItemStyle3rd"] as Style;
+
+                        childitem.ContextMenu = new ContextMenu();
+                        childitem.ContextMenu.Items.Add(new MenuItem() { Header = "在线检测", Width = 160, Tag = "check", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                        childitem.ContextMenu.Items.Add(new MenuItem() { Header = "远程监听", Width = 160, Tag = "monitor", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                        childitem.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
+                        childitem.ContextMenu.Items.Add(new MenuItem() { Header = "语音调度", Width = 160, Tag = "dispatch", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                        childitem.ContextMenu.Items.Add(new MenuItem() { Header = "短消息", Width = 160, Tag = "message", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                        childitem.ContextMenu.Items.Add(new MenuItem() { Header = "位置查询", Width = 160, Tag = "position", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                        childitem.ContextMenu.Items.Add(new MenuItem() { Header = "指令控制", Width = 160, Tag = "control", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                        childitem.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
+                        childitem.ContextMenu.Items.Add(new MenuItem() { Header = "工单", Width = 160, Tag = "jobticker", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+
+                        for (int i = 0; i < 9; i++)
+                            if ((i != 7) && (i != 2))
+                                ((MenuItem)childitem.ContextMenu.Items[i]).Click += new RoutedEventHandler(OrgMenu_Click);
+
+                        itemGroup.Items.Add(childitem);
+                    }
+                }
+
+                itemOrg.Items.Add(itemGroup);
+            }
+            if(null != m_mainWin.tree_OrgView)m_mainWin.tree_OrgView.Items.Add(itemOrg);
         }
     }
 } 
