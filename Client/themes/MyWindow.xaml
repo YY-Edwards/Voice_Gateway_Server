@@ -703,8 +703,8 @@
                                 <Condition Property="IsSelectionActive" Value="false"/>
                             </MultiTrigger.Conditions>
                             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-                            <Setter Property="Background" TargetName="grid" Value="#FFF0F0F0"/>
-                            <Setter Property="Background" TargetName="border" Value="#FFF0F0F0"/>
+                            <Setter Property="Background" TargetName="grid" Value="#FFFFFF00"/>
+                            <Setter Property="Background" TargetName="border" Value="#FFFFFF00"/>
                         </MultiTrigger>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
@@ -799,8 +799,8 @@
                                 <Condition Property="IsSelectionActive" Value="false"/>
                             </MultiTrigger.Conditions>
                             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-                            <Setter Property="Background" TargetName="grid" Value="#FFF0F0F0"/>
-                            <Setter Property="Background" TargetName="border" Value="#FFF0F0F0"/>
+                            <Setter Property="Background" TargetName="grid" Value="#FFFFFF00"/>
+                            <Setter Property="Background" TargetName="border" Value="#FFFFFF00"/>
                         </MultiTrigger>
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
@@ -857,8 +857,8 @@
 									<Condition Property="IsSelectionActive" Value="false"/>
 								</MultiTrigger.Conditions>
 								<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-								<Setter Property="Background" TargetName="grid" Value="#FFF0F0F0"/>
-								<Setter Property="Background" TargetName="border" Value="#FFF0F0F0"/>
+                            <Setter Property="Background" TargetName="grid" Value="#FFFFFF00"/>
+                            <Setter Property="Background" TargetName="border" Value="#FFFFFF00"/>
 							</MultiTrigger>
 							<Trigger Property="IsEnabled" Value="false">
 								<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>

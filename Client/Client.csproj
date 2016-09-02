@@ -47,6 +47,9 @@
     <Reference Include="CefSharp.Wpf">
       <HintPath>..\DLLS\CefSharp.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="GifImageLib">
+      <HintPath>..\DLLS\GifImageLib.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\DLLS\Newtonsoft.Json.dll</HintPath>
@@ -80,7 +83,11 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="class\FastOperate.cs" />
+    <Compile Include="class\Operate.cs" />
     <Compile Include="class\targetMgr.cs" />
+    <Compile Include="ctrl\ComboButton.xaml.cs">
+      <DependentUpon>ComboButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ctrl\FastPanel.xaml.cs">
       <DependentUpon>FastPanel.xaml</DependentUpon>
     </Compile>
@@ -154,6 +161,10 @@
     <Resource Include="themes\resource\Logo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="ctrl\ComboButton.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="ctrl\FastPanel.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -215,10 +226,25 @@
     <Resource Include="themes\resource\HeaderRight.png" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="themes\resource\ride.png" />
     <Resource Include="themes\resource\sys-1.png" />
     <Resource Include="themes\resource\sys-2.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="themes\resource\contact.png" />
+    <Resource Include="themes\resource\group.png" />
+    <Resource Include="themes\resource\radio.png" />
+    <Resource Include="themes\resource\vehicle.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="themes\resource\control.png" />
+    <Resource Include="themes\resource\dispatch.png" />
+    <Resource Include="themes\resource\position.png" />
+    <Resource Include="themes\resource\shortmessage.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="themes\resource\dispatch.gif" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

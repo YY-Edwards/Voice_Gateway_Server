@@ -628,18 +628,18 @@ namespace TrboX
 
         }
 
-        public void On_Mouse_Pressed()
-        {
-            //left-top(width, 0) when FlowDirection is Right to left
-            Point ep = m_mainWin.exp_New.TranslatePoint(new Point(m_mainWin.exp_New.ActualWidth, 0), (UIElement)m_mainWin);
-            Point mp = Mouse.GetPosition((UIElement)m_mainWin);
+        //public void On_Mouse_Pressed()
+        //{
+        //    //left-top(width, 0) when FlowDirection is Right to left
+        //    Point ep = m_mainWin.exp_New.TranslatePoint(new Point(m_mainWin.exp_New.ActualWidth, 0), (UIElement)m_mainWin);
+        //    Point mp = Mouse.GetPosition((UIElement)m_mainWin);
 
-            //doglle button width :20
-            if ((mp.X < ep.X + 20) || (mp.X > ep.X + m_mainWin.exp_New.ActualWidth) || (mp.Y < ep.Y) || (mp.Y > ep.Y + m_mainWin.exp_New.ActualHeight))
-            {
-                if (true == m_mainWin.exp_New.IsExpanded) m_mainWin.exp_New.IsExpanded = false;
-            }
-        }
+        //    //doglle button width :20
+        //    if ((mp.X < ep.X + 20) || (mp.X > ep.X + m_mainWin.exp_New.ActualWidth) || (mp.Y < ep.Y) || (mp.Y > ep.Y + m_mainWin.exp_New.ActualHeight))
+        //    {
+        //        if (true == m_mainWin.exp_New.IsExpanded) m_mainWin.exp_New.IsExpanded = false;
+        //    }
+        //}
 
 
         private void SelectedMainTab()
@@ -669,63 +669,63 @@ namespace TrboX
         private void CreateNewOperateWindow()
         {
 
-            m_mainWin.exp_New.PreviewMouseLeftButtonUp += delegate
-            {
-                //left-top(width, 0) when FlowDirection is Right to left
-                Point ep = m_mainWin.exp_New.TranslatePoint(new Point(m_mainWin.exp_New.ActualWidth, 0), (UIElement)m_mainWin);
-                Point mp = Mouse.GetPosition((UIElement)m_mainWin);
+            //m_mainWin.exp_New.PreviewMouseLeftButtonUp += delegate
+            //{
+            //    //left-top(width, 0) when FlowDirection is Right to left
+            //    Point ep = m_mainWin.exp_New.TranslatePoint(new Point(m_mainWin.exp_New.ActualWidth, 0), (UIElement)m_mainWin);
+            //    Point mp = Mouse.GetPosition((UIElement)m_mainWin);
 
-                //doglle button width :20
-                if ((mp.X < ep.X + 20) || (mp.X > ep.X + m_mainWin.exp_New.ActualWidth) || (mp.Y < ep.Y) || (mp.Y > ep.Y + m_mainWin.exp_New.ActualHeight))
-                {
-                    m_newOperateWin.rad_CreateCall.IsChecked = true;
-                    m_newOperateWin.tab_NewType.SelectedIndex = 0;
-                    m_newOperateWin.ShowDialog(); 
-                }
+            //    //doglle button width :20
+            //    if ((mp.X < ep.X + 20) || (mp.X > ep.X + m_mainWin.exp_New.ActualWidth) || (mp.Y < ep.Y) || (mp.Y > ep.Y + m_mainWin.exp_New.ActualHeight))
+            //    {
+            //        m_newOperateWin.rad_CreateCall.IsChecked = true;
+            //        m_newOperateWin.tab_NewType.SelectedIndex = 0;
+            //        m_newOperateWin.ShowDialog(); 
+            //    }
 
-            };
+            //};
             
-            m_mainWin.lst_Tool_New.SelectionChanged += delegate
-            {
+            //m_mainWin.lst_Tool_New.SelectionChanged += delegate
+            //{
                 
-                m_mainWin.exp_New.IsExpanded = false;
+            //    m_mainWin.exp_New.IsExpanded = false;
                  
-               m_newOperateWin.tab_NewType.SelectedIndex = m_mainWin.lst_Tool_New.SelectedIndex;
+            //   m_newOperateWin.tab_NewType.SelectedIndex = m_mainWin.lst_Tool_New.SelectedIndex;
 
-                switch (m_mainWin.lst_Tool_New.SelectedIndex)
-                {
-                    case 0:
-                        m_newOperateWin.rad_CreateCall.IsChecked = true;
-                        m_newOperateWin.ShowDialog();
+            //    switch (m_mainWin.lst_Tool_New.SelectedIndex)
+            //    {
+            //        case 0:
+            //            m_newOperateWin.rad_CreateCall.IsChecked = true;
+            //            m_newOperateWin.ShowDialog();
                         
-                        break;
-                    case 1:
-                        m_newOperateWin.rad_CreateMsg.IsChecked = true;
-                        m_newOperateWin.ShowDialog();                      
-                        break;
-                    case 2:
-                        m_newOperateWin.rad_CreatePosition.IsChecked = true;
-                        m_newOperateWin.ShowDialog();                      
-                        break;
-                    case 3:
-                        m_newOperateWin.rad_CreateCtrl.IsChecked = true;
-                        m_newOperateWin.ShowDialog();
-                        break;
-                    case 4:
-                        m_newOperateWin.rad_CreateJob.IsChecked = true;
-                        m_newOperateWin.ShowDialog();
-                        break;
-                    case 5:
-                        m_newOperateWin.rad_CreateTracker.IsChecked = true;
-                        m_newOperateWin.ShowDialog();
-                        break;
-                    default:
-                        break;
-                }
+            //            break;
+            //        case 1:
+            //            m_newOperateWin.rad_CreateMsg.IsChecked = true;
+            //            m_newOperateWin.ShowDialog();                      
+            //            break;
+            //        case 2:
+            //            m_newOperateWin.rad_CreatePosition.IsChecked = true;
+            //            m_newOperateWin.ShowDialog();                      
+            //            break;
+            //        case 3:
+            //            m_newOperateWin.rad_CreateCtrl.IsChecked = true;
+            //            m_newOperateWin.ShowDialog();
+            //            break;
+            //        case 4:
+            //            m_newOperateWin.rad_CreateJob.IsChecked = true;
+            //            m_newOperateWin.ShowDialog();
+            //            break;
+            //        case 5:
+            //            m_newOperateWin.rad_CreateTracker.IsChecked = true;
+            //            m_newOperateWin.ShowDialog();
+            //            break;
+            //        default:
+            //            break;
+            //    }
 
-                m_mainWin.lst_Tool_New.SelectedIndex = -1;
+            //    m_mainWin.lst_Tool_New.SelectedIndex = -1;
 
-            };
+            //};
         }
 
         private void CreateNewFastWindow()
@@ -763,7 +763,6 @@ namespace TrboX
             //right button menu 
             
 
-
             TreeViewItem itemOrg = new TreeViewItem() { Header = "用户/设备" };
             itemOrg.Style = App.Current.Resources["TreeViewItemRoot"] as Style;
             itemOrg.IsExpanded = true;
@@ -781,8 +780,8 @@ namespace TrboX
             itemOrg.ContextMenu.Items.Add (new MenuItem() { Header = "工单", Width = 160, Tag = "jobticker", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
 
             for (int i = 0; i < 8; i++ )
-                if((i != 6) && (i != 1))
-                ((MenuItem)itemOrg.ContextMenu.Items[i]).Click += new RoutedEventHandler(OrgMenu_Click);
+                if((i != 1) && (i != 6))
+                    ((MenuItem)itemOrg.ContextMenu.Items[i]).Click += new RoutedEventHandler(m_mainWin.OnOrganizationMenu_Click);
 
             if(null == itemOrg)return;
 
@@ -791,8 +790,11 @@ namespace TrboX
                 TreeViewItem itemGroup = new TreeViewItem() { Header = "♟♙" + group.Key.target.KeyHeader };
                 itemGroup.Style = App.Current.Resources["TreeViewItemStyle2nd"] as Style;
                 itemGroup.IsExpanded = group.Key.is_exp;
+                itemGroup.Tag = group.Key;
 
                 itemGroup.ContextMenu = new ContextMenu();
+                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "添加到快速操作", Width = 160, Tag = "fast", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                itemGroup.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
                 itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "在线检测", Width = 160, Tag = "check", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
                 itemGroup.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
                 //itemOrg.ContextMenu.Items.Add (new MenuItem() { Header = "远程监听", Width = 160, Tag = "monitor", Style = App.Current.Resources["MenuItemStyleNormal"] as Style }); 
@@ -803,9 +805,9 @@ namespace TrboX
                 itemGroup.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
                 itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "工单", Width = 160, Tag = "jobticker", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
 
-                for (int i = 0; i < 8; i++)
-                    if ((i != 6) && (i != 1))
-                        ((MenuItem)itemGroup.ContextMenu.Items[i]).Click += new RoutedEventHandler(OrgMenu_Click);
+                for (int i = 0; i < 10; i++)
+                    if ((i != 1) && (i != 3) && (i != 8))
+                        ((MenuItem)itemGroup.ContextMenu.Items[i]).Click += new RoutedEventHandler(m_mainWin.OnOrganizationMenu_Click);
 
 
                 if (null != group.Value)
@@ -842,22 +844,29 @@ namespace TrboX
                             }
                         }
 
+                        childitem.Tag = item;
+
                         childitem.Style = App.Current.Resources["TreeViewItemStyle3rd"] as Style;
 
                         childitem.ContextMenu = new ContextMenu();
+                        childitem.ContextMenu.Items.Add(new MenuItem() { Header = "添加到快速操作", Width = 160, Tag = "fast", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                        childitem.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
+
                         childitem.ContextMenu.Items.Add(new MenuItem() { Header = "在线检测", Width = 160, Tag = "check", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
                         childitem.ContextMenu.Items.Add(new MenuItem() { Header = "远程监听", Width = 160, Tag = "monitor", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
                         childitem.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
+
                         childitem.ContextMenu.Items.Add(new MenuItem() { Header = "语音调度", Width = 160, Tag = "dispatch", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
                         childitem.ContextMenu.Items.Add(new MenuItem() { Header = "短消息", Width = 160, Tag = "message", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
                         childitem.ContextMenu.Items.Add(new MenuItem() { Header = "位置查询", Width = 160, Tag = "position", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
                         childitem.ContextMenu.Items.Add(new MenuItem() { Header = "指令控制", Width = 160, Tag = "control", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
                         childitem.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
+
                         childitem.ContextMenu.Items.Add(new MenuItem() { Header = "工单", Width = 160, Tag = "jobticker", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
 
-                        for (int i = 0; i < 9; i++)
-                            if ((i != 7) && (i != 2))
-                                ((MenuItem)childitem.ContextMenu.Items[i]).Click += new RoutedEventHandler(OrgMenu_Click);
+                        for (int i = 0; i < 11; i++)
+                            if ((i != 1) && (i != 4 )&& (i != 9))
+                                ((MenuItem)childitem.ContextMenu.Items[i]).Click += new RoutedEventHandler(m_mainWin.OnOrganizationMenu_Click);
 
                         itemGroup.Items.Add(childitem);
                     }
@@ -866,6 +875,36 @@ namespace TrboX
                 itemOrg.Items.Add(itemGroup);
             }
             if(null != m_mainWin.tree_OrgView)m_mainWin.tree_OrgView.Items.Add(itemOrg);
+
+            m_mainWin.tree_OrgView.SelectedItemChanged += delegate(object sender, RoutedPropertyChangedEventArgs<object> e)
+            {
+                COrganization target = ((TreeViewItem)((TreeView)sender).SelectedItem).Tag as COrganization;
+
+                if (null == target) //All
+                {
+                    m_mainWin.bdr_Tool_Base.IsEnabled = true;
+                    m_mainWin.bdr_Tool_Ctrl.IsEnabled = true;
+                }
+                else if (OrgItemType.Type_Group == target.target.key) //Group
+                {
+                    m_mainWin.bdr_Tool_Base.IsEnabled = true;
+                    m_mainWin.bdr_Tool_Ctrl.IsEnabled = true;
+                }
+                else if (null != target.target.radio)//radio
+                {
+                    m_mainWin.bdr_Tool_Base.IsEnabled = true;
+                    m_mainWin.bdr_Tool_Ctrl.IsEnabled = true;
+                }
+                else // No Radio
+                {
+
+                }
+
+            };
+            m_mainWin.tree_OrgView.PreviewMouseDoubleClick += delegate(object sender, MouseButtonEventArgs e)
+            {
+              
+            };           
         }
     }
 } 

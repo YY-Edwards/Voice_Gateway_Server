@@ -57,7 +57,7 @@ namespace TrboX
 
         public override void OnMouseL_R_Prssed()
         {
-            m_View.On_Mouse_Pressed();
+           // m_View.On_Mouse_Pressed();
         }
 
 
@@ -67,20 +67,34 @@ namespace TrboX
             m_Target.UpdateTragetList();
             m_View.FillDataToOrgTreeView();
 
+
             //dispatch
             m_FastOperateWin = new FastOperateWindow(this);
             lst_dispatch.View = (ViewBase)this.FindResource("ImageView");
 
             //map
             MyWebGrid.Children.Insert(0, Map);
-
-           
-            
         }
 
 
 
+        public void OnOrganizationMenu_Click(object sender, RoutedEventArgs e)
+        {
+            TreeViewItem item = ((ContextMenu)((MenuItem)sender).Parent).PlacementTarget as TreeViewItem;
 
+            switch ((string)((MenuItem)sender).Tag)
+            {
+                case "fast":
+                    m_FastOperateWin.Add(new FastOperate()
+                     {
+                         m_Type = FastType.FastType_Contact,
+                         m_Contact = ((COrganization)item.Tag).target
+                     });
+                    break;
+            };
+
+
+        }
 
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
@@ -136,19 +150,10 @@ namespace TrboX
             
         }
 
-        private int index = 0;
+       
         private void btn_Tool_NewContact_Click(object sender, RoutedEventArgs e)
         {
 
-            FastOperate op = new FastOperate()
-            {
-                m_Type = (index % 2 == 0) ? FastType.FastType_Contact : FastType.FastType_Operate,
-                m_Contact = new CRelationShipObj(OrgItemType.Type_Group, new CGroup() {id = 1, name = "地勤" }, null,null, null),
-            };
-
-            m_FastOperateWin.Add(op);
-            
-            index++;
         }
 
         private void FastPanel_Closing(object sender, RoutedEventArgs e)
@@ -156,5 +161,39 @@ namespace TrboX
             FastOperate it = (FastOperate)((FastPanel)sender).DataContext;
             m_FastOperateWin.Remove(it);
         }
+
+        private void tree_OrgView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+
+        }
+
+        private void tree_OrgView_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
+        {
+
+        }
+
+        private int index = 0;
+
+        private void btn_Tool_NewFastOperate_Click(object sender, RoutedEventArgs e)
+        {
+            FastOperate op = new FastOperate()
+            {
+                m_Type = FastType.FastType_Operate,
+                //m_Contact = new CRelationShipObj(OrgItemType.Type_Employee, new CGroup() { id = 1, name = "地勤", group_id = 12 }
+                //    , new CEmployee() { id = 2, name = "崔二胯子" }
+                //    , new CVehicle() { id = 12, number = "牛B74110" }
+                //    , new CRadio() { id = 22, radio_id = 2314, is_online = true, type = RadioType.RIDE }),
+
+                m_Operate = new COperate(OPType.Dispatch, new CDispatch() {target = new CRelationShipObj(OrgItemType.Type_Employee, new CGroup() { id = 1, name = "地勤", group_id = 12 }
+                    , new CEmployee() { id = 2, name = "崔二胯子" }
+                    , new CVehicle() { id = 12, number = "牛B74110" }
+                    , new CRadio() { id = 22, radio_id = 2314, is_online = true, type = RadioType.RIDE }), targettype = TargetType.Radio})
+            };
+
+            m_FastOperateWin.Add(op);
+
+            index++;
+        }
+ 
     }
 }

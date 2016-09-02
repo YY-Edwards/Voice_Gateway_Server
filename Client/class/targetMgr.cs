@@ -82,6 +82,25 @@ namespace TrboX
             radio = rad;
         }
 
+        public string KeyName
+        {
+            get {
+                switch (key)
+                {
+                    case OrgItemType.Type_Employee:
+                        return employee.name;
+                    case OrgItemType.Type_Vehicle:
+                        return vehicle.number;
+                    case OrgItemType.Type_Group:
+                        return group.name;
+                    case OrgItemType.Type_Radio:
+                    case OrgItemType.Type_Ride:
+                        return radio.type == RadioType.RADIO ? "手持台:" :"车载台:" + radio.radio_id.ToString();
+                    default:
+                        return "";
+                }
+            }
+        }
         public string Header
         {
             get{return GetHeader(); }
@@ -401,7 +420,7 @@ namespace TrboX
         + "]";
 
         string radio = "["
-        + "{'id':1, 'radio_id':111, 'is_online':true, 'type':'RIDE'},"
+        + "{'id':1, 'radio_id':65536, 'is_online':true, 'type':'RIDE'},"
         + "{'id':2, 'radio_id':112},"
         + "{'id':3, 'radio_id':113},"
         + "{'id':4, 'radio_id':114},"

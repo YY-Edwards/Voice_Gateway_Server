@@ -20,5 +20,13 @@ namespace TrboX
         public FastType m_Type { set; get; }
 
         public CRelationShipObj m_Contact { set; get; }
+
+        public COperate m_Operate { set; get; }
+
+        public FastOperate()
+        {
+            m_Contact = null;
+            m_Operate = null;
+        }
     }
 }

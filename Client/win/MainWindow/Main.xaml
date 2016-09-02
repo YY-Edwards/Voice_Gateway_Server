@@ -167,26 +167,19 @@
                     <DockPanel LastChildFill="False" Margin="0">
                         <Border BorderBrush="#FFEEEEEE" BorderThickness="1,0" Margin="0" Padding="3,0">
                             <DockPanel LastChildFill="False">
-                                <Expander x:Name="exp_New" Header="☎" Height="28" Style="{DynamicResource SimpleExpander}" VerticalAlignment="Center" FlowDirection="RightToLeft" ToolTip="新建呼叫" Margin="5,0,0,0"  >
-                                    <Grid Background="#FFE5E5E5" FlowDirection="LeftToRight">
-                                        <Popup AllowsTransparency="False" IsOpen="{Binding IsExpanded, ElementName=exp_New}" Placement="Bottom" Margin="0,2,0,0">
-                                            <Border BorderBrush="Black" BorderThickness="1" Height="132" Width="120" Background="White" FlowDirection="LeftToRight">
-                                                <ListBox x:Name="lst_Tool_New" Style="{DynamicResource SimpleListBox}" BorderThickness="0">
-                                                    <ListBoxItem Content="新建呼叫"/>
-                                                    <ListBoxItem Content="新建短消息"/>
-                                                    <ListBoxItem Content="新建位置查询"/>
-                                                    <ListBoxItem Content="新建指令控制"/>
-                                                    <ListBoxItem Content="新建工单"/>
-                                                    <ListBoxItem Content="新建巡更任务"/>
-                                                </ListBox>
-                                            </Border>
-                                        </Popup>
-                                    </Grid>
-                                </Expander>
+                                <local:ComboButton Icon="/TrboX;component/themes/resource/Logo.png" Width="35" >
+                                    <local:ComboButton.Items>
+                                        <ComboBoxItem Content="新建呼叫"/>
+                                        <ComboBoxItem Content="新建短消息"/>
+                                        <ComboBoxItem Content="新建位置查询"/>
+                                        <ComboBoxItem Content="新建指令控制"/>
+                                        <ComboBoxItem Content="新建工单"/>
+                                    </local:ComboButton.Items>
+                                </local:ComboButton>
                                 <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="131,86,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="删除"/>
                             </DockPanel>
                         </Border>
-                        <Border x:Name="bdr_Tool_Base" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0">
+                        <Border x:Name="bdr_Tool_Base" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0" IsEnabled="False">
                             <DockPanel LastChildFill="False" Margin="0">
                                 <Button x:Name="btn_Tool_PTT" local:CExIcon.Content="PTT"  ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="36" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="呼叫" Click="btn_Tool_PTT_Click" />
                                 <Button x:Name="btn_Tool_Msg" local:CExIcon.Content="✉"  Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="短消息" Click="btn_Tool_Msg_Click"/>
@@ -198,10 +191,10 @@
                             <DockPanel LastChildFill="False" Margin="0">
                                 <Button x:Name="btn_Tool_NewContact" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="131,7,22,22" ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="24" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="添加常用联系人" Click="btn_Tool_NewContact_Click" />
                                 <Button x:Name="btn_Tool_NewGroup" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="161,7,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="添加常用组"/>
-                                <Button x:Name="btn_Tool_NewFastOperate" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="161,168,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="添加快速操作"/>
+                                <Button x:Name="btn_Tool_NewFastOperate" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="161,168,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="添加快速操作" Click="btn_Tool_NewFastOperate_Click"/>
                             </DockPanel>
                         </Border>
-                        <Border x:Name="bdr_Tool_Ctrl" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0">
+                        <Border x:Name="bdr_Tool_Ctrl" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0" IsEnabled="False">
                             <DockPanel LastChildFill="False" Margin="0">
                                 <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="404,290,22,22" ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="24" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="遥毙" />
                                 <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="220,290,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="遥晕"/>
@@ -281,7 +274,7 @@
                                                     <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
                                                         <Label Content="组织" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                                     </Border>
-                                                    <TreeView x:Name="tree_OrgView" Style="{DynamicResource TreeViewStyleNav}" BorderThickness="0" Margin="0">
+                                                    <TreeView x:Name="tree_OrgView" Style="{DynamicResource TreeViewStyleNav}" BorderThickness="0" Margin="0" >
                                                     	<TreeViewItem Header="TreeViewItem" Style="{DynamicResource TreeViewItemRoot}" Visibility="Collapsed">
                                                     		<TreeViewItem Header="TreeViewItem" Style="{DynamicResource TreeViewItemStyle2nd}"/>
                                                     		<TreeViewItem Header="TreeViewItem" Style="{DynamicResource TreeViewItemStyle2nd}"/>
