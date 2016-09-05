@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UITest", "..\UITest\UITest\UITest.csproj", "{40184F4D-37F6-4AEC-8DF2-9024415C631A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "gifTest", "gifTest\gifTest.csproj", "{71AEEDB7-416E-44DE-977A-A3F9EBB04A7E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,16 @@ Global
 		{40184F4D-37F6-4AEC-8DF2-9024415C631A}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{40184F4D-37F6-4AEC-8DF2-9024415C631A}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{40184F4D-37F6-4AEC-8DF2-9024415C631A}.Release|x86.ActiveCfg = Release|Any CPU
+		{71AEEDB7-416E-44DE-977A-A3F9EBB04A7E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{71AEEDB7-416E-44DE-977A-A3F9EBB04A7E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{71AEEDB7-416E-44DE-977A-A3F9EBB04A7E}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{71AEEDB7-416E-44DE-977A-A3F9EBB04A7E}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{71AEEDB7-416E-44DE-977A-A3F9EBB04A7E}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{71AEEDB7-416E-44DE-977A-A3F9EBB04A7E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{71AEEDB7-416E-44DE-977A-A3F9EBB04A7E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{71AEEDB7-416E-44DE-977A-A3F9EBB04A7E}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{71AEEDB7-416E-44DE-977A-A3F9EBB04A7E}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{71AEEDB7-416E-44DE-977A-A3F9EBB04A7E}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

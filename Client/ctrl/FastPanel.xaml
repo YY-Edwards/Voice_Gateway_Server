@@ -244,10 +244,13 @@
                                             <ColumnDefinition Width="90"/>
                                             <ColumnDefinition Width="131*"/>
                                         </Grid.ColumnDefinitions>
-                                        <Image Source="/TrboX;component/themes/resource/dispatch.gif" Stretch="Uniform" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Bottom"/>
+                                        <gif:GifImage Source="/TrboX;component/themes/resource/dispatch.gif" Stretch="Uniform" Grid.Row="1" Margin="0,0,0,30"/>
                                         <DockPanel LastChildFill="False" Grid.Column="1" Grid.RowSpan="2">
                                             <TextBlock TextWrapping="Wrap" Text="呼叫" VerticalAlignment="Top" FontSize="16" Margin="0,10,0,0" DockPanel.Dock="Top"/>
-                                            <Button Content="{Binding m_Operate.call.target.KeyName}" ToolTip="{Binding m_Operate.call.target.KeyHeader}" VerticalAlignment="Top"  FontSize="14" DockPanel.Dock="Top" Height="25"/>
+                                            <DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Height="30">
+                                            	<Button Content="▼" ToolTip="{Binding m_Operate.call.target.KeyHeader}"  FontSize="14" DockPanel.Dock="Right" Margin="0" Width="30" Height="24"/>
+                                            	<TextBlock TextWrapping="Wrap" Text="{Binding m_Operate.call.target.KeyName}" ToolTip="{Binding m_Operate.call.target.KeyHeader}" VerticalAlignment="Center" Height="24" Background="#FFEEEEEE"/>
+                                            </DockPanel>
                                             <Separator Margin="0" Height="10" DockPanel.Dock="Top"/>
                                             <ComboBox Style="{DynamicResource SimpleComboBox}" VerticalAlignment="Top" Width="120" DockPanel.Dock="Top" SelectedIndex="0">
                                                 <ComboBoxItem Content="个呼"/>
@@ -257,67 +260,32 @@
                                             <CheckBox Content="PTT" Height="30" VerticalAlignment="Top" DockPanel.Dock="Bottom" Style="{DynamicResource CheckBoxStylePTT}"/>
                                             <Separator Margin="0" Height="10" DockPanel.Dock="Bottom"/>
                                         </DockPanel>
+                                        <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="---00:00:00--" VerticalAlignment="Bottom" Grid.Row="1"/>
                                     </Grid>
                                 </TabItem>
-                                <TabItem x:Name="employee1" Header="TabItem" Margin="0,-2,-2,0" Width="10" VerticalAlignment="Top">
-                                    <DockPanel LastChildFill="False">
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.radio.radio_id, StringFormat=终端ID：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
-
-
-                                    </DockPanel>
-                                </TabItem>
-                                <TabItem x:Name="vehicle1" Header="TabItem" Margin="0,-2,65,0" Width="10" VerticalAlignment="Top">
-                                    <DockPanel LastChildFill="False">
-                                        <TextBlock TextWrapping="Wrap" Text="车辆" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,10,0,0" FontSize="16"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.vehicle.number, StringFormat=车牌：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,2,0,0" FontSize="16"/>
-                                        <Separator Height="10" Margin="0" DockPanel.Dock="Top"/>
-                                        <TextBlock TextWrapping="Wrap"  VerticalAlignment="Top" DockPanel.Dock="Top" Visibility="{Binding m_Contact.group, Converter={StaticResource NullHide}}" Margin="0,2">
-                                            <TextBlock.Text>
-                                                <MultiBinding StringFormat="组： {0}（ID：{1}）">
-                                                    <Binding Path="m_Contact.group.name" />
-                                                    <Binding Path="m_Contact.group.group_id" />
-                                                </MultiBinding>
-                                            </TextBlock.Text>
-                                        </TextBlock>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.employee.number, StringFormat=联系人：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.vehicle, Converter={StaticResource NullHide}}" Margin="0,2"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.radio.type, StringFormat=终端类型：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.radio.radio_id, StringFormat=终端ID：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
-                                    </DockPanel>
-                                </TabItem>
-                                <TabItem x:Name="ride1" Header="TabItem" Margin="0,-2,0,0" Width="10" VerticalAlignment="Top">
-                                    <DockPanel LastChildFill="False">
-                                        <TextBlock TextWrapping="Wrap" Text="车载台" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,10,0,0" FontSize="16"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.radio.radio_id, StringFormat=ID:\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,2,0,0" FontSize="16"/>
-                                        <Separator Height="10" Margin="0" DockPanel.Dock="Top"/>
-                                        <TextBlock TextWrapping="Wrap"  VerticalAlignment="Top" DockPanel.Dock="Top" Visibility="{Binding m_Contact.group, Converter={StaticResource NullHide}}" Margin="0,2">
-                                            <TextBlock.Text>
-                                                <MultiBinding StringFormat="组： {0}（ID：{1}）">
-                                                    <Binding Path="m_Contact.group.name" />
-                                                    <Binding Path="m_Contact.group.group_id" />
-                                                </MultiBinding>
-                                            </TextBlock.Text>
-                                        </TextBlock>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.employee.number, StringFormat=联系人：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.vehicle, Converter={StaticResource NullHide}}" Margin="0,2"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.vehicle.number, StringFormat=车辆：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
-                                    </DockPanel>
-                                </TabItem>
-                                <TabItem x:Name="radio1" Header="TabItem" Margin="0,-2,0,0" Width="10" VerticalAlignment="Top">
-                                    <DockPanel LastChildFill="False">
-                                        <TextBlock TextWrapping="Wrap" Text="手持台" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,10,0,0" FontSize="16"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.radio.radio_id, StringFormat=ID:\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,2,0,0" FontSize="16"/>
-                                        <Separator Height="10" Margin="0" DockPanel.Dock="Top"/>
-                                        <TextBlock TextWrapping="Wrap"  VerticalAlignment="Top" DockPanel.Dock="Top" Visibility="{Binding m_Contact.group, Converter={StaticResource NullHide}}" Margin="0,2">
-                                            <TextBlock.Text>
-                                                <MultiBinding StringFormat="组： {0}（ID：{1}）">
-                                                    <Binding Path="m_Contact.group.name" />
-                                                    <Binding Path="m_Contact.group.group_id" />
-                                                </MultiBinding>
-                                            </TextBlock.Text>
-                                        </TextBlock>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.employee.number, StringFormat=联系人：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.vehicle, Converter={StaticResource NullHide}}" Margin="0,2"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.vehicle.number, StringFormat=车辆：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
-
-                                    </DockPanel>
+                                <TabItem x:Name="messaged" Header="TabItem" Width="10" VerticalAlignment="Top" Margin="0,-2,0,0">
+                                	<Grid>
+                                		<Grid.RowDefinitions>
+                                			<RowDefinition Height="100"/>
+                                			<RowDefinition Height="29*"/>
+                                		</Grid.RowDefinitions>
+                                		<Grid.ColumnDefinitions>
+                                			<ColumnDefinition Width="90"/>
+                                			<ColumnDefinition Width="131*"/>
+                                		</Grid.ColumnDefinitions>
+                                		<gif:GifImage Source="/TrboX;component/themes/resource/dispatch.gif" Stretch="Uniform" Grid.Row="1" Margin="0,0,0,30"/>
+                                		<DockPanel LastChildFill="False" Grid.Column="1" Grid.RowSpan="2">
+                                			<TextBlock TextWrapping="Wrap" Text="短消息" VerticalAlignment="Top" FontSize="16" Margin="0,10,0,0" DockPanel.Dock="Top"/>
+                                			<DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Height="30">
+                                				<Button Content="▼" ToolTip="{Binding m_Operate.call.target.KeyHeader}"  FontSize="14" DockPanel.Dock="Right" Margin="0" Width="30" Height="24"/>
+                                				<TextBlock TextWrapping="Wrap" Text="{Binding m_Operate.call.target.KeyName}" ToolTip="{Binding m_Operate.call.target.KeyHeader}" VerticalAlignment="Center" Height="24" Background="#FFEEEEEE"/>
+                                			</DockPanel>
+                                			<Separator Margin="0" Height="10" DockPanel.Dock="Top"/>
+                                			<TextBox Height="148.883333333333" TextWrapping="Wrap" Text="Test Message" VerticalAlignment="Top" DockPanel.Dock="Top"/>
+                                			<CheckBox Content="发送" Height="30" VerticalAlignment="Top" DockPanel.Dock="Bottom" Style="{DynamicResource CheckBoxStylePTT}"/>
+                                			<Separator Margin="0" Height="10" DockPanel.Dock="Bottom"/>
+                                		</DockPanel>
+                                	</Grid>
                                 </TabItem>
                             </TabControl>
                         </Border>

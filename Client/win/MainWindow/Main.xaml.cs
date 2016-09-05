@@ -184,10 +184,19 @@ namespace TrboX
                 //    , new CVehicle() { id = 12, number = "牛B74110" }
                 //    , new CRadio() { id = 22, radio_id = 2314, is_online = true, type = RadioType.RIDE }),
 
-                m_Operate = new COperate(OPType.Dispatch, new CDispatch() {target = new CRelationShipObj(OrgItemType.Type_Employee, new CGroup() { id = 1, name = "地勤", group_id = 12 }
-                    , new CEmployee() { id = 2, name = "崔二胯子" }
-                    , new CVehicle() { id = 12, number = "牛B74110" }
-                    , new CRadio() { id = 22, radio_id = 2314, is_online = true, type = RadioType.RIDE }), targettype = TargetType.Radio})
+                //m_Operate = new COperate(OPType.Dispatch, new CDispatch() {target = new CRelationShipObj(OrgItemType.Type_Employee, new CGroup() { id = 1, name = "地勤", group_id = 12 }
+                //    , new CEmployee() { id = 2, name = "崔二胯子" }
+                //    , new CVehicle() { id = 12, number = "牛B74110" }
+                //    , new CRadio() { id = 22, radio_id = 2314, is_online = true, type = RadioType.RIDE }), targettype = TargetType.Radio})
+
+                m_Operate = new COperate(OPType.ShortMessage, new CDispatch()
+                {
+                    target = new CRelationShipObj(OrgItemType.Type_Employee, new CGroup() { id = 1, name = "地勤", group_id = 12 }
+                        , new CEmployee() { id = 2, name = "崔二胯子" }
+                        , new CVehicle() { id = 12, number = "牛B74110" }
+                        , new CRadio() { id = 22, radio_id = 2314, is_online = true, type = RadioType.RIDE }),
+                    targettype = TargetType.Radio
+                })
             };
 
             m_FastOperateWin.Add(op);
