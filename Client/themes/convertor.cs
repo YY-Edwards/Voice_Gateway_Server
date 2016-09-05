@@ -20,4 +20,20 @@ namespace TrboX
             return value;
         }
     }
+
+    public class MsgWidthValueConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return (double)value - 100;
+           
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+
+
 }

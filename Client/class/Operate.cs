@@ -74,7 +74,7 @@ namespace TrboX
         {
             if (true == iscsbk)
             {
-                if (true != isenh)
+                if (true == isenh)
                     return csbkenhcyclelist;
                 else
                     return csbkcyclelist;
@@ -111,11 +111,13 @@ namespace TrboX
 
         public COperate(OPType tp, object obj)
         {
+            type = tp;
+            
             call = null;
             message = null;
             control = null;
             position = null;
-            switch (tp)
+            switch (type)
             {
                 case OPType.Dispatch:
                     call = obj as CDispatch;

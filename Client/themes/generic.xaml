@@ -27,4 +27,32 @@
         <Setter Property="HorizontalAlignment" Value="Center"/>
         <Setter Property="ContentTemplate" Value="{Binding Path= View.ItemTemplate, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListView}}}" />
     </Style>
+
+
+    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type local:MsgView}, ResourceId = MsgView}" 
+           TargetType="{x:Type ListView}"
+           BasedOn="{StaticResource {x:Type ListBox}}">
+
+        <Setter Property="BorderBrush" Value="Black"/>
+        <Setter Property="BorderThickness" Value="0.5" />
+        <Setter Property="Grid.IsSharedSizeScope" Value="True" />
+
+        <Setter Property="ItemsPanel">
+            <Setter.Value>
+                <ItemsPanelTemplate>
+                    <StackPanel Width="{Binding (FrameworkElement.ActualWidth),RelativeSource={RelativeSource AncestorType=ScrollContentPresenter}}" />
+                </ItemsPanelTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="{ComponentResourceKey TypeInTargetAssembly={x:Type local:MsgView}, ResourceId = MsgViewItem}" 
+           TargetType="{x:Type ListViewItem}"
+           BasedOn="{StaticResource {x:Type ListBoxItem}}">
+        <Setter Property="Margin" Value="2,0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="ContentTemplate" Value="{Binding Path= View.ItemTemplate, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListView}}}" />
+    </Style>
+
 </ResourceDictionary>

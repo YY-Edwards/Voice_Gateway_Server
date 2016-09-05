@@ -160,6 +160,27 @@ namespace TrboX
         }
     }
 
+    public class FalselHideConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (false == (bool)value)
+            {
+                return Visibility.Collapsed;
+            }
+            else
+            {
+                return Visibility.Visible;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+
     public class MonitorConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -206,6 +227,32 @@ namespace TrboX
     }
 
 
+    public class OperateTypeItemConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            switch ((OPType)value)
+            {
+                case OPType.Dispatch:
+                    return 0;
+                case OPType.ShortMessage:
+                    return 1;
+                case OPType.Position:
+                    return 2;
+                case OPType.Control:
+                    return 3;
+                case OPType.JobTicker:
+                    return 4;
+            }
+            return -1;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
 
     /// <summary>
     /// FastPanel.xaml 的交互逻辑
@@ -215,15 +262,27 @@ namespace TrboX
         public FastPanel()
         {
             InitializeComponent();
+            updatecyclelist(null, null);
         }
         public FastOperate PanelItem 
         {
             get { return (FastOperate)GetValue(PanelItemProperty); }
             set { SetValue(PanelItemProperty, value); }  
         }
+
         public static readonly DependencyProperty PanelItemProperty =
-            DependencyProperty.Register("PanelItem", typeof(FastOperate), typeof(FastPanel), new PropertyMetadata(null));
-        
+            DependencyProperty.Register("PanelItem", typeof(FastOperate), typeof(FastPanel), new UIPropertyMetadata(null, delegate(DependencyObject obj, DependencyPropertyChangedEventArgs e){
+
+                if (OPType.Position == ((FastOperate)e.NewValue).m_Operate.type)
+                {
+                    var element = obj as FastPanel;
+                    List<double> cyclelist = CPosition.UpdateCycleList(((FastOperate)e.NewValue).m_Operate.position.iscsbk, ((FastOperate)e.NewValue).m_Operate.position.isenh);
+                    element.cmb_CycleLst.Items.Clear();
+                    foreach (double cycle in cyclelist)
+                        element.cmb_CycleLst.Items.Add(new ComboBoxItem() {Content = cycle.ToString() + "s", Tag = cycle });
+                }
+            }));
+
 
         public event RoutedEventHandler Closing
         {
@@ -250,7 +309,50 @@ namespace TrboX
             int i = 0;
         }
 
-        
-      
+        private void updatecyclelist(object sender, RoutedEventArgs e)
+        {
+            List<double> cyclelist = CPosition.UpdateCycleList((bool)chk_CSBK.IsChecked, (bool)chk_Enh.IsChecked);
+            cmb_CycleLst.Items.Clear();
+            foreach (double cycle in cyclelist)
+                cmb_CycleLst.Items.Add(new ComboBoxItem() { Content = cycle.ToString() + "s", Tag = cycle });
+        }
+
+        ListView dragSource = null; 
+        private void bdr_PanelTitle_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+
+            object data = GetDataFromListBox((ListBox)this.Parent, e.GetPosition(this));
+            if (data != null)
+            {
+
+                DragDrop.DoDragDrop(this, data, DragDropEffects.Copy);
+            }  
+        }
+
+        private static object GetDataFromListBox(ListBox source, Point point)
+        {
+            UIElement element = source.InputHitTest(point) as UIElement;
+            if (element != null)
+            {
+                object data = DependencyProperty.UnsetValue;
+                while (data == DependencyProperty.UnsetValue)
+                {
+                    data = source.ItemContainerGenerator.ItemFromContainer(element);
+                    if (data == DependencyProperty.UnsetValue)
+                    {
+                        element = VisualTreeHelper.GetParent(element) as UIElement;
+                    }
+                    if (element == source)
+                    {
+                        return null;
+                    }
+                }
+                if (data != DependencyProperty.UnsetValue)
+                {
+                    return data;
+                }
+            }
+            return null;
+        }  
     }
 }

@@ -11,6 +11,7 @@
         Title="TrboX" Height="640" Width="1024" WindowStartupLocation="CenterScreen" Style="{DynamicResource MyWindowStyle}" 
     >
     <local:MyWindow.Resources>
+        <local:MsgWidthValueConverter x:Key="MsgWidth"/>
         <!--Simple Tree View - 这用来在 ScrollViewer 中对 TreeViewItems 进行布局 -->
         <local:IsNullValueConverter x:Key="IsObjNull" />
         <GridView x:Key="GridView">
@@ -35,6 +36,120 @@
                 </DataTemplate>
             </local:TileView.ItemTemplate>
         </local:TileView>
+        
+        <local:MsgView x:Key="EventView">
+            <local:MsgView.ItemTemplate>
+                <DataTemplate>
+                    <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,0">
+                        <DockPanel >
+                            <Image Source="/TrboX;component/themes/resource/event.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
+
+                            <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
+                            <TextBlock Text="{Binding  time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName= lst_Event, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
+                            <TextBlock Text="{Binding  content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Event, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF000000" VerticalAlignment="Center" />
+
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+
+            </local:MsgView.ItemTemplate>
+        </local:MsgView>
+
+        <local:MsgView x:Key="AlarmView">
+            <local:MsgView.ItemTemplate>
+                <DataTemplate>
+                    <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="Red" Background="Red" VerticalAlignment="Stretch" Padding="5,0">
+                        <DockPanel >
+                            <Image Source="/TrboX;component/themes/resource/alarm.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
+                            <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_AlarmNotify_Close_Click"></Button>
+                            
+                            <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
+                            <TextBlock Text="{Binding  time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FFDDDDDD" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
+                                <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="White" VerticalAlignment="Center" />
+
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+                
+            </local:MsgView.ItemTemplate>
+        </local:MsgView>
+
+        <local:MsgView x:Key="MsgView">
+            <local:MsgView.ItemTemplate>
+                <DataTemplate>
+                    <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE"  VerticalAlignment="Stretch" Padding="5,0">
+                        <DockPanel >
+                            <Image Source="/TrboX;component/themes/resource/msg.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
+                            <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_MsgNotify_Close_Click"></Button>
+
+                            <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
+                            <TextBlock Text="{Binding  time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
+                            <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
+
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+
+            </local:MsgView.ItemTemplate>
+        </local:MsgView>
+
+        <local:MsgView x:Key="RxView">
+            <local:MsgView.ItemTemplate>
+                <DataTemplate>
+                    <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush ="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,0">
+                        <DockPanel >
+                            <Image Source="/TrboX;component/themes/resource/rx.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
+                            <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_RxNotify_Close_Click"></Button>
+
+                            <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
+                            <TextBlock Text="{Binding  time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
+                            <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
+
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+
+            </local:MsgView.ItemTemplate>
+        </local:MsgView>
+
+        <local:MsgView x:Key="JobView">
+            <local:MsgView.ItemTemplate>
+                <DataTemplate>
+                    <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE"   VerticalAlignment="Stretch" Padding="5,0">
+                        <DockPanel >
+                            <Image Source="/TrboX;component/themes/resource/job.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
+                            <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_JobNotify_Close_Click"></Button>
+
+                            <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
+                            <TextBlock Text="{Binding  time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
+                            <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
+
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+
+            </local:MsgView.ItemTemplate>
+        </local:MsgView>
+
+        <local:MsgView x:Key="TrackerView">
+            <local:MsgView.ItemTemplate>
+                <DataTemplate>
+                    <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,0">
+                        <DockPanel >
+                            <Image Source="/TrboX;component/themes/resource/tracker.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
+                            <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_TrackerNotify_Close_Click"></Button>
+
+                            <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
+                            <TextBlock Text="{Binding  time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
+                            <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
+
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+
+            </local:MsgView.ItemTemplate>
+        </local:MsgView>
+
     </local:MyWindow.Resources>
     
     <Grid Margin="0">
@@ -424,7 +539,13 @@
                                     <Border BorderBrush="Black" BorderThickness="0" Height="30" DockPanel.Dock="Top" Background="#FF97C5F7">
                                         <Label Content="事件记录" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                                     </Border>
-                                    <DockPanel LastChildFill="False" DockPanel.Dock="Top"/>
+									 <Grid DockPanel.Dock="Top">
+                                    	<ListView x:Name="lst_Event"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" >
+                                    		<ListView.View>
+                                    			<local:MsgView />
+                                    		</ListView.View>
+                                    	</ListView>
+                                    </Grid>
                                 </DockPanel>
                             </Border>
                             <GridSplitter x:Name="grdspl_Main_Event" HorizontalAlignment="Stretch" Height="5" VerticalAlignment="Top" Margin="0" Background="#4C000000" Grid.Row="1"/>
@@ -442,50 +563,92 @@
                                 <DockPanel>
                                     <Border BorderBrush="Black" BorderThickness="0" Height="30" DockPanel.Dock="Top">
                                         <DockPanel Margin="0">
+                                            <Button x:Name="btn_ClearAlarmMsg" Content="✘" Height="20" VerticalAlignment="Center" Width="20" DockPanel.Dock="Right" Margin="0,0,3,0" />
+                                            <TextBlock TextWrapping="Wrap"  VerticalAlignment="Center" DockPanel.Dock="Right" Width="60" Text="{Binding Items.Count, ElementName=lst_Alarm, Mode=OneWay, StringFormat=共 {0} 条}"/>
                                             <CheckBox x:Name="chk_MsgExp_Alarm" Content="报警信息" Margin="0" IsChecked="True" Style="{DynamicResource CheckBoxStyleMsg}" BorderThickness="0"/>
+                                            
                                         </DockPanel>
-                                    </Border>
-                                    <Label Content="报警" DockPanel.Dock="Top" BorderThickness="1" BorderBrush="#FFDE2727" Margin="0" Panel.ZIndex="-4"/>
+                                   </Border>
+                                    
+                                    <Grid DockPanel.Dock="Top">
+                                    	<ListView x:Name="lst_Alarm"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" >
+                                    		<ListView.View>
+                                    			<local:MsgView />
+                                    		</ListView.View>
+                                    	</ListView>
+                                    </Grid>
                                 </DockPanel>
                             </Border>
                             <Border  x:Name="bdr_Msg_ShortMsg" BorderBrush="Black" BorderThickness="1,0,1,1" Margin="0" Grid.Row="1">
                                 <DockPanel>
                                     <Border BorderBrush="Black" BorderThickness="0" Height="30" DockPanel.Dock="Top" Margin="0">
                                         <DockPanel Margin="0">
-                                            <CheckBox  x:Name="chk_MsgExp_ShortMsg" Content="短消息" Margin="0" Style="{DynamicResource CheckBoxStyleMsg}" BorderThickness="0"/>
+                                            <Button x:Name="btn_ClearShortMsg" Content="✘" Height="20" VerticalAlignment="Center" Width="20" DockPanel.Dock="Right" Margin="0,5,3,5"/>
+                                        	<TextBlock TextWrapping="Wrap"  VerticalAlignment="Center" DockPanel.Dock="Right" Width="60" Text="{Binding Items.Count, ElementName=lst_ShortMsg, Mode=OneWay, StringFormat=共 \{0\} 条}" Margin="0,7.38"/>
+                                        	<CheckBox  x:Name="chk_MsgExp_ShortMsg" Content="短消息" Margin="0" Style="{DynamicResource CheckBoxStyleMsg}" BorderThickness="0"/>
                                         </DockPanel>
                                     </Border>
-                                    <Label Content="短消息" BorderThickness="1" BorderBrush="#FFDE2727" Margin="0"/>
+                                    <Grid>
+										 <ListView x:Name="lst_ShortMsg"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" >
+                                    		<ListView.View>
+                                    			<local:MsgView />
+                                    		</ListView.View>
+                                    	</ListView>
+									</Grid>
                                 </DockPanel>
                             </Border>
                             <Border  x:Name="bdr_Msg_Rx" BorderBrush="Black" BorderThickness="1,0,1,1" Margin="0" Grid.Row="2">
                                 <DockPanel>
                                     <Border BorderBrush="Black" BorderThickness="0" Height="30" DockPanel.Dock="Top" Margin="0">
                                         <DockPanel Margin="0">
-                                            <CheckBox  x:Name="chk_MsgExp_Rx" Content="被叫记录" Margin="0" Style="{DynamicResource CheckBoxStyleMsg}" BorderThickness="0"/>
+                                            <Button x:Name="btn_ClearRxMsg" Content="✘" Height="20" VerticalAlignment="Center" Width="20" DockPanel.Dock="Right" Margin="0,5,3,5"/>
+                                        	<TextBlock TextWrapping="Wrap"  VerticalAlignment="Center" DockPanel.Dock="Right" Width="60" Text="{Binding Items.Count, ElementName=lst_Rx, Mode=OneWay, StringFormat=共 \{0\} 条}" Margin="0,7.38"/>
+                                        	<CheckBox  x:Name="chk_MsgExp_Rx" Content="被叫记录" Margin="0" Style="{DynamicResource CheckBoxStyleMsg}" BorderThickness="0"/>
                                         </DockPanel>
                                     </Border>
-                                    <Label Content="被叫记录" BorderThickness="1" BorderBrush="#FFDE2727" Margin="0"/>
+                                     <Grid>
+										 <ListView x:Name="lst_Rx"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" >
+                                    		<ListView.View>
+                                    			<local:MsgView />
+                                    		</ListView.View>
+                                    	</ListView>
+									</Grid>
                                 </DockPanel>
                             </Border>
                             <Border  x:Name="bdr_Msg_Job" BorderBrush="Black" BorderThickness="1,0,1,1" Grid.Row="3" Margin="0">
                                 <DockPanel>
                                     <Border BorderBrush="Black" BorderThickness="0" Height="30" Margin="0" DockPanel.Dock="Top">
                                         <DockPanel Margin="0">
-                                            <CheckBox  x:Name="chk_MsgExp_Job" Content="工单" Margin="0" Style="{DynamicResource CheckBoxStyleMsg}" BorderThickness="0"/>
+                                            <Button x:Name="btn_ClearJobMsg" Content="✘" Height="20" VerticalAlignment="Center" Width="20" DockPanel.Dock="Right" Margin="0,5,3,5"/>
+                                        	<TextBlock TextWrapping="Wrap"  VerticalAlignment="Center" DockPanel.Dock="Right" Width="60" Text="{Binding Items.Count, ElementName=lst_Job, Mode=OneWay, StringFormat=共 \{0\} 条}" Margin="0,7.38"/>
+                                        	<CheckBox  x:Name="chk_MsgExp_Job" Content="工单" Margin="0" Style="{DynamicResource CheckBoxStyleMsg}" BorderThickness="0"/>
                                         </DockPanel>
                                     </Border>
-                                    <Label Content="工单" BorderThickness="1" BorderBrush="#FFDE2727" Margin="0"/>
+                                     <Grid>
+										 <ListView x:Name="lst_Job"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" >
+                                    		<ListView.View>
+                                    			<local:MsgView />
+                                    		</ListView.View>
+                                    	</ListView>
+									</Grid>
                                 </DockPanel>
                             </Border>
                             <Border x:Name="bdr_Msg_Tracker" BorderBrush="Black" BorderThickness="1,0,1,1" Grid.Row="4" Margin="0">
                                 <DockPanel>
                                     <Border BorderBrush="Black" BorderThickness="0" Height="30" DockPanel.Dock="Top" Margin="0">
                                         <DockPanel Margin="0">
-                                            <CheckBox  x:Name="chk_MsgExp_Tracker" Content="巡更" Margin="0" Style="{DynamicResource CheckBoxStyleMsg}" BorderThickness="0" Background="{x:Null}"/>
+                                            <Button x:Name="btn_ClearTrackerMsg" Content="✘" Height="20" VerticalAlignment="Center" Width="20" DockPanel.Dock="Right" Margin="0,5,3,5"/>
+                                        	<TextBlock TextWrapping="Wrap"  VerticalAlignment="Center" DockPanel.Dock="Right" Width="60" Text="{Binding Items.Count, ElementName=lst_Tracker, Mode=OneWay, StringFormat=共 \{0\} 条}" Margin="0,7.38"/>
+                                        	<CheckBox  x:Name="chk_MsgExp_Tracker" Content="巡更" Margin="0" Style="{DynamicResource CheckBoxStyleMsg}" BorderThickness="0" Background="{x:Null}"/>
                                         </DockPanel>
                                     </Border>
-                                    <Label Content="巡更" BorderThickness="1" BorderBrush="#FFDE2727"/>
+                                     <Grid>
+										 <ListView x:Name="lst_Tracker"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" >
+                                    		<ListView.View>
+                                    			<local:MsgView />
+                                    		</ListView.View>
+                                    	</ListView>
+									</Grid>
                                 </DockPanel>
                             </Border>
                             <GridSplitter x:Name="grdspl_Msg_Row0" HorizontalAlignment="Stretch" Height="5" VerticalAlignment="Bottom" Background="#00000000" Margin="0,0,0,-2" Visibility="Hidden"/>

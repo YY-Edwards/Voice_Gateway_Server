@@ -83,6 +83,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="class\FastOperate.cs" />
+    <Compile Include="class\Message.cs" />
     <Compile Include="class\Operate.cs" />
     <Compile Include="class\targetMgr.cs" />
     <Compile Include="ctrl\ComboButton.xaml.cs">
@@ -124,6 +125,7 @@
       <DependentUpon>NewOperate.xaml</DependentUpon>
     </Compile>
     <Compile Include="win\CreateOperate\NewOperateView.cs" />
+    <Compile Include="win\MainWindow\MsgView.cs" />
     <Compile Include="win\TargetOperate\OperateWin.xaml.cs">
       <DependentUpon>OperateWin.xaml</DependentUpon>
     </Compile>
@@ -244,6 +246,16 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="themes\resource\dispatch.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="themes\resource\alarm.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="themes\resource\event.png" />
+    <Resource Include="themes\resource\job.png" />
+    <Resource Include="themes\resource\msg.png" />
+    <Resource Include="themes\resource\rx.png" />
+    <Resource Include="themes\resource\tracker.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

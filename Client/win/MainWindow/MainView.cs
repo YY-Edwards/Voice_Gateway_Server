@@ -9,6 +9,12 @@ using System.Windows.Media;
 
 namespace TrboX
 {
+    public class CEvent
+    {
+        public string content { set; get; }
+        public DateTime time { set; get; }
+    }
+
     public class MsgBox_t
     {
         public MsgBox_t(bool s, bool e,int r,  double h)
@@ -24,14 +30,16 @@ namespace TrboX
         public int rowindex { set; get; }
         public double height { set; get; }
     };
-    class MainView
+    public class MainView
     {
         private Main m_mainWin;
 
         newFast m_newFastWin;
         NewOperate m_newOperateWin;
+        public NotifyView m_NotifyView;
 
         private Dictionary<Border, MsgBox_t> m_bdrMsgList = new Dictionary<Border, MsgBox_t>();
+
 
         private GridLength EventRowLength
             , MsgAlarmLength
@@ -51,7 +59,10 @@ namespace TrboX
 
             m_newFastWin = new newFast();
             m_newOperateWin = new NewOperate();
+            m_NotifyView = new NotifyView(m_mainWin);
 
+            m_mainWin.lst_Event.View = (ViewBase)m_mainWin.FindResource("EventView");
+          
 
             menu_View_Tool();
 
@@ -419,7 +430,7 @@ namespace TrboX
             {
                  m_bdrMsgList[item.Key].height = m_mainWin.grd_Msg.RowDefinitions[item.Value.rowindex].ActualHeight;
 
-                 if((true == item.Value.show) && (true == item.Value.expanler) &&  (30 >=m_mainWin.grd_Msg.RowDefinitions[item.Value.rowindex].ActualHeight))
+                 if((true == item.Value.show) && (true == item.Value.expanler) &&  (31 >=m_mainWin.grd_Msg.RowDefinitions[item.Value.rowindex].ActualHeight))
                  {
                      is_need_update_hight = true;
                  }
@@ -905,6 +916,30 @@ namespace TrboX
             {
               
             };           
+        }
+
+        public void AddEvent(string content)
+        {
+            m_mainWin.Dispatcher.Invoke(new Action(() =>
+                {
+
+                    while (m_mainWin.lst_Event.Items.Count >= 50)
+                    {
+                        try
+                        {
+                            m_mainWin.lst_Event.Items.RemoveAt(m_mainWin.lst_Event.Items.Count - 1);
+                        }
+                        catch
+                        {
+                        }
+                    }
+
+                    m_mainWin.lst_Event.Items.Insert(0, new CEvent()
+                    {
+                        content = content,
+                        time = DateTime.Now
+                    });
+                }));
         }
     }
 } 

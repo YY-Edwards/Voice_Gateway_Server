@@ -42,18 +42,29 @@ namespace TrboX
         }
     }
 
-    class CLayout
+    public class MsgView : ViewBase
     {
-        //private MainWindow m_mainWindow;
-        //public CLayout(MainWindow win)
-        //{
-        //    m_mainWindow = win;
-        //}
+        private DataTemplate itemTemplate;
+        public DataTemplate ItemTemplate
+        {
+            set { itemTemplate = value; }
+            get { return itemTemplate; }
+        }
 
-        //public void Exit()
-        //{
-        //    Environment.Exit(0);
-        //}
+        protected override object DefaultStyleKey
+        {
+            get
+            {
+                return new ComponentResourceKey(GetType(), "MsgView");
+            }
+        }
 
+        protected override object ItemContainerDefaultStyleKey
+        {
+            get
+            {
+                return new ComponentResourceKey(GetType(), "MsgViewItem");
+            }
+        }
     }
 }
