@@ -30,7 +30,7 @@
                         <DockPanel.ContextMenu >
                             <ContextMenu Visibility="Hidden"/>
                         </DockPanel.ContextMenu>
-                        <local:FastPanel  PanelItem ="{Binding CurrentItem}" Closing = "FastPanel_Closing"/>
+                        <local:FastPanel  PanelItem ="{Binding CurrentItem}" AllowDrop="True" TitlePressed="FastPanel_TiltePressed" Closing = "FastPanel_Closing" />
                     </DockPanel>
 
                 </DataTemplate>
@@ -490,7 +490,7 @@
                                                 	<Label Content="语音调度" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                                 </Border>
                                                 <Grid>
-                                                    <ListView x:Name="lst_dispatch"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" >
+                                                    <ListView x:Name="lst_dispatch"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" AllowDrop="True" Drop="lst_dispatch_Drop" PreviewMouseLeftButtonDown="lst_dispatch_PreviewMouseLeftButtonDown" >
                                                         <ListView.ContextMenu>
                                                             <ContextMenu>
                                                             	<MenuItem Header="添加常用联系人"/>

@@ -317,42 +317,72 @@ namespace TrboX
                 cmb_CycleLst.Items.Add(new ComboBoxItem() { Content = cycle.ToString() + "s", Tag = cycle });
         }
 
-        ListView dragSource = null; 
+
+        public event RoutedEventHandler TitlePressed
+        {
+            add { AddHandler(TitlePressedRoutedEvent, value); }
+            remove { RemoveHandler(TitlePressedRoutedEvent, value); }
+        }
+
+        public static readonly RoutedEvent TitlePressedRoutedEvent =
+           EventManager.RegisterRoutedEvent("TitlePressed", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
+
+        ListView dragSource = null;
         private void bdr_PanelTitle_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
         {
 
-            object data = GetDataFromListBox((ListBox)this.Parent, e.GetPosition(this));
-            if (data != null)
-            {
+            //object data = GetDataFromListBox((ListBox)this.Parent, e.GetPosition(this));
+            //if (data != null)
+            //{
 
-                DragDrop.DoDragDrop(this, data, DragDropEffects.Copy);
-            }  
+            //    DragDrop.DoDragDrop(this, data, DragDropEffects.Copy);
+            //}
+
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(TitlePressedRoutedEvent);
+            RaiseEvent(newEventArgs);
         }
 
-        private static object GetDataFromListBox(ListBox source, Point point)
+        private void bdr_PanelTitle_Drop(object sender, DragEventArgs e)
         {
-            UIElement element = source.InputHitTest(point) as UIElement;
-            if (element != null)
-            {
-                object data = DependencyProperty.UnsetValue;
-                while (data == DependencyProperty.UnsetValue)
-                {
-                    data = source.ItemContainerGenerator.ItemFromContainer(element);
-                    if (data == DependencyProperty.UnsetValue)
-                    {
-                        element = VisualTreeHelper.GetParent(element) as UIElement;
-                    }
-                    if (element == source)
-                    {
-                        return null;
-                    }
-                }
-                if (data != DependencyProperty.UnsetValue)
-                {
-                    return data;
-                }
-            }
-            return null;
-        }  
+            int i = 0;
+        }
+
+        FastOperate targetitem;
+
+        private void Grid_Drop(object sender, DragEventArgs e)
+        {
+            int i = 0;  
+        }
+
+        private void Grid_DragEnter(object sender, DragEventArgs e)
+        {
+            int i = 0;
+        }
+
+        //private static object GetDataFromListBox(ListBox source, Point point)
+        //{
+        //    UIElement element = source.InputHitTest(point) as UIElement;
+        //    if (element != null)
+        //    {
+        //        object data = DependencyProperty.UnsetValue;
+        //        while (data == DependencyProperty.UnsetValue)
+        //        {
+        //            data = source.ItemContainerGenerator.ItemFromContainer(element);
+        //            if (data == DependencyProperty.UnsetValue)
+        //            {
+        //                element = VisualTreeHelper.GetParent(element) as UIElement;
+        //            }
+        //            if (element == source)
+        //            {
+        //                return null;
+        //            }
+        //        }
+        //        if (data != DependencyProperty.UnsetValue)
+        //        {
+        //            return data;
+        //        }
+        //    }
+        //    return null;
+        //}  
     }
 }

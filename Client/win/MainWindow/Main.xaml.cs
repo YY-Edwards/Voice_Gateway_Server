@@ -12,6 +12,8 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Forms.Integration;
 
+using System.Windows.Controls.Primitives; 
+
 namespace TrboX
 {
   /// <summary>
@@ -240,5 +242,118 @@ namespace TrboX
             CTackerNotification it = (CTackerNotification)((Button)sender).DataContext;
             m_View.m_NotifyView.m_Notify.Remove(it);
         }
+
+
+        private void FastPanel_TiltePressed(object sender, RoutedEventArgs e)
+         {
+             FastOperate it = (FastOperate)((FastPanel)sender).DataContext;
+
+             Point point = ((FastPanel)sender).TranslatePoint(new Point(0, 0), lst_dispatch);
+
+             object data = GetDataFromListBox(lst_dispatch, point);
+             if (data != null)
+             {
+                 DragDrop.DoDragDrop(this, data, DragDropEffects.Move);
+             }
+         }
+
+        private static object GetDataFromListBox(ListBox source, Point point)
+        {
+            UIElement element = source.InputHitTest(point) as UIElement;
+            if (element != null)
+            {
+                object data = DependencyProperty.UnsetValue;
+                while (data == DependencyProperty.UnsetValue)
+                {
+                    data = source.ItemContainerGenerator.ItemFromContainer(element);
+                    if (data == DependencyProperty.UnsetValue)
+                    {
+                        element = VisualTreeHelper.GetParent(element) as UIElement;
+                    }
+                    if (element == source)
+                    {
+                        return null;
+                    }
+                }
+                if (data != DependencyProperty.UnsetValue)
+                {
+                    return data;
+                }
+            }
+            return null;
+        }
+
+
+        //drage item
+        int SourceIndex = -1;
+        delegate Point GetPositionDelegate(IInputElement element);  
+
+
+        private void lst_dispatch_Drop(object sender, DragEventArgs e)
+        {
+            int TargetIndex = GetCurrentIndex(new GetPositionDelegate(e.GetPosition));
+
+            m_FastOperateWin.ChangePosition(SourceIndex, TargetIndex);
+
+            //if ((SourceIndex > -1) && (SourceIndex < lst_dispatch.Items.Count))
+            //{
+            //    FastOperate Source = lst_dispatch.Items[SourceIndex] as FastOperate;
+            //    if (null != Source)
+            //    {
+            //        //m_FastOperateWin_
+            //        m_FastOperateWin.Remove(Source);
+            //    }
+
+            //    if (null != Source) m_FastOperateWin.Remove(Source);
+            //}
+
+            //if ((TargetIndex > -1) && (TargetIndex < lst_dispatch.Items.Count))
+            //{
+                
+            //}
+
+        }
+
+        ListViewItem GetListViewItem(int index)
+        {
+            if (lst_dispatch.ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated)
+                return null;
+
+            return lst_dispatch.ItemContainerGenerator.ContainerFromIndex(index) as ListViewItem;
+        }  
+
+        private int GetCurrentIndex(GetPositionDelegate getPosition)
+        {
+            int index = -1;
+            for (int i = 0; i < lst_dispatch.Items.Count; ++i)
+            {
+                ListViewItem item = GetListViewItem(i);
+                if (item != null && this.IsMouseOverTarget(item, getPosition))
+                {
+                    index = i;
+                    break;
+                }
+            }
+            return index;
+        }
+
+        bool IsMouseOverTarget(Visual target, GetPositionDelegate getPosition)
+        {
+            Rect bounds = VisualTreeHelper.GetDescendantBounds(target);
+            Point mousePos = getPosition((IInputElement)target);
+            return bounds.Contains(mousePos);
+        } 
+
+
+
+        private void lst_dispatch_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+           SourceIndex = this.GetCurrentIndex(e.GetPosition);
+
+           if (SourceIndex < 0) return;
+
+           lst_dispatch.SelectedIndex = SourceIndex;
+        }
+
     }
 }

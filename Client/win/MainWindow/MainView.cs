@@ -803,24 +803,27 @@ namespace TrboX
                 itemGroup.IsExpanded = group.Key.is_exp;
                 itemGroup.Tag = group.Key;
 
-                itemGroup.ContextMenu = new ContextMenu();
-                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "添加到快速操作", Width = 160, Tag = "fast", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                itemGroup.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
-                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "在线检测", Width = 160, Tag = "check", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                itemGroup.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
-                //itemOrg.ContextMenu.Items.Add (new MenuItem() { Header = "远程监听", Width = 160, Tag = "monitor", Style = App.Current.Resources["MenuItemStyleNormal"] as Style }); 
-                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "语音调度", Width = 160, Tag = "dispatch", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "短消息", Width = 160, Tag = "message", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "位置查询", Width = 160, Tag = "position", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "指令控制", Width = 160, Tag = "control", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                itemGroup.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
-                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "工单", Width = 160, Tag = "jobticker", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
 
-                for (int i = 0; i < 10; i++)
-                    if ((i != 1) && (i != 3) && (i != 8))
-                        ((MenuItem)itemGroup.ContextMenu.Items[i]).Click += new RoutedEventHandler(m_mainWin.OnOrganizationMenu_Click);
+                    itemGroup.ContextMenu = new ContextMenu();
+                    itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "添加到快速操作", Width = 160, Tag = "fast", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                    itemGroup.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
+                    itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "在线检测", Width = 160, Tag = "check", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                    itemGroup.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
+                    //itemOrg.ContextMenu.Items.Add (new MenuItem() { Header = "远程监听", Width = 160, Tag = "monitor", Style = App.Current.Resources["MenuItemStyleNormal"] as Style }); 
+                    itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "语音调度", Width = 160, Tag = "dispatch", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                    itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "短消息", Width = 160, Tag = "message", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                    itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "位置查询", Width = 160, Tag = "position", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                    itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "指令控制", Width = 160, Tag = "control", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                    itemGroup.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
+                    itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "工单", Width = 160, Tag = "jobticker", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
 
+                    for (int i = 0; i < 10; i++)
+                        if ((i != 1) && (i != 3) && (i != 8))
+                            ((MenuItem)itemGroup.ContextMenu.Items[i]).Click += new RoutedEventHandler(m_mainWin.OnOrganizationMenu_Click);
 
+                    if (null == group.Key.target.group) itemGroup.ContextMenu.Visibility = Visibility.Hidden;
+                
+               
                 if (null != group.Value)
                 {
                     foreach(var item in group.Value)

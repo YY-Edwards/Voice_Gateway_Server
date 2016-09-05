@@ -73,6 +73,32 @@ namespace TrboX
             m_mainWin.lst_dispatch.Items.Insert(0,item);
         }
 
+        public void ChangePosition(int oldindex, int newindex)
+        {
+            if ((oldindex < 0) || (oldindex >= m_mainWin.lst_dispatch.Items.Count) || (newindex < 0) || (newindex >= m_mainWin.lst_dispatch.Items.Count)) return;
+
+            FastOperate item = m_mainWin.lst_dispatch.Items[oldindex] as FastOperate;
+
+            if(null == item)return;
+
+
+
+            if (oldindex > newindex)
+            {
+                m_mainWin.lst_dispatch.Items.Insert(newindex, item);
+                m_mainWin.lst_dispatch.Items.RemoveAt(oldindex + 1);
+            }
+            else
+            {
+                m_mainWin.lst_dispatch.Items.Insert(newindex + 1, item);
+                m_mainWin.lst_dispatch.Items.RemoveAt(oldindex);
+            }
+
+           
+
+        }
+
+
         public void Remove(FastOperate item)
         {
             m_mainWin.lst_dispatch.Items.Remove(item);

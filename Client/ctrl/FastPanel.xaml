@@ -82,12 +82,12 @@
     </UserControl.Resources>
     <!--Simple Tree View - 这用来在 ScrollViewer 中对 TreeViewItems 进行布局 -->
 
-    <Grid>
+    <Grid Drop="Grid_Drop" DragEnter="Grid_DragEnter">
         <Grid.RowDefinitions>
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Border x:Name="bdr_PanelTitle" Background="{Binding m_Type, Converter={StaticResource TypeToColor}}" BorderThickness="0" PreviewMouseLeftButtonDown="bdr_PanelTitle_PreviewMouseLeftButtonDown">
+        <Border x:Name="bdr_PanelTitle" Background="{Binding m_Type, Converter={StaticResource TypeToColor}}" BorderThickness="0" PreviewMouseLeftButtonDown="bdr_PanelTitle_PreviewMouseLeftButtonDown" Drop="bdr_PanelTitle_Drop">
             <DockPanel LastChildFill="False">
                 <Label Content="{Binding m_Type, Converter={StaticResource TypeToTitle}}" VerticalAlignment="Center"/>
                 <Button x:Name="btn_Close" Content="x" VerticalAlignment="Center" DockPanel.Dock="Right" HorizontalAlignment="Center" Margin="0,0,5,0" Height="20" Width="20" Click="btn_Close_Click"/>
