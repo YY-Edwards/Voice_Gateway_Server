@@ -82,6 +82,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="class\Event.cs" />
     <Compile Include="class\FastOperate.cs" />
     <Compile Include="class\Message.cs" />
     <Compile Include="class\Operate.cs" />
@@ -101,9 +102,20 @@
     <Compile Include="themes\MyWindow.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="win\MainWindow\EventWin.cs" />
+    <Compile Include="win\MainWindow\MainArea.cs" />
+    <Compile Include="win\MainWindow\MainMenu.cs" />
+    <Compile Include="win\MainWindow\MainMsgWin.cs" />
+    <Compile Include="win\MainWindow\MainResourceMgr.cs" />
+    <Compile Include="win\MainWindow\MainTool.cs" />
+    <Compile Include="win\MainWindow\NewWinMgr.cs" />
+    <Compile Include="win\WarnningWindow.xaml.cs">
+      <DependentUpon>WarnningWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="win\About\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
+    <Compile Include="win\MainWindow\DispatchView.cs" />
     <Compile Include="win\MainWindow\FastOperateWindow.cs" />
     <Compile Include="win\Login\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
@@ -186,6 +198,10 @@
     <Page Include="themes\Simple Styles.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="win\WarnningWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="win\About\About.xaml">
       <SubType>Designer</SubType>
