@@ -5,6 +5,7 @@ using System.Text;
 
 namespace TrboX
 {
+
     public class NewWinMgr
     {
         private Main m_Main;

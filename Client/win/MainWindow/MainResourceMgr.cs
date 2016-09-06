@@ -10,6 +10,7 @@ using System.Windows.Media;
 
 namespace TrboX
 {
+
     public class MainResourceMgr
     {
         

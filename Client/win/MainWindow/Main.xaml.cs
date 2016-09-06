@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Forms.Integration;
 
-using System.Windows.Controls.Primitives; 
+
 
 namespace TrboX
 {
@@ -51,7 +51,7 @@ namespace TrboX
             }
         }
 
-        public new static readonly DependencyProperty IsNeedSaveWorkSpace =
+        public static readonly DependencyProperty IsNeedSaveWorkSpace =
             DependencyProperty.Register("NeedSave", typeof(bool), typeof(Main), new PropertyMetadata(false));
 
         public Main()
@@ -108,62 +108,7 @@ namespace TrboX
             aboutwin.ShowDialog();
         }
 
-        private void btn_Tool_PTT_Click(object sender, RoutedEventArgs e)
-        {
-            OperateWin Operate = new OperateWin();
-            Operate.Show();
-        }
 
-        private void btn_Tool_Msg_Click(object sender, RoutedEventArgs e)
-        {
-            OperateWin Operate = new OperateWin();
-            Operate.Show();
-        }
-
-        private void btn_Tool_Position_Click(object sender, RoutedEventArgs e)
-        {
-            OperateWin Operate = new OperateWin();
-            Operate.Show();
-        }
-
-        private void btn_Tool_Job_Click(object sender, RoutedEventArgs e)
-        {
-            OperateWin Operate = new OperateWin();
-            Operate.Show();
-        }
-
-        private void lst_dispatch_Loaded(object sender, RoutedEventArgs e)
-        {
-            //itemstc it = new itemstc
-            //{
-            //    name = "AddItem"
-            //};
-
-            //btn_add.Content = it;
-            
-        }
-
-       
-        private void btn_Tool_NewContact_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private void FastPanel_Closing(object sender, RoutedEventArgs e)
-        {
-            //FastOperate it = (FastOperate)((FastPanel)sender).DataContext;
-            //m_FastOperateWin.Remove(it);
-        }
-
-        private void tree_OrgView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
-        {
-
-        }
-
-        private void tree_OrgView_PreviewMouseDoubleClick(object sender, MouseButtonEventArgs e)
-        {
-
-        }
 
         private int index = 0;
 
@@ -213,145 +158,42 @@ namespace TrboX
             index++;
         }
 
+
+
+
         private void btn_AlarmNotify_Close_Click(object sender, RoutedEventArgs e)
         {
-            CAlarmNotification it = (CAlarmNotification)((Button)sender).DataContext;
-            m_View.m_NotifyView.m_Notify.Remove(it);
+            MsgWin.RemoveNotify(((Button)sender).DataContext);
         }
 
         private void btn_MsgNotify_Close_Click(object sender, RoutedEventArgs e)
         {
-            CMsgNotification it = (CMsgNotification)((Button)sender).DataContext;
-            m_View.m_NotifyView.m_Notify.Remove(it);
+            MsgWin.RemoveNotify(((Button)sender).DataContext);
         }
 
         private void btn_RxNotify_Close_Click(object sender, RoutedEventArgs e)
         {
-            CRxNotification it = (CRxNotification)((Button)sender).DataContext;
-            m_View.m_NotifyView.m_Notify.Remove(it);
+            MsgWin.RemoveNotify(((Button)sender).DataContext);
         }
 
         private void btn_JobNotify_Close_Click(object sender, RoutedEventArgs e)
         {
-            CJobTicketNotification it = (CJobTicketNotification)((Button)sender).DataContext;
-            m_View.m_NotifyView.m_Notify.Remove(it);
+            MsgWin.RemoveNotify(((Button)sender).DataContext);
         }
         private void btn_TrackerNotify_Close_Click(object sender, RoutedEventArgs e)
         {
-            CTackerNotification it = (CTackerNotification)((Button)sender).DataContext;
-            m_View.m_NotifyView.m_Notify.Remove(it);
+            MsgWin.RemoveNotify(((Button)sender).DataContext);
         }
 
 
         private void FastPanel_TiltePressed(object sender, RoutedEventArgs e)
-         {
-             FastOperate it = (FastOperate)((FastPanel)sender).DataContext;
-
-             Point point = ((FastPanel)sender).TranslatePoint(new Point(0, 0), lst_dispatch);
-
-             object data = GetDataFromListBox(lst_dispatch, point);
-             if (data != null)
-             {
-                 DragDrop.DoDragDrop(this, data, DragDropEffects.Move);
-             }
-         }
-
-        private static object GetDataFromListBox(ListBox source, Point point)
         {
-            UIElement element = source.InputHitTest(point) as UIElement;
-            if (element != null)
-            {
-                object data = DependencyProperty.UnsetValue;
-                while (data == DependencyProperty.UnsetValue)
-                {
-                    data = source.ItemContainerGenerator.ItemFromContainer(element);
-                    if (data == DependencyProperty.UnsetValue)
-                    {
-                        element = VisualTreeHelper.GetParent(element) as UIElement;
-                    }
-                    if (element == source)
-                    {
-                        return null;
-                    }
-                }
-                if (data != DependencyProperty.UnsetValue)
-                {
-                    return data;
-                }
-            }
-            return null;
+             WorkArea.PastPanelPressed(sender, e);
         }
 
-
-        //drage item
-        int SourceIndex = -1;
-        delegate Point GetPositionDelegate(IInputElement element);  
-
-
-        private void lst_dispatch_Drop(object sender, DragEventArgs e)
+        private void FastPanel_Closing(object sender, RoutedEventArgs e)
         {
-            int TargetIndex = GetCurrentIndex(new GetPositionDelegate(e.GetPosition));
-
-            //m_FastOperateWin.ChangePosition(SourceIndex, TargetIndex);
-
-            //if ((SourceIndex > -1) && (SourceIndex < lst_dispatch.Items.Count))
-            //{
-            //    FastOperate Source = lst_dispatch.Items[SourceIndex] as FastOperate;
-            //    if (null != Source)
-            //    {
-            //        //m_FastOperateWin_
-            //        m_FastOperateWin.Remove(Source);
-            //    }
-
-            //    if (null != Source) m_FastOperateWin.Remove(Source);
-            //}
-
-            //if ((TargetIndex > -1) && (TargetIndex < lst_dispatch.Items.Count))
-            //{
-                
-            //}
-
-        }
-
-        ListViewItem GetListViewItem(int index)
-        {
-            if (lst_dispatch.ItemContainerGenerator.Status != GeneratorStatus.ContainersGenerated)
-                return null;
-
-            return lst_dispatch.ItemContainerGenerator.ContainerFromIndex(index) as ListViewItem;
-        }  
-
-        private int GetCurrentIndex(GetPositionDelegate getPosition)
-        {
-            int index = -1;
-            for (int i = 0; i < lst_dispatch.Items.Count; ++i)
-            {
-                ListViewItem item = GetListViewItem(i);
-                if (item != null && this.IsMouseOverTarget(item, getPosition))
-                {
-                    index = i;
-                    break;
-                }
-            }
-            return index;
-        }
-
-        bool IsMouseOverTarget(Visual target, GetPositionDelegate getPosition)
-        {
-            Rect bounds = VisualTreeHelper.GetDescendantBounds(target);
-            Point mousePos = getPosition((IInputElement)target);
-            return bounds.Contains(mousePos);
-        } 
-
-
-
-        private void lst_dispatch_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
-        {
-           SourceIndex = this.GetCurrentIndex(e.GetPosition);
-
-           if (SourceIndex < 0) return;
-
-           lst_dispatch.SelectedIndex = SourceIndex;
+            WorkArea.FastPanel.Remove((FastOperate)((FastPanel)sender).DataContext);
         }
 
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
@@ -374,14 +216,13 @@ namespace TrboX
                         break;
 
                 }
-            }
-            
+            }           
         }
 
         public void SaveWorkSpace()
         {
-            //m_FastOperateWin.Save();
-            m_View.m_NotifyView.m_Notify.Save();
+            WorkArea.FastPanel.Save();
+            MsgWin.SaveNotify();
             g_IsNeedSaveWorkSpace = false;
         }
 

@@ -16,9 +16,9 @@ namespace TrboX
     {
         private Main m_Main;
         
-        private Main m_mainWin;
+        //private Main m_mainWin;
 
-        public NotifyView m_NotifyView;
+        //public NotifyView m_NotifyView;
         private Dictionary<Border, MsgBox_t> m_bdrMsgList = new Dictionary<Border, MsgBox_t>();
 
 
@@ -27,7 +27,7 @@ namespace TrboX
         {
             if (null == win) return;
             m_Main = win;
-            m_mainWin = win;
+            //m_mainWin = win;
 
             GrdSplControlRegister();
             //m_mainWin.bdr_MaskMainTab.ClipToBounds = true;
@@ -258,36 +258,36 @@ namespace TrboX
             {
                 m_Main.rad_Nav_Map.Visibility = Visibility.Visible;
                 m_Main.grd_Nav.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
-                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_mainWin.grd_Nav.RowDefinitions[1].ActualHeight + 30);
-                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_mainWin.grd_Nav.RowDefinitions[1].ActualHeight + 30;
+                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 30);
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 30;
             }
             else
             {
                 m_Main.rad_Nav_Dispatch.IsChecked = true;
                 m_Main.rad_Nav_Map.Visibility = Visibility.Collapsed;
                 m_Main.grd_Nav.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
-                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_mainWin.grd_Nav.RowDefinitions[1].ActualHeight - 30);
-                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_mainWin.grd_Nav.RowDefinitions[1].ActualHeight - 30;
+                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 30);
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 30;
             }
         }
         public void NavRecordingShow(bool show)
         {
-            m_mainWin.menu_View_Nav_Recording.IsChecked = show;
+            m_Main.menu_View_Nav_Recording.IsChecked = show;
             m_Main.rad_Nav_Recording.IsChecked = show;
             if (show)
             {
                 m_Main.rad_Nav_Recording.Visibility = Visibility.Visible;
                 m_Main.grd_Nav.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
-                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_mainWin.grd_Nav.RowDefinitions[1].ActualHeight + 30);
-                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_mainWin.grd_Nav.RowDefinitions[1].ActualHeight + 30;
+                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 30);
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 30;
             }
             else
             {
                 m_Main.rad_Nav_Dispatch.IsChecked = true;
                 m_Main.rad_Nav_Recording.Visibility = Visibility.Collapsed;
                 m_Main.grd_Nav.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
-                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_mainWin.grd_Nav.RowDefinitions[1].ActualHeight - 30);
-                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_mainWin.grd_Nav.RowDefinitions[1].ActualHeight - 30;
+                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 30);
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 30;
             }
         }
 
@@ -297,22 +297,22 @@ namespace TrboX
         }
         public void NavReportShow(bool show)
         {
-            m_mainWin.menu_View_Nav_Report.IsChecked = show;
+            m_Main.menu_View_Nav_Report.IsChecked = show;
             m_Main.rad_Nav_Report.IsChecked = show;
             if (show)
             {
                 m_Main.rad_Nav_Report.Visibility = Visibility.Visible;
                 m_Main.grd_Nav.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
-                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_mainWin.grd_Nav.RowDefinitions[1].ActualHeight + 30);
-                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_mainWin.grd_Nav.RowDefinitions[1].ActualHeight + 30;
+                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 30);
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 30;
             }
             else
             {
                 m_Main.rad_Nav_Dispatch.IsChecked = true;
                 m_Main.rad_Nav_Report.Visibility = Visibility.Collapsed;
                 m_Main.grd_Nav.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
-                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_mainWin.grd_Nav.RowDefinitions[1].ActualHeight - 30);
-                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_mainWin.grd_Nav.RowDefinitions[1].ActualHeight - 30;
+                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 30);
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 30;
             }
         }
 
@@ -320,54 +320,54 @@ namespace TrboX
         private GridLength EventRowLength;
         public void EventMessageShow(bool show)
         {
-            m_mainWin.menu_View_Event.IsChecked = show;
+            m_Main.menu_View_Event.IsChecked = show;
             if(show)
             {
-                m_mainWin.grd_Disptch.RowDefinitions[1].MinHeight = 31;
-                m_mainWin.grd_Row_Event.Height = EventRowLength;
+                m_Main.grd_Disptch.RowDefinitions[1].MinHeight = 31;
+                m_Main.grd_Row_Event.Height = EventRowLength;
 
-                m_mainWin.grdspl_Main_Event.Visibility = Visibility.Visible;
+                m_Main.grdspl_Main_Event.Visibility = Visibility.Visible;
             }
             else
             {
-                m_mainWin.grd_Disptch.RowDefinitions[1].MinHeight = 0;
-                EventRowLength = m_mainWin.grd_Disptch.RowDefinitions[1].Height;
-                m_mainWin.grd_Disptch.RowDefinitions[1].Height = new GridLength(0);
-                m_mainWin.grd_Disptch.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
-                m_mainWin.grd_Disptch.RowDefinitions[0].MaxHeight = m_mainWin.grd_main.ActualHeight;
+                m_Main.grd_Disptch.RowDefinitions[1].MinHeight = 0;
+                EventRowLength = m_Main.grd_Disptch.RowDefinitions[1].Height;
+                m_Main.grd_Disptch.RowDefinitions[1].Height = new GridLength(0);
+                m_Main.grd_Disptch.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
+                m_Main.grd_Disptch.RowDefinitions[0].MaxHeight = m_Main.grd_main.ActualHeight;
 
-                m_mainWin.grdspl_Main_Event.Visibility = Visibility.Hidden;
+                m_Main.grdspl_Main_Event.Visibility = Visibility.Hidden;
             }
         }
 
 
         public void MsgAlarmShow(bool show)
         {
-            m_mainWin.menu_View_Msg_Alarm.IsChecked = show;
+            m_Main.menu_View_Msg_Alarm.IsChecked = show;
             m_Main.MsgWin.MsgAlarmShow(!show);
         }
 
         public void MsgShortMsgShow(bool show)
         {
-            m_mainWin.menu_View_Msg_ShortMsg.IsChecked = show;
+            m_Main.menu_View_Msg_ShortMsg.IsChecked = show;
             m_Main.MsgWin.MsgShortMsgShow(!show);
         }
 
         public void MsgRxShow(bool show)
         {
-            m_mainWin.menu_View_Msg_Rx.IsChecked = show;
+            m_Main.menu_View_Msg_Rx.IsChecked = show;
             m_Main.MsgWin.MsgRxShow(!show);
         }
 
         public void MsgJobShow(bool show)
         {
-            m_mainWin.menu_View_Msg_Job.IsChecked = show;
+            m_Main.menu_View_Msg_Job.IsChecked = show;
             m_Main.MsgWin.MsgJobShow(!show);
         }
 
         public void MsgTrackerShow(bool show)
         {
-            m_mainWin.menu_View_Msg_Tracker.IsChecked = show;
+            m_Main.menu_View_Msg_Tracker.IsChecked = show;
             m_Main.MsgWin.MsgTrackerShow(!show);
         }
 

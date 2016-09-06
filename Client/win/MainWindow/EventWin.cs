@@ -17,6 +17,8 @@ namespace TrboX
         {
             if (null == win) return;
             m_Main = win;
+
+            m_Main.lst_Event.View = (ViewBase)m_Main.FindResource("EventView");
         }
 
         public void AddEvent(string content)

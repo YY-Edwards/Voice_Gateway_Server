@@ -115,7 +115,6 @@
     <Compile Include="win\About\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
     </Compile>
-    <Compile Include="win\MainWindow\DispatchView.cs" />
     <Compile Include="win\MainWindow\FastOperateWindow.cs" />
     <Compile Include="win\Login\Login.xaml.cs">
       <DependentUpon>Login.xaml</DependentUpon>
@@ -137,7 +136,6 @@
       <DependentUpon>NewOperate.xaml</DependentUpon>
     </Compile>
     <Compile Include="win\CreateOperate\NewOperateView.cs" />
-    <Compile Include="win\MainWindow\MsgView.cs" />
     <Compile Include="win\TargetOperate\OperateWin.xaml.cs">
       <DependentUpon>OperateWin.xaml</DependentUpon>
     </Compile>
