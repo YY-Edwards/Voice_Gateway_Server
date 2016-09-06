@@ -81,8 +81,8 @@ namespace TrboX
         {
             get
             {
-                ControlTemplate baseWindowTemplate = button.Template;
-                ComboBox combo = (ComboBox)baseWindowTemplate.FindName("combo", button);
+                ControlTemplate baseWindowTemplate = combox.Template;
+                ComboBox combo = (ComboBox)baseWindowTemplate.FindName("combo", combox);
 
                 if (null == combo) return -1;
                 else
@@ -91,8 +91,8 @@ namespace TrboX
                 }
             }
             set {
-                ControlTemplate baseWindowTemplate = button.Template;
-                ComboBox combo = (ComboBox)baseWindowTemplate.FindName("combo", button);
+                ControlTemplate baseWindowTemplate = combox.Template;
+                ComboBox combo = (ComboBox)baseWindowTemplate.FindName("combo", combox);
 
                 if (null != combo)
                 {
@@ -122,7 +122,9 @@ namespace TrboX
         private void combo_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (-1 == ((ComboBox)sender).SelectedIndex) return;
-            
+
+            //SelectedIndex = ((ComboBox)sender).SelectedIndex;
+           
             RoutedEventArgs newEventArgs = new RoutedEventArgs(SelectedRoutedEvent);
             RaiseEvent(newEventArgs);
           

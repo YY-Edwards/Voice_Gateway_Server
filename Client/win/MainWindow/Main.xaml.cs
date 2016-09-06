@@ -21,80 +21,79 @@ namespace TrboX
     /// </summary>
     public partial class Main : MyWindow
     {
-        public MainView m_View;
-        FastOperateWindow m_FastOperateWin;
-        
-        public TargetMgr m_Target = new TargetMgr();
+        public MainMenu MenuBar;
+        public MainTool ToolBar;
 
+        public MainView View;
+
+
+        public MainResourceMgr ResrcMgr;
+        public MainArea WorkArea;
+
+        public EventWin EventList;
+        public MainMsgWin MsgWin;
+
+
+        public NewWinMgr SubWindow;
         
-        MyWebBrowse Map = new MyWebBrowse("file:///E:/Home/Projects/TrboX 3.0/Prj/TrboX/Debug/amap/index.html");
+        public MainView m_View;
+
+
+
+        public bool g_IsNeedSaveWorkSpace
+        {
+            get {
+                return (bool)GetValue(IsNeedSaveWorkSpace); 
+            }
+            set
+            {
+                SetValue(IsNeedSaveWorkSpace, value);
+            }
+        }
+
+        public new static readonly DependencyProperty IsNeedSaveWorkSpace =
+            DependencyProperty.Register("NeedSave", typeof(bool), typeof(Main), new PropertyMetadata(false));
+
         public Main()
         {
             InitializeComponent();
             this.Loaded += delegate
             {
-                this.WindowState = WindowState.Maximized;
-                m_View = new MainView(this);
+                WindowState = WindowState.Maximized;
+
+                MenuBar = new MainMenu(this);
+                ToolBar = new MainTool(this);
+
+                View = new MainView(this);
+
+                ResrcMgr = new MainResourceMgr(this);
+                WorkArea = new MainArea(this);
+                EventList = new EventWin(this);
+                MsgWin = new MainMsgWin(this);
+
+                SubWindow = new NewWinMgr(this);
 
                 OnWindowLoaded();
             };
             this.Closed += delegate
             {
-                m_FastOperateWin.Save();
-                m_View.m_NotifyView.m_Notify.Save();
                 Environment.Exit(0);
             };
         }
 
-        public override void OnMouseL_R_Prssed()
-        {
-           // m_View.On_Mouse_Pressed();
-        }
-
-
         private void OnWindowLoaded()
         {
            // organzation tree
-            m_Target.UpdateTragetList();
-            m_View.FillDataToOrgTreeView();
+            //m_Target.UpdateTragetList();
+            //m_View.FillDataToOrgTreeView();
 
+            ////dispatch
+            //lst_dispatch.View = (ViewBase)this.FindResource("ImageView");
 
-            //dispatch
-            m_FastOperateWin = new FastOperateWindow(this);
-            lst_dispatch.View = (ViewBase)this.FindResource("ImageView");
-
-            //map
-            MyWebGrid.Children.Insert(0, Map);
-
-            //msglist
-           
+            ////map
+            //MyWebGrid.Children.Insert(0, Map);
         }
 
-
-
-        public void OnOrganizationMenu_Click(object sender, RoutedEventArgs e)
-        {
-            TreeViewItem item = ((ContextMenu)((MenuItem)sender).Parent).PlacementTarget as TreeViewItem;
-
-            switch ((string)((MenuItem)sender).Tag)
-            {
-                case "fast":
-                    m_FastOperateWin.Add(new FastOperate()
-                     {
-                         m_Type = FastType.FastType_Contact,
-                         m_Contact = ((COrganization)item.Tag).target
-                     });
-                    break;
-            };
-
-
-        }
-
-
-        private void Button_Click_1(object sender, RoutedEventArgs e)
-        {
-            Map.View("file:///E:/Home/Projects/TrboX 3.0/Prj/TrboX/Debug/amap/index.html");
-        }
 
         //About
         private void menu_Help_About_Click(object sender, RoutedEventArgs e)
@@ -152,8 +151,8 @@ namespace TrboX
 
         private void FastPanel_Closing(object sender, RoutedEventArgs e)
         {
-            FastOperate it = (FastOperate)((FastPanel)sender).DataContext;
-            m_FastOperateWin.Remove(it);
+            //FastOperate it = (FastOperate)((FastPanel)sender).DataContext;
+            //m_FastOperateWin.Remove(it);
         }
 
         private void tree_OrgView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
@@ -209,7 +208,7 @@ namespace TrboX
                 )
             };
 
-            m_FastOperateWin.Add(op);
+            //m_FastOperateWin.Add(op);
 
             index++;
         }
@@ -293,7 +292,7 @@ namespace TrboX
         {
             int TargetIndex = GetCurrentIndex(new GetPositionDelegate(e.GetPosition));
 
-            m_FastOperateWin.ChangePosition(SourceIndex, TargetIndex);
+            //m_FastOperateWin.ChangePosition(SourceIndex, TargetIndex);
 
             //if ((SourceIndex > -1) && (SourceIndex < lst_dispatch.Items.Count))
             //{
@@ -353,6 +352,37 @@ namespace TrboX
            if (SourceIndex < 0) return;
 
            lst_dispatch.SelectedIndex = SourceIndex;
+        }
+
+        private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (true == g_IsNeedSaveWorkSpace)
+            {
+
+                WarnningWindow warn = new WarnningWindow();
+                warn.ShowDialog();
+
+                switch (warn.Reslut)
+                {
+                    case ResultType.Enter:
+                        SaveWorkSpace();
+                        break;
+                    case ResultType.Exit:
+                        break;
+                    case ResultType.Cancle:
+                        e.Cancel = true;
+                        break;
+
+                }
+            }
+            
+        }
+
+        public void SaveWorkSpace()
+        {
+            //m_FastOperateWin.Save();
+            m_View.m_NotifyView.m_Notify.Save();
+            g_IsNeedSaveWorkSpace = false;
         }
 
     }

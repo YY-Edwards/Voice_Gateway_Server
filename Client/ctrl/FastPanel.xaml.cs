@@ -120,6 +120,29 @@ namespace TrboX
         }
     }
 
+    public class ButtonHideItemConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            CRelationShipObj contact = value as CRelationShipObj;
+            if (null == contact) return Visibility.Collapsed;
+
+            if((OrgItemType.Type_Group != contact.key) && (null == contact.radio))
+            {
+                return Visibility.Collapsed;
+            }
+
+            return Visibility.Visible;
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+    
+
     public class FastPanelItemConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)

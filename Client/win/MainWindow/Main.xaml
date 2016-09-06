@@ -5,15 +5,16 @@
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" 
         xmlns:local="clr-namespace:TrboX"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" 
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" x:Name="MainWindow" mc:Ignorable="d" 
         x:Class="TrboX.Main"   
         Icon="/TrboX;component/themes/resource/Logo.png" 
-        Title="TrboX" Height="640" Width="1024" WindowStartupLocation="CenterScreen" Style="{DynamicResource MyWindowStyle}" 
+        Title="TrboX" Height="640" Width="1024" WindowStartupLocation="CenterScreen" Style="{DynamicResource MyWindowStyle}" Closing="MainWindow_Closing" 
     >
     <local:MyWindow.Resources>
         <local:MsgWidthValueConverter x:Key="MsgWidth"/>
         <!--Simple Tree View - 这用来在 ScrollViewer 中对 TreeViewItems 进行布局 -->
         <local:IsNullValueConverter x:Key="IsObjNull" />
+        <local:MainTabIndexFromRadio x:Key="IndexFromRadio" />
         <GridView x:Key="GridView">
             <GridView.Columns>
                 <GridViewColumn Header="Name" DisplayMemberBinding="{Binding Path=name}"/>
@@ -166,17 +167,19 @@
                     <Menu Style="{DynamicResource MenuStyleNormal}">
                         <MenuItem Header="文件" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top">
                             <MenuItem Header="新建" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160">
-                                <MenuItem Header="语音调度" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160" IsEnabled="False"/>
-                                <MenuItem x:Name="menu_View_Tool_Base1" Header="短消息" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                                <MenuItem x:Name="menu_View_Tool_Fast1" Header="位置查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                                <MenuItem x:Name="menu_View_Tool_Ctrl1" Header="工单" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_File_NewDispatch" Header="语音调度" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_File_NewMessage" Header="短消息" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_File_NewPosition" Header="位置查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_File_NewControl" Header="指令控制" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_File_NewJobTicket" Header="工单" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>                               
+                                <MenuItem x:Name="menu_File_NewTracker" Header="巡更任务" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                             </MenuItem>
-                            <MenuItem Header="保存" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem   x:Name="menu_File_Save"  Header="保存" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160" IsEnabled="{Binding NeedSave, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Main}}}"/>
                             <Separator Margin="0" Style="{DynamicResource SeparatorStyleNormal}"/>
-                            <MenuItem Header="导出" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                            <MenuItem Header="打印" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem x:Name="menu_File_Export" Header="导出" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem x:Name="menu_File_Print" Header="打印" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                             <Separator Margin="0" Style="{DynamicResource SeparatorStyleNormal}"/>
-                            <MenuItem x:Name="menu_View_Event1" Header="退出TrboX" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem x:Name="menu_File_Exit" Header="退出TrboX" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                         </MenuItem>
                         <MenuItem Header="视图" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top">
                             <MenuItem Header="工具栏" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160">
@@ -208,67 +211,56 @@
                                 <MenuItem x:Name="menu_View_Msg_Tracker" Header="巡更" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" IsChecked="True" Width="160"/>
                             </MenuItem>
                         </MenuItem>
-                        <MenuItem Header="目标" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top">
-                        	<MenuItem Header="在线检测" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        	<MenuItem Header="远程监听" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                        <MenuItem x:Name="menu_Target" Header="目标" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Visibility="Collapsed">
+                            <MenuItem x:Name="menu_Target_Check" Header="在线检测" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem x:Name="menu_Target_Monitor" Header="远程监听" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                         	<Separator Margin="0" Style="{DynamicResource SeparatorStyleNormal}" Width="160"/>
-                        	<MenuItem Header="语音调度" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160">
-                        		<MenuItem Header="个呼" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        		<MenuItem Header="组呼" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        		<MenuItem Header="广播/全呼" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        	</MenuItem>
-                        	<MenuItem Header="短消息" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160">
-                        		<MenuItem Header="单发" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        		<MenuItem Header="组发" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        		<MenuItem Header="广播/全发" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        	</MenuItem>
+                            <MenuItem  x:Name="menu_Target_Call" Header="呼叫" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160" />
+                            <MenuItem  x:Name="menu_Target_Message" Header="短消息" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160" />                      
                         	<MenuItem Header="位置查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160">
-                        		<MenuItem Header="查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        		<MenuItem Header="周期查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem  x:Name="menu_Target_Position"  Header="查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_Target_PositionCycle"  Header="周期查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                         		<Separator Margin="0" Style="{DynamicResource SeparatorStyleNormal}" Width="160"/>
-                        		<MenuItem Header="CSBK查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        		<MenuItem Header="CSBK周期查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_Target_PositionCSBK"  Header="CSBK查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_Target_PositionCSBKCycle"  Header="CSBK周期查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                         		<Separator Margin="0" Style="{DynamicResource SeparatorStyleNormal}" Width="160"/>
-                        		<MenuItem Header="CSBK增强型查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        		<MenuItem Header="CSBK增强型周期查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_Target_PositionEnh"  Header="CSBK增强型查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_Target_PositionEnhCycle"  Header="CSBK增强型周期查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                         		<Separator Margin="0" Style="{DynamicResource SeparatorStyleNormal}" Width="160"/>
-                        		<MenuItem Header="轨迹回放" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_Target_Trail"  Header="轨迹回放" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                         	</MenuItem>
                         	<MenuItem Header="指令控制" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160">
-                        		<MenuItem Header="遥开" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        		<MenuItem Header="遥毙" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        		<MenuItem Header="遥晕" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        		<MenuItem Header="遥醒" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        		<Separator Margin="0" Style="{DynamicResource SeparatorStyleNormal}" Width="160"/>
-                        		<Separator Margin="0" Style="{DynamicResource SeparatorStyleNormal}" Width="160"/>
-                        		<MenuItem Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_Target_StartUp"  Header="遥开" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_Target_Shut" Header="遥毙" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_Target_Sleep" Header="遥晕" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                                <MenuItem x:Name="menu_Target_Week" Header="遥醒" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                         	</MenuItem>
                         	<Separator Margin="0" Style="{DynamicResource SeparatorStyleNormal}" Width="160"/>
-                        	<MenuItem Header="工单" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                        	<MenuItem x:Name="menu_Target_JobTicket" Header="工单" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                         </MenuItem>
                         <MenuItem Header="录音" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top">
-                        	<MenuItem Header="录音列表" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        	<MenuItem Header="查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        	<MenuItem Header="回放" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem x:Name="menu_Rec_Update"   Header="更新" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem x:Name="menu_Rec_Search" Header="查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem x:Name="menu_Rec_Replay" Header="回放" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                         	<Separator Margin="0" Style="{DynamicResource SeparatorStyleNormal}"/>
-                        	<MenuItem x:Name="menu_View_Event3" Header="导入" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        	<MenuItem x:Name="menu_View_Event2_Copy2" Header="导出" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem x:Name="menu_Rec_Import"  Header="导入" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem x:Name="menu_Rec_Export" Header="导出" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                         </MenuItem>
                         <MenuItem Header="巡更" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top">
-                        	<MenuItem x:Name="menu_View_Event2_Copy1" Header="任务列表" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        	<MenuItem Header="新建常规任务" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        	<MenuItem Header="新建定时任务" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                        	<MenuItem x:Name="menu_Tracker_Task" Header="任务列表" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem x:Name="menu_Tracker_NewTask" Header="新建常规任务" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem  x:Name="menu_Tracker_NewTimeTask" Header="新建定时任务" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                         	<Separator Margin="0" Style="{DynamicResource SeparatorStyleNormal}"/>
-                        	<MenuItem x:Name="menu_View_Event2" Header="跟踪" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem  x:Name="menu_Tracker_Tracker" Header="跟踪" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                         </MenuItem>
                         <MenuItem Header="工具" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top">
-                        	<MenuItem Header="新建常用联系人" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        	<MenuItem Header="新建常用组" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        	<MenuItem Header="新建快速操作" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem  x:Name="menu_Tools_NewContact" Header="新建常用联系人" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem x:Name="menu_Tools_NewGroup" Header="新建常用组" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem x:Name="menu_Tools_NewOperate" Header="新建快速操作" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                         	<Separator Margin="0" Style="{DynamicResource SeparatorStyleNormal}"/>
-                        	<MenuItem x:Name="menu_View_Event4" Header="导出配置" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        	<MenuItem x:Name="menu_View_Event2_Copy5" Header="导入配置" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                        	<MenuItem x:Name="menu_View_Event2_Copy6" Header="选项" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem x:Name="menu_Tools_Export" Header="导出配置" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem x:Name="menu_Tools_Import" Header="导入配置" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
+                            <MenuItem x:Name="menu_Tools_Potions" Header="选项" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                         </MenuItem>
                         <MenuItem Header="帮助" HorizontalAlignment="Left" Style="{DynamicResource MenuItemStyleNormal}" Margin="0">
                             <MenuItem x:Name="menu_Help_Look" Header="查看帮助" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
@@ -282,13 +274,13 @@
                     <DockPanel LastChildFill="False" Margin="0">
                         <Border BorderBrush="#FFEEEEEE" BorderThickness="1,0" Margin="0" Padding="3,0">
                             <DockPanel LastChildFill="False">
-                                <local:ComboButton Icon="/TrboX;component/themes/resource/Logo.png" Width="35" >
+                                <local:ComboButton x:Name="cmb_Tool_New" Icon="/TrboX;component/themes/resource/Logo.png" Width="35" >
                                     <local:ComboButton.Items>
-                                        <ComboBoxItem Content="新建呼叫"/>
                                         <ComboBoxItem Content="新建短消息"/>
                                         <ComboBoxItem Content="新建位置查询"/>
                                         <ComboBoxItem Content="新建指令控制"/>
                                         <ComboBoxItem Content="新建工单"/>
+                                        <ComboBoxItem Content="新建巡更任务"/>
                                     </local:ComboButton.Items>
                                 </local:ComboButton>
                                 <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="131,86,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="删除"/>
@@ -382,8 +374,17 @@
                                             </RadioButton>
                                         </DockPanel>
                                     </Border>
-                                    <Border x:Name="bdr_MaskMgrTab" BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top">
-                                        <TabControl x:Name="tab_Mgr"  BorderThickness="0" Focusable="False" IsTabStop="True" SelectedIndex="0" IsSynchronizedWithCurrentItem="True" Margin="0,-22,0,0" Style="{DynamicResource TabControlStyleNormal}">
+                                    <Border x:Name="bdr_MaskMgrTab" BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" ClipToBounds="True">
+                                        <TabControl x:Name="tab_Mgr"  BorderThickness="0" Focusable="False" IsTabStop="True" IsSynchronizedWithCurrentItem="True" Margin="0,-22,0,0" Style="{DynamicResource TabControlStyleNormal}">
+                                            <TabControl.SelectedIndex>
+                                                <MultiBinding  Converter="{StaticResource IndexFromRadio}" Mode="OneWay">
+                                                    <Binding ElementName="rad_Mgr_Org" Path="IsChecked" />
+                                                    <Binding ElementName="rad_Mgr_Group" Path="IsChecked" />
+                                                    <Binding ElementName="rad_Mgr_Employee" Path="IsChecked" />
+                                                    <Binding ElementName="rad_Mgr_Vehicle" Path="IsChecked" />
+                                                    <Binding ElementName="rad_Mgr_Device" Path="IsChecked" />
+                                                </MultiBinding>
+                                            </TabControl.SelectedIndex>
                                             <TabItem x:Name="tab_Mgr_Org" Header="组织" Style="{DynamicResource SimpleTabItem}" Width="10">
                                                 <DockPanel>
                                                     <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
@@ -482,15 +483,23 @@
                             </Grid.RowDefinitions>
 
                             <Border BorderBrush="Black" BorderThickness="1" Margin="0" Padding="0">
-                                <Border x:Name="bdr_MaskMainTab" BorderBrush="Black" BorderThickness="0">
+                                <Border x:Name="bdr_MaskMainTab" BorderBrush="Black" BorderThickness="0" ClipToBounds="True">
                                     <TabControl x:Name="tab_main" BorderThickness="0" Margin="0,-22,0,0" ClipToBounds="True" Style="{DynamicResource TabControlStyleNormal}">
+                                        <TabControl.SelectedIndex>
+                                            <MultiBinding  Converter="{StaticResource IndexFromRadio}" Mode="OneWay">
+                                                <Binding ElementName="rad_Nav_Dispatch" Path="IsChecked" />
+                                                <Binding ElementName="rad_Nav_Map" Path="IsChecked" />
+                                                <Binding ElementName="rad_Nav_Recording" Path="IsChecked" />
+                                                <Binding ElementName="rad_Nav_Report" Path="IsChecked" />
+                                            </MultiBinding>
+                                        </TabControl.SelectedIndex>
                                         <TabItem Header="起始页" Style="{DynamicResource SimpleTabItem}" Width="20">
                                             <DockPanel>
                                                 <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
                                                 	<Label Content="语音调度" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                                 </Border>
                                                 <Grid>
-                                                    <ListView x:Name="lst_dispatch"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" AllowDrop="True" Drop="lst_dispatch_Drop" PreviewMouseLeftButtonDown="lst_dispatch_PreviewMouseLeftButtonDown" >
+                                                    <ListView x:Name="lst_dispatch"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Drop="lst_dispatch_Drop" PreviewMouseLeftButtonDown="lst_dispatch_PreviewMouseLeftButtonDown"   >
                                                         <ListView.ContextMenu>
                                                             <ContextMenu>
                                                             	<MenuItem Header="添加常用联系人"/>

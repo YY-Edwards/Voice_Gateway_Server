@@ -20,7 +20,8 @@
 
         <local:ItemIconConverter x:Key="TypeToIcon" />
         <local:OperateTypeItemConverter x:Key="OpTypeToItem" />
-        
+
+        <local:ButtonHideItemConverter x:Key="OpBtnHide" />
 
         <local:ContactTypeItemConverter x:Key="ContactTypeToItem" />
         <Style x:Key="ComboButtonSCtrl" TargetType="{x:Type local:ComboButton}">
@@ -89,10 +90,10 @@
         </Grid.RowDefinitions>
         <Border x:Name="bdr_PanelTitle" Background="{Binding m_Type, Converter={StaticResource TypeToColor}}" BorderThickness="0" PreviewMouseLeftButtonDown="bdr_PanelTitle_PreviewMouseLeftButtonDown" Drop="bdr_PanelTitle_Drop">
             <DockPanel LastChildFill="False">
-                <Label Content="{Binding m_Type, Converter={StaticResource TypeToTitle}}" VerticalAlignment="Center"/>
-                <Button x:Name="btn_Close" Content="x" VerticalAlignment="Center" DockPanel.Dock="Right" HorizontalAlignment="Center" Margin="0,0,5,0" Height="20" Width="20" Click="btn_Close_Click"/>
+                <Label Content="{Binding m_Type, Converter={StaticResource TypeToTitle}}" VerticalAlignment="Center"/>               
             </DockPanel>
         </Border>
+        <Button x:Name="btn_Close" Content="x" VerticalAlignment="Top" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,5,5,0" Height="20" Width="20" Click="btn_Close_Click"/>
         <Border BorderBrush="Black" BorderThickness="0" Grid.RowSpan="3" Grid.Row="1" ClipToBounds="True" Padding="10,0,10,10" Background="#8021EEAD">
             <TabControl SelectedIndex="{Binding m_Type, Converter={StaticResource TypeToItem}}" Style="{DynamicResource TabControlStyleNormal}" Margin="0,-22,0,0" BorderThickness="0">
                 <TabItem Header="TabItem">
@@ -204,19 +205,19 @@
                             </TabControl>
                         </Border>
                         <DockPanel LastChildFill="False" Grid.Row="1" Width="80" HorizontalAlignment="Left">
-                            <Button Content="在线检测" Margin="0,0,0,3" DockPanel.Dock="Top" ToolTip="在线检测"/>
-                            <Button Content="远程监听" Margin="0,0,0,3" DockPanel.Dock="Top" ToolTip="远程监听" Visibility="{Binding m_Contact.key, Converter={StaticResource IsMonitor}}"/>
-                            <Button Content="呼叫" Margin="0,0,0,3" DockPanel.Dock="Top" ToolTip="呼叫"/>
-                            <Button Content="短消息" Margin="0,0,0,3" DockPanel.Dock="Top" ToolTip="短消息"/>
-                            <Button Content="位置查询" Margin="0,0,0,3" DockPanel.Dock="Top"  ToolTip="位置查询"/>
-                            <local:ComboButton Content="遥毙" Height="20" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,3" Background="White">
+                            <Button x:Name="btn_Check" Content="在线检测" Margin="0,0,0,3" DockPanel.Dock="Top" ToolTip="在线检测" Visibility="{Binding m_Contact, Converter={StaticResource OpBtnHide}}"/>
+                            <Button x:Name="btn_Monitor"  Content="远程监听" Margin="0,0,0,3" DockPanel.Dock="Top" ToolTip="远程监听"  Visibility="{Binding Visibility, ElementName=btn_Check}"/>
+                            <Button x:Name="btn_Call"  Content="呼叫" Margin="0,0,0,3" DockPanel.Dock="Top" ToolTip="呼叫"  Visibility="{Binding Visibility, ElementName=btn_Check}"/>
+                            <Button x:Name="btn_Message"  Content="短消息" Margin="0,0,0,3" DockPanel.Dock="Top" ToolTip="短消息"  Visibility="{Binding Visibility, ElementName=btn_Check}"/>
+                            <Button x:Name="btn_Position"  Content="位置查询" Margin="0,0,0,3" DockPanel.Dock="Top"  ToolTip="位置查询"  Visibility="{Binding Visibility, ElementName=btn_Check}"/>
+                            <local:ComboButton x:Name="btn_Control"  Content="遥毙" Height="20" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,3" Background="White" Visibility="{Binding Visibility, ElementName=btn_Check}">
                                 <local:ComboButton.Items>
                                     <ComboBoxItem Content="遥开"/>
                                     <ComboBoxItem Content="遥晕"/>
                                     <ComboBoxItem Content="遥醒"/>
                                 </local:ComboButton.Items>
                             </local:ComboButton>
-                            <Button Content="工单" Margin="0" DockPanel.Dock="Top" Cursor="" ToolTip="工单"/>
+                            <Button x:Name="btn_Job"  Content="工单" Margin="0" DockPanel.Dock="Top" Cursor="" ToolTip="工单" Visibility="{Binding Visibility, ElementName=btn_Check}" />
                         </DockPanel>
                     </Grid>
                 </TabItem>

@@ -13,6 +13,7 @@ namespace TrboX
         Control,
         Position,
         JobTicker,
+        Tracker,
     };
 
     public enum TargetType

@@ -162,6 +162,7 @@ namespace TrboX
             {
                 m_Win.lst_Alarm.Items.Insert(0, item);
             }));
+            m_Win.g_IsNeedSaveWorkSpace = true;
         }
 
         public void Remove(CAlarmNotification item)
@@ -170,11 +171,13 @@ namespace TrboX
             {
                 m_Win.lst_Alarm.Items.Remove(item);
             }));
+            m_Win.g_IsNeedSaveWorkSpace = true;
         }
 
         public void ClearAlarm()
         {
             m_Win.lst_Alarm.Items.Clear();
+            m_Win.g_IsNeedSaveWorkSpace = true;
         }
 
         public void Add(CMsgNotification item)
@@ -183,6 +186,7 @@ namespace TrboX
             {
                 m_Win.lst_ShortMsg.Items.Insert(0, item);
             }));
+            m_Win.g_IsNeedSaveWorkSpace = true;
         }
 
         public void Remove(CMsgNotification item)
@@ -191,11 +195,13 @@ namespace TrboX
             {
                 m_Win.lst_ShortMsg.Items.Remove(item);
             }));
+            m_Win.g_IsNeedSaveWorkSpace = true;
         }
 
         public void ClearShortMsg()
         {
             m_Win.lst_ShortMsg.Items.Clear();
+            m_Win.g_IsNeedSaveWorkSpace = true;
         }
 
         public void Add(CRxNotification item)
@@ -204,6 +210,7 @@ namespace TrboX
             {
                 m_Win.lst_Rx.Items.Insert(0, item);
             }));
+            m_Win.g_IsNeedSaveWorkSpace = true;
         }
 
         public void Remove(CRxNotification item)
@@ -212,11 +219,13 @@ namespace TrboX
             {
                 m_Win.lst_Rx.Items.Remove(item);
             }));
+            m_Win.g_IsNeedSaveWorkSpace = true;
         }
 
         public void ClearRx()
         {
             m_Win.lst_Rx.Items.Clear();
+            m_Win.g_IsNeedSaveWorkSpace = true;
         }
 
         public void Add(CJobTicketNotification item)
@@ -225,6 +234,7 @@ namespace TrboX
             {
                 m_Win.lst_Job.Items.Insert(0, item);
             }));
+            m_Win.g_IsNeedSaveWorkSpace = true;
         }
 
         public void Remove(CJobTicketNotification item)
@@ -233,11 +243,13 @@ namespace TrboX
             {
                 m_Win.lst_Job.Items.Remove(item);
             }));
+            m_Win.g_IsNeedSaveWorkSpace = true;
         }
 
         public void ClearJob()
         {
             m_Win.lst_Job.Items.Clear();
+            m_Win.g_IsNeedSaveWorkSpace = true;
         }
 
         public void Add(CTackerNotification item)
@@ -246,6 +258,7 @@ namespace TrboX
             {
                 m_Win.lst_Tracker.Items.Insert(0, item);
             }));
+            m_Win.g_IsNeedSaveWorkSpace = true;
         }
 
         public void Remove(CTackerNotification item)
@@ -254,11 +267,13 @@ namespace TrboX
             {
                 m_Win.lst_Tracker.Items.Remove(item);
             }));
+            m_Win.g_IsNeedSaveWorkSpace = true;
         }
 
         public void ClearTracker()
         {
             m_Win.lst_Tracker.Items.Clear();
+            m_Win.g_IsNeedSaveWorkSpace = true;
         }
 
     }
@@ -285,14 +300,14 @@ namespace TrboX
             while(true)
             {
                 i++;
-                 //m_Notify.Add(new CAlarmNotification() { Content = "test" + i.ToString(), time = DateTime.Now });
-                 //m_Notify.Add(new CMsgNotification() { Content = "test" + i.ToString(), time = DateTime.Now });
-                 //m_Notify.Add(new CRxNotification() { time = DateTime.Now });
-                 //m_Notify.Add(new CJobTicketNotification() {  time = DateTime.Now });
-                 //m_Notify.Add(new CTackerNotification() {  time = DateTime.Now });
+                //m_Notify.Add(new CAlarmNotification() { Content = "test" + i.ToString(), time = DateTime.Now });
+                //m_Notify.Add(new CMsgNotification() { Content = "test" + i.ToString(), time = DateTime.Now });
+                //m_Notify.Add(new CRxNotification() { time = DateTime.Now });
+                //m_Notify.Add(new CJobTicketNotification() { time = DateTime.Now });
+                //m_Notify.Add(new CTackerNotification() { time = DateTime.Now });
 
 
-                 //m_Win.m_View.AddEvent("事件" + i.ToString());
+                //m_Win.m_View.AddEvent("事件" + i.ToString());
 
                 Thread.Sleep(2000);
             }

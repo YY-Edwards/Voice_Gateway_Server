@@ -44,21 +44,6 @@ namespace TrboX
             }
         }
 
-        public string SerializeObject(object obj)
-        {
-            if (null == obj)
-                return string.Empty;
-            Type type = obj.GetType();
-            FieldInfo[] fields = type.GetFields(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance);
-            StringBuilder objString = new StringBuilder();
-            foreach (FieldInfo field in fields)
-            {
-                object value = field.GetValue(obj);     //取得字段的值
-                objString.Append(field.Name + ":" + value + ";");
-            }
-            return objString.ToString();
-        }
-
         public void Add(FastOperate item)
         {
             foreach (FastOperate it in m_mainWin.lst_dispatch.Items)
@@ -71,6 +56,7 @@ namespace TrboX
             }
 
             m_mainWin.lst_dispatch.Items.Insert(0,item);
+            m_mainWin.g_IsNeedSaveWorkSpace = true;
         }
 
         public void ChangePosition(int oldindex, int newindex)
@@ -94,7 +80,7 @@ namespace TrboX
                 m_mainWin.lst_dispatch.Items.RemoveAt(oldindex);
             }
 
-           
+            m_mainWin.g_IsNeedSaveWorkSpace = true;
 
         }
 
@@ -102,7 +88,7 @@ namespace TrboX
         public void Remove(FastOperate item)
         {
             m_mainWin.lst_dispatch.Items.Remove(item);
-            
+            m_mainWin.g_IsNeedSaveWorkSpace = true;           
         }
 
         public void Save()
