@@ -756,8 +756,14 @@
 				</Setter.Value>
 			</Setter>
 		</Style>
-		<Style x:Key="TreeViewItemStyle2nd" d:IsControlPart="True" TargetType="{x:Type TreeViewItem}">
-			<Setter Property="Background" Value="Transparent"/>
+
+    <local:IconFormOrgConverter x:Key="IconFromOrg" />
+    <local:IconOpFormOrgConverter x:Key="IconOpFromOrg" />
+    <local:IconEnableFormOrgConverter x:Key="IconEnableFromOrg" />
+
+
+    <Style x:Key="TreeViewItemStyleGroup" d:IsControlPart="True" TargetType="{x:Type TreeViewItem}">
+        <Setter Property="Background" Value="Transparent"/>
         <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
         <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
         <Setter Property="Padding" Value="1,0,0,0"/>
@@ -775,11 +781,12 @@
                             <RowDefinition/>
                         </Grid.RowDefinitions>
                         <Border x:Name="border" BorderBrush="Black" BorderThickness="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Height="Auto" Grid.RowSpan="1" VerticalAlignment="Stretch" Width="Auto" Margin="0" Background="#FF97C5F7"/>
-                    	<ToggleButton x:Name="Expander" Style="{DynamicResource SimpleTreeViewItemToggleButton}" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press" VerticalAlignment="Stretch" Margin="20,0,0,0"/>
-                    	<Border Grid.Column="1" x:Name="Selection_Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" VerticalAlignment="Center">
-                    		<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" x:Name="PART_Header" ContentSource="Header"/>
-                    	</Border>
-                    	<ItemsPresenter Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" x:Name="ItemsHost"/>
+                        <ToggleButton x:Name="Expander" Style="{DynamicResource SimpleTreeViewItemToggleButton}" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press" VerticalAlignment="Stretch" Margin="20,0,0,0"/>
+                        <Border Grid.Column="1" x:Name="Selection_Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" VerticalAlignment="Center" Margin="25,0,0,0">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" x:Name="PART_Header" ContentSource="Header"/>
+                        </Border>
+                        <ItemsPresenter Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" x:Name="ItemsHost"/>
+                        <Image Margin="5,0,0,0" Grid.Column="1" Width="16" Height="16" HorizontalAlignment="Left" Source="{Binding Tag.target, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconFromOrg}}"/>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsExpanded" Value="False">
@@ -790,10 +797,10 @@
                             <Setter Property="Visibility" Value="Hidden" TargetName="Expander"/>
                         </Trigger>
                         <Trigger Property="IsSelected" Value="true">
-                            <Setter Property="Background" TargetName="border" Value="#FF97C5F7"/>
+                            <Setter Property="Background" TargetName="border" Value="#FFFFFF00"/>
                             <Setter Property="Background" TargetName="Selection_Border" Value="{x:Null}"/>
                         </Trigger>
-                        <MultiTrigger>
+                        <!--<MultiTrigger>
                             <MultiTrigger.Conditions>
                                 <Condition Property="IsSelected" Value="true"/>
                                 <Condition Property="IsSelectionActive" Value="false"/>
@@ -801,78 +808,81 @@
                             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
                             <Setter Property="Background" TargetName="grid" Value="#FFFFFF00"/>
                             <Setter Property="Background" TargetName="border" Value="#FFFFFF00"/>
-                        </MultiTrigger>
+                        </MultiTrigger>-->
                         <Trigger Property="IsEnabled" Value="false">
                             <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
                             <Setter Property="Background" TargetName="border" Value="#FFF3F3F3"/>
                         </Trigger>
                         <Trigger Property="IsMouseOver" Value="True">
-                        	<Setter Property="Background" TargetName="border" Value="#FF97C5F7"/>
+                            <Setter Property="Background" TargetName="border" Value="#FF97C5F7"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-		</Style>
-		<Style x:Key="TreeViewItemStyle3rd" d:IsControlPart="True" TargetType="{x:Type TreeViewItem}">
-			<Setter Property="Background" Value="Transparent"/>
-			<Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-			<Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
-			<Setter Property="Padding" Value="1,0,0,0"/>
-			<Setter Property="Template">
-				<Setter.Value>
-					<ControlTemplate TargetType="{x:Type TreeViewItem}">
-						<Grid x:Name="grid">
-							<Grid.ColumnDefinitions>
-								<ColumnDefinition MinWidth="19" Width="Auto"/>
-								<ColumnDefinition Width="Auto"/>
-								<ColumnDefinition Width="*"/>
-							</Grid.ColumnDefinitions>
-							<Grid.RowDefinitions>
-								<RowDefinition Height="24"/>
-								<RowDefinition/>
-							</Grid.RowDefinitions>
-							<Border x:Name="border" BorderBrush="Black" BorderThickness="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Height="Auto" Grid.RowSpan="1" VerticalAlignment="Stretch" Width="Auto" Margin="0" Background="#FF97C5F7"/>
-							<ToggleButton x:Name="Expander" Style="{DynamicResource SimpleTreeViewItemToggleButton}" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press" VerticalAlignment="Stretch" Margin="40,0,0,0"/>
-							<Border Grid.Column="1" x:Name="Selection_Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" VerticalAlignment="Center">
-								<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" x:Name="PART_Header" ContentSource="Header"/>
-							</Border>
-							<ItemsPresenter Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" x:Name="ItemsHost"/>
-						</Grid>
-						<ControlTemplate.Triggers>
-							<Trigger Property="IsExpanded" Value="False">
-								<Setter Property="Visibility" Value="Collapsed" TargetName="ItemsHost"/>
-								<Setter Property="Background" TargetName="border" Value="{x:Null}"/>
-							</Trigger>
-							<Trigger Property="HasItems" Value="false">
-								<Setter Property="Visibility" Value="Hidden" TargetName="Expander"/>
-							</Trigger>
-							<Trigger Property="IsSelected" Value="true">
-								<Setter Property="Background" TargetName="border" Value="#FF97C5F7"/>
-								<Setter Property="Background" TargetName="Selection_Border" Value="{x:Null}"/>
-							</Trigger>
-							<MultiTrigger>
-								<MultiTrigger.Conditions>
-									<Condition Property="IsSelected" Value="true"/>
-									<Condition Property="IsSelectionActive" Value="false"/>
-								</MultiTrigger.Conditions>
-								<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+    </Style>
+    <Style x:Key="TreeViewItemStyleMember" d:IsControlPart="True" TargetType="{x:Type TreeViewItem}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+        <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+        <Setter Property="Padding" Value="1,0,0,0"/>
+        <Setter Property="IsEnabled" Value="{Binding Tag.target, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconEnableFromOrg}}"/>
+        
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                    <Grid x:Name="grid">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MinWidth="19" Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="24"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Border x:Name="border" BorderBrush="Black" BorderThickness="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Height="Auto" Grid.RowSpan="1" VerticalAlignment="Stretch" Width="Auto" Margin="0" Background="#FF97C5F7"/>
+                        <ToggleButton x:Name="Expander" Style="{DynamicResource SimpleTreeViewItemToggleButton}" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press" VerticalAlignment="Stretch" Margin="40,0,0,0"/>
+                        <Border Grid.Column="1" x:Name="Selection_Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" VerticalAlignment="Center" Margin="25,0,0,0">
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" x:Name="PART_Header" ContentSource="Header"  Opacity="{Binding Tag.target, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconOpFromOrg}}"/>
+                        </Border>
+                        <ItemsPresenter Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" x:Name="ItemsHost"/>
+                        <Image Margin="5,0,0,0" Grid.Column="1" Width="16" Height="16" HorizontalAlignment="Left" Source="{Binding Tag.target, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconFromOrg}}" Opacity="{Binding Tag.target, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconOpFromOrg}}"/>                       
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsExpanded" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" TargetName="ItemsHost"/>
+                            <Setter Property="Background" TargetName="border" Value="{x:Null}"/>
+                        </Trigger>
+                        <Trigger Property="HasItems" Value="false">
+                            <Setter Property="Visibility" Value="Hidden" TargetName="Expander"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="true">
+                            <Setter Property="Background" TargetName="border" Value="#FFFFFF00"/>
+                            <Setter Property="Background" TargetName="Selection_Border" Value="{x:Null}"/>
+                        </Trigger>
+                        <!--<MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="true"/>
+                                <Condition Property="IsSelectionActive" Value="false"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
                             <Setter Property="Background" TargetName="grid" Value="#FFFFFF00"/>
                             <Setter Property="Background" TargetName="border" Value="#FFFFFF00"/>
-							</MultiTrigger>
-							<Trigger Property="IsEnabled" Value="false">
-								<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
-								<Setter Property="Background" TargetName="border" Value="#FFF3F3F3"/>
-							</Trigger>
-							<Trigger Property="IsMouseOver" Value="True">
-								<Setter Property="Background" TargetName="border" Value="#FF97C5F7"/>
-							</Trigger>
-						</ControlTemplate.Triggers>
-					</ControlTemplate>
-				</Setter.Value>
-			</Setter>
-		</Style>
-	
+                        </MultiTrigger>-->
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            <Setter Property="Background" TargetName="border" Value="#FFF3F3F3"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" TargetName="border" Value="#FF97C5F7"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+   
     <DataTemplate x:Key="ButtonIconTemplate">
         <DockPanel Height="Auto" LastChildFill="False">
             <Border Width="{Binding Range.Width}" Height="{Binding Range.Height}" ClipToBounds="True" Margin="0">

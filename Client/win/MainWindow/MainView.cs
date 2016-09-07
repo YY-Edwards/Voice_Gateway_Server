@@ -370,10 +370,5 @@ namespace TrboX
             m_Main.menu_View_Msg_Tracker.IsChecked = show;
             m_Main.MsgWin.MsgTrackerShow(!show);
         }
-
-        private void OrgMenu_Click(object sender, RoutedEventArgs e)
-        {
-            TreeViewItem item = ((ContextMenu)((MenuItem)sender).Parent).PlacementTarget as TreeViewItem;
-        }
     }
 } 

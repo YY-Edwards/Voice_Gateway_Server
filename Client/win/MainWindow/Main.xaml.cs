@@ -26,19 +26,16 @@ namespace TrboX
 
         public MainView View;
 
-
         public MainResourceMgr ResrcMgr;
         public MainArea WorkArea;
 
         public EventWin EventList;
         public MainMsgWin MsgWin;
 
-
-        public NewWinMgr SubWindow;
-        
-        public MainView m_View;
+        public NewWinMgr SubWindow;        
 
 
+        public COrganization CurrentTraget = null;
 
         public bool g_IsNeedSaveWorkSpace
         {
@@ -226,5 +223,9 @@ namespace TrboX
             g_IsNeedSaveWorkSpace = false;
         }
 
+        private void tree_OrgView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
+        {
+
+        }
     }
 }

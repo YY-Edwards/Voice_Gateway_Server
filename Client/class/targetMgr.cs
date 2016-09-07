@@ -92,10 +92,11 @@ namespace TrboX
                     case OrgItemType.Type_Vehicle:
                         return vehicle.number;
                     case OrgItemType.Type_Group:
+                        if (null == group) return "未分组";
                         return group.name;
                     case OrgItemType.Type_Radio:
                     case OrgItemType.Type_Ride:
-                        return radio.type == RadioType.RADIO ? "手持台:" :"车载台:" + radio.radio_id.ToString();
+                        return ((radio.type == RadioType.RADIO) ? "手持台：" :"车载台：")+ radio.radio_id.ToString();
                     default:
                         return "";
                 }
@@ -115,6 +116,28 @@ namespace TrboX
                         return GetHeaderByEmployee();
                     case OrgItemType.Type_Vehicle:
                         return GetHeaderByVehicle();
+                    default:
+                        break;
+                }
+                return GetHeader();
+            }
+        }
+
+        public string HeaderWithoutKey
+        {
+            get 
+            {
+                switch (key)
+                {
+                    case OrgItemType.Type_Group:
+                        return GetHeaderWithoutGroup();
+                    case OrgItemType.Type_Employee:
+                        return GetHeaderWithOutEmployee();
+                    case OrgItemType.Type_Vehicle:
+                        return GetHeaderWithOutVehicle();
+                    case OrgItemType.Type_Radio:
+                    case OrgItemType.Type_Ride:
+                        return GetHeaderWithOutRadio();
                     default:
                         break;
                 }
@@ -205,24 +228,30 @@ namespace TrboX
                 }
             }
         }
-        private string GetHeaderByEmployee()
+
+
+        private string GetHeaderWithOutEmployee()
         {
             if (null == employee)
             {
-                return GetHeader();
+                return "";
             }
             else
             {
-                string header = employee.name;
+                string header = "";
                 bool hasheader = false;
 
-                if ((null == group) && (null == vehicle) && (null == radio)) return header;
+                //if ((null == group) && (null == vehicle) && (null == radio)) return header;
 
-                header += "（";
 
                 if (null != group)
                 {
                     header += group.name + "：" + group.group_id.ToString();
+                    hasheader = true;
+                }
+                 else
+                {
+                    header += "未分组";
                     hasheader = true;
                 }
 
@@ -238,7 +267,61 @@ namespace TrboX
                     header += "RadioID：" + radio.radio_id.ToString();
                 }
 
-                return header + "）";
+                return header;
+            }
+        }
+
+
+        private string GetHeaderByEmployee()
+        {
+            if (null == employee)
+            {
+                return GetHeader();
+            }
+            else
+            {
+                return employee.name + (("" == GetHeaderWithOutEmployee()) ? "" :( "(" + GetHeaderWithOutEmployee() + ")"));
+            }
+        }
+
+        private string GetHeaderWithOutVehicle()
+        {
+            if (null == vehicle)
+            {
+                return "";
+            }
+            else
+            {
+                string header = "";
+                bool hasheader = false;
+
+                //if ((null == group) && (null == employee) && (null == radio)) return header;
+
+                if (null != group)
+                {
+                    header += group.name + "：" + group.group_id.ToString();
+                    hasheader = true;
+                }
+                else
+                {
+                    header += "未分组";
+                    hasheader = true;
+                }
+
+                if (null != employee)
+                {
+                    if (true == hasheader) header += "，";
+                    header += employee.name;
+                    hasheader = true;
+                }
+
+                if (null != radio)
+                {
+                    if (true == hasheader) header += "，";
+                    header += "RadioID：" + radio.radio_id.ToString();
+                }
+
+                return header;
             }
         }
         private string GetHeaderByVehicle()
@@ -249,16 +332,39 @@ namespace TrboX
             }
             else
             {
-                string header = vehicle.number;
+                return vehicle.number + (("" == GetHeaderWithOutVehicle()) ? "" : ("(" + GetHeaderWithOutVehicle() + ")"));
+            }
+        }
+
+        public string HeaderWithOutRadio
+        {
+            get
+            {
+                return GetHeaderWithOutRadio();
+            }
+        }
+
+        private string GetHeaderWithOutRadio()
+        {
+            if (null == radio)
+            {
+                return "";
+            }
+            else
+            {
+                string header = "";
                 bool hasheader = false;
 
-                if ((null == group) && (null == employee) && (null == radio)) return header;
-
-                header += "（";
+                //if ((null == group) && (null == employee) && (null == vehicle)) return header;
 
                 if (null != group)
                 {
                     header += group.name + "：" + group.group_id.ToString();
+                    hasheader = true;
+                }
+                else
+                {
+                    header += "未分组";
                     hasheader = true;
                 }
 
@@ -266,15 +372,27 @@ namespace TrboX
                 {
                     if (true == hasheader) header += "，";
                     header += employee.name;
+                    hasheader = true;
                 }
 
-                if (null != radio)
+                if (null != vehicle)
                 {
                     if (true == hasheader) header += "，";
-                    header += "RadioID：" + radio.radio_id.ToString();
+                    header += vehicle.number;
                 }
 
-                return header + "）";
+                return header;
+            }
+        }
+        private string GetHeaderByRadio()
+        {
+            if (null == radio)
+            {
+                return GetHeader();
+            }
+            else
+            {
+                return ((radio.type == RadioType.RADIO) ? "手持台:" : "车载台:") + radio.radio_id.ToString() + (("" == GetHeaderWithOutVehicle()) ? "" : ("(" + GetHeaderWithOutVehicle() + ")"));
             }
         }
 

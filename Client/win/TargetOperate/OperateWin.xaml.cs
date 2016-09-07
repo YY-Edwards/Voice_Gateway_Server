@@ -19,20 +19,52 @@ namespace TrboX
     public partial class OperateWin : MyWindow
     {
         OpView m_View;
-        public OperateWin():base()
+        private CRelationShipObj Target = null;
+        private OPType Operate = OPType.Dispatch;
+
+        public OperateWin(CRelationShipObj target)
+            : base()
         {
             InitializeComponent();
-            
+
+            if(null == target)return;
+            Target = target;
 
             this.Loaded += delegate
             {           
-                Title = "张三";
-                SubTitle = "车辆：川A12345  组ID:10（地勤） 设备ID：123";
+                Title = Target.KeyName;
+                SubTitle = Target.HeaderWithoutKey;
 
                 m_View = new OpView(this);
+
+                OnChangeOperateType();
             };
         }
 
+        public override void OnMyWindow_Btn_Close_Click()
+        {
+            this.Hide();
+        }
 
+        public void SetOperateType(OPType type)
+        {
+            Operate = type;
+            OnChangeOperateType();
+        }
+
+        private void OnChangeOperateType()
+        {
+            switch (Operate)
+            {
+                case OPType.Dispatch:
+                case OPType.ShortMessage:
+                case OPType.JobTicker:
+                case OPType.Position:
+                case OPType.Tracker:
+                default:
+                    break;
+
+            };
+        }
     }
 }

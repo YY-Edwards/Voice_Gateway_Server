@@ -3,6 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+
 namespace TrboX
 {
 
@@ -12,6 +17,7 @@ namespace TrboX
 
         private NewOperate m_CreateOperateWindow = new NewOperate();
         private newFast m_CreateFastOperateWindow = new newFast();
+        private Dictionary<int, OperateWin> m_TargetWin = new Dictionary<int, OperateWin>();
        
         public NewWinMgr(Main win)
         {
@@ -45,6 +51,20 @@ namespace TrboX
             }
 
            m_CreateOperateWindow.ShowDialog();
+        }
+
+        public void OpenOrCreateTragetWin(COrganization target, OPType op)
+        {
+            if(!m_TargetWin.ContainsKey(target.index))
+            {
+                OperateWin newwin = new OperateWin(target.target);
+                m_TargetWin.Add(target.index, newwin);
+            }
+
+            m_TargetWin[target.index].Show();
+            m_TargetWin[target.index].Activate();
+
+            m_TargetWin[target.index].SetOperateType(op);
         }
     }
 }

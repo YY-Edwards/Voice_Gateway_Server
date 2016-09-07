@@ -7,13 +7,12 @@
         x:Class="TrboX.OperateWin" 
         Icon="/TrboX;component/themes/resource/Logo.png"  
         Style="{StaticResource MyWindowStyle}" 
-        Height="500" Width="720" WindowStartupLocation="CenterScreen">
+        Height="500" Width="600" WindowStartupLocation="CenterScreen" MinWidth="400" MinHeight="400">
+	<src:MyWindow.Resources>
+		<src:MainTabIndexFromRadio x:Key="IndexFromRadio" />
+	</src:MyWindow.Resources>
 	<DockPanel>
 		<Grid x:Name="grd_OperateWin" Margin="0" DockPanel.Dock="Top">
-			<Grid.ColumnDefinitions>
-				<ColumnDefinition MinWidth="100"/>
-				<ColumnDefinition MinWidth="100" Width="160"/>
-			</Grid.ColumnDefinitions>
 			<Grid x:Name="grd_Operate" Margin="0">
 				<Grid.RowDefinitions>
 					<RowDefinition MinHeight="31"/>
@@ -32,10 +31,10 @@
 					<DockPanel>
 						<Border BorderBrush="Black" BorderThickness="1" Height="30" DockPanel.Dock="Top">
 							<DockPanel LastChildFill="False">
-								<RadioButton Content="呼叫" Style="{DynamicResource SimpleRadioButton}" Margin="5,0,0,0" VerticalAlignment="Center" GroupName="OpTab" IsChecked="True"/>
-								<RadioButton Content="短消息" Style="{DynamicResource SimpleRadioButton}" Margin="5,0,0,0" VerticalAlignment="Center" GroupName="OpTab"/>
-								<RadioButton Content="定位" Style="{DynamicResource SimpleRadioButton}" Margin="5,0,0,0" VerticalAlignment="Center" GroupName="OpTab"/>
-								<RadioButton Content="工单" Style="{DynamicResource SimpleRadioButton}" Margin="5,0,0,0" VerticalAlignment="Center" GroupName="OpTab"/>
+								<RadioButton x:Name="rad_Call" Content="呼叫" Style="{DynamicResource SimpleRadioButton}" Margin="5,0,0,0" VerticalAlignment="Center" GroupName="OpTab" IsChecked="True"/>
+								<RadioButton x:Name="rad_Message" Content="短消息" Style="{DynamicResource SimpleRadioButton}" Margin="5,0,0,0" VerticalAlignment="Center" GroupName="OpTab"/>
+								<RadioButton x:Name="rad_Position" Content="定位" Style="{DynamicResource SimpleRadioButton}" Margin="5,0,0,0" VerticalAlignment="Center" GroupName="OpTab"/>
+								<RadioButton x:Name="rad_Jobticket" Content="工单" Style="{DynamicResource SimpleRadioButton}" Margin="5,0,0,0" VerticalAlignment="Center" GroupName="OpTab"/>
 								<ComboBox Style="{DynamicResource SimpleComboBox}" VerticalAlignment="Center" HorizontalAlignment="Left" Width="70" Margin="5,0,0,0" SelectedIndex="0">
 									<ComboBoxItem Content="遥毙"/>
 									<ComboBoxItem Content="遥晕"/>
@@ -43,50 +42,56 @@
 								</ComboBox>
 								<Button Content="在线检测" Style="{DynamicResource SimpleButton}" VerticalAlignment="Center" Margin="5,0,0,0"/>
 								<Button Content="远程监听" Style="{DynamicResource SimpleButton}" VerticalAlignment="Center" Margin="5,0,0,0"/>
-								<CheckBox Content="历史记录" Style="{DynamicResource SimpleCheckBox}" DockPanel.Dock="Right" Margin="0,0,5,0" VerticalAlignment="Center"/>
 							</DockPanel>
 						</Border>
-						<TabControl Style="{DynamicResource SimpleTabControl}" BorderThickness="0" Width="554" DockPanel.Dock="Top">
-							<TabItem Header="呼叫" Style="{DynamicResource SimpleTabItem}">
-								<Grid>
-									<Button Content="PTT" HorizontalAlignment="Center" Style="{DynamicResource SimpleButton}" VerticalAlignment="Center" Width="95" Height="29.24" Margin="0"/>
-								</Grid>
-							</TabItem>
-							<TabItem Header="短消息" Style="{DynamicResource SimpleTabItem}">
-								<Grid>
-									<Button Content="发送" HorizontalAlignment="Right" Style="{DynamicResource SimpleButton}" VerticalAlignment="Bottom" Width="79" Margin="0,0,5,5" Height="22.24"/>
-									<TextBox Style="{DynamicResource SimpleTextBox}" TextWrapping="Wrap" Text="TextBox的发热发反反复复方法反反复复方法反反复复方法反反复复" Margin="5,5,5,32.24"/>
-								</Grid>
-							</TabItem>
-							<TabItem Header="定位" Style="{DynamicResource SimpleTabItem}">
-								<Grid>
-									<DockPanel LastChildFill="False">
-										<CheckBox Content="增强型GPS" HorizontalAlignment="Left" Style="{DynamicResource SimpleCheckBox}" VerticalAlignment="Top" DockPanel.Dock="Top"/>
-										<CheckBox Content="CSBK" HorizontalAlignment="Left" Style="{DynamicResource SimpleCheckBox}" VerticalAlignment="Top" DockPanel.Dock="Top"/>
-										<CheckBox Content="周期查询" HorizontalAlignment="Left" Style="{DynamicResource SimpleCheckBox}" VerticalAlignment="Top" DockPanel.Dock="Top"/>
-										<ComboBox Style="{DynamicResource SimpleComboBox}" VerticalAlignment="Top" DockPanel.Dock="Top" SelectedIndex="0" HorizontalAlignment="Left" Width="120">
-											<ComboBoxItem Content="30S"/>
-											<ComboBoxItem Content="60S"/>
-											<ComboBoxItem Content="120S"/>
-										</ComboBox>
-										<Button Content="定位" Style="{DynamicResource SimpleButton}" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="0,0,5,5" Height="23.24" Width="79"/>
-									</DockPanel>
-								</Grid>
-							</TabItem>
-							<TabItem Header="工单" Style="{DynamicResource SimpleTabItem}">
-								<Grid>
-									<Button Content="发送" HorizontalAlignment="Right" Style="{DynamicResource SimpleButton}" VerticalAlignment="Bottom" Width="79" Height="22.24" Margin="0,0,5,5"/>
-									<ComboBox HorizontalAlignment="Left" Style="{DynamicResource SimpleComboBox}" VerticalAlignment="Top" Width="544" Height="23.24" Margin="0,11,0,0"/>
-								</Grid>
-							</TabItem>
-						</TabControl>
+						<Border BorderBrush="Black" BorderThickness="0,0,0,1" ClipToBounds="True">
+							<TabControl Style="{DynamicResource TabControlStyleNormal}" BorderThickness="0" Margin="0,-22,0,0">
+								 <TabControl.SelectedIndex>
+                                        <MultiBinding  Converter="{StaticResource IndexFromRadio}" Mode="OneWay">
+                                            <Binding ElementName="rad_Call" Path="IsChecked" />
+                                            <Binding ElementName="rad_Message" Path="IsChecked" />
+                                            <Binding ElementName="rad_Position" Path="IsChecked" />
+                                            <Binding ElementName="rad_Jobticket" Path="IsChecked" />
+                                        </MultiBinding>
+                                    </TabControl.SelectedIndex>
+								<TabItem Header="呼叫" Style="{DynamicResource SimpleTabItem}">
+									<Grid>
+										<Button Content="PTT" HorizontalAlignment="Center" Style="{DynamicResource SimpleButton}" VerticalAlignment="Center" Width="95" Height="29.24" Margin="0"/>
+									</Grid>
+								</TabItem>
+								<TabItem Header="短消息" Style="{DynamicResource SimpleTabItem}">
+									<Grid>
+										<Button Content="发送" HorizontalAlignment="Right" Style="{DynamicResource SimpleButton}" VerticalAlignment="Bottom" Width="79" Margin="0,0,5,5" Height="22.24"/>
+										<TextBox Style="{DynamicResource SimpleTextBox}" TextWrapping="Wrap" Text="TextBox的发热发反反复复方法反反复复方法反反复复方法反反复复" Margin="5,5,5,32.24"/>
+									</Grid>
+								</TabItem>
+								<TabItem Header="定位" Style="{DynamicResource SimpleTabItem}">
+									<Grid>
+										<DockPanel LastChildFill="False">
+											<CheckBox Content="增强型GPS" HorizontalAlignment="Left" Style="{DynamicResource SimpleCheckBox}" VerticalAlignment="Top" DockPanel.Dock="Top"/>
+											<CheckBox Content="CSBK" HorizontalAlignment="Left" Style="{DynamicResource SimpleCheckBox}" VerticalAlignment="Top" DockPanel.Dock="Top"/>
+											<CheckBox Content="周期查询" HorizontalAlignment="Left" Style="{DynamicResource SimpleCheckBox}" VerticalAlignment="Top" DockPanel.Dock="Top"/>
+											<ComboBox Style="{DynamicResource SimpleComboBox}" VerticalAlignment="Top" DockPanel.Dock="Top" SelectedIndex="0" HorizontalAlignment="Left" Width="120">
+												<ComboBoxItem Content="30S"/>
+												<ComboBoxItem Content="60S"/>
+												<ComboBoxItem Content="120S"/>
+											</ComboBox>
+											<Button Content="定位" Style="{DynamicResource SimpleButton}" VerticalAlignment="Bottom" DockPanel.Dock="Bottom" HorizontalAlignment="Right" Margin="0,0,5,5" Height="23.24" Width="79"/>
+										</DockPanel>
+									</Grid>
+								</TabItem>
+								<TabItem Header="工单" Style="{DynamicResource SimpleTabItem}">
+									<Grid>
+										<Button Content="发送" HorizontalAlignment="Right" Style="{DynamicResource SimpleButton}" VerticalAlignment="Bottom" Width="79" Height="22.24" Margin="0,0,5,5"/>
+										<ComboBox HorizontalAlignment="Left" Style="{DynamicResource SimpleComboBox}" VerticalAlignment="Top" Width="544" Height="23.24" Margin="0,11,0,0"/>
+									</Grid>
+								</TabItem>
+							</TabControl>
+						</Border>
 					</DockPanel>
 				</Border>
 				<GridSplitter x:Name="grdspl_Operate" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="#4C0E0101" Height="5" Margin="0,0,0,-2"/>
 			</Grid>
-			<Border BorderBrush="Black" BorderThickness="1" Grid.Column="1" Margin="1,0,0,0">
-				<Label Content="历史记录"/>
-			</Border>
 			<GridSplitter x:Name="grdspl_Hositry" HorizontalAlignment="Left" Width="5" Background="#4C0C0000" Grid.Column="1" Margin="-2,0,0,0"/>
         
 		</Grid>

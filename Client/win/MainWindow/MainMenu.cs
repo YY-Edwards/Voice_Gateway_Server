@@ -91,7 +91,7 @@ namespace TrboX
             m_Main.menu_Target_Monitor.Click += delegate { };
 
             //call
-            m_Main.menu_Target_Call.Click += delegate { };
+            m_Main.menu_Target_Call.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(m_Main.CurrentTraget, OPType.Dispatch); };
 
             //message
             m_Main.menu_Target_Message.Click += delegate { };

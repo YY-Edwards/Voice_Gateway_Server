@@ -12,7 +12,6 @@
     			<Border BorderBrush="Black" BorderThickness="1,1,0,0" DockPanel.Dock="Top">
     				<DockPanel LastChildFill="False">
     					<RadioButton x:Name="rad_CreateContact" Content="常用联系人" Height="30" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" DockPanel.Dock="Top" GroupName="CreateType"/>
-    					<RadioButton x:Name="rad_CreateGroup" Content="常用组" Height="30" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" DockPanel.Dock="Top" GroupName="CreateType"/>
     					<RadioButton x:Name="rad_CreateFastOperate" Content="快速操作" Height="30" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" DockPanel.Dock="Top" GroupName="CreateType"/>
     				</DockPanel>
     			</Border>
@@ -24,12 +23,7 @@
     						<Grid Background="#FFE5E5E5">
     							<Label Content="新建常用联系人" HorizontalAlignment="Left" VerticalAlignment="Top"/>
     						</Grid>
-    					</TabItem>
-    					<TabItem Header="" Margin="0,-1.5,0,1.5">
-    						<Grid Background="#FFE5E5E5">
-    							<Label Content="新建常用组" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-    						</Grid>
-    					</TabItem>
+    					</TabItem>   					
     					<TabItem Header="" Margin="-2,-3.5,0,-0.5">
     						<Grid Background="#FFE5E5E5">
     							<Label Content="新建快速操作" HorizontalAlignment="Left" VerticalAlignment="Top"/>

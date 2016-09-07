@@ -602,7 +602,7 @@ namespace TrboX
 
                 m_Main.EventList.AddEvent("事件" + i.ToString());
 
-                Thread.Sleep(2000);
+                Thread.Sleep(10000);
             }
         }
     }

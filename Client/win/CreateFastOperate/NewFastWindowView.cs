@@ -14,6 +14,7 @@ namespace TrboX
             m_Win = win;
 
             m_Win.bdr_MaskCreateTab.ClipToBounds = true;
+            
 
             CreateTabChange();
         }
@@ -25,14 +26,9 @@ namespace TrboX
                 m_Win.tab_CreatFast.SelectedIndex = 0;
             };
 
-            m_Win.rad_CreateGroup.Checked += delegate
-            {
-                m_Win.tab_CreatFast.SelectedIndex = 1;
-            };
-
             m_Win.rad_CreateFastOperate.Checked += delegate
             {
-                m_Win.tab_CreatFast.SelectedIndex = 2;
+                m_Win.tab_CreatFast.SelectedIndex = 1;
             }; 
         }
     }

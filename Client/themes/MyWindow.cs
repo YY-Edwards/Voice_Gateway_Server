@@ -92,7 +92,7 @@ namespace TrboX
         {
         }
 
-        private static void WmGetMinMaxInfo(System.IntPtr hwnd, System.IntPtr lParam)
+        private void WmGetMinMaxInfo(System.IntPtr hwnd, System.IntPtr lParam)
         {
             MINMAXINFO mmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
 
@@ -111,6 +111,9 @@ namespace TrboX
                 mmi.ptMaxPosition.y = Math.Abs(rcWorkArea.top - rcMonitorArea.top);
                 mmi.ptMaxSize.x = Math.Abs(rcWorkArea.right - rcWorkArea.left);
                 mmi.ptMaxSize.y = Math.Abs(rcWorkArea.bottom - rcWorkArea.top);
+
+                mmi.ptMinTrackSize.x = (int)MinWidth;
+                mmi.ptMinTrackSize.y = (int)MinHeight; 
             }
 
             Marshal.StructureToPtr(mmi, lParam, true);
@@ -214,7 +217,6 @@ namespace TrboX
         {
             SendMessage(hs.Handle, WM_SYSCOMMAND, (IntPtr)(61440 + direction), IntPtr.Zero);
         }
-
 
         public virtual void OnMyWindow_Btn_Close_Click()
         {
