@@ -33,16 +33,6 @@ namespace TrboX
 
     public class CNotify
     {
-        [Serializable]
-        private struct Notify_t
-        {
-            public List<CAlarmNotification> alarm;
-            public List<CRxNotification> rx;
-            public List<CMsgNotification> message;
-            public List<CJobTicketNotification> job;
-            public List<CTackerNotification> tacker;
-        };
-
         private Main m_Main;
 
         private BinaryFormatter m_BinFormat = new BinaryFormatter();//创建二进制序列化器
@@ -53,51 +43,47 @@ namespace TrboX
             if (null == win) return;
             m_Main = win;
 
-            m_NotifySavePath = AppDomain.CurrentDomain.BaseDirectory + "SRWYREGB34THEWTR2Q3WG4WUJ6JNWEG243G.TMP";
+            m_NotifySavePath = AppDomain.CurrentDomain.BaseDirectory + "SRWYREGB34THEWTR2Q3WG4WUJ6JNWEG243G.tmp";
 
             Stream NotifySaveFile = new FileStream(m_NotifySavePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
 
             NotifySaveFile.Position = 0;
 
-            Notify_t Notify = new Notify_t();
+            List<CNotification> Notify = new  List<CNotification>();
             try
             {
-                Notify = (Notify_t)m_BinFormat.Deserialize(NotifySaveFile);
+                Notify = (List<CNotification>)m_BinFormat.Deserialize(NotifySaveFile);
             }
             catch
             {
             };
 
-            if (null != Notify.alarm)
-                foreach (CAlarmNotification item in Notify.alarm)
+            foreach (CNotification item in Notify)
+            {
+                switch(item.Type)
                 {
-                    m_Main.lst_Alarm.Items.Add(item);
+                    case NotifyType.Alarm:
+                        m_Main.lst_Alarm.Items.Add(item);
+                        m_Main.View.MsgAlarmShow(true);
+                        break;
+                    case NotifyType.Call:
+                         m_Main.lst_Rx.Items.Add(item);
+                        m_Main.View.MsgRxShow(true);
+                        break;
+                    case NotifyType.Message:
+                        m_Main.lst_ShortMsg.Items.Add(item);
+                        m_Main.View.MsgShortMsgShow(true);
+                        break;
+                    case NotifyType.JobTicker:
+                        m_Main.lst_Job.Items.Add(item);
+                        m_Main.View.MsgJobShow(true);
+                        break;
+                    case NotifyType.Tracker:
+                         m_Main.lst_Tracker.Items.Add(item);
+                        m_Main.View.MsgTrackerShow(true);
+                        break;
                 }
-
-            if (null != Notify.message)
-                foreach (CMsgNotification item in Notify.message)
-                {
-                    m_Main.lst_ShortMsg.Items.Add(item);
-                }
-
-            if (null != Notify.rx)
-                foreach (CRxNotification item in Notify.rx)
-                {
-                    m_Main.lst_Rx.Items.Add(item);
-                }
-
-            if (null != Notify.job)
-                foreach (CJobTicketNotification item in Notify.job)
-                {
-                    m_Main.lst_Job.Items.Add(item);
-                }
-
-            if (null != Notify.tacker)
-                foreach (CTackerNotification item in Notify.tacker)
-                {
-                    m_Main.lst_Tracker.Items.Add(item);
-                }
-
+            }
 
             m_Main.lst_Alarm.View = (ViewBase)m_Main.FindResource("AlarmView");
             m_Main.lst_ShortMsg.View = (ViewBase)m_Main.FindResource("MsgView");
@@ -105,208 +91,144 @@ namespace TrboX
             m_Main.lst_Job.View = (ViewBase)m_Main.FindResource("JobView");
             m_Main.lst_Tracker.View = (ViewBase)m_Main.FindResource("TrackerView");
 
-            m_Main.btn_ClearAlarmMsg.Click += delegate
-            {
-                ClearAlarm();
-            };
-            m_Main.btn_ClearShortMsg.Click += delegate
-            {
-                ClearShortMsg();
-            };
-            m_Main.btn_ClearRxMsg.Click += delegate
-            {
-                ClearRx();
-            };
-            m_Main.btn_ClearJobMsg.Click += delegate
-            {
-                ClearJob();
-            };
-            m_Main.btn_ClearTrackerMsg.Click += delegate
-            {
-                ClearTracker();
-            };
-
+            m_Main.btn_ClearAlarmMsg.Click += delegate { Clear(NotifyType.Alarm); };
+            m_Main.btn_ClearShortMsg.Click += delegate { Clear(NotifyType.Message); };
+            m_Main.btn_ClearRxMsg.Click += delegate { Clear(NotifyType.Call); };
+            m_Main.btn_ClearJobMsg.Click += delegate { Clear(NotifyType.JobTicker); };
+            m_Main.btn_ClearTrackerMsg.Click += delegate { Clear(NotifyType.Tracker); };
         }
 
         public void Save()
         {
-            Notify_t Notify = new Notify_t();
-            Notify.alarm = new List<CAlarmNotification>();
-            Notify.rx = new List<CRxNotification>();
-            Notify.message = new List<CMsgNotification>();
-            Notify.job = new List<CJobTicketNotification>();
-            Notify.tacker = new List<CTackerNotification>();
-
-            m_Main.Dispatcher.Invoke(new Action(() =>
-            {
-                foreach (CAlarmNotification item in m_Main.lst_Alarm.Items)
-                {
-                    Notify.alarm.Add(item);
-                }
-
-                foreach (CRxNotification item in m_Main.lst_Rx.Items)
-                {
-                    Notify.rx.Add(item);
-                }
-
-                foreach (CMsgNotification item in m_Main.lst_ShortMsg.Items)
-                {
-                    Notify.message.Add(item);
-                }
-
-                foreach (CJobTicketNotification item in m_Main.lst_Job.Items)
-                {
-                    Notify.job.Add(item);
-                }
-
-                foreach (CTackerNotification item in m_Main.lst_Tracker.Items)
-                {
-                    Notify.tacker.Add(item);
-                }
-
-            }));
-
             Stream NotifySaveFile = new FileStream(m_NotifySavePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
 
             NotifySaveFile.SetLength(0);
-            m_BinFormat.Serialize(NotifySaveFile, Notify);
+            m_BinFormat.Serialize(NotifySaveFile, Get());
         }
 
 
-        public void Add(CAlarmNotification item)
+        public List<CNotification> Get()
+        {
+            List<CNotification> Notify = new List<CNotification>();
+            
+            m_Main.Dispatcher.Invoke(new Action(() =>
+            {
+                foreach (CNotification item in m_Main.lst_Alarm.Items) Notify.Add(item);
+                foreach (CNotification item in m_Main.lst_Rx.Items) Notify.Add(item);
+                foreach (CNotification item in m_Main.lst_ShortMsg.Items) Notify.Add(item);
+                foreach (CNotification item in m_Main.lst_Job.Items) Notify.Add(item);
+                foreach (CNotification item in m_Main.lst_Tracker.Items) Notify.Add(item);
+            }));
+            return Notify;
+        }
+
+        public void Add(CNotification notify)
         {
             m_Main.Dispatcher.Invoke(new Action(() =>
             {
-                m_Main.lst_Alarm.Items.Insert(0, item);
+                switch (notify.Type)
+                {
+                    case NotifyType.Alarm:
+                        m_Main.lst_Alarm.Items.Insert(0, notify);
+                        m_Main.View.MsgAlarmShow(true);
+                        break;
+                    case NotifyType.Call:
+                        m_Main.lst_Rx.Items.Insert(0, notify);
+                        m_Main.View.MsgRxShow(true);
+                        break;
+                    case NotifyType.Message:
+                        m_Main.lst_ShortMsg.Items.Insert(0, notify);
+                        m_Main.View.MsgShortMsgShow(true);
+                        break;
+                    case NotifyType.JobTicker:
+                        m_Main.lst_Job.Items.Insert(0, notify);
+                        m_Main.View.MsgJobShow(true);
+                        break;
+                    case NotifyType.Tracker:
+                        m_Main.lst_Tracker.Items.Insert(0, notify);
+                        m_Main.View.MsgTrackerShow(true);
+                        break;
+                }
+
                 m_Main.g_IsNeedSaveWorkSpace = true;
-            }));           
+                m_Main.SubWindow.AddNotifyToOperateWin(notify);
+            }));
         }
 
-        public void Remove(CAlarmNotification item)
+        public void Remove(CNotification notify)
         {
             m_Main.Dispatcher.Invoke(new Action(() =>
             {
-                m_Main.lst_Alarm.Items.Remove(item);
-                m_Main.g_IsNeedSaveWorkSpace = true;
-            }));           
-        }
+                switch (notify.Type)
+                {
+                    case NotifyType.Alarm:
+                        m_Main.lst_Alarm.Items.Remove(notify);
+                        if (0 == m_Main.lst_Alarm.Items.Count) m_Main.View.MsgAlarmShow(false);
+                        break;
+                    case NotifyType.Call:
+                        m_Main.lst_Rx.Items.Remove(notify);
+                        if (0 == m_Main.lst_Rx.Items.Count) m_Main.View.MsgRxShow(false);
+                        break;
+                    case NotifyType.Message:
+                        m_Main.lst_ShortMsg.Items.Remove(notify);
+                        if (0 == m_Main.lst_ShortMsg.Items.Count) m_Main.View.MsgShortMsgShow(false);
+                        break;
+                    case NotifyType.JobTicker:
+                        m_Main.lst_Job.Items.Remove(notify);
+                        if (0 == m_Main.lst_Job.Items.Count) m_Main.View.MsgJobShow(false);
+                        break;
+                    case NotifyType.Tracker:
+                        m_Main.lst_Tracker.Items.Remove(notify);
+                        if (0 == m_Main.lst_Tracker.Items.Count) m_Main.View.MsgTrackerShow(false);
+                        break;
+                }
 
-        public void ClearAlarm()
-        {
-            m_Main.Dispatcher.Invoke(new Action(() =>
-            {
-                m_Main.lst_Alarm.Items.Clear();
-                m_Main.g_IsNeedSaveWorkSpace = true;
-            }));      
-        }
-
-        public void Add(CMsgNotification item)
-        {
-            m_Main.Dispatcher.Invoke(new Action(() =>
-            {
-                m_Main.lst_ShortMsg.Items.Insert(0, item);
-                m_Main.g_IsNeedSaveWorkSpace = true;
-            }));            
-        }
-
-        public void Remove(CMsgNotification item)
-        {
-            m_Main.Dispatcher.Invoke(new Action(() =>
-            {
-                m_Main.lst_ShortMsg.Items.Remove(item);
-                m_Main.g_IsNeedSaveWorkSpace = true;
-            }));         
-        }
-
-        public void ClearShortMsg()
-        {
-            m_Main.Dispatcher.Invoke(new Action(() =>
-            {
-                m_Main.lst_ShortMsg.Items.Clear();
                 m_Main.g_IsNeedSaveWorkSpace = true;
             }));
         }
 
-        public void Add(CRxNotification item)
+        public void Clear(NotifyType type)
         {
             m_Main.Dispatcher.Invoke(new Action(() =>
             {
-                m_Main.lst_Rx.Items.Insert(0, item);
-                m_Main.g_IsNeedSaveWorkSpace = true;
-            }));           
-        }
+                switch (type)
+                {
+                    case NotifyType.Alarm:
+                        m_Main.lst_Alarm.Items.Clear();
+                        m_Main.View.MsgAlarmShow(false);
+                        break;
+                    case NotifyType.Call:
+                        m_Main.lst_Rx.Items.Clear();
+                        m_Main.View.MsgRxShow(false);
+                        break;
+                    case NotifyType.Message:
+                        m_Main.lst_ShortMsg.Items.Clear();
+                       m_Main.View.MsgShortMsgShow(false);
+                        break;
+                    case NotifyType.JobTicker:
+                        m_Main.lst_Job.Items.Clear();
+                        m_Main.View.MsgJobShow(false);
+                        break;
+                    case NotifyType.Tracker:
+                        m_Main.lst_Tracker.Items.Clear();
+                        m_Main.View.MsgTrackerShow(false);
+                        break;
+                }
 
-        public void Remove(CRxNotification item)
-        {
-            m_Main.Dispatcher.Invoke(new Action(() =>
-            {
-                m_Main.lst_Rx.Items.Remove(item);
-                m_Main.g_IsNeedSaveWorkSpace = true;
-            }));         
-        }
-
-        public void ClearRx()
-        {
-            m_Main.Dispatcher.Invoke(new Action(() =>
-             {
-                 m_Main.lst_Rx.Items.Clear();
-                 m_Main.g_IsNeedSaveWorkSpace = true;
-             }));
-        }
-
-        public void Add(CJobTicketNotification item)
-        {
-            m_Main.Dispatcher.Invoke(new Action(() =>
-            {
-                m_Main.lst_Job.Items.Insert(0, item);
-                m_Main.g_IsNeedSaveWorkSpace = true;
-            }));           
-        }
-
-        public void Remove(CJobTicketNotification item)
-        {
-            m_Main.Dispatcher.Invoke(new Action(() =>
-            {
-                m_Main.lst_Job.Items.Remove(item);
-                m_Main.g_IsNeedSaveWorkSpace = true;
-            }));          
-        }
-
-        public void ClearJob()
-        {
-            m_Main.Dispatcher.Invoke(new Action(() =>
-            {
-                m_Main.lst_Job.Items.Clear();
                 m_Main.g_IsNeedSaveWorkSpace = true;
             }));
         }
 
-        public void Add(CTackerNotification item)
+        public void RemoveNotifyBySrc(CRelationShipObj src)
         {
-            m_Main.Dispatcher.Invoke(new Action(() =>
-            {
-                m_Main.lst_Tracker.Items.Insert(0, item);
-                m_Main.g_IsNeedSaveWorkSpace = true;
-            }));            
+            List<CNotification> notify = Get();
+            List<CNotification> willdel = new List<CNotification>();
+            foreach (CNotification item in notify)
+                if (true == CRelationShipObj.Compare(item.Source, src)) willdel.Add(item);
+
+            foreach (CNotification item in willdel) Remove(item);
         }
 
-        public void Remove(CTackerNotification item)
-        {
-            m_Main.Dispatcher.Invoke(new Action(() =>
-            {
-                m_Main.lst_Tracker.Items.Remove(item);
-                m_Main.g_IsNeedSaveWorkSpace = true;
-            }));           
-        }
-
-        public void ClearTracker()
-        {
-            m_Main.Dispatcher.Invoke(new Action(() =>
-             {
-                 m_Main.lst_Tracker.Items.Clear();
-                 m_Main.g_IsNeedSaveWorkSpace = true;
-             }));
-        }
     }
 
     public class MainMsgWin
@@ -319,7 +241,10 @@ namespace TrboX
        {
             if (null == win) return;
             m_Main = win;
+       }
 
+        public void Initialize()
+        {
             m_bdrMsgList.Add(m_Main.bdr_Msg_Alarm, new MsgBox_t(true, true, 0, m_Main.grd_Msg.RowDefinitions[0].ActualHeight));
             m_bdrMsgList.Add(m_Main.bdr_Msg_ShortMsg, new MsgBox_t(true, false, 1, m_Main.grd_Msg.RowDefinitions[1].ActualHeight));
             m_bdrMsgList.Add(m_Main.bdr_Msg_Rx, new MsgBox_t(true, false, 2, m_Main.grd_Msg.RowDefinitions[2].ActualHeight));
@@ -328,14 +253,21 @@ namespace TrboX
 
             MsgWinExplanerRegister();
 
-           //receive notify
+            m_Main.View.MsgAlarmShow(false); 
+            m_Main.View.MsgShortMsgShow(false);
+            m_Main.View.MsgRxShow(false); 
+            m_Main.View.MsgJobShow(false); 
+            m_Main.View.MsgTrackerShow(false); 
+
+            //receive notify
             m_Notify = new CNotify(m_Main);
 
             Thread t = new Thread(() => { NoficationThread(); });
             t.Start(); 
+        }
 
-       }
 
+       private double MsgWidth = 260;
        private void UpdateMsgWinSta()
        {
            int show_count = 0;
@@ -445,6 +377,7 @@ namespace TrboX
            {
                //hide manager win
                m_Main.grd_main.ColumnDefinitions[2].MinWidth = 0;
+               MsgWidth = m_Main.grd_main.ColumnDefinitions[2].ActualWidth;
                m_Main.grd_main.ColumnDefinitions[2].Width = new GridLength(0);
 
                m_Main.grd_main.ColumnDefinitions[1].Width = new GridLength(1, GridUnitType.Star);
@@ -452,10 +385,10 @@ namespace TrboX
 
                m_Main.grdspl_Main_Msg.Visibility = Visibility.Hidden;
            }
-           else if (m_Main.grd_main.ColumnDefinitions[2].ActualWidth == 0)
+           else if(0 == m_Main.grd_main.ColumnDefinitions[2].MinWidth)
            {
                m_Main.grd_main.ColumnDefinitions[2].MinWidth = 100;
-               m_Main.grd_main.ColumnDefinitions[2].Width = new GridLength(200);
+               m_Main.grd_main.ColumnDefinitions[2].Width = new GridLength(MsgWidth);
 
                m_Main.grdspl_Main_Msg.Visibility = Visibility.Visible;
            }
@@ -479,6 +412,7 @@ namespace TrboX
            m_Main.chk_MsgExp_Tracker.Checked += delegate{m_bdrMsgList[m_Main.bdr_Msg_Tracker].expanler = true;UpdateMsgWinSta();};
            m_Main.chk_MsgExp_Tracker.Unchecked += delegate{m_bdrMsgList[m_Main.bdr_Msg_Tracker].expanler = false;UpdateMsgWinSta();};
        }
+
         public void MsgAlarmShow(bool hide = false)
         {
             if(hide)
@@ -558,51 +492,65 @@ namespace TrboX
              UpdateMsgWinSta();
         }
 
-        public void RemoveNotify(object obj)
+        public void AddNotify(CNotification notify)
         {
-            string  type = obj.GetType().ToString();
-            switch (type)
-            {
-                case "TrboX.CAlarmNotification":
-                    m_Notify.Remove((CAlarmNotification)obj);
-                    break;
-                case "TrboX.CMsgNotification":
-                    m_Notify.Remove((CMsgNotification)obj);
-                    break;
-                case "TrboX.CRxNotification":
-                    m_Notify.Remove((CRxNotification)obj);
-                    break;
-                case "TrboX.CJobTicketNotification":
-                    m_Notify.Remove((CJobTicketNotification)obj);
-                    break;
-                case "TrboX.CTackerNotification":
-                    m_Notify.Remove((CTackerNotification)obj);
-                    break;
-            }          
+            m_Notify.Add(notify);
+        }
+        public List<CNotification> GetNotify(bool asc)
+        {
+            List<CNotification> notify = m_Notify.Get();
+            if (true == asc) notify.Sort((x, y) => x.Time.CompareTo(y.Time));
+            else notify.Sort((x, y) => -x.Time.CompareTo(y.Time)); 
+
+            return notify;
         }
 
+        public void ClearTarget(CRelationShipObj target)
+        {
+            m_Notify.RemoveNotifyBySrc(target);
+        }
+        public void RemoveNotify(object item)
+        {
+            m_Notify.Remove(item as CNotification);
+        }
+
+        public void ClearNotify(NotifyType type)
+        {
+            m_Notify.Clear(type);
+        }
         public void SaveNotify()
         {
             m_Notify.Save();
         }
 
-        //receive notify
         private void NoficationThread()
         {
             int i = 0;
             while (true)
             {
                 i++;
-                m_Notify.Add(new CAlarmNotification() { Content = "test" + i.ToString(), time = DateTime.Now });
-                m_Notify.Add(new CMsgNotification() { Content = "test" + i.ToString(), time = DateTime.Now });
-                m_Notify.Add(new CRxNotification() { time = DateTime.Now });
-                m_Notify.Add(new CJobTicketNotification() { time = DateTime.Now });
-                m_Notify.Add(new CTackerNotification() { time = DateTime.Now });
+
+                AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Content = new CAlarmNotification() { Content = "test" + i.ToString() } });
+                AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 3 }), Content = new CAlarmNotification() { Content = "Alarm" + i.ToString() } });
+
+               //CAlarmNotification alarm = new CAlarmNotification() {Source= new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio(){id = 2}), Content = "test" + i.ToString(), time = DateTime.Now };
+               //m_Notify.Add(alarm);
 
 
-                m_Main.EventList.AddEvent("事件" + i.ToString());
+               //alarm = new CAlarmNotification() { Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 3 }), Content = "test" + i.ToString(), time = DateTime.Now };
+               //m_Notify.Add(alarm);
 
-                Thread.Sleep(10000);
+                m_Notify.Add(new CNotification() { Type = NotifyType.Call, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Time = DateTime.Now });
+                m_Notify.Add(new CNotification() { Type = NotifyType.Message, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Time = DateTime.Now, Content = new CMsgNotification() { Content = "Message" + i.ToString() } });
+                m_Notify.Add(new CNotification() { Type = NotifyType.JobTicker, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Time = DateTime.Now });
+                m_Notify.Add(new CNotification() { Type = NotifyType.Tracker, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Time = DateTime.Now });
+
+
+                
+
+                //m_Main.EventList.AddEvent("事件" + i.ToString());
+
+                Thread.Sleep(5000);
             }
         }
     }

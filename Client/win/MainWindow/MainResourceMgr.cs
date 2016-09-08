@@ -311,21 +311,19 @@ namespace TrboX
             {
                 foreach (var group in OrgList)
                 {
-                    foreach (var item in group.Value)
-                    {
-                        if (null != item.target.radio)
-                        {
-                            CRadio radio = new CRadio() { id = item.target.radio.id, radio_id = item.target.radio.radio_id, is_online = !item.target.radio.is_online, type = item.target.radio.type };
-                            Update(radio);
+                    //foreach (var item in group.Value)
+                    //{
+                    //    if (null != item.target.radio)
+                    //    {
+                    //        CRadio radio = new CRadio() { id = item.target.radio.id, radio_id = item.target.radio.radio_id, is_online = !item.target.radio.is_online, type = item.target.radio.type };
+                    //        Update(radio);
 
-                        }
-                    }
+                    //    }
+                    //}
 
                     Thread.Sleep(5000);
-                    UpdateView();
-                }
-                
-                
+                    //UpdateView();
+                }                               
             }
         }
 

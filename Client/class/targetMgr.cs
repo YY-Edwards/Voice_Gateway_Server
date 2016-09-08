@@ -82,6 +82,28 @@ namespace TrboX
             radio = rad;
         }
 
+        public static bool Compare(CRelationShipObj src, CRelationShipObj dest)
+        {
+            if (OrgItemType.Type_Group == src.key)
+            {
+                if ((null != src.group) && (null != src.group))
+                    if (src.group.id == dest.group.id)
+                    {
+                        return true;
+                    }
+            }
+            else
+            {
+                if ((null != src.radio) && (null != dest.radio))
+                    if (src.radio.id == dest.radio.id)
+                    {
+                        return true;
+                    }
+            }
+
+            return false;
+        }
+
         public string KeyName
         {
             get {
@@ -539,11 +561,11 @@ namespace TrboX
 
         string radio = "["
         + "{'id':1, 'radio_id':65536, 'is_online':true, 'type':'RIDE'},"
-        + "{'id':2, 'radio_id':112},"
-        + "{'id':3, 'radio_id':113},"
-        + "{'id':4, 'radio_id':114},"
-        + "{'id':5, 'radio_id':115},"
-        + "{'id':6, 'radio_id':116},"
+        + "{'id':2, 'radio_id':112, 'is_online':true},"
+        + "{'id':3, 'radio_id':113, 'is_online':true},"
+        + "{'id':4, 'radio_id':114, 'is_online':true},"
+        + "{'id':5, 'radio_id':115, 'is_online':true},"
+        + "{'id':6, 'radio_id':116, 'is_online':true},"
         + "{'id':7, 'radio_id':117},"
         + "{'id':8, 'radio_id':118},"
         + "{'id':9, 'radio_id':119},"

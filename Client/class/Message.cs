@@ -5,42 +5,50 @@ using System.Text;
 
 namespace TrboX 
 {
+    
+    public enum NotifyType
+    {
+        Alarm,
+        Message,
+        Call,
+        JobTicker,
+        Tracker,
+    };
+    
     [Serializable]
     public class CAlarmNotification
     {
        public  string Content { set; get; }
-       public DateTime time { set; get; }
     }
 
     [Serializable]
-   public class CRxNotification
-   {
-       public CRelationShipObj Source { set; get; }
-       public DateTime time { set; get; }
-   }
+    public class CRxNotification
+    {
+
+    }
 
     [Serializable]
     public class CMsgNotification
     {
-        public CRelationShipObj Source { set; get; }
-        public DateTime time { set; get; }
         public string Content { set; get; }
     }
 
     [Serializable]
     public class CJobTicketNotification
     {
-        public CRelationShipObj Source { set; get; }
-        public DateTime time { set; get; }
-
-        //job
     }
 
     [Serializable]
     public class CTackerNotification
     {
-        public CRelationShipObj Source { set; get; }
-        public DateTime time { set; get; }
     }
 
+    [Serializable]
+    public class CNotification
+    {
+        public NotifyType Type { set; get; }
+        public CRelationShipObj Source { set; get; }
+        public DateTime Time { set; get; }
+        public object Content{ set; get; }
+    }
 }

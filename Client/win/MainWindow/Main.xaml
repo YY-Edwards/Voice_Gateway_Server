@@ -137,8 +137,8 @@
                             <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_AlarmNotify_Close_Click"></Button>
                             
                             <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
-                            <TextBlock Text="{Binding  time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FFDDDDDD" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
-                                <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="White" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FFDDDDDD" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
+                                <TextBlock Text="{Binding  Content.Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="White" VerticalAlignment="Center" />
 
                         </DockPanel>
                     </Border>
@@ -156,8 +156,8 @@
                             <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_MsgNotify_Close_Click"></Button>
 
                             <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
-                            <TextBlock Text="{Binding  time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
-                            <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
+                            <TextBlock Text="{Binding  Content.Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
 
                         </DockPanel>
                     </Border>
@@ -175,7 +175,7 @@
                             <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_RxNotify_Close_Click"></Button>
 
                             <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
-                            <TextBlock Text="{Binding  time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
+                            <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
                             <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
 
                         </DockPanel>
@@ -194,7 +194,7 @@
                             <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_JobNotify_Close_Click"></Button>
 
                             <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
-                            <TextBlock Text="{Binding  time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
+                            <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
                             <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
 
                         </DockPanel>
@@ -213,7 +213,7 @@
                             <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_TrackerNotify_Close_Click"></Button>
 
                             <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
-                            <TextBlock Text="{Binding  time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
+                            <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
                             <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
 
                         </DockPanel>
@@ -341,7 +341,7 @@
                     </Menu>
                 </DockPanel>
             </Border>
-            <Border BorderBrush="Black" BorderThickness="0" Height="30" DockPanel.Dock="Top" Margin="0">
+            <Border BorderBrush="Black" BorderThickness="0" Height="30" DockPanel.Dock="Top" Margin="0" Panel.ZIndex="1">
                 <Border BorderBrush="White" BorderThickness="0,1,0,0" HorizontalAlignment="Left" Background="#19FFFFFF" Margin="5,0,0,0">
                     <DockPanel LastChildFill="False" Margin="0">
                         <Border BorderBrush="#FFEEEEEE" BorderThickness="1,0" Margin="0" Padding="3,0">

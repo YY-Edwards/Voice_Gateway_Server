@@ -67,6 +67,7 @@ namespace TrboX
                 WorkArea = new MainArea(this);
                 EventList = new EventWin(this);
                 MsgWin = new MainMsgWin(this);
+                MsgWin.Initialize();
 
                 SubWindow = new NewWinMgr(this);
 

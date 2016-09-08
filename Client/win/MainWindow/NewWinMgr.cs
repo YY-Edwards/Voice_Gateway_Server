@@ -10,7 +10,6 @@ using System.Windows.Media;
 
 namespace TrboX
 {
-
     public class NewWinMgr
     {
         private Main m_Main;
@@ -61,10 +60,24 @@ namespace TrboX
                 m_TargetWin.Add(target.index, newwin);
             }
 
+            m_TargetWin[target.index].Owner = m_Main;
+
             m_TargetWin[target.index].Show();
-            m_TargetWin[target.index].Activate();
+            if (false == m_TargetWin[target.index].IsActive)
+            {
+                m_TargetWin[target.index].Activate();
+            }            
 
             m_TargetWin[target.index].SetOperateType(op);
+        }
+
+        public void AddNotifyToOperateWin(CNotification notify)
+        {                         
+            foreach (var item in m_TargetWin)
+            {
+                if (true == CRelationShipObj.Compare(notify.Source, item.Value.Target))
+                    item.Value.RxMessage(notify);
+            }
         }
     }
 }

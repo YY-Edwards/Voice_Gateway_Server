@@ -29,7 +29,9 @@ namespace TrboX
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            return (double)value - 100;
+            
+            if((double)value > 100)return (double)value - 100;
+            else return (double)value;
            
         }
 
@@ -384,4 +386,79 @@ namespace TrboX
             return value;
         }
     }
+
+
+    public class IconFormNotifyConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (null == value) return false;
+
+            switch ((NotifyType)value)
+            {
+                case NotifyType.Alarm:
+                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/alarm.png"));
+                case NotifyType.Call:
+                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/rx.png"));
+                case NotifyType.Message:
+                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/msg.png"));
+                case NotifyType.JobTicker:
+                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/job.png"));
+                case NotifyType.Tracker:
+                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/tracker.png"));
+            }
+
+            return null;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+
+
+    public class ContentFormNotifyConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (2 != value.Count()) return "";
+
+            switch ((NotifyType)value[0])
+            {
+                case NotifyType.Alarm:
+                case NotifyType.Call:
+                    return "语音呼叫"; 
+                case NotifyType.Message:
+                    return (string)value[1];
+            }
+
+            return "";
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    public class MsgMAxWidthConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+
+            if ((double)value > 200) return (double)value - 200;
+            else return (double)value;
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
 }
+
+
+
+
