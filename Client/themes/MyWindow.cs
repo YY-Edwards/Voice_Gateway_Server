@@ -13,6 +13,28 @@ using Microsoft.Win32;
 
 namespace TrboX
 {
+    [StructLayout(LayoutKind.Sequential)]
+    public struct POINT
+    {
+        public int x;
+        public int y;
+        public POINT(int x, int y)
+        {
+            this.x = x;
+            this.y = y;
+        }
+    }
+
+    [StructLayout(LayoutKind.Sequential)]
+    public struct MINMAXINFO
+    {
+        public POINT ptReserved;
+        public POINT ptMaxSize;
+        public POINT ptMaxPosition;
+        public POINT ptMinTrackSize;
+        public POINT ptMaxTrackSize;
+    };
+
     public partial  class MyWindow : Window
     {
         private const int WM_SYSCOMMAND = 0x112;
@@ -22,6 +44,10 @@ namespace TrboX
         public double relativeClip = 14;
 
         public string SubTitle { set { SetSubTitle(value); } get { return SubTitle; } }
+
+        public MINMAXINFO m_mmi;
+        public MINMAXINFO MinMaxInfo { get{return m_mmi;} }
+
        //public string SubTitle { set;}
         public MyWindow():base()
         {
@@ -94,7 +120,7 @@ namespace TrboX
 
         private void WmGetMinMaxInfo(System.IntPtr hwnd, System.IntPtr lParam)
         {
-            MINMAXINFO mmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
+            m_mmi = (MINMAXINFO)Marshal.PtrToStructure(lParam, typeof(MINMAXINFO));
 
             // Adjust the maximized size and position to fit the work area of the correct monitor
             int MONITOR_DEFAULTTONEAREST = 0x00000002;
@@ -107,43 +133,19 @@ namespace TrboX
 
                 RECT rcWorkArea = monitorInfo.rcWork;
                 RECT rcMonitorArea = monitorInfo.rcMonitor;
-                mmi.ptMaxPosition.x = Math.Abs(rcWorkArea.left - rcMonitorArea.left);
-                mmi.ptMaxPosition.y = Math.Abs(rcWorkArea.top - rcMonitorArea.top);
-                mmi.ptMaxSize.x = Math.Abs(rcWorkArea.right - rcWorkArea.left);
-                mmi.ptMaxSize.y = Math.Abs(rcWorkArea.bottom - rcWorkArea.top);
+                m_mmi.ptMaxPosition.x = Math.Abs(rcWorkArea.left - rcMonitorArea.left);
+                m_mmi.ptMaxPosition.y = Math.Abs(rcWorkArea.top - rcMonitorArea.top);
+                m_mmi.ptMaxSize.x = Math.Abs(rcWorkArea.right - rcWorkArea.left);
+                m_mmi.ptMaxSize.y = Math.Abs(rcWorkArea.bottom - rcWorkArea.top);
 
-                mmi.ptMinTrackSize.x = (int)MinWidth;
-                mmi.ptMinTrackSize.y = (int)MinHeight; 
+                m_mmi.ptMinTrackSize.x = (int)MinWidth;
+                m_mmi.ptMinTrackSize.y = (int)MinHeight; 
             }
 
-            Marshal.StructureToPtr(mmi, lParam, true);
+            Marshal.StructureToPtr(m_mmi, lParam, true);
         }
 
- 
 
-        [StructLayout(LayoutKind.Sequential)]
-
-        public struct POINT
-        {
-            public int x;
-            public int y;
-            public POINT(int x, int y)
-            {
-                this.x = x;
-                this.y = y;
-            }
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-
-        public struct MINMAXINFO
-        {
-            public POINT ptReserved;
-            public POINT ptMaxSize;
-            public POINT ptMaxPosition;
-            public POINT ptMinTrackSize;
-            public POINT ptMaxTrackSize;
-        };
 
         [StructLayout(LayoutKind.Sequential, Pack = 0)]
         public struct RECT

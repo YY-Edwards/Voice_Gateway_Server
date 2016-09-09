@@ -13,6 +13,11 @@ using System.Windows.Shapes;
 
 using System.Windows.Automation.Peers;
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
+using System.Windows.Threading;
+
 namespace TrboX
 {
     public class CHistory
@@ -31,9 +36,12 @@ namespace TrboX
         Main m_Main;
         OpView m_View;
         private CRelationShipObj m_Target = null;
-        private OPType Operate = OPType.Dispatch;
+        private COperate Operate = new COperate (OPType.Dispatch, null);
 
-        private CHistory m_FirstUnReadMsg = null;
+        private int m_FirstUnReadMsgIndex = -1;
+        private CNotification m_CurrentMsg = null;
+
+        public Main OwnerWin { set { m_Main = value; } get { return m_Main; } }
 
         public OperateWin(CRelationShipObj target)
             : base()
@@ -50,19 +58,13 @@ namespace TrboX
                 Title = m_Target.KeyName;
                 SubTitle = m_Target.HeaderWithoutKey;
 
-                if (null == m_Main) m_Main = (Main)this.Owner;
-
                 m_View = new OpView(this);
 
                 OnChangeOperateType();
 
                 lst_History.View = (ViewBase)FindResource("HistoryView");
-
-                
             };
-            this.Activated += delegate {
-                if (null == m_Main) m_Main = (Main)this.Owner;
-                OnOperateWinActivated(); };    
+            this.Activated += delegate {OnOperateWinActivated(); };    
         }
 
         private void OnOperateWinActivated()
@@ -83,15 +85,41 @@ namespace TrboX
                     if (true == CRelationShipObj.Compare(item.Source, Target))
                     {
                         RxMessage(item);
-                        if (null == m_FirstUnReadMsg)
+
+                        if (-1 == m_FirstUnReadMsgIndex)
                         {
-                            m_FirstUnReadMsg = ConvertToHistory(item);
-                            bdr_UnRead.Visibility = Visibility.Visible;  
+                            m_FirstUnReadMsgIndex = lst_History.Items.Count - 1;
+                            bdr_UnRead.Visibility = Visibility.Visible;
                         }
-                    }
-                        
+                    }                       
                 }
+
+                lst_History.Dispatcher.BeginInvoke(new Action(() =>
+                {
+                    if (null != m_CurrentMsg)
+                    {
+                        lst_History.SelectedIndex = FindItemInListView(ConvertToHistory(m_CurrentMsg));
+                        lst_History.UpdateLayout();
+                        lst_History.ScrollIntoView(lst_History.SelectedItem);
+                        m_CurrentMsg = null;
+                    }
+                    else
+                    {
+                        ListViewAutomationPeer lvap = new ListViewAutomationPeer(lst_History);
+                        var svap = lvap.GetPattern(PatternInterface.Scroll) as ScrollViewerAutomationPeer;
+                        ((ScrollViewer)svap.Owner).ScrollToEnd();
+                    }
+                }), DispatcherPriority.ContextIdle);
             }));
+
+
+        }
+
+        public CNotification CurrentNotify
+        {
+            set {
+                m_CurrentMsg = value;
+            }
         }
 
         public CRelationShipObj Target
@@ -111,15 +139,15 @@ namespace TrboX
             this.Hide();
         }
 
-        public void SetOperateType(OPType type)
+        public void SetOperateType(COperate op)
         {
-            Operate = type;
+            Operate = op;
             OnChangeOperateType();
         }
 
         private void OnChangeOperateType()
         {
-            switch (Operate)
+            switch (Operate.type)
             {
                 case OPType.Dispatch:
                 case OPType.ShortMessage:
@@ -136,19 +164,28 @@ namespace TrboX
         {
             if (null == msg) return;
             
-            if ((false == this.IsActive) && (null == m_FirstUnReadMsg))
-            {
-                m_FirstUnReadMsg = msg;
-                bdr_UnRead.Visibility = Visibility.Visible;
-            }
-            
             lst_History.Items.Add(msg);
 
+            if ((false == this.IsActive) && (-1 == m_FirstUnReadMsgIndex))
+            {
+                m_FirstUnReadMsgIndex = lst_History.Items.Count - 1;
+                bdr_UnRead.Visibility = Visibility.Visible;
+            }
             ListViewAutomationPeer lvap = new ListViewAutomationPeer(lst_History);
             var svap = lvap.GetPattern(PatternInterface.Scroll) as ScrollViewerAutomationPeer;
-            var scroll = svap.Owner as ScrollViewer;
+            ((ScrollViewer)svap.Owner).ScrollToEnd();
+        }
 
-            scroll.ScrollToEnd();
+        private int FindItemInListView(CHistory item)
+        {
+            for(int i  = 0; i< lst_History.Items.Count; i++)
+            {
+                if (JsonConvert.SerializeObject(lst_History.Items[i] as CHistory).Equals(JsonConvert.SerializeObject(item)))
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         private CHistory ConvertToHistory(CNotification notify)
@@ -196,9 +233,6 @@ namespace TrboX
         }
 
 
-
-
-
         private void btn_PTT_Click(object sender, RoutedEventArgs e)
         {
             AddMessage(new CHistory()
@@ -224,15 +258,43 @@ namespace TrboX
 
         private void bdr_UnRead_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            if (null != m_FirstUnReadMsg) lst_History.ScrollIntoView(m_FirstUnReadMsg);
-            m_FirstUnReadMsg = null;
+            if (-1 != m_FirstUnReadMsgIndex)
+            {
+                lst_History.SelectedIndex = m_FirstUnReadMsgIndex;
+            }
+            
+            m_FirstUnReadMsgIndex = -1;
             bdr_UnRead.Visibility = Visibility.Collapsed;
         }
 
         private void btn_UnReadClose_Click(object sender, RoutedEventArgs e)
         {
-            m_FirstUnReadMsg = null;
+            m_FirstUnReadMsgIndex = -1;
             bdr_UnRead.Visibility = Visibility.Collapsed;
+        }
+
+
+        private void lst_History_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            lst_History.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                lst_History.UpdateLayout();
+                if (null != lst_History.SelectedItem)
+                {
+                    lst_History.ScrollIntoView(lst_History.SelectedItem);
+                }
+                else
+                {
+                    ListViewAutomationPeer lvap = new ListViewAutomationPeer(lst_History);
+                    var svap = lvap.GetPattern(PatternInterface.Scroll) as ScrollViewerAutomationPeer;
+                    ((ScrollViewer)svap.Owner).ScrollToEnd();
+                }
+            }), DispatcherPriority.ContextIdle);
+        }
+
+        private void btn_AddFastPanel_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

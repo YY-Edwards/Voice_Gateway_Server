@@ -510,6 +510,7 @@ namespace TrboX
         }
     }
 
+    [Serializable]
     public class COrganization
     {
         public int index { set; get; }
@@ -566,24 +567,24 @@ namespace TrboX
         + "{'id':4, 'radio_id':114, 'is_online':true},"
         + "{'id':5, 'radio_id':115, 'is_online':true},"
         + "{'id':6, 'radio_id':116, 'is_online':true},"
-        + "{'id':7, 'radio_id':117},"
-        + "{'id':8, 'radio_id':118},"
-        + "{'id':9, 'radio_id':119},"
-        + "{'id':10, 'radio_id':120},"
-        + "{'id':11, 'radio_id':121},"
-        + "{'id':12, 'radio_id':122},"
-        + "{'id':13, 'radio_id':123},"
-        + "{'id':14, 'radio_id':124},"
-        + "{'id':15, 'radio_id':125},"
-        + "{'id':16, 'radio_id':126},"
-        + "{'id':17, 'radio_id':127},"
-        + "{'id':18, 'radio_id':128},"
-        + "{'id':19, 'radio_id':129},"
-        + "{'id':20, 'radio_id':130},"
-        + "{'id':21, 'radio_id':131},"
-        + "{'id':22, 'radio_id':132},"
-        + "{'id':23, 'radio_id':133},"
-        + "{'id':24, 'radio_id':134}"
+        + "{'id':7, 'radio_id':117, 'is_online':true},"
+        + "{'id':8, 'radio_id':118, 'is_online':true},"
+        + "{'id':9, 'radio_id':119, 'is_online':true},"
+        + "{'id':10, 'radio_id':120, 'is_online':true},"
+        + "{'id':11, 'radio_id':121, 'is_online':true},"
+        + "{'id':12, 'radio_id':122, 'is_online':true},"
+        + "{'id':13, 'radio_id':123, 'is_online':true},"
+        + "{'id':14, 'radio_id':124, 'is_online':true},"
+        + "{'id':15, 'radio_id':125, 'is_online':true},"
+        + "{'id':16, 'radio_id':126, 'is_online':true},"
+        + "{'id':17, 'radio_id':127, 'is_online':true},"
+        + "{'id':18, 'radio_id':128, 'is_online':true},"
+        + "{'id':19, 'radio_id':129, 'is_online':true},"
+        + "{'id':20, 'radio_id':130, 'is_online':true},"
+        + "{'id':21, 'radio_id':131, 'is_online':true},"
+        + "{'id':22, 'radio_id':132, 'is_online':true},"
+        + "{'id':23, 'radio_id':133, 'is_online':true},"
+        + "{'id':24, 'radio_id':134, 'is_online':true}"
         + "]";
 
         string relationship = "["
@@ -635,6 +636,8 @@ namespace TrboX
         public Dictionary<int, CGroup> g_GroupList = new Dictionary<int, CGroup>();
         public Dictionary<int, CRadio> g_RadioList = new Dictionary<int, CRadio>();
         public List<CRelationship> g_RelationshipList = new List<CRelationship>();
+
+        private Dictionary<COrganization, List<COrganization>> m_OrgList = new Dictionary<COrganization, List<COrganization>>();
      
         public TargetMgr()
         {
@@ -660,74 +663,78 @@ namespace TrboX
             g_RadioList.Add(-1, null);
 
             g_RelationshipList = JsonConvert.DeserializeObject(relationship, typeof(List<CRelationship>)) as List<CRelationship>;
+
+            UpdateOrgList();
+
         }
 
-        public Dictionary<COrganization,List<COrganization>> GetOrgList()
+        private void UpdateOrgList()
         {
-            Dictionary<COrganization, List<COrganization>> OrgList = new Dictionary<COrganization, List<COrganization>>();
-            Dictionary<int, COrganization> GroupList = new Dictionary<int,COrganization>();
+            Dictionary<int, COrganization> GroupList = new Dictionary<int, COrganization>();
 
             int count = 0;
 
-            foreach(var group in g_GroupList)
+            foreach (var group in g_GroupList)
             {
                 if (null == group.Value) continue;
 
-                COrganization org = new COrganization{
+                COrganization org = new COrganization
+                {
                     index = count++,
                     target = new CRelationShipObj(OrgItemType.Type_Group, g_GroupList[group.Value.id], null, null, null),
                     is_exp = true,
-                    };
+                };
 
                 GroupList.Add(group.Value.id, org);
-                OrgList.Add(org, new List<COrganization>());
+                m_OrgList.Add(org, new List<COrganization>());
             }
 
             foreach (CRelationship rela in g_RelationshipList)
             {
                 if (-1 == rela.group)
-                {                  
-                    COrganization org = new COrganization{
-                         index = count++,
-                         target = new CRelationShipObj(OrgItemType.Type_Group, null, null, null, null),
-                         is_exp = true,
+                {
+                    COrganization org = new COrganization
+                    {
+                        index = count++,
+                        target = new CRelationShipObj(OrgItemType.Type_Group, null, null, null, null),
+                        is_exp = true,
                     };
 
                     GroupList.Add(-1, org);
-                    OrgList.Add(org, new List<COrganization>());
+                    m_OrgList.Add(org, new List<COrganization>());
                     break;
                 }
             }
 
-            foreach(var employee in g_EmployeeList)
+            foreach (var employee in g_EmployeeList)
             {
                 bool isundefinedgroup = false;
 
                 if (null == employee.Value) continue;
-                foreach(CRelationship rela in g_RelationshipList)
+                foreach (CRelationship rela in g_RelationshipList)
                 {
                     if (employee.Value.id == rela.employee)
                     {
-                       isundefinedgroup = true;
+                        isundefinedgroup = true;
 
-                       CRelationShipObj target = new CRelationShipObj(OrgItemType.Type_Employee,g_GroupList[rela.group], g_EmployeeList[rela.employee], g_VehicleList[rela.vehicle], g_RadioList[rela.radio]);
+                        CRelationShipObj target = new CRelationShipObj(OrgItemType.Type_Employee, g_GroupList[rela.group], g_EmployeeList[rela.employee], g_VehicleList[rela.vehicle], g_RadioList[rela.radio]);
 
-                       OrgList[GroupList[rela.group]].Add(new COrganization
-                       {
+                        m_OrgList[GroupList[rela.group]].Add(new COrganization
+                        {
                             index = count++,
                             target = target,
                             is_exp = true,
-                       });
+                        });
 
-                       break;
-                    }                                          
+                        break;
+                    }
                 }
 
                 if (false == isundefinedgroup)
                 {
                     CRelationShipObj target = new CRelationShipObj(OrgItemType.Type_Employee, null, g_EmployeeList[employee.Value.id], null, null);
 
-                    OrgList[GroupList[-1]].Add(new COrganization
+                    m_OrgList[GroupList[-1]].Add(new COrganization
                     {
                         index = count++,
                         target = target,
@@ -743,14 +750,14 @@ namespace TrboX
 
                 if (null == vehicle.Value) continue;
                 foreach (CRelationship rela in g_RelationshipList)
-                {                   
+                {
                     if (vehicle.Value.id == rela.vehicle)
                     {
                         isundefinedgroup = true;
 
-                        CRelationShipObj target = new CRelationShipObj(OrgItemType.Type_Vehicle,g_GroupList[rela.group], g_EmployeeList[rela.employee], g_VehicleList[rela.vehicle], g_RadioList[rela.radio]);
+                        CRelationShipObj target = new CRelationShipObj(OrgItemType.Type_Vehicle, g_GroupList[rela.group], g_EmployeeList[rela.employee], g_VehicleList[rela.vehicle], g_RadioList[rela.radio]);
 
-                        OrgList[GroupList[rela.group]].Add(new COrganization
+                        m_OrgList[GroupList[rela.group]].Add(new COrganization
                         {
                             index = count++,
                             target = target,
@@ -763,8 +770,8 @@ namespace TrboX
 
                 if (false == isundefinedgroup)
                 {
-                    CRelationShipObj target = new CRelationShipObj(OrgItemType.Type_Vehicle,null, null, g_VehicleList[vehicle.Value.id], null);
-                    OrgList[GroupList[-1]].Add(new COrganization
+                    CRelationShipObj target = new CRelationShipObj(OrgItemType.Type_Vehicle, null, null, g_VehicleList[vehicle.Value.id], null);
+                    m_OrgList[GroupList[-1]].Add(new COrganization
                     {
                         index = count++,
                         target = target,
@@ -786,7 +793,7 @@ namespace TrboX
                         if ((-1 != rela.vehicle) || (-1 != rela.employee)) break;
 
                         CRelationShipObj target = new CRelationShipObj(g_RadioList[rela.radio].type == RadioType.RADIO ? OrgItemType.Type_Radio : OrgItemType.Type_Ride, g_GroupList[rela.group], g_EmployeeList[rela.employee], g_VehicleList[rela.vehicle], g_RadioList[rela.radio]);
-                        OrgList[GroupList[rela.group]].Add(new COrganization
+                        m_OrgList[GroupList[rela.group]].Add(new COrganization
                         {
                             index = count++,
                             target = target,
@@ -801,7 +808,7 @@ namespace TrboX
                 {
                     CRelationShipObj target = new CRelationShipObj(g_RadioList[radio.Value.id].type == RadioType.RADIO ? OrgItemType.Type_Radio : OrgItemType.Type_Ride, null, null, null, g_RadioList[radio.Value.id]);
 
-                    OrgList[GroupList[-1]].Add(new COrganization
+                    m_OrgList[GroupList[-1]].Add(new COrganization
                     {
                         index = count++,
                         target = target,
@@ -809,8 +816,11 @@ namespace TrboX
                     });
                 }
             }
+        }
 
-            return OrgList;
+        public Dictionary<COrganization,List<COrganization>> OrgList
+        {
+            get { return m_OrgList; }
         }
     }
 }

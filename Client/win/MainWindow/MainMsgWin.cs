@@ -219,6 +219,16 @@ namespace TrboX
             }));
         }
 
+        public void Explaner(CNotification notify)
+        {
+            m_Main.Dispatcher.Invoke(new Action(() =>
+            {
+                m_Main.SubWindow.OpenOrCreateTragetWin(notify);
+            }));
+        }
+
+        
+
         public void RemoveNotifyBySrc(CRelationShipObj src)
         {
             List<CNotification> notify = Get();
@@ -388,7 +398,10 @@ namespace TrboX
            else if(0 == m_Main.grd_main.ColumnDefinitions[2].MinWidth)
            {
                m_Main.grd_main.ColumnDefinitions[2].MinWidth = 100;
-               m_Main.grd_main.ColumnDefinitions[2].Width = new GridLength(MsgWidth);
+               if (MsgWidth > 100) 
+                   m_Main.grd_main.ColumnDefinitions[2].Width = new GridLength(MsgWidth);
+               else
+                   m_Main.grd_main.ColumnDefinitions[2].Width = new GridLength(260);
 
                m_Main.grdspl_Main_Msg.Visibility = Visibility.Visible;
            }
@@ -513,6 +526,10 @@ namespace TrboX
         {
             m_Notify.Remove(item as CNotification);
         }
+        public void ExplanerNotify(object item)
+        {
+            m_Notify.Explaner(item as CNotification);
+        }
 
         public void ClearNotify(NotifyType type)
         {
@@ -530,27 +547,20 @@ namespace TrboX
             {
                 i++;
 
-                AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Content = new CAlarmNotification() { Content = "test" + i.ToString() } });
-                AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 3 }), Content = new CAlarmNotification() { Content = "Alarm" + i.ToString() } });
+                //AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Content = new CAlarmNotification() { Content = "test" + i.ToString() } });
+                //AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 3 }), Content = new CAlarmNotification() { Content = "Alarm" + i.ToString() } });
 
-               //CAlarmNotification alarm = new CAlarmNotification() {Source= new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio(){id = 2}), Content = "test" + i.ToString(), time = DateTime.Now };
-               //m_Notify.Add(alarm);
-
-
-               //alarm = new CAlarmNotification() { Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 3 }), Content = "test" + i.ToString(), time = DateTime.Now };
-               //m_Notify.Add(alarm);
-
-                m_Notify.Add(new CNotification() { Type = NotifyType.Call, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Time = DateTime.Now });
-                m_Notify.Add(new CNotification() { Type = NotifyType.Message, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Time = DateTime.Now, Content = new CMsgNotification() { Content = "Message" + i.ToString() } });
-                m_Notify.Add(new CNotification() { Type = NotifyType.JobTicker, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Time = DateTime.Now });
-                m_Notify.Add(new CNotification() { Type = NotifyType.Tracker, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Time = DateTime.Now });
+                //m_Notify.Add(new CNotification() { Type = NotifyType.Call, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Time = DateTime.Now });
+                //m_Notify.Add(new CNotification() { Type = NotifyType.Message, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Time = DateTime.Now, Content = new CMsgNotification() { Content = "Message" + i.ToString() } });
+                //m_Notify.Add(new CNotification() { Type = NotifyType.JobTicker, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Time = DateTime.Now });
+                //m_Notify.Add(new CNotification() { Type = NotifyType.Tracker, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Time = DateTime.Now });
 
 
-                
 
-                //m_Main.EventList.AddEvent("事件" + i.ToString());
 
-                Thread.Sleep(5000);
+                m_Main.EventList.AddEvent("事件" + i.ToString());
+
+                Thread.Sleep(10000);
             }
         }
     }

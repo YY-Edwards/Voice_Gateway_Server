@@ -159,34 +159,20 @@ namespace TrboX
 
 
 
-        private void btn_AlarmNotify_Close_Click(object sender, RoutedEventArgs e)
+        private void btn_Notify_Close_Click(object sender, RoutedEventArgs e)
         {
             MsgWin.RemoveNotify(((Button)sender).DataContext);
         }
 
-        private void btn_MsgNotify_Close_Click(object sender, RoutedEventArgs e)
+        private void btn_Notify_Explaner_Click(object sender, RoutedEventArgs e)
         {
-            MsgWin.RemoveNotify(((Button)sender).DataContext);
-        }
-
-        private void btn_RxNotify_Close_Click(object sender, RoutedEventArgs e)
-        {
-            MsgWin.RemoveNotify(((Button)sender).DataContext);
-        }
-
-        private void btn_JobNotify_Close_Click(object sender, RoutedEventArgs e)
-        {
-            MsgWin.RemoveNotify(((Button)sender).DataContext);
-        }
-        private void btn_TrackerNotify_Close_Click(object sender, RoutedEventArgs e)
-        {
-            MsgWin.RemoveNotify(((Button)sender).DataContext);
+            MsgWin.ExplanerNotify(((Button)sender).DataContext);
         }
 
 
         private void FastPanel_TiltePressed(object sender, RoutedEventArgs e)
         {
-             WorkArea.PastPanelPressed(sender, e);
+            WorkArea.PastPanelPressed(sender, e);
         }
 
         private void FastPanel_Closing(object sender, RoutedEventArgs e)
@@ -194,11 +180,58 @@ namespace TrboX
             WorkArea.FastPanel.Remove((FastOperate)((FastPanel)sender).DataContext);
         }
 
+        private void dis_OnlineCheck(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void dis_Monitor(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void dis_StartUp(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void dis_ShutDown(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void dis_Week(object sender, RoutedEventArgs e)
+        {
+
+        }
+        private void dis_Sleep(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void dis_Dispatch(object sender, RoutedEventArgs e)
+        {
+            SubWindow.OpenOrCreateTragetWin(((FastOperate)((FastPanel)sender).DataContext).m_Contact, new COperate(OPType.Dispatch, null));           
+        }
+
+        private void dis_Message(object sender, RoutedEventArgs e)
+        {
+            SubWindow.OpenOrCreateTragetWin(((FastOperate)((FastPanel)sender).DataContext).m_Contact, new COperate(OPType.ShortMessage, null));        
+        }
+
+        private void dis_Position(object sender, RoutedEventArgs e)
+        {
+            SubWindow.OpenOrCreateTragetWin(((FastOperate)((FastPanel)sender).DataContext).m_Contact, new COperate(OPType.Position, null));  
+        }
+
+        private void dis_Jobticket(object sender, RoutedEventArgs e)
+        {
+            SubWindow.OpenOrCreateTragetWin(((FastOperate)((FastPanel)sender).DataContext).m_Contact, new COperate(OPType.JobTicker, null));  
+        }
+
+
         private void MainWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             if (true == g_IsNeedSaveWorkSpace)
             {
-
                 WarnningWindow warn = new WarnningWindow();
                 warn.ShowDialog();
 

@@ -45,13 +45,6 @@ namespace TrboX
                 }
             }));
 
-
-        public event RoutedEventHandler Closing
-        {
-            add { AddHandler(ClosingRoutedEvent, value); }
-            remove { RemoveHandler(ClosingRoutedEvent, value); }
-        }
-
         public static readonly RoutedEvent ClosingRoutedEvent =
             EventManager.RegisterRoutedEvent("Closing", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
 
@@ -59,16 +52,6 @@ namespace TrboX
         {
             RoutedEventArgs newEventArgs = new RoutedEventArgs(ClosingRoutedEvent);
             RaiseEvent(newEventArgs);
-        }
-
-        private void teste_Selected(object sender, RoutedEventArgs e)
-        {
-            int i = 0;
-        }
-
-        private void teste_Click(object sender, RoutedEventArgs e)
-        {
-            int i = 0;
         }
 
         private void updatecyclelist(object sender, RoutedEventArgs e)
@@ -79,13 +62,6 @@ namespace TrboX
                 cmb_CycleLst.Items.Add(new ComboBoxItem() { Content = cycle.ToString() + "s", Tag = cycle });
         }
 
-
-        public event RoutedEventHandler TitlePressed
-        {
-            add { AddHandler(TitlePressedRoutedEvent, value); }
-            remove { RemoveHandler(TitlePressedRoutedEvent, value); }
-        }
-
         public static readonly RoutedEvent TitlePressedRoutedEvent =
            EventManager.RegisterRoutedEvent("TitlePressed", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
 
@@ -94,6 +70,163 @@ namespace TrboX
             RoutedEventArgs newEventArgs = new RoutedEventArgs(TitlePressedRoutedEvent);
             RaiseEvent(newEventArgs);
         }
+
+        public event RoutedEventHandler TitlePressed
+        {
+            add { AddHandler(TitlePressedRoutedEvent, value); }
+            remove { RemoveHandler(TitlePressedRoutedEvent, value); }
+        }
+
+        public event RoutedEventHandler Closing
+        {
+            add { AddHandler(ClosingRoutedEvent, value); }
+            remove { RemoveHandler(ClosingRoutedEvent, value); }
+        }
+
+        public event RoutedEventHandler OnlineCheck
+        {
+            add { AddHandler(OnlineCheckRoutedEvent, value); }
+            remove { RemoveHandler(OnlineCheckRoutedEvent, value); }
+        }
+
+         public static readonly RoutedEvent OnlineCheckRoutedEvent =
+         EventManager.RegisterRoutedEvent("OnlineCheck", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
+
+
+        private void btn_Check_Click(object sender, RoutedEventArgs e)
+        {
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(OnlineCheckRoutedEvent);
+            RaiseEvent(newEventArgs);
+        }
+
+        public static readonly RoutedEvent MonitorRoutedEvent =
+EventManager.RegisterRoutedEvent("Monitor", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
+        private void btn_Monitor_Click(object sender, RoutedEventArgs e)
+        {
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(MonitorRoutedEvent);
+            RaiseEvent(newEventArgs);
+        }
+        public static readonly RoutedEvent DispatchRoutedEvent =
+EventManager.RegisterRoutedEvent(" Dispatch", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
+        private void btn_Call_Click(object sender, RoutedEventArgs e)
+        {
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(DispatchRoutedEvent);
+            RaiseEvent(newEventArgs);
+        }
+        public static readonly RoutedEvent MessageRoutedEvent =
+EventManager.RegisterRoutedEvent("Message", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
+        private void btn_Message_Click(object sender, RoutedEventArgs e)
+        {
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(MessageRoutedEvent);
+            RaiseEvent(newEventArgs);
+        }
+        public static readonly RoutedEvent PositionRoutedEvent =
+EventManager.RegisterRoutedEvent("Position", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
+        private void btn_Position_Click(object sender, RoutedEventArgs e)
+        {
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(PositionRoutedEvent);
+            RaiseEvent(newEventArgs);
+
+        }
+        public static readonly RoutedEvent JobTicketRoutedEvent =
+EventManager.RegisterRoutedEvent("JobTicket", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
+        private void btn_Job_Click(object sender, RoutedEventArgs e)
+        {
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(JobTicketRoutedEvent);
+            RaiseEvent(newEventArgs);
+        }
+
+
+
+        public static readonly RoutedEvent ShutDownRoutedEvent =
+EventManager.RegisterRoutedEvent("ShutDown", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
+        private void btn_Control_Click(object sender, RoutedEventArgs e)
+        {
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(ShutDownRoutedEvent);
+            RaiseEvent(newEventArgs);
+        }
+
+        public static readonly RoutedEvent StartUpRoutedEvent =
+EventManager.RegisterRoutedEvent("StartUp", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
+        public static readonly RoutedEvent SleepRoutedEvent =
+EventManager.RegisterRoutedEvent("Sleep", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
+
+        public static readonly RoutedEvent WeekRoutedEvent =
+EventManager.RegisterRoutedEvent("Week", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
+
+        private void btn_Control_Selected(object sender, RoutedEventArgs e)
+        {
+            switch(btn_Control.SelectedIndex)
+            {
+                case 0:
+
+            RaiseEvent(new RoutedEventArgs(StartUpRoutedEvent));
+            break;
+                case 1:
+
+            RaiseEvent(new RoutedEventArgs(SleepRoutedEvent));
+            break;
+                case 2:
+
+            RaiseEvent(new RoutedEventArgs(WeekRoutedEvent));
+            break;
+                default:
+                    break;
+            }
+        }
+
+        public event RoutedEventHandler Monitor
+        {
+            add { AddHandler(MonitorRoutedEvent, value); }
+            remove { RemoveHandler(MonitorRoutedEvent, value); }
+        }
+
+        public event RoutedEventHandler Dispatch
+        {
+            add { AddHandler(DispatchRoutedEvent, value); }
+            remove { RemoveHandler(DispatchRoutedEvent, value); }
+        }
+
+        public event RoutedEventHandler Message
+        {
+            add { AddHandler(MessageRoutedEvent, value); }
+            remove { RemoveHandler(MessageRoutedEvent, value); }
+        }
+
+        public event RoutedEventHandler Position
+        {
+            add { AddHandler(PositionRoutedEvent, value); }
+            remove { RemoveHandler(PositionRoutedEvent, value); }
+        }
+
+        public event RoutedEventHandler ShutDown
+        {
+            add { AddHandler(ShutDownRoutedEvent, value); }
+            remove { RemoveHandler(ShutDownRoutedEvent, value); }
+        }
+        public event RoutedEventHandler StartUp
+        {
+            add { AddHandler(StartUpRoutedEvent, value); }
+            remove { RemoveHandler(StartUpRoutedEvent, value); }
+        }
+        public event RoutedEventHandler Sleep
+        {
+            add { AddHandler(SleepRoutedEvent, value); }
+            remove { RemoveHandler(SleepRoutedEvent, value); }
+        }
+        public event RoutedEventHandler Week
+        {
+            add { AddHandler(WeekRoutedEvent, value); }
+            remove { RemoveHandler(WeekRoutedEvent, value); }
+        }
+
+        public event RoutedEventHandler Jobticket
+        {
+            add { AddHandler(JobTicketRoutedEvent, value); }
+            remove { RemoveHandler(JobTicketRoutedEvent, value); }
+        }
+
+
 
     }
 }

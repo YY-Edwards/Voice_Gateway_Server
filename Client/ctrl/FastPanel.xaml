@@ -112,7 +112,7 @@
                                     <ImageBrush.ImageSource>
                                         <MultiBinding  Converter="{StaticResource TypeToIcon}">
                                             <Binding  Path="m_Type" />
-                                            <Binding  Path="m_Contact.key" />
+                                            <Binding  Path="m_Contact.target.key" />
                                             <Binding  Path="m_Operate.type" />
                                         </MultiBinding>
                                     </ImageBrush.ImageSource>
@@ -120,31 +120,31 @@
                             </Border.Background>
                         </Border>
                         <Border BorderBrush="Black" BorderThickness="0" Grid.RowSpan="2" Grid.Column="1">
-                            <TabControl SelectedIndex="{Binding m_Contact.key, Converter={StaticResource ContactTypeToItem}}" Style="{DynamicResource TabControlStyleNormal}" Margin="0,-22,0,0" BorderThickness="0">
+                            <TabControl SelectedIndex="{Binding m_Contact.target.key, Converter={StaticResource ContactTypeToItem}}" Style="{DynamicResource TabControlStyleNormal}" Margin="0,-22,0,0" BorderThickness="0">
                                 <TabItem x:Name="group" Header="TabItem" Width="10" VerticalAlignment="Top">
                                     <DockPanel LastChildFill="False">
                                         <TextBlock TextWrapping="Wrap" Text="组" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,10,0,0" FontSize="16"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.group.name, StringFormat=名称：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,2,0,0" FontSize="16"/>
+                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.target.group.name, StringFormat=名称：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,2,0,0" FontSize="16"/>
                                         <Separator Height="10" Margin="0" DockPanel.Dock="Top"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.group.group_id, StringFormat=ID：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"/>
+                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.target.group.group_id, StringFormat=ID：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"/>
                                     </DockPanel>
                                 </TabItem>
                                 <TabItem x:Name="employee" Header="TabItem" Margin="0,-2,-2,0" Width="10" VerticalAlignment="Top">
                                     <DockPanel LastChildFill="False">
                                         <TextBlock TextWrapping="Wrap" Text="联系人" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,10,0,0" FontSize="16"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.employee.name, StringFormat=姓名：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,2,0,0" FontSize="16"/>
+                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.target.employee.name, StringFormat=姓名：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,2,0,0" FontSize="16"/>
                                         <Separator Height="10" Margin="0" DockPanel.Dock="Top"/>
-                                        <TextBlock TextWrapping="Wrap"  VerticalAlignment="Top" DockPanel.Dock="Top" Visibility="{Binding m_Contact.group, Converter={StaticResource NullHide}}" Margin="0,2">
+                                        <TextBlock TextWrapping="Wrap"  VerticalAlignment="Top" DockPanel.Dock="Top" Visibility="{Binding m_Contact.target.group, Converter={StaticResource NullHide}}" Margin="0,2">
                                             <TextBlock.Text>
                                                 <MultiBinding StringFormat="组： {0}（ID：{1}）">
-                                                    <Binding Path="m_Contact.group.name" />
-                                                    <Binding Path="m_Contact.group.group_id" />
+                                                    <Binding Path="m_Contact.target.group.name" />
+                                                    <Binding Path="m_Contact.target.group.group_id" />
                                                 </MultiBinding>
                                             </TextBlock.Text>
                                         </TextBlock>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.vehicle.number, StringFormat=车辆：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.vehicle, Converter={StaticResource NullHide}}" Margin="0,2"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.radio.type, StringFormat=终端类型：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.radio.radio_id, StringFormat=终端ID：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
+                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.target.vehicle.number, StringFormat=车辆：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.vehicle, Converter={StaticResource NullHide}}" Margin="0,2"/>
+                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.target.radio.type, StringFormat=终端类型：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
+                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.target.radio.radio_id, StringFormat=终端ID：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
 
 
                                     </DockPanel>
@@ -152,72 +152,72 @@
                                 <TabItem x:Name="vehicle" Header="TabItem" Margin="0,-2,65,0" Width="10" VerticalAlignment="Top">
                                     <DockPanel LastChildFill="False">
                                         <TextBlock TextWrapping="Wrap" Text="车辆" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,10,0,0" FontSize="16"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.vehicle.number, StringFormat=车牌：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,2,0,0" FontSize="16"/>
+                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.target.vehicle.number, StringFormat=车牌：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,2,0,0" FontSize="16"/>
                                         <Separator Height="10" Margin="0" DockPanel.Dock="Top"/>
-                                        <TextBlock TextWrapping="Wrap"  VerticalAlignment="Top" DockPanel.Dock="Top" Visibility="{Binding m_Contact.group, Converter={StaticResource NullHide}}" Margin="0,2">
+                                        <TextBlock TextWrapping="Wrap"  VerticalAlignment="Top" DockPanel.Dock="Top" Visibility="{Binding m_Contact.target.group, Converter={StaticResource NullHide}}" Margin="0,2">
                                             <TextBlock.Text>
                                                 <MultiBinding StringFormat="组： {0}（ID：{1}）">
-                                                    <Binding Path="m_Contact.group.name" />
-                                                    <Binding Path="m_Contact.group.group_id" />
+                                                    <Binding Path="m_Contact.target.group.name" />
+                                                    <Binding Path="m_Contact.target.group.group_id" />
                                                 </MultiBinding>
                                             </TextBlock.Text>
                                         </TextBlock>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.employee.number, StringFormat=联系人：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.vehicle, Converter={StaticResource NullHide}}" Margin="0,2"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.radio.type, StringFormat=终端类型：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.radio.radio_id, StringFormat=终端ID：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
+                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.target.employee.number, StringFormat=联系人：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.vehicle, Converter={StaticResource NullHide}}" Margin="0,2"/>
+                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.target.radio.type, StringFormat=终端类型：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
+                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.target.radio.radio_id, StringFormat=终端ID：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
                                     </DockPanel>
                                 </TabItem>
                                 <TabItem x:Name="ride" Header="TabItem" Margin="0,-2,0,0" Width="10" VerticalAlignment="Top">
                                     <DockPanel LastChildFill="False">
                                         <TextBlock TextWrapping="Wrap" Text="车载台" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,10,0,0" FontSize="16"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.radio.radio_id, StringFormat=ID:\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,2,0,0" FontSize="16"/>
+                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.target.radio.radio_id, StringFormat=ID:\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,2,0,0" FontSize="16"/>
                                         <Separator Height="10" Margin="0" DockPanel.Dock="Top"/>
-                                        <TextBlock TextWrapping="Wrap"  VerticalAlignment="Top" DockPanel.Dock="Top" Visibility="{Binding m_Contact.group, Converter={StaticResource NullHide}}" Margin="0,2">
+                                        <TextBlock TextWrapping="Wrap"  VerticalAlignment="Top" DockPanel.Dock="Top" Visibility="{Binding m_Contact.target.group, Converter={StaticResource NullHide}}" Margin="0,2">
                                             <TextBlock.Text>
                                                 <MultiBinding StringFormat="组： {0}（ID：{1}）">
-                                                    <Binding Path="m_Contact.group.name" />
-                                                    <Binding Path="m_Contact.group.group_id" />
+                                                    <Binding Path="m_Contact.target.group.name" />
+                                                    <Binding Path="m_Contact.target.group.group_id" />
                                                 </MultiBinding>
                                             </TextBlock.Text>
                                         </TextBlock>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.employee.number, StringFormat=联系人：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.vehicle, Converter={StaticResource NullHide}}" Margin="0,2"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.vehicle.number, StringFormat=车辆：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
+                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.target.employee.number, StringFormat=联系人：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.vehicle, Converter={StaticResource NullHide}}" Margin="0,2"/>
+                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.target.vehicle.number, StringFormat=车辆：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
                                     </DockPanel>
                                 </TabItem>
                                 <TabItem x:Name="radio" Header="TabItem" Margin="0,-2,0,0" Width="10" VerticalAlignment="Top">
                                     <DockPanel LastChildFill="False">
                                         <TextBlock TextWrapping="Wrap" Text="手持台" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,10,0,0" FontSize="16"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.radio.radio_id, StringFormat=ID:\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,2,0,0" FontSize="16"/>
+                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.target.radio.radio_id, StringFormat=ID:\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,2,0,0" FontSize="16"/>
                                         <Separator Height="10" Margin="0" DockPanel.Dock="Top"/>
-                                        <TextBlock TextWrapping="Wrap"  VerticalAlignment="Top" DockPanel.Dock="Top" Visibility="{Binding m_Contact.group, Converter={StaticResource NullHide}}" Margin="0,2">
+                                        <TextBlock TextWrapping="Wrap"  VerticalAlignment="Top" DockPanel.Dock="Top" Visibility="{Binding m_Contact.target.group, Converter={StaticResource NullHide}}" Margin="0,2">
                                             <TextBlock.Text>
                                                 <MultiBinding StringFormat="组： {0}（ID：{1}）">
-                                                    <Binding Path="m_Contact.group.name" />
-                                                    <Binding Path="m_Contact.group.group_id" />
+                                                    <Binding Path="m_Contact.target.group.name" />
+                                                    <Binding Path="m_Contact.target.group.group_id" />
                                                 </MultiBinding>
                                             </TextBlock.Text>
                                         </TextBlock>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.employee.number, StringFormat=联系人：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.vehicle, Converter={StaticResource NullHide}}" Margin="0,2"/>
-                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.vehicle.number, StringFormat=车辆：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
+                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.target.employee.number, StringFormat=联系人：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.vehicle, Converter={StaticResource NullHide}}" Margin="0,2"/>
+                                        <TextBlock TextWrapping="Wrap" Text="{Binding m_Contact.target.vehicle.number, StringFormat=车辆：\{0\}}" VerticalAlignment="Top" DockPanel.Dock="Top"  Visibility="{Binding m_Contact.radio, Converter={StaticResource NullHide}}" Margin="0,2"/>
 
                                     </DockPanel>
                                 </TabItem>
                             </TabControl>
                         </Border>
                         <DockPanel LastChildFill="False" Grid.Row="1" Width="80" HorizontalAlignment="Left">
-                            <Button x:Name="btn_Check" Content="在线检测" Margin="0,0,0,3" DockPanel.Dock="Top" ToolTip="在线检测" Visibility="{Binding m_Contact, Converter={StaticResource OpBtnHide}}"/>
-                            <Button x:Name="btn_Monitor"  Content="远程监听" Margin="0,0,0,3" DockPanel.Dock="Top" ToolTip="远程监听"  Visibility="{Binding Visibility, ElementName=btn_Check}"/>
-                            <Button x:Name="btn_Call"  Content="呼叫" Margin="0,0,0,3" DockPanel.Dock="Top" ToolTip="呼叫"  Visibility="{Binding Visibility, ElementName=btn_Check}"/>
-                            <Button x:Name="btn_Message"  Content="短消息" Margin="0,0,0,3" DockPanel.Dock="Top" ToolTip="短消息"  Visibility="{Binding Visibility, ElementName=btn_Check}"/>
-                            <Button x:Name="btn_Position"  Content="位置查询" Margin="0,0,0,3" DockPanel.Dock="Top"  ToolTip="位置查询"  Visibility="{Binding Visibility, ElementName=btn_Check}"/>
-                            <local:ComboButton x:Name="btn_Control"  Content="遥毙" Height="20" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,3" Background="White" Visibility="{Binding Visibility, ElementName=btn_Check}">
+                            <Button x:Name="btn_Check" Content="在线检测" Margin="0,0,0,3" DockPanel.Dock="Top" ToolTip="在线检测" Visibility="{Binding m_Contact.target, Converter={StaticResource OpBtnHide}}" Click="btn_Check_Click"/>
+                            <Button x:Name="btn_Monitor"  Content="远程监听" Margin="0,0,0,3" DockPanel.Dock="Top" ToolTip="远程监听"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_Monitor_Click"/>
+                            <Button x:Name="btn_Call"  Content="呼叫" Margin="0,0,0,3" DockPanel.Dock="Top" ToolTip="呼叫"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_Call_Click"/>
+                            <Button x:Name="btn_Message"  Content="短消息" Margin="0,0,0,3" DockPanel.Dock="Top" ToolTip="短消息"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_Message_Click"/>
+                            <Button x:Name="btn_Position"  Content="位置查询" Margin="0,0,0,3" DockPanel.Dock="Top"  ToolTip="位置查询"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_Position_Click"/>
+                            <local:ComboButton x:Name="btn_Control"  Content="遥毙" Height="20" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,3" Background="White" Visibility="{Binding Visibility, ElementName=btn_Check}" Selected="btn_Control_Selected" Click="btn_Control_Click">
                                 <local:ComboButton.Items>
                                     <ComboBoxItem Content="遥开"/>
                                     <ComboBoxItem Content="遥晕"/>
                                     <ComboBoxItem Content="遥醒"/>
                                 </local:ComboButton.Items>
                             </local:ComboButton>
-                            <Button x:Name="btn_Job"  Content="工单" Margin="0" DockPanel.Dock="Top" Cursor="" ToolTip="工单" Visibility="{Binding Visibility, ElementName=btn_Check}" />
+                            <Button x:Name="btn_Job"  Content="工单" Margin="0" DockPanel.Dock="Top" Cursor="" ToolTip="工单" Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_Job_Click" />
                         </DockPanel>
                     </Grid>
                 </TabItem>
@@ -229,7 +229,7 @@
                                     <ImageBrush.ImageSource>
                                         <MultiBinding  Converter="{StaticResource TypeToIcon}">
                                             <Binding  Path="m_Type" />
-                                            <Binding  Path="m_Contact.key" />
+                                            <Binding  Path="m_Contact.target.key" />
                                             <Binding  Path="m_Operate.type" />
                                         </MultiBinding>
                                     </ImageBrush.ImageSource>

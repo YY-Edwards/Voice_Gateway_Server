@@ -33,6 +33,41 @@ namespace TrboX
 
         }
 
+        private enum ContextMenuType
+        {
+            All,
+            Group,
+            RadioOn,
+            RadioOff,
+        };
+
+        private ContextMenu CreateOrgMenu(ContextMenuType type)
+        {
+            ContextMenu menu = new ContextMenu();
+            if (ContextMenuType.All != type) menu.Items.Add(new MenuItem() { Header = "添加到快速操作", Width = 160, Tag = "fast", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+            if (ContextMenuType.All != type) menu.Items.Add(new Separator() { Margin = new Thickness(5) });
+
+            menu.Items.Add(new MenuItem() { Header = "在线检测", Width = 160, Tag = "check", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+
+            if ((ContextMenuType.Group == type) || (ContextMenuType.RadioOn == type))
+                menu.Items.Add(new MenuItem() { Header = "远程监听", Width = 160, Tag = "monitor", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+
+             if (ContextMenuType.RadioOff != type)
+             {
+                 menu.Items.Add(new Separator() { Margin = new Thickness(5) });
+                 menu.Items.Add(new MenuItem() { Header = "语音调度", Width = 160, Tag = "dispatch", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                 menu.Items.Add(new MenuItem() { Header = "短消息", Width = 160, Tag = "message", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                 menu.Items.Add(new MenuItem() { Header = "位置查询", Width = 160, Tag = "position", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                 menu.Items.Add(new MenuItem() { Header = "指令控制", Width = 160, Tag = "control", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                 menu.Items.Add(new Separator() { Margin = new Thickness(5) });
+                 menu.Items.Add(new MenuItem() { Header = "工单", Width = 160, Tag = "jobticker", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+             }
+
+            foreach(var item in menu.Items)if(item is MenuItem)((MenuItem)item).Click += new RoutedEventHandler(OnOrganizationMenu_Click);  
+            
+            return menu;
+        }
+
         private void FillDataToOrgTreeView()
         {
             TreeViewItem OrginItem = m_Main.tree_OrgView.Items.Count > 0 ? m_Main.tree_OrgView.Items[0] as TreeViewItem : null;
@@ -42,28 +77,10 @@ namespace TrboX
             
             if (null != OrginItem) itemOrg.IsExpanded = OrginItem.IsExpanded;           
             else itemOrg.IsExpanded = true;
-            
 
-            
-
-            //menu
-            itemOrg.ContextMenu = new ContextMenu();
-            itemOrg.ContextMenu.Items.Add(new MenuItem() { Header = "在线检测", Width = 160, Tag = "check", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-            itemOrg.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
-            //itemOrg.ContextMenu.Items.Add (new MenuItem() { Header = "远程监听", Width = 160, Tag = "monitor", Style = App.Current.Resources["MenuItemStyleNormal"] as Style }); 
-            itemOrg.ContextMenu.Items.Add(new MenuItem() { Header = "语音调度", Width = 160, Tag = "dispatch", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-            itemOrg.ContextMenu.Items.Add(new MenuItem() { Header = "短消息", Width = 160, Tag = "message", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-            itemOrg.ContextMenu.Items.Add(new MenuItem() { Header = "位置查询", Width = 160, Tag = "position", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-            itemOrg.ContextMenu.Items.Add(new MenuItem() { Header = "指令控制", Width = 160, Tag = "control", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-            itemOrg.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
-            itemOrg.ContextMenu.Items.Add(new MenuItem() { Header = "工单", Width = 160, Tag = "jobticker", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-
-            for (int i = 0; i < 8; i++)
-                if ((i != 1) && (i != 6))
-                    ((MenuItem)itemOrg.ContextMenu.Items[i]).Click += new RoutedEventHandler(OnOrganizationMenu_Click);
+            itemOrg.ContextMenu = CreateOrgMenu(ContextMenuType.All);
 
             if (null == itemOrg) return;
-
             int groupcount = 0;
             foreach (var group in OrgList)
             {
@@ -75,28 +92,7 @@ namespace TrboX
                 else itemGroup.IsExpanded = group.Key.is_exp; 
 
                 itemGroup.Tag = group.Key;
-
-               
-
-
-                itemGroup.ContextMenu = new ContextMenu();
-                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "添加到快速操作", Width = 160, Tag = "fast", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                itemGroup.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
-                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "在线检测", Width = 160, Tag = "check", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "远程监听", Width = 160, Tag = "monitor", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                itemGroup.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
-
-                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "语音调度", Width = 160, Tag = "dispatch", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "短消息", Width = 160, Tag = "message", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "位置查询", Width = 160, Tag = "position", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "指令控制", Width = 160, Tag = "control", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                itemGroup.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
-                itemGroup.ContextMenu.Items.Add(new MenuItem() { Header = "工单", Width = 160, Tag = "jobticker", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-
-                for (int i = 0; i < 10; i++)
-                    if ((i != 1) && (i != 4) && (i != 9))
-                        ((MenuItem)itemGroup.ContextMenu.Items[i]).Click += new RoutedEventHandler(OnOrganizationMenu_Click);
-
+                itemGroup.ContextMenu = CreateOrgMenu(ContextMenuType.Group);
                 if (null == group.Key.target.group) itemGroup.ContextMenu.Visibility = Visibility.Hidden;
 
 
@@ -124,36 +120,17 @@ namespace TrboX
 
 
                         if(true == childitem.IsSelected)m_Main.CurrentTraget = item;
-                          
 
-                        childitem.ContextMenu = new ContextMenu();
-                        childitem.ContextMenu.Items.Add(new MenuItem() { Header = "添加到快速操作", Width = 160, Tag = "fast", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                        childitem.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
 
-                        childitem.ContextMenu.Items.Add(new MenuItem() { Header = "在线检测", Width = 160, Tag = "check", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                        childitem.ContextMenu.Items.Add(new MenuItem() { Header = "远程监听", Width = 160, Tag = "monitor", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                        childitem.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
-
-                        childitem.ContextMenu.Items.Add(new MenuItem() { Header = "语音调度", Width = 160, Tag = "dispatch", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                        childitem.ContextMenu.Items.Add(new MenuItem() { Header = "短消息", Width = 160, Tag = "message", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                        childitem.ContextMenu.Items.Add(new MenuItem() { Header = "位置查询", Width = 160, Tag = "position", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                        childitem.ContextMenu.Items.Add(new MenuItem() { Header = "指令控制", Width = 160, Tag = "control", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                        childitem.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
-
-                        childitem.ContextMenu.Items.Add(new MenuItem() { Header = "工单", Width = 160, Tag = "jobticker", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-
-                        for (int i = 0; i < 11; i++)
-                            if ((i != 1) && (i != 4) && (i != 9))
-                                ((MenuItem)childitem.ContextMenu.Items[i]).Click += new RoutedEventHandler(OnOrganizationMenu_Click);
-
+                        
+                        
                         if ((null == item.target.radio) || (false == item.target.radio.is_online))
                         {
-                            childitem.ContextMenu = new ContextMenu();
-                            childitem.ContextMenu.Items.Add(new MenuItem() { Header = "添加到快速操作", Width = 160, Tag = "fast", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                            childitem.ContextMenu.Items.Add(new Separator() { Margin = new Thickness(5) });
-                            childitem.ContextMenu.Items.Add(new MenuItem() { Header = "在线检测", Width = 160, Tag = "check", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                            ((MenuItem)childitem.ContextMenu.Items[0]).Click += new RoutedEventHandler(OnOrganizationMenu_Click);
-                            ((MenuItem)childitem.ContextMenu.Items[2]).Click += new RoutedEventHandler(OnOrganizationMenu_Click);
+                            childitem.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOff);
+                        }
+                        else
+                        {
+                            childitem.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOn);
                         }
 
                         itemGroup.Items.Add(childitem);
@@ -211,7 +188,18 @@ namespace TrboX
 
         private void OnOrganizationMenu_Click(object sender, RoutedEventArgs e)
         {
-            TreeViewItem item = ((ContextMenu)((MenuItem)sender).Parent).PlacementTarget as TreeViewItem;
+            
+            COrganization org = null;
+            if(((ContextMenu)((MenuItem)sender).Parent).PlacementTarget is TreeViewItem)
+            {
+                org = ((TreeViewItem)((ContextMenu)((MenuItem)sender).Parent).PlacementTarget).Tag as COrganization;
+            }
+            else if(((ContextMenu)((MenuItem)sender).Parent).PlacementTarget is ListBoxItem)
+            {
+                org = ((ListBoxItem)((ContextMenu)((MenuItem)sender).Parent).PlacementTarget).Content as COrganization;
+            }
+
+            if (null == org) return;
 
             switch ((string)((MenuItem)sender).Tag)
             {
@@ -219,8 +207,22 @@ namespace TrboX
                     m_Main.WorkArea.FastPanel.Add(new FastOperate()
                     {
                         m_Type = FastType.FastType_Contact,
-                        m_Contact = ((COrganization)item.Tag).target
+                        m_Contact = org
                     });
+                    break;
+                case "dispatch":
+                    m_Main.SubWindow.OpenOrCreateTragetWin(org, new COperate(OPType.Dispatch, null));
+                    break;
+                case "message":
+                    m_Main.SubWindow.OpenOrCreateTragetWin(org, new COperate(OPType.ShortMessage, null));
+                    break;
+                case "position":
+                    m_Main.SubWindow.OpenOrCreateTragetWin(org, new COperate(OPType.Position, null));
+                    break;
+                case "control":                   
+                    break;
+                case "jobticker":
+                    m_Main.SubWindow.OpenOrCreateTragetWin(org, new COperate(OPType.JobTicker, null));
                     break;
             };
         }
@@ -231,7 +233,12 @@ namespace TrboX
             m_Main.lst_Group.Items.Clear();
             foreach (var group in OrgList)
             {
-                if(null != group.Key.target.group)m_Main.lst_Group.Items.Add(group.Key);
+                if (null != group.Key.target.group)
+                {
+                    ListViewItem item = new ListViewItem() { Content = group.Key };
+                    item.ContextMenu = CreateOrgMenu(ContextMenuType.Group);
+                    m_Main.lst_Group.Items.Add(item);
+                }
             }          
         }
 
@@ -241,9 +248,18 @@ namespace TrboX
             m_Main.lst_Employee.Items.Clear();
             foreach (var group in OrgList)
             {
-                foreach(var item in group.Value)
+                foreach(var org in group.Value)
                 {
-                    if ((null != item.target.employee) && (OrgItemType.Type_Employee == item.target.key)) m_Main.lst_Employee.Items.Add(item);
+                    if ((null != org.target.employee) && (OrgItemType.Type_Employee == org.target.key)) 
+                    {
+                        ListViewItem item = new ListViewItem() { Content = org };
+                        if ((null == org.target.radio) || (false == org.target.radio.is_online))
+                            item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOff);                       
+                        else
+                            item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOn);                        
+                       
+                        m_Main.lst_Employee.Items.Add(item);
+                    }
                 }
             }
         }
@@ -253,26 +269,42 @@ namespace TrboX
             m_Main.lst_Vehicle.Items.Clear();
             foreach (var group in OrgList)
             {
-                foreach (var item in group.Value)
-                {                   
-                    if ((null != item.target.vehicle) && (OrgItemType.Type_Vehicle == item.target.key)) m_Main.lst_Vehicle.Items.Add(item);
+                foreach (var org in group.Value)
+                {
+                    if ((null != org.target.vehicle) && (OrgItemType.Type_Vehicle == org.target.key))
+                    {
+                        ListViewItem item = new ListViewItem() { Content = org };
+
+                        if ((null == org.target.radio) || (false == org.target.radio.is_online))
+                            item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOff);
+                        else
+                            item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOn);
+
+                        m_Main.lst_Vehicle.Items.Add(item);
+                    }
                 }
             }
         }
         private void FillDataToRadioList()
         {
             m_Main.lst_Radio.View = (ViewBase)m_Main.FindResource("RadioView");
-            Dictionary<int, COrganization> RadioList = new Dictionary<int, COrganization>();
+            Dictionary<int, ListBoxItem> RadioList = new Dictionary<int, ListBoxItem>();
             m_Main.lst_Radio.Items.Clear();
             foreach (var group in OrgList)
             {
-                foreach (var item in group.Value)
+                foreach (var org in group.Value)
                 {
-                    if (null != item.target.radio)
+                    if (null != org.target.radio)
                     {
-                        if(!RadioList.ContainsKey(item.target.radio.id))
+                        if(!RadioList.ContainsKey(org.target.radio.id))
                         {
-                            RadioList.Add(item.target.radio.id, item);
+                            ListViewItem item = new ListViewItem() { Content = org };
+                            if (false == org.target.radio.is_online)
+                                item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOff);
+                            else
+                                item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOn);
+
+                            RadioList.Add(org.target.radio.id, item);
                             m_Main.lst_Radio.Items.Add(item);
                         }
                     }
@@ -296,7 +328,7 @@ namespace TrboX
         {
             m_Main.Dispatcher.Invoke(new Action(() =>
             {
-                OrgList = m_Target.GetOrgList();
+                OrgList = m_Target.OrgList;
                 FillDataToOrgTreeView();
                 FillDataToGroupList();
                 FillDataToEmployeeList();

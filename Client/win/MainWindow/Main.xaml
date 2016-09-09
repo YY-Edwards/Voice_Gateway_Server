@@ -33,7 +33,7 @@
                         <DockPanel.ContextMenu >
                             <ContextMenu Visibility="Hidden"/>
                         </DockPanel.ContextMenu>
-                        <local:FastPanel  PanelItem ="{Binding CurrentItem}" AllowDrop="True" TitlePressed="FastPanel_TiltePressed" Closing = "FastPanel_Closing" />
+                        <local:FastPanel x:Name="dis"  PanelItem ="{Binding CurrentItem}" AllowDrop="True" TitlePressed="FastPanel_TiltePressed" Closing = "FastPanel_Closing" Dispatch="dis_Dispatch" Jobticket="dis_Jobticket" Message="dis_Message" Monitor="dis_Monitor" OnlineCheck="dis_OnlineCheck" Position="dis_Position" ShutDown="dis_ShutDown" Sleep="dis_Sleep" StartUp="dis_StartUp" Week="dis_Week"  />
                     </DockPanel>
 
                 </DataTemplate>
@@ -134,7 +134,8 @@
                     <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="Red" Background="Red" VerticalAlignment="Stretch" Padding="5,0">
                         <DockPanel >
                             <Image Source="/TrboX;component/themes/resource/alarm.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
-                            <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_AlarmNotify_Close_Click"></Button>
+                            <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Close_Click"></Button>
+                            <Button x:Name="btn_AlarmNotify_Explaner" Content="↗" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Explaner_Click" ></Button>
                             
                             <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
                             <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FFDDDDDD" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
@@ -153,8 +154,8 @@
                     <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE"  VerticalAlignment="Stretch" Padding="5,0">
                         <DockPanel >
                             <Image Source="/TrboX;component/themes/resource/msg.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
-                            <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_MsgNotify_Close_Click"></Button>
-
+                            <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Close_Click"></Button>
+                            <Button x:Name="btn_AlarmNotify_Explaner" Content="↗" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Explaner_Click" ></Button>
                             <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
                             <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
                             <TextBlock Text="{Binding  Content.Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
@@ -172,8 +173,8 @@
                     <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush ="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,0">
                         <DockPanel >
                             <Image Source="/TrboX;component/themes/resource/rx.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
-                            <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_RxNotify_Close_Click"></Button>
-
+                            <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Close_Click"></Button>
+                            <Button x:Name="btn_AlarmNotify_Explaner" Content="↗" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Explaner_Click" ></Button>
                             <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
                             <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
                             <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
@@ -191,8 +192,8 @@
                     <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE"   VerticalAlignment="Stretch" Padding="5,0">
                         <DockPanel >
                             <Image Source="/TrboX;component/themes/resource/job.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
-                            <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_JobNotify_Close_Click"></Button>
-
+                            <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Close_Click"></Button>
+                            <Button x:Name="btn_AlarmNotify_Explaner" Content="↗" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Explaner_Click" ></Button>
                             <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
                             <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
                             <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
@@ -210,8 +211,8 @@
                     <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,0">
                         <DockPanel >
                             <Image Source="/TrboX;component/themes/resource/tracker.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
-                            <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_TrackerNotify_Close_Click"></Button>
-
+                            <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Close_Click"></Button>
+                            <Button x:Name="btn_AlarmNotify_Explaner" Content="↗" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Explaner_Click" ></Button>
                             <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
                             <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
                             <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
