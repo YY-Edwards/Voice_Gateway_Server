@@ -168,5 +168,13 @@ namespace TrboX
                     item.Value.RxMessage(notify);
             }
         }
+
+
+        //Create Fast Operate
+        public void OpenCreateFastWin(FastType type)
+        {
+            //m_CreateFastOperateWindow.FastType = type;
+            m_CreateFastOperateWindow.Show();
+        }
     }
 }

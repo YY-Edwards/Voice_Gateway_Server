@@ -106,59 +106,6 @@ namespace TrboX
             aboutwin.ShowDialog();
         }
 
-
-
-        private int index = 0;
-
-        private void btn_Tool_NewFastOperate_Click(object sender, RoutedEventArgs e)
-        {
-            FastOperate op = new FastOperate()
-            {
-                m_Type = FastType.FastType_Operate,
-                //m_Contact = new CRelationShipObj(OrgItemType.Type_Employee, new CGroup() { id = 1, name = "地勤", group_id = 12 }
-                //    , new CEmployee() { id = 2, name = "崔二胯子" }
-                //    , new CVehicle() { id = 12, number = "牛B74110" }
-                //    , new CRadio() { id = 22, radio_id = 2314, is_online = true, type = RadioType.RIDE }),
-
-                //m_Operate = new COperate(OPType.Dispatch, new CDispatch() {target = new CRelationShipObj(OrgItemType.Type_Employee, new CGroup() { id = 1, name = "地勤", group_id = 12 }
-                //    , new CEmployee() { id = 2, name = "崔二胯子" }
-                //    , new CVehicle() { id = 12, number = "牛B74110" }
-                //    , new CRadio() { id = 22, radio_id = 2314, is_online = true, type = RadioType.RIDE }), targettype = TargetType.Radio})
-
-                //m_Operate = new COperate(OPType.ShortMessage, new CShortMessage()
-                //{
-                //    target = new CRelationShipObj(OrgItemType.Type_Employee, new CGroup() { id = 1, name = "地勤", group_id = 12 }
-                //        , new CEmployee() { id = 2, name = "崔二胯子" }
-                //        , new CVehicle() { id = 12, number = "牛B74110" }
-                //        , new CRadio() { id = 22, radio_id = 2314, is_online = true, type = RadioType.RIDE }),
-                //    targettype = TargetType.Radio,
-                //    message = "hello,test msg"
-                //}
-
-                
-                m_Operate = new COperate(OPType.Position, new CPosition()
-                {
-                    target = new CRelationShipObj(OrgItemType.Type_Employee, new CGroup() { id = 1, name = "地勤", group_id = 12 }
-                        , new CEmployee() { id = 2, name = "崔二胯子" }
-                        , new CVehicle() { id = 12, number = "牛B74110" }
-                        , new CRadio() { id = 22, radio_id = 2314, is_online = true, type = RadioType.RIDE }),
-                    targettype = TargetType.Radio,
-                    iscsbk = true,
-                    isenh = false,
-                    iscycle = false,
-                }
-                
-                )
-            };
-
-            //m_FastOperateWin.Add(op);
-
-            index++;
-        }
-
-
-
-
         private void btn_Notify_Close_Click(object sender, RoutedEventArgs e)
         {
             MsgWin.RemoveNotify(((Button)sender).DataContext);

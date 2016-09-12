@@ -28,6 +28,9 @@ namespace TrboX
             m_Target.UpdateTragetList();
             UpdateView();
 
+
+           
+
             Thread t = new Thread(() => { NoficationThread(); });
             t.Start();
 
@@ -328,6 +331,8 @@ namespace TrboX
         {
             m_Main.Dispatcher.Invoke(new Action(() =>
             {
+                m_Main.ChoiceContact.ContactSrc = m_Target.OrgList;
+                              
                 OrgList = m_Target.OrgList;
                 FillDataToOrgTreeView();
                 FillDataToGroupList();

@@ -133,7 +133,7 @@ namespace TrboX
         }
         private void ToolsItemRegister()
         {
-            m_Main.menu_Tools_NewContact.Click += delegate { };
+            m_Main.menu_Tools_NewContact.Click += delegate { m_Main.SubWindow.OpenCreateFastWin(FastType.FastType_Contact); };
             m_Main.menu_Tools_NewGroup.Click += delegate { };
             m_Main.menu_Tools_NewOperate.Click += delegate { };
             m_Main.menu_Tools_Export.Click += delegate { };

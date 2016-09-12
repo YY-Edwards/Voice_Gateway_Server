@@ -1,0 +1,132 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:local="clr-namespace:TrboX" x:Class="TrboX.Contact" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <local:IconFormOrgConverter x:Key="IconFromOrg" />
+        <local:MsgView x:Key="ContactListView">
+            <local:MsgView.ItemTemplate>
+                <DataTemplate>
+                    <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2">
+                        <DockPanel >
+                            <Image x:Name="Icon" Source="{Binding target, Converter= {StaticResource IconFromOrg}}" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
+                            <DockPanel x:Name="dck_Content" Margin="5,0" >
+                                <TextBlock Text="{Binding  target.KeyName}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" />
+                            </DockPanel>
+                        </DockPanel>
+                    </Border>
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding target.key}" Value="Type_Employee">
+                            <Setter TargetName="Msg" Property="ToolTip" Value="{Binding target.HeaderWithoutKey}" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding target.key}" Value="Type_Vehicle">
+                            <Setter TargetName="Msg" Property="ToolTip" Value="{Binding target.HeaderWithoutKey}" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding target.key}" Value="Type_Radio">
+                            <Setter TargetName="Msg" Property="ToolTip" Value="{Binding target.HeaderWithoutKey}" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding target.key}" Value="Type_Ride">
+                            <Setter TargetName="Msg" Property="ToolTip" Value="{Binding target.HeaderWithoutKey}" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                    
+                </DataTemplate>
+
+            </local:MsgView.ItemTemplate>
+        </local:MsgView>
+
+
+
+        <ControlTemplate  x:Key="ContactCmbBox" TargetType="{x:Type ComboBox}">
+            <Grid>
+                <!-- ToggleButton 已数据绑定到 ComboBox 本身以切换 IsDropDownOpen -->
+                <Border BorderBrush="Black" BorderThickness="1,1,1,0" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" Background="White">
+                    <ListView Margin="0,0,20,0">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </Border>
+                <!-- ToggleButton 已数据绑定到 ComboBox 本身以切换 IsDropDownOpen -->
+                <ToggleButton Grid.Column="2" Template="{DynamicResource ToggleButtonControlTemplateContach}" x:Name="ToggleButton" Focusable="false" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press"/>
+
+                <!-- 必须将 TextBox 命名为 PART_EditableTextBox，否则 ComboBox 将无法识别它 -->
+                <TextBox Visibility="Hidden" Template="{DynamicResource ComboBoxTextBox}" HorizontalAlignment="Left" Margin="3,3,23,3" x:Name="PART_EditableTextBox" Style="{x:Null}" VerticalAlignment="Center" Focusable="True" Background="Transparent" IsReadOnly="{TemplateBinding IsReadOnly}"/>
+
+                <!-- Popup 可显示 ComboBox 中的项列表。IsOpen 已数据绑定到通过 ComboBoxToggleButton 来切换的 IsDropDownOpen -->
+                <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" x:Name="Popup" Focusable="False" AllowsTransparency="True" PopupAnimation="Slide">
+                    <Grid MaxHeight="500" MinWidth="{TemplateBinding ActualWidth}" x:Name="DropDown" SnapsToDevicePixels="True" Height="Auto">
+                        <Border x:Name="DropDownBorder" Background="{DynamicResource WindowBackgroundBrush}" BorderBrush="{DynamicResource SolidBorderBrush}" BorderThickness="1">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="30"/>
+                                    <RowDefinition Height="65*"/>
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch">
+                                    <DockPanel LastChildFill="True">
+                                        <Button x:Name="btn_Search" Content="S" Width="20" Margin="0,0,3,0" DockPanel.Dock="Right" Height="20" HorizontalAlignment="Center" VerticalAlignment="Center" Click="btn_Search_Click"/>
+                                        <TextBox x:Name="txt_SearchCon" Height="20" TextWrapping="Wrap" Text="{Binding Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Contact}}}" VerticalAlignment="Center" Width="Auto" Margin="5,0" VerticalContentAlignment="Center"/>
+                                    </DockPanel>
+                                </Border>
+                                <ListView x:Name="lst_ContactList"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Grid.Row="1" >
+                                    <ListView.View>
+                                        <local:MsgView />
+                                    </ListView.View>
+                                </ListView>
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </Popup>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <!-- 这会强制 DropDown 的大小有最小限制(如果它为空) -->
+                <Trigger Property="HasItems" Value="false">
+                    <Setter Property="MinHeight" Value="95" TargetName="DropDownBorder"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="false">
+                    <Setter Property="Foreground" Value="{DynamicResource DisabledForegroundBrush}"/>
+                </Trigger>
+                <Trigger Property="IsGrouping" Value="true">
+                    <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                </Trigger>
+                <Trigger Property="AllowsTransparency" SourceName="Popup" Value="true">
+                    <Setter Property="CornerRadius" Value="4" TargetName="DropDownBorder"/>
+                    <Setter Property="Margin" Value="0,2,0,0" TargetName="DropDownBorder"/>
+                </Trigger>
+                <Trigger Property="IsEditable" Value="true">
+                    <Setter Property="IsTabStop" Value="false"/>
+                    <Setter Property="Visibility" Value="Visible" TargetName="PART_EditableTextBox"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+
+        <ControlTemplate x:Key="ToggleButtonControlTemplateContach" TargetType="{x:Type ToggleButton}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition Width="20"/>
+                </Grid.ColumnDefinitions>
+                <Image HorizontalAlignment="Center" Height="14" VerticalAlignment="Center" Width="14" Source="/TrboX;component/themes/resource/contact.png" Grid.Column="1"/>
+            </Grid>
+            <ControlTemplate.Triggers>
+                <Trigger Property="IsMouseOver" Value="true"/>
+                <Trigger Property="IsChecked" Value="true"/>
+                <Trigger Property="IsEnabled" Value="False">
+                    <Setter Property="Foreground" Value="{DynamicResource DisabledForegroundBrush}"/>
+                </Trigger>
+            </ControlTemplate.Triggers>
+        </ControlTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <ComboBox  Name="combox"  BorderThickness="0" Template="{DynamicResource ContactCmbBox}"/>
+    </Grid>
+</UserControl>

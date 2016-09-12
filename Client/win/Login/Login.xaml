@@ -20,11 +20,11 @@
 						<TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="密码：" VerticalAlignment="Center" Width="40"/>
 						<PasswordBox HorizontalAlignment="Left" VerticalAlignment="Center" Style="{DynamicResource PasswordBoxStyleNormal}" Width="120" Margin="10,0,0,0"/>
 					</DockPanel>
-					<DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top">
-						<Button x:Name="btn_login" Content="Login" VerticalAlignment="Center" HorizontalAlignment="Left" Click="btn_Login_Click" Style="{DynamicResource ButtonStyleNormal}" Margin="50,0,0,0" Width="55"/>
-						<Button x:Name="btn_cancel" Content="Cancel" VerticalAlignment="Center" Width="55" HorizontalAlignment="Right" Style="{DynamicResource ButtonStyleNormal}" Click="btn_cancel_Click" DockPanel.Dock="Right"/>
-					</DockPanel>
-				</DockPanel>
+                    <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top">
+                        <Button x:Name="btn_login" Content="Login" VerticalAlignment="Center" HorizontalAlignment="Left" Click="btn_Login_Click" Style="{DynamicResource ButtonStyleNormal}" Margin="50,0,0,0" Width="55"/>
+                        <Button x:Name="btn_cancel" Content="Cancel" VerticalAlignment="Center" Width="55" HorizontalAlignment="Right" Style="{DynamicResource ButtonStyleNormal}" Click="btn_cancel_Click" DockPanel.Dock="Right"/>
+                    </DockPanel>
+                </DockPanel>
 				<Label Content="TrboX 登录" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="315.333,50.5,0,0" FontSize="24" FontFamily="Magneto"/>
 			</Grid>
 		</Border>
