@@ -82,28 +82,6 @@ namespace TrboX
             radio = rad;
         }
 
-        public static bool Compare(CRelationShipObj src, CRelationShipObj dest)
-        {
-            if (OrgItemType.Type_Group == src.key)
-            {
-                if ((null != src.group) && (null != src.group))
-                    if (src.group.id == dest.group.id)
-                    {
-                        return true;
-                    }
-            }
-            else
-            {
-                if ((null != src.radio) && (null != dest.radio))
-                    if (src.radio.id == dest.radio.id)
-                    {
-                        return true;
-                    }
-            }
-
-            return false;
-        }
-
         public string KeyName
         {
             get {
@@ -118,12 +96,74 @@ namespace TrboX
                         return group.name;
                     case OrgItemType.Type_Radio:
                     case OrgItemType.Type_Ride:
-                        return ((radio.type == RadioType.RADIO) ? "手持台：" :"车载台：")+ radio.radio_id.ToString();
+                        return (radio.type == RadioType.RADIO) ? "手持台" : "车载台";
                     default:
                         return "";
                 }
             }
         }
+
+        public string Sub1st
+        {
+            get
+            {
+                switch (key)
+                {
+                    case OrgItemType.Type_Employee:
+                        return  (null == vehicle) ? "" : vehicle.number;
+                    case OrgItemType.Type_Vehicle:
+                        return (null == employee) ? "" : employee.name;
+                    case OrgItemType.Type_Group:
+                        return (null == group) ? "" : ("ID：" + group.group_id.ToString());
+                    case OrgItemType.Type_Radio:
+                    case OrgItemType.Type_Ride:
+                        return (null == radio) ? "" : ("ID：" + radio.radio_id.ToString());
+                    default:
+                        return "";
+                }
+            }
+        }
+
+        public string Sub2nd
+        {
+            get
+            {
+                switch (key)
+                {
+                    case OrgItemType.Type_Employee:
+                    case OrgItemType.Type_Vehicle:
+                        return (null == group) ? "" : (group.name + " ：" + group.group_id.ToString());
+                    case OrgItemType.Type_Group:
+                        return "";
+                    case OrgItemType.Type_Radio:
+                    case OrgItemType.Type_Ride:
+                        return (null == group) ? "" : (group.name + " ：" + group.group_id.ToString());
+                    default:
+                        return "";
+                }
+            }
+        }
+
+        public string Sub3rd
+        {
+            get
+            {
+                switch (key)
+                {
+                    case OrgItemType.Type_Employee:
+                    case OrgItemType.Type_Vehicle:
+                        return ((radio.type == RadioType.RADIO) ? "手持台：" : "车载台：") + radio.radio_id.ToString();
+                    case OrgItemType.Type_Group:
+                        return "";
+                    case OrgItemType.Type_Radio:
+                    case OrgItemType.Type_Ride:
+                        return "";
+                    default:
+                        return "";
+                }
+            }
+        }
+
         public string Header
         {
             get{return GetHeader(); }
@@ -507,6 +547,29 @@ namespace TrboX
 
                 return header + "）";
             }
+        }
+
+
+        public static bool Compare(CRelationShipObj src, CRelationShipObj dest)
+        {
+            if (OrgItemType.Type_Group == src.key)
+            {
+                if ((null != src.group) && (null != src.group))
+                    if (src.group.id == dest.group.id)
+                    {
+                        return true;
+                    }
+            }
+            else
+            {
+                if ((null != src.radio) && (null != dest.radio))
+                    if (src.radio.id == dest.radio.id)
+                    {
+                        return true;
+                    }
+            }
+
+            return false;
         }
     }
 

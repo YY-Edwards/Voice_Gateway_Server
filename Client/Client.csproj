@@ -279,6 +279,15 @@
     <Resource Include="themes\resource\rx.png" />
     <Resource Include="themes\resource\tracker.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="themes\resource\check.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="themes\resource\monitor.png" />
+    <Resource Include="themes\resource\more.png" />
+    <Resource Include="themes\resource\shutdown.png" />
+    <Resource Include="themes\resource\startup.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

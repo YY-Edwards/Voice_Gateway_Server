@@ -67,4 +67,30 @@ namespace TrboX
             }
         }
     }
+
+    public class ContactView : ViewBase
+    {
+        private DataTemplate itemTemplate;
+        public DataTemplate ItemTemplate
+        {
+            set { itemTemplate = value; }
+            get { return itemTemplate; }
+        }
+
+        protected override object DefaultStyleKey
+        {
+            get
+            {
+                return new ComponentResourceKey(GetType(), "ContactView");
+            }
+        }
+
+        protected override object ItemContainerDefaultStyleKey
+        {
+            get
+            {
+                return new ComponentResourceKey(GetType(), "ContactViewItem");
+            }
+        }
+    }
 }

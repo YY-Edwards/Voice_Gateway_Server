@@ -210,6 +210,31 @@ namespace TrboX
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+
+            if(value is string)
+            {
+                if ("" == (string)value)
+                {
+                    return Visibility.Collapsed;
+                }
+                else
+                {
+                    return Visibility.Visible;
+                }
+            }
+
+            if(value is bool)
+            {
+                if (false == (bool)value)
+                {
+                    return Visibility.Collapsed;
+                }
+                else
+                {
+                    return Visibility.Visible;
+                }
+            }
+
             if (null == value)
             {
                 return Visibility.Collapsed;
@@ -356,6 +381,8 @@ namespace TrboX
             if (null == value) return 0.4;
 
             CRelationShipObj target = value as CRelationShipObj;
+            if (OrgItemType.Type_Group == target.key) return 1;
+
             if (null != target.radio)
             if (true == target.radio.is_online) return 1;
 

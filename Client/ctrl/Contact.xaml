@@ -3,40 +3,77 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:TrboX" x:Class="TrboX.Contact" 
+             xmlns:local="clr-namespace:TrboX" x:Name="userControl" x:Class="TrboX.Contact" 
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <local:IconFormOrgConverter x:Key="IconFromOrg" />
+        <local:FalselHideConverter x:Key="FalseHide" />
+
+        <local:ContactView x:Key="ContactView">
+            <local:ContactView.ItemTemplate>
+                <DataTemplate>
+                    <Border x:Name="CurMsg" BorderThickness="1" BorderBrush="#FFCCCCCC" CornerRadius="2" Padding="2" >
+                        <DockPanel>
+                            <DockPanel.ContextMenu >
+                                <ContextMenu Visibility="Hidden"/>
+                            </DockPanel.ContextMenu>
+                            <TextBlock Text="{Binding target.KeyName}" Margin="2,0"></TextBlock>
+                            <Button Content="x" DockPanel.Dock="Right" Margin="2,0" MinHeight="12" MinWidth="12" Click="Button_Click" ></Button>
+                        </DockPanel>
+                    </Border>
+
+                    <DataTemplate.Triggers>
+                        <DataTrigger Binding="{Binding target.key}" Value="Type_Employee">
+                            <Setter TargetName="CurMsg" Property="ToolTip" Value="{Binding target.HeaderWithoutKey}" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding target.key}" Value="Type_Vehicle">
+                            <Setter TargetName="CurMsg" Property="ToolTip" Value="{Binding target.HeaderWithoutKey}" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding target.key}" Value="Type_Radio">
+                            <Setter TargetName="CurMsg" Property="ToolTip" Value="{Binding target.HeaderWithoutKey}" />
+                        </DataTrigger>
+
+                        <DataTrigger Binding="{Binding target.key}" Value="Type_Ride">
+                            <Setter TargetName="CurMsg" Property="ToolTip" Value="{Binding target.HeaderWithoutKey}" />
+                        </DataTrigger>
+                    </DataTemplate.Triggers>
+                </DataTemplate>
+            </local:ContactView.ItemTemplate>
+        </local:ContactView>
+
         <local:MsgView x:Key="ContactListView">
             <local:MsgView.ItemTemplate>
                 <DataTemplate>
                     <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2">
                         <DockPanel >
-                            <Image x:Name="Icon" Source="{Binding target, Converter= {StaticResource IconFromOrg}}" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
+                            <Image x:Name="Icon" Source="{Binding  contact.target, Converter= {StaticResource IconFromOrg}}" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"  Opacity="{Binding  contact.target, Converter={StaticResource IconOpFromOrg}}"/>
                             <DockPanel x:Name="dck_Content" Margin="5,0" >
-                                <TextBlock Text="{Binding  target.KeyName}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" />
+                                <CheckBox IsChecked="{Binding issel}" Click="CheckBox_Click" Visibility="{Binding IsMultiple, Converter={StaticResource FalseHide}, ElementName=userControl}"></CheckBox>
+                                <TextBlock Text="{Binding  contact.target.KeyName}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  Opacity="{Binding  contact.target, Converter={StaticResource IconOpFromOrg}}"/>
                             </DockPanel>
                         </DockPanel>
                     </Border>
                     <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding target.key}" Value="Type_Employee">
-                            <Setter TargetName="Msg" Property="ToolTip" Value="{Binding target.HeaderWithoutKey}" />
+                        <DataTrigger Binding="{Binding contact.target.key}" Value="Type_Employee">
+                            <Setter TargetName="Msg" Property="ToolTip" Value="{Binding contact.target.HeaderWithoutKey}" />
                         </DataTrigger>
 
-                        <DataTrigger Binding="{Binding target.key}" Value="Type_Vehicle">
-                            <Setter TargetName="Msg" Property="ToolTip" Value="{Binding target.HeaderWithoutKey}" />
+                        <DataTrigger Binding="{Binding contact.target.key}" Value="Type_Vehicle">
+                            <Setter TargetName="Msg" Property="ToolTip" Value="{Binding contact.target.HeaderWithoutKey}" />
                         </DataTrigger>
 
-                        <DataTrigger Binding="{Binding target.key}" Value="Type_Radio">
-                            <Setter TargetName="Msg" Property="ToolTip" Value="{Binding target.HeaderWithoutKey}" />
+                        <DataTrigger Binding="{Binding contact.target.key}" Value="Type_Radio">
+                            <Setter TargetName="Msg" Property="ToolTip" Value="{Binding contact.target.HeaderWithoutKey}" />
                         </DataTrigger>
 
-                        <DataTrigger Binding="{Binding target.key}" Value="Type_Ride">
-                            <Setter TargetName="Msg" Property="ToolTip" Value="{Binding target.HeaderWithoutKey}" />
+                        <DataTrigger Binding="{Binding contact.target.key}" Value="Type_Ride">
+                            <Setter TargetName="Msg" Property="ToolTip" Value="{Binding contact.target.HeaderWithoutKey}" />
                         </DataTrigger>
                     </DataTemplate.Triggers>
-                    
+
                 </DataTemplate>
 
             </local:MsgView.ItemTemplate>
@@ -48,11 +85,9 @@
             <Grid>
                 <!-- ToggleButton 已数据绑定到 ComboBox 本身以切换 IsDropDownOpen -->
                 <Border BorderBrush="Black" BorderThickness="1,1,1,0" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" Background="White">
-                    <ListView Margin="0,0,20,0">
+                    <ListView x:Name="lst_CurrentContact"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0,0,20,0" MaxHeight="90"  >
                         <ListView.View>
-                            <GridView>
-                                <GridViewColumn/>
-                            </GridView>
+                            <local:ContactView />
                         </ListView.View>
                     </ListView>
                 </Border>
@@ -64,7 +99,7 @@
 
                 <!-- Popup 可显示 ComboBox 中的项列表。IsOpen 已数据绑定到通过 ComboBoxToggleButton 来切换的 IsDropDownOpen -->
                 <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" x:Name="Popup" Focusable="False" AllowsTransparency="True" PopupAnimation="Slide">
-                    <Grid MaxHeight="500" MinWidth="{TemplateBinding ActualWidth}" x:Name="DropDown" SnapsToDevicePixels="True" Height="Auto">
+                    <Grid MaxHeight="300" MinWidth="{TemplateBinding ActualWidth}" x:Name="DropDown" SnapsToDevicePixels="True" Height="Auto" Width="{TemplateBinding ActualWidth}">
                         <Border x:Name="DropDownBorder" Background="{DynamicResource WindowBackgroundBrush}" BorderBrush="{DynamicResource SolidBorderBrush}" BorderThickness="1">
                             <Grid>
                                 <Grid.RowDefinitions>
@@ -77,7 +112,7 @@
                                         <TextBox x:Name="txt_SearchCon" Height="20" TextWrapping="Wrap" Text="{Binding Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Contact}}}" VerticalAlignment="Center" Width="Auto" Margin="5,0" VerticalContentAlignment="Center"/>
                                     </DockPanel>
                                 </Border>
-                                <ListView x:Name="lst_ContactList"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Grid.Row="1" >
+                                <ListView x:Name="lst_ContactList"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Grid.Row="1" SelectionChanged="lst_ContactList_SelectionChanged" >
                                     <ListView.View>
                                         <local:MsgView />
                                     </ListView.View>
@@ -115,6 +150,7 @@
                     <ColumnDefinition/>
                     <ColumnDefinition Width="20"/>
                 </Grid.ColumnDefinitions>
+                <Border BorderBrush="Black" BorderThickness="0,0,0,1" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" Grid.Column="1" Background="#00000000"/>
                 <Image HorizontalAlignment="Center" Height="14" VerticalAlignment="Center" Width="14" Source="/TrboX;component/themes/resource/contact.png" Grid.Column="1"/>
             </Grid>
             <ControlTemplate.Triggers>

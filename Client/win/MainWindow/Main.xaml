@@ -29,7 +29,7 @@
             
             <local:TileView.ItemTemplate>
                 <DataTemplate>
-                    <DockPanel Width="240" Height="300" >
+                    <DockPanel Width="200" Height="260" >
                         <DockPanel.ContextMenu >
                             <ContextMenu Visibility="Hidden"/>
                         </DockPanel.ContextMenu>
@@ -393,7 +393,7 @@
                 </Border>
             </Border>
             <Border BorderBrush="Black" BorderThickness="0" Margin="0" DockPanel.Dock="Bottom" Height="30">
-                <src:Contact x:Name="ChoiceContact" Content="测试联系人搜素"  DockPanel.Dock="Top" Margin="0,5,0,0" />
+                <!--<src:Contact x:Name="ChoiceContact" IsMultiple="False" DockPanel.Dock="Top" Margin="0,5,0,0"/>-->
             </Border>
             <Grid Background="White" Margin="0">
                 <Border BorderBrush="Black" BorderThickness="0" Margin="0" Padding="5">
@@ -570,7 +570,7 @@
                                                 	<Label Content="语音调度" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                                 </Border>
                                                 <Grid>
-                                                    <ListView x:Name="lst_dispatch"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}"  >
+                                                    <ListView x:Name="lst_dispatch"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" VerticalContentAlignment="Top"  >
                                                         <ListView.ContextMenu>
                                                             <ContextMenu>
                                                             	<MenuItem Header="添加常用联系人"/>

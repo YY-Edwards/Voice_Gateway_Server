@@ -330,9 +330,7 @@ namespace TrboX
         private void UpdateView()
         {
             m_Main.Dispatcher.Invoke(new Action(() =>
-            {
-                m_Main.ChoiceContact.ContactSrc = m_Target.OrgList;
-                              
+            {           
                 OrgList = m_Target.OrgList;
                 FillDataToOrgTreeView();
                 FillDataToGroupList();

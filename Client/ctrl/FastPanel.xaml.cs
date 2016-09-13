@@ -25,7 +25,12 @@ namespace TrboX
         {
             InitializeComponent();
             updatecyclelist(null, null);
+            this.Loaded+=delegate
+            {
+                //contact_box.ContactSrc = 
+            };
         }
+
         public FastOperate PanelItem 
         {
             get { return (FastOperate)GetValue(PanelItemProperty); }
@@ -156,23 +161,23 @@ EventManager.RegisterRoutedEvent("Week", RoutingStrategy.Bubble, typeof(RoutedEv
 
         private void btn_Control_Selected(object sender, RoutedEventArgs e)
         {
-            switch(btn_Control.SelectedIndex)
-            {
-                case 0:
+            //switch(btn_Control.SelectedIndex)
+            //{
+            //    case 0:
 
-            RaiseEvent(new RoutedEventArgs(StartUpRoutedEvent));
-            break;
-                case 1:
+            //RaiseEvent(new RoutedEventArgs(StartUpRoutedEvent));
+            //break;
+            //    case 1:
 
-            RaiseEvent(new RoutedEventArgs(SleepRoutedEvent));
-            break;
-                case 2:
+            //RaiseEvent(new RoutedEventArgs(SleepRoutedEvent));
+            //break;
+            //    case 2:
 
-            RaiseEvent(new RoutedEventArgs(WeekRoutedEvent));
-            break;
-                default:
-                    break;
-            }
+            //RaiseEvent(new RoutedEventArgs(WeekRoutedEvent));
+            //break;
+            //    default:
+            //        break;
+            //}
         }
 
         public event RoutedEventHandler Monitor
