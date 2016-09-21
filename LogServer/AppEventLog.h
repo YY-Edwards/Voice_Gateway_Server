@@ -9,6 +9,6 @@ public:
 
 public: // Derived from CAbstractAction
 	virtual std::string getName();
-	virtual int run(CBaseConnector* pConnector, std::map<std::string, std::string> args);
+	virtual int run(CRemotePeer* pRemote, std::map<std::string, std::string> args);
 };
 

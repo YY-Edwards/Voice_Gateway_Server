@@ -12,7 +12,7 @@ public:
 	~CRpcServer();
 
 public: // dereived from OnConnectorData
-	virtual int onReceive(unsigned char* pData, int dataLen);
+	virtual int onReceive(CRemotePeer* pRemote, char* pData, int dataLen);
 
 public:
 	int start();

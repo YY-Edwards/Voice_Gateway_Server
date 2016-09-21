@@ -10,11 +10,12 @@ public:
 	~CRpcClient();
 
 public: // dereived from OnConnectorData
-	virtual int onReceive(unsigned char* pData, int dataLen);
+	virtual int onReceive(CRemotePeer* pRemote, char* pData, int dataLen);
 
 public:
 	int start();
 	void stop();
+	int send(unsigned char* pData, int dataLen);
 
 protected:
 	CBaseConnector* m_pConnector;
