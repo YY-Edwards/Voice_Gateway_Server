@@ -29,6 +29,6 @@ protected:
 	int m_nConnected;
 	HANDLE m_recvThread;
 	int m_nClientRunning;
-	std::string m_strConnStr;
+	char m_strConnStr[1000];
 };
 

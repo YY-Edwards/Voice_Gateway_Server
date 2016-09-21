@@ -23,7 +23,7 @@ public:
 // Implementation
 protected:
 	HICON m_hIcon;
-	CRpcClient* m_rpcClient;
+	CRpcClient m_rpcClient;
 
 	// Generated message map functions
 	virtual BOOL OnInitDialog();

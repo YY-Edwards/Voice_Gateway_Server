@@ -104,6 +104,7 @@
     <ClInclude Include="..\lib\rpc\include\AbstractAction.h" />
     <ClInclude Include="..\lib\rpc\include\BaseConnector.h" />
     <ClInclude Include="..\lib\rpc\include\RpcClient.h" />
+    <ClInclude Include="..\lib\rpc\include\RpcJsonParser.h" />
     <ClInclude Include="..\lib\rpc\include\TcpClientConnector.h" />
     <ClInclude Include="..\lib\utf8\utf8.h" />
     <ClInclude Include="LogServerTester.h" />

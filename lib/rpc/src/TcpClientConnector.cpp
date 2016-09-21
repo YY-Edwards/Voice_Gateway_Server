@@ -25,7 +25,9 @@ int CTcpClientConnector::start(const char* connStr)
 		return -1;
 	}
 
-	m_strConnStr = connStr;
+	ZeroMemory(m_strConnStr, sizeof(m_strConnStr));
+	memcpy(m_strConnStr, connStr, strlen(connStr));
+	//m_strConnStr = connStr;
 
 #ifdef _WIN32
 	WSADATA			 wsda;					//   Structure   to   store   info
@@ -51,13 +53,15 @@ int CTcpClientConnector::start(const char* connStr)
 
 void CTcpClientConnector::stop()
 {
-	if (Connected)
+	if (Connected == m_nClientRunning)
 	{
+		m_nClientRunning = ClientNotRunning;
+
 		if (INVALID_SOCKET != m_clientSocket)
 		{
+			WaitForSingleObject(m_recvThread, 600);
 			closesocket(m_clientSocket);
 			m_clientSocket = INVALID_SOCKET;
-			WSACleanup();
 		}
 
 		m_nConnected = NotConnect;
@@ -123,7 +127,7 @@ DWORD CTcpClientConnector::netHandler()
 							if (SOCKET_ERROR == n || 0 == n)
 							{
 								//LOG(ERROR)<<"recv error,code:"<<WSAGetLastError();
-								throw new std::exception("socket error or remote disconnect£¡");
+								throw std::exception("socket error or remote disconnect£¡");
 							}
 							if (m_hReceiveData)
 							{
@@ -136,11 +140,11 @@ DWORD CTcpClientConnector::netHandler()
 						{
 							if (FD_ISSET(fdException.fd_array[i], &fdException))
 							{
-								throw new std::exception("socket exception£¡");
+								throw std::exception("socket exception£¡");
 							}
 						}
 					}
-					catch (...)
+					catch (std::exception& e)
 					{
 						closesocket(m_clientSocket);
 						Sleep(2000);					// wait 2 seconds
@@ -152,7 +156,7 @@ DWORD CTcpClientConnector::netHandler()
 		}
 		else {
 			// connect or re-connect server
-			connect(m_strConnStr.c_str());
+			connect(m_strConnStr);
 		}
 	}
 	return 0;

@@ -12,11 +12,7 @@ CRpcClient::CRpcClient()
 
 CRpcClient::~CRpcClient()
 {
-	if (m_pConnector)
-	{
-		m_pConnector->stop();
-		delete m_pConnector;
-	}
+	stop();
 }
 
 
@@ -30,12 +26,17 @@ int CRpcClient::start(const char* connStr)
 
 void CRpcClient::stop()
 {
-	m_pConnector->stop();
+	if (m_pConnector)
+	{
+		m_pConnector->stop();
+		delete m_pConnector;
+	}
+	m_pConnector = NULL;
 }
 
 int CRpcClient::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 {
-	std::string str((char*)pData, dataLen);
+	std::string str(pData, dataLen);
 	std::wstring wStr;
 	utf8::utf8to16(str.begin(), str.end(), std::back_inserter(wStr));
 	TRACE(_T("received str:%s\r\n"), wStr.c_str());
@@ -44,5 +45,9 @@ int CRpcClient::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 
 int CRpcClient::send(unsigned char* pData, int dataLen)
 {
+	if (NULL == m_pConnector)
+	{
+		return 0;
+	}
 	return m_pConnector->send(pData, dataLen);
 }

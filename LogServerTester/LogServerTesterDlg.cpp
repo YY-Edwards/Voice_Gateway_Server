@@ -3,6 +3,7 @@
 //
 
 #include "stdafx.h"
+//#include <vld.h> 
 #include "LogServerTester.h"
 #include "LogServerTesterDlg.h"
 #include "afxdialogex.h"
@@ -100,7 +101,7 @@ BOOL CLogServerTesterDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 
 	// TODO: Add extra initialization here
-	m_rpcClient = new CRpcClient();
+	//m_rpcClient = new CRpcClient();
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -155,21 +156,21 @@ HCURSOR CLogServerTesterDlg::OnQueryDragIcon()
 }
 
 
-
+#define CONNSTR  "tcp://127.0.0.1:8000"
 void CLogServerTesterDlg::OnBnClickedBtnConnect()
 {
-	m_rpcClient->start("tcp://localhost:8000");
+	m_rpcClient.start(CONNSTR);
 }
 
 
 void CLogServerTesterDlg::OnBnClickedBtnStop()
 {
-	m_rpcClient->stop();
+	m_rpcClient.stop();
 }
 
 
 void CLogServerTesterDlg::OnBnClickedBtnCallAppEvent()
 {
 	std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"target\":23, \"dest\":234, \"type\":\"group\"}}";
-	m_rpcClient->send((PBYTE)strCall.c_str(), strCall.size()+1);
+	m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size()+1);
 }
