@@ -14,6 +14,7 @@ CAppEventLog::~CAppEventLog()
 
 std::string CAppEventLog::getName()
 {
+
 	return "appEvent";
 }
 

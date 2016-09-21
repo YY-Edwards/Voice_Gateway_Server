@@ -20,6 +20,12 @@
 #include <Windows.h>
 #include<list>
 using namespace std;
+#include "rapidjson/rapidjson.h"
+#include "rapidjson/document.h"
+#include "rapidjson/reader.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+using  namespace rapidjson;
 
 
 #define CMD_NULL               0
@@ -65,13 +71,11 @@ extern AllCommand      m_allCommand;
 extern list <AllCommand>allCommandList;
 
 #include "DispatchPort.h"
-extern CDispatchPort * pDispatchPort;
 
 #define GOOGLE_GLOG_DLL_DECL           // 使用静态glog库用这个
 #define GLOG_NO_ABBREVIATED_SEVERITIES // 没这个编译会出错,传说因为和Windows.h冲突
-#include "glog/logging.h"
-#pragma comment(lib,"glog/lib/libglog.lib")
-#include "jsoncpp\include\json\json.h"
+#include "../lib/glog/logging.h"
+#pragma comment(lib,"../lib/glog/lib/libglog.lib")
 
 
 #define DEBUG_LOG  TRUE

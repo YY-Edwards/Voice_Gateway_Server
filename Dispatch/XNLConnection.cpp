@@ -3,7 +3,7 @@
 //copyright treaties.  Unauthorized reproduction or distribution of this software is strictly prohibited.  2009 Motorola, 
 //Inc. All Rights Reserved.
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include <process.h>
 #include ".\xnlconnection.h"
 
@@ -710,14 +710,19 @@ void CXNLConnection::decode_xnl_data_msg_ack(char * p_msg_buf)
 			if (it->ackNum == p_msg->msg_hdr.trans_id)
 			{
 
-				if (pDispatchPort != NULL)
+		//		if (pDispatchPort != NULL)
 				{
-					//拼接json
-					Json::Value  root;
-					root["sn"] = Json::Value(it->sn);
-					root["status"] = Json::Value(0);
-					Json::FastWriter fw;
-					pDispatchPort->sendResultToClient(fw.write(root));
+					////拼接json
+					//rapidjson::Document document;
+					//Document::AllocatorType& allocator = document.GetAllocator();
+					//Value root(kObjectType);
+					//root.AddMember("sn", it->sn, allocator);
+					//root.AddMember("status", 0, allocator);
+					//StringBuffer buffer;
+					//Writer<StringBuffer> writer(buffer);
+					//root.Accept(writer);
+					//std::string reststring = buffer.GetString();
+					//pDispatchPort->sendResultToClient(reststring);
 					//unsigned char str[30] = { 0 };
 					//sprintf_s((char *)str, sizeof(str), "result:0");
 
@@ -792,26 +797,31 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 		
 		for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 		{
-			if (0x000B == xnl_opcode && 0xB41C == xcmp_opcode  && pDispatchPort!=NULL)
+			if (0x000B == xnl_opcode && 0xB41C == xcmp_opcode  )
 			{
 				//拼接json
-				Json::Value  root;
-				root["sn"] = Json::Value(it->sn);
-				Json::FastWriter fw;
+				rapidjson::Document document;
+				Document::AllocatorType& allocator = document.GetAllocator();
+				Value root(kObjectType);
+				root.AddMember("sn", it->sn, allocator);
 				BOOL rmtflag = FALSE;
 				if (rmt_type_code == 0x00)                                                   //在线检测
 				{
 					if (0x0010 == check_result/* & 0x00FF)*/)
 					{
 						rmtflag = TRUE; 
-						root["status"] = Json::Value(1);// 1:在线
+						root.AddMember("status", 1, allocator);// 1:在线
 					}
 					else
 					{
 						rmtflag = false; 
-						root["status"] = Json::Value(0);//0:不在线
+						root.AddMember("status", 0, allocator);;//0:不在线
 					}
-					pDispatchPort->sendResultToClient(fw.write(root));
+					StringBuffer buffer;
+					Writer<StringBuffer> writer(buffer);
+					root.Accept(writer);
+					std::string reststring = buffer.GetString();
+					//pDispatchPort->sendResultToClient(reststring);
 					allCommandList.erase(it++);
 				}
 				else if (rmt_type_code == 0x01)
@@ -819,14 +829,18 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					if (0x0110 == check_result/* & 0x00FF)*/)                                    //摇闭
 					{
 						rmtflag = true;                                   //成功    
-						root["status"] = Json::Value(1);
+						root.AddMember("status", 1, allocator);
 					} 
 					else
 					{
 						rmtflag = false;                               //失败
-						root["status"] = Json::Value(0);
+						root.AddMember("status", 0, allocator);
 					}
-					pDispatchPort->sendResultToClient(fw.write(root));
+					StringBuffer buffer;
+					Writer<StringBuffer> writer(buffer);
+					root.Accept(writer);
+					std::string reststring = buffer.GetString();
+					//pDispatchPort->sendResultToClient(reststring);
 					allCommandList.erase(it++);
 				}
 				else if (rmt_type_code == 0x02)
@@ -834,14 +848,18 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					if (0x0210 == check_result/* & 0x00FF)*/)                                     //摇开
 					{
 						rmtflag = true;                                  //成功
-						root["status"] = Json::Value(1);
+						root.AddMember("status", 1, allocator);
 					}
 					else
 					{
 						rmtflag = FALSE;                                //失败
-						root["status"] = Json::Value(0);
+						root.AddMember("status", 0, allocator);
 					}
-					pDispatchPort->sendResultToClient(fw.write(root));
+					StringBuffer buffer;
+					Writer<StringBuffer> writer(buffer);
+					root.Accept(writer);
+					std::string reststring = buffer.GetString();
+					//pDispatchPort->sendResultToClient(reststring);
 					allCommandList.erase(it++);
 				}
 				else if (rmt_type_code == 0x03)
@@ -849,14 +867,18 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					if (0x0310 == check_result/* & 0x00FF)*/)                                    //远程监听
 					{
 						rmtflag = true;                                   //成功
-						root["status"] = Json::Value(1);
+						root.AddMember("status", 1, allocator);
 					}
 					else
 					{
 						rmtflag = false;                                   // 失败
-						root["status"] = Json::Value(0);
+						root.AddMember("status",0, allocator);
 					}
-					pDispatchPort->sendResultToClient(fw.write(root));
+					StringBuffer buffer;
+					Writer<StringBuffer> writer(buffer);
+					root.Accept(writer);
+					std::string reststring = buffer.GetString();
+					//pDispatchPort->sendResultToClient(reststring);
 					allCommandList.erase(it++);
 				}
 			
@@ -1023,14 +1045,20 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 		switch (*((char*)(pBuf + sizeof(xnl_msg_hdr_t)+3)))
 		{
 		case 0x04:
-			if (pDispatchPort != NULL)
+		//	if (pDispatchPort != NULL)
 			{
 				//拼接json
-				Json::Value  root;
-				root["sn"] = Json::Value(it->sn);
-				root["status"] = Json::Value(1);                            //1：呼叫开始
-				Json::FastWriter fw;
-				pDispatchPort->sendResultToClient(fw.write(root));
+				//拼接json
+				rapidjson::Document document;
+				Document::AllocatorType& allocator = document.GetAllocator();
+				Value root(kObjectType);
+				root.AddMember("sn", it->sn, allocator);
+				root.AddMember("status", 1, allocator);                                //1：呼叫开始
+				StringBuffer buffer;
+				Writer<StringBuffer> writer(buffer);
+				root.Accept(writer);
+				std::string reststring = buffer.GetString();
+			//	pDispatchPort->sendResultToClient(reststring);
 			}
 			allCommandList.erase(it++);
 			/*if (myCallBackFunc != NULL)
@@ -1041,14 +1069,19 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 			}*/
 			break;
 		case 0x03:
-			if (pDispatchPort != NULL)
+		//	if (pDispatchPort != NULL)
 			{
 				//拼接json
-				Json::Value  root;
-				root["sn"] = Json::Value(it->sn);
-				root["status"] = Json::Value(2);                            //1：呼叫结束
-				Json::FastWriter fw;
-				pDispatchPort->sendResultToClient(fw.write(root));
+				rapidjson::Document document;
+				Document::AllocatorType& allocator = document.GetAllocator();
+				Value root(kObjectType);
+				root.AddMember("sn", it->sn, allocator);
+				root.AddMember("status", 2, allocator);        //2:呼叫结束
+				StringBuffer buffer;
+				Writer<StringBuffer> writer(buffer);
+				root.Accept(writer);
+				std::string reststring = buffer.GetString();
+			//	pDispatchPort->sendResultToClient(reststring);
 			}
 			allCommandList.erase(it++);
 			/*if (myCallBackFunc != NULL)

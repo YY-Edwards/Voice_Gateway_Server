@@ -171,16 +171,22 @@ void CRadioARS::RecvData()
 			//			LOG(INFO) << "对讲机开机ars ondata ";
 			//#endif
 			//		}
-			if (pDispatchPort != NULL)
+			//if (pDispatchPort != NULL)
 			{
-				Json::Value  root;
-				Json::Value result;
-				Json::FastWriter fw;
-				root["type"] = Json::Value("onRecvARS");
-				result["arsRadioID"] = Json::Value(strID);
-				result["result"] = Json::Value(0);                              //0:上线
-				root["result"] = Json::Value(result);
-				pDispatchPort->sendResultToClient(fw.write(root));
+				//rapidjson::Document document;
+				//Document::AllocatorType& allocator = document.GetAllocator();
+				//Value root(kObjectType);
+				//Value child(kObjectType);
+				//child.AddMember("type", "onRecvARS", allocator);
+				//string string1 = "";
+				//child.AddMember("srcRadioID", string1, allocator);
+				//child.AddMember("result", 0, allocator);                              //0:上线
+				//root.AddMember("child", child, allocator);
+				//StringBuffer buffer;
+				//Writer<StringBuffer> writer(buffer);
+				//root.Accept(writer);
+				//std::string reststring = buffer.GetString();
+				//pDispatchPort->sendResultToClient(reststring);
 			}
 
 		}
@@ -201,17 +207,22 @@ void CRadioARS::RecvData()
 			//#endif
 			//		}
 
-			if (pDispatchPort != NULL)
+		//	if (pDispatchPort != NULL)
 			{
-				//拼接json
-				Json::Value  root;
-				Json::Value result;
-				Json::FastWriter fw;
-				root["type"] = Json::Value("onRecvARS");
-				result["arsRadioID"] = Json::Value(strID);
-				result["result"] = Json::Value(1);                              //1：下线
-				root["result"] = Json::Value(result);
-				pDispatchPort->sendResultToClient(fw.write(root));
+				//rapidjson::Document document;
+				//Document::AllocatorType& allocator = document.GetAllocator();
+				//Value root(kObjectType);
+				//Value child(kObjectType);
+				//child.AddMember("type", "onRecvARS", allocator);
+				//string string1 = "";
+				//child.AddMember("srcRadioID", string1, allocator);
+				//child.AddMember("result", 1, allocator);                              //1：下线
+				//root.AddMember("child", child, allocator);
+				//StringBuffer buffer;
+				//Writer<StringBuffer> writer(buffer);
+				//root.Accept(writer);
+				//std::string reststring = buffer.GetString();
+				//pDispatchPort->sendResultToClient(reststring);
 			}
 		}
 }
