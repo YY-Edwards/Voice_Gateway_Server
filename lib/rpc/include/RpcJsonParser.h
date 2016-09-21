@@ -36,7 +36,7 @@ public:
 	CRpcJsonParser();
 	~CRpcJsonParser();
 
-	std::string parseCall(std::string str, std::map<std::string, std::string>& args);
+	std::string parseCall(const std::string str, std::map<std::string, std::string>& args);
 
 protected:
 	std::map<std::string, CFunctionParser*>  m_mpParser;

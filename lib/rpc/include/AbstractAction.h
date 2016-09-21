@@ -6,11 +6,11 @@
 #include <map>
 #include <string>
 
-class CBaseConnector;
+class CRemotePeer;
 
 class CAbstractAction{
 public:
 	virtual std::string getName() = 0;
-	virtual int run(CBaseConnector* pConnector, std::map<std::string, std::string> args) = 0;
+	virtual int run(CRemotePeer* pRemote, std::map<std::string, std::string> args) = 0;
 };
 #endif

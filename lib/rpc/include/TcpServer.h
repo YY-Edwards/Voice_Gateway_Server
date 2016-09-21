@@ -23,10 +23,15 @@
 #define		ServerPORT			8000
 #define		MaxClientSupport	10
 
-class TcpClient{
+class TcpClient : public CRemotePeer{
 public:
 	SOCKET		s;
 	SOCKADDR_IN addr;
+public:
+	int sendResponse(char* pData, int dataLen)
+	{
+		return ::send(s, pData, dataLen, 0);
+	}
 };
 
 class CTcpServer :
@@ -37,10 +42,10 @@ public:
 	~CTcpServer();
 
 public: // dereived from CAbstractConnector
-	virtual int start();
+	virtual int start(const char* connStr = NULL);
 	virtual void stop();
 	virtual int send(unsigned char* pData, int dataLen);
-	virtual int connect(char* connStr);
+	virtual int connect(const char* connStr);
 
 protected:
 	static DWORD WINAPI AcceptThread(LPVOID pVoid);

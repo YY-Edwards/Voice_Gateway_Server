@@ -72,7 +72,7 @@ CRpcJsonParser::~CRpcJsonParser()
 	}
 }
 
-std::string CRpcJsonParser::parseCall(std::string str, std::map<std::string, std::string>& args)
+std::string CRpcJsonParser::parseCall(const std::string str, std::map<std::string, std::string>& args)
 {
 	std::string strCall = "";
 	args.erase(args.begin(), args.end());

@@ -17,7 +17,7 @@ CTcpServer::~CTcpServer()
 {
 }
 
-int CTcpServer::start()
+int CTcpServer::start(const char* connStr)
 {
 	if (ServerRunning == m_nServerIsRunning)
 	{
@@ -67,10 +67,10 @@ int CTcpServer::start()
 
 int CTcpServer::send(unsigned char* pData, int dataLen)
 {
-	return 0;
+	return ::send(m_serverSocket, (char*)pData, dataLen, 0);
 }
 
-int CTcpServer::connect(char* connStr)
+int CTcpServer::connect(const char* connStr)
 {
 	return 0;
 }
@@ -100,6 +100,8 @@ DWORD CTcpServer::connectHandler()
 	FD_ZERO(&allSockets);
 	FD_SET(m_serverSocket, &allSockets);
 	while (ServerRunning == m_nServerIsRunning){
+		FD_ZERO(&fdRead);
+		FD_ZERO(&fdException);
 		fdRead = allSockets;
 		fdException = allSockets;
 
@@ -175,7 +177,7 @@ DWORD CTcpServer::connectHandler()
 
 						if (m_hReceiveData)
 						{
-							m_hReceiveData->onReceive((unsigned char*)buf, n);
+							m_hReceiveData->onReceive(m_mpClients[fdRead.fd_array[i]], buf, n);
 						}
 					}
 				}

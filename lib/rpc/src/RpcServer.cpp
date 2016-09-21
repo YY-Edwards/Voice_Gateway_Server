@@ -13,9 +13,9 @@ CRpcServer::~CRpcServer()
 {
 }
 
-int CRpcServer::onReceive(unsigned char* pData, int dataLen)
+int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 {
-	std::string str((char*)pData, dataLen);
+	std::string str(pData, dataLen);
 
 	std::map<std::string, std::string> args;
 	CRpcJsonParser parser;
@@ -24,7 +24,7 @@ int CRpcServer::onReceive(unsigned char* pData, int dataLen)
 	std::lock_guard<std::mutex> lock(m_actionsLocker);
 	if (m_mpActions.find(call) != m_mpActions.end())
 	{
-		m_mpActions[call]->run(m_pConnector, args);
+		m_mpActions[call]->run(pRemote, args);
 	}
 
 	printf("received data:%s", str.c_str());
