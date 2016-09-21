@@ -10,13 +10,22 @@ CSendSms::CSendSms()
 CSendSms::~CSendSms()
 {
 }
+std::list<std::string> CSendSms::getArgNames()
+{
+	std::list<std::string> args;
+
+	args.push_back("name");
+	args.push_back("content");
+
+	return args;
+}
 std::string CSendSms::getName()
 {
 
 	return "sendSms";
 }
 
-int CSendSms::run(CBaseConnector* pConnector, std::map<std::string, std::string> args)
+int CSendSms::run(CRemotePeer* pRemote, std::map<std::string, std::string> args)
 {
 	return 0;
 }

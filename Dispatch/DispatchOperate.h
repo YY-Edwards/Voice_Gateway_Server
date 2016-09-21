@@ -28,7 +28,7 @@ public:
 	//void  setCallBackFunc(void(*callBackFunc)(int, int, char *, int));
 	void RadioConnect();
 	void TcpConnect();
-	int getOverturnGps(const char* ip);
+	int getOverturnGps(const char* ip,int sn );
 	int getLic(const char* licPath);
 	int tcpConnect(const char *ip);
 	int radioUdpConnect(const char *ip);

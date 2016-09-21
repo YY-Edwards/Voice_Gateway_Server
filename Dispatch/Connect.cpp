@@ -10,13 +10,22 @@ CConnect::CConnect()
 CConnect::~CConnect()
 {
 }
+std::list<std::string> CConnect::getArgNames()
+{
+	std::list<std::string> args;
+
+	args.push_back("radioIP");
+	args.push_back("mnisIP");
+
+	return args;
+}
 std::string CConnect::getName()
 {
 
 	return "connect";
 }
 
-int CConnect::run(CBaseConnector* pConnector, std::map<std::string, std::string> args)
+int CConnect::run(CRemotePeer* pRemote, std::map<std::string, std::string> args)
 {
 	DispatchOperate  * pDispatchOperate = new DispatchOperate();
 	string radioIP = args["radioIP"];
