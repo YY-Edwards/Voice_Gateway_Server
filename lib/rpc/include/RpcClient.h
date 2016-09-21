@@ -13,7 +13,7 @@ public: // dereived from OnConnectorData
 	virtual int onReceive(CRemotePeer* pRemote, char* pData, int dataLen);
 
 public:
-	int start();
+	int start(const char* connStr);
 	void stop();
 	int send(unsigned char* pData, int dataLen);
 

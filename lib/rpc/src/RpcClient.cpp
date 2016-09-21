@@ -20,11 +20,11 @@ CRpcClient::~CRpcClient()
 }
 
 
-int CRpcClient::start()
+int CRpcClient::start(const char* connStr)
 {
 	m_pConnector = new CTcpClientConnector();
 	m_pConnector->setReceiveDataHandler(this);
-	m_pConnector->start("tcp://localhost:8000");
+	m_pConnector->start(connStr);
 	return 0;
 }
 

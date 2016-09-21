@@ -158,7 +158,7 @@ HCURSOR CLogServerTesterDlg::OnQueryDragIcon()
 
 void CLogServerTesterDlg::OnBnClickedBtnConnect()
 {
-	m_rpcClient->start();
+	m_rpcClient->start("tcp://localhost:8000");
 }
 
 
