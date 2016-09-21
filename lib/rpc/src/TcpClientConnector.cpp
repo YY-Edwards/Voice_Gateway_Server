@@ -25,9 +25,7 @@ int CTcpClientConnector::start(const char* connStr)
 		return -1;
 	}
 
-	ZeroMemory(m_strConnStr, sizeof(m_strConnStr));
-	memcpy(m_strConnStr, connStr, strlen(connStr));
-	//m_strConnStr = connStr;
+	m_strConnStr = connStr;
 
 #ifdef _WIN32
 	WSADATA			 wsda;					//   Structure   to   store   info
@@ -156,7 +154,7 @@ DWORD CTcpClientConnector::netHandler()
 		}
 		else {
 			// connect or re-connect server
-			connect(m_strConnStr);
+			connect(m_strConnStr.c_str());
 		}
 	}
 	return 0;

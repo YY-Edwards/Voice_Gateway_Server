@@ -171,6 +171,6 @@ void CLogServerTesterDlg::OnBnClickedBtnStop()
 
 void CLogServerTesterDlg::OnBnClickedBtnCallAppEvent()
 {
-	std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"target\":23, \"dest\":234, \"type\":\"group\"}}";
+	std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
 	m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size()+1);
 }
