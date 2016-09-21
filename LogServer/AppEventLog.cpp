@@ -24,6 +24,7 @@ std::list<std::string> CAppEventLog::getArgNames()
 
 std::string CAppEventLog::getName()
 {
+
 	return "appEvent";
 }
 

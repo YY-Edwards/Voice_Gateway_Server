@@ -19,7 +19,7 @@ DispatchOperate::DispatchOperate()
 DispatchOperate::~DispatchOperate()
 {
 }
-int DispatchOperate::connect(const char* ip, const char * pIP,int sn)
+int DispatchOperate::Connect(const char* ip, const char * pIP,int sn)
 {
 	// Connection
 	AddAllCommand(sn, RADIO_CONNECT);
@@ -522,25 +522,33 @@ void DispatchOperate::RadioConnect()
 		for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 		{
 			//拼接json
-			Json::Value  root;
-			Json::FastWriter fw;
-			root["sn"] = Json::Value(it->sn);
-			if (pDispatchPort != NULL)
+			rapidjson::Document document;
+			Document::AllocatorType& allocator = document.GetAllocator();
+			Value root(kObjectType);
+		
+			//if (pDispatchPort != NULL)
 			{
 				if (pXnlConnection == NULL)    //0:调度业务和数据业务都连接失败 1： 调度业务连接成功，数据业务连接失败 2：调度业务连接失败，数据业务连接成功 3. 调度业务和数据业务都连接成功
 				{
 					if (textConnectResult && ARSConnectResult && GPSConnectResult)
 					{
-						root["status"] = Json::Value(2);
-						pDispatchPort->sendResultToClient(fw.write(root));
+						/*root.AddMember("status",2,allocator);
+						StringBuffer buffer;
+						Writer<StringBuffer> writer(buffer);
+						root.Accept(writer);
+						std::string reststring = buffer.GetString();
+						pDispatchPort->sendResultToClient(reststring);*/
 						allCommandList.erase(it++);
 						break;
 					}
 					else
 					{
-						root["status"] = Json::Value(0);
-						pDispatchPort->sendResultToClient(fw.write(root));
-						allCommandList.erase(it++);
+					/*	root.AddMember("status", 0, allocator);
+						StringBuffer buffer;
+						Writer<StringBuffer> writer(buffer);
+						root.Accept(writer);
+						std::string reststring = buffer.GetString();
+						pDispatchPort->sendResultToClient(reststring);*/
 						break;
 					}
 				}
@@ -548,15 +556,23 @@ void DispatchOperate::RadioConnect()
 				{
 					if (textConnectResult && ARSConnectResult && GPSConnectResult)
 					{
-						root["status"] = Json::Value(1);
-						pDispatchPort->sendResultToClient(fw.write(root));
+						/*root.AddMember("status", 1, allocator);
+						StringBuffer buffer;
+						Writer<StringBuffer> writer(buffer);
+						root.Accept(writer);
+						std::string reststring = buffer.GetString();
+						pDispatchPort->sendResultToClient(reststring);*/
 						allCommandList.erase(it++);
 						break;
 					}
 					else
 					{
-						root["status"] = Json::Value(3);
-						pDispatchPort->sendResultToClient(fw.write(root));
+						/*root.AddMember("status", 3, allocator);
+						StringBuffer buffer;
+						Writer<StringBuffer> writer(buffer);
+						root.Accept(writer);
+						std::string reststring = buffer.GetString();
+						pDispatchPort->sendResultToClient(reststring);*/
 						allCommandList.erase(it++);
 						break;
 					}
@@ -730,111 +746,112 @@ int DispatchOperate::getLic(const char* licPath)
 {
 
 
-	char* strmac;
-	strmac = pXnlConnection->readmac;
-	CString  filename(licPath);
-	//char buffer[256];
-	unsigned char temp[48];
-	memset(temp, 0, 48);
-	//GetCurrentDirectory(256, (LPWSTR)buffer);
-	//filename.Format(_T("%s"), licPath);
-	//filename += "\\serial.lic";
-	CStdioFile file;
-	CString strText;
-	CString szLine;
-	if (file.Open(filename, CFile::modeRead))
-	{
+	//char* strmac;
+	//strmac = pXnlConnection->readmac;
+	//CString  filename(licPath);
+	////char buffer[256];
+	//unsigned char temp[48];
+	//memset(temp, 0, 48);
+	////GetCurrentDirectory(256, (LPWSTR)buffer);
+	////filename.Format(_T("%s"), licPath);
+	////filename += "\\serial.lic";
+	//CStdioFile file;
+	//CString strText;
+	//CString szLine;
+	//if (file.Open(filename, CFile::modeRead))
+	//{
 
-		file.Read(temp, 48);
-		file.Close();
-	}
-
-
-	//解密
-	unsigned char key[16];
-	unsigned char input[16];
-	unsigned char output[16];
-
-	char serial[11];                          //Master  Serial
-	unsigned char date[11];
-	unsigned char peerNum[5];
-	memset(key, 0, 16);
-	memset(input, 0, 16);
-	memset(output, 0, 16);
-
-	memset(serial, 0, 11);
-	memset(date, 0, 11);
-	memset(peerNum, 0, 5);
-	memcpy(key, "ji1hua!@#567ADef", 16);
-	Aes1 m_Aes1(16, key);
-	for (int i = 0; i <strText.GetLength(); i++)
-	{
-		temp[i] = strText.GetAt(i);
-	}
-	for (int j = 0; j <= 2; j++)
-	{
-		memcpy(input, temp + j * 16, 16);
-		m_Aes1.InvCipher(input, output);
-		if (j == 0)
-		{
-			memcpy(serial, output, 8);
-		}
-		if (j == 1)
-		{
-			memcpy(serial + 8, output, 2);           //    Master Serial   
-			memcpy(date, output + 2, 6);
-		}
-
-		if (j == 2)
-		{
-			memcpy(date + 6, output, 4);
-			memcpy(peerNum, output + 4, 4);
-		}
-
-	}
-	CString cstr_serial, cstr_date, cstr_peer, strDate, cstr_serial1;
-
-	cstr_serial = (unsigned char *)serial;              //序列号
-	if (pXnlConnection == NULL)
-	{
-		return 1;
-	}
-	cstr_serial1 = pXnlConnection->readmac;
+	//	file.Read(temp, 48);
+	//	file.Close();
+	//}
 
 
-	cstr_date = (unsigned char *)date;                  //使用期限 
-	cstr_peer = (unsigned char *)peerNum;                //中继台数
+	////解密
+	//unsigned char key[16];
+	//unsigned char input[16];
+	//unsigned char output[16];
 
-	int year = 0, month = 0, day = 0;
-	sscanf_s((char *)date, "%4d-%2d-%2d", &year, &month, &day);
-	year = (year > 2000) ? year - 2000 : 0;
+	//char serial[11];                          //Master  Serial
+	//unsigned char date[11];
+	//unsigned char peerNum[5];
+	//memset(key, 0, 16);
+	//memset(input, 0, 16);
+	//memset(output, 0, 16);
 
-	if (memcmp(cstr_serial, cstr_serial1, 10))
-	{
-		return 1;
-	}
-	else
-	{
-		if (cstr_date == _T("0000-00-00"))
-		{
-			return  0;
-		}
-		else
-		{
-			SYSTEMTIME st;
-			GetLocalTime(&st);
-			strDate.Format(_T("%4d-%02d-%02d"), st.wYear, st.wMonth, st.wDay);
-			if (cstr_date.Compare(strDate) < 0)
-			{
-				return (year << 24) + (month << 16) + (day << 8) + 1;                             //超出授权时间
-			}
-			else
-			{
-				return (year << 24) + (month << 16) + (day << 8);
-			}
-		}
+	//memset(serial, 0, 11);
+	//memset(date, 0, 11);
+	//memset(peerNum, 0, 5);
+	//memcpy(key, "ji1hua!@#567ADef", 16);
+	//Aes1 m_Aes1(16, key);
+	//for (int i = 0; i <strText.GetLength(); i++)
+	//{
+	//	temp[i] = strText.GetAt(i);
+	//}
+	//for (int j = 0; j <= 2; j++)
+	//{
+	//	memcpy(input, temp + j * 16, 16);
+	//	m_Aes1.InvCipher(input, output);
+	//	if (j == 0)
+	//	{
+	//		memcpy(serial, output, 8);
+	//	}
+	//	if (j == 1)
+	//	{
+	//		memcpy(serial + 8, output, 2);           //    Master Serial   
+	//		memcpy(date, output + 2, 6);
+	//	}
 
-	}
+	//	if (j == 2)
+	//	{
+	//		memcpy(date + 6, output, 4);
+	//		memcpy(peerNum, output + 4, 4);
+	//	}
+
+	//}
+	//CString cstr_serial, cstr_date, cstr_peer, strDate, cstr_serial1;
+
+	//cstr_serial = (unsigned char *)serial;              //序列号
+	//if (pXnlConnection == NULL)
+	//{
+	//	return 1;
+	//}
+	//cstr_serial1 = pXnlConnection->readmac;
+
+
+	//cstr_date = (unsigned char *)date;                  //使用期限 
+	//cstr_peer = (unsigned char *)peerNum;                //中继台数
+
+	//int year = 0, month = 0, day = 0;
+	//sscanf_s((char *)date, "%4d-%2d-%2d", &year, &month, &day);
+	//year = (year > 2000) ? year - 2000 : 0;
+
+	//if (memcmp(cstr_serial, cstr_serial1, 10))
+	//{
+	//	return 1;
+	//}
+	//else
+	//{
+	//	if (cstr_date == _T("0000-00-00"))
+	//	{
+	//		return  0;
+	//	}
+	//	else
+	//	{
+	//		SYSTEMTIME st;
+	//		GetLocalTime(&st);
+	//		strDate.Format(_T("%4d-%02d-%02d"), st.wYear, st.wMonth, st.wDay);
+	//		if (cstr_date.Compare(strDate) < 0)
+	//		{
+	//			return (year << 24) + (month << 16) + (day << 8) + 1;                             //超出授权时间
+	//		}
+	//		else
+	//		{
+	//			return (year << 24) + (month << 16) + (day << 8);
+	//		}
+	//	}
+
+	//}
+return 1;
 }
 
 int DispatchOperate::tcpConnect(const char* ip)

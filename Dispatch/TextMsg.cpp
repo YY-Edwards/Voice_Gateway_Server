@@ -448,14 +448,19 @@ void CTextMsg::RecvMsg()
 						LOG(INFO) << "接收短信发送成功ack  ondata ";
 #endif
 					}*/
-					if (pDispatchPort != NULL)
+					//if (pDispatchPort != NULL)
 					{
-						//拼接json
-						Json::Value  root;
-						Json::FastWriter fw;
-						root["sn"] = Json::Value(it->sn);
-						root["status"] = Json::Value(1);                              //1：发送成功
-						pDispatchPort->sendResultToClient(fw.write(root));
+						////拼接json
+						//rapidjson::Document document;
+						//Document::AllocatorType& allocator = document.GetAllocator();
+						//Value root(kObjectType);
+						//root.AddMember("sn", it->sn, allocator);
+						//root.AddMember("status", 1, allocator);                //1:发送成功
+						//StringBuffer buffer;
+						//Writer<StringBuffer> writer(buffer);
+						//root.Accept(writer);
+						//std::string reststring = buffer.GetString();
+						//pDispatchPort->sendResultToClient(reststring);
 					}
 					allCommandList.erase(it++);
 				}
@@ -508,19 +513,27 @@ void CTextMsg::RecvMsg()
 //				
 //#endif
 //			}
-			if (pDispatchPort != NULL)
+			//if (pDispatchPort != NULL)
 			{
 				//拼接json
-				Json::Value  root;
-				Json::Value result;
-				Json::FastWriter fw;
-				root["type"] = Json::Value("onRecvMsg");
-				result["srcRadioID"] = Json::Value(strID);
-				CString strTime = CTime::GetCurrentTime().Format("%Y-%m-%d %H:%M:%S");                         //获取系统时间
-				result["date"] = Json::Value(strTime); 
-				result["message"] = Json::Value(message);
-				root["result"] = Json::Value(result);
-				pDispatchPort->sendResultToClient(fw.write(root));
+
+				////拼接json
+				//rapidjson::Document document;
+				//Document::AllocatorType& allocator = document.GetAllocator();
+				//Value root(kObjectType);
+				//Value child(kObjectType);
+				//child.AddMember("type", "onRecvMsg", allocator);
+				//child.AddMember("srcRadioID", strID, allocator);
+				//CString strTime = CTime::GetCurrentTime().Format("%Y-%m-%d %H:%M:%S");                         //获取系统时间
+				//child.AddMember("date", strTime, allocator);
+				//child.AddMember("message", message, allocator);
+				//root.AddMember("result", child, allocator);
+				//StringBuffer buffer;
+				//Writer<StringBuffer> writer(buffer);
+				//root.Accept(writer);
+				//std::string reststring = buffer.GetString();
+				//pDispatchPort->sendResultToClient(reststring);
+
 			}
 			 
 		}

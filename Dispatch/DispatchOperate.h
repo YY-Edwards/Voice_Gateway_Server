@@ -3,14 +3,14 @@
 #include "RadioARS.h"
 #include "RadioGps.h"
 #include <map>
-#include "Aes1.h"
+#include "../../lib/AES/Aes.h"
 #pragma once
 class DispatchOperate
 {
 public:
 	DispatchOperate();
 	~DispatchOperate();
-	int connect(const char* ip, const char  * pIP, int sn);
+	int Connect(const char* ip, const char  * pIP, int sn);
 	int call(int id, int sn);
 	int groupCall(int id, int sn);
 	int allCall( int sn);

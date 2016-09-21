@@ -25,8 +25,14 @@
     <Filter Include="xcmp">
       <UniqueIdentifier>{454dd649-d9c5-4f17-a18c-bcc324b5c658}</UniqueIdentifier>
     </Filter>
-    <Filter Include="aes">
-      <UniqueIdentifier>{2246dd48-a7b1-40e0-b250-e2db9b4e1610}</UniqueIdentifier>
+    <Filter Include="rpc">
+      <UniqueIdentifier>{8f9fbd40-1d12-459d-a412-b430cd0e2624}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rpc\include">
+      <UniqueIdentifier>{786fb5de-f057-46d2-bf65-8cb0f7e45070}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rpc\src">
+      <UniqueIdentifier>{be7734da-0899-47a3-85a3-2b5dfd4faa1d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -37,9 +43,6 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="ConvertUTF.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="Util.h">
@@ -69,13 +72,64 @@
     <ClInclude Include="DispatchOperate.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Aes1.h">
-      <Filter>aes</Filter>
-    </ClInclude>
-    <ClInclude Include="DispatchPort.h">
+    <ClInclude Include="UnitTest.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="UnitTest.h">
+    <ClInclude Include="..\lib\rpc\include\AbstractAction.h">
+      <Filter>rpc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\rpc\include\BaseConnector.h">
+      <Filter>rpc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\rpc\include\RpcJsonParser.h">
+      <Filter>rpc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\rpc\include\RpcServer.h">
+      <Filter>rpc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\rpc\include\TcpServer.h">
+      <Filter>rpc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="Connect.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Call.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GroupCall.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="AllCall.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RmotePowerON.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RemotePowerOff.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="RadioCheck.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Wiretap.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SendSms.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="SendGroupSms.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GetGps.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="StopCall.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="CancelGps.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="GetOverTurnGPS.h">
       <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
@@ -84,12 +138,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="Dispatch.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="ConvertUTF.c">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Util.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="TextMsg.cpp">
@@ -101,28 +149,64 @@
     <ClCompile Include="DispatchOperate.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="Aes1.cpp">
-      <Filter>aes</Filter>
-    </ClCompile>
     <ClCompile Include="RadioGps.cpp">
       <Filter>gps</Filter>
     </ClCompile>
     <ClCompile Include="RadioARS.cpp">
       <Filter>ars</Filter>
     </ClCompile>
-    <ClCompile Include="DispatchPort.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="jsoncpp\src\json\json_reader.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="jsoncpp\src\json\json_value.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="jsoncpp\src\json\json_writer.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="UnitTest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp">
+      <Filter>rpc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\rpc\src\RpcServer.cpp">
+      <Filter>rpc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\rpc\src\TcpServer.cpp">
+      <Filter>rpc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Connect.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Call.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GroupCall.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="AllCall.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RmotePowerON.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RemotePowerOff.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="RadioCheck.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Wiretap.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SendSms.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="SendGroupSms.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GetGps.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StopCall.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="CancelGps.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="GetOverTurnGPS.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

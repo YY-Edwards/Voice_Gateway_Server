@@ -1,9 +1,13 @@
-#pragma once
+
 #undef ERROR
-#include "jsoncpp\include\json\json.h"
 #include <../mutex.h>
 #include "DispatchOperate.h"
-
+#include "rapidjson/rapidjson.h"
+#include "rapidjson/document.h"
+#include "rapidjson/reader.h"
+#include "rapidjson/writer.h"
+#include "rapidjson/stringbuffer.h"
+#pragma once
 class CClientConnection
 {
 public:
@@ -29,29 +33,27 @@ public:
 			std::string strMsg;
 			for (int i = 0; i < strlen(pMessage); i++)
 			{
-				Json::Reader reader;
-				Json::Value root;
-				Json::Value root_1;
-				if (reader.parse(pMessage, root_1))  // reader将Json字符串解析到root，root将包含Json里所有子元素  
-				{
-					string call = root_1["call"].asString();  
-					string param = root_1["param"].asString();
-					reader.parse(param, root);
-					int sn = root["sn"].asInt();
+				rapidjson::Document doc;
+				doc.Parse(pMessage);
+				
+				string call = doc["call"].GetString();
+					//string param = doc["param"].GetString();
+					
+					int sn = doc["param"]["sn"].GetInt();
 					if (call.compare("connect") == 0)                            // 连接车台
 					{
-						string radioIP = root["radioIP"].asString();
-						string mnisIP = root["mnisIP"].asString();
-						pDispatchOperate->connect(radioIP.c_str(), mnisIP.c_str(),sn);
+						string radioIP = doc["param"]["radioIP"].GetString();
+						string mnisIP = doc["param"]["mnisIP"].GetString();
+						pDispatchOperate->Connect(radioIP.c_str(), mnisIP.c_str(),sn);
 					}
 					else if (call.compare("call") == 0)                          //单呼
 					{
-						int id = root["id"].asInt();
+						int id = doc["param"]["id"].GetInt();
 						pDispatchOperate->call(id, sn);
 					}
 					else if (call.compare("groupCall") == 0)                     //组呼
 					{
-						int id = root["id"].asInt();
+						int id = doc["param"]["id"].GetInt();
 						pDispatchOperate->groupCall(id, sn);
 					}
 					else if (call.compare("allCall") == 0)                       //全呼
@@ -64,58 +66,58 @@ public:
 					}
 					else if (call.compare("remotePowerOn") == 0)                   //遥开
 					{
-						int id = root["id"].asInt();
+						int id = doc["param"]["id"].GetInt();
 						pDispatchOperate->remotePowerOn(id, sn);
 					} 
 					else if (call.compare("remotePowerOff") == 0)                 //遥闭
 					{
-						int id = root["id"].asInt();
+						int id = doc["param"]["id"].GetInt();
 						pDispatchOperate->remotePowerOff(id, sn);
 					}
 
 					else if (call.compare("radioCheck") == 0)                    //在线检测
 					{
-						int id = root["id"].asInt();
+						int id = doc["param"]["id"].GetInt();
 						pDispatchOperate->radioCheck(id, sn);
 					}
 					else if (call.compare("wiretap") == 0)                       //远程监听
 					{
-						int id = root["id"].asInt();
+						int id = doc["param"]["id"].GetInt();
 						pDispatchOperate->wiretap(id, sn);
 					} 
 					else if (call.compare("sendSms") == 0)                       //发送短信
 					{
-						int id = root["id"].asInt();
-						string msg = root["msg"].asString();
+						int id = doc["param"]["id"].GetInt();
+						string msg = doc["param"]["msg"].GetString();
 						wchar_t * text = new wchar_t[msg.size()];
 						pDispatchOperate->sendSms(id, text, sn);
 					}
 					else if (call.compare("sendGroupSms") == 0)                  //群发
 					{
-						int id = root["id"].asInt();
-						string msg = root["msg"].asString();
+						int id = doc["param"]["id"].GetInt();
+						string msg = doc["param"]["msg"].GetString();
 						wchar_t * text = new wchar_t[msg.size()];
 						pDispatchOperate->sendGroupSms(id, text, sn);
 					}
 					else if (call.compare("getGps") == 0)                       //gps查询
 					{
-						int id = root["id"].asInt();
-						int queryMode = root["queryMode"].asInt();
-						int cycle = root["cycle"].asInt();
+						int id = doc["param"]["id"].GetInt();
+						int queryMode = doc["param"]["queryMode"].GetInt();
+						int cycle = doc["param"]["cycle"].GetInt();
 						pDispatchOperate->getGps(id, queryMode, cycle, sn);
 					}
 					else if (call.compare("cancelPollGps") == 0)                     //取消周期查询
 					{
-						int id = root["id"].asInt();
+						int id = doc["param"]["id"].GetInt();
 						pDispatchOperate->cancelPollGps(id, sn);
 					}   
 					else if (call.compare("getOverturnGps") == 0)                    //gps翻转
 					{  
-						string  ip = root["ip"].asString();
+						string  ip = doc["param"]["ip"].GetString();
 						pDispatchOperate->getOverturnGps(ip.c_str());
 					}
 				}
-			}
+			
 		}
 		catch (std::exception e)
 		{

@@ -53,7 +53,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_AFXDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>mutex.h;..\Dispatch\jsoncpp\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../lib/gtest/include;../lib/glog/lib;mutex.h;../lib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -62,7 +62,8 @@
       </StackReserveSize>
       <StackCommitSize>
       </StackCommitSize>
-      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -88,53 +89,67 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\glog\logging.h" />
-    <ClInclude Include="Aes1.h" />
-    <ClInclude Include="ConvertUTF.h" />
+    <ClInclude Include="..\lib\rpc\include\AbstractAction.h" />
+    <ClInclude Include="..\lib\rpc\include\BaseConnector.h" />
+    <ClInclude Include="..\lib\rpc\include\RpcJsonParser.h" />
+    <ClInclude Include="..\lib\rpc\include\RpcServer.h" />
+    <ClInclude Include="..\lib\rpc\include\TcpServer.h" />
+    <ClInclude Include="AllCall.h" />
+    <ClInclude Include="Call.h" />
+    <ClInclude Include="CancelGps.h" />
+    <ClInclude Include="Connect.h" />
     <ClInclude Include="DispatchOperate.h" />
-    <ClInclude Include="DispatchPort.h" />
+    <ClInclude Include="GetGps.h" />
+    <ClInclude Include="GetOverTurnGPS.h" />
+    <ClInclude Include="GroupCall.h" />
     <ClInclude Include="RadioARS.h" />
+    <ClInclude Include="RadioCheck.h" />
     <ClInclude Include="RadioGps.h" />
+    <ClInclude Include="RemotePowerOff.h" />
+    <ClInclude Include="RmotePowerON.h" />
+    <ClInclude Include="SendGroupSms.h" />
+    <ClInclude Include="SendSms.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StopCall.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TextMsg.h" />
     <ClInclude Include="UnitTest.h" />
     <ClInclude Include="Util.h" />
+    <ClInclude Include="Wiretap.h" />
     <ClInclude Include="xcmp_msg_defs.h" />
     <ClInclude Include="XNLConnection.h" />
     <ClInclude Include="xnl_messages_def.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Aes1.cpp" />
-    <ClCompile Include="ConvertUTF.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp" />
+    <ClCompile Include="..\lib\rpc\src\RpcServer.cpp" />
+    <ClCompile Include="..\lib\rpc\src\TcpServer.cpp" />
+    <ClCompile Include="AllCall.cpp" />
+    <ClCompile Include="Call.cpp" />
+    <ClCompile Include="CancelGps.cpp" />
+    <ClCompile Include="Connect.cpp" />
     <ClCompile Include="Dispatch.cpp" />
     <ClCompile Include="DispatchOperate.cpp" />
-    <ClCompile Include="DispatchPort.cpp" />
-    <ClCompile Include="jsoncpp\src\json\json_reader.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="jsoncpp\src\json\json_value.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="jsoncpp\src\json\json_writer.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="GetGps.cpp" />
+    <ClCompile Include="GetOverTurnGPS.cpp" />
+    <ClCompile Include="GroupCall.cpp" />
     <ClCompile Include="RadioARS.cpp" />
+    <ClCompile Include="RadioCheck.cpp" />
     <ClCompile Include="RadioGps.cpp" />
+    <ClCompile Include="RemotePowerOff.cpp" />
+    <ClCompile Include="RmotePowerON.cpp" />
+    <ClCompile Include="SendGroupSms.cpp" />
+    <ClCompile Include="SendSms.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="StopCall.cpp" />
     <ClCompile Include="TextMsg.cpp" />
     <ClCompile Include="UnitTest.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\Dispatch\gtest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Util.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
+    <ClCompile Include="Wiretap.cpp" />
     <ClCompile Include="XNLConnection.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
