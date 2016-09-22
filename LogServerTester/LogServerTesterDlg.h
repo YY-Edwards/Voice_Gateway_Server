@@ -35,4 +35,13 @@ public:
 	afx_msg void OnBnClickedBtnConnect();
 	afx_msg void OnBnClickedBtnStop();
 	afx_msg void OnBnClickedBtnCallAppEvent();
+	afx_msg void OnBnClickedRadiobtn();
+	afx_msg void OnBnClickedCallbtn();
+	afx_msg void OnBnClickedMsgbtn();
+	afx_msg void OnBnClickedStopcallbtn();
+	afx_msg void OnBnClickedPoweron();
+	afx_msg void OnBnClickedGroupmsg();
+	afx_msg void OnBnClickedPoweroff();
+	afx_msg void OnBnClickedOnline();
+	afx_msg void OnBnClickedWiretap();
 };
