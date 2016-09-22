@@ -178,7 +178,7 @@ std::string CRpcJsonParser::buildCall(char* pCallName, uint64_t callId, std::map
 		d.AddMember("param", paramEl, d.GetAllocator());
 
 		StringBuffer sb;
-		PrettyWriter<StringBuffer> writer(sb);
+		Writer<StringBuffer> writer(sb);
 		d.Accept(writer); // Accept() traverses the DOM and generates Handler events.
 		jsonStr = sb.GetString();
 		//std::string tmpStr = sb.GetString();
@@ -239,7 +239,7 @@ std::string CRpcJsonParser::buildResponse(char* pStatus, uint64_t callId, int er
 		}
 
 		StringBuffer sb;
-		PrettyWriter<StringBuffer> writer(sb);
+		Writer<StringBuffer> writer(sb);
 		d.Accept(writer); // Accept() traverses the DOM and generates Handler events.
 		jsonStr = sb.GetString();
 		//std::string tmpStr = sb.GetString();

@@ -16,6 +16,7 @@ CTcpClientConnector::CTcpClientConnector()
 
 CTcpClientConnector::~CTcpClientConnector()
 {
+	stop();
 }
 
 int CTcpClientConnector::start(const char* connStr)
@@ -51,7 +52,7 @@ int CTcpClientConnector::start(const char* connStr)
 
 void CTcpClientConnector::stop()
 {
-	if (Connected == m_nClientRunning)
+	if (ClientRunning == m_nClientRunning)
 	{
 		m_nClientRunning = ClientNotRunning;
 
@@ -68,6 +69,10 @@ void CTcpClientConnector::stop()
 
 int CTcpClientConnector::send(unsigned char* pData, int dataLen)
 {
+	if (ClientNotRunning == m_nClientRunning)
+	{
+		return -1;
+	}
 	return ::send(m_clientSocket, (char*)pData, dataLen, 0);
 }
 
@@ -142,7 +147,7 @@ DWORD CTcpClientConnector::netHandler()
 							}
 						}
 					}
-					catch (std::exception& e)
+					catch (std::exception e)
 					{
 						closesocket(m_clientSocket);
 						Sleep(2000);					// wait 2 seconds

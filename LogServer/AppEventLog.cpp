@@ -28,7 +28,7 @@ std::string CAppEventLog::getName()
 	return "appEvent";
 }
 
-int CAppEventLog::run(CRemotePeer* pRemote, std::map<std::string, std::string> args)
+int CAppEventLog::run(CRemotePeer* pRemote, std::map<std::string, std::string> args, uint64_t callId)
 {
 	pRemote->sendResponse("appevent received", strlen("appevent received"));
 
