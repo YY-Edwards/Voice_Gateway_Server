@@ -68,7 +68,7 @@ public:
 	CString ParseUserMsg(TextMsg* HandleMsg,int* len);
 	UINT8 GetSeqNumber(TextMsg* HandleMsg);
 	bool ReplyMsgACK(ThreadMsg* Msg, UINT8 SeqNumber);
-	bool SendMsg(int sn, LPTSTR message, DWORD dwRadioID, int CaiNet);
+	bool SendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet);
 	void RecvMsg();
 
 private:

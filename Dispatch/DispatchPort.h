@@ -114,7 +114,7 @@ public:
 					else if (call.compare("getOverturnGps") == 0)                    //gps·­×ª
 					{  
 						string  ip = doc["param"]["ip"].GetString();
-						pDispatchOperate->getOverturnGps(ip.c_str());
+						pDispatchOperate->getOverturnGps(ip.c_str(),sn);
 					}
 				}
 			

@@ -14,8 +14,8 @@ std::list<std::string> CSendSms::getArgNames()
 {
 	std::list<std::string> args;
 
-	args.push_back("name");
-	args.push_back("content");
+	args.push_back("id");
+	args.push_back("msg");
 
 	return args;
 }
@@ -27,5 +27,23 @@ std::string CSendSms::getName()
 
 int CSendSms::run(CRemotePeer* pRemote, std::map<std::string, std::string> args)
 {
+
+	if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
+	{
+		if (args.find("id") != args.end() && args.find("msg") != args.end())
+		{
+			int id = atoi(args["id"].c_str());
+			int callId = atoi(args["callId"].c_str());
+			string msg = args["msg"];
+			//string to wchar_t *
+			int msgSize = (int)(msg.length() + 1);
+			wchar_t* text = new wchar_t[msgSize];
+			MultiByteToWideChar(CP_ACP, 0, msg.c_str(), -1, text, msgSize);
+			int result = m_dispatchOperate[pRemote]->sendSms(id, text, callId);
+			delete[] text;
+			
+		}
+
+	}
 	return 0;
 }

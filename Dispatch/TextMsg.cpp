@@ -32,7 +32,7 @@ bool CTextMsg::InitSocket(SOCKET *s ,DWORD dwAddress)
 	BOOL bReuseaddr = FALSE;
 	setsockopt(m_ThreadMsg->mySocket, SOL_SOCKET, SO_DONTLINGER, (const char*)&bReuseaddr, sizeof(BOOL));
 
-	WSAStartup(MAKEWORD(1, 1), &wsda);     //   Load   version   1.1   of   Winsock
+	int ret = WSAStartup(MAKEWORD(1, 1), &wsda);     //   Load   version   1.1   of   Winsock
 
 	*s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);   //   Create   an   UDP   socket
 
@@ -50,8 +50,8 @@ bool CTextMsg::InitSocket(SOCKET *s ,DWORD dwAddress)
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(4007);
 	addr.sin_addr.s_addr = dwAddress;
-
-	if (bind(*s, (struct sockaddr *) &addr, sizeof(addr)) == SOCKET_ERROR)
+	ret = ::bind(*s, (struct sockaddr *) &addr, sizeof(addr));
+	if ( ret== SOCKET_ERROR)
 	{
 		int b = WSAGetLastError();
 		//AfxMessageBox(_T("绑定端口错误！"));
@@ -100,7 +100,7 @@ CString CTextMsg::ParseUserMsg(TextMsg* HandleMsg ,int * len)
 {
 	UINT16			MsgSize;
 	FirstHeader		FstHeader;
-	SecondHeader    SndHeader;
+	SecondHeader    callIddHeader;
 	UINT8			AddressSize;
 	static TCHAR	szMessage[MAX_MESSAGE_LENGTH];
 	CString         ParsedMsg;
@@ -120,10 +120,10 @@ CString CTextMsg::ParseUserMsg(TextMsg* HandleMsg ,int * len)
 
 		if (FstHeader.ExtensionBit)                  // 存在 Subsequent Header， Subsequent Header可能存在2个
 		{
-			memcpy((char*)&SndHeader, &HandleMsg->TextPayload[MsgOffset], sizeof(SecondHeader));
+			memcpy((char*)&callIddHeader, &HandleMsg->TextPayload[MsgOffset], sizeof(SecondHeader));
 			MsgOffset = MsgOffset + sizeof(SecondHeader);
 
-			if (SndHeader.Extension)
+			if (callIddHeader.Extension)
 			{
 				MsgOffset = MsgOffset + sizeof(ThirdHeader);
 			}
@@ -133,10 +133,10 @@ CString CTextMsg::ParseUserMsg(TextMsg* HandleMsg ,int * len)
 	{ // 在收到的信息中不带Address
 		if (FstHeader.ExtensionBit)                  // 存在 Subsequent Header， Subsequent Header可能存在2个
 		{
-			memcpy((char*)&SndHeader, &HandleMsg->TextPayload[MsgOffset], sizeof(SecondHeader));
+			memcpy((char*)&callIddHeader, &HandleMsg->TextPayload[MsgOffset], sizeof(SecondHeader));
 			MsgOffset = MsgOffset + sizeof(SecondHeader);
 
-			if (SndHeader.Extension)
+			if (callIddHeader.Extension)
 			{
 				MsgOffset = MsgOffset + sizeof(ThirdHeader);
 			}
@@ -158,7 +158,7 @@ UINT8 CTextMsg::GetSeqNumber(TextMsg* HandleMsg)
 
 	UINT16			MsgSize;
 	FirstHeader		FstHeader;
-	SecondHeader    SndHeader;
+	SecondHeader    callIddHeader;
 	ThirdHeader     TrdHeader;
 	UINT8			AddressSize;
 	UINT8           TxtSeqNum;
@@ -181,11 +181,11 @@ UINT8 CTextMsg::GetSeqNumber(TextMsg* HandleMsg)
 
 		if (FstHeader.ExtensionBit)                  // 存在 Subsequent Header， Subsequent Header可能存在多个
 		{
-			memcpy((char*)&SndHeader, &HandleMsg->TextPayload[OffSet], sizeof(SecondHeader));
-			TxtSeqNum = SndHeader.SequenceNum;       // 取得接收到的Message序列号中的低5位
+			memcpy((char*)&callIddHeader, &HandleMsg->TextPayload[OffSet], sizeof(SecondHeader));
+			TxtSeqNum = callIddHeader.SequenceNum;       // 取得接收到的Message序列号中的低5位
 			OffSet = OffSet + sizeof(SecondHeader);
 
-			if (SndHeader.Extension)
+			if (callIddHeader.Extension)
 			{
 				memcpy((char*)&TrdHeader, &HandleMsg->TextPayload[OffSet], sizeof(ThirdHeader));
 				UINT8 MsbSeq = TrdHeader.SequenceNum; // 取得接收到的Message序列号中的高2位
@@ -199,11 +199,11 @@ UINT8 CTextMsg::GetSeqNumber(TextMsg* HandleMsg)
 	{ // 在收到的信息中不带Address
 		if (FstHeader.ExtensionBit)                  // 存在 Subsequent Header
 		{
-			memcpy((char*)&SndHeader, &HandleMsg->TextPayload[OffSet], sizeof(SecondHeader));
-			TxtSeqNum = SndHeader.SequenceNum;       // 取得接收到的Message序列号中的低5位
+			memcpy((char*)&callIddHeader, &HandleMsg->TextPayload[OffSet], sizeof(SecondHeader));
+			TxtSeqNum = callIddHeader.SequenceNum;       // 取得接收到的Message序列号中的低5位
 			OffSet = OffSet + sizeof(SecondHeader);
 
-			if (SndHeader.Extension)
+			if (callIddHeader.Extension)
 			{
 				memcpy((char*)&TrdHeader, &HandleMsg->TextPayload[OffSet], sizeof(ThirdHeader));
 				UINT8 MsbSeq = TrdHeader.SequenceNum; // 取得接收到的Message序列号中的高2位
@@ -222,7 +222,7 @@ bool CTextMsg::ReplyMsgACK(ThreadMsg* Msg, UINT8 SeqNumber)
 	UINT16			MsgSize;
 	FirstHeader		FstHeader;
 	UINT8			AddressSize;
-	SecondHeader    SndHeader;
+	SecondHeader    callIddHeader;
 	ThirdHeader     TrdHeader;
 	int             OffSet;
 
@@ -244,9 +244,9 @@ bool CTextMsg::ReplyMsgACK(ThreadMsg* Msg, UINT8 SeqNumber)
 
 	if (SeqNumber <= 31)               //Sequence Nuber 只需要Second Header
 	{
-		SndHeader.Extension = 1;
-		SndHeader.SequenceNum = SeqNumber;
-		SndHeader.Reserved = 0;
+		callIddHeader.Extension = 1;
+		callIddHeader.SequenceNum = SeqNumber;
+		callIddHeader.Reserved = 0;
 
 		TrdHeader.Extension = 0;
 		TrdHeader.SequenceNum = 0;    // Sequence Number 的 高2位
@@ -256,9 +256,9 @@ bool CTextMsg::ReplyMsgACK(ThreadMsg* Msg, UINT8 SeqNumber)
 	}
 	else
 	{                                 //Sequence Number 需要Second Header 和 Third Header
-		SndHeader.Extension = 1;
-		SndHeader.SequenceNum = (SeqNumber & 0x1F);        // Sequence Number 的 低5位
-		SndHeader.Reserved = 0;
+		callIddHeader.Extension = 1;
+		callIddHeader.SequenceNum = (SeqNumber & 0x1F);        // Sequence Number 的 低5位
+		callIddHeader.Reserved = 0;
 
 		TrdHeader.Extension = 0;
 		TrdHeader.SequenceNum = ((SeqNumber >> 5) & 0x3);    // Sequence Number 的 高2位
@@ -280,7 +280,7 @@ bool CTextMsg::ReplyMsgACK(ThreadMsg* Msg, UINT8 SeqNumber)
 	memcpy(&Msg->RcvBuffer[OffSet], (char*)&AddressSize, sizeof(AddressSize));      // 填充AddressSize
 
 	OffSet = OffSet + sizeof(AddressSize);
-	memcpy(&Msg->RcvBuffer[OffSet], (char*)&SndHeader, sizeof(SecondHeader));   // 填充SecondHeader
+	memcpy(&Msg->RcvBuffer[OffSet], (char*)&callIddHeader, sizeof(SecondHeader));   // 填充SecondHeader
 
 	OffSet = OffSet + sizeof(SecondHeader);
 	memcpy(&Msg->RcvBuffer[OffSet], (char*)&TrdHeader, sizeof(ThirdHeader));    // 填充ThirdHeader
@@ -298,13 +298,13 @@ bool CTextMsg::ReplyMsgACK(ThreadMsg* Msg, UINT8 SeqNumber)
 }
 
 
-bool CTextMsg::SendMsg(int sn, LPTSTR message, DWORD dwRadioID, int CaiNet)
+bool CTextMsg::SendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet)
 {
 	//构造ACK
 	UINT16			MsgSize;
 	FirstHeader		FstHeader;
 	UINT8			AddressSize;
-	SecondHeader    SndHeader;
+	SecondHeader    callIddHeader;
 	ThirdHeader     TrdHeader;
 	int             OffSet;
 	char			buf[1024];
@@ -326,9 +326,9 @@ bool CTextMsg::SendMsg(int sn, LPTSTR message, DWORD dwRadioID, int CaiNet)
 	AddressSize = 0;
 	MsgSize = MsgSize + sizeof(AddressSize);
 
-	SndHeader.Extension = 1;
-	SndHeader.SequenceNum = m_nSendSequenceNumber & 0x1f;
-	SndHeader.Reserved = 0;
+	callIddHeader.Extension = 1;
+	callIddHeader.SequenceNum = m_nSendSequenceNumber & 0x1f;
+	callIddHeader.Reserved = 0;
 
 	TrdHeader.Extension = 0;
 	TrdHeader.SequenceNum = (m_nSendSequenceNumber >> 5) & 0x03;    // Sequence Number 的 高2位
@@ -349,7 +349,7 @@ bool CTextMsg::SendMsg(int sn, LPTSTR message, DWORD dwRadioID, int CaiNet)
 	memcpy(&buf[OffSet], (char*)&AddressSize, sizeof(AddressSize));      // 填充AddressSize
 
 	OffSet = OffSet + sizeof(AddressSize);
-	memcpy(&buf[OffSet], (char*)&SndHeader, sizeof(SecondHeader));   // 填充SecondHeader
+	memcpy(&buf[OffSet], (char*)&callIddHeader, sizeof(SecondHeader));   // 填充SecondHeader
 
 	OffSet = OffSet + sizeof(SecondHeader);
 	memcpy(&buf[OffSet], (char*)&TrdHeader, sizeof(ThirdHeader));    // 填充ThirdHeader
@@ -365,7 +365,7 @@ bool CTextMsg::SendMsg(int sn, LPTSTR message, DWORD dwRadioID, int CaiNet)
 	list<AllCommand>::iterator it;
 	for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 	{
-		if (it->sn == sn)
+		if (it->callId == callId)
 		{
 			it->ackNum = m_nSendSequenceNumber;
 		}
@@ -454,7 +454,7 @@ void CTextMsg::RecvMsg()
 						//rapidjson::Document document;
 						//Document::AllocatorType& allocator = document.GetAllocator();
 						//Value root(kObjectType);
-						//root.AddMember("sn", it->sn, allocator);
+						//root.AddMember("callId", it->callId, allocator);
 						//root.AddMember("status", 1, allocator);                //1:发送成功
 						//StringBuffer buffer;
 						//Writer<StringBuffer> writer(buffer);

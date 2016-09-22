@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "Call.h"
 
-
+std::map<CRemotePeer*, DispatchOperate*>  m_dispatchOperate;
 CCall::CCall()
 {
 }
@@ -25,13 +25,17 @@ std::string CCall::getName()
 
 int CCall::run(CRemotePeer* pRemote, std::map<std::string, std::string> args)
 {
-	DispatchOperate  * pDispatchOperate = new DispatchOperate();
-	if (args.find("id") != args.end())
+	if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
 	{
-		int id = atoi(args["id"].c_str());
-		int sn = atoi(args["sn"].c_str());
-		int result = pDispatchOperate->call(id, sn);
+		if (args.find("id") != args.end())
+		{
+			int id = atoi(args["id"].c_str());
+			int callId = atoi(args["callId"].c_str());
+			int result = m_dispatchOperate[pRemote]->call(id, callId);
+		}
+
 	}
+	
 	
 	return 0;
 }

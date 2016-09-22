@@ -26,9 +26,9 @@ int CCancelGps::run(CRemotePeer* pRemote, std::map<std::string, std::string> arg
 	DispatchOperate  * pDispatchOperate = new DispatchOperate();
 	if (args.find("id") != args.end())
 	{
-		int sn = atoi(args["sn"].c_str());
+		int callId = atoi(args["callId"].c_str());
 		int id = atoi(args["id"].c_str());
-		int result = pDispatchOperate->cancelPollGps(id, sn);
+		int result = pDispatchOperate->cancelPollGps(id, callId);
 	}
 	return 0;
 }

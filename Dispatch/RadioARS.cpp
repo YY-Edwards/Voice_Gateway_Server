@@ -23,7 +23,7 @@ bool CRadioARS::InitARSSocket(DWORD dwAddress)
 	SOCKADDR_IN      addr;					//   The   local   interface   address   
 	WSADATA			 wsda;					//   Structure   to   store   info
 	
-	WSAStartup(MAKEWORD(1, 1), &wsda);     //   Load   version   1.1   of   Winsock
+	int ret = WSAStartup(MAKEWORD(1, 1), &wsda);     //   Load   version   1.1   of   Winsock
 	CloseARSSocket(&m_ThreadARS->mySocket);
 	BOOL bReuseaddr = FALSE;
 	setsockopt(m_ThreadARS->mySocket, SOL_SOCKET, SO_DONTLINGER, (const char*)&bReuseaddr, sizeof(BOOL));
@@ -41,8 +41,8 @@ bool CRadioARS::InitARSSocket(DWORD dwAddress)
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(4005);
 	addr.sin_addr.s_addr = dwAddress;
-
-	if (bind(m_ThreadARS->mySocket, (struct sockaddr *) &addr, sizeof(addr)) == SOCKET_ERROR)
+	ret = ::bind(m_ThreadARS->mySocket, (struct sockaddr *) &addr, sizeof(addr));
+	if (ret == SOCKET_ERROR)
 	{
 		int b = WSAGetLastError();
 		//CloseARSSocket(s);

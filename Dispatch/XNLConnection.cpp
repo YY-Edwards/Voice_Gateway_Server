@@ -716,7 +716,7 @@ void CXNLConnection::decode_xnl_data_msg_ack(char * p_msg_buf)
 					//rapidjson::Document document;
 					//Document::AllocatorType& allocator = document.GetAllocator();
 					//Value root(kObjectType);
-					//root.AddMember("sn", it->sn, allocator);
+					//root.AddMember("callId", it->callId, allocator);
 					//root.AddMember("status", 0, allocator);
 					//StringBuffer buffer;
 					//Writer<StringBuffer> writer(buffer);
@@ -799,29 +799,21 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 		{
 			if (0x000B == xnl_opcode && 0xB41C == xcmp_opcode  )
 			{
-				//拼接json
-				rapidjson::Document document;
-				Document::AllocatorType& allocator = document.GetAllocator();
-				Value root(kObjectType);
-				root.AddMember("sn", it->sn, allocator);
+				
 				BOOL rmtflag = FALSE;
 				if (rmt_type_code == 0x00)                                                   //在线检测
 				{
 					if (0x0010 == check_result/* & 0x00FF)*/)
 					{
 						rmtflag = TRUE; 
-						root.AddMember("status", 1, allocator);// 1:在线
+						// 1:在线
 					}
 					else
 					{
 						rmtflag = false; 
-						root.AddMember("status", 0, allocator);;//0:不在线
+						//0:不在线
 					}
-					StringBuffer buffer;
-					Writer<StringBuffer> writer(buffer);
-					root.Accept(writer);
-					std::string reststring = buffer.GetString();
-					//pDispatchPort->sendResultToClient(reststring);
+					
 					allCommandList.erase(it++);
 				}
 				else if (rmt_type_code == 0x01)
@@ -829,18 +821,14 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					if (0x0110 == check_result/* & 0x00FF)*/)                                    //摇闭
 					{
 						rmtflag = true;                                   //成功    
-						root.AddMember("status", 1, allocator);
+						
 					} 
 					else
 					{
 						rmtflag = false;                               //失败
-						root.AddMember("status", 0, allocator);
+						
 					}
-					StringBuffer buffer;
-					Writer<StringBuffer> writer(buffer);
-					root.Accept(writer);
-					std::string reststring = buffer.GetString();
-					//pDispatchPort->sendResultToClient(reststring);
+				
 					allCommandList.erase(it++);
 				}
 				else if (rmt_type_code == 0x02)
@@ -848,18 +836,14 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					if (0x0210 == check_result/* & 0x00FF)*/)                                     //摇开
 					{
 						rmtflag = true;                                  //成功
-						root.AddMember("status", 1, allocator);
+						
 					}
 					else
 					{
 						rmtflag = FALSE;                                //失败
-						root.AddMember("status", 0, allocator);
+					
 					}
-					StringBuffer buffer;
-					Writer<StringBuffer> writer(buffer);
-					root.Accept(writer);
-					std::string reststring = buffer.GetString();
-					//pDispatchPort->sendResultToClient(reststring);
+					
 					allCommandList.erase(it++);
 				}
 				else if (rmt_type_code == 0x03)
@@ -867,18 +851,14 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					if (0x0310 == check_result/* & 0x00FF)*/)                                    //远程监听
 					{
 						rmtflag = true;                                   //成功
-						root.AddMember("status", 1, allocator);
+						
 					}
 					else
 					{
 						rmtflag = false;                                   // 失败
-						root.AddMember("status",0, allocator);
+						
 					}
-					StringBuffer buffer;
-					Writer<StringBuffer> writer(buffer);
-					root.Accept(writer);
-					std::string reststring = buffer.GetString();
-					//pDispatchPort->sendResultToClient(reststring);
+				
 					allCommandList.erase(it++);
 				}
 			
@@ -1045,22 +1025,13 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 		switch (*((char*)(pBuf + sizeof(xnl_msg_hdr_t)+3)))
 		{
 		case 0x04:
-		//	if (pDispatchPort != NULL)
-			{
-				//拼接json
-				//拼接json
-				rapidjson::Document document;
-				Document::AllocatorType& allocator = document.GetAllocator();
-				Value root(kObjectType);
-				root.AddMember("sn", it->sn, allocator);
-				root.AddMember("status", 1, allocator);                                //1：呼叫开始
-				StringBuffer buffer;
-				Writer<StringBuffer> writer(buffer);
-				root.Accept(writer);
-				std::string reststring = buffer.GetString();
-			//	pDispatchPort->sendResultToClient(reststring);
-			}
-			allCommandList.erase(it++);
+		
+				
+				                                //1：呼叫开始
+			
+
+			//	allCommandList.erase(it++);
+			
 			/*if (myCallBackFunc != NULL)
 			{
 				unsigned char str[30] = { 0 };
@@ -1069,21 +1040,11 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 			}*/
 			break;
 		case 0x03:
-		//	if (pDispatchPort != NULL)
-			{
-				//拼接json
-				rapidjson::Document document;
-				Document::AllocatorType& allocator = document.GetAllocator();
-				Value root(kObjectType);
-				root.AddMember("sn", it->sn, allocator);
-				root.AddMember("status", 2, allocator);        //2:呼叫结束
-				StringBuffer buffer;
-				Writer<StringBuffer> writer(buffer);
-				root.Accept(writer);
-				std::string reststring = buffer.GetString();
-			//	pDispatchPort->sendResultToClient(reststring);
-			}
-			allCommandList.erase(it++);
+		
+				
+
+				        //2:呼叫结束
+			//allCommandList.erase(it++);
 			/*if (myCallBackFunc != NULL)
 			{
 				unsigned char str[30] = { 0 };
@@ -1140,27 +1101,27 @@ void CXNLConnection::decode_xcmp_dev_init_status(char * p_msg_buf)
                            break;
                            
                        case XCMP_DEVICE_RF_BAND:
-                           /* This PC application doesn't care this descriptor */
+                           /* This PC application doecallId't care this descriptor */
                            break;
                            
                        case XCMP_DEVICE_GPIO_CTRL:
-                           /* This PC application doesn't care this descriptor */
+                           /* This PC application doecallId't care this descriptor */
                            break;
                            
                        case XCMP_DEVICE_RADIO_TYPE:
-                           /* This PC application doesn't care this descriptor */
+                           /* This PC application doecallId't care this descriptor */
                            break;
                            
                        case XCMP_DEVICE_KEYPAD:
-                           /* This PC application doesn't care this descriptor */
+                           /* This PC application doecallId't care this descriptor */
                            break;
                            
                        case XCMP_DEVICE_CHANNEL_KNOB:
-                           /* This PC application doesn't care this descriptor */
+                           /* This PC application doecallId't care this descriptor */
                            break;
                            
                        case XCMP_DEVICE_VIRTUAL_PERSONALITY_SUPPORT:
-                           /* This PC application doesn't care this descriptor */
+                           /* This PC application doecallId't care this descriptor */
                            break;
                            
                        default: /* Just ignore unknown descriptor */

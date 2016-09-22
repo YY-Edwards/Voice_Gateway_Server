@@ -27,7 +27,7 @@ bool CRadioGps::InitGPSSocket(DWORD dwAddress)
 	//CString			 strError;
 	SOCKADDR_IN      addr;					//   The   local   interface   address   
 	WSADATA			 wsda;					//   Structure   to   store   info
-	WSAStartup(MAKEWORD(1, 1), &wsda);     //   Load   version   1.1   of   Winsock
+	int ret = WSAStartup(MAKEWORD(1, 1), &wsda);     //   Load   version   1.1   of   Winsock
 
 	CloseGPSSocket(&m_ThreadGps->mySocket);
 	BOOL bReuseaddr = FALSE;
@@ -50,8 +50,8 @@ bool CRadioGps::InitGPSSocket(DWORD dwAddress)
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(4001);
 	addr.sin_addr.s_addr = dwAddress;
-
-	if (bind(m_ThreadGps->mySocket, (struct sockaddr *) &addr, sizeof(addr)) == SOCKET_ERROR)
+	ret = ::bind(m_ThreadGps->mySocket, (struct sockaddr *) &addr, sizeof(addr));
+	if (ret == SOCKET_ERROR)
 	{
 		int b = WSAGetLastError();
 		//CloseGPSSocket(s);
@@ -67,7 +67,7 @@ bool CRadioGps::InitGPSOverturnSocket(DWORD dwAddress)
 	//CString			 strError;
 	SOCKADDR_IN      addr;					//   The   local   interface   address   
 	WSADATA			 wsda;					//   Structure   to   store   info
-	WSAStartup(MAKEWORD(1, 1), &wsda);     //   Load   version   1.1   of   Winsock
+	int ret = WSAStartup(MAKEWORD(1, 1), &wsda);     //   Load   version   1.1   of   Winsock
 
 
 	m_ThreadGpsOverturn->mySocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);   //   Create   an   UDP   socket
@@ -87,8 +87,8 @@ bool CRadioGps::InitGPSOverturnSocket(DWORD dwAddress)
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(4001);
 	addr.sin_addr.s_addr = dwAddress;
-
-	if (bind(m_ThreadGpsOverturn->mySocket, (struct sockaddr *) &addr, sizeof(addr)) == SOCKET_ERROR)
+	ret = ::bind(m_ThreadGpsOverturn->mySocket, (struct sockaddr *) &addr, sizeof(addr));
+	if (ret == SOCKET_ERROR)
 	{
 		int b = WSAGetLastError();
 		//CloseGPSSocket(s);

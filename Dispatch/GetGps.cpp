@@ -28,11 +28,11 @@ int CGetGps::run(CRemotePeer* pRemote, std::map<std::string, std::string> args)
 	DispatchOperate  * pDispatchOperate = new DispatchOperate();
 	if (args.find("id") != args.end() && args.find("cycle") != args.end() && args.find("querymode") != args.end())
 	{
-		int sn = atoi(args["sn"].c_str());
+		int callId = atoi(args["callId"].c_str());
 		int id = atoi(args["id"].c_str());
 		int cycle = atoi(args["cycle"].c_str());
 		int querymode = atoi(args["querymode"].c_str());
-		int result = pDispatchOperate->getGps(id, querymode, cycle, sn);
+		int result = pDispatchOperate->getGps(id, querymode, cycle, callId);
 	}
 
 	return 0;

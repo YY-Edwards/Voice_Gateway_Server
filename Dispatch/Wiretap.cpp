@@ -27,5 +27,12 @@ std::string CWiretap::getName()
 
 int CWiretap::run(CRemotePeer* pRemote, std::map<std::string, std::string> args)
 {
+	DispatchOperate  * pDispatchOperate = new DispatchOperate();
+	if (args.find("id") != args.end())
+	{
+		int id = atoi(args["id"].c_str());
+		int callId = atoi(args["callId"].c_str());
+		int result = pDispatchOperate->wiretap(id, callId);
+	}
 	return 0;
 }
