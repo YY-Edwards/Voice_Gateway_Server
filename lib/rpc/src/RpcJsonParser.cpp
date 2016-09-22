@@ -13,9 +13,9 @@ CRpcJsonParser::~CRpcJsonParser()
 {
 }
 
-std::string CRpcJsonParser::getCallName(const std::string str)
+int CRpcJsonParser::getCallName(const std::string str, std::string& callName, uint64_t& callId)
 {
-	std::string strCall = "";
+	int ret = 0;
 
 	Document d;
 	try{
@@ -35,17 +35,29 @@ std::string CRpcJsonParser::getCallName(const std::string str)
 			throw std::exception("call name not exist");
 		}
 
-		strCall = d["call"].GetString();
+		if (!d.HasMember("callId"))
+		{
+			throw std::exception("call id not exist");
+		}
+
+		callName = d["call"].GetString();
+		if (rapidjson::kNumberType == d["callId"].GetType())
+		{
+			callId = std::atoll(d["callId"].GetString());
+		}
+		else if (rapidjson::kStringType == d["callId"].GetType()) {
+			callId = d["callId"].GetInt64();
+		}
 	}
 	catch (std::exception& e){
-		//		printf("%s\r\n",e.what());
+		ret = -1;
 	}
 	catch (...)
 	{
-		//printf("unknow error\r\n");
+		ret = -1;
 	}
 
-	return strCall;
+	return ret;
 }
 
 std::string CRpcJsonParser::getVal(Value& v)

@@ -13,6 +13,6 @@ class CAbstractAction{
 public:
 	virtual std::string getName() = 0;
 	virtual std::list<std::string> getArgNames() = 0;
-	virtual int run(CRemotePeer* pRemote, std::map<std::string, std::string> args) = 0;
+	virtual int run(CRemotePeer* pRemote, std::map<std::string, std::string> args, uint64_t callId) = 0;
 };
 #endif
