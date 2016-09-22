@@ -5,7 +5,7 @@
 
 class CRemotePeer{
 public:
-	virtual int sendResponse(char* pData, int dataLen) = 0;
+	virtual int sendResponse(const char* pData, int dataLen) = 0;
 };
 
 class OnConnectorData{

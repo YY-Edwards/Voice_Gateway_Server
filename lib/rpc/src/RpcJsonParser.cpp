@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include <algorithm>
 #include <cstdio>
 #include <exception>
 
@@ -43,10 +44,10 @@ int CRpcJsonParser::getCallName(const std::string str, std::string& callName, ui
 		callName = d["call"].GetString();
 		if (rapidjson::kNumberType == d["callId"].GetType())
 		{
-			callId = std::atoll(d["callId"].GetString());
+			callId = d["callId"].GetUint64();
 		}
 		else if (rapidjson::kStringType == d["callId"].GetType()) {
-			callId = d["callId"].GetInt64();
+			callId = std::atoll(d["callId"].GetString());
 		}
 	}
 	catch (std::exception& e){
@@ -149,4 +150,115 @@ int CRpcJsonParser::getArgs(const std::string str, std::list<std::string> argLis
 	}
 	
 	return ret;
+}
+
+std::string CRpcJsonParser::buildCall(char* pCallName, uint64_t callId, std::map<std::string, std::string> params)
+{
+	std::string jsonStr = "";
+
+	try{
+		Document d;
+		d.SetObject();
+		Value callNameEl(kStringType);
+		callNameEl.SetString(pCallName, d.GetAllocator());
+		
+		Value callIdEl(kNumberType);
+		callIdEl.SetUint64(callId);
+
+		Value paramEl(kObjectType);
+		for (auto p = params.begin(); p != params.end(); ++p)
+		{
+			Value el(kStringType);
+			el.SetString(p->second.c_str(), d.GetAllocator());
+			paramEl.AddMember( StringRef( p->first.c_str()), el, d.GetAllocator());
+		}
+		
+		d.AddMember("call", callNameEl, d.GetAllocator());
+		d.AddMember("callId", callIdEl, d.GetAllocator());
+		d.AddMember("param", paramEl, d.GetAllocator());
+
+		StringBuffer sb;
+		PrettyWriter<StringBuffer> writer(sb);
+		d.Accept(writer); // Accept() traverses the DOM and generates Handler events.
+		jsonStr = sb.GetString();
+		//std::string tmpStr = sb.GetString();
+		//for (auto ich = tmpStr.begin(); ich != tmpStr.end(); ++ich)
+		//{
+		//	if (*ich != '\n' && *ich!=' ')
+		//	{
+		//		jsonStr.push_back(*ich);
+		//	}
+		//}
+	}
+	catch (std::exception& e)
+	{
+
+	}
+	catch (...)
+	{
+
+	}
+
+	return jsonStr;
+}
+
+std::string CRpcJsonParser::buildResponse(char* pStatus, uint64_t callId, int errCode, const char* statusText, std::map<std::string, std::string> contents)
+{
+	std::string jsonStr = "";
+
+	try{
+		Document d;
+		d.SetObject();
+		Value statusEl(kStringType);
+		statusEl.SetString(pStatus, d.GetAllocator());
+
+		Value callIdEl(kNumberType);
+		callIdEl.SetUint64(callId);
+
+		Value errCodeEl(kNumberType);
+		errCodeEl.SetInt(errCode);
+
+		Value statusTextEl(kStringType);
+		statusTextEl.SetString(statusText, d.GetAllocator());
+
+		Value contentEl(kObjectType);
+		for (auto p = contents.begin(); p != contents.end(); ++p)
+		{
+			Value el(kStringType);
+			el.SetString(p->second.c_str(), d.GetAllocator());
+			contentEl.AddMember(StringRef(p->first.c_str()), el, d.GetAllocator());
+		}
+
+		d.AddMember("status", statusEl, d.GetAllocator());
+		d.AddMember("statusText", statusTextEl, d.GetAllocator());
+		d.AddMember("callId", callIdEl, d.GetAllocator());
+		d.AddMember("errCode", errCodeEl, d.GetAllocator());
+		if (contents.size() > 0)
+		{
+			d.AddMember("contents", contentEl, d.GetAllocator());
+		}
+
+		StringBuffer sb;
+		PrettyWriter<StringBuffer> writer(sb);
+		d.Accept(writer); // Accept() traverses the DOM and generates Handler events.
+		jsonStr = sb.GetString();
+		//std::string tmpStr = sb.GetString();
+		//for (auto ich = tmpStr.begin(); ich != tmpStr.end(); ++ich)
+		//{
+		//	if (*ich != '\n' && *ich != ' ')
+		//	{
+		//		jsonStr.push_back(*ich);
+		//	}
+		//}
+	}
+	catch (std::exception& e)
+	{
+
+	}
+	catch (...)
+	{
+
+	}
+
+	return jsonStr;
 }

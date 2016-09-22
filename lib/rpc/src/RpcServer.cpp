@@ -22,10 +22,12 @@ int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 		std::map<std::string, std::string> args;
 		CRpcJsonParser parser;
 		std::string callName;
-		uint64_t callId;
+		uint64_t callId = 0;
 		if (0 != parser.getCallName(str, callName, callId))
 		{
 			// send error response
+			std::string response = CRpcJsonParser::buildResponse("failed", callId, 404, "Invalid request");
+			pRemote->sendResponse(response.c_str(), response.size());
 			throw std::exception("invalid request");
 		}
 
@@ -37,6 +39,8 @@ int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 			if (0 != parser.getArgs(str, argList, args))
 			{
 				// invalid parameter, send error response
+				std::string response = CRpcJsonParser::buildResponse("failed", callId, 404, "Invalid parameter");
+				pRemote->sendResponse(response.c_str(), response.size());
 				throw std::exception("invalid parameter number");
 			}
 			m_mpActions[callName]->run(pRemote, args, callId);
