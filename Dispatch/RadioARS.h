@@ -1,7 +1,8 @@
 
 //#include <WinSock2.h>
 //#include <Windows.h>
-
+#include "../lib/rpc/include/BaseConnector.h"
+#include "../lib/rpc/include/RpcJsonParser.h"
 #pragma once
 #define SEND_LENTH   4
 #define RECV_LENTH   28
@@ -27,8 +28,11 @@ public:
 	static DWORD WINAPI ReceiveDataThread(LPVOID lpParam);
 	bool SendARSAck(DWORD dwRadioID, int CaiNet);
 	void RecvData();
+	void setRemotePeer(CRemotePeer * pRemote);
+
 private:
 	bool m_RcvSocketOpened;
 	ThreadARS *m_ThreadARS;
+	CRemotePeer* pRemotePeer;
 };
 

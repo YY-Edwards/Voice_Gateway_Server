@@ -25,10 +25,10 @@ std::string CAllCall::getName()
 	return "allCall";
 }
 
-int CAllCall::run(CRemotePeer* pRemote, std::map<std::string, std::string> args)
+int CAllCall::run(CRemotePeer* pRemote, std::map<std::string, std::string> args, uint64_t callId)
 {
 	DispatchOperate  * pDispatchOperate = new DispatchOperate();
-	int callId = atoi(args["callId"].c_str());
-	int result = pDispatchOperate->allCall(callId);
+	
+	int result = pDispatchOperate->allCall(pRemote, callId);
 	return 0;
 }

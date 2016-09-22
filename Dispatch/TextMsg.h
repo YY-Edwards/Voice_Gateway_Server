@@ -5,7 +5,7 @@
 
 //#include <WinSock2.h>
 //#include <Windows.h>
-
+#include "../lib/rpc/include/BaseConnector.h"
 #pragma once
 #define MAX_MESSAGE_LENGTH			(512 + 1)           // 最大可以接收1024个Unicode的字符，多一个字符位置是保存字符串结尾,目前 Text Message 的最大长度是 140 unicode.
 #define MESSAGE_BUFFER              MAX_MESSAGE_LENGTH * 2
@@ -68,13 +68,15 @@ public:
 	CString ParseUserMsg(TextMsg* HandleMsg,int* len);
 	UINT8 GetSeqNumber(TextMsg* HandleMsg);
 	bool ReplyMsgACK(ThreadMsg* Msg, UINT8 SeqNumber);
-	bool SendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet);
+	bool SendMsg( int callId, LPTSTR message, DWORD dwRadioID, int CaiNet);
+	void setRemotePeer(CRemotePeer * pRemote);
 	void RecvMsg();
 
 private:
 	int m_nSendSequenceNumber;
 	bool m_RcvSocketOpened;
 	ThreadMsg * m_ThreadMsg;
+	CRemotePeer* pRemotePeer;
 	
 	
 };

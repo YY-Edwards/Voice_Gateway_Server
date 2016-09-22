@@ -7,7 +7,8 @@
 //#include <winsock2.h>
 #include "xnl_messages_def.h"
 #include "xcmp_msg_defs.h"
-
+#include "../lib/rpc/include/BaseConnector.h"
+#include "../lib/rpc/include/RpcJsonParser.h"
 #define WM_RX_XCMP_MESSAGE (WM_USER + 100) 
 
 typedef enum
@@ -114,6 +115,7 @@ public:
     BOOL    m_bConnected;
     unsigned long m_XCMP_ver; /* XCMP version */
 	char readmac[11];
+	void setRemotePeer(CRemotePeer * pRemote);
 
 private:
     HWND    m_hWnd;
@@ -137,5 +139,6 @@ private:
     MSG_QUEUE_T*   m_pSendQueHdr;
     MSG_QUEUE_T*   m_pSendQueTail;
     char *m_pLastSendMsg;
+	CRemotePeer* pRemotePeer;
 	
 };

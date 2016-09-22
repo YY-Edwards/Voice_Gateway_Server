@@ -25,16 +25,20 @@ std::string CSendGroupSms::getName()
 	return "sendGroupSms";
 }
 
-int CSendGroupSms::run(CRemotePeer* pRemote, std::map<std::string, std::string> args)
+int CSendGroupSms::run(CRemotePeer* pRemote, std::map<std::string, std::string> args, uint64_t callId)
 {
-	DispatchOperate  * pDispatchOperate = new DispatchOperate();
-	if (args.find("id") != args.end() &&args.find("msg")!=args.end())
+	
+	if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
 	{
-		int id = atoi(args["id"].c_str());
-		int callId = atoi(args["callId"].c_str());
-		string msg = args["msg"];
-		wchar_t * text = new wchar_t[msg.size()];
-		int result = pDispatchOperate->sendGroupSms(id,text, callId);
+		if (args.find("id") != args.end())
+		{
+			int id = atoi(args["id"].c_str());
+			string msg = args["msg"];
+			wchar_t * text = new wchar_t[msg.size()];
+			int result = m_dispatchOperate[pRemote]->sendGroupSms(pRemote, id, text, callId);
+			
+		}
+
 	}
 	return 0;
 }

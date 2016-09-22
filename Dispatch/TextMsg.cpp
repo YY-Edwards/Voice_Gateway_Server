@@ -2,7 +2,7 @@
 #include "TextMsg.h"
 
 
-
+#include "../lib/rpc/include/RpcJsonParser.h"
 #pragma comment(lib, "wsock32.lib")
 
 
@@ -439,28 +439,12 @@ void CTextMsg::RecvMsg()
 			{
 				if (it->ackNum == SeqNum)
 				{
-					/*if (myCallBackFunc != NULL)
+					std::map<std::string, std::string> args;
+					args["id"] = m_ThreadMsg->radioID;
+					std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId,0,"1", args);
+					if (pRemotePeer != NULL)
 					{
-						unsigned char str[30] = { 0 };
-						sprintf_s((char *)str, sizeof(str), "result:0");
-						onData(myCallBackFunc, it->seq, SEND_PRIVATE_MSG, (char *)str, sizeof(str));
-#if DEBUG_LOG
-						LOG(INFO) << "接收短信发送成功ack  ondata ";
-#endif
-					}*/
-					//if (pDispatchPort != NULL)
-					{
-						////拼接json
-						//rapidjson::Document document;
-						//Document::AllocatorType& allocator = document.GetAllocator();
-						//Value root(kObjectType);
-						//root.AddMember("callId", it->callId, allocator);
-						//root.AddMember("status", 1, allocator);                //1:发送成功
-						//StringBuffer buffer;
-						//Writer<StringBuffer> writer(buffer);
-						//root.Accept(writer);
-						//std::string reststring = buffer.GetString();
-						//pDispatchPort->sendResultToClient(reststring);
+						pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 					}
 					allCommandList.erase(it++);
 				}
@@ -486,61 +470,34 @@ void CTextMsg::RecvMsg()
 		}
 		if (!FstHeader.Control)
 		{
-			CString  strID;
-			strID.Format(_T("%lu"), m_ThreadMsg->radioID);
+			CString strTime = CTime::GetCurrentTime().Format("%Y-%m-%d %H:%M:%S");                         //获取系统时间
 			CString message = ParseUserMsg(&HandleMsg, 0);
-//			if (myCallBackFunc != NULL)
-//			{
-//				int len = 0;
-//
-//				CString str, strID;
-//				CString message = ParseUserMsg(&HandleMsg, &len);
-//				strID.Format(_T("%lu"), m_ThreadMsg->radioID);
-//				str = "id:" + strID + ";content:" + message;
-//
-//
-//				len = WideCharToMultiByte(CP_ACP, 0, str, wcslen(str), NULL, 0, NULL, NULL);
-//				char * m_char = new char[len + 1];
-//				WideCharToMultiByte(CP_ACP, 0, str, wcslen(str), m_char, len, NULL, NULL);
-//				m_char[len] = '\0';
-//
-//
-//				//unsigned char* data = (unsigned char*)(LPCTSTR)str;
-//				onData(myCallBackFunc, 1, RECV_MSG, m_char, len);
-//				delete[] m_char;
-//#if DEBUG_LOG
-//				LOG(INFO) << "接收短信  ondata ";
-//				
-//#endif
-//			}
-			//if (pDispatchPort != NULL)
+			std::map<std::string, std::string> args;
+			args["id"] = m_ThreadMsg->radioID;
+			args["date"] = (LPCSTR)&strTime;
+			args["message"] = (LPCSTR)&message;
+			std::string callJsonStr = CRpcJsonParser::buildCall("onRecvMsg", 1, args);
+			if (pRemotePeer != NULL)
 			{
-				//拼接json
+				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+#if DEBUG_LOG
+				LOG(INFO) << "接收到短信 ： "+callJsonStr;
+#endif
 
-				////拼接json
-				//rapidjson::Document document;
-				//Document::AllocatorType& allocator = document.GetAllocator();
-				//Value root(kObjectType);
-				//Value child(kObjectType);
-				//child.AddMember("type", "onRecvMsg", allocator);
-				//child.AddMember("srcRadioID", strID, allocator);
-				//CString strTime = CTime::GetCurrentTime().Format("%Y-%m-%d %H:%M:%S");                         //获取系统时间
-				//child.AddMember("date", strTime, allocator);
-				//child.AddMember("message", message, allocator);
-				//root.AddMember("result", child, allocator);
-				//StringBuffer buffer;
-				//Writer<StringBuffer> writer(buffer);
-				//root.Accept(writer);
-				//std::string reststring = buffer.GetString();
-				//pDispatchPort->sendResultToClient(reststring);
-
+			}
+#if DEBUG_LOG
+			LOG(INFO) << "接收到短信，但是此短信的目的地没建立tcp连接！";
+#endif
 			}
 			 
 		}
 		
-	}
+	
 	
 }
 
 
-
+void CTextMsg::setRemotePeer(CRemotePeer * pRemote)
+{
+	pRemotePeer = pRemote;
+}

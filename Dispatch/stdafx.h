@@ -72,6 +72,7 @@ extern list <AllCommand>allCommandList;
 
 #include"DispatchOperate.h"
 #include "../lib/rpc/include/RpcServer.h"
+
 extern map<CRemotePeer *, DispatchOperate*>  m_dispatchOperate;
 
 

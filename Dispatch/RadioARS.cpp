@@ -226,3 +226,7 @@ void CRadioARS::RecvData()
 			}
 		}
 }
+void CRadioARS::setRemotePeer(CRemotePeer * pRemote)
+{
+	pRemotePeer = pRemote;
+}

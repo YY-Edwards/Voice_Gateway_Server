@@ -29,7 +29,7 @@ DispatchOperate::DispatchOperate()
 DispatchOperate::~DispatchOperate()
 {
 }
-int DispatchOperate::Connect(const char* ip, const char * pIP,int callId)
+int DispatchOperate::Connect(CRemotePeer* pRemote,const char* ip, const char * pIP, int callId)
 {
 	// Connection
 	AddAllCommand(callId, RADIO_CONNECT);
@@ -57,7 +57,7 @@ int DispatchOperate::Connect(const char* ip, const char * pIP,int callId)
 	return 0;
 
 }
-int DispatchOperate::call(int id,int callId)
+int DispatchOperate::call(CRemotePeer* pRemote, int id, int callId)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "单呼";
@@ -72,6 +72,7 @@ int DispatchOperate::call(int id,int callId)
 		{
 			if (target_radio_id != 0)
 			{
+				pXnlConnection->setRemotePeer(pRemote);
 				pXnlConnection->send_xcmp_call_ctrl_request(0x01, call_type, 0x01, target_radio_id, 0);
 				pXnlConnection->send_xcmp_tx_ctrl_request(0x01, 0x00);
 
@@ -94,7 +95,7 @@ int DispatchOperate::call(int id,int callId)
 
 	return 1;
 }
-int DispatchOperate::groupCall(int id, int callId)
+int DispatchOperate::groupCall(CRemotePeer* pRemote, int id, int callId)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "组呼";
@@ -109,6 +110,7 @@ int DispatchOperate::groupCall(int id, int callId)
 		{
 			if (target_radio_id != 0)
 			{
+				pXnlConnection->setRemotePeer(pRemote);
 				pXnlConnection->send_xcmp_call_ctrl_request(0x01, call_type, 0x01, 0, target_radio_id);
 				pXnlConnection->send_xcmp_tx_ctrl_request(0x01, 0x00);
 
@@ -130,7 +132,7 @@ int DispatchOperate::groupCall(int id, int callId)
 
 	return 1;
 }
-int DispatchOperate::allCall( int callId)
+int DispatchOperate::allCall(CRemotePeer* pRemote, int callId)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "全呼";
@@ -144,6 +146,7 @@ int DispatchOperate::allCall( int callId)
 		{
 			if (target_radio_id != 0)
 			{
+				pXnlConnection->setRemotePeer(pRemote);
 				pXnlConnection->send_xcmp_call_ctrl_request(0x01, call_type, 0x01, 0, target_radio_id);
 				pXnlConnection->send_xcmp_tx_ctrl_request(0x01, 0x00);
 
@@ -165,7 +168,7 @@ int DispatchOperate::allCall( int callId)
 	return 1;
 
 }
-int DispatchOperate::stopCall( int callId)
+int DispatchOperate::stopCall(CRemotePeer* pRemote, int callId)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "停止呼叫";
@@ -176,6 +179,7 @@ int DispatchOperate::stopCall( int callId)
 	{
 		if (pXnlConnection != NULL)
 		{
+			pXnlConnection->setRemotePeer(pRemote);
 			pXnlConnection->send_xcmp_tx_ctrl_request(0x02, 0x00);
 
 			return 0;
@@ -191,7 +195,7 @@ int DispatchOperate::stopCall( int callId)
 
 	return 1;
 }
-int DispatchOperate::remotePowerOn(int id, int callId)
+int DispatchOperate::remotePowerOn(CRemotePeer* pRemote, int id, int callId)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "遥开";
@@ -205,7 +209,7 @@ int DispatchOperate::remotePowerOn(int id, int callId)
 		{
 			if (target_radio_id != 0)
 			{
-
+				pXnlConnection->setRemotePeer(pRemote);
 				pXnlConnection->send_xcmp_rmt_radio_ctrl_request(0x02, 0x01, 0x01, target_radio_id);
 
 				return 0;
@@ -226,7 +230,7 @@ int DispatchOperate::remotePowerOn(int id, int callId)
 
 	return 1;
 }
-int DispatchOperate::remotePowerOff(int id , int callId)
+int DispatchOperate::remotePowerOff(CRemotePeer* pRemote, int id, int callId)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "遥闭";
@@ -240,6 +244,7 @@ int DispatchOperate::remotePowerOff(int id , int callId)
 
 			if (target_radio_id != 0)
 			{
+				pXnlConnection->setRemotePeer(pRemote);
 				pXnlConnection->send_xcmp_rmt_radio_ctrl_request(0x01, 0x01, 0x01, target_radio_id);
 
 			}
@@ -258,7 +263,7 @@ int DispatchOperate::remotePowerOff(int id , int callId)
 	}
 	return 1;
 }
-int DispatchOperate::radioCheck(int id, int callId)
+int DispatchOperate::radioCheck(CRemotePeer* pRemote, int id, int callId)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "在线检测";
@@ -273,6 +278,7 @@ int DispatchOperate::radioCheck(int id, int callId)
 
 			if (target_radio_id != 0)
 			{
+				pXnlConnection->setRemotePeer(pRemote);
 				pXnlConnection->send_xcmp_rmt_radio_ctrl_request(0x00, 0x01, 0x01, target_radio_id);
 
 				return 0;
@@ -293,7 +299,7 @@ int DispatchOperate::radioCheck(int id, int callId)
 	return 1;
 
 }
-int DispatchOperate::wiretap(int id, int callId)
+int DispatchOperate::wiretap(CRemotePeer* pRemote, int id, int callId)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "远程监听";
@@ -308,7 +314,7 @@ int DispatchOperate::wiretap(int id, int callId)
 
 			if (target_radio_id != 0)
 			{
-
+				pXnlConnection->setRemotePeer(pRemote);
 				pXnlConnection->send_xcmp_rmt_radio_ctrl_request(0x03, 0x01, 0x01, target_radio_id);
 
 				return 0;
@@ -328,7 +334,7 @@ int DispatchOperate::wiretap(int id, int callId)
 	return 1;
 
 }
-int DispatchOperate::sendSms(int id, wchar_t* message, int callId)
+int DispatchOperate::sendSms(CRemotePeer* pRemote, int id, wchar_t* message, int callId)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "单发";
@@ -336,7 +342,9 @@ int DispatchOperate::sendSms(int id, wchar_t* message, int callId)
 	AddAllCommand(callId, SEND_PRIVATE_MSG);
 	try
 	{
-		bool sendTextResult = pTextMsg.SendMsg(callId,message, id, 12);             //12:单发
+		pTextMsg.setRemotePeer(pRemote);
+		bool sendTextResult = pTextMsg.SendMsg(callId, message, id, 12);             //12:单发
+		
 		if (sendTextResult)
 		{
 
@@ -356,13 +364,14 @@ int DispatchOperate::sendSms(int id, wchar_t* message, int callId)
 	
 
 }
-int DispatchOperate::sendGroupSms(int id, wchar_t* message, int callId)
+int DispatchOperate::sendGroupSms(CRemotePeer* pRemote, int id, wchar_t* message, int callId)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "组发";
 #endif
 	AddAllCommand(callId, SEND_GROUP_MSG);
-	bool sendTextResult = pTextMsg.SendMsg(callId,message, id, 225);          //225:组发
+	pTextMsg.setRemotePeer(pRemote);
+	bool sendTextResult = pTextMsg.SendMsg(callId, message, id, 225);          //225:组发
 	try
 	{
 		if (sendTextResult)
@@ -384,7 +393,7 @@ int DispatchOperate::sendGroupSms(int id, wchar_t* message, int callId)
 	}
 
 }
-int DispatchOperate::getGps(int id, int queryMode, int cycle, int callId)
+int DispatchOperate::getGps(CRemotePeer* pRemote, int id, int queryMode, int cycle, int callId)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "gps查询";
@@ -439,7 +448,7 @@ int DispatchOperate::getGps(int id, int queryMode, int cycle, int callId)
 
 }
 
-int DispatchOperate::cancelPollGps(int id, int callId)
+int DispatchOperate::cancelPollGps(CRemotePeer* pRemote, int id, int callId)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "取消周期查询";
@@ -467,7 +476,7 @@ int DispatchOperate::cancelPollGps(int id, int callId)
 #endif
 	}
 }
-int DispatchOperate::getOverturnGps(const char* ip,int callId)
+int DispatchOperate::getOverturnGps(CRemotePeer* pRemote, const char* ip, int callId)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "gps翻转";
@@ -537,12 +546,18 @@ int DispatchOperate::RadioConnect()
 					if (textConnectResult && ARSConnectResult && GPSConnectResult)
 					{
 						allCommandList.erase(it++);
+#if DEBUG_LOG
+						LOG(INFO) << "数据连接成功，调度业务连接失败";
+#endif
 						return 2;
 						break;
 					}
 					else
 					{
 						allCommandList.erase(it++);
+#if DEBUG_LOG
+						LOG(INFO) << "数据连接失败，调度业务连接失败";
+#endif
 						return 0;
 						break;
 					}
@@ -552,12 +567,18 @@ int DispatchOperate::RadioConnect()
 					if (textConnectResult && ARSConnectResult && GPSConnectResult)
 					{
 						allCommandList.erase(it++);
+#if DEBUG_LOG
+						LOG(INFO) << "数据连接成功，调度业务连接成功";
+#endif
 						return 3;
 						break;
 					}
 					else
 					{
 						allCommandList.erase(it++);
+#if DEBUG_LOG
+						LOG(INFO) << "数据连接失败，调度业务连接失败";
+#endif
 						return 1;
 						break;
 					}

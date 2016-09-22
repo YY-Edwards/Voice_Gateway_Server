@@ -23,14 +23,14 @@ std::string CGroupCall::getName()
 	return "groupCall";
 }
 
-int CGroupCall::run(CRemotePeer* pRemote, std::map<std::string, std::string> args)
+int CGroupCall::run(CRemotePeer* pRemote, std::map<std::string, std::string> args, uint64_t callId)
 {
 	DispatchOperate  * pDispatchOperate = new DispatchOperate();
 	if (args.find("id") != args.end())
 	{
 		int id = atoi(args["id"].c_str());
 		int callId = atoi(args["callId"].c_str());
-		int result = pDispatchOperate->groupCall(id, callId);
+		int result = pDispatchOperate->groupCall(pRemote, id, callId);
 	}
 	return 0;
 }
