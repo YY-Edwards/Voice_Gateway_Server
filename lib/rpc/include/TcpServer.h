@@ -28,7 +28,7 @@ public:
 	SOCKET		s;
 	SOCKADDR_IN addr;
 public:
-	int sendResponse(char* pData, int dataLen)
+	int sendResponse(const char* pData, int dataLen)
 	{
 		return ::send(s, pData, dataLen, 0);
 	}

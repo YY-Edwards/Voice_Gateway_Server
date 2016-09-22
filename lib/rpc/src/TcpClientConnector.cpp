@@ -209,7 +209,7 @@ int CTcpClientConnector::connect(const char* connStr)
 			break;
 		}
 	}
-	catch (std::exception e){
+	catch (std::exception& e){
 		ret = -1;
 	}
 	catch (...){

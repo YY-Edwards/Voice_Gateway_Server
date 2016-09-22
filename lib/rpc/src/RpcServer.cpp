@@ -15,22 +15,45 @@ CRpcServer::~CRpcServer()
 
 int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 {
-	std::string str(pData, dataLen);
+	try{
+		std::string str(pData, dataLen);
+		printf("received data:%s", str.c_str());
 
-	std::map<std::string, std::string> args;
-	CRpcJsonParser parser;
-	std::string callName = parser.getCallName(str);
-	if (m_mpActions.find(callName) != m_mpActions.end())
-	{
-		std::list<std::string> argList = m_mpActions[callName]->getArgNames();
-		parser.getArgs(str, argList, args);
-		m_mpActions[callName]->run(pRemote, args);
+		std::map<std::string, std::string> args;
+		CRpcJsonParser parser;
+		std::string callName;
+		uint64_t callId = 0;
+		if (0 != parser.getCallName(str, callName, callId))
+		{
+			// send error response
+			std::string response = CRpcJsonParser::buildResponse("failed", callId, 404, "Invalid request");
+			pRemote->sendResponse(response.c_str(), response.size());
+			throw std::exception("invalid request");
+		}
+
+		std::lock_guard<std::mutex> lock(m_actionsLocker);
+
+		if (m_mpActions.find(callName) != m_mpActions.end())
+		{
+			std::list<std::string> argList = m_mpActions[callName]->getArgNames();
+			if (0 != parser.getArgs(str, argList, args))
+			{
+				// invalid parameter, send error response
+				std::string response = CRpcJsonParser::buildResponse("failed", callId, 404, "Invalid parameter");
+				pRemote->sendResponse(response.c_str(), response.size());
+				throw std::exception("invalid parameter number");
+			}
+			m_mpActions[callName]->run(pRemote, args, callId);
+		}
 	}
-	
-	std::lock_guard<std::mutex> lock(m_actionsLocker);
-	
-
-	printf("received data:%s", str.c_str());
+	catch (std::exception& e)
+	{
+		printf("exception: %s\r\n", e.what());
+	}
+	catch (...)
+	{
+		printf("unknow error! \r\n");
+	}
 	return 0;
 }
 

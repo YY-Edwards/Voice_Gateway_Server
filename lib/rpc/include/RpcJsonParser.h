@@ -14,8 +14,12 @@ public:
 	CRpcJsonParser();
 	~CRpcJsonParser();
 
-	std::string getCallName(const std::string str);
+	int getCallName(const std::string str, std::string& callName, uint64_t& callId);
 	int getArgs(const std::string str, std::list<std::string> argList, std::map<std::string, std::string>& args);
+
+public: // static memebers
+	static std::string buildCall(char* pCallName, uint64_t callId, std::map<std::string, std::string> params);
+	static std::string buildResponse(char* pStatus, uint64_t callId, int errCode, const char* statusText, std::map<std::string, std::string> contents = std::map<std::string, std::string>());
 
 protected:
 	int parseArgs(Value& v, std::list<std::string> argList ,std::map<std::string, std::string>& args);
