@@ -10,13 +10,25 @@ CAllCall::CAllCall()
 CAllCall::~CAllCall()
 {
 }
+std::list<std::string> CAllCall::getArgNames()
+{
+	std::list<std::string> args;
+
+	/*args.push_back("name");
+	args.push_back("content");*/
+
+	return args;
+}
 std::string CAllCall::getName()
 {
 
 	return "allCall";
 }
 
-int CAllCall::run(CBaseConnector* pConnector, std::map<std::string, std::string> args)
+int CAllCall::run(CRemotePeer* pRemote, std::map<std::string, std::string> args)
 {
+	DispatchOperate  * pDispatchOperate = new DispatchOperate();
+	int sn = atoi(args["sn"].c_str());
+	int result = pDispatchOperate->allCall(sn);
 	return 0;
 }

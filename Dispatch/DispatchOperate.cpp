@@ -457,7 +457,7 @@ int DispatchOperate::cancelPollGps(int id, int sn)
 #endif
 	}
 }
-int DispatchOperate::getOverturnGps(const char* ip)
+int DispatchOperate::getOverturnGps(const char* ip,int sn)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "gps·­×ª";

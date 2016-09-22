@@ -7,7 +7,8 @@ public:
 	CStopCall();
 	~CStopCall();
 public: // Derived from CAbstractAction
+	virtual std::list<std::string> getArgNames();
 	virtual std::string getName();
-	virtual int run(CBaseConnector* pConnector, std::map<std::string, std::string> args);
+	virtual int run(CRemotePeer* pRemote, std::map<std::string, std::string> args);
 };
 
