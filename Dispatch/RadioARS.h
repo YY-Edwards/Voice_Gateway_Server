@@ -23,13 +23,11 @@ class CRadioARS
 public:
 	CRadioARS();
 	~CRadioARS();
-	bool InitARSSocket(DWORD dwAddress);
+	bool InitARSSocket(DWORD dwAddress,CRemotePeer * pRemote);
 	bool CloseARSSocket(SOCKET* s);
 	static DWORD WINAPI ReceiveDataThread(LPVOID lpParam);
 	bool SendARSAck(DWORD dwRadioID, int CaiNet);
 	void RecvData();
-	void setRemotePeer(CRemotePeer * pRemote);
-
 private:
 	bool m_RcvSocketOpened;
 	ThreadARS *m_ThreadARS;

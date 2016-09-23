@@ -96,14 +96,14 @@ DWORD WINAPI CTextMsg::ReceiveDataThread(LPVOID lpParam)
 	return 1;
 }
 
-CString CTextMsg::ParseUserMsg(TextMsg* HandleMsg ,int * len)
+wstring CTextMsg::ParseUserMsg(TextMsg* HandleMsg, int * len)
 {
 	UINT16			MsgSize;
 	FirstHeader		FstHeader;
 	SecondHeader    callIddHeader;
 	UINT8			AddressSize;
 	static TCHAR	szMessage[MAX_MESSAGE_LENGTH];
-	CString         ParsedMsg;
+	wstring         ParsedMsg;
 	int             MsgOffset;                                // 正式的Message在TextPayload中的起始偏移量
 
 	memset((char*)szMessage, 0, sizeof(szMessage));             // 不知道这里针对 unicode 使用 sizeof 是否正确。
@@ -147,8 +147,8 @@ CString CTextMsg::ParseUserMsg(TextMsg* HandleMsg ,int * len)
 	//*len = MsgSize - MsgOffset - 2;
 	//ParsedMsg = szMessage;
 	memcpy((char*)szMessage, &HandleMsg->TextPayload[MsgOffset], MsgSize - MsgOffset - 2);
-	ParsedMsg.Format(_T("%s"), szMessage);
-	
+	/*ParsedMsg.Format(_T("%s"), szMessage);*/
+	ParsedMsg = szMessage;
 
 	return ParsedMsg;
 }
@@ -417,7 +417,9 @@ void CTextMsg::RecvMsg()
 	m_ThreadMsg->radioID = (m_ThreadMsg->remote_addr.sin_addr.S_un.S_un_b.s_b2 << 16) + (m_ThreadMsg->remote_addr.sin_addr.S_un.S_un_b.s_b3 << 8) + m_ThreadMsg->remote_addr.sin_addr.S_un.S_un_b.s_b4;
 	m_ThreadMsg->RcvBuffer[MESSAGE_BUFFER - 1] = '\0';
 	m_ThreadMsg->RcvBuffer[MESSAGE_BUFFER] = '\0';         // 因为是Unicode，所以把最后的两个字节都置为 \0
-
+	char s[12];
+	sprintf_s(s, "%d", m_ThreadMsg->radioID);
+	string stringId = s;
 	if (ret == TEXTLENTH_1 || ret == TEXTLENTH_2)
 	{
 		//iBytes = 5: TMS Service Availability Acknowledgement 
@@ -440,7 +442,7 @@ void CTextMsg::RecvMsg()
 				if (it->ackNum == SeqNum)
 				{
 					std::map<std::string, std::string> args;
-					args["id"] = m_ThreadMsg->radioID;
+					args["id"] = stringId;
 					std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId,0,"1", args);
 					if (pRemotePeer != NULL)
 					{
@@ -471,11 +473,13 @@ void CTextMsg::RecvMsg()
 		if (!FstHeader.Control)
 		{
 			CString strTime = CTime::GetCurrentTime().Format("%Y-%m-%d %H:%M:%S");                         //获取系统时间
-			CString message = ParseUserMsg(&HandleMsg, 0);
+			wstring message = ParseUserMsg(&HandleMsg, 0);
+			string strMsg;
+			WideCharToMultiByte(CP_ACP, 0, (LPCWSTR)message.c_str(), (int)message.length(), (LPSTR)strMsg.c_str(), (int)message.length(), NULL, NULL);
 			std::map<std::string, std::string> args;
 			args["id"] = m_ThreadMsg->radioID;
 			args["date"] = (LPCSTR)&strTime;
-			args["message"] = (LPCSTR)&message;
+			args["message"] = strMsg;
 			std::string callJsonStr = CRpcJsonParser::buildCall("onRecvMsg", 1, args);
 			if (pRemotePeer != NULL)
 			{
@@ -485,9 +489,13 @@ void CTextMsg::RecvMsg()
 #endif
 
 			}
+			else
+			{
 #if DEBUG_LOG
-			LOG(INFO) << "接收到短信，但是此短信的目的地没建立tcp连接！";
+		LOG(INFO) << "接收到短信，但是此短信的目的地没建立tcp连接！";
 #endif
+			}
+			
 			}
 			 
 		}

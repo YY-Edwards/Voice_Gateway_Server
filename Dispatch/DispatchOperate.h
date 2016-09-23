@@ -5,13 +5,12 @@
 #include <map>
 #include "../../lib/AES/Aes.h"
 #include "../lib/rpc/include/BaseConnector.h"
-
+#include "../lib/rpc/include/RpcJsonParser.h"
 #pragma once
 class DispatchOperate
 {
 public:
 	DispatchOperate();
-	//DispatchOperate(CRemotePeer * pRemotePeer);
 	~DispatchOperate();
 	int Connect(CRemotePeer* pRemote,const char* ip, const char  * pIP, int callId);
 	int call(CRemotePeer* pRemote, int id, int callId);
@@ -28,7 +27,6 @@ public:
 	int cancelPollGps(CRemotePeer* pRemote, int id, int callId);
 	static DWORD WINAPI TCPConnectionThread(LPVOID lpParam);
 	static DWORD WINAPI TimeOutThread(LPVOID lpParam);
-	//void  setCallBackFunc(void(*callBackFunc)(int, int, char *, int));
 	int RadioConnect();
 	void TcpConnect();
 	int getOverturnGps(CRemotePeer* pRemote, const char* ip, int callId);
@@ -36,6 +34,7 @@ public:
 	int tcpConnect(const char *ip);
 	int radioUdpConnect(const char *ip);
 	int mnisUdpConnect(const char* ip);
+	
 private:
 	void AddAllCommand(int callId, int command);
 	void TimeOut();
@@ -50,5 +49,7 @@ private:
 	bool             ARSConnectResult;
 	bool            GPSConnectResult;
 	map <int, int> gpsDic;
+	CRemotePeer* pRemotePeer;
+	int callID;
 };
 

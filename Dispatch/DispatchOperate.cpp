@@ -12,6 +12,7 @@ DispatchOperate::DispatchOperate()
 	textConnectResult = false;
 	ARSConnectResult = false;
 	GPSConnectResult = false;
+	callID = -1;
 
 }
 //DispatchOperate::DispatchOperate(CRemotePeer * pRemotePeer)
@@ -32,6 +33,8 @@ DispatchOperate::~DispatchOperate()
 int DispatchOperate::Connect(CRemotePeer* pRemote,const char* ip, const char * pIP, int callId)
 {
 	// Connection
+	pRemotePeer = pRemote;
+	callID = callId;
 	AddAllCommand(callId, RADIO_CONNECT);
 	if (INADDR_NONE == inet_addr(pIP))
 	{
@@ -516,19 +519,19 @@ int DispatchOperate::RadioConnect()
 	//udp Connection
 	//text  Connection                                      //0:连接成功  1：udp 连接失败  2：tcp 连接失败  3： udp、tcp均失败
 	SOCKET mSokset;
-	if (!textConnectResult)
+	//if (!textConnectResult)
 	{
 		textConnectResult = pTextMsg.InitSocket(&mSokset, dwIP);
 	}
 
 	//	ARS Connection
-	if (!ARSConnectResult)
+	//if (!ARSConnectResult)
 	{
-		ARSConnectResult = pRadioARS.InitARSSocket(dwIP);
+		ARSConnectResult = pRadioARS.InitARSSocket(dwIP,pRemotePeer);
 	}
 
 	//	GPS Connection
-	if (!GPSConnectResult)
+	//if (!GPSConnectResult)
 	{
 		GPSConnectResult = pRadioGPS.InitGPSSocket(dwIP);
 	}
@@ -545,19 +548,49 @@ int DispatchOperate::RadioConnect()
 				{
 					if (textConnectResult && ARSConnectResult && GPSConnectResult)
 					{
-						allCommandList.erase(it++);
+						
 #if DEBUG_LOG
 						LOG(INFO) << "数据连接成功，调度业务连接失败";
 #endif
+						list<AllCommand>::iterator it;
+						for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+						{
+							if (it->callId == callID)
+							{
+								std::map<std::string, std::string> args;
+								std::string callJsonStr = CRpcJsonParser::buildResponse("2", it->callId, 0, "2", args);
+								if (pRemotePeer != NULL)
+								{
+									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								}
+								allCommandList.erase(it++);
+							}
+							break;
+						}
 						return 2;
 						break;
 					}
 					else
 					{
-						allCommandList.erase(it++);
+						
 #if DEBUG_LOG
 						LOG(INFO) << "数据连接失败，调度业务连接失败";
 #endif
+						list<AllCommand>::iterator it;
+						for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+						{
+							if (it->callId == callID)
+							{
+								std::map<std::string, std::string> args;
+								std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 0, "0", args);
+								if (pRemotePeer != NULL)
+								{
+									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								}
+								allCommandList.erase(it++);
+							}
+							break;
+						}
 						return 0;
 						break;
 					}
@@ -566,19 +599,49 @@ int DispatchOperate::RadioConnect()
 				{
 					if (textConnectResult && ARSConnectResult && GPSConnectResult)
 					{
-						allCommandList.erase(it++);
+						
 #if DEBUG_LOG
 						LOG(INFO) << "数据连接成功，调度业务连接成功";
 #endif
+						list<AllCommand>::iterator it;
+						for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+						{
+							if (it->callId == callID)
+							{
+								std::map<std::string, std::string> args;
+								std::string callJsonStr = CRpcJsonParser::buildResponse("3", it->callId, 0, "3", args);
+								if (pRemotePeer != NULL)
+								{
+									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								}
+								allCommandList.erase(it++);
+							}
+							break;
+						}
 						return 3;
 						break;
 					}
 					else
 					{
-						allCommandList.erase(it++);
+						
 #if DEBUG_LOG
-						LOG(INFO) << "数据连接失败，调度业务连接失败";
+						LOG(INFO) << "数据连接失败，调度业务连接成功";
 #endif
+						list<AllCommand>::iterator it;
+						for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+						{
+							if (it->callId == callID)
+							{
+								std::map<std::string, std::string> args;
+								std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 1, "1", args);
+								if (pRemotePeer != NULL)
+								{
+									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								}
+								allCommandList.erase(it++);
+							}
+							break;
+						}
 						return 1;
 						break;
 					}
@@ -588,30 +651,7 @@ int DispatchOperate::RadioConnect()
 	}
 	return 0;
 }
-//void   DispatchOperate::setCallBackFunc(void(*callBackFunc)(int, int, char *, int))
-//{
-//	//myCallBackFunc = callBackFunc;
-//}
-//void onData(void(*func)(int, int, char*, int), int seq, int command, char* data, int length)
-//{
-//#if DEBUG_LOG
-//	LOG(INFO) << "onData ";
-//#endif
-//	try
-//	{
-//		func(seq, command, data, length);
-//	}
-//	catch (double)
-//	{
-//
-//#if DEBUG_LOG
-//		LOG(INFO) << "callbackfunc error ";
-//#endif
-//	}
-//#if DEBUG_LOG
-//	LOG(INFO) << "onData  exit ";
-//#endif
-//}
+
 void DispatchOperate::AddAllCommand(int callId, int command)
 {
 	m_allCommand.callId = callId;
@@ -841,7 +881,7 @@ int DispatchOperate::radioUdpConnect(const char* ip)
 	//	ARS Connection
 	//if (!ARSConnectResult)
 	//{
-	ARSConnectResult = pRadioARS.InitARSSocket(dwIP);
+//	ARSConnectResult = pRadioARS.InitARSSocket(dwIP);
 	//}
 
 	//	GPS Connection
@@ -886,7 +926,7 @@ int DispatchOperate::mnisUdpConnect(const char* ip)
 	//	ARS Connection
 	//if (!ARSConnectResult)
 	//{
-	ARSConnectResult = pRadioARS.InitARSSocket(dwIP);
+	//ARSConnectResult = pRadioARS.InitARSSocket(dwIP);
 	//}
 
 	//	GPS Connection

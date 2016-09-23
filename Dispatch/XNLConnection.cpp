@@ -769,15 +769,14 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 	}
 
 	xcmp_opcode = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t))));
-
-
 	unsigned short xnl_opcode = 0;        //add by lcc
 	unsigned short check_result = 0;       //add by lcc
 	unsigned char rmt_fuction = 0;
 	unsigned char  rmt_type_code = 0;
 	unsigned char  rmt_result_code = 0;
 	unsigned short xnl_transationid = 0;
-	unsigned short  indicatorid = 0;
+	unsigned long  indicatorid = 0;
+	
 	xnl_opcode = ntohs(*((unsigned short *)(pBuf + 2)));  // add by lcc
 	xnl_transationid = ntohs(*((unsigned short *)(pBuf + 5)));
 	check_result = ntohs(*((unsigned short *)(pBuf + 16)));  // add by lcc
@@ -785,6 +784,9 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 	rmt_type_code = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+1)));
 	rmt_result_code = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+1)));
 	indicatorid = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+ 5)));
+	char s[12];
+	sprintf_s(s, "%d", indicatorid);
+	string stringId = s;
 	list<AllCommand>::iterator it;
 	switch (xcmp_opcode)
 	{
@@ -793,23 +795,22 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 		send_xcmp_radio_status_request(0x08);             //read serial
 		break;
 		//在线检测
-	case 0XB41C:
-		
+	case 0XB41C:                         //  Remote Radio Control Broadcast
 		for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 		{
-			if (0x000B == xnl_opcode && 0xB41C == xcmp_opcode  )
+			if (0x000B == xnl_opcode && 0xB41C == xcmp_opcode)
 			{
-				
+
 				BOOL rmtflag = FALSE;
 				if (rmt_type_code == 0x00)                                                   //在线检测
 				{
 					if (0x0010 == check_result/* & 0x00FF)*/)
 					{
-						rmtflag = TRUE; 
+						rmtflag = TRUE;
 						// 1:在线
 						std::map<std::string, std::string> args;
-						args["id"] = xnl_transationid;
-						std::string callJsonStr = CRpcJsonParser::buildResponse("1", 0, 1, "1", args);
+						//	args["id"] = stringId;
+						std::string callJsonStr = CRpcJsonParser::buildResponse("1", 0, 0, "1", args);
 						if (pRemotePeer != NULL)
 						{
 							pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
@@ -821,11 +822,11 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					}
 					else
 					{
-						rmtflag = false; 
+						rmtflag = false;
 						//0:不在线
 						std::map<std::string, std::string> args;
-						args["id"] = xnl_transationid;
-						std::string callJsonStr = CRpcJsonParser::buildResponse("0", 0, 1, "1", args);
+						//args["id"] = stringId;
+						std::string callJsonStr = CRpcJsonParser::buildResponse("0", 0, 0, "1", args);
 						if (pRemotePeer != NULL)
 						{
 							pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
@@ -835,7 +836,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 #endif
 						break;
 					}
-					
+
 					allCommandList.erase(it++);
 				}
 				else if (rmt_type_code == 0x01)
@@ -844,8 +845,8 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					{
 						rmtflag = true;                                   //成功    
 						std::map<std::string, std::string> args;
-						args["id"] = xnl_transationid;
-						std::string callJsonStr = CRpcJsonParser::buildResponse("1", 0, 1, "1", args);
+						//args["id"] = stringId;
+						std::string callJsonStr = CRpcJsonParser::buildResponse("1", 0, 0, "1", args);
 						if (pRemotePeer != NULL)
 						{
 							pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
@@ -854,13 +855,13 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						LOG(INFO) << "遥闭成功";
 #endif
 						break;
-					} 
+					}
 					else
 					{
 						rmtflag = false;                               //失败
 						std::map<std::string, std::string> args;
-						args["id"] = xnl_transationid;
-						std::string callJsonStr = CRpcJsonParser::buildResponse("0", 0, 1, "1", args);
+						//args["id"] = stringId;
+						std::string callJsonStr = CRpcJsonParser::buildResponse("0", 0, 0, "1", args);
 						if (pRemotePeer != NULL)
 						{
 							pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
@@ -870,7 +871,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 #endif
 						break;
 					}
-				
+
 					allCommandList.erase(it++);
 				}
 				else if (rmt_type_code == 0x02)
@@ -879,13 +880,13 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					{
 						rmtflag = true;                                  //成功
 						std::map<std::string, std::string> args;
-						args["id"] = xnl_transationid;
-						std::string callJsonStr = CRpcJsonParser::buildResponse("1", 0, 1, "1", args);
+						//args["id"] = stringId;
+						std::string callJsonStr = CRpcJsonParser::buildResponse("1", 0, 0, "1", args);
 						if (pRemotePeer != NULL)
 						{
 							pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 						}
-						
+
 #if DEBUG_LOG
 						LOG(INFO) << "遥开成功";
 #endif
@@ -895,7 +896,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					{
 						rmtflag = FALSE;                                //失败
 						std::map<std::string, std::string> args;
-						args["id"] = xnl_transationid;
+						//args["id"] = stringId;
 						std::string callJsonStr = CRpcJsonParser::buildResponse("0", 0, 1, "1", args);
 						if (pRemotePeer != NULL)
 						{
@@ -906,7 +907,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 #endif
 						break;
 					}
-					
+
 					allCommandList.erase(it++);
 				}
 				else if (rmt_type_code == 0x03)
@@ -915,8 +916,8 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					{
 						rmtflag = true;                                   //成功
 						std::map<std::string, std::string> args;
-						args["id"] = xnl_transationid;
-						std::string callJsonStr = CRpcJsonParser::buildResponse("1", 0, 1, "1", args);
+						//args["id"] = stringId;
+						std::string callJsonStr = CRpcJsonParser::buildResponse("1", 0, 0, "1", args);
 						if (pRemotePeer != NULL)
 						{
 							pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
@@ -930,8 +931,8 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					{
 						rmtflag = false;                                   // 失败
 						std::map<std::string, std::string> args;
-						args["id"] = xnl_transationid;
-						std::string callJsonStr = CRpcJsonParser::buildResponse("0", 0, 1, "1", args);
+						args["id"] = stringId;
+						std::string callJsonStr = CRpcJsonParser::buildResponse("0", 0, 0, "1", args);
 						if (pRemotePeer != NULL)
 						{
 							pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
@@ -941,101 +942,65 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 #endif
 						break;
 					}
-				
+
 					allCommandList.erase(it++);
 				}
-			
-			
+
+			}
 		}
-			break;
-		}
+		break;
 	case 0XB413:                 //紧急报警
 		if (0x000B == xnl_opcode && 0xB413 == xcmp_opcode)
 		{
 			
-						//1:成功
-			/*if (myCallBackFunc != NULL)
-			{
-				unsigned char str[30] = { 0 };
-				sprintf_s((char *)str, sizeof(str), "result:1");
-				onData(myCallBackFunc, 1, EMERGENCY, (char *)str, sizeof(str));
-			}*/
-			
-			break;
 		}
 		break;
-	case 0X841C:              //远程
-		//if (0x000B == xnl_opcode && 0X841C == xcmp_opcode)
-		//{
-
-		//	BOOL rmtflag = FALSE;
-		//	if (0x00 == rmt_result_code)
-		//	{
-		//		rmtflag = TRUE;               //1:成功
-		//		if (myCallBackFunc != NULL)
-		//		{
-		//			unsigned char str[30] = { 0 };
-		//			sprintf_s((char *)str, sizeof(str), "result:1");
-		//			onData(myCallBackFunc, 1, REMOTE_REPLY, (char *)str, sizeof(str));
-		//		}
-		//	}
-		//
-		//	else
-		//	{
-		//		rmtflag = FALSE;              //0:失败
-		//		if (myCallBackFunc != NULL)
-		//		{
-		//			unsigned char str[30] = { 0 };
-		//			sprintf_s((char *)str, sizeof(str), "result:0");
-		//			onData(myCallBackFunc, 1, REMOTE_REPLY, (char *)str, sizeof(str));
-		//		}
-		//	}
-
-		//}
+	case 0X841C:              //Remote Radio Control Reply
 		break;
 	case XCMP_RADIO_STATUS_REPLY:
 		{
 			decode_xcmp_radio_status_reply(pBuf);
-			/*if (myCallBackFunc != NULL)
-			{
-				unsigned char str[30] = { 0 };
-				sprintf_s((char *)str, sizeof(str), "result:1");
-				onData(myCallBackFunc, 1, LICENSE, (char *)str, sizeof(str));
-			}*/
 		}
 		break;
 	case XCMP_CALL_CTRL_BRDCST:             //XCMP_CALL_CTRL_REPLY 
 		switch (*((char*)(pBuf + sizeof(xnl_msg_hdr_t)+3)))
 		{
 		case 0x04:
-		
-				
-				                                //1：呼叫开始
-			
-
-			//	allCommandList.erase(it++);
-			
-			/*if (myCallBackFunc != NULL)
+			//1：呼叫开始
+#if DEBUG_LOG
+			LOG(INFO) << "呼叫开始  ";
+#endif
+			for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 			{
-				unsigned char str[30] = { 0 };
-				sprintf_s((char *)str, sizeof(str), "result:1");
-				onData(myCallBackFunc, 1, CALL_START, (char *)str, sizeof(str));
-			}*/
+				std::map<std::string, std::string> args;
+				std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
+				if (pRemotePeer != NULL)
+				{
+					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+				}
+				allCommandList.erase(it++);
+
+				break;
+			}
 			break;
 		case 0x03:
-		
-				
-
-				        //2:呼叫结束
-			//allCommandList.erase(it++);
-			/*if (myCallBackFunc != NULL)
+			 //2:呼叫结束
+#if DEBUG_LOG
+			LOG(INFO) << "呼叫结束  ";
+#endif
+			for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 			{
-				unsigned char str[30] = { 0 };
-				sprintf_s((char *)str, sizeof(str), "result:1");
-				onData(myCallBackFunc, 1, CALL_END, (char *)str, sizeof(str));
-			}*/
-			break;
+				std::map<std::string, std::string> args;
+				std::string callJsonStr = CRpcJsonParser::buildResponse("2", it->callId, 0, "1", args);
+				if (pRemotePeer != NULL)
+				{
+					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+				}
+				allCommandList.erase(it++);
 
+				break;
+			}
+			break;
 		}
 
 	     default: /* just forward the xcmp message to the application */
@@ -1235,9 +1200,7 @@ BOOL CXNLConnection::send_xcmp_call_ctrl_request(unsigned char function,
                                                  unsigned long rmt_addr,
                                                  unsigned long group_id)
 {
-#if DEBUG_LOG
-	LOG(INFO) << "呼叫开始  ";
-#endif
+
     xcmp_call_ctrl_request_t *p_msg = NULL;
     unsigned short            msg_size = sizeof(xcmp_call_ctrl_request_t);
     unsigned char *p_addr = (unsigned char *)&rmt_addr;
@@ -1303,21 +1266,6 @@ BOOL CXNLConnection::send_xcmp_call_ctrl_request(unsigned char function,
         memcpy(p_cur_msg, (char *)&tmp_group_id, 4);
     }
 
-	list<AllCommand>::iterator it;
-	for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
-	{
-		
-		std::map<std::string, std::string> args;
-		args["id"] = group_id;
-		std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
-		if (pRemotePeer != NULL)
-		{
-			pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-		}
-	//	allCommandList.erase(it++);      //呼叫结束时erase
-		
-		break;
-	}
 
     init_xnl_header_of_xcmp_msg((char *)p_msg, msg_size - sizeof(xnl_msg_hdr_t));
     /* Add the message to the sending queue */
@@ -1333,27 +1281,27 @@ BOOL CXNLConnection::send_xcmp_rmt_radio_ctrl_request(unsigned char feature,
 {
 	if (feature == 0x00)
 	{
-#if DEBUG_LOG
-		LOG(INFO) << "打开ptt ";
-#endif
+//#if DEBUG_LOG
+//		LOG(INFO) << "打开ptt ";
+//#endif
 	}
 	else if (feature == 0x01)
 	{
-#if DEBUG_LOG
-		LOG(INFO) << "打开ptt ";
-#endif
+//#if DEBUG_LOG
+//		LOG(INFO) << "打开ptt ";
+//#endif
 	}
 	else if (feature == 0x02)
 	{
-#if DEBUG_LOG
-		LOG(INFO) << "遥开 ";
-#endif
+//#if DEBUG_LOG
+//		LOG(INFO) << "遥开 ";
+//#endif
 	}
 	else if (feature == 0x03)
 	{
-#if DEBUG_LOG
-		LOG(INFO) << "远程监听 ";
-#endif
+//#if DEBUG_LOG
+//		LOG(INFO) << "远程监听 ";
+//#endif
 	}
     xcmp_rmt_radio_ctrl_request_t *p_msg = NULL;
     unsigned short            msg_size = sizeof(xcmp_rmt_radio_ctrl_request_t) + 3; /* the address size is 3, so need to plus 1 */
@@ -1481,13 +1429,13 @@ BOOL CXNLConnection::send_xcmp_tx_ctrl_request(unsigned char function, unsigned 
 	if (function == 0x01 && mode == 0x00)
 	{
 #if DEBUG_LOG
-		LOG(INFO) << "打开ptt ";
+		LOG(INFO) << "打开ptt(开始呼叫) ";                      
 #endif
 	}
 	else if (function == 0x02 && mode == 0x00)
 	{
 #if DEBUG_LOG
-		LOG(INFO) << "呼叫停止 ";
+		LOG(INFO) << "打开ptt(结束呼叫) ";
 #endif
 	}
     xcmp_tx_ctrl_request_t *p_msg = (xcmp_tx_ctrl_request_t *)malloc(sizeof(xcmp_tx_ctrl_request_t));
@@ -1502,21 +1450,7 @@ BOOL CXNLConnection::send_xcmp_tx_ctrl_request(unsigned char function, unsigned 
     p_msg->function = function;
     p_msg->mode = mode;
 
-	list<AllCommand>::iterator it;
-	for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
-	{
 
-		std::map<std::string, std::string> args;
-		
-		std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
-		if (pRemotePeer != NULL)
-		{
-			pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-		}
-		allCommandList.erase(it++);
-
-		break;
-	}
     init_xnl_header_of_xcmp_msg((char *)p_msg, payload_len);
     /* Add the message to the sending queue */
     enqueue_msg((char *)p_msg);
