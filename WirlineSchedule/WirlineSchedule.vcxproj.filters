@@ -1,0 +1,96 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Call.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="common.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="HMAC_SHA1.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="IPSCPeer.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="SerialDongle.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="SHA1.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="WirlineSchedule.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="WLNet.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Ambe3000.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Call.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="HMAC_SHA1.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="IPSCPeer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="SerialDongle.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="SHA1.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="VoiceDefs.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="WLNet.h">
+      <Filter>include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{57520bbf-e856-4e6b-956e-995892d6c4f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{af2633c2-8a32-4dc2-9005-86b33b9eb70e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
