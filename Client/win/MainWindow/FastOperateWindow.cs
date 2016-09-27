@@ -67,8 +67,6 @@ namespace TrboX
 
             if(null == item)return;
 
-
-
             if (oldindex > newindex)
             {
                 m_mainWin.lst_dispatch.Items.Insert(newindex, item);
@@ -86,18 +84,34 @@ namespace TrboX
 
 
         public void Remove(FastOperate item)
-        {
-            m_mainWin.lst_dispatch.Items.Remove(item);
-            m_mainWin.g_IsNeedSaveWorkSpace = true;           
+        {           
+            if(null == item)return;
+            List<FastOperate> willdel = new List<FastOperate>();
+            foreach (var it in m_mainWin.lst_dispatch.Items)
+            {
+                if (item.IsEqual(it as FastOperate))
+                {
+                    m_mainWin.lst_dispatch.Items.Remove(it);
+                    m_mainWin.g_IsNeedSaveWorkSpace = true;
+                    return;
+                }
+            }
         }
 
-        public void Save()
+
+        public List<FastOperate> Get()
         {
             List<FastOperate> FastOperateList = new List<FastOperate>();
-            foreach(FastOperate item in m_mainWin.lst_dispatch.Items)
+            foreach (FastOperate item in m_mainWin.lst_dispatch.Items)
             {
                 FastOperateList.Add(item);
             }
+
+            return FastOperateList;
+        }
+        public void Save()
+        {
+            List<FastOperate> FastOperateList = Get();
 
             Stream FastOperateListFile = new FileStream(m_FastOperateListPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
 

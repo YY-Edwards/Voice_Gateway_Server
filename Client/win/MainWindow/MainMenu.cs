@@ -91,18 +91,18 @@ namespace TrboX
             m_Main.menu_Target_Monitor.Click += delegate { };
 
             //call
-            m_Main.menu_Target_Call.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(m_Main.CurrentTraget, new COperate(OPType.Dispatch, null)); };
+            m_Main.menu_Target_Call.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(new COperate(OPType.Dispatch,m_Main.CurrentTraget, null)); };
 
             //message
-            m_Main.menu_Target_Message.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(m_Main.CurrentTraget, new COperate(OPType.ShortMessage, null)); };
+            m_Main.menu_Target_Message.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(new COperate(OPType.ShortMessage, m_Main.CurrentTraget, null)); };
 
             //position
-            m_Main.menu_Target_Position.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(m_Main.CurrentTraget, new COperate(OPType.Position, null)); };
-            m_Main.menu_Target_PositionCycle.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(m_Main.CurrentTraget, new COperate(OPType.Position, null)); };
-            m_Main.menu_Target_PositionCSBK.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(m_Main.CurrentTraget, new COperate(OPType.Position, null)); };
-            m_Main.menu_Target_PositionCSBKCycle.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(m_Main.CurrentTraget, new COperate(OPType.Position, null)); };
-            m_Main.menu_Target_PositionEnh.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(m_Main.CurrentTraget, new COperate(OPType.Position, null)); };
-            m_Main.menu_Target_PositionEnhCycle.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(m_Main.CurrentTraget, new COperate(OPType.Position, null)); };
+            m_Main.menu_Target_Position.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(new COperate(OPType.Position, m_Main.CurrentTraget, null)); };
+            m_Main.menu_Target_PositionCycle.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(new COperate(OPType.Position, m_Main.CurrentTraget, null)); };
+            m_Main.menu_Target_PositionCSBK.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(new COperate(OPType.Position, m_Main.CurrentTraget, null)); };
+            m_Main.menu_Target_PositionCSBKCycle.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(new COperate(OPType.Position, m_Main.CurrentTraget, null)); };
+            m_Main.menu_Target_PositionEnh.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(new COperate(OPType.Position, m_Main.CurrentTraget, null)); };
+            m_Main.menu_Target_PositionEnhCycle.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(new COperate(OPType.Position, m_Main.CurrentTraget, null)); };
             m_Main.menu_Target_Trail.Click += delegate { };
 
             //control
@@ -112,7 +112,7 @@ namespace TrboX
             m_Main.menu_Target_Week.Click += delegate { };
 
             //job ticket
-            m_Main.menu_Target_JobTicket.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(m_Main.CurrentTraget, new COperate(OPType.JobTicker, null)); };
+            m_Main.menu_Target_JobTicket.Click += delegate { m_Main.SubWindow.OpenOrCreateTragetWin(new COperate(OPType.JobTicker, m_Main.CurrentTraget, null)); };
                            
         }
 
@@ -134,8 +134,7 @@ namespace TrboX
         private void ToolsItemRegister()
         {
             m_Main.menu_Tools_NewContact.Click += delegate { m_Main.SubWindow.OpenCreateFastWin(FastType.FastType_Contact); };
-            m_Main.menu_Tools_NewGroup.Click += delegate { };
-            m_Main.menu_Tools_NewOperate.Click += delegate { };
+            m_Main.menu_Tools_NewOperate.Click += delegate { m_Main.SubWindow.OpenCreateFastWin(FastType.FastType_Operate); };
             m_Main.menu_Tools_Export.Click += delegate { };
             m_Main.menu_Tools_Import.Click += delegate { };
             m_Main.menu_Tools_Potions.Click += delegate { };           

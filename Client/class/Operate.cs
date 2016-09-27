@@ -16,26 +16,36 @@ namespace TrboX
         Tracker,
     };
 
-    public enum TargetType
-    {
-        Radio,
-        Group,
-        All,
-    };
+    //public enum TargetType
+    //{
+    //    Radio,
+    //    Group,
+    //    All,
+    //};
 
      [Serializable]
     public class CDispatch
     {
-        public CRelationShipObj target { set; get; }
-        public TargetType targettype { set; get; }
+         public bool IsEqual(CDispatch dispatch)
+         {
+             return true;
+         }
     }
 
     [Serializable]
     public class CShortMessage
     {
-        public CRelationShipObj target { set; get; }
-        public TargetType targettype { set; get; }
-        public string message { set; get; }
+        public string Message { set; get; }
+
+        public bool IsEqual(CShortMessage msg)
+        {
+            if (null == msg) return false;
+
+            if (Message == msg.Message)
+                return true;
+
+            return false;
+        }
     };
 
     public enum ControlType
@@ -52,9 +62,17 @@ namespace TrboX
     [Serializable]
     public class CControl
     {
-        public CRelationShipObj target { set; get; }
-        public TargetType targettype { set; get; }
-        public ControlType type { set; get; }
+        public ControlType Type { set; get; }
+
+        public bool IsEqual(CControl control)
+        {
+            if (null == control) return false;
+
+            if (Type == control.Type)
+                return true;
+
+            return false;
+        }
     }
 
     public enum PositionType
@@ -84,57 +102,162 @@ namespace TrboX
                 return normalcyclelist;
 
         }
+        public CPosition Type { set; get; }
+        public bool IsCycle { set; get; }
+        public double Cycle { set; get; }
 
-        public CRelationShipObj target { set; get; }
-        public TargetType targettype { set; get; }
-        public CPosition type { set; get; }
-        public bool iscycle { set; get; }
-        public double cycle { set; get; }
+        public bool IsCSBK { set; get; }
+        public bool IsEnh { set; get; }
 
-        public bool iscsbk { set; get; }
-        public bool isenh { set; get; }
+
+        public bool IsEqual(CPosition position)
+        {
+            if (null == position)return false;
+
+            if((Type == position.Type) 
+                &&(IsCycle == position.IsCycle)
+                && (Cycle == position.Cycle)
+                && (IsCSBK == position.IsCSBK)
+                && (IsEnh == position.IsEnh)
+                ) return true;
+
+            return false;            
+        }
        
     }
 
      [Serializable]
+     public class CJobTicket
+     {
+            public bool IsEqual(CJobTicket job)
+            {
+                return true;
+            }
+     }
+
+     [Serializable]
+     public class CTacker
+     {
+            public bool IsEqual(CTacker tacker)
+            {
+                return true;
+            }
+     }
+
+    [Serializable]
     public class COperate
     {
-        public OPType type { set; get; }
+        public OPType Type { set; get; }
 
-        public CDispatch call { set; get; }
-        public CShortMessage message { set; get; }
-        public CControl control { set; get; }
-        public CPosition position { set; get; }
+        public CMultMember Target { set; get; }
+        public object Operate { set; get; }
+
+        //public CDispatch call { set; get; }
+        //public CShortMessage message { set; get; }
+        //public CControl control { set; get; }
+        //public CPosition position { set; get; }
 
         public COperate()
         {
         }
 
-        public COperate(OPType tp, object obj)
+        public bool IsEqual(COperate operate)
         {
-            type = tp;
-            
-            call = null;
-            message = null;
-            control = null;
-            position = null;
-            switch (type)
+            if ((null == operate)||(Type != operate.Type)) return false;
+
+            if((null == Target) && (null == operate.Target))
+            {}
+            else if ((null == Target) || (null == operate.Target) || (!Target.IsEqual(operate.Target))) return false;
+
+            if((null == Target) && (null == operate.Target))return true;
+
+            switch(Type)
             {
-                case OPType.Dispatch:
-                    call = obj as CDispatch;
-                    break;
-                case OPType.ShortMessage:
-                    message = obj as CShortMessage;
-                    break;
-                case OPType.Control:
-                    control = obj as CControl;
-                    break;
-                case OPType.Position:
-                    position = obj as CPosition;
-                    break;
-                case OPType.JobTicker:
-                    break;
+                case OPType.Dispatch:return (null == Operate) ? false: ((CDispatch)Operate).IsEqual((CDispatch)operate.Operate);                    
+                case OPType.ShortMessage: return (null == Operate) ? false: ((CShortMessage)Operate).IsEqual((CShortMessage)operate.Operate);
+                case OPType.Control: return (null == Operate) ? false: ((CControl)Operate).IsEqual((CControl)operate.Operate);
+                case OPType.Position: return (null == Operate) ? false: ((CPosition)Operate).IsEqual((CPosition)operate.Operate);
+                case OPType.JobTicker: return (null == Operate) ? false: ((CJobTicket)Operate).IsEqual((CJobTicket)operate.Operate);
+                case OPType.Tracker: return (null == Operate) ? false: ((CTacker)Operate).IsEqual((CTacker)operate.Operate);
+                default:return false;
             }
+        }
+
+
+        public string Name
+        {
+            get {
+                switch (Type)
+                {
+                    case OPType.Dispatch: return "呼叫" + (((null == Target)||("" == Target.Name)) ? "" : ("->" + Target.Name));
+                    case OPType.ShortMessage: return "发送短消息" + (((null == Target) || ("" == Target.Name)) ? "" : ("->" + Target.Name));
+                    case OPType.Control: return "信令" + (((null == Target) || ("" == Target.Name)) ? "" : ("->" + Target.Name));
+                    case OPType.Position: return "位置查询" + (((null == Target) || ("" == Target.Name)) ? "" : ("->" + Target.Name));
+                    case OPType.JobTicker: return "发送工单" + (((null == Target) || ("" == Target.Name)) ? "" : ("->" + Target.Name));
+                    case OPType.Tracker: return "追踪" + (((null == Target) || ("" == Target.Name)) ? "" : ("->" + Target.Name));
+                    default: return "";
+                }
+            }
+        }
+
+        public string Information
+        {
+            get
+            {
+                //switch (Type)
+                //{
+                //    case OPType.Dispatch: return "";
+                //    case OPType.ShortMessage: return (null == Operate) ? "" : ((CShortMessage)Operate).Message;
+                //    case OPType.Control: return "信令" + ((null == Target) ? "" : ("　" + Target.Name));
+                //    case OPType.Position: return "位置查询" + ((null == Target) ? "" : ("　" + Target.Name));
+                //    case OPType.JobTicker: return "发送工单" + ((null == Target) ? "" : ("　" + Target.Name));
+                //    case OPType.Tracker: return "追踪" + ((null == Target) ? "" : ("　" + Target.Name));
+                //    default: return "";
+                //}
+
+                return "";
+            }
+        }
+
+         public string NameInfo
+        {
+            get {
+                return Name + (("" == Information) ? "" : ("," + Information));
+            }
+        }
+
+        //public COperate(OPType tp, object obj)
+        //{
+        //    type = tp;
+            
+        //    call = null;
+        //    message = null;
+        //    control = null;
+        //    position = null;
+        //    switch (type)
+        //    {
+        //        case OPType.Dispatch:
+        //            call = obj as CDispatch;
+        //            break;
+        //        case OPType.ShortMessage:
+        //            message = obj as CShortMessage;
+        //            break;
+        //        case OPType.Control:
+        //            control = obj as CControl;
+        //            break;
+        //        case OPType.Position:
+        //            position = obj as CPosition;
+        //            break;
+        //        case OPType.JobTicker:
+        //            break;
+        //    }
+        //}
+
+        public COperate(OPType type, CMultMember target, object obj)
+        {
+            Type = type;
+            Target = target;
+            Operate = obj;           
         }
     }
 }

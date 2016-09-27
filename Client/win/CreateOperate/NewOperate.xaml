@@ -1,13 +1,29 @@
-﻿<src:MyWindow x:Class="TrboX.NewOperate"
+﻿<src:MyWindow
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:src="clr-namespace:TrboX"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" 
-        Icon="/TrboX;component/themes/resource/Logo.png"        
-        Style="{StaticResource MyWindowStyle}"  
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="TrboX.NewOperate" 
+        Icon="/TrboX;component/themes/resource/Logo.png"  
         Title="新建操作" Height="360" Width="600" WindowStyle="None" WindowStartupLocation="CenterScreen">
-    <DockPanel Margin="5,0,5,5">
-        <DockPanel LastChildFill="False" Width="80">
+    <src:MyWindow.Resources>
+        <src:MainTabIndexFromRadio x:Key="IndexFromRadio" />
+        <src:OpTypeSelectToContactType x:Key="OpTypeSelectToContactType"/>
+        <src:FalselHideConverter x:Key="FalseHide" />
+    </src:MyWindow.Resources>
+    <src:MyWindow.Style>
+        <StaticResource ResourceKey="MyWindowStyle"/>
+    </src:MyWindow.Style>
+    <Grid Margin="10,0,10,10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="267*"/>
+            <RowDefinition Height="31*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="75*"/>
+            <ColumnDefinition Width="503*"/>
+        </Grid.ColumnDefinitions>
+        <DockPanel LastChildFill="False" Margin="0">
             <Border BorderBrush="Black" BorderThickness="1,1,0,0" DockPanel.Dock="Top">
                 <DockPanel LastChildFill="False">
                     <RadioButton x:Name="rad_CreateCall" Content="呼叫" Height="30" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" DockPanel.Dock="Top" GroupName="CreateType"/>
@@ -15,45 +31,179 @@
                     <RadioButton x:Name="rad_CreatePosition" Content="位置查询" Height="30" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" DockPanel.Dock="Top" GroupName="CreateType"/>
                     <RadioButton x:Name="rad_CreateCtrl" Content="命令控制" Height="30" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" DockPanel.Dock="Top" GroupName="CreateType"/>
                     <RadioButton x:Name="rad_CreateJob" Content="工单" Height="30" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" DockPanel.Dock="Top" GroupName="CreateType"/>
-                    <RadioButton x:Name="rad_CreateTracker" Content="巡更任务" Height="30" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" DockPanel.Dock="Top" GroupName="CreateType"/>
+                    <RadioButton x:Name="rad_CreateTracker" Content="巡更任务" Height="30" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" DockPanel.Dock="Top" GroupName="CreateType" Visibility="Collapsed"/>
                 </DockPanel>
             </Border>
         </DockPanel>
-        <Border BorderBrush="Black" BorderThickness="1">
-            <Border x:Name="bdr_MaskCreateTab" BorderBrush="Black" BorderThickness="0" Margin="0">
-                <TabControl x:Name="tab_NewType" Margin="0,-22,0,0" Style="{DynamicResource TabControlStyleNormal}" BorderThickness="0">
-                    <TabItem Header="" Margin="-2,-3.5,-2,1.5">
-                        <Grid Background="#FFE5E5E5">
-                            <Label Content="新建呼叫" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                        </Grid>
+        <DockPanel Grid.Column="1" Background="#DDFFFFFF">
+            <TextBlock TextWrapping="Wrap" Text="{Binding SelectedItem.Header, ElementName=tab_NewType}" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="10,5,0,0" FontSize="16"/>
+            <Separator Height="10" Margin="10,0" VerticalAlignment="Top" DockPanel.Dock="Top"/>
+            <DockPanel VerticalAlignment="Top" LastChildFill="False" DockPanel.Dock="Top" Margin="10,0">
+                <TextBlock TextWrapping="Wrap" Text="对　　象：" VerticalAlignment="Top" Margin="0,3,0,0"/>
+                <src:Contact x:Name="contact_OpTarget" VerticalAlignment="Center" IsMultiple="{Binding SelectedIndex, Converter={StaticResource OpTypeSelectToContactType}, ElementName=tab_NewType}" Margin="0" MinHeight="23" MaxHeight="55" Width="200"/>
+            </DockPanel>
+            <Border x:Name="bdr_MaskCreateTab" BorderBrush="Black" BorderThickness="0" Margin="0,5,0,0" Width="485.595" ClipToBounds="True">
+                <TabControl x:Name="tab_NewType" Margin="0,-22,0,0" Style="{DynamicResource TabControlStyleNormal}" BorderThickness="0" SelectionChanged="tab_NewType_SelectionChanged">
+                    <TabControl.SelectedIndex>
+                        <MultiBinding Converter="{StaticResource IndexFromRadio}" Mode="OneWay">
+                            <Binding ElementName="rad_CreateCall" Path="IsChecked" />
+                            <Binding ElementName="rad_CreateMsg" Path="IsChecked" />
+                            <Binding ElementName="rad_CreatePosition" Path="IsChecked" />
+                            <Binding ElementName="rad_CreateCtrl" Path="IsChecked" />
+                            <Binding ElementName="rad_CreateJob" Path="IsChecked" />
+                            <Binding ElementName="rad_CreateTracker" Path="IsChecked" />
+                        </MultiBinding>
+                    </TabControl.SelectedIndex>
+                    <TabItem Header="呼叫" Margin="-2,-3.5,-2,1.5">
+                        <DockPanel LastChildFill="False" Margin="0">
+                            <DockPanel LastChildFill="False" Margin="0" Width="465.595" VerticalAlignment="Top" DockPanel.Dock="Top">
+                                <DockPanel Height="25" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,5">
+                                    <TextBlock TextWrapping="Wrap" Text="呼叫方式：" VerticalAlignment="Center"/>
+                                    <ComboBox VerticalAlignment="Center" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
+                                        <ComboBoxItem Content="组呼"/>
+                                        <ComboBoxItem Content="个呼"/>
+                                        <ComboBoxItem Content="全呼"/>
+                                    </ComboBox>
+                                </DockPanel>
+                                <DockPanel Height="25" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,5">
+                                    <TextBlock TextWrapping="Wrap" Text="信　　道：" VerticalAlignment="Center"/>
+                                    <ComboBox VerticalAlignment="Center" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
+                                        <ComboBoxItem Content="信道1"/>
+                                        <ComboBoxItem Content="信道2"/>
+                                    </ComboBox>
+                                </DockPanel>
+                                <DockPanel Height="30" DockPanel.Dock="Top" Margin="0,10,0,0">
+                                    <Button Content="PTT" Width="200" HorizontalAlignment="Left" Margin="60,0,0,0" DockPanel.Dock="Top" IsCancel="True"/>
+                                </DockPanel>
+                            </DockPanel>
+                        </DockPanel>
                     </TabItem>
-                    <TabItem Header="" Margin="0,-1.5,0,1.5">
-                        <Grid Background="#FFE5E5E5">
-                            <Label Content="新建短消息" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                        </Grid>
+                    <TabItem Header="短消息" Margin="0,-1.5,0,1.5">
+                        <DockPanel LastChildFill="False" Margin="0">
+                            <DockPanel LastChildFill="False" Margin="0" Width="465.595" VerticalAlignment="Top" DockPanel.Dock="Top">
+                                <DockPanel Height="25" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,5">
+                                    <TextBlock TextWrapping="Wrap" Text="发送方式：" VerticalAlignment="Center"/>
+                                    <ComboBox VerticalAlignment="Center" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
+                                        <ComboBoxItem Content="组发"/>
+                                        <ComboBoxItem Content="个发"/>
+                                        <ComboBoxItem Content="全发"/>
+                                    </ComboBox>
+                                </DockPanel>
+                                <DockPanel Height="25" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,5">
+                                    <TextBlock TextWrapping="Wrap" Text="信　　道：" VerticalAlignment="Center"/>
+                                    <ComboBox VerticalAlignment="Center" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
+                                        <ComboBoxItem Content="信道1"/>
+                                        <ComboBoxItem Content="信道2"/>
+                                    </ComboBox>
+                                </DockPanel>
+                                <DockPanel DockPanel.Dock="Top" Margin="0,0,0,5">
+                                    <TextBlock TextWrapping="Wrap" Text="内　　容：" VerticalAlignment="Top" Margin="0,2,0,0"/>
+                                    <TextBox Height="60" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Width="200" HorizontalAlignment="Left"/>
+
+                                </DockPanel>
+                                <DockPanel Height="30" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,10,0,0">
+                                    <Button Content="发送" Width="200" HorizontalAlignment="Left" Margin="60,0,0,0" DockPanel.Dock="Top" IsCancel="True"/>
+                                </DockPanel>
+                            </DockPanel>
+                        </DockPanel>
                     </TabItem>
-                    <TabItem Header="" Margin="-2,-3.5,0,-0.5">
-                        <Grid Background="#FFE5E5E5">
-                            <Label Content="新建位置查询" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                        </Grid>
+                    <TabItem Header="位置查询" Margin="-2,-3.5,0,-0.5">
+                        <DockPanel LastChildFill="False" Margin="0">
+                            <DockPanel LastChildFill="False" Margin="0" Width="465.595" VerticalAlignment="Top" DockPanel.Dock="Top">
+                                <CheckBox x:Name="chk_All" Content="　查询所有" Style="{DynamicResource SimpleCheckBox}" VerticalAlignment="Top" DockPanel.Dock="Top"  Margin="60,0,297.595,0"/>
+                                <CheckBox x:Name="chk_CSBK" Content="　CSBK" Style="{DynamicResource SimpleCheckBox}" VerticalAlignment="Top" DockPanel.Dock="Top"   Checked="updatecyclelist" Unchecked="updatecyclelist" Margin="60,5,297.595,0"/>
+                                <CheckBox x:Name="chk_Enh" Content="　CSBK增强型" Style="{DynamicResource SimpleCheckBox}" DockPanel.Dock="Top" IsEnabled="{Binding IsChecked, ElementName=chk_CSBK}" Checked="updatecyclelist" Unchecked="updatecyclelist" Margin="60,5,297.595,0"/>
+                                <CheckBox x:Name="chk_Cycle" Content="　周期查询" Style="{DynamicResource SimpleCheckBox}" VerticalAlignment="Center" Margin="60,5,297.595,0" DockPanel.Dock="Top"/>
+                                <ComboBox x:Name="cmb_CycleLst" Style="{DynamicResource SimpleComboBox}" VerticalAlignment="Center" Visibility="{Binding IsChecked, Converter={StaticResource FalseHide}, ElementName=chk_Cycle}" Margin="0,5,297.595,0" SelectedIndex="0" DockPanel.Dock="Top"/>
+                                <DockPanel Height="30" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,10,0,0">
+                                    <Grid Width="200" Margin="60,0,0,0" HorizontalAlignment="Left">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="50*"/>
+                                            <ColumnDefinition Width="50*"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Button Content="开始查询" Margin="0,0,5,0" IsCancel="True"/>
+                                        <Button Content="结束查询" Margin="5,0,0,0" IsCancel="True" Grid.Column="1"/>
+                                    </Grid>
+                                </DockPanel>
+                            </DockPanel>
+                        </DockPanel>
                     </TabItem>
-                    <TabItem Header="" Margin="-2,-3.5,0,-0.5">
-                        <Grid Background="#FFE5E5E5">
-                            <Label Content="新建命令控制" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                        </Grid>
+                    <TabItem Header="命令控制" Margin="-2,-3.5,0,-0.5">
+                        <DockPanel LastChildFill="False" Margin="0">
+                            <DockPanel LastChildFill="False" Margin="0" Width="465.595" VerticalAlignment="Top" DockPanel.Dock="Top">
+                                <DockPanel Height="25" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,5">
+                                    <TextBlock TextWrapping="Wrap" Text="发送方式：" VerticalAlignment="Center"/>
+                                    <ComboBox VerticalAlignment="Center" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
+                                        <ComboBoxItem Content="组发"/>
+                                        <ComboBoxItem Content="个发"/>
+                                        <ComboBoxItem Content="全发"/>
+                                    </ComboBox>
+                                </DockPanel>
+                                <DockPanel Height="25" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,5">
+                                    <TextBlock TextWrapping="Wrap" Text="信　　道：" VerticalAlignment="Center"/>
+                                    <ComboBox VerticalAlignment="Center" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
+                                        <ComboBoxItem Content="信道1"/>
+                                        <ComboBoxItem Content="信道2"/>
+                                    </ComboBox>
+                                </DockPanel>
+                                <DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0">
+                                    <TextBlock TextWrapping="Wrap" Text="信　　令：" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0"/>
+                                    <ComboBox x:Name="cmb_ControlList" VerticalAlignment="Top" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
+                                        <ComboBoxItem Content="在线检测"/>
+                                        <ComboBoxItem Content="远程监听"/>
+                                        <ComboBoxItem Content="遥毙"/>
+                                        <ComboBoxItem Content="遥开"/>
+                                        <ComboBoxItem Content="遥晕"/>
+                                        <ComboBoxItem Content="摇醒"/>
+                                    </ComboBox>
+                                </DockPanel>
+                                <DockPanel Height="30" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,10,0,0">
+                                    <Button Content="发送" Width="200" HorizontalAlignment="Left" Margin="60,0,0,0" DockPanel.Dock="Top" IsCancel="True"/>
+                                </DockPanel>
+                            </DockPanel>
+                        </DockPanel>
                     </TabItem>
-                    <TabItem Header="" Margin="-2,-3.5,0,-0.5">
-                        <Grid Background="#FFE5E5E5">
-                            <Label Content="新建工单" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-                        </Grid>
+                    <TabItem Header="工单" Margin="-2,-3.5,0,-0.5">
+                        <DockPanel LastChildFill="False" Margin="10,0" Width="465.595" VerticalAlignment="Top">
+                            <DockPanel Height="25" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,5">
+                                <TextBlock TextWrapping="Wrap" Text="发送方式：" VerticalAlignment="Center"/>
+                                <ComboBox VerticalAlignment="Center" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
+                                    <ComboBoxItem Content="组发"/>
+                                    <ComboBoxItem Content="个发"/>
+                                    <ComboBoxItem Content="全发"/>
+                                </ComboBox>
+                            </DockPanel>
+                            <DockPanel Height="25" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,5">
+                                <TextBlock TextWrapping="Wrap" Text="信　　道：" VerticalAlignment="Center"/>
+                                <ComboBox VerticalAlignment="Center" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
+                                    <ComboBoxItem Content="信道1"/>
+                                    <ComboBoxItem Content="信道2"/>
+                                </ComboBox>
+                            </DockPanel>
+                            <DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0">
+                                <TextBlock TextWrapping="Wrap" Text="工　　单：" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0"/>
+                                <ComboBox x:Name="cmb_ControlList1" VerticalAlignment="Top" SelectedIndex="0" Width="200" HorizontalAlignment="Left">
+                                    <ComboBoxItem Content="工单1"/>
+                                    <ComboBoxItem Content="工单2"/>
+                                    <ComboBoxItem Content="工单3"/>
+                                </ComboBox>
+                            </DockPanel>
+                            <DockPanel Height="30" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,10,0,0">
+                                <Button Content="发送" Width="200" HorizontalAlignment="Left" Margin="60,0,0,0" DockPanel.Dock="Top" IsCancel="True"/>
+                            </DockPanel>
+                        </DockPanel>
                     </TabItem>
-                    <TabItem Header="" Margin="-2,-3.5,0,-0.5">
-                        <Grid Background="#FFE5E5E5">
+                    <TabItem Header="巡更任务" Margin="-2,-3.5,0,-0.5">
+                        <Grid>
                             <Label Content="新建巡更" HorizontalAlignment="Left" VerticalAlignment="Top"/>
                         </Grid>
                     </TabItem>
                 </TabControl>
             </Border>
-        </Border>
-    </DockPanel>
+        </DockPanel>
+        <DockPanel LastChildFill="False" Grid.Row="1" Grid.Column="1" Margin="0">
+            <Button Content="关闭" VerticalAlignment="Center" Width="75" DockPanel.Dock="Right" Margin="10,0,0,0" Height="22" Click="Button_Click"/>
+            <Button Content="添加到快速操作" VerticalAlignment="Center" Width="100" DockPanel.Dock="Right" Height="22"/>
+        </DockPanel>
+    </Grid>
 </src:MyWindow>

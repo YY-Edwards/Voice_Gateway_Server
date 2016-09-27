@@ -38,8 +38,8 @@ namespace TrboX
 
                 m_Main.lst_Event.Items.Insert(0, new CEvent()
                 {
-                    content = content,
-                    time = DateTime.Now
+                    Content = content,
+                    Time = DateTime.Now
                 });
             }));
         }

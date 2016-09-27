@@ -16,6 +16,7 @@
         <local:IsNullValueConverter x:Key="IsObjNull" />
         <local:MainTabIndexFromRadio x:Key="IndexFromRadio" />
         <local:FalselHideConverter x:Key="FalseHide" />
+        <local:ItemIconConverter x:Key="TypeToIcon" />
 
         <GridView x:Key="GridView">
             <GridView.Columns>
@@ -25,17 +26,43 @@
             </GridView.Columns>
         </GridView>
 
-        <local:TileView x:Key="ImageView">
-            
+        <local:TileView x:Key="ImageView">           
             <local:TileView.ItemTemplate>
                 <DataTemplate>
-                    <DockPanel Width="200" Height="260" >
+                    <DockPanel Width="240" Height="300" >
                         <DockPanel.ContextMenu >
                             <ContextMenu Visibility="Hidden"/>
                         </DockPanel.ContextMenu>
-                        <local:FastPanel x:Name="dis"  PanelItem ="{Binding CurrentItem}" AllowDrop="True" TitlePressed="FastPanel_TiltePressed" Closing = "FastPanel_Closing" Dispatch="dis_Dispatch" Jobticket="dis_Jobticket" Message="dis_Message" Monitor="dis_Monitor" OnlineCheck="dis_OnlineCheck" Position="dis_Position" ShutDown="dis_ShutDown" Sleep="dis_Sleep" StartUp="dis_StartUp" Week="dis_Week"  />
+                        <local:FastPanel x:Name="dis"  PanelItem ="{Binding}" AllowDrop="True" TitlePressed="FastPanel_TiltePressed" Closing = "FastPanel_Closing" Dispatch="dis_Dispatch" Message="dis_Message" Monitor="dis_Monitor" OnlineCheck="dis_OnlineCheck"  ShutDown="dis_ShutDown"  StartUp="dis_StartUp" More="dis_More" />
                     </DockPanel>
+                </DataTemplate>
+            </local:TileView.ItemTemplate>
+        </local:TileView>
 
+        <local:TileView x:Key="IconView">
+            <local:TileView.ItemTemplate>
+                <DataTemplate>
+                    <DockPanel Width="60" Height="80" >
+                        <DockPanel.ContextMenu >
+                            <ContextMenu Visibility="Hidden"/>
+                        </DockPanel.ContextMenu>
+                        <DockPanel>
+                            <Border BorderThickness="1" BorderBrush="#FF888888" ToolTip="{Binding NameInfo}" DockPanel.Dock="Top" HorizontalAlignment="Center" Width="60" Height="60" Padding="5">
+                                <Image DockPanel.Dock="Top" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                                <Image.Source>
+                                    <MultiBinding  Converter="{StaticResource TypeToIcon}" Mode="OneWay" >
+                                        <Binding  Path="Type" />
+                                        <Binding  Path="Contact" />
+                                        <Binding  Path="Operate" />
+                                    </MultiBinding>
+                                </Image.Source>
+                            </Image>
+                        </Border>
+                        <Grid>
+                                    <TextBlock Text="{Binding SimpleName}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF666666"/>
+                                </Grid>                          
+                            </DockPanel>
+                    </DockPanel>
                 </DataTemplate>
             </local:TileView.ItemTemplate>
         </local:TileView>
@@ -43,11 +70,11 @@
         <local:MsgView x:Key="GroupView">
             <local:MsgView.ItemTemplate>
                 <DataTemplate>
-                    <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2">
+                    <Border x:Name="Msg" ToolTip="{Binding NameInfo}" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2" Background="#00000000">
                         <DockPanel >
                             <Image x:Name="Icon" Source="/TrboX;component/themes/resource/group.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
                             <DockPanel x:Name="dck_Content" Margin="5,0" >
-                                <TextBlock Text="{Binding  target.KeyHeader}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" />
+                                <TextBlock Text="{Binding  Name}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" />                               
                             </DockPanel>
                         </DockPanel>
                     </Border>
@@ -59,11 +86,11 @@
         <local:MsgView x:Key="EmployeeView">
             <local:MsgView.ItemTemplate>
                 <DataTemplate>
-                    <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2"   >
+                    <Border x:Name="Msg" Background="#00000000" ToolTip="{Binding NameInfo}" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2"   >
                         <DockPanel >
-                            <Image x:Name="Icon" Source="/TrboX;component/themes/resource/contact.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0" Opacity="{Binding target, Converter={StaticResource IconOpFromOrg}}"/>
+                            <Image x:Name="Icon" Source="/TrboX;component/themes/resource/contact.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0" Opacity="{Binding Converter={StaticResource IconOpFromOrg}}"/>
                             <DockPanel x:Name="dck_Content" Margin="5,0" >
-                                <TextBlock Text="{Binding  target.KeyName}" ToolTip="{Binding target.HeaderWithoutKey}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Opacity="{Binding target, Converter={StaticResource IconOpFromOrg}}" />
+                                <TextBlock Text="{Binding  Name}" ToolTip="{Binding target.HeaderWithoutKey}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Opacity="{Binding Converter={StaticResource IconOpFromOrg}}" />
                             </DockPanel>
                         </DockPanel>
                     </Border>
@@ -75,11 +102,11 @@
         <local:MsgView x:Key="VehicleView">
             <local:MsgView.ItemTemplate>
                 <DataTemplate>
-                    <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2">
+                    <Border x:Name="Msg"  Background="#00000000" ToolTip="{Binding NameInfo}" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2">
                         <DockPanel >
-                            <Image x:Name="Icon" Source="/TrboX;component/themes/resource/vehicle.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"  Opacity="{Binding target, Converter={StaticResource IconOpFromOrg}}"/>
+                            <Image x:Name="Icon" Source="/TrboX;component/themes/resource/vehicle.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"  Opacity="{Binding Converter={StaticResource IconOpFromOrg}}"/>
                             <DockPanel x:Name="dck_Content" Margin="5,0" >
-                                <TextBlock Text="{Binding  target.KeyName}" ToolTip="{Binding target.HeaderWithoutKey}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  Opacity="{Binding target, Converter={StaticResource IconOpFromOrg}}" />
+                                <TextBlock Text="{Binding  Name}" ToolTip="{Binding target.HeaderWithoutKey}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  Opacity="{Binding Converter={StaticResource IconOpFromOrg}}" />
                             </DockPanel>
                         </DockPanel>
                     </Border>
@@ -90,19 +117,19 @@
         <local:MsgView x:Key="RadioView">
             <local:MsgView.ItemTemplate>
                 <DataTemplate>
-                    <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2">
+                    <Border x:Name="Msg"  Background="#00000000" ToolTip="{Binding NameInfo}" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2">
                         <DockPanel >
-                            <Image x:Name="Icon" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"  Opacity="{Binding target, Converter={StaticResource IconOpFromOrg}}"/>
+                            <Image x:Name="Icon" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"  Opacity="{Binding Converter={StaticResource IconOpFromOrg}}"/>
                             <DockPanel x:Name="dck_Content" Margin="5,0" >
-                                <TextBlock Text="{Binding  target.radio.radio_id, StringFormat=ID:{0}}" ToolTip="{Binding target.HeaderWithOutRadio}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  Opacity="{Binding target, Converter={StaticResource IconOpFromOrg}}"/>
+                                <TextBlock Text="{Binding  Radio.RadioID, StringFormat=ID：{0}}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  Opacity="{Binding Converter={StaticResource IconOpFromOrg}}"/>
                             </DockPanel>
                         </DockPanel>
                     </Border>
                     <DataTemplate.Triggers>
-                        <DataTrigger Binding="{Binding target.radio.type}" Value="RADIO">
+                        <DataTrigger Binding="{Binding Radio.Type}" Value="RADIO">
                             <Setter TargetName="Icon" Property="Source" Value="/TrboX;component/themes/resource/radio.png"/>
                         </DataTrigger>
-                        <DataTrigger Binding="{Binding target.radio.type}" Value="RIDE">
+                        <DataTrigger Binding="{Binding Radio.Type}" Value="RIDE">
                             <Setter TargetName="Icon" Property="Source" Value="/TrboX;component/themes/resource/ride.png"/>
                         </DataTrigger>
                     </DataTemplate.Triggers>
@@ -118,8 +145,8 @@
                             <Image Source="/TrboX;component/themes/resource/event.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
 
                             <DockPanel x:Name="dck_Content" Margin="5,0" >
-                                <TextBlock Text="{Binding  time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName= lst_Event, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
-                                <TextBlock Text="{Binding  content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Event, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF000000" VerticalAlignment="Center" />
+                                <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName= lst_Event, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
+                                <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Event, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF000000" VerticalAlignment="Center" />
                             </DockPanel>
                         </DockPanel>
                     </Border>
@@ -136,10 +163,13 @@
                             <Image Source="/TrboX;component/themes/resource/alarm.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
                             <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Close_Click"></Button>
                             <Button x:Name="btn_AlarmNotify_Explaner" Content="↗" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Explaner_Click" ></Button>
-                            
-                            <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
-                            <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FFDDDDDD" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
-                                <TextBlock Text="{Binding  Content.Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="White" VerticalAlignment="Center" />
+
+                            <DockPanel x:Name="dck_Content" Margin="5,0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" DockPanel.Dock="Top" >
+                                <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0,0,5,0"  Foreground="#FFDDDDDD" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" FontSize="10" />
+                                <TextBlock Text="{Binding  Source.Name, StringFormat=({0})}" TextWrapping="NoWrap" Margin="0"  Foreground="#FFDDDDDD" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" FontSize="10" />
+                            </DockPanel>
+                            <TextBlock Text="{Binding Content.Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="White" VerticalAlignment="Center">
+                            </TextBlock>
 
                         </DockPanel>
                     </Border>
@@ -156,8 +186,10 @@
                             <Image Source="/TrboX;component/themes/resource/msg.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
                             <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Close_Click"></Button>
                             <Button x:Name="btn_AlarmNotify_Explaner" Content="↗" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Explaner_Click" ></Button>
-                            <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
-                            <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
+                            <DockPanel x:Name="dck_Content" Margin="5,0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" DockPanel.Dock="Top" >
+                                <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0,0,5,0"  Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" FontSize="10" />
+                                <TextBlock Text="{Binding  Source.Name, StringFormat=({0})}" TextWrapping="NoWrap" Margin="0"  Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" FontSize="10" />
+                            </DockPanel>
                             <TextBlock Text="{Binding  Content.Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
 
                         </DockPanel>
@@ -175,8 +207,10 @@
                             <Image Source="/TrboX;component/themes/resource/rx.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
                             <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Close_Click"></Button>
                             <Button x:Name="btn_AlarmNotify_Explaner" Content="↗" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Explaner_Click" ></Button>
-                            <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
-                            <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
+                            <DockPanel x:Name="dck_Content" Margin="5,0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" DockPanel.Dock="Top" >
+                                <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0,0,5,0"  Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" FontSize="10" />
+                                <TextBlock Text="{Binding  Source.Name, StringFormat=({0})}" TextWrapping="NoWrap" Margin="0"  Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" FontSize="10" />
+                            </DockPanel>
                             <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
 
                         </DockPanel>
@@ -194,8 +228,10 @@
                             <Image Source="/TrboX;component/themes/resource/job.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
                             <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Close_Click"></Button>
                             <Button x:Name="btn_AlarmNotify_Explaner" Content="↗" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Explaner_Click" ></Button>
-                            <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
-                            <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
+                            <DockPanel x:Name="dck_Content" Margin="5,0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" DockPanel.Dock="Top" >
+                                <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0,0,5,0"  Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" FontSize="10" />
+                                <TextBlock Text="{Binding  Source.Name, StringFormat=({0})}" TextWrapping="NoWrap" Margin="0"  Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" FontSize="10" />
+                            </DockPanel>
                             <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
 
                         </DockPanel>
@@ -213,8 +249,10 @@
                             <Image Source="/TrboX;component/themes/resource/tracker.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
                             <Button x:Name="btn_AlarmNotify_Close" Content="X" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Close_Click"></Button>
                             <Button x:Name="btn_AlarmNotify_Explaner" Content="↗" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="20" Width="20" Margin="0,3,0,0" Click="btn_Notify_Explaner_Click" ></Button>
-                            <DockPanel x:Name="dck_Content" Margin="5,0" ></DockPanel>
-                            <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" />
+                            <DockPanel x:Name="dck_Content" Margin="5,0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" DockPanel.Dock="Top" >
+                                <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0,0,5,0"  Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" FontSize="10" />
+                                <TextBlock Text="{Binding  Source.Name, StringFormat=({0})}" TextWrapping="NoWrap" Margin="0"  Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" FontSize="10" />
+                            </DockPanel>
                             <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
 
                         </DockPanel>
@@ -328,7 +366,6 @@
                         </MenuItem>
                         <MenuItem Header="工具" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top">
                             <MenuItem  x:Name="menu_Tools_NewContact" Header="新建常用联系人" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
-                            <MenuItem x:Name="menu_Tools_NewGroup" Header="新建常用组" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                             <MenuItem x:Name="menu_Tools_NewOperate" Header="新建快速操作" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
                         	<Separator Margin="0" Style="{DynamicResource SeparatorStyleNormal}"/>
                             <MenuItem x:Name="menu_Tools_Export" Header="导出配置" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleNormal}" VerticalAlignment="Top" Width="160"/>
@@ -347,7 +384,7 @@
                     <DockPanel LastChildFill="False" Margin="0">
                         <Border BorderBrush="#FFEEEEEE" BorderThickness="1,0" Margin="0" Padding="3,0">
                             <DockPanel LastChildFill="False">
-                                <local:ComboButton x:Name="cmb_Tool_New" Icon="/TrboX;component/themes/resource/Logo.png" Width="35" >
+                                <local:ComboButton x:Name="cmb_Tool_New" Icon="/TrboX;component/themes/resource/new.png" Width="35" Margin="2.5,0" >
                                     <local:ComboButton.Items>
                                         <ComboBoxItem Content="新建短消息"/>
                                         <ComboBoxItem Content="新建位置查询"/>
@@ -356,37 +393,40 @@
                                         <ComboBoxItem Content="新建巡更任务"/>
                                     </local:ComboButton.Items>
                                 </local:ComboButton>
-                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="131,86,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="删除"/>
+								 <local:ComboButton x:Name="cmb_Tool_Save" Icon="/TrboX;component/themes/resource/save.png" IsEnabled="{Binding NeedSave, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Main}}}" Margin="2.5,0" VerticalAlignment="Center" ToolTip="保存" />
+								 <local:ComboButton x:Name="cmb_Tool_Delete" Icon="/TrboX;component/themes/resource/delete.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="删除" />
+
                             </DockPanel>
                         </Border>
                         <Border x:Name="bdr_Tool_Base" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0" IsEnabled="False">
                             <DockPanel LastChildFill="False" Margin="0">
-                                <Button x:Name="btn_Tool_PTT" local:CExIcon.Content="PTT"  ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="36" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="呼叫" />
-                                <Button x:Name="btn_Tool_Msg" local:CExIcon.Content="✉"  Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="短消息" />
-                                <Button x:Name="btn_Tool_Position" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="313,249,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="位置查询" />
-                                <Button x:Name="btn_Tool_Job" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="253,7,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="工单"/>
-                            </DockPanel>
+								<local:ComboButton x:Name="btn_Tool_PTT" Icon="/TrboX;component/themes/resource/rx.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="呼叫" />
+								<local:ComboButton x:Name="btn_Tool_Msg" Icon="/TrboX;component/themes/resource/msg.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="短消息" />
+								<local:ComboButton x:Name="btn_Tool_Position" Icon="/TrboX;component/themes/resource/position.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="位置查询" />
+								<local:ComboButton x:Name="btn_Tool_Job" Icon="/TrboX;component/themes/resource/job.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="工单" />
+							 </DockPanel>
                         </Border>
                         <Border x:Name="bdr_Tool_Fast" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0">
                             <DockPanel LastChildFill="False" Margin="0">
-                                <Button x:Name="btn_Tool_NewContact" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="131,7,22,22" ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="24" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="添加常用联系人"  />
-                                <Button x:Name="btn_Tool_NewGroup" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="161,7,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="添加常用组"/>
-                                <Button x:Name="btn_Tool_NewFastOperate" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="161,168,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="添加快速操作" />
-                            </DockPanel>
+								<local:ComboButton x:Name="btn_Tool_NewContact" Icon="/TrboX;component/themes/resource/contact.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="添加常用联系人" />
+								<local:ComboButton x:Name="btn_Tool_NewFastOperate" Icon="/TrboX;component/themes/resource/event.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="添加快速操作" />
+                                </DockPanel>
                         </Border>
                         <Border x:Name="bdr_Tool_Ctrl" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0" IsEnabled="False">
                             <DockPanel LastChildFill="False" Margin="0">
-                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="404,290,22,22" ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="24" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="遥毙" />
-                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="220,290,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="遥晕"/>
-                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="344,86,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="遥开"/>
-                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="190,290,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="在线检测"/>
-                                <Button local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="7,330,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,2" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="远程监听"/>
+								<local:ComboButton x:Name="btn_Tool_Check" Icon="/TrboX;component/themes/resource/check.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="在线检测" />
+								<local:ComboButton x:Name="btn_Tool_Monitor" Icon="/TrboX;component/themes/resource/monitor.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="远程监听" />
+								<local:ComboButton x:Name="btn_Tool_Start" Icon="/TrboX;component/themes/resource/start.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="遥开" />
+								<local:ComboButton x:Name="btn_Tool_Shut" Icon="/TrboX;component/themes/resource/shut.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="遥毙" />
+								<local:ComboButton x:Name="btn_Tool_Sleep" Icon="/TrboX;component/themes/resource/sleep.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="遥晕" />
+                               
                             </DockPanel>
                         </Border>
                         <Border x:Name="bdr_Tool_Help" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0">
                             <DockPanel LastChildFill="False" Margin="0">
-                                <Button x:Name="btn_Help" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="282,127,22,22" ContentTemplate="{DynamicResource ButtonIconTemplate}" Width="24" Margin="3,0" Height="24"  VerticalAlignment="Center" Style="{DynamicResource ButtonStyleIcon}" ToolTip="查看帮助" />
-                                <Button x:Name="btn_About" local:CExIcon.Icon="/TrboX;component/themes/resource/icon-2.png" local:CExIcon.Range="7,168,22,22" Style="{DynamicResource ButtonStyleIcon}" Width="24" Margin="3,0" Height="24" ContentTemplate="{DynamicResource ButtonIconTemplate}" VerticalAlignment="Center" ToolTip="关于TrboX" Click="btn_About_Click"/>
+								<local:ComboButton x:Name="btn_Help" Icon="/TrboX;component/themes/resource/help.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="查看帮助" />
+								<local:ComboButton x:Name="btn_About" Icon="/TrboX;component/themes/resource/info.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="关于TrboX" Click="btn_About_Click"/>
+                              
                             </DockPanel>
                         </Border>
                     </DockPanel>
@@ -567,20 +607,26 @@
                                         <TabItem Header="起始页" Style="{DynamicResource SimpleTabItem}" Width="20">
                                             <DockPanel>
                                                 <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
-                                                	<Label Content="语音调度" VerticalAlignment="Center" HorizontalAlignment="Left"/>
+                                                	<DockPanel LastChildFill="False">
+                                                		<Label Content="语音调度" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,2.38"/>
+                                                        <CheckBox x:Name="chk_MaxSize" Content="Max" VerticalAlignment="Center" ClipToBounds="True" DockPanel.Dock="Right" Margin="0,0,5,0"/>
+                                                        <CheckBox x:Name="chk_MinIconView" Content="" VerticalAlignment="Center" ClipToBounds="True" DockPanel.Dock="Right" IsChecked="True"/>
+                                                	</DockPanel>
                                                 </Border>
                                                 <Grid>
                                                     <ListView x:Name="lst_dispatch"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" VerticalContentAlignment="Top"  >
+                                                        <ListView.View>
+                                                            <local:TileView/>
+                                                        </ListView.View>
                                                         <ListView.ContextMenu>
                                                             <ContextMenu>
-                                                            	<MenuItem Header="添加常用联系人"/>
-                                                            	<MenuItem Header="添加常用组"/>
-                                                            	<MenuItem Header="添加快速操作"/>
+                                                                <MenuItem x:Name="menu_FastListAddContact" Header="添加常用联系人" />
+                                                                <MenuItem x:Name="menu_FastListAddOperate" Header="添加快速操作"/>
                                                             </ContextMenu>
                                                         </ListView.ContextMenu>
-                                                        <ListView.View>
+                                                        <!--<ListView.View>
                                                 			<local:TileView />
-                                                		</ListView.View>
+                                                		</ListView.View>-->
                                                 	</ListView>
                                                 </Grid>
                                             </DockPanel>

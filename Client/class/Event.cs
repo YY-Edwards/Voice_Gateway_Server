@@ -7,8 +7,8 @@ namespace TrboX
 {
     public class CEvent
     {
-        public string content { set; get; }
-        public DateTime time { set; get; }
+        public string Content { set; get; }
+        public DateTime Time { set; get; }
     }
 
 }

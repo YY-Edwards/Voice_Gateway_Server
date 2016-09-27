@@ -8,10 +8,11 @@
              d:DesignHeight="300" d:DesignWidth="300">
     <UserControl.Resources>
         <local:NullHideConverter x:Key="NullHide" />
+        <local:BoolToOpConverter x:Key="BoolToOp" />
         <ControlTemplate x:Key="ButtonControlTemplateComBtn"  TargetType="{x:Type Button}">
             <Border x:Name="border" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" Background="{x:Null}">
                 <Grid Margin="0">
-                    <ComboBox x:Name="combo" ItemsSource="{Binding Items}"  Margin="0" SelectionChanged="combo_SelectionChanged" Style="{DynamicResource ComboBoxStyleCombox}"/>
+                    <ComboBox x:Name="combo" ItemsSource="{Binding Items}" IsEnabled="{Binding IsEnable}"  Margin="0" SelectionChanged="combo_SelectionChanged" Style="{DynamicResource ComboBoxStyleCombox}"/>
                 </Grid>
             </Border>
         </ControlTemplate>
@@ -108,12 +109,12 @@
         </Style>
     </UserControl.Resources>
     <Grid>
-        <Button x:Name="combox" Template="{DynamicResource ButtonControlTemplateComBtn}" BorderThickness="0" Background="{x:Null}"/>
-        <Button x:Name="button" Click="button_Click" d:IsHidden="True" Background="{x:Null}" BorderThickness="0" Margin="0,0,14,0" >
+        <Button x:Name="combox" Template="{DynamicResource ButtonControlTemplateComBtn}" BorderThickness="0" Background="{x:Null}" Visibility="Collapsed"  />
+        <Button x:Name="button" Click="button_Click" d:IsHidden="True" Background="{x:Null}" BorderThickness="0" Margin="0" >
             <Button.Template>
                 <ControlTemplate  TargetType="{x:Type Button}">
                     <Border x:Name="border" BorderBrush="Black" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto">
-                        <DockPanel x:Name="panel" >
+                        <DockPanel x:Name="panel" Opacity="{Binding IsEnabled, Converter={StaticResource BoolToOp}, RelativeSource={RelativeSource TemplatedParent}}" >
                             <Image x:Name="icon" Source="{Binding Icon}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="20" Height="20" Visibility="{Binding Source, RelativeSource={RelativeSource Self}, Converter={StaticResource NullHide}}"/>
                             <Label Content="{Binding Content}" VerticalAlignment="Center" Style="{DynamicResource LabelStyle1}" />
                         </DockPanel>
