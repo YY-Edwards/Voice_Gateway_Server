@@ -19,31 +19,22 @@ int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 		std::string str(pData, dataLen);
 		printf("received data:%s", str.c_str());
 
-		std::map<std::string, std::string> args;
-		CRpcJsonParser parser;
 		std::string callName;
 		uint64_t callId = 0;
-		if (0 != parser.getCallName(str, callName, callId))
+		std::string param = "";
+		if (0 != CRpcJsonParser::getRequest(str, callName, callId, param))
 		{
 			// send error response
 			std::string response = CRpcJsonParser::buildResponse("failed", callId, 404, "Invalid request");
 			pRemote->sendResponse(response.c_str(), response.size());
 			throw std::exception("invalid request");
 		}
+		CAbstractAction* pAction = NULL;
+		pAction = (m_mpActions.find(callName) != m_mpActions.end()) ? m_mpActions[callName] : NULL;
 
-		std::lock_guard<std::mutex> lock(m_actionsLocker);
-
-		if (m_mpActions.find(callName) != m_mpActions.end())
+		if (pAction)
 		{
-			std::list<std::string> argList = m_mpActions[callName]->getArgNames();
-			if (0 != parser.getArgs(str, argList, args))
-			{
-				// invalid parameter, send error response
-				std::string response = CRpcJsonParser::buildResponse("failed", callId, 404, "Invalid parameter");
-				pRemote->sendResponse(response.c_str(), response.size());
-				throw std::exception("invalid parameter number");
-			}
-			m_mpActions[callName]->run(pRemote, args, callId);
+			pAction->run(pRemote, param, callId);
 		}
 	}
 	catch (std::exception& e)
@@ -73,8 +64,6 @@ void CRpcServer::stop()
 		delete m_pConnector;
 	}
 
-	std::lock_guard<std::mutex> lock(m_actionsLocker);
-
 	// close and free all actions memory
 	for (auto i = m_mpActions.begin(); i != m_mpActions.end(); i++)
 	{
@@ -90,6 +79,5 @@ void CRpcServer::addActionHandler(CAbstractAction* pAction)
 	{
 		return;
 	}
-	std::lock_guard<std::mutex> lock(m_actionsLocker);
 	m_mpActions[pAction->getName()] = pAction;
 }

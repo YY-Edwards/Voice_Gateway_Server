@@ -9,7 +9,6 @@ public:
 
 public: // Derived from CAbstractAction
 	virtual std::string getName();
-	virtual std::list<std::string> getArgNames();
-	virtual int run(CRemotePeer* pRemote, std::map<std::string, std::string> args, uint64_t callId);
+	virtual int run(CRemotePeer* pRemote, const std::string& param, uint64_t callId);
 };
 

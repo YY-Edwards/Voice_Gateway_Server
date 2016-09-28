@@ -17,7 +17,7 @@ public:
 public: // dereived from CAbstractConnector
 	virtual int start(const char* connStr);
 	virtual void stop();
-	virtual int send(unsigned char* pData, int dataLen);
+	virtual int send(const char* pData, int dataLen);
 	virtual int connect(const char* connStr);
 
 protected:

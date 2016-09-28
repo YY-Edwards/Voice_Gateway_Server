@@ -2,6 +2,7 @@
 #include "../../utf8/utf8.h"
 #include "../include/TcpClientConnector.h"
 #include "../include/RpcClient.h"
+#include "../include/RpcJsonParser.h"
 
 
 CRpcClient::CRpcClient()
@@ -36,18 +37,89 @@ void CRpcClient::stop()
 
 int CRpcClient::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 {
-	std::string str(pData, dataLen);
-	std::wstring wStr;
-	utf8::utf8to16(str.begin(), str.end(), std::back_inserter(wStr));
-	TRACE(_T("received str:%s\r\n"), wStr.c_str());
+	try{
+		std::string str(pData, dataLen);
+
+		std::map<std::string, std::string> args;
+		CRpcJsonParser parser;
+		std::string status, statusText;
+		int errCode = 0;
+		uint64_t callId = 0;
+		std::string content;
+		if (0 != parser.getResponse(str, status, statusText, errCode, callId, content))
+		{
+			throw std::exception("invalid request");
+		}
+
+		bool isResponse = false;
+		std::lock_guard<std::mutex> lock(m_mtxRequest);
+		// remove the front request in list, if the call id is match
+		for (auto itr = m_lstRequest.begin(); itr != m_lstRequest.end(); ++itr){
+			if (callId == (*itr)->m_nCallId)
+			{
+				isResponse = true;
+				// handle response
+				(*itr)->success(content.c_str());
+
+				delete *itr;
+				m_lstRequest.remove(*itr);
+				break;
+			}
+		}
+
+		if (!isResponse)
+		{
+			if (nullptr != m_fnIncomeHandler)
+			{
+				m_fnIncomeHandler(m_pConnector, pData, dataLen);
+			}
+		}
+
+	}
+	catch (std::exception& e)
+	{
+		printf("exception: %s\r\n", e.what());
+	}
+	catch (...)
+	{
+		printf("unknow error! \r\n");
+	}
 	return 0;
 }
 
-int CRpcClient::send(unsigned char* pData, int dataLen)
+int CRpcClient::send(const char* pData, int dataLen)
 {
 	if (NULL == m_pConnector)
 	{
 		return 0;
 	}
 	return m_pConnector->send(pData, dataLen);
+}
+
+int CRpcClient::sendRequest(const char* pRequest,
+						uint64_t nCallId,
+						std::function<void(const char* pResponse)> success,
+						std::function<void(const char* pResponse)> failed)
+{
+	if (NULL == pRequest)
+	{
+		return -1;
+	}
+
+	std::lock_guard<std::mutex> lock(m_mtxRequest);
+
+	CRequest* pReq = new CRequest();
+	pReq->m_strRequest = pRequest;
+	pReq->m_nCallId = nCallId;
+	pReq->success = success;
+	pReq->failed = failed;
+
+	if (0 == m_lstRequest.size())
+	{
+		// send request immediately
+		this->send(pReq->m_strRequest.c_str(), pReq->m_strRequest.size());
+	}
+	m_lstRequest.push_back(pReq);
+
+	return 0;
 }

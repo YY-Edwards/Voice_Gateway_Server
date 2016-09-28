@@ -14,7 +14,7 @@ CRpcJsonParser::~CRpcJsonParser()
 {
 }
 
-int CRpcJsonParser::getCallName(const std::string str, std::string& callName, uint64_t& callId)
+int CRpcJsonParser::getRequest(const std::string str, std::string& callName, uint64_t& callId, std::string& args)
 {
 	int ret = 0;
 
@@ -49,6 +49,19 @@ int CRpcJsonParser::getCallName(const std::string str, std::string& callName, ui
 		else if (rapidjson::kStringType == d["callId"].GetType()) {
 			callId = std::atoll(d["callId"].GetString());
 		}
+
+		if (!d.HasMember("param"))
+		{
+			if (!d["param"].IsObject())
+			{
+				throw std::exception("parameter invalid");
+			}
+
+			StringBuffer sb;
+			Writer<StringBuffer> writer(sb);
+			d["param"].Accept(writer); // Accept() traverses the DOM and generates Handler events.
+			args = sb.GetString();
+		}
 	}
 	catch (std::exception& e){
 		ret = -1;
@@ -61,64 +74,18 @@ int CRpcJsonParser::getCallName(const std::string str, std::string& callName, ui
 	return ret;
 }
 
-std::string CRpcJsonParser::getVal(Value& v)
-{
-	if (v.IsInt())
-	{
-		int val = v.GetInt();
-		return std::to_string(val);
-	}
-	else if (v.IsFloat())
-	{
-		return std::to_string(v.GetFloat());
-	}
-	else if (v.IsString())
-	{
-		return v.GetString();
-	}
-
-	return std::string("");
-}
-
-int CRpcJsonParser::parseArgs(Value& v, std::list<std::string> argList, std::map<std::string, std::string>& args)
-{
-	try
-	{
-		if (!v.IsObject())
-		{
-			throw std::exception("value is not object");
-		}
-
-		for (auto iArgName = argList.begin(); iArgName != argList.end(); iArgName++)
-		{
-			std::string name = *iArgName;
-			if (v.HasMember(name.c_str()))
-			{
-				args[name] = getVal(v[name.c_str()]);
-			}
-			else
-			{
-				std::string err = "filed " + name + "not exist";
-				throw std::exception(err.c_str());
-			}
-		}
-		return 0;
-	}
-	catch (std::exception& e){
-
-	}
-	catch (...)
-	{
-
-	}
-	return -1;
-}
-int CRpcJsonParser::getArgs(const std::string str, std::list<std::string> argList, std::map<std::string, std::string>& args)
+int CRpcJsonParser::getResponse(const std::string str, 
+						std::string& status, 
+						std::string& statusText, 
+						int& errCode, 
+						uint64_t& callId, 
+						std::string& content)
 {
 	int ret = 0;
-	args.erase(args.begin(), args.end());
+	content.erase(content.begin(), content.end());
 
 	Document d;
+
 	try{
 		if (d.ParseInsitu((char*)str.c_str()).HasParseError())
 		{
@@ -131,14 +98,56 @@ int CRpcJsonParser::getArgs(const std::string str, std::list<std::string> argLis
 
 		d.Parse(str.c_str());
 
-		if (!d.HasMember("param"))
+		if (d.HasMember("status"))
 		{
-			throw std::exception("parameter not exist or parameter format error");
+			status = d["status"].GetString();
+		}
+		else
+		{
+			throw std::exception("response is invalid");
 		}
 
-		if (0 != parseArgs(d["param"], argList, args))
+		if (d.HasMember("callId"))
 		{
-			throw std::exception("parse argument error!");
+			if (rapidjson::kNumberType == d["callId"].GetType())
+			{
+				callId = d["callId"].GetUint64();
+			} 
+			else if (rapidjson::kStringType == d["callId"].GetType())
+			{
+				callId = std::atoll(d["callId"].GetString());
+			} 
+			else
+			{
+				throw std::exception("call id is invalid");
+			}
+		}
+		else
+		{
+			throw std::exception("response is not valid");
+		}
+		
+		if (d.HasMember("statusText"))
+		{
+			statusText = d["statusText"].GetString();
+		}
+		
+		if (d.HasMember("errCode"))
+		{
+			errCode = d["errCode"].GetInt();
+		}
+
+		if (d.HasMember("contents"))
+		{
+			if (!d["contents"].IsObject())
+			{
+				throw std::exception("content is not object");
+			}
+
+			StringBuffer sb;
+			Writer<StringBuffer> writer(sb);
+			d["contents"].Accept(writer); // Accept() traverses the DOM and generates Handler events.
+			content = sb.GetString();
 		}
 	}
 	catch (std::exception& e){
@@ -148,7 +157,7 @@ int CRpcJsonParser::getArgs(const std::string str, std::list<std::string> argLis
 	{
 		ret = -1;
 	}
-	
+
 	return ret;
 }
 
@@ -181,14 +190,7 @@ std::string CRpcJsonParser::buildCall(char* pCallName, uint64_t callId, std::map
 		Writer<StringBuffer> writer(sb);
 		d.Accept(writer); // Accept() traverses the DOM and generates Handler events.
 		jsonStr = sb.GetString();
-		//std::string tmpStr = sb.GetString();
-		//for (auto ich = tmpStr.begin(); ich != tmpStr.end(); ++ich)
-		//{
-		//	if (*ich != '\n' && *ich!=' ')
-		//	{
-		//		jsonStr.push_back(*ich);
-		//	}
-		//}
+		d.RemoveAllMembers();
 	}
 	catch (std::exception& e)
 	{
@@ -242,14 +244,7 @@ std::string CRpcJsonParser::buildResponse(char* pStatus, uint64_t callId, int er
 		Writer<StringBuffer> writer(sb);
 		d.Accept(writer); // Accept() traverses the DOM and generates Handler events.
 		jsonStr = sb.GetString();
-		//std::string tmpStr = sb.GetString();
-		//for (auto ich = tmpStr.begin(); ich != tmpStr.end(); ++ich)
-		//{
-		//	if (*ich != '\n' && *ich != ' ')
-		//	{
-		//		jsonStr.push_back(*ich);
-		//	}
-		//}
+		d.RemoveAllMembers();
 	}
 	catch (std::exception& e)
 	{

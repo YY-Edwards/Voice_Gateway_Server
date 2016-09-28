@@ -19,7 +19,7 @@ public:
 	virtual ~CBaseConnector(){}
 	virtual int start(const char* connStr = NULL) = 0;
 	virtual void stop() = 0;
-	virtual int send(unsigned char* pData, int dataLen) = 0;
+	virtual int send(const char* pData, int dataLen) = 0;
 	virtual int connect(const char* connStr) = 0;
 
 	void setReceiveDataHandler(OnConnectorData* handler){

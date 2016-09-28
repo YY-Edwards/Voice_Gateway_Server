@@ -67,7 +67,7 @@ void CTcpClientConnector::stop()
 	}
 }
 
-int CTcpClientConnector::send(unsigned char* pData, int dataLen)
+int CTcpClientConnector::send(const char* pData, int dataLen)
 {
 	if (ClientNotRunning == m_nClientRunning)
 	{
