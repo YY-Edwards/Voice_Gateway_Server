@@ -359,7 +359,7 @@ void CWLNet::InitControlBuffer(DWORD dwSelfPeerId)
 	temp = temp >> 8;
 	m_ControlProto[1] = (char)(temp & 0x000000FF);
 
-	if (m_dwRecType == IPSC)
+	if (g_recordType == IPSC)
 	{
 		m_ControlProto[5] = IPSC_PEERMODE_DEFAULT;
 		m_ControlProto[6] = IPSC_PEERSERVICES_DEFAULT_4;
@@ -372,7 +372,7 @@ void CWLNet::InitControlBuffer(DWORD dwSelfPeerId)
 		m_ControlProto[12] = IPSC_OLDESTLPVERSION_DEFAULT_2;
 		m_ControlProto[13] = IPSC_OLDESTLPVERSION_DEFAULT_1;
 	}
-	else if (m_dwRecType == CPC)
+	else if (g_recordType == CPC)
 	{
 		m_ControlProto[5] = CPC_PEERMODE_DEFAULT;    // PEERMODE_DEFAULT
 		m_ControlProto[6] = CPC_PEERSERVICES_DEFAULT_4;    // PEER SERVICE
@@ -436,7 +436,6 @@ BOOL CWLNet::StartNet(DWORD dwMasterIp
 	m_dwMyRadioID = dwSelfRadioId;
 	m_TxSlot = dwSelfSlot;
 	m_dwMyRadioGroup = dwSelfGroup;
-	m_dwRecType = recType;
 	//InitControlBuffer(dwSelfPeerId);
 	m_dwMyPeerID = dwSelfPeerId;
 	m_WLStatus = STARTING;
@@ -641,7 +640,7 @@ void CWLNet::Net_RegisterLE(DWORD eventIndex)
 
 		//Build_LE_MASTER_PEER_REGISTRATION_REQUEST();
 		//m_ControlProto[0] = LE_MASTER_PEER_REGISTRATION_REQUEST;
-		if (m_dwRecType == LCP)
+		if (g_recordType == LCP)
 		{
 			//m_SendControlBuffer.len = LE_MASTER_PEER_REGISTRATION_REQUEST_LCP_L;
 			T_LE_PROTOCOL_90_LCP networkData = { 0 };
@@ -660,7 +659,7 @@ void CWLNet::Net_RegisterLE(DWORD eventIndex)
 			T_LE_PROTOCOL_90 networkData = { 0 };
 			networkData.Opcode = LE_MASTER_PEER_REGISTRATION_REQUEST;
 			networkData.peerID = m_dwMyPeerID;
-			if (IPSC == m_dwRecType)
+			if (IPSC == g_recordType)
 			{
 				networkData.currentLinkProtocolVersion = IPSC_CURRENTLPVERSION;
 				networkData.oldestLinkProtocolVersion = IPSC_OLDESTPVERSION;
@@ -845,7 +844,7 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE(DWORD eveintIndex)
 				T_LE_PROTOCOL_91_LCP networkDataLcp = { 0 };
 				T_LE_PROTOCOL_91 networkData = { 0 };
 				/*解包*/
-				if (LCP == m_dwRecType)
+				if (LCP == g_recordType)
 				{
 					networkDataLcp.length = (u_short)m_dwByteRecevied;
 					Unpack_LE_MASTER_PEER_REGISTRATION_RESPONSE(m_CurrentRecvBuffer.buf, networkDataLcp);
@@ -856,14 +855,14 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE(DWORD eveintIndex)
 					Unpack_LE_MASTER_PEER_REGISTRATION_RESPONSE(m_CurrentRecvBuffer.buf, networkData);
 				}
 				/*获取关键数据*/
-				if (LCP == m_dwRecType)
+				if (LCP == g_recordType)
 				{
 					m_ulMasterPeerID = networkDataLcp.peerID;
 					m_ucMasterMode = networkDataLcp.peerMode;
 					m_uMasterServices = networkDataLcp.peerServices;
 					ExpectedPeers = networkDataLcp.numPeers;
 				}
-				else if ((CPC == m_dwRecType || IPSC == m_dwRecType))
+				else if ((CPC == g_recordType || IPSC == g_recordType))
 				{
 					m_ulMasterPeerID = networkData.peerID;
 					m_ucMasterMode = networkData.peerMode;
@@ -904,7 +903,7 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE(DWORD eveintIndex)
 				//Need to get map.
 				else
 				{
-					if (LCP == m_dwRecType)
+					if (LCP == g_recordType)
 					{
 						T_LE_PROTOCOL_92_LCP networkData = { 0 };
 						networkData.acceptedLinkProtocolVersion = LCP_CURRENTLPVERSION;
@@ -982,7 +981,7 @@ void CWLNet::Net_MaintainKeepAlive()
 		m_dwMasterKeepAliveTime = GetTickCount();
 
 		/*主动发送LE_MASTER_KEEP_ALIVE_REQUEST*/
-		if (LCP == m_dwRecType)
+		if (LCP == g_recordType)
 		{
 			T_LE_PROTOCOL_96_LCP networkData = { 0 };
 			networkData.currentLinkProtocolVersion = LCP_CURRENTLPVERSION;
@@ -1000,7 +999,7 @@ void CWLNet::Net_MaintainKeepAlive()
 			T_LE_PROTOCOL_96 networkData = { 0 };
 			networkData.Opcode = LE_MASTER_KEEP_ALIVE_REQUEST;
 			networkData.peerID = m_dwMyPeerID;
-			if (CPC == m_dwRecType)
+			if (CPC == g_recordType)
 			{
 				networkData.currentLinkProtocolVersion = CPC_CURRENTLPVERSION;
 				networkData.oldestLinkProtocolVersion = CPC_OLDESTPVERSION;
@@ -1036,16 +1035,15 @@ void CWLNet::Net_MaintainKeepAlive()
 void CWLNet::Net_MaintainAlive(DWORD eventIndex)
 {
 	int    rc;
-
 	//进行超时检查
-	if (m_dwRecType == CPC || m_dwRecType == LCP)
-	{
-		Process_WL_BURST_CALL(0, true);
-	}
-	else if (m_dwRecType == IPSC)
-	{
-		ProcessCall(0, TRUE);
-	}
+	//if (m_dwRecType == CPC || m_dwRecType == LCP)
+	//{
+	Process_WL_BURST_CALL(WL_BURST_CHECK_TIMEOUT, NULL);
+	//}
+	//else if (m_dwRecType == IPSC)
+	//{
+	//	ProcessCall(0, TRUE);
+	//}
 
 	switch (eventIndex)
 	{
@@ -1094,7 +1092,7 @@ void CWLNet::Net_MaintainAlive(DWORD eventIndex)
 											   T_LE_PROTOCOL_98 networkData = { 0 };
 											   T_LE_PROTOCOL_98_LCP networkDataLcp = { 0 };
 											   CIPSCPeer* peer = NULL;
-											   if (LCP == m_dwRecType)
+											   if (LCP == g_recordType)
 											   {
 												   networkDataLcp.length = (u_short)m_dwByteRecevied;
 												   Unpack_LE_PEER_KEEP_ALIVE_REQUEST(m_CurrentRecvBuffer.buf, networkDataLcp);
@@ -1118,7 +1116,7 @@ void CWLNet::Net_MaintainAlive(DWORD eventIndex)
 												T_LE_PROTOCOL_99 networkData = { 0 };
 												T_LE_PROTOCOL_99_LCP networkDataLcp = { 0 };
 												CIPSCPeer* peer = NULL;
-												if (LCP == m_dwRecType)
+												if (LCP == g_recordType)
 												{
 													networkDataLcp.length = (u_short)m_dwByteRecevied;
 													Unpack_LE_PEER_KEEP_ALIVE_RESPONSE(m_CurrentRecvBuffer.buf, networkDataLcp);
@@ -1277,42 +1275,42 @@ void CWLNet::Net_MaintainAlive(DWORD eventIndex)
 												  break;
 											  case WL_VC_VOICE_START:
 											  {
-																		//Unpack_WL_VC_VOICE_START(m_CurrentRecvBuffer.buf, networkData18);
+																		Unpack_WL_VC_VOICE_START(m_CurrentRecvBuffer.buf, networkData18);
 																		//if (peer)
 																		//{
 																		//	peer->HandlePacket(wirelineOpcode, &networkData18, m_masterAddress, m_masterPort);
 																		//}
-																		Process_WL_BURST_CALL(wirelineOpcode);
+																		Process_WL_BURST_CALL(WL_VC_VOICE_START, &networkData18);
 											  }
 												  break;
 											  case WL_VC_VOICE_END_BURST:
 											  {
-																			//Unpack_WL_VC_VOICE_END_BURST(m_CurrentRecvBuffer.buf, networkData19);
+																			Unpack_WL_VC_VOICE_END_BURST(m_CurrentRecvBuffer.buf, networkData19);
 																			//if (peer)
 																			//{
 																			//	peer->HandlePacket(wirelineOpcode, &networkData19, m_masterAddress, m_masterPort);
 																			//}
-																			Process_WL_BURST_CALL(wirelineOpcode);
+																			Process_WL_BURST_CALL(WL_VC_VOICE_END_BURST, &networkData19);
 											  }
 												  break;
 											  case WL_VC_CALL_SESSION_STATUS:
 											  {
 																				Unpack_WL_VC_CALL_SESSION_STATUS(m_CurrentRecvBuffer.buf, networkData20);
-																				if (peer)
-																				{
-																					peer->HandlePacket(WL_VC_CALL_SESSION_STATUS_REMOTE, &networkData20, m_masterAddress, m_masterPort);
-																				}
-																				Process_WL_BURST_CALL(wirelineOpcode);
+																				//if (peer)
+																				//{
+																				//	peer->HandlePacket(WL_VC_CALL_SESSION_STATUS_REMOTE, &networkData20, m_masterAddress, m_masterPort);
+																				//}
+																				Process_WL_BURST_CALL(WL_VC_CALL_SESSION_STATUS, &networkData20);
 											  }
 												  break;
 											  case WL_VC_VOICE_BURST:
 											  {
-																		//Unpack_WL_VC_VOICE_BURST(m_CurrentRecvBuffer.buf, networkData21);
+																		Unpack_WL_VC_VOICE_BURST(m_CurrentRecvBuffer.buf, networkData21);
 																		//if (peer)
 																		//{
 																		//	peer->HandlePacket(wirelineOpcode, &networkData21, m_masterAddress, m_masterPort);
 																		//}
-																		Process_WL_BURST_CALL(wirelineOpcode);
+																		Process_WL_BURST_CALL(WL_VC_VOICE_BURST, &networkData21);
 											  }
 												  break;
 											  default:
@@ -1326,7 +1324,7 @@ void CWLNet::Net_MaintainAlive(DWORD eventIndex)
 												  /*解包*/
 												  T_LE_PROTOCOL_93 networkData = { 0 };
 												  T_LE_PROTOCOL_93_LCP networkDataLcp = { 0 };
-												  if (LCP == m_dwRecType)
+												  if (LCP == g_recordType)
 												  {
 													  networkDataLcp.length = (u_short)m_RecvMap;
 													  Unpack_LE_NOTIFICATION_MAP_BROADCAST(m_CurrentRecvBuffer.buf, networkDataLcp);
@@ -1470,7 +1468,7 @@ void CWLNet::Net_WAITFOR_LE_NOTIFICATION_MAP_BROADCAST(DWORD eventIndex)
 				/*解包*/
 				T_LE_PROTOCOL_93 networkData = { 0 };
 				T_LE_PROTOCOL_93_LCP networkDataLcp = { 0 };
-				if (LCP == m_dwRecType)
+				if (LCP == g_recordType)
 				{
 					networkDataLcp.length = (u_short)m_RecvMap;
 					Unpack_LE_NOTIFICATION_MAP_BROADCAST(m_CurrentRecvBuffer.buf, networkDataLcp);
@@ -1663,7 +1661,7 @@ void CWLNet::Net_WAITFOR_LE_NOTIFICATION_MAP_BROADCAST(DWORD eventIndex)
 //}
 void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 {
-	if (LCP == m_dwRecType)
+	if (LCP == g_recordType)
 	{
 		int mapNums = pLcp->mapNums;
 		m_PeerCount = mapNums;
@@ -1934,235 +1932,433 @@ void CWLNet::ProcessCall(DWORD dwCallType, BOOL isTimeCheckout)
 	}
 }
 
-void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, bool isCheckTimeOut)
+//void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, bool isCheckTimeOut)
+//{
+//
+//	//如果当前dongle未打开
+//	if (!g_dongle_open)
+//	{
+//		return;
+//	}
+//
+//	int nCallId, nPeerId, nSrcId, nTgtId;
+//	char callType = m_CurrentRecvBuffer.buf[11];
+//
+//	int id, src, tgt, callid;
+//
+//	memcpy(&id, &m_CurrentRecvBuffer.buf[1], 4);
+//	memcpy(&src, &m_CurrentRecvBuffer.buf[12], 4);
+//	memcpy(&tgt, &m_CurrentRecvBuffer.buf[16], 4);
+//	memcpy(&callid, &m_CurrentRecvBuffer.buf[7], 4);
+//
+//	nPeerId = ntohl(id);
+//	nSrcId = ntohl(src);
+//	nTgtId = ntohl(tgt);
+//	nCallId = ntohl(callid);
+//
+//
+//	if (!isTargetMeCall(nTgtId))
+//	{
+//		return;
+//	}
+//
+//	if (WL_VC_VOICE_START == wirelineOpCode)
+//	{
+//		CRecordFile* rFile = new CRecordFile();
+//		rFile->originalPeerId = nPeerId;
+//		rFile->srcId = nSrcId;
+//		rFile->tagetId = nTgtId;
+//		rFile->sequenceNumber = nCallId;
+//		rFile->callType = callType;
+//		rFile->prevTimestamp = GetTickCount();
+//
+//		requireVoiceReocrdsLock();
+//		m_voiceReocrds.push_back(rFile);
+//		releaseVoiceReocrdsLock();
+//
+//		//g_dongle->m_bPrepareDecode = TRUE;
+//		//TRACE(_T("Voice start\r\n"));
+//		sprintf_s(m_reportMsg, "Voice start");
+//		sendLogToWindow();
+//
+//		//转换dongle模式
+//		if (!g_pDongle->changeAMBEToPCM())
+//		{
+//			//转换失败
+//		}
+//		else
+//		{
+//			//转换成功
+//		}
+//	}
+//	else if (
+//		WL_VC_VOICE_END_BURST == wirelineOpCode
+//		|| WL_VC_CALL_SESSION_STATUS == wirelineOpCode
+//		|| isCheckTimeOut
+//		//|| isTimeout
+//		)
+//	{
+//		//TRACE(_T("Voice end\r\n"));
+//		for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+//		{
+//			if ((*i)->srcId == nSrcId &&
+//				(*i)->tagetId == nTgtId &&
+//				(*i)->sequenceNumber == nCallId &&
+//				!isCheckTimeOut)
+//			{
+//				//m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, 1);
+//				//sprintf_s(m_reportMsg, "dwSize:%d,srcId:%d,tgtId:%d,type:%d,rectype:%d", (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, 1);
+//				//sendLogToWindow();
+//
+//				requireVoiceReocrdsLock();
+//				delete (*i);
+//				m_voiceReocrds.erase(i);
+//				releaseVoiceReocrdsLock();
+//
+//				sprintf_s(m_reportMsg, "Voice end");
+//				sendLogToWindow();
+//
+//				return;
+//			}
+//
+//			if (isCheckTimeOut)
+//			{
+//				//add timeout deal
+//				DWORD cur = GetTickCount();
+//				DWORD prev = (*i)->prevTimestamp;
+//				DWORD rlt = cur - prev;
+//				if (rlt > VOICE_END_TIMEOUT)
+//				{
+//					//m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, 1);
+//					//sprintf_s(m_reportMsg, "dwSize:%d,srcId:%d,tgtId:%d,type:%d,rectype:%d", (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, 1);
+//					//sendLogToWindow();
+//
+//					requireVoiceReocrdsLock();
+//					delete (*i);
+//					m_voiceReocrds.erase(i);
+//					releaseVoiceReocrdsLock();
+//
+//					sprintf_s(m_reportMsg, "Voice end");
+//					sendLogToWindow();
+//
+//					return;
+//				}
+//			}
+//
+//		}
+//	}
+//	else if (WL_VC_VOICE_BURST == wirelineOpCode)
+//	{
+//		char voiceFrame[7];
+//
+//		unsigned char flagRecord = 0x00;//初始化flag
+//		unsigned char haveRecord = 0x01;//存在记录
+//		unsigned char haveNotRecord = 0x02;//不存在记录
+//
+//		for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+//		{
+//			if ((*i)->srcId == nSrcId &&
+//				(*i)->tagetId == nTgtId &&
+//				(*i)->sequenceNumber == nCallId)
+//			{
+//				flagRecord = 0x01;
+//
+//				voiceFrame[0] = (m_CurrentRecvBuffer.buf)[45];
+//				voiceFrame[1] = (m_CurrentRecvBuffer.buf)[46];
+//				voiceFrame[2] = (m_CurrentRecvBuffer.buf)[47];
+//				voiceFrame[3] = (m_CurrentRecvBuffer.buf)[48];
+//				voiceFrame[4] = (m_CurrentRecvBuffer.buf)[49];
+//				voiceFrame[5] = (m_CurrentRecvBuffer.buf)[50];
+//				voiceFrame[6] = ((m_CurrentRecvBuffer.buf)[51]) & 0x80;
+//
+//				//AMBE2FrameToAMBE3000Frame(voiceFrame);
+//
+//				(*i)->WriteVoiceFrame(voiceFrame);
+//
+//				//TRACE("Bad voice frame? %s\r\n", (((m_CurrentRecvBuffer.buf)[39]) & 0x40) > 0 ? _T("Yes") : _T("No"));
+//
+//
+//				voiceFrame[0] = (((m_CurrentRecvBuffer.buf)[51]) << 2) | ((((m_CurrentRecvBuffer.buf)[52]) >> 6) & 0x03);
+//				voiceFrame[1] = (((m_CurrentRecvBuffer.buf)[52]) << 2) | ((((m_CurrentRecvBuffer.buf)[53]) >> 6) & 0x03);
+//				voiceFrame[2] = (((m_CurrentRecvBuffer.buf)[53]) << 2) | ((((m_CurrentRecvBuffer.buf)[54]) >> 6) & 0x03);
+//				voiceFrame[3] = (((m_CurrentRecvBuffer.buf)[54]) << 2) | ((((m_CurrentRecvBuffer.buf)[55]) >> 6) & 0x03);
+//				voiceFrame[4] = (((m_CurrentRecvBuffer.buf)[55]) << 2) | ((((m_CurrentRecvBuffer.buf)[56]) >> 6) & 0x03);
+//				voiceFrame[5] = (((m_CurrentRecvBuffer.buf)[56]) << 2) | ((((m_CurrentRecvBuffer.buf)[57]) >> 6) & 0x03);
+//				voiceFrame[6] = (((m_CurrentRecvBuffer.buf)[57]) << 2) & 0x80;
+//				//TRACE("Bad voice frame? %s\r\n", ((((m_CurrentRecvBuffer.buf)[45]) << 2) & 0x40) > 0 ? _T("Yes") : _T("No"));
+//
+//				//				AMBE2FrameToAMBE3000Frame(voiceFrame);
+//				(*i)->WriteVoiceFrame(voiceFrame);
+//
+//				voiceFrame[0] = (((m_CurrentRecvBuffer.buf)[57]) << 4) | ((((m_CurrentRecvBuffer.buf)[58]) >> 4) & 0x0F);
+//				voiceFrame[1] = (((m_CurrentRecvBuffer.buf)[58]) << 4) | ((((m_CurrentRecvBuffer.buf)[59]) >> 4) & 0x0F);
+//				voiceFrame[2] = (((m_CurrentRecvBuffer.buf)[59]) << 4) | ((((m_CurrentRecvBuffer.buf)[60]) >> 4) & 0x0F);
+//				voiceFrame[3] = (((m_CurrentRecvBuffer.buf)[60]) << 4) | ((((m_CurrentRecvBuffer.buf)[61]) >> 4) & 0x0F);
+//				voiceFrame[4] = (((m_CurrentRecvBuffer.buf)[61]) << 4) | ((((m_CurrentRecvBuffer.buf)[62]) >> 4) & 0x0F);
+//				voiceFrame[5] = (((m_CurrentRecvBuffer.buf)[62]) << 4) | ((((m_CurrentRecvBuffer.buf)[63]) >> 4) & 0x0F);
+//				voiceFrame[6] = (((m_CurrentRecvBuffer.buf)[63]) << 4) & 0x80;
+//				//TRACE("Bad voice frame? %s\r\n", ((((m_CurrentRecvBuffer.buf)[51]) << 4) & 0x40) > 0 ? _T("Yes") : _T("No"));
+//				//				AMBE2FrameToAMBE3000Frame(voiceFrame);
+//				(*i)->WriteVoiceFrame(voiceFrame);
+//				break;
+//			}
+//			else
+//			{
+//				flagRecord = 0x02;
+//			}
+//		}
+//
+//		if (flagRecord & haveNotRecord)
+//		{
+//			CRecordFile* rFile = new CRecordFile();
+//			rFile->originalPeerId = nPeerId;
+//			rFile->srcId = nSrcId;
+//			rFile->tagetId = nTgtId;
+//			rFile->sequenceNumber = nCallId;
+//			rFile->callType = callType;
+//			rFile->prevTimestamp = GetTickCount();
+//
+//			requireVoiceReocrdsLock();
+//			m_voiceReocrds.push_back(rFile);
+//			releaseVoiceReocrdsLock();
+//
+//
+//			voiceFrame[0] = (m_CurrentRecvBuffer.buf)[45];
+//			voiceFrame[1] = (m_CurrentRecvBuffer.buf)[46];
+//			voiceFrame[2] = (m_CurrentRecvBuffer.buf)[47];
+//			voiceFrame[3] = (m_CurrentRecvBuffer.buf)[48];
+//			voiceFrame[4] = (m_CurrentRecvBuffer.buf)[49];
+//			voiceFrame[5] = (m_CurrentRecvBuffer.buf)[50];
+//			voiceFrame[6] = ((m_CurrentRecvBuffer.buf)[51]) & 0x80;
+//
+//			//			AMBE2FrameToAMBE3000Frame(voiceFrame);
+//
+//			rFile->WriteVoiceFrame(voiceFrame);
+//
+//			//TRACE("Bad voice frame? %s\r\n", (((m_CurrentRecvBuffer.buf)[39]) & 0x40) > 0 ? _T("Yes") : _T("No"));
+//
+//
+//			voiceFrame[0] = (((m_CurrentRecvBuffer.buf)[51]) << 2) | ((((m_CurrentRecvBuffer.buf)[52]) >> 6) & 0x03);
+//			voiceFrame[1] = (((m_CurrentRecvBuffer.buf)[52]) << 2) | ((((m_CurrentRecvBuffer.buf)[53]) >> 6) & 0x03);
+//			voiceFrame[2] = (((m_CurrentRecvBuffer.buf)[53]) << 2) | ((((m_CurrentRecvBuffer.buf)[54]) >> 6) & 0x03);
+//			voiceFrame[3] = (((m_CurrentRecvBuffer.buf)[54]) << 2) | ((((m_CurrentRecvBuffer.buf)[55]) >> 6) & 0x03);
+//			voiceFrame[4] = (((m_CurrentRecvBuffer.buf)[55]) << 2) | ((((m_CurrentRecvBuffer.buf)[56]) >> 6) & 0x03);
+//			voiceFrame[5] = (((m_CurrentRecvBuffer.buf)[56]) << 2) | ((((m_CurrentRecvBuffer.buf)[57]) >> 6) & 0x03);
+//			voiceFrame[6] = (((m_CurrentRecvBuffer.buf)[57]) << 2) & 0x80;
+//			//TRACE("Bad voice frame? %s\r\n", ((((m_CurrentRecvBuffer.buf)[45]) << 2) & 0x40) > 0 ? _T("Yes") : _T("No"));
+//
+//			//			AMBE2FrameToAMBE3000Frame(voiceFrame);
+//			rFile->WriteVoiceFrame(voiceFrame);
+//
+//			voiceFrame[0] = (((m_CurrentRecvBuffer.buf)[57]) << 4) | ((((m_CurrentRecvBuffer.buf)[58]) >> 4) & 0x0F);
+//			voiceFrame[1] = (((m_CurrentRecvBuffer.buf)[58]) << 4) | ((((m_CurrentRecvBuffer.buf)[59]) >> 4) & 0x0F);
+//			voiceFrame[2] = (((m_CurrentRecvBuffer.buf)[59]) << 4) | ((((m_CurrentRecvBuffer.buf)[60]) >> 4) & 0x0F);
+//			voiceFrame[3] = (((m_CurrentRecvBuffer.buf)[60]) << 4) | ((((m_CurrentRecvBuffer.buf)[61]) >> 4) & 0x0F);
+//			voiceFrame[4] = (((m_CurrentRecvBuffer.buf)[61]) << 4) | ((((m_CurrentRecvBuffer.buf)[62]) >> 4) & 0x0F);
+//			voiceFrame[5] = (((m_CurrentRecvBuffer.buf)[62]) << 4) | ((((m_CurrentRecvBuffer.buf)[63]) >> 4) & 0x0F);
+//			voiceFrame[6] = (((m_CurrentRecvBuffer.buf)[63]) << 4) & 0x80;
+//			//TRACE("Bad voice frame? %s\r\n", ((((m_CurrentRecvBuffer.buf)[51]) << 4) & 0x40) > 0 ? _T("Yes") : _T("No"));
+//			//			AMBE2FrameToAMBE3000Frame(voiceFrame);
+//			rFile->WriteVoiceFrame(voiceFrame);
+//		}
+//	}
+//}
+
+void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 {
-
-	//如果当前dongle未打开
-	if (!g_dongle_open)
+	DWORD callId, srcId, tgtId;
+	switch (wirelineOpCode)
 	{
-		return;
+		/*check is lost terminal*/
+	case WL_BURST_CHECK_TIMEOUT:
+	{
+								   /*获取当前时间戳*/
+								   DWORD currentTimestamp = GetTickCount();
+								   /*结束超时的语音*/
+								   for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+								   {
+									   CRecordFile *p = (CRecordFile*)(*i);
+									   long diffTimestamp = currentTimestamp - p->prevTimestamp;
+									   if (diffTimestamp > VOICE_END_TIMEOUT)
+									   {
+										   requireVoiceReocrdsLock();
+										   delete p;
+										   m_voiceReocrds.erase(i);
+										   releaseVoiceReocrdsLock();
+										   sprintf_s(m_reportMsg, "call %lu timeout,then end %ld", p->callId, diffTimestamp);
+										   sendLogToWindow();
+										   break;
+									   }
+								   }
 	}
-
-	int nCallId, nPeerId, nSrcId, nTgtId;
-	char callType = m_CurrentRecvBuffer.buf[11];
-
-	int id, src, tgt, callid;
-
-	memcpy(&id, &m_CurrentRecvBuffer.buf[1], 4);
-	memcpy(&src, &m_CurrentRecvBuffer.buf[12], 4);
-	memcpy(&tgt, &m_CurrentRecvBuffer.buf[16], 4);
-	memcpy(&callid, &m_CurrentRecvBuffer.buf[7], 4);
-
-	nPeerId = ntohl(id);
-	nSrcId = ntohl(src);
-	nTgtId = ntohl(tgt);
-	nCallId = ntohl(callid);
-
-
-	if (!isTargetMeCall(nTgtId))
+		break;
+		/*recive a voice statrt of a call*/
+	case WL_VC_VOICE_START:
 	{
-		return;
+							  g_pDongle->changeAMBEToPCM();
+
+							  T_WL_PROTOCOL_18 *p = (T_WL_PROTOCOL_18*)pNetWork;
+							  /*建立语音记录*/
+							  CRecordFile* rFile = new CRecordFile();
+							  rFile->originalPeerId = p->peerID;
+							  rFile->srcId = p->sourceID;
+							  rFile->tagetId = p->targetID;
+							  rFile->callId = p->callID;
+							  rFile->callType = p->callType;
+							  rFile->prevTimestamp = GetTickCount();
+
+							  requireVoiceReocrdsLock();
+							  m_voiceReocrds.push_back(rFile);
+							  releaseVoiceReocrdsLock();
+
+							  sprintf_s(m_reportMsg, "Voice start");
+							  sendLogToWindow();
 	}
-
-	if (WL_VC_VOICE_START == wirelineOpCode)
+		break;
+		/*recive a voice end of a call*/
+	case WL_VC_VOICE_END_BURST:
 	{
-		CRecordFile* rFile = new CRecordFile();
-		rFile->originalPeerId = nPeerId;
-		rFile->srcId = nSrcId;
-		rFile->tagetId = nTgtId;
-		rFile->sequenceNumber = nCallId;
-		rFile->callType = callType;
-		rFile->prevTimestamp = GetTickCount();
-
-		requireVoiceReocrdsLock();
-		m_voiceReocrds.push_back(rFile);
-		releaseVoiceReocrdsLock();
-
-		//g_dongle->m_bPrepareDecode = TRUE;
-		//TRACE(_T("Voice start\r\n"));
-		sprintf_s(m_reportMsg, "Voice start");
-		sendLogToWindow();
-
-		//转换dongle模式
-		if (!g_pDongle->changeAMBEToPCM())
-		{
-			//转换失败
-		}
-		else
-		{
-			//转换成功
-		}
+								  T_WL_PROTOCOL_19 *p = (T_WL_PROTOCOL_19*)pNetWork;
+								  callId = p->callID;
+								  srcId = p->sourceID;
+								  tgtId = p->targetID;
+								  /*结束本次语音*/
+								  for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+								  {
+									  if ((*i)->srcId == srcId &&
+										  (*i)->tagetId == tgtId &&
+										  (*i)->callId == callId)
+									  {
+										  requireVoiceReocrdsLock();
+										  delete (*i);
+										  m_voiceReocrds.erase(i);
+										  releaseVoiceReocrdsLock();
+										  sprintf_s(m_reportMsg, "Voice end");
+										  sendLogToWindow();
+										  break;
+									  }
+								  }
 	}
-	else if (
-		WL_VC_VOICE_END_BURST == wirelineOpCode
-		|| WL_VC_CALL_SESSION_STATUS == wirelineOpCode
-		|| isCheckTimeOut
-		//|| isTimeout
-		)
+		break;
+		/*recive a voice data of a call*/
+	case WL_VC_VOICE_BURST:
 	{
-		//TRACE(_T("Voice end\r\n"));
-		for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
-		{
-			if ((*i)->srcId == nSrcId &&
-				(*i)->tagetId == nTgtId &&
-				(*i)->sequenceNumber == nCallId &&
-				!isCheckTimeOut)
-			{
-				//m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, 1);
-				//sprintf_s(m_reportMsg, "dwSize:%d,srcId:%d,tgtId:%d,type:%d,rectype:%d", (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, 1);
-				//sendLogToWindow();
+							  char voiceFrame1[7] = { 0 };
+							  char voiceFrame2[7] = { 0 };
+							  char voiceFrame3[7] = { 0 };
+							  T_WL_PROTOCOL_21 *p = (T_WL_PROTOCOL_21*)pNetWork;
+							  callId = p->callID;
+							  srcId = p->sourceID;
+							  tgtId = p->targetID;
+							  bool ishaveRecord = false;
+							  char* pAmbePacket = &(p->AMBEVoiceEncodedFrames.data[0]);
 
-				requireVoiceReocrdsLock();
-				delete (*i);
-				m_voiceReocrds.erase(i);
-				releaseVoiceReocrdsLock();
+							  voiceFrame1[0] = pAmbePacket[1];
+							  voiceFrame1[1] = pAmbePacket[2];
+							  voiceFrame1[2] = pAmbePacket[3];
+							  voiceFrame1[3] = pAmbePacket[4];
+							  voiceFrame1[4] = pAmbePacket[5];
+							  voiceFrame1[5] = pAmbePacket[6];
+							  voiceFrame1[6] = (pAmbePacket[7]) & 0x80;
 
-				sprintf_s(m_reportMsg, "Voice end");
-				sendLogToWindow();
+							  voiceFrame2[0] = ((pAmbePacket[7]) << 2) | (((pAmbePacket[8]) >> 6) & 0x03);
+							  voiceFrame2[1] = ((pAmbePacket[8]) << 2) | (((pAmbePacket[9]) >> 6) & 0x03);
+							  voiceFrame2[2] = ((pAmbePacket[9]) << 2) | (((pAmbePacket[10]) >> 6) & 0x03);
+							  voiceFrame2[3] = ((pAmbePacket[10]) << 2) | (((pAmbePacket[11]) >> 6) & 0x03);
+							  voiceFrame2[4] = ((pAmbePacket[11]) << 2) | (((pAmbePacket[12]) >> 6) & 0x03);
+							  voiceFrame2[5] = ((pAmbePacket[12]) << 2) | (((pAmbePacket[13]) >> 6) & 0x03);
+							  voiceFrame2[6] = ((pAmbePacket[13]) << 2) & 0x80;
 
-				return;
-			}
+							  voiceFrame3[0] = ((pAmbePacket[13]) << 4) | (((pAmbePacket[14]) >> 4) & 0x0F);
+							  voiceFrame3[1] = ((pAmbePacket[14]) << 4) | (((pAmbePacket[15]) >> 4) & 0x0F);
+							  voiceFrame3[2] = ((pAmbePacket[15]) << 4) | (((pAmbePacket[16]) >> 4) & 0x0F);
+							  voiceFrame3[3] = ((pAmbePacket[16]) << 4) | (((pAmbePacket[17]) >> 4) & 0x0F);
+							  voiceFrame3[4] = ((pAmbePacket[17]) << 4) | (((pAmbePacket[18]) >> 4) & 0x0F);
+							  voiceFrame3[5] = ((pAmbePacket[18]) << 4) | (((pAmbePacket[19]) >> 4) & 0x0F);
+							  voiceFrame3[6] = ((pAmbePacket[19]) << 4) & 0x80;
 
-			if (isCheckTimeOut)
-			{
-				//add timeout deal
-				DWORD cur = GetTickCount();
-				DWORD prev = (*i)->prevTimestamp;
-				DWORD rlt = cur - prev;
-				if (rlt > VOICE_END_TIMEOUT)
-				{
-					//m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, 1);
-					//sprintf_s(m_reportMsg, "dwSize:%d,srcId:%d,tgtId:%d,type:%d,rectype:%d", (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, 1);
-					//sendLogToWindow();
+							  for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+							  {
+								  /*存在则记录语音*/
+								  if ((*i)->srcId == srcId &&
+									  (*i)->tagetId == tgtId &&
+									  (*i)->callId == callId)
+								  {
+									  ishaveRecord = true;
+									  (*i)->WriteVoiceFrame(voiceFrame1);
+									  (*i)->WriteVoiceFrame(voiceFrame2);
+									  (*i)->WriteVoiceFrame(voiceFrame3);
+									  break;
+								  }
+							  }
+							  if (!ishaveRecord)
+							  {
+								  CRecordFile* rFile = new CRecordFile();
+								  rFile->originalPeerId = p->peerID;
+								  rFile->srcId = p->sourceID;
+								  rFile->tagetId = p->targetID;
+								  rFile->callId = p->callID;
+								  rFile->callType = p->callType;
+								  rFile->prevTimestamp = GetTickCount();
 
-					requireVoiceReocrdsLock();
-					delete (*i);
-					m_voiceReocrds.erase(i);
-					releaseVoiceReocrdsLock();
+								  rFile->WriteVoiceFrame(voiceFrame1);
+								  rFile->WriteVoiceFrame(voiceFrame2);
+								  rFile->WriteVoiceFrame(voiceFrame3);
 
-					sprintf_s(m_reportMsg, "Voice end");
-					sendLogToWindow();
+								  requireVoiceReocrdsLock();
+								  m_voiceReocrds.push_back(rFile);
+								  releaseVoiceReocrdsLock();
 
-					return;
-				}
-			}
-
-		}
+								  sprintf_s(m_reportMsg, "lost header Voice start");
+								  sendLogToWindow();
+							  }
 	}
-	else if (WL_VC_VOICE_BURST == wirelineOpCode)
+		break;
+		/*recive a call hang up or end*/
+	case WL_VC_CALL_SESSION_STATUS:
 	{
-		char voiceFrame[7];
-
-		unsigned char flagRecord = 0x00;//初始化flag
-		unsigned char haveRecord = 0x01;//存在记录
-		unsigned char haveNotRecord = 0x02;//不存在记录
-
-		for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
-		{
-			if ((*i)->srcId == nSrcId &&
-				(*i)->tagetId == nTgtId &&
-				(*i)->sequenceNumber == nCallId)
-			{
-				flagRecord = 0x01;
-
-				voiceFrame[0] = (m_CurrentRecvBuffer.buf)[45];
-				voiceFrame[1] = (m_CurrentRecvBuffer.buf)[46];
-				voiceFrame[2] = (m_CurrentRecvBuffer.buf)[47];
-				voiceFrame[3] = (m_CurrentRecvBuffer.buf)[48];
-				voiceFrame[4] = (m_CurrentRecvBuffer.buf)[49];
-				voiceFrame[5] = (m_CurrentRecvBuffer.buf)[50];
-				voiceFrame[6] = ((m_CurrentRecvBuffer.buf)[51]) & 0x80;
-
-				//AMBE2FrameToAMBE3000Frame(voiceFrame);
-
-				(*i)->WriteVoiceFrame(voiceFrame);
-
-				//TRACE("Bad voice frame? %s\r\n", (((m_CurrentRecvBuffer.buf)[39]) & 0x40) > 0 ? _T("Yes") : _T("No"));
-
-
-				voiceFrame[0] = (((m_CurrentRecvBuffer.buf)[51]) << 2) | ((((m_CurrentRecvBuffer.buf)[52]) >> 6) & 0x03);
-				voiceFrame[1] = (((m_CurrentRecvBuffer.buf)[52]) << 2) | ((((m_CurrentRecvBuffer.buf)[53]) >> 6) & 0x03);
-				voiceFrame[2] = (((m_CurrentRecvBuffer.buf)[53]) << 2) | ((((m_CurrentRecvBuffer.buf)[54]) >> 6) & 0x03);
-				voiceFrame[3] = (((m_CurrentRecvBuffer.buf)[54]) << 2) | ((((m_CurrentRecvBuffer.buf)[55]) >> 6) & 0x03);
-				voiceFrame[4] = (((m_CurrentRecvBuffer.buf)[55]) << 2) | ((((m_CurrentRecvBuffer.buf)[56]) >> 6) & 0x03);
-				voiceFrame[5] = (((m_CurrentRecvBuffer.buf)[56]) << 2) | ((((m_CurrentRecvBuffer.buf)[57]) >> 6) & 0x03);
-				voiceFrame[6] = (((m_CurrentRecvBuffer.buf)[57]) << 2) & 0x80;
-				//TRACE("Bad voice frame? %s\r\n", ((((m_CurrentRecvBuffer.buf)[45]) << 2) & 0x40) > 0 ? _T("Yes") : _T("No"));
-
-				//				AMBE2FrameToAMBE3000Frame(voiceFrame);
-				(*i)->WriteVoiceFrame(voiceFrame);
-
-				voiceFrame[0] = (((m_CurrentRecvBuffer.buf)[57]) << 4) | ((((m_CurrentRecvBuffer.buf)[58]) >> 4) & 0x0F);
-				voiceFrame[1] = (((m_CurrentRecvBuffer.buf)[58]) << 4) | ((((m_CurrentRecvBuffer.buf)[59]) >> 4) & 0x0F);
-				voiceFrame[2] = (((m_CurrentRecvBuffer.buf)[59]) << 4) | ((((m_CurrentRecvBuffer.buf)[60]) >> 4) & 0x0F);
-				voiceFrame[3] = (((m_CurrentRecvBuffer.buf)[60]) << 4) | ((((m_CurrentRecvBuffer.buf)[61]) >> 4) & 0x0F);
-				voiceFrame[4] = (((m_CurrentRecvBuffer.buf)[61]) << 4) | ((((m_CurrentRecvBuffer.buf)[62]) >> 4) & 0x0F);
-				voiceFrame[5] = (((m_CurrentRecvBuffer.buf)[62]) << 4) | ((((m_CurrentRecvBuffer.buf)[63]) >> 4) & 0x0F);
-				voiceFrame[6] = (((m_CurrentRecvBuffer.buf)[63]) << 4) & 0x80;
-				//TRACE("Bad voice frame? %s\r\n", ((((m_CurrentRecvBuffer.buf)[51]) << 4) & 0x40) > 0 ? _T("Yes") : _T("No"));
-				//				AMBE2FrameToAMBE3000Frame(voiceFrame);
-				(*i)->WriteVoiceFrame(voiceFrame);
-				break;
-			}
-			else
-			{
-				flagRecord = 0x02;
-			}
-		}
-
-		if (flagRecord & haveNotRecord)
-		{
-			CRecordFile* rFile = new CRecordFile();
-			rFile->originalPeerId = nPeerId;
-			rFile->srcId = nSrcId;
-			rFile->tagetId = nTgtId;
-			rFile->sequenceNumber = nCallId;
-			rFile->callType = callType;
-			rFile->prevTimestamp = GetTickCount();
-
-			requireVoiceReocrdsLock();
-			m_voiceReocrds.push_back(rFile);
-			releaseVoiceReocrdsLock();
-
-
-			voiceFrame[0] = (m_CurrentRecvBuffer.buf)[45];
-			voiceFrame[1] = (m_CurrentRecvBuffer.buf)[46];
-			voiceFrame[2] = (m_CurrentRecvBuffer.buf)[47];
-			voiceFrame[3] = (m_CurrentRecvBuffer.buf)[48];
-			voiceFrame[4] = (m_CurrentRecvBuffer.buf)[49];
-			voiceFrame[5] = (m_CurrentRecvBuffer.buf)[50];
-			voiceFrame[6] = ((m_CurrentRecvBuffer.buf)[51]) & 0x80;
-
-			//			AMBE2FrameToAMBE3000Frame(voiceFrame);
-
-			rFile->WriteVoiceFrame(voiceFrame);
-
-			//TRACE("Bad voice frame? %s\r\n", (((m_CurrentRecvBuffer.buf)[39]) & 0x40) > 0 ? _T("Yes") : _T("No"));
-
-
-			voiceFrame[0] = (((m_CurrentRecvBuffer.buf)[51]) << 2) | ((((m_CurrentRecvBuffer.buf)[52]) >> 6) & 0x03);
-			voiceFrame[1] = (((m_CurrentRecvBuffer.buf)[52]) << 2) | ((((m_CurrentRecvBuffer.buf)[53]) >> 6) & 0x03);
-			voiceFrame[2] = (((m_CurrentRecvBuffer.buf)[53]) << 2) | ((((m_CurrentRecvBuffer.buf)[54]) >> 6) & 0x03);
-			voiceFrame[3] = (((m_CurrentRecvBuffer.buf)[54]) << 2) | ((((m_CurrentRecvBuffer.buf)[55]) >> 6) & 0x03);
-			voiceFrame[4] = (((m_CurrentRecvBuffer.buf)[55]) << 2) | ((((m_CurrentRecvBuffer.buf)[56]) >> 6) & 0x03);
-			voiceFrame[5] = (((m_CurrentRecvBuffer.buf)[56]) << 2) | ((((m_CurrentRecvBuffer.buf)[57]) >> 6) & 0x03);
-			voiceFrame[6] = (((m_CurrentRecvBuffer.buf)[57]) << 2) & 0x80;
-			//TRACE("Bad voice frame? %s\r\n", ((((m_CurrentRecvBuffer.buf)[45]) << 2) & 0x40) > 0 ? _T("Yes") : _T("No"));
-
-			//			AMBE2FrameToAMBE3000Frame(voiceFrame);
-			rFile->WriteVoiceFrame(voiceFrame);
-
-			voiceFrame[0] = (((m_CurrentRecvBuffer.buf)[57]) << 4) | ((((m_CurrentRecvBuffer.buf)[58]) >> 4) & 0x0F);
-			voiceFrame[1] = (((m_CurrentRecvBuffer.buf)[58]) << 4) | ((((m_CurrentRecvBuffer.buf)[59]) >> 4) & 0x0F);
-			voiceFrame[2] = (((m_CurrentRecvBuffer.buf)[59]) << 4) | ((((m_CurrentRecvBuffer.buf)[60]) >> 4) & 0x0F);
-			voiceFrame[3] = (((m_CurrentRecvBuffer.buf)[60]) << 4) | ((((m_CurrentRecvBuffer.buf)[61]) >> 4) & 0x0F);
-			voiceFrame[4] = (((m_CurrentRecvBuffer.buf)[61]) << 4) | ((((m_CurrentRecvBuffer.buf)[62]) >> 4) & 0x0F);
-			voiceFrame[5] = (((m_CurrentRecvBuffer.buf)[62]) << 4) | ((((m_CurrentRecvBuffer.buf)[63]) >> 4) & 0x0F);
-			voiceFrame[6] = (((m_CurrentRecvBuffer.buf)[63]) << 4) & 0x80;
-			//TRACE("Bad voice frame? %s\r\n", ((((m_CurrentRecvBuffer.buf)[51]) << 4) & 0x40) > 0 ? _T("Yes") : _T("No"));
-			//			AMBE2FrameToAMBE3000Frame(voiceFrame);
-			rFile->WriteVoiceFrame(voiceFrame);
-		}
+									  T_WL_PROTOCOL_20* p = (T_WL_PROTOCOL_20*)pNetWork;
+									  callId = p->callID;
+									  srcId = p->sourceID;
+									  tgtId = p->targetID;
+									  /*结束本次语音*/
+									  for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+									  {
+										  if ((*i)->srcId == callId &&
+											  (*i)->tagetId == tgtId &&
+											  (*i)->callId == callId)
+										  {
+											  requireVoiceReocrdsLock();
+											  delete (*i);
+											  m_voiceReocrds.erase(i);
+											  releaseVoiceReocrdsLock();
+											  sprintf_s(m_reportMsg, "Voice end");
+											  sendLogToWindow();
+											  break;
+										  }
+									  }
+									  switch (p->callSessionStatus)
+									  {
+									  case Call_Session_End:
+									  {
+															   /*结束本次通话*/
+															   SetCallStatus(CALL_IDLE);
+									  }
+										  break;
+									  case Call_Session_Call_Hang:
+									  {
+																	 /*进入挂起状态*/
+																	 SetCallStatus(CALL_HANGUP);
+									  }
+										  break;
+									  default:
+										  break;
+									  }
+	}
+		break;
+	default:
+		//do nothing
+		break;
 	}
 }
 
@@ -2236,7 +2432,7 @@ BOOL CWLNet::WriteVoiceFrame(tCallParams& call, DWORD dwCallType, BOOL isCheckTi
 	{
 		if ((*i)->srcId == call.fld.CallSrcID &&
 			(*i)->tagetId == call.fld.CallTgtID &&
-			(*i)->sequenceNumber == call.fld.CallSequenceNumber)
+			(*i)->callId == call.fld.CallSequenceNumber)
 		{
 			voiceFrame[0] = (m_CurrentRecvBuffer.buf)[33];
 			voiceFrame[1] = (m_CurrentRecvBuffer.buf)[34];
@@ -2382,8 +2578,8 @@ BOOL CWLNet::WriteVoiceFrame(tCallParams& call, DWORD dwCallType, BOOL isCheckTi
 		rFile->originalPeerId = call.fld.CallOriginatingPeerID;
 		rFile->srcId = call.fld.CallSrcID;
 		rFile->tagetId = call.fld.CallTgtID;
-		rFile->sequenceNumber = call.fld.CallSequenceNumber;
-		rFile->callType = dwCallType;
+		rFile->callId = call.fld.CallSequenceNumber;
+		rFile->callType = (unsigned char)dwCallType;
 
 
 		sprintf_s(m_reportMsg, "src:%d,tgt:%d", rFile->srcId, rFile->tagetId);
@@ -3703,7 +3899,9 @@ void CWLNet::SetLogPtr(PLogReport value)
 
 void CWLNet::sendLogToWindow()
 {
-	printf_s("%s\n", m_reportMsg);
+	//SYSTEMTIME now = { 0 };
+	//GetLocalTime(&now);
+	//printf_s("%04u-%02u-%02u %02u:%02u:%02u %03u %s\n", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond, now.wMilliseconds, m_reportMsg);
 	if (NULL != m_report)
 	{
 		m_report(m_reportMsg);
@@ -4652,9 +4850,10 @@ bool CWLNet::isTargetMeCall(unsigned int tgtId)
 	//sprintf_s(m_reportMsg, "recive a call to %u,local raidoId is %u,local radioGroup is %u", tgtId, m_dwMyRadioID, m_dwMyRadioGroup);
 	//sendLogToWindow();
 
-	return true;
+	//return true;
 
-	if (tgtId == m_dwMyRadioID || tgtId == m_dwMyRadioGroup)
+	if (tgtId == g_localRadioId
+		|| tgtId == g_localGroup)
 	{
 		return true;
 	}
@@ -4865,7 +5064,7 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 	char* pAmbeData = pData;
 
 	m_pCurrentSendVoicePeer = GetPeer(m_ulMasterPeerID);//192.168.2.121：50000
-	if (IPSC == m_dwRecType)
+	if (IPSC == g_recordType)
 	{
 		if (m_pCurrentSendVoicePeer)
 		{
@@ -5177,21 +5376,10 @@ void CWLNet::NetWorker_SendCallByWL(void)
 	{
 		requireReadySendVoicesLock();
 		SendVoicePackage* temp = m_sendVoices.front();
-
 		m_BytesSent = 0;
-		//if (sendVoices.size() == 1)
-		//{
-		//	m_SendBurstBuffer.len = 47;
-		//}
-		//else
-		//{
 		m_SendBurstBuffer.len = temp->sPackageLenth;
-		//}
 		m_SendBurstBuffer.buf = temp->pPackageData;
-
 		struct sockaddr_in m_peerAddr = { 0 };
-
-		//CIPSCPeer* peer = GetPeer(3232236153, 20675);//192.168.2.121：50000
 		if (m_pCurrentSendVoicePeer)
 		{
 			m_peerAddr = m_pCurrentSendVoicePeer->GetPeerAddressOfSockaddrin();
@@ -5204,9 +5392,6 @@ void CWLNet::NetWorker_SendCallByWL(void)
 				return;
 			}
 		}
-		//current = GetTickCount();
-
-		//printf_s("rlt:%lu\r\n", (current - prev));
 		m_sendVoices.pop_front();
 
 		//释放内存
@@ -5805,7 +5990,7 @@ int CWLNet::callBack()
 			}
 			else
 			{
-				if ((IPSC == m_dwRecType && g_callRequstDeclineReasonCodeInfo.RetryOfIPSC)
+				if ((IPSC == g_recordType && g_callRequstDeclineReasonCodeInfo.RetryOfIPSC)
 					|| g_callRequstDeclineReasonCodeInfo.HangCallRetry)
 				{
 					m_retryRequestCallCount--;
@@ -5844,7 +6029,7 @@ int CWLNet::newCall()
 {
 	bool requestCallSuccess = false;
 	m_retryRequestCallCount = REQUEST_CALL_REPEAT_FREQUENCY;
-	if (IPSC == m_dwRecType)
+	if (IPSC == g_recordType)
 	{
 		/*获取当前主中继相关信息*/
 		m_pCurrentSendVoicePeer = GetPeer(m_ulMasterPeerID);//192.168.2.121：50000
@@ -5889,7 +6074,7 @@ int CWLNet::newCall()
 			}
 		}
 	}
-	else if (CPC == m_dwRecType)
+	else if (CPC == g_recordType)
 	{
 
 		if (m_pSitePeer)
@@ -5922,13 +6107,13 @@ int CWLNet::newCall()
 			}
 			if (!requestCallSuccess)
 			{
-				SetCallStatus(CALL_IDLE); 
+				SetCallStatus(CALL_IDLE);
 				sprintf_s(m_reportMsg, "new call failure:%s", g_callRequstDeclineReasonCodeInfo.ReasonCode);
 				sendLogToWindow();
 			}
 		}
 	}
-	else if (LCP == m_dwRecType)
+	else if (LCP == g_recordType)
 	{
 		if (m_pSitePeer)
 		{

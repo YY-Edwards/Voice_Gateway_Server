@@ -1,7 +1,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-extern long g_volume;
+#define DATA_TABLE_NAME_SIZE 64
 typedef void(*PLogReport)(char* log_msg);
 enum    ScrambleDirection  {
 	IPSCTODONGLE,
@@ -66,14 +66,23 @@ typedef struct OutData
 #define FLAG_DECODE_PREAPRE_END 0x04
 #define FLAG_DECODE_END 0x08
 
+enum _RECORD_TYPE_VALUE
+{
+	IPSC = 0,
+	CPC,
+	LCP,
+};
+
+
 extern bool g_dongle_open;//dongle 是否开启
 extern BOOL g_net_connect;//网络是否已经连接
 
-extern unsigned long g_callId;
-extern unsigned long g_localGroup;
-extern unsigned long g_localRadioId;
-extern unsigned long g_localPeerId;
-extern unsigned char g_callType;
+extern unsigned long g_callId;//呼出ID
+extern unsigned long g_localGroup;//默认通话组
+extern unsigned long g_localRadioId;//本机RADIO ID
+extern unsigned long g_localPeerId;//本机PEER ID
+extern unsigned char g_callType;//呼出类型
+extern _RECORD_TYPE_VALUE g_recordType;
 
 #define WXJ_DLL FALSE
 
@@ -128,13 +137,6 @@ enum _SlotNumber
 	BOTH_SLOT1_SLOT2,
 };
 
-enum _RECORD_TYPE_VALUE
-{
-	IPSC = 0,
-	CPC,
-	LCP,
-};
-
 #define STATUS_ONTIME 0x0001
 
 #define PEER_STATUS_NULL			0x00
@@ -179,6 +181,7 @@ enum _RECORD_TYPE_VALUE
 
 
 /*自定义case*/
+#define WL_BURST_CHECK_TIMEOUT					0x00
 #define	LE_PEER_REGISTRATION_REQUEST_LOCAL		0x0A94
 #define LE_PEER_KEEP_ALIVE_REQUEST_LOCAL		0x0A98
 #define	WL_REGISTRATION_REQUEST_LOCAL			0x0A01

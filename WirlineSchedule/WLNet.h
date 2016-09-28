@@ -319,38 +319,34 @@ public:
 public:
 	void WriteVoiceFrame(char* pFrame, int len = 7)
 	{
-		//加入实时播放的buffer
-		tAMBEFrame* pAMBEFrame = NULL;
-		pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();
-		if (NULL != pAMBEFrame)
+		if ((callType == Group_Voice_Call && tagetId == g_localGroup)
+			|| (callType == Private_Voice_Call && tagetId == g_localRadioId)
+			|| (callType == All_Call))
 		{
+			//加入实时播放的buffer
+			tAMBEFrame* pAMBEFrame = NULL;
+			pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();
 			memcpy(pAMBEFrame->fld.ChannelBits, pFrame, len);
 			g_pDongle->deObfuscate(IPSCTODONGLE, pAMBEFrame);
 			g_pDongle->MarkAMBEBufferFilled();
-
 			//继续解码数据
 			g_pDongle->releaseWaitNextNetDataEvent();
-
 			g_pDongle->DecodeBuffers();
 		}
-		//出现未知错误
 		else
 		{
-			g_dongleIsUsing = FALSE;
+			/*交互录音进程，将AMBE数据写入到本地*/
 		}
 		prevTimestamp = GetTickCount();
-
-		//memcpy(buffer + lenght, pFrame, len);
-		//lenght += len;
 	}
 public:
 	char buffer[100000];
-	int  lenght;
+	int lenght;
 	int srcId;
 	int tagetId;
 	int originalPeerId;
-	int sequenceNumber;
-	int callType;
+	int callId;
+	unsigned char callType;
 	unsigned long prevTimestamp;
 };
 
@@ -583,7 +579,7 @@ private:
 
 	void ProcessCall(DWORD dwCallType, BOOL isTimeCheckout = FALSE);
 
-	void Process_WL_BURST_CALL(char wirelineOpCode, bool isCheckTimeOut = false);
+	void Process_WL_BURST_CALL(char wirelineOpCode,void  *pNetWork);
 
 	BOOL WriteVoiceFrame(tCallParams& call, DWORD dwCallType, BOOL isCheckTimeout = FALSE);
 
@@ -612,7 +608,7 @@ private:
 
 	WLStatus						m_WLStatus;
 	BOOL							m_bExit;
-	DWORD							m_dwRecType;
+	//DWORD							m_dwRecType;
 
 	SOCKET							m_socket;
 	WSAData							m_wsaData;

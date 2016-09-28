@@ -3,6 +3,7 @@
 
 #include "stdafx.h"
 #include "Manager.h"
+#include "MySQL.h"
 
 
 #ifndef DLLEXPORT
@@ -109,7 +110,7 @@ DLLEXPORT int StopRecord()
 
 DLLEXPORT int SendFile(unsigned int length, char* pData)
 {
-	return manager.SendFile(length,pData);
+	return manager.SendFile(length, pData);
 }
 #endif
 
@@ -123,6 +124,12 @@ DLLEXPORT int SendFile(unsigned int length, char* pData)
 #define DEFAULT_GROUP		9
 #define DONGLE_PORT			8
 #define DEFAULT_CALLTYPE	0x4f
+
+#define DB_HOST				"127.0.0.1"
+#define DB_PORT				3306
+#define DB_USER				"root"
+#define DB_PWD				""
+#define DB_NAME				"MotoVoice"
 
 HWND GetConsoleHwnd(void)
 {
@@ -162,15 +169,43 @@ HWND GetConsoleHwnd(void)
 	return(hwndFound);
 }
 
+
+void handleLog(char *pLog)
+{
+	SYSTEMTIME now = { 0 };
+	GetLocalTime(&now);
+	printf_s("%04u-%02u-%02u %02u:%02u:%02u %03u %s\n", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond, now.wMilliseconds, pLog);
+}
+
 int main()
 {
+	/*局部变量声明*/
 	int returnValue;
-	HWND hwnd = GetConsoleHwnd();
-	/*关键参数*/
-	returnValue = manager.initWnd(hwnd);
+	CMySQL m_db;
+	int cmd = 0;
+	bool run = true;
+	PLogReport m_report = handleLog;
+	/*当前句柄获取*/
+	HWND m_hwnd = GetConsoleHwnd();
+	/*初始化日志回调*/
+	manager.setLogPtr(m_report);
+	m_db.SetLogPtr(m_report);
+	/*初始化数据库*/
+	BOOL ret = m_db.Open(DB_HOST, DB_PORT, DB_USER, DB_PWD, DB_NAME);
+	if (!ret)
+	{
+		printf_s("open data server fail\r\n");
+		char temp = 0x00;
+		scanf_s("%c", &temp, 1);
+		return 0;
+	}
+	/*初始化网络、Dongle、Sound*/
+	returnValue = manager.initWnd(m_hwnd);
 	if (returnValue != 0)
 	{
 		printf_s("Initialization system fail\r\n");
+		char temp = 0x00;
+		scanf_s("%c", &temp, 1);
 		return 0;
 	}
 	else
@@ -182,14 +217,15 @@ int main()
 	if (returnValue != 0)
 	{
 		printf_s("Initialization system fail\r\n");
+		char temp = 0x00;
+		scanf_s("%c", &temp, 1);
 		return 0;
 	}
 	else
 	{
 		printf_s("Initialization system success\r\n");
 	}
-	int cmd = 0;
-	bool run = true;
+	/*进入菜单选项*/
 	while (run)
 	{
 		printf_s("/************/\n/* 1.按下PTT\n/* 2.松开PTT\n/* 0.退出\n/************/\n\r");

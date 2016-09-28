@@ -568,7 +568,9 @@ void CSound::HandleSoundOutput(void)
 
 void CSound::sendLogToWindow()
 {
-	printf_s("%s\n", m_reportMsg);
+	//SYSTEMTIME now = { 0 };
+	//GetLocalTime(&now);
+	//printf_s("%04u-%02u-%02u %02u:%02u:%02u %03u %s\n", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond, now.wMilliseconds, m_reportMsg);
 	if (NULL != m_report)
 	{
 		m_report(m_reportMsg);

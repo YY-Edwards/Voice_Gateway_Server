@@ -60,6 +60,7 @@ int CManager::initSys(
 	g_localGroup = local_group;
 	g_localPeerId = local_id;
 	g_localRadioId = local_radio_id;
+	g_recordType = (_RECORD_TYPE_VALUE)record_type;
 
 	WCHAR tmpStr[128] = { 0 };
 	LPCTSTR lpctTmpStr = tmpStr;
@@ -99,21 +100,19 @@ int CManager::setLogPtr(PLogReport log_handel)
 {
 	
 	m_report = log_handel;
-// 	sprintf_s(m_reportMsg, "setLogPtr:log_handel:0x%x", log_handel);
-// 	sendLogToWindow();
 
 	g_pDongle->SetLogPtr(log_handel);
 	g_pSound->SetLogPtr(log_handel);
 	g_pNet->SetLogPtr(log_handel);
 	
-	//temp delete
-	//g_net->setLogPtr(log_handel);
 	return 0;
 }
 
 void CManager::sendLogToWindow()
 {
-	printf_s("%s\n", m_reportMsg);
+	//SYSTEMTIME now = { 0 };
+	//GetLocalTime(&now);
+	//printf_s("%04u-%02u-%02u %02u:%02u:%02u %03u %s\n", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond, now.wMilliseconds, m_reportMsg);
 	if (NULL != m_report)
 	{
 		m_report(m_reportMsg);

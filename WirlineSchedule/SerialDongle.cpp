@@ -531,7 +531,9 @@ void CSerialDongle::SerialRxThread()
 
 void CSerialDongle::sendLogToWindow()
 {
-	printf_s("%s\n", m_reportMsg);
+	//SYSTEMTIME now = { 0 };
+	//GetLocalTime(&now);
+	//printf_s("%04u-%02u-%02u %02u:%02u:%02u %03u %s\n", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond, now.wMilliseconds, m_reportMsg);
 	if (NULL != m_report)
 	{
 		m_report(m_reportMsg);
@@ -745,9 +747,6 @@ unsigned __int8 CSerialDongle::CheckSum(DVSI3000struct* pMsg)
 
 void CSerialDongle::DecodeBuffers()
 {
-	//DWORD cacheTime = 1 * 50;
-	//if (m_AMBE_CirBuff.size() > cacheTime)
-	//{
 
 	if (!(m_decodeFlag&MASK_DECODE_DOING))
 	{
@@ -756,56 +755,6 @@ void CSerialDongle::DecodeBuffers()
 		sprintf_s(m_reportMsg, "start decoding");
 		sendLogToWindow();
 	}
-	//}
-	//if (m_bPrepareDecode)
-	//{
-	//	readyNextWriteAMBE();
-	//	m_bDecode = TRUE;
-	//	m_bPrepareDecode = FALSE;
-	//	sprintf_s(m_reportMsg, "start decoding");
-	//	sendLogToWindow();
-	//}
-
-	////切换Dongle的模式
-	//if (changeAMBEToPCM())
-	//{
-	//	readyNextWriteAMBE();
-	//}
-
-	//if (m_AMBE_CirBuff.size() > (5 * 50) && !m_bCode)
-	//{
-	//	//提醒界面
-	//	sprintf_s(m_reportMsg, "start decoding");
-	//	sendLogToWindow();
-	//	m_bCode = TRUE;
-	//	readyNextWriteAMBE();
-	//}
-
-	//if (!m_bDecode && m_AMBE_CirBuff.size() > 50)
-	//{
-	//	m_bDecode = TRUE;
-	//	//提醒界面
-	//	sprintf_s(m_reportMsg, "start decoding");
-	//	sendLogToWindow();
-	//	readyNextWriteAMBE();
-	//}
-
-	////补空
-	//while (m_AMBE_CirBuff.size() < 50 && m_bDecode)
-	//{
-	//	char pFrame[7] = { 0 };
-
-	//	tAMBEFrame* pAMBEFrame = NULL;
-	//	pAMBEFrame = g_dongle->GetFreeAMBEBuffer();
-	//	if (NULL != pAMBEFrame)
-	//	{
-	//		memcpy(pAMBEFrame->fld.ChannelBits, pFrame, 7);
-	//		g_dongle->deObfuscate(IPSCTODONGLE, pAMBEFrame);
-	//		g_dongle->MarkAMBEBufferFilled();
-	//		//g_dongle->DecodeBuffers();
-	//	}
-	//}
-
 }
 
 void CSerialDongle::SendDVSIPCMMsgtoDongle(unsigned __int8* pData, BOOL bIsEnd)

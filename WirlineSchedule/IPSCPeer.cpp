@@ -177,7 +177,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 	case LE_PEER_REGISTRATION_REQUEST_REMOTE:
 	{
 												T_LE_PROTOCOL_95 networkData = { 0 };
-												DWORD recordType = m_pWLNet->m_dwRecType;
+												DWORD recordType = g_recordType;
 												if (IPSC == recordType)
 												{
 													networkData.currentLinkProtocolVersion = IPSC_CURRENTLPVERSION;
@@ -202,7 +202,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 		break;
 	case LE_PEER_REGISTRATION_REQUEST_LOCAL:
 	{
-											   DWORD recordType = m_pWLNet->m_dwRecType;
+											   DWORD recordType = g_recordType;
 											   T_LE_PROTOCOL_94 networkData = { 0 };
 											   if (IPSC == recordType)
 											   {
@@ -225,7 +225,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 											   m_peerStatus = PEER_STATUS_REGIS_RESPONSE;
 											   m_startTickCount = GetTickCount();
 											   SendToPeer(&m_PeerAddr);
-											   sprintf_s(m_reportMsg, "PEER %luLE_PEER_REGISTRATION_REQUEST_LOCAL,m_startTickCount:%lu,this:%lu", m_ulPeerID, m_startTickCount, (DWORD)this);
+											   sprintf_s(m_reportMsg, "PEER %lu build 0x94 packet,TickCount:%lu,this:%lu", m_ulPeerID, m_startTickCount, (DWORD)this);
 											   sendLogToWindow();
 											   ////////////////////////////////////////////////////////////////////////////
 											   ///*开启->等待LE注册回复(S)-<定时器,可能会发生以下两种情况*/
@@ -245,7 +245,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 	{
 												 m_startTickCount = GetTickCount();
 												 m_peerStatus = PEER_STATUS_ALIVE_REQUES;
-												 sprintf_s(m_reportMsg, "PEER %luLE_PEER_REGISTRATION_RESPONSE_REMOTE,m_startTickCount:%lu,this:%lu", m_ulPeerID, m_startTickCount, DWORD(this));
+												 sprintf_s(m_reportMsg, "PEER %lu recive 0x95 packet,TickCount:%lu,this:%lu", m_ulPeerID, m_startTickCount, DWORD(this));
 												 sendLogToWindow();
 												 ////////////////////////////////////////////////////////////////////////////
 												 ///*更新->等待LE注册回复(S)-<定时器,使准时*/
@@ -272,7 +272,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 											  ////////////////////////////////////////////////////////////////////////////
 											  //m_statusWaitPeerAliveRequest = STATUS_ONTIME;
 											  m_startTickCount = GetTickCount();
-											  DWORD recordType = m_pWLNet->m_dwRecType;
+											  DWORD recordType = g_recordType;
 											  T_LE_PROTOCOL_98* p = NULL;
 											  T_LE_PROTOCOL_98_LCP* pLcp = NULL;
 											  if (LCP == recordType)
@@ -343,7 +343,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 		break;
 	case LE_PEER_KEEP_ALIVE_REQUEST_LOCAL:
 	{
-											 DWORD recordType = m_pWLNet->m_dwRecType;
+											 DWORD recordType = g_recordType;
 											 /*发起心跳包*/
 											 if (LCP == recordType)
 											 {
@@ -436,7 +436,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 										  networkData.wlRegistrationEntries[1].VoiceAttributes = REGISTERED_VOICE_SERVICE;
 										  networkData.wlRegistrationEntries[1].AddressType = AllTalkGroupCall;
 										  //改动理由:devspec_nai_voice_csbk_0102.pdf line 998
-										  if (IPSC == m_pWLNet->m_dwRecType
+										  if (IPSC == g_recordType
 											  && !getRemote3rdParty())
 										  {
 											  networkData.registrationSlotNumber = SLOT1;
@@ -447,7 +447,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 											  m_SendControlBuffer.len = Build_WL_REGISTRATION_REQUEST(m_SendControlBuffer.buf, &networkData);
 											  SendToPeer(&m_PeerAddr);
 										  }
-										  else if ((CPC == m_pWLNet->m_dwRecType)
+										  else if ((CPC == g_recordType)
 											  && !getRemote3rdParty())
 										  {
 											  if (0 != m_ulPeerID)
@@ -461,7 +461,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 												  m_pWLNet->setSitePeer(this);
 											  }
 										  }
-										  else if (LCP == m_pWLNet->m_dwRecType
+										  else if (LCP == g_recordType
 											  && !getRemote3rdParty())
 										  {
 											  if (0x00FFFFFF & m_ulPeerID)
@@ -489,7 +489,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 		break;
 	case WL_VC_CHNL_CTRL_REQUEST_LOCAL:
 	{
-										  DWORD recordType = m_pWLNet->m_dwRecType;
+										  DWORD recordType = g_recordType;
 										  /*获取关键信息*/
 										  T_WL_PROTOCOL_13 networkData = { 0 };
 										  networkData.accessCriteria = Access_Criteria_Polite_Access;
@@ -578,27 +578,6 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 										  default:
 											  break;
 										  }
-	}
-		break;
-	case WL_VC_CALL_SESSION_STATUS_REMOTE:
-	{
-											 T_WL_PROTOCOL_20* p = (T_WL_PROTOCOL_20*)pParameter;
-											 switch (p->callSessionStatus)
-											 {
-											 case Call_Session_End:
-											 {
-																	  m_pWLNet->SetCallStatus(CALL_IDLE);
-											 }
-												 break;
-											 case Call_Session_Call_Hang:
-											 {
-																			m_pWLNet->SetCallStatus(CALL_HANGUP);
-																			//m_pWLNet->setCurrentSendVoicePeer(this);
-											 }
-												 break;
-											 default:
-												 break;
-											 }
 	}
 		break;
 	default:
@@ -1200,7 +1179,9 @@ void CIPSCPeer::setLogPtr(PLogReport log_handel)
 
 void CIPSCPeer::sendLogToWindow()
 {
-	printf_s("%s\n", m_reportMsg);
+	//SYSTEMTIME now = { 0 };
+	//GetLocalTime(&now);
+	//printf_s("%04u-%02u-%02u %02u:%02u:%02u %03u %s\n", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond, now.wMilliseconds, m_reportMsg);
 	if (NULL != m_report)
 	{
 		m_report(m_reportMsg);
@@ -1661,7 +1642,7 @@ void CIPSCPeer::PeerStatusCheckProc()
 	{
 									   if (dif > WAIT_LE_PEER_REGISTRATION_RESPONSE_TIMER)
 									   {
-										   sprintf_s(m_reportMsg, "PEER:%luLE注册异常,PEER_STATUS_REGIS_RESPONSE,m_startTickCount:%lu,this:%lu", m_ulPeerID, m_startTickCount, (DWORD)this);
+										   sprintf_s(m_reportMsg, "PEER:%luLE注册异常,TickCount:%lu,this:%lu", m_ulPeerID, m_startTickCount, (DWORD)this);
 										   sendLogToWindow();
 										   HandlePacket(LE_PEER_REGISTRATION_REQUEST_LOCAL, NULL, 0, 0);
 									   }
@@ -1681,8 +1662,8 @@ void CIPSCPeer::destroy()
 	}
 	else
 	{
-		sprintf_s(m_reportMsg, "timeKillEvent fail");
-		sendLogToWindow();
+		//sprintf_s(m_reportMsg, "timeKillEvent fail");
+		//sendLogToWindow();
 	}
 }
 
@@ -1692,7 +1673,7 @@ void CIPSCPeer::getCallRequestRltInfo(DECLINE_REASON_CODE_INFO &declineReasonCod
 	memset(&declineReasonCodeInfo, 0, sizeof(DECLINE_REASON_CODE_INFO));
 	declineReasonCodeInfo.Value = value;
 	declineReasonCodeInfo.BhaveGet = true;
-	DWORD recordType = m_pWLNet->m_dwRecType;
+	DWORD recordType = g_recordType;
 	switch (declineReasonCodeInfo.Value)
 	{
 	case 0x03:
