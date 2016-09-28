@@ -32,10 +32,10 @@ namespace TrboX
         public EventWin EventList;
         public MainMsgWin MsgWin;
 
-        public NewWinMgr SubWindow;        
+        public NewWinMgr SubWindow;
 
 
-        public COrganization CurrentTraget = null;
+        public CMultMember CurrentTraget = null;
 
         public bool g_IsNeedSaveWorkSpace
         {
@@ -145,33 +145,21 @@ namespace TrboX
         {
 
         }
-        private void dis_Week(object sender, RoutedEventArgs e)
-        {
-
-        }
-        private void dis_Sleep(object sender, RoutedEventArgs e)
-        {
-
-        }
 
         private void dis_Dispatch(object sender, RoutedEventArgs e)
         {
-            SubWindow.OpenOrCreateTragetWin(((FastOperate)((FastPanel)sender).DataContext).m_Contact, new COperate(OPType.Dispatch, null));           
+            
         }
 
         private void dis_Message(object sender, RoutedEventArgs e)
         {
-            SubWindow.OpenOrCreateTragetWin(((FastOperate)((FastPanel)sender).DataContext).m_Contact, new COperate(OPType.ShortMessage, null));        
+            COperate operate = ((FastOperate)((FastPanel)sender).DataContext).Operate;
+            if( null == operate) { int i = 0; }               
         }
 
-        private void dis_Position(object sender, RoutedEventArgs e)
+        private void dis_More(object sender, RoutedEventArgs e)
         {
-            SubWindow.OpenOrCreateTragetWin(((FastOperate)((FastPanel)sender).DataContext).m_Contact, new COperate(OPType.Position, null));  
-        }
-
-        private void dis_Jobticket(object sender, RoutedEventArgs e)
-        {
-            SubWindow.OpenOrCreateTragetWin(((FastOperate)((FastPanel)sender).DataContext).m_Contact, new COperate(OPType.JobTicker, null));  
+            SubWindow.OpenOrCreateTragetWin(new COperate(OPType.JobTicker, ((FastOperate)((FastPanel)sender).DataContext).Contact, null));  
         }
 
 

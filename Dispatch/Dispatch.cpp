@@ -23,6 +23,7 @@
 #include "StopCall.h"
 #include "Wiretap.h"
 
+
 #pragma comment(lib, "Shlwapi.lib")
 static TCHAR szServiceName[] = _T("Dispatch");
 static TCHAR szServiceRun[] = _T("run");
@@ -33,12 +34,15 @@ static SERVICE_STATUS g_ServiceStatus = { 0 };
 static HANDLE g_ServiceStopEvent = INVALID_HANDLE_VALUE;
 static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 
+
+
+
 //void StartService()
 //{
 //	SC_HANDLE hSCM;
 //	SC_HANDLE shService;
 //	SERVICE_STATUS_PROCESS ssStatus;
-//	DWORD dwBytesNeeded;
+//	DWORD dwBytecallIdeeded;
 //	DWORD dwOldCheckPoint;
 //	DWORD dwStartTickCount;
 //	DWORD dwWaitTime;
@@ -58,7 +62,7 @@ static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 //		SC_STATUS_PROCESS_INFO,         // information level
 //		(LPBYTE)&ssStatus,             // address of structure
 //		sizeof(SERVICE_STATUS_PROCESS), // size of structure
-//		&dwBytesNeeded))              // size needed if buffer is too small
+//		&dwBytecallIdeeded))              // size needed if buffer is too small
 //	{
 //		printf("QueryServiceStatusEx failed (%d)\n", GetLastError());
 //		CloseServiceHandle(shService);
@@ -106,7 +110,7 @@ static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 //			SC_STATUS_PROCESS_INFO,         // information level
 //			(LPBYTE)&ssStatus,             // address of structure
 //			sizeof(SERVICE_STATUS_PROCESS), // size of structure
-//			&dwBytesNeeded))              // size needed if buffer is too small
+//			&dwBytecallIdeeded))              // size needed if buffer is too small
 //		{
 //			printf("QueryServiceStatusEx failed (%d)\n", GetLastError());
 //			CloseServiceHandle(shService);
@@ -543,6 +547,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	CAllCall* pAllCall = new CAllCall();
 	CCall *pCall = new CCall();
 	CCancelGps *pCancelGps = new CCancelGps();
+	CConnect  *pConnect = new CConnect();
 	CGetGps *pGetGps = new CGetGps();
 	CGetOverTurnGPS * pGetOverTurnGPS = new CGetOverTurnGPS();
 	CGroupCall *pGroupCall = new CGroupCall();
@@ -557,6 +562,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler(pAllCall);
 	rpcServer.addActionHandler(pCall);
 	rpcServer.addActionHandler(pCancelGps);
+	rpcServer.addActionHandler(pConnect);
 	rpcServer.addActionHandler(pGetGps);
 	rpcServer.addActionHandler(pGetOverTurnGPS);
 	rpcServer.addActionHandler(pGroupCall);
@@ -568,6 +574,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler(pStopCall);
 	rpcServer.addActionHandler(pWiretap);
 	rpcServer.start();
+	while (1);
 	return 0;
 }
 

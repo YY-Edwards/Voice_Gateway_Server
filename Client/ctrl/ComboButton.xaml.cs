@@ -20,8 +20,38 @@ using System.Collections;
 using System.ComponentModel.Design;
 using System.Collections.ObjectModel;
 
+using System.Globalization;
+
 namespace TrboX
 {
+
+    public class BoolToOpConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (null == value) return 0.3;
+
+            if (value is bool)
+            {
+                if (false == (bool)value) return 0.3;
+                return 1;
+            }
+
+            CMember target = value as CMember;
+            if (MemberType.Group == target.Type) return 1;
+
+            if (null != target.Radio)
+                if (true == target.Radio.IsOnline) return 1;
+
+            return 0.3;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+
     /// <summary>
     /// ComboButton.xaml 的交互逻辑
     /// </summary>
@@ -35,6 +65,7 @@ namespace TrboX
             this.Loaded += delegate
             {
 
+                if (null!=items)
                 if (items.Count > 0)
                 {
                     combox.Visibility = Visibility.Visible;
@@ -73,7 +104,8 @@ namespace TrboX
                 if (null == items) items =  new List<ComboBoxItem>();
                 return items;               
                 }
-            set { items = Items; }
+            set { items = Items;
+            }
         }
 
         public int SelectedIndex

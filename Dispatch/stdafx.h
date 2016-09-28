@@ -20,13 +20,13 @@
 #include <Windows.h>
 #include<list>
 using namespace std;
+
 #include "rapidjson/rapidjson.h"
 #include "rapidjson/document.h"
 #include "rapidjson/reader.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
 using  namespace rapidjson;
-
 
 #define CMD_NULL               0
 #define RADIO_CONNECT          1
@@ -61,7 +61,7 @@ using  namespace rapidjson;
 #define CALL_END               30
 typedef struct tagAllCommand
 {
-	int sn;
+	int callId;
 	int ackNum;
 	int timeOut;
 	int timeCount;
@@ -70,7 +70,12 @@ typedef struct tagAllCommand
 extern AllCommand      m_allCommand;
 extern list <AllCommand>allCommandList;
 
-#include "DispatchPort.h"
+#include"DispatchOperate.h"
+#include "../lib/rpc/include/RpcServer.h"
+
+extern map<CRemotePeer *, DispatchOperate*>  m_dispatchOperate;
+
+
 
 #define GOOGLE_GLOG_DLL_DECL           // 使用静态glog库用这个
 #define GLOG_NO_ABBREVIATED_SEVERITIES // 没这个编译会出错,传说因为和Windows.h冲突

@@ -1,0 +1,349 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Call.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="common.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="HMAC_SHA1.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="IPSCPeer.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="SerialDongle.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="SHA1.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="WirlineSchedule.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="WLNet.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="MySQL.cpp">
+      <Filter>source\data</Filter>
+    </ClCompile>
+    <ClCompile Include="RecorderServer.cpp">
+      <Filter>source\wampserver</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Ambe3000.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Call.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="HMAC_SHA1.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="IPSCPeer.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="SerialDongle.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="SHA1.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="VoiceDefs.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="WLNet.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="MySQL.h">
+      <Filter>include\data</Filter>
+    </ClInclude>
+    <ClInclude Include="RecorderServer.h">
+      <Filter>include\wampserver</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\base64.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\config-win.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\decimal.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\errmsg.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\hash.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\keycache.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\lf.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\m_ctype.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\m_string.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_aes.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_alarm.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_alloc.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_atomic.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_attribute.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_base.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_bit.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_bitmap.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_charsets.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_config.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_dbug.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_dir.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_getopt.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_global.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_libwrap.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_list.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_md5.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_net.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_no_pthread.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_nosys.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_pthread.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_stacktrace.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_sys.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_time.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_tree.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_trie.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_uctype.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_vle.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\my_xml.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\myisampack.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\mysql.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\mysql_com.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\mysql_time.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\mysql_version.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\mysqld_error.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\mysys_err.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\queues.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\service_versions.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\sha1.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\sha2.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\sql_common.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\sslopt-case.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\sslopt-longopts.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\sslopt-vars.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\t_ctype.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\thr_alarm.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\thr_lock.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\typelib.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\violite.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\waiting_threads.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\wqueue.h">
+      <Filter>mysql-connector-c\include</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\atomic\gcc_builtins.h">
+      <Filter>mysql-connector-c\include\atomic</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\atomic\generic-msvc.h">
+      <Filter>mysql-connector-c\include\atomic</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\atomic\nolock.h">
+      <Filter>mysql-connector-c\include\atomic</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\atomic\rwlock.h">
+      <Filter>mysql-connector-c\include\atomic</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\atomic\x86-gcc.h">
+      <Filter>mysql-connector-c\include\atomic</Filter>
+    </ClInclude>
+    <ClInclude Include="mysql-connector-c\include\mysys\rijndael.h">
+      <Filter>mysql-connector-c\include\mysys</Filter>
+    </ClInclude>
+    <ClInclude Include="mutex.h">
+      <Filter>include\wampserver</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="include">
+      <UniqueIdentifier>{57520bbf-e856-4e6b-956e-995892d6c4f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source">
+      <UniqueIdentifier>{af2633c2-8a32-4dc2-9005-86b33b9eb70e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\data">
+      <UniqueIdentifier>{9842d64f-8510-4b23-8766-687ffa659807}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\wampserver">
+      <UniqueIdentifier>{59ab17ff-7597-43a5-b799-70b3765547ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\data">
+      <UniqueIdentifier>{5ff1fc2f-b425-438d-8dc1-ff090f99f95c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\wampserver">
+      <UniqueIdentifier>{73aefc18-6a16-43ca-aead-c0268dac440c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mysql-connector-c">
+      <UniqueIdentifier>{55d42700-df13-4f11-a354-db6263baa8f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mysql-connector-c\include">
+      <UniqueIdentifier>{cc485cff-8ecf-4f81-9432-7b3b2cd665b7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mysql-connector-c\lib">
+      <UniqueIdentifier>{93fdc6c6-04d3-41ad-9194-e2c6e0a7e04e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mysql-connector-c\include\atomic">
+      <UniqueIdentifier>{444c513a-bae5-4c34-b5d0-e2b534669cd9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mysql-connector-c\include\mysys">
+      <UniqueIdentifier>{0630fdfb-3a3d-40f8-a035-a6f44e86ce91}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="mysql-connector-c\lib\libmysql.dll">
+      <Filter>mysql-connector-c\lib</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="mysql-connector-c\lib\libmysql.lib">
+      <Filter>mysql-connector-c\lib</Filter>
+    </Library>
+    <Library Include="mysql-connector-c\lib\mysqlclient.lib">
+      <Filter>mysql-connector-c\lib</Filter>
+    </Library>
+  </ItemGroup>
+</Project>

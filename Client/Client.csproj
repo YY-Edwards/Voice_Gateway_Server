@@ -135,11 +135,9 @@
     <Compile Include="win\CreateFastOperate\newFast.xaml.cs">
       <DependentUpon>newFast.xaml</DependentUpon>
     </Compile>
-    <Compile Include="win\CreateFastOperate\NewFastWindowView.cs" />
     <Compile Include="win\CreateOperate\NewOperate.xaml.cs">
       <DependentUpon>NewOperate.xaml</DependentUpon>
     </Compile>
-    <Compile Include="win\CreateOperate\NewOperateView.cs" />
     <Compile Include="win\TargetOperate\OperateWin.xaml.cs">
       <DependentUpon>OperateWin.xaml</DependentUpon>
     </Compile>
@@ -242,10 +240,6 @@
     <Resource Include="Logo.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="themes\resource\icon-1.png" />
-    <Resource Include="themes\resource\icon-2.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="themes\resource\HeaderLeft.png" />
     <Resource Include="themes\resource\HeaderRight.png" />
   </ItemGroup>
@@ -262,12 +256,7 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="themes\resource\control.png" />
-    <Resource Include="themes\resource\dispatch.png" />
     <Resource Include="themes\resource\position.png" />
-    <Resource Include="themes\resource\shortmessage.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\dispatch.gif" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="themes\resource\alarm.png" />
@@ -285,8 +274,22 @@
   <ItemGroup>
     <Resource Include="themes\resource\monitor.png" />
     <Resource Include="themes\resource\more.png" />
-    <Resource Include="themes\resource\shutdown.png" />
-    <Resource Include="themes\resource\startup.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="themes\resource\delete.png" />
+    <Resource Include="themes\resource\save.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="themes\resource\new.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="themes\resource\shut.png" />
+    <Resource Include="themes\resource\sleep.png" />
+    <Resource Include="themes\resource\start.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="themes\resource\help.png" />
+    <Resource Include="themes\resource\info.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

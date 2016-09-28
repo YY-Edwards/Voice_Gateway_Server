@@ -17,13 +17,15 @@ CRadioARS::~CRadioARS()
 	}
 	
 }
-bool CRadioARS::InitARSSocket(DWORD dwAddress)
+bool CRadioARS::InitARSSocket(DWORD dwAddress,CRemotePeer * pRemote)
 {
-	
+
+	pRemotePeer = pRemote;
+
 	SOCKADDR_IN      addr;					//   The   local   interface   address   
 	WSADATA			 wsda;					//   Structure   to   store   info
 	
-	WSAStartup(MAKEWORD(1, 1), &wsda);     //   Load   version   1.1   of   Winsock
+	int ret = WSAStartup(MAKEWORD(1, 1), &wsda);     //   Load   version   1.1   of   Winsock
 	CloseARSSocket(&m_ThreadARS->mySocket);
 	BOOL bReuseaddr = FALSE;
 	setsockopt(m_ThreadARS->mySocket, SOL_SOCKET, SO_DONTLINGER, (const char*)&bReuseaddr, sizeof(BOOL));
@@ -41,8 +43,8 @@ bool CRadioARS::InitARSSocket(DWORD dwAddress)
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(4005);
 	addr.sin_addr.s_addr = dwAddress;
-
-	if (bind(m_ThreadARS->mySocket, (struct sockaddr *) &addr, sizeof(addr)) == SOCKET_ERROR)
+	ret = ::bind(m_ThreadARS->mySocket, (struct sockaddr *) &addr, sizeof(addr));
+	if (ret == SOCKET_ERROR)
 	{
 		int b = WSAGetLastError();
 		//CloseARSSocket(s);
@@ -130,8 +132,9 @@ void CRadioARS::RecvData()
 	xcmp_opcode = ntohs(*((unsigned short *)(m_ThreadARS->RcvBuffer + 2)));
 	unsigned char ars_code = 0;
 	ars_code = ntohs(*((unsigned short *)(m_ThreadARS->RcvBuffer + 1)));
-	CString str,strID;
-	strID.Format(_T("%lu"), m_ThreadARS->radioID);
+	char s[12];
+	sprintf_s(s, "%d", m_ThreadARS->radioID);
+	string stringId = s;
 	if (xcmp_opcode == 0xf020 || xcmp_opcode == 0xf040)
 	{
 		//send ars ack  to radio
@@ -158,71 +161,33 @@ void CRadioARS::RecvData()
 		{
 			int a = GetLastError();
 		}
-			//		if (myCallBackFunc != NULL)
-			//		{
-			//			//CString str, strID;
-			//			//strID.Format(_T("%lu"), m_ThreadARS->radioID);
-			//			//str = "id:" + strID + ";result:1";
-			//			//unsigned char* data = (unsigned char*)(LPCTSTR)str;
-			//			unsigned char str[30] = {0};
-			//			sprintf_s((char *)str, sizeof(str), "id:%d;result:1", m_ThreadARS->radioID);
-			//			onData(myCallBackFunc, 1, RADIO_ARS, (char *)str, sizeof(str));
-			//#if DEBUG_LOG
-			//			LOG(INFO) << "对讲机开机ars ondata ";
-			//#endif
-			//		}
-			//if (pDispatchPort != NULL)
-			{
-				//rapidjson::Document document;
-				//Document::AllocatorType& allocator = document.GetAllocator();
-				//Value root(kObjectType);
-				//Value child(kObjectType);
-				//child.AddMember("type", "onRecvARS", allocator);
-				//string string1 = "";
-				//child.AddMember("srcRadioID", string1, allocator);
-				//child.AddMember("result", 0, allocator);                              //0:上线
-				//root.AddMember("child", child, allocator);
-				//StringBuffer buffer;
-				//Writer<StringBuffer> writer(buffer);
-				//root.Accept(writer);
-				//std::string reststring = buffer.GetString();
-				//pDispatchPort->sendResultToClient(reststring);
-			}
+		//0:上线
 
+#if DEBUG_LOG
+		LOG(INFO) << stringId +" 号对讲机上线";
+#endif
+		std::map<std::string, std::string> args;
+		args["id"] = stringId;
+		std::string callJsonStr = CRpcJsonParser::buildResponse("0", 0, 0, "0", args);
+		if (pRemotePeer != NULL)
+		{
+			pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+		}
+		
+	
 		}
 		else if (ars_code == 0x31)
 		{
-			//		if (myCallBackFunc != NULL)
-			//		{
-			//			//CString str,strID;
-			//			//strID.Format(_T("%lu"), m_ThreadARS->radioID);
-			//			//str = "id:" + strID + ";result:0";
-			//			//unsigned char* data = (unsigned char*)(LPCTSTR)str;
-			//
-			//			unsigned char str[30] = { 0 };
-			//			sprintf_s((char *)str, sizeof(str), "id:%d;result:0", m_ThreadARS->radioID);
-			//			onData(myCallBackFunc, 1, RADIO_ARS, (char *)str, sizeof(str));
-			//#if DEBUG_LOG
-			//			LOG(INFO) << "对讲机关机ars ondata ";
-			//#endif
-			//		}
-
-		//	if (pDispatchPort != NULL)
+			//1:下线
+#if DEBUG_LOG
+			LOG(INFO) << stringId + " 号对讲机下线";
+#endif
+			std::map<std::string, std::string> args;
+			args["id"] = stringId;
+			std::string callJsonStr = CRpcJsonParser::buildResponse("1", 0, 0, "1", args);
+			if (pRemotePeer != NULL)
 			{
-				//rapidjson::Document document;
-				//Document::AllocatorType& allocator = document.GetAllocator();
-				//Value root(kObjectType);
-				//Value child(kObjectType);
-				//child.AddMember("type", "onRecvARS", allocator);
-				//string string1 = "";
-				//child.AddMember("srcRadioID", string1, allocator);
-				//child.AddMember("result", 1, allocator);                              //1：下线
-				//root.AddMember("child", child, allocator);
-				//StringBuffer buffer;
-				//Writer<StringBuffer> writer(buffer);
-				//root.Accept(writer);
-				//std::string reststring = buffer.GetString();
-				//pDispatchPort->sendResultToClient(reststring);
+				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 			}
 		}
 }

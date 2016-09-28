@@ -30,46 +30,10 @@ namespace TrboX
             //m_mainWin = win;
 
             GrdSplControlRegister();
-            //m_mainWin.bdr_MaskMainTab.ClipToBounds = true;
-            //m_mainWin.bdr_MaskMgrTab.ClipToBounds = true;
-
-            //m_newFastWin = new newFast();
-           
-            //m_NotifyView = new NotifyView(m_mainWin);
-
-            //m_mainWin.lst_Event.View = (ViewBase)m_mainWin.FindResource("EventView");
-          
-
-            ////menu_View_Tool();
-
-            //menu_View_Manager();
-
-            //menu_View_Nav();
-
-            //EventRowLength = m_mainWin.grd_Row_Event.Height;
-            //menu_View_Event();
-
-            //MsgAlarmLength = m_mainWin.grd_Row_Msg_Alarm.Height;
-            //MsgShortMsgLength = m_mainWin.grd_Row_Msg_Alarm.Height;
-            //MsgRxLength = m_mainWin.grd_Row_Msg_Alarm.Height;
-            //MsgJobLength = m_mainWin.grd_Row_Msg_Alarm.Height;
-            //MsgTrackerLength = m_mainWin.grd_Row_Msg_Alarm.Height;
-
-            //m_bdrMsgList.Add(m_mainWin.bdr_Msg_Alarm, new MsgBox_t(true, true,0, m_mainWin.grd_Msg.RowDefinitions[0].ActualHeight));
-            //m_bdrMsgList.Add(m_mainWin.bdr_Msg_ShortMsg, new MsgBox_t(true, false,1, m_mainWin.grd_Msg.RowDefinitions[1].ActualHeight));
-            //m_bdrMsgList.Add(m_mainWin.bdr_Msg_Rx, new MsgBox_t(true, false,2, m_mainWin.grd_Msg.RowDefinitions[2].ActualHeight));
-            //m_bdrMsgList.Add(m_mainWin.bdr_Msg_Job, new MsgBox_t(true, false,3, m_mainWin.grd_Msg.RowDefinitions[3].ActualHeight));
-            //m_bdrMsgList.Add(m_mainWin.bdr_Msg_Tracker, new MsgBox_t(true, false,4, m_mainWin.grd_Msg.RowDefinitions[4].ActualHeight));
-           
-            //menu_View_Msg();
-
-            //chk_Msg_Expanler();
-
-
-            //SelectedMainTab();
-
         }
 
+
+        private double wmin0,wmin2,hmin1,w0,w2,h1;
         private void GrdSplControlRegister()
         {
 
@@ -94,8 +58,33 @@ namespace TrboX
             {
                 m_Main.grd_Disptch.RowDefinitions[0].MaxHeight = m_Main.grd_main.ActualHeight - 30;
                 m_Main.grd_Disptch.RowDefinitions[1].MaxHeight = m_Main.grd_main.ActualHeight - 30;
-
             };
+
+
+            m_Main.chk_MaxSize.Unchecked += delegate {
+                m_Main.chk_MaxSize.Content = "Max";
+                if(wmin0 > 0) m_Main.grd_main.ColumnDefinitions[0].MinWidth = wmin0;
+                if (wmin0 > 0) m_Main.grd_main.ColumnDefinitions[2].MinWidth = wmin2;
+                if (wmin0 > 0) m_Main.grd_Disptch.RowDefinitions[1].MinHeight = hmin1;
+
+                if(w0 > 0)m_Main.grd_main.ColumnDefinitions[0].Width = new GridLength(w0);
+                if (w2 > 0) m_Main.grd_main.ColumnDefinitions[2].Width = new GridLength(w2);
+                if (h1 > 0) m_Main.grd_Disptch.RowDefinitions[1].Height = new GridLength(h1);
+            };
+            m_Main.chk_MaxSize.Checked += delegate {
+                m_Main.chk_MaxSize.Content = "Min";
+                wmin0 = m_Main.grd_main.ColumnDefinitions[0].MinWidth; m_Main.grd_main.ColumnDefinitions[0].MinWidth = 0;
+                wmin2 = m_Main.grd_main.ColumnDefinitions[2].MinWidth; m_Main.grd_main.ColumnDefinitions[2].MinWidth  = 0;
+                hmin1 = m_Main.grd_Disptch.RowDefinitions[1].MinHeight; m_Main.grd_Disptch.RowDefinitions[1].MinHeight = 0;
+
+                w0 = m_Main.grd_main.ColumnDefinitions[0].ActualWidth; m_Main.grd_main.ColumnDefinitions[0].Width = new GridLength(0);
+                w2 = m_Main.grd_main.ColumnDefinitions[2].ActualWidth; m_Main.grd_main.ColumnDefinitions[2].Width = new GridLength(0);
+                h1 = m_Main.grd_Disptch.RowDefinitions[1].ActualHeight; m_Main.grd_Disptch.RowDefinitions[1].Height = new GridLength(0);
+
+                m_Main.grd_main.ColumnDefinitions[1].MaxWidth = m_Main.grd_main.ActualWidth;
+                m_Main.grd_Disptch.RowDefinitions[0].MaxHeight = m_Main.grd_main.ActualHeight;
+            };
+
 
         }
 
@@ -242,9 +231,8 @@ namespace TrboX
             }
             else
             {
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = NavigationMaxHeight == 0 ? 121 : NavigationMaxHeight;
                 m_Main.grd_Nav.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
-                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = NavigationMaxHeight == 0 ? m_Main.grd_main.ActualHeight : NavigationMaxHeight;
-
                 m_Main.grdspl_Mgs_Nav.Visibility = Visibility.Visible;
             }
         }

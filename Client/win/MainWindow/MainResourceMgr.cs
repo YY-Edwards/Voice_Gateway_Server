@@ -14,22 +14,18 @@ namespace TrboX
 
     public class MainResourceMgr
     {
-        
-        private Main m_Main;
-        public TargetMgr m_Target = new TargetMgr();
+        public TargetMgr Target = new TargetMgr();
 
-        private Dictionary<COrganization, List<COrganization>> OrgList;
+        private Main m_Main;   
+        private CTargetRes m_TargetList;
 
         public MainResourceMgr(Main win)
         {
             if (null == win) return;
             m_Main = win;
 
-            m_Target.UpdateTragetList();
+            Target.UpdateTragetList();
             UpdateView();
-
-
-           
 
             Thread t = new Thread(() => { NoficationThread(); });
             t.Start();
@@ -74,71 +70,137 @@ namespace TrboX
         private void FillDataToOrgTreeView()
         {
             TreeViewItem OrginItem = m_Main.tree_OrgView.Items.Count > 0 ? m_Main.tree_OrgView.Items[0] as TreeViewItem : null;
-                       
+
             TreeViewItem itemOrg = new TreeViewItem() { Header = "用户/设备" };
             itemOrg.Style = App.Current.Resources["TreeViewItemRoot"] as Style;
-            
-            if (null != OrginItem) itemOrg.IsExpanded = OrginItem.IsExpanded;           
+
+            if (null != OrginItem) itemOrg.IsExpanded = OrginItem.IsExpanded;
             else itemOrg.IsExpanded = true;
 
             itemOrg.ContextMenu = CreateOrgMenu(ContextMenuType.All);
-
             if (null == itemOrg) return;
+
             int groupcount = 0;
-            foreach (var group in OrgList)
+            List<int> radio_lst = new List<int>();
+            foreach (var group in m_TargetList.Group)
             {
-                TreeViewItem itemGroup = new TreeViewItem() { Header = group.Key.target.KeyHeader };
+                TreeViewItem itemGroup = new TreeViewItem() { Header = group.Value.Name};
                 itemGroup.Style = App.Current.Resources["TreeViewItemStyleGroup"] as Style;
 
-                if ((null != OrginItem) && (OrginItem.Items.Count > groupcount))                
-                    itemGroup.IsExpanded = ((TreeViewItem)OrginItem.Items[groupcount]).IsExpanded;               
-                else itemGroup.IsExpanded = group.Key.is_exp; 
+                if ((null != OrginItem) && (OrginItem.Items.Count > groupcount))
+                    itemGroup.IsExpanded = ((TreeViewItem)OrginItem.Items[groupcount]).IsExpanded;
+                else itemGroup.IsExpanded = true;
 
-                itemGroup.Tag = group.Key;
+                itemGroup.Tag = group.Value;
                 itemGroup.ContextMenu = CreateOrgMenu(ContextMenuType.Group);
-                if (null == group.Key.target.group) itemGroup.ContextMenu.Visibility = Visibility.Hidden;
-
-
-                if (null != group.Value)
+                if (-1 == group.Value.Group.GroupID) itemGroup.ContextMenu.Visibility = Visibility.Hidden;
+                else if ("" != group.Value.Information)
                 {
-                    int itemcount = 0;
-                    foreach (var item in group.Value)
+                    itemGroup.ToolTip = group.Value.Information;
+                }
+
+                int itemcount = 0;
+               
+                foreach(var employee in m_TargetList.Employee)
+                {
+                    if (group.Value.Group.ID != employee.Value.Group.ID) continue;
+                    if (null != employee.Value.Radio) radio_lst.Add(employee.Value.Radio.RadioID);
+
+                    TreeViewItem childitem = new TreeViewItem();
+                    childitem.Header = employee.Value.Name;
+                    childitem.ToolTip = employee.Value.Name + (("" == employee.Value.InformationWithoutGroup) ? "" : "：") + employee.Value.InformationWithoutGroup;
+                    childitem.Style = App.Current.Resources["TreeViewItemStyleMember"] as Style;
+                    childitem.Tag = employee.Value;
+
+                    if ((null != OrginItem) && (OrginItem.Items.Count > groupcount))
                     {
-                        TreeViewItem childitem = new TreeViewItem();
-                        childitem.Header = item.target.KeyHeaderWithoutGroup;
-                        childitem.Style = App.Current.Resources["TreeViewItemStyleMember"] as Style;
-                        childitem.Tag = item;
-
-
-                        if ((null != OrginItem) && (OrginItem.Items.Count > groupcount))
+                        if ((null != (TreeViewItem)OrginItem.Items[groupcount]) && (((TreeViewItem)OrginItem.Items[itemcount]).Items.Count > itemcount))
                         {
-                            if ((null != (TreeViewItem)OrginItem.Items[groupcount]) && (((TreeViewItem)OrginItem.Items[itemcount]).Items.Count > itemcount))
-                            {
-                               if(true == ((TreeViewItem)((TreeViewItem)OrginItem.Items[groupcount]).Items[itemcount]).IsFocused)
-                                    childitem.Focus();
-                               childitem.IsSelected = ((TreeViewItem)((TreeViewItem)OrginItem.Items[groupcount]).Items[itemcount]).IsSelected;
-                               
-                            }
+                            if (true == ((TreeViewItem)((TreeViewItem)OrginItem.Items[groupcount]).Items[itemcount]).IsFocused)childitem.Focus();
+                            childitem.IsSelected = ((TreeViewItem)((TreeViewItem)OrginItem.Items[groupcount]).Items[itemcount]).IsSelected;
                         }
+                    }
+
+                    if (true == childitem.IsSelected) 
+                    {
+                        m_Main.CurrentTraget = new CMultMember() { Type = SelectionType.Single, Target = new List<CMember>() };
+                        m_Main.CurrentTraget.Target.Add(employee.Value);
+                    }
 
 
-                        if(true == childitem.IsSelected)m_Main.CurrentTraget = item;
+                    if ((null == employee.Value.Radio) || (false == employee.Value.Radio.IsOnline))childitem.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOff);                    
+                    else childitem.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOn);
+                  
+                    itemGroup.Items.Add(childitem);
+                    itemcount++;
+                }
 
+                foreach (var vehicle in m_TargetList.Vehicle)
+                {
+                    if (group.Value.Group.ID != vehicle.Value.Group.ID) continue;
+                    if (null != vehicle.Value.Radio) radio_lst.Add(vehicle.Value.Radio.RadioID);
 
-                        
-                        
-                        if ((null == item.target.radio) || (false == item.target.radio.is_online))
+                    TreeViewItem childitem = new TreeViewItem();
+                    childitem.Header = vehicle.Value.Name;
+                    childitem.ToolTip = vehicle.Value.Name + (("" == vehicle.Value.InformationWithoutGroup) ? "" : "：") + vehicle.Value.InformationWithoutGroup;
+                    childitem.Style = App.Current.Resources["TreeViewItemStyleMember"] as Style;
+                    childitem.Tag = vehicle.Value;
+
+                    if ((null != OrginItem) && (OrginItem.Items.Count > groupcount))
+                    {
+                        if ((null != (TreeViewItem)OrginItem.Items[groupcount]) && (((TreeViewItem)OrginItem.Items[itemcount]).Items.Count > itemcount))
                         {
-                            childitem.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOff);
+                            if (true == ((TreeViewItem)((TreeViewItem)OrginItem.Items[groupcount]).Items[itemcount]).IsFocused) childitem.Focus();
+                            childitem.IsSelected = ((TreeViewItem)((TreeViewItem)OrginItem.Items[groupcount]).Items[itemcount]).IsSelected;
                         }
-                        else
-                        {
-                            childitem.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOn);
-                        }
+                    }
 
-                        itemGroup.Items.Add(childitem);
-                        itemcount++;
-                    }  
+                    if (true == childitem.IsSelected)
+                    {
+                        m_Main.CurrentTraget = new CMultMember() { Type = SelectionType.Single, Target = new List<CMember>() };
+                        m_Main.CurrentTraget.Target.Add(vehicle.Value);
+                    }
+
+
+                    if ((null == vehicle.Value.Radio) || (false == vehicle.Value.Radio.IsOnline)) childitem.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOff);
+                    else childitem.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOn);
+
+                    itemGroup.Items.Add(childitem);
+                    itemcount++;
+                }
+
+                foreach (var radio in m_TargetList.Radio)
+                {
+                    if (group.Value.Group.ID != radio.Value.Group.ID) continue;
+                    if(radio_lst.Contains(radio.Value.Radio.RadioID))continue;
+
+                    TreeViewItem childitem = new TreeViewItem();
+                    childitem.Header = radio.Value.Name;
+                    childitem.ToolTip = radio.Value.Name + (("" == radio.Value.InformationWithoutGroup) ? "" : "：") + radio.Value.InformationWithoutGroup;
+                    childitem.Style = App.Current.Resources["TreeViewItemStyleMember"] as Style;
+                    childitem.Tag = radio.Value;
+
+                    if ((null != OrginItem) && (OrginItem.Items.Count > groupcount))
+                    {
+                        if ((null != (TreeViewItem)OrginItem.Items[groupcount]) && (((TreeViewItem)OrginItem.Items[itemcount]).Items.Count > itemcount))
+                        {
+                            if (true == ((TreeViewItem)((TreeViewItem)OrginItem.Items[groupcount]).Items[itemcount]).IsFocused) childitem.Focus();
+                            childitem.IsSelected = ((TreeViewItem)((TreeViewItem)OrginItem.Items[groupcount]).Items[itemcount]).IsSelected;
+                        }
+                    }
+
+                    if (true == childitem.IsSelected)
+                    {
+                        m_Main.CurrentTraget = new CMultMember() { Type = SelectionType.Single, Target = new List<CMember>() };
+                        m_Main.CurrentTraget.Target.Add(radio.Value);
+                    }
+
+
+                    if (false == radio.Value.Radio.IsOnline) childitem.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOff);
+                    else childitem.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOn);
+
+                    itemGroup.Items.Add(childitem);
+                    itemcount++;
                 }
 
                 itemOrg.Items.Add(itemGroup);
@@ -153,34 +215,77 @@ namespace TrboX
             m_Main.tree_OrgView.SelectedItemChanged += delegate(object sender, RoutedPropertyChangedEventArgs<object> e)
             {
                 if (null == ((TreeView)sender).SelectedItem) return;
-                m_Main.CurrentTraget = ((TreeViewItem)((TreeView)sender).SelectedItem).Tag as COrganization;
 
+                m_Main.CurrentTraget = new CMultMember() { Target = new List<CMember>() };
 
-                if (null == m_Main.CurrentTraget) //All
+                CMember target = ((TreeViewItem)((TreeView)sender).SelectedItem).Tag as CMember;
+
+                if (null == target) //All
                 {
-                    m_Main.bdr_Tool_Base.IsEnabled = true;
-                    m_Main.bdr_Tool_Ctrl.IsEnabled = true;
-                    m_Main.menu_Target.Visibility = Visibility.Visible;
-
-                }
-                else if (OrgItemType.Type_Group == m_Main.CurrentTraget.target.key) //Group
-                {
+                    m_Main.CurrentTraget.Type = SelectionType.All;
                     m_Main.bdr_Tool_Base.IsEnabled = true;
                     m_Main.bdr_Tool_Ctrl.IsEnabled = true;
                     m_Main.menu_Target.Visibility = Visibility.Visible;
                 }
-                else if (null != m_Main.CurrentTraget.target.radio)//radio
+                else if (MemberType.Group == target.Type) //Group
                 {
+                    m_Main.CurrentTraget.Type = SelectionType.Single;
+                    m_Main.CurrentTraget.Target.Add(target);
                     m_Main.bdr_Tool_Base.IsEnabled = true;
                     m_Main.bdr_Tool_Ctrl.IsEnabled = true;
                     m_Main.menu_Target.Visibility = Visibility.Visible;
                 }
-                else // No Radio
+                else//radio
                 {
-                    m_Main.bdr_Tool_Base.IsEnabled = false;
-                    m_Main.bdr_Tool_Ctrl.IsEnabled = false;
-                    m_Main.menu_Target.Visibility = Visibility.Collapsed;
+
+                    m_Main.CurrentTraget.Type = SelectionType.Single;
+                    m_Main.CurrentTraget.Target.Add(target);
+                    if(null == target.Radio)
+                    {
+                        m_Main.bdr_Tool_Base.IsEnabled = false;
+                        m_Main.bdr_Tool_Ctrl.IsEnabled = false;
+                        m_Main.menu_Target.Visibility = Visibility.Collapsed;
+                    }
+                    else if(false == target.Radio.IsOnline)
+                    {
+                        m_Main.bdr_Tool_Base.IsEnabled = false;
+                        m_Main.bdr_Tool_Ctrl.IsEnabled = false;
+
+                        m_Main.menu_Target.Visibility = Visibility.Visible;
+                        //monitor
+                        m_Main.menu_Target_Monitor.IsEnabled = false;
+
+                        //call
+                        m_Main.menu_Target_Call.IsEnabled = false;
+
+                        //message
+                        m_Main.menu_Target_Message.IsEnabled = false;
+
+                        //position
+                        m_Main.menu_Target_Position.IsEnabled = false;
+                        m_Main.menu_Target_PositionCycle.IsEnabled = false;
+                        m_Main.menu_Target_PositionCSBK.IsEnabled = false;
+                        m_Main.menu_Target_PositionCSBKCycle.IsEnabled = false;
+                        m_Main.menu_Target_PositionEnh.IsEnabled = false;
+                        m_Main.menu_Target_PositionEnhCycle.IsEnabled = false;
+                        m_Main.menu_Target_Trail.IsEnabled = false;
+
+                        //control
+                        m_Main.menu_Target_StartUp.IsEnabled = false;
+                        m_Main.menu_Target_Shut.IsEnabled = false;
+                        m_Main.menu_Target_Sleep.IsEnabled = false;
+                        m_Main.menu_Target_Week.IsEnabled = false;
+
+                        //job ticket
+                        m_Main.menu_Target_JobTicket.IsEnabled = false;
+                    }
+                    else{
+                        m_Main.bdr_Tool_Base.IsEnabled = true;
+                        m_Main.bdr_Tool_Ctrl.IsEnabled = true;
+                        m_Main.menu_Target.Visibility = Visibility.Visible;
+                    }
                 }
+
 
             };
             m_Main.tree_OrgView.PreviewMouseDoubleClick += delegate(object sender, MouseButtonEventArgs e)
@@ -191,41 +296,44 @@ namespace TrboX
 
         private void OnOrganizationMenu_Click(object sender, RoutedEventArgs e)
         {
+            CMember org = null;
             
-            COrganization org = null;
-            if(((ContextMenu)((MenuItem)sender).Parent).PlacementTarget is TreeViewItem)
+
+            if (((ContextMenu)((MenuItem)sender).Parent).PlacementTarget is TreeViewItem)
             {
-                org = ((TreeViewItem)((ContextMenu)((MenuItem)sender).Parent).PlacementTarget).Tag as COrganization;
+                org = ((TreeViewItem)((ContextMenu)((MenuItem)sender).Parent).PlacementTarget).Tag as CMember;               
             }
-            else if(((ContextMenu)((MenuItem)sender).Parent).PlacementTarget is ListBoxItem)
+            else if (((ContextMenu)((MenuItem)sender).Parent).PlacementTarget is ListBoxItem)
             {
-                org = ((ListBoxItem)((ContextMenu)((MenuItem)sender).Parent).PlacementTarget).Content as COrganization;
+                org = ((ListBoxItem)((ContextMenu)((MenuItem)sender).Parent).PlacementTarget).Content as CMember;
             }
 
-            if (null == org) return;
+
+            CMultMember trg = new CMultMember() { Type = (null == org) ? SelectionType.All : SelectionType.Single, Target = new List<CMember>() };
+            trg.Target.Add(org);
 
             switch ((string)((MenuItem)sender).Tag)
             {
                 case "fast":
                     m_Main.WorkArea.FastPanel.Add(new FastOperate()
                     {
-                        m_Type = FastType.FastType_Contact,
-                        m_Contact = org
+                        Type = FastType.FastType_Contact,
+                        Contact = trg
                     });
                     break;
                 case "dispatch":
-                    m_Main.SubWindow.OpenOrCreateTragetWin(org, new COperate(OPType.Dispatch, null));
+                    m_Main.SubWindow.OpenOrCreateTragetWin(new COperate(OPType.Dispatch, trg, null));
                     break;
                 case "message":
-                    m_Main.SubWindow.OpenOrCreateTragetWin(org, new COperate(OPType.ShortMessage, null));
+                    m_Main.SubWindow.OpenOrCreateTragetWin(new COperate(OPType.ShortMessage, trg, null));
                     break;
                 case "position":
-                    m_Main.SubWindow.OpenOrCreateTragetWin(org, new COperate(OPType.Position, null));
+                    m_Main.SubWindow.OpenOrCreateTragetWin(new COperate(OPType.Position, trg, null));
                     break;
-                case "control":                   
+                case "control":
                     break;
                 case "jobticker":
-                    m_Main.SubWindow.OpenOrCreateTragetWin(org, new COperate(OPType.JobTicker, null));
+                    m_Main.SubWindow.OpenOrCreateTragetWin(new COperate(OPType.JobTicker, trg, null));
                     break;
             };
         }
@@ -234,11 +342,11 @@ namespace TrboX
         {
             m_Main.lst_Group.View = (ViewBase)m_Main.FindResource("GroupView");
             m_Main.lst_Group.Items.Clear();
-            foreach (var group in OrgList)
+            foreach (var group in m_TargetList.Group)
             {
-                if (null != group.Key.target.group)
+                if ((null != group.Value.Group) && (-1 != group.Value.Group.ID))
                 {
-                    ListViewItem item = new ListViewItem() { Content = group.Key };
+                    ListViewItem item = new ListViewItem() { Content = group.Value };
                     item.ContextMenu = CreateOrgMenu(ContextMenuType.Group);
                     m_Main.lst_Group.Items.Add(item);
                 }
@@ -249,89 +357,65 @@ namespace TrboX
         {
             m_Main.lst_Employee.View = (ViewBase)m_Main.FindResource("EmployeeView");
             m_Main.lst_Employee.Items.Clear();
-            foreach (var group in OrgList)
+            foreach (var employee in m_TargetList.Employee)
             {
-                foreach(var org in group.Value)
+                if (null != employee.Value.Employee)
                 {
-                    if ((null != org.target.employee) && (OrgItemType.Type_Employee == org.target.key)) 
-                    {
-                        ListViewItem item = new ListViewItem() { Content = org };
-                        if ((null == org.target.radio) || (false == org.target.radio.is_online))
-                            item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOff);                       
-                        else
-                            item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOn);                        
-                       
-                        m_Main.lst_Employee.Items.Add(item);
-                    }
+                    ListViewItem item = new ListViewItem() { Content = employee.Value };
+                    if ((null == employee.Value.Radio) || (false == employee.Value.Radio.IsOnline))
+                        item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOff);
+                    else
+                        item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOn);
+
+                    m_Main.lst_Employee.Items.Add(item);
                 }
+                
             }
         }
         private void FillDataToVehicleList()
         {
             m_Main.lst_Vehicle.View = (ViewBase)m_Main.FindResource("VehicleView");
             m_Main.lst_Vehicle.Items.Clear();
-            foreach (var group in OrgList)
+            foreach (var vehicle in m_TargetList.Vehicle)
             {
-                foreach (var org in group.Value)
+                if (null != vehicle.Value.Vehicle)
                 {
-                    if ((null != org.target.vehicle) && (OrgItemType.Type_Vehicle == org.target.key))
-                    {
-                        ListViewItem item = new ListViewItem() { Content = org };
+                    ListViewItem item = new ListViewItem() { Content = vehicle.Value };
 
-                        if ((null == org.target.radio) || (false == org.target.radio.is_online))
-                            item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOff);
-                        else
-                            item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOn);
+                    if ((null == vehicle.Value.Radio) || (false == vehicle.Value.Radio.IsOnline))
+                        item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOff);
+                    else
+                        item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOn);
 
-                        m_Main.lst_Vehicle.Items.Add(item);
-                    }
+                    m_Main.lst_Vehicle.Items.Add(item);
                 }
+                
             }
         }
         private void FillDataToRadioList()
         {
             m_Main.lst_Radio.View = (ViewBase)m_Main.FindResource("RadioView");
-            Dictionary<int, ListBoxItem> RadioList = new Dictionary<int, ListBoxItem>();
             m_Main.lst_Radio.Items.Clear();
-            foreach (var group in OrgList)
+            foreach (var radio in m_TargetList.Radio)
             {
-                foreach (var org in group.Value)
+                if (null != radio.Value.Radio)
                 {
-                    if (null != org.target.radio)
-                    {
-                        if(!RadioList.ContainsKey(org.target.radio.id))
-                        {
-                            ListViewItem item = new ListViewItem() { Content = org };
-                            if (false == org.target.radio.is_online)
-                                item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOff);
-                            else
-                                item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOn);
+                    ListViewItem item = new ListViewItem() { Content = radio.Value };
+                    if (false == radio.Value.Radio.IsOnline)
+                        item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOff);
+                    else
+                        item.ContextMenu = CreateOrgMenu(ContextMenuType.RadioOn);
 
-                            RadioList.Add(org.target.radio.id, item);
-                            m_Main.lst_Radio.Items.Add(item);
-                        }
-                    }
-                }
+                    m_Main.lst_Radio.Items.Add(item);                  
+                }               
             }
-        }
-
-        private void Update(CRadio radio)
-        {
-            if (!m_Target.g_RadioList.ContainsKey(radio.id))
-            {
-                m_Target.g_RadioList.Add(radio.id, radio);
-            }
-            else
-            {
-                m_Target.g_RadioList[radio.id] = radio;
-            }          
         }
 
         private void UpdateView()
         {
             m_Main.Dispatcher.Invoke(new Action(() =>
-            {           
-                OrgList = m_Target.OrgList;
+            {
+                m_TargetList = Target.TargetList;
                 FillDataToOrgTreeView();
                 FillDataToGroupList();
                 FillDataToEmployeeList();
@@ -344,21 +428,17 @@ namespace TrboX
         {
             while(true)
             {
-                foreach (var group in OrgList)
-                {
-                    //foreach (var item in group.Value)
-                    //{
-                    //    if (null != item.target.radio)
-                    //    {
-                    //        CRadio radio = new CRadio() { id = item.target.radio.id, radio_id = item.target.radio.radio_id, is_online = !item.target.radio.is_online, type = item.target.radio.type };
-                    //        Update(radio);
+                //foreach (var rad in m_TargetList.Radio)
+                //{
+                //    if (null != rad.Value.Radio)
+                //    {
+                //        CRadio radio = new CRadio() { ID = rad.Value.Radio.ID, RadioID = rad.Value.Radio.RadioID, IsOnline = !rad.Value.Radio.IsOnline, Type = rad.Value.Radio.Type };
+                //        m_Target.Update(radio);
+                //    } 
+                //}
 
-                    //    }
-                    //}
-
-                    Thread.Sleep(5000);
-                    //UpdateView();
-                }                               
+                //UpdateView();
+                Thread.Sleep(5000);
             }
         }
 

@@ -120,36 +120,51 @@ namespace TrboX
     {
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
         {
+           if((value[0] == DependencyProperty.UnsetValue)||( value[0] == DependencyProperty.UnsetValue)||( value[0] == DependencyProperty.UnsetValue))return null;
+
             switch ((FastType)value[0])
             {
                 case FastType.FastType_Contact:
-                    if (null != value[1])
-                        switch ((OrgItemType)value[1])
-                        {
-                            case OrgItemType.Type_Group:
-                                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/group.png"));
-                            case OrgItemType.Type_Employee:
-                                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/contact.png"));
-                            case OrgItemType.Type_Vehicle:
-                                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/vehicle.png"));
-                            case OrgItemType.Type_Ride:
-                                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/ride.png"));
-                            case OrgItemType.Type_Radio:
-                                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/radio.png"));
-                        }
+                    CMultMember member = (CMultMember)value[1];
+                    if ((null != value[1]) && (0 < member.Target.Count))
+                    {
+                        if ((1 < member.Target.Count) || (SelectionType.Single != member.Type))
+                            return new BitmapImage(new Uri("pack://application:,,,/themes/resource/group.png"));
+                        else
+                            switch (((CMultMember)value[1]).Target[0].Type)
+                            {
+                                case MemberType.Group:
+                                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/group.png"));
+                                case MemberType.Employee:
+                                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/contact.png"));
+                                case MemberType.Vehicle:
+                                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/vehicle.png"));
+                                case MemberType.Radio:
+                                    if (null != member.Target[0].Radio)
+                                    {
+                                        if (RadioType.RADIO == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/radio.png"));
+                                        if (RadioType.RIDE == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/ride.png"));
+                                    }
+                                    return null;
+                                default:
+                                    return null;
+                            }
+                    }
                     break;
                 case FastType.FastType_Operate:
                     if (null != value[2])
-                        switch ((OPType)value[2])
+                        switch (((COperate)value[2]).Type)
                         {
                             case OPType.Dispatch:
-                                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/dispatch.png"));
+                                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/rx.png"));
                             case OPType.ShortMessage:
-                                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/shortmessage.png"));
+                                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/msg.png"));
                             case OPType.Position:
                                 return new BitmapImage(new Uri("pack://application:,,,/themes/resource/position.png"));
                             case OPType.Control:
                                 return new BitmapImage(new Uri("pack://application:,,,/themes/resource/control.png"));
+                            case OPType.JobTicker:
+                                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/job.png"));
                         }
                     break;
             }
@@ -167,13 +182,13 @@ namespace TrboX
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            CRelationShipObj contact = value as CRelationShipObj;
-            if (null == contact) return Visibility.Collapsed;
+            //CRelationShipObj contact = value as CRelationShipObj;
+            //if (null == contact) return Visibility.Collapsed;
 
-            if ((OrgItemType.Type_Group != contact.key) && (null == contact.radio))
-            {
-                return Visibility.Collapsed;
-            }
+            //if ((OrgItemType.Type_Group != contact.key) && (null == contact.radio))
+            //{
+            //    return Visibility.Collapsed;
+            //}
 
             return Visibility.Visible;
 
@@ -276,11 +291,11 @@ namespace TrboX
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            switch ((OrgItemType)value)
-            {
-                case OrgItemType.Type_Group:
-                    return Visibility.Collapsed;
-            }
+            //switch ((OrgItemType)value)
+            //{
+            //    case OrgItemType.Type_Group:
+            //        return Visibility.Collapsed;
+            //}
 
             return Visibility.Visible;
         }
@@ -295,19 +310,19 @@ namespace TrboX
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            switch ((OrgItemType)value)
-            {
-                case OrgItemType.Type_Group:
-                    return 0;
-                case OrgItemType.Type_Employee:
-                    return 1;
-                case OrgItemType.Type_Vehicle:
-                    return 2;
-                case OrgItemType.Type_Ride:
-                    return 3;
-                case OrgItemType.Type_Radio:
-                    return 4;
-            }
+            //switch ((OrgItemType)value)
+            //{
+            //    case OrgItemType.Type_Group:
+            //        return 0;
+            //    case OrgItemType.Type_Employee:
+            //        return 1;
+            //    case OrgItemType.Type_Vehicle:
+            //        return 2;
+            //    case OrgItemType.Type_Ride:
+            //        return 3;
+            //    case OrgItemType.Type_Radio:
+            //        return 4;
+            //}
             return -1;
         }
 
@@ -347,23 +362,34 @@ namespace TrboX
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (null == value) return " ";
+            if (null == value) return null;
+             CMultMember member = null;
+             if (value is CMember) member = ((CMember)value).SingleToMult();
+             else if (value is CMultMember) member = (CMultMember)value;
+             else return null;
+             
+            if ((null == member) || (null == member.Target) || (member.Target.Count == 0)) return null;
 
-            CRelationShipObj target = value as CRelationShipObj;
-
-            switch (target.key)
-            {
-                case OrgItemType.Type_Group:
-                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/group.png"));
-                case OrgItemType.Type_Employee:
-                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/contact.png"));
-                case OrgItemType.Type_Vehicle:
-                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/vehicle.png"));
-                case OrgItemType.Type_Ride:
-                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/ride.png"));
-                case OrgItemType.Type_Radio:
-                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/radio.png"));
-            }
+            if ((1 < member.Target.Count) || (SelectionType.Single != member.Type))
+                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/group.png"));
+            else 
+                switch (member.Target[0].Type)
+                {
+                    case MemberType.Group:
+                        return new BitmapImage(new Uri("pack://application:,,,/themes/resource/group.png"));
+                    case MemberType.Employee:
+                        return new BitmapImage(new Uri("pack://application:,,,/themes/resource/contact.png"));
+                    case MemberType.Vehicle:
+                        return new BitmapImage(new Uri("pack://application:,,,/themes/resource/vehicle.png"));
+                    case MemberType.Radio:
+                        if (null != member.Target[0].Radio)
+                        {
+                            if (RadioType.RADIO == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/radio.png"));
+                            if (RadioType.RIDE == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/ride.png"));
+                        }
+                        break;
+                    default: return null;
+                }
 
             return null;
         }
@@ -380,11 +406,17 @@ namespace TrboX
         {
             if (null == value) return 0.4;
 
-            CRelationShipObj target = value as CRelationShipObj;
-            if (OrgItemType.Type_Group == target.key) return 1;
+            if(value is bool)
+            {
+                if (false == (bool)value) return 0.4;
+                return 1;
+            }
 
-            if (null != target.radio)
-            if (true == target.radio.is_online) return 1;
+            CMember target = value as CMember;
+            if (MemberType.Group == target.Type) return 1;
+
+            if (null != target.Radio)
+                if (true == target.Radio.IsOnline) return 1;
 
             return 0.4;
         }
@@ -395,15 +427,17 @@ namespace TrboX
         }
     }
 
+
+
     public class IconEnableFormOrgConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (null == value) return false;
 
-            CRelationShipObj target = value as CRelationShipObj;
-            if (null != target.radio)
-                if (true == target.radio.is_online) return true;
+            CMember target = value as CMember;
+            if (null != target.Radio)
+                if (true == target.Radio.IsOnline) return true;
 
             return false;
         }
@@ -484,6 +518,7 @@ namespace TrboX
             return value;
         }
     }
+
 }
 
 

@@ -11,14 +11,32 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using System.Globalization;
+
 
 namespace TrboX
 {
+    public class ContactListVOffset : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if ((null == value) || (0.000001 > (double)value)) return 0;
+            return ((double)value - 0.000001) / (double)value - 3;
+
+            //return 0;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+
 
     public class contact_str
     {
-        public bool issel { set; get; }
-        public COrganization contact { set; get; }
+        public bool IsSel { set; get; }
+        public CMember Contact { set; get; }
     }
     /// <summary>
     /// Contact.xaml 的交互逻辑
@@ -39,6 +57,10 @@ namespace TrboX
                 ListView lst_CurrentContact = (ListView)baseWindowTemplate.FindName("lst_CurrentContact", combox);
                 if (null != lst_CurrentContact)
                 lst_CurrentContact.View = (ViewBase)lst_CurrentContact.FindResource("ContactView");
+
+               
+                OnContactListChange("", this);
+                OnCurrentContactChange("", this);
             };
         }
 
@@ -51,215 +73,353 @@ namespace TrboX
         public new static readonly DependencyProperty IsMultipleProperty =
             DependencyProperty.Register("IsMultiple", typeof(bool), typeof(Contact), new UIPropertyMetadata(true));
 
-        public Dictionary<COrganization, List<COrganization>> ContactSrc
+        public CTargetRes ContactList
         {
-            get { return (Dictionary<COrganization, List<COrganization>>)GetValue(ContactSrcProperty); }
-            set { SetValue(ContactSrcProperty, value); }
+            get { return (CTargetRes)GetValue(ContactListProperty); }
+            set { SetValue(ContactListProperty, value); }
         }
 
-        public static readonly DependencyProperty ContactSrcProperty =
-            DependencyProperty.Register("ContactSrc", typeof(Dictionary<COrganization, List<COrganization>>), typeof(Contact), new UIPropertyMetadata(null, delegate(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        public static readonly DependencyProperty ContactListProperty =
+            DependencyProperty.Register("ContactList", typeof(CTargetRes), typeof(Contact), new UIPropertyMetadata(new CTargetRes()));
+
+        public static void OnContactListChange(string condition, DependencyObject obj)
         {
-            Dictionary<COrganization, List<COrganization>> contactlist = e.NewValue as Dictionary<COrganization, List<COrganization>>;
+            CTargetRes contactlist = ((Contact)obj).ContactList;
             ControlTemplate baseWindowTemplate = ((Contact)obj).combox.Template;
             ListView lst_ContactList = (ListView)baseWindowTemplate.FindName("lst_ContactList", ((Contact)obj).combox);
+            List<contact_str> conlist = MatchCondition(condition, contactlist, ((Contact)obj).CurrentContact);
             if (null != lst_ContactList)
             {
-               
-                foreach (var group in contactlist)
-                {
-                    if (null != group.Key.target.group)
-                    {
-                        contact_str con = new contact_str()
-                        {
-                            issel = false,
-                            contact = group.Key,
-                        };
-                        
-                        foreach (var selected in ((Contact)obj).CurrentContact)
-                        {
-                            if (selected.index == group.Key.index)
-                            {
-                                con.issel = true;
-                                break;
-                            }
-                        }
-
-                        lst_ContactList.Items.Add(con);
-                    }
-                }
-
-                foreach (var group in contactlist)
-                {
-                    foreach(var item in group.Value)
-                    {
-                        contact_str con = new contact_str()
-                        {
-                            issel = false,
-                            contact = item,
-                        };
-
-                        foreach (var selected in ((Contact)obj).CurrentContact)
-                        {
-                            if (selected.index == item.index)
-                            {
-                                con.issel = true;
-                                break;
-                            }
-                        }
-                        lst_ContactList.Items.Add(con);
-                    }                        
-                }
+                lst_ContactList.Items.Clear();
+                foreach (contact_str con in conlist)
+                    lst_ContactList.Items.Add(new ListViewItem() { Content = con });
             }
-        }));
+        }
 
-        public List<COrganization> CurrentContact
+        public CMultMember CurrentContact
         {
-            get { return (List<COrganization>)GetValue(CurrentContactProperty); }
+            get {
+                return (CMultMember)GetValue(CurrentContactProperty);
+            }
             set { SetValue(CurrentContactProperty, value); }
         }
 
         public static readonly DependencyProperty CurrentContactProperty =
-            DependencyProperty.Register("CurrentContact", typeof(List<COrganization>), typeof(Contact), new UIPropertyMetadata(new List<COrganization>(), delegate(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-            {
+            DependencyProperty.Register("CurrentContact", typeof(CMultMember), typeof(Contact),
+            new PropertyMetadata(new CMultMember()));
 
-                List<COrganization> contactlist = e.NewValue as List<COrganization>;
-                ControlTemplate baseWindowTemplate = ((Contact)obj).combox.Template;
-                ListView lst_CurrentContact = (ListView)baseWindowTemplate.FindName("lst_CurrentContact", ((Contact)obj).combox);
-
-                if (null != lst_CurrentContact)
-                {
-                    
-                    foreach (var item in contactlist)
-                    {
-                        lst_CurrentContact.Items.Add(item);
-                    }
-                }
-            }));
-
-        private void SearchAndDisp(string str)
+        public void UpdateCurrentContact(CMultMember target)
         {
-            ControlTemplate baseWindowTemplate = combox.Template;
-            ListView lst_ContactList = (ListView)baseWindowTemplate.FindName("lst_ContactList", combox);
+            CurrentContact = (null == target)? null :target.Clone();
+            OnCurrentContactChange(m_Condition, this);
+            OnContactListChange(m_Condition, this);
+        }
 
-            if (null != lst_ContactList)
+        public static void OnCurrentContactChange(string condition, DependencyObject obj)
+        {
+            ControlTemplate baseWindowTemplate = ((Contact)obj).combox.Template;
+            ListView lst_CurrentContact = (ListView)baseWindowTemplate.FindName("lst_CurrentContact", ((Contact)obj).combox);
+            ListView lst_ContactList = (ListView)baseWindowTemplate.FindName("lst_ContactList", ((Contact)obj).combox);
+            CMultMember member = ((Contact)obj).CurrentContact;
+
+            if (null != lst_CurrentContact)
             {
+                lst_CurrentContact.Items.Clear();
 
-                lst_ContactList.Items.Clear();
-                foreach (var group in ContactSrc)
-                {
-                    if (null != group.Key.target.group)
-                    if((group.Key.target.group.group_id.ToString().Contains(str)) ||(group.Key.target.group.name.Contains(str)))
-                        lst_ContactList.Items.Add(group.Key);
-                }
+                if (null == member) return;
+                if (null == member.Target) return;
 
-                foreach (var group in ContactSrc)
-                {
-                    foreach (var item in group.Value)
-                    {
-                        if(null != item.target.group)
-                            if ((item.target.group.group_id.ToString().Contains(str)) || (item.target.group.name.Contains(str)))
-                            {
-                                lst_ContactList.Items.Add(item);
-                                continue;
-                            }
-
-                        if (null != item.target.employee)
-                            if (item.target.employee.name.Contains(str))
-                            {
-                                lst_ContactList.Items.Add(item);
-                                continue;
-                            }
-
-                        if (null != item.target.vehicle)
-                            if (item.target.vehicle.number.Contains(str))
-                            {
-                                lst_ContactList.Items.Add(item);
-                                continue;
-                            }
-
-                        if (null != item.target.radio)
-                            if (item.target.radio.radio_id.ToString().Contains(str))
-                            {
-                                lst_ContactList.Items.Add(item);
-                                continue;
-                            }                       
-                    }                       
-                }
+                foreach (var item in member.Target)
+                    lst_CurrentContact.Items.Add(new ListViewItem() { Content = item });
             }
         }
 
+
+
+        private static List<contact_str> ConvertToList(CTargetRes targetlist, CMultMember selected)
+        {
+            List<int> existraido = new List<int>();
+            List<contact_str> res = new List<contact_str>();
+
+            if (null != targetlist.Group)
+            foreach (var group in targetlist.Group)
+            {
+                //debar undefine group
+                if ((null == group.Value.Group) || (-1 == group.Value.Group.GroupID) || (-1 == group.Value.Group.ID)) continue;
+
+                contact_str con = new contact_str(){IsSel = false,Contact = group.Value,};
+
+                //keep selection status
+                if ((null != selected) && (null != selected.Target))              
+                    foreach (var item in selected.Target)
+                        if (item.IsEqual(con.Contact))
+                        {
+                            con.IsSel = true;
+                            break;
+                        }
+                 
+                res.Add(con);
+            }
+
+            if (null != targetlist.Employee)
+            foreach (var employee in targetlist.Employee)
+            {
+                contact_str con = new contact_str() { IsSel = false, Contact = employee.Value, };
+                if ((null != selected) && (null != selected.Target))              
+                        foreach (var item in selected.Target)
+                            if (item.IsEqual(con.Contact))
+                            {
+                                con.IsSel = true;
+                                break;
+                            }
+                 res.Add(con);
+
+                if (null != employee.Value.Radio) existraido.Add(employee.Value.Radio.RadioID);
+                    
+            }
+
+            if (null != targetlist.Vehicle)
+            foreach (var vehicle in targetlist.Vehicle)
+            {
+                contact_str con = new contact_str() { IsSel = false, Contact = vehicle.Value, };
+                if ((null != selected) && (null != selected.Target))               
+                    foreach (var item in selected.Target)
+                        if (item.IsEqual(con.Contact))
+                        {
+                            con.IsSel = true;
+                            break;
+                        }
+                
+                res.Add(con);
+
+                if (null != vehicle.Value.Radio) existraido.Add(vehicle.Value.Radio.RadioID);
+            }
+
+            if (null != targetlist.Radio)
+            foreach (var radio in targetlist.Radio)
+            {
+                if ((null != radio.Value.Radio) && (existraido.Contains(radio.Value.Radio.RadioID))) continue;
+                    
+                contact_str con = new contact_str() { IsSel = false, Contact = radio.Value, };
+                if ((null != selected) && (null != selected.Target))
+                
+                    foreach (var item in selected.Target)
+                        if (item.IsEqual(con.Contact))
+                        {
+                            con.IsSel = true;
+                            break;
+                        }
+                res.Add(con);
+            }
+
+            return res;
+        }
+
+        private static List<contact_str> MatchCondition(string condition, CTargetRes targetlist, CMultMember selected)
+        {
+            List<contact_str> conlist = ConvertToList(targetlist, selected);
+
+            if ("" == condition) return conlist;
+            List<contact_str> willdel = new List<contact_str>();
+            
+            foreach(contact_str con in conlist)
+            {
+                if (((null != con.Contact.Group) && (con.Contact.Group.GroupID.ToString().Contains(condition) || con.Contact.Group.Name.Contains(condition)))
+                  || ((null != con.Contact.Employee) && con.Contact.Employee.Name.Contains(condition))
+                  || ((null != con.Contact.Vehicle) && con.Contact.Vehicle.Number.Contains(condition))
+                  || ((null != con.Contact.Radio) && con.Contact.Radio.RadioID.ToString().Contains(condition)))
+                {
+                    //match condition
+                }
+                else
+                {
+                    //remove
+                    willdel.Add(con);
+                }
+            }
+
+            //remove
+            foreach(contact_str con in willdel)
+                conlist.Remove(con);
+
+            return conlist;
+        }
+
+        private string m_Condition = "";
         private void btn_Search_Click(object sender, RoutedEventArgs e)
         {
+           
             ControlTemplate baseWindowTemplate = combox.Template;
             TextBox txt_SearchCon = (TextBox)baseWindowTemplate.FindName("txt_SearchCon", combox);
-            if (null == txt_SearchCon) SearchAndDisp("");
-            else SearchAndDisp(txt_SearchCon.Text);
-        }
+             m_Condition = (null == txt_SearchCon) ? "" : txt_SearchCon.Text;
 
-        private void CheckBox_Click(object sender, RoutedEventArgs e)
+             OnContactListChange(m_Condition, this);
+        }
+        private void  CheckBox_Checked(object sender, RoutedEventArgs e)
         {
-            if (null == CurrentContact) CurrentContact = new List<COrganization>();
+            if (null == CurrentContact) CurrentContact = new CMultMember();
+            CurrentContact.Type = SelectionType.Multiple;
+            if (null == CurrentContact.Target) CurrentContact.Target = new List<CMember>();
+            CurrentContact.Target.Add(((contact_str)((CheckBox)sender).DataContext).Contact);
 
             ControlTemplate baseWindowTemplate = combox.Template;
             ListView lst_CurrentContact = (ListView)baseWindowTemplate.FindName("lst_CurrentContact", combox);
+            if (null != lst_CurrentContact)
+            lst_CurrentContact.Items.Add(new ListViewItem(){Content = ((contact_str)((CheckBox)sender).DataContext).Contact});
 
-            if (true == ((CheckBox)sender).IsChecked)
-            {
-                CurrentContact.Add((COrganization)((contact_str)((CheckBox)sender).DataContext).contact);
-                lst_CurrentContact.Items.Add((COrganization)((contact_str)((CheckBox)sender).DataContext).contact);
-            }
-            else
-            {
-                CurrentContact.Remove((COrganization)((contact_str)((CheckBox)sender).DataContext).contact);
-                lst_CurrentContact.Items.Remove((COrganization)((contact_str)((CheckBox)sender).DataContext).contact);
-            }
+
+            //OnCurrentContactChange(m_Condition, this);
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {                           
-            ControlTemplate baseWindowTemplate = combox.Template;
-            ListView lst_ContactList = (ListView)baseWindowTemplate.FindName("lst_ContactList", combox);
-            ListView lst_CurrentContact = (ListView)baseWindowTemplate.FindName("lst_CurrentContact", combox);
-            if ((null != lst_ContactList) && (null != lst_CurrentContact))
-            {           
-               int index = -1;
-                foreach(contact_str item in lst_ContactList.Items)
-               {
-                   if(item.contact.index == ((COrganization)((Button)sender).DataContext).index)
-                   {
-                       index = lst_ContactList.Items.IndexOf(item);
-                       break;
-                   }
-               }
 
-                if(index >= 0)
+        private void CheckBox_UnChecked(object sender, RoutedEventArgs e)
+        {
+            if (null == CurrentContact) return;
+            if (null == CurrentContact.Target) return;
+
+
+            foreach (CMember mem in CurrentContact.Target)
+            {
+                if (mem.IsEqual(((contact_str)((CheckBox)sender).DataContext).Contact))
                 {
-                    lst_ContactList.Items.RemoveAt(index);
-                    lst_ContactList.Items.Insert(index, new contact_str() { issel = false, contact = (COrganization)((Button)sender).DataContext });
+                    CurrentContact.Target.Remove(mem);
+                    //OnCurrentContactChange(m_Condition, this);
+                    break;
+                }
+            }
+
+            ControlTemplate baseWindowTemplate = combox.Template;
+            ListView lst_CurrentContact = (ListView)baseWindowTemplate.FindName("lst_CurrentContact", combox);
+            //ListView lst_ContactList = (ListView)baseWindowTemplate.FindName("lst_ContactList", combox);
+
+            if (null != lst_CurrentContact)
+                foreach (var item in lst_CurrentContact.Items)
+                {
+                    if (((CMember)((ListViewItem)item).Content).IsEqual(((contact_str)((CheckBox)sender).DataContext).Contact))
+                    {
+                        lst_CurrentContact.Items.Remove(item);
+                        break;
+                    }
                 }
 
-                CurrentContact.Remove((COrganization)((Button)sender).DataContext);
-                lst_CurrentContact.Items.Remove((COrganization)((Button)sender).DataContext);
-            }    
+            //if (null != lst_ContactList)
+            //    foreach (var item in lst_ContactList.Items)
+            //    {
+            //        if (((contact_str)((ListViewItem)item).Content).Contact.IsEqual((CMember)((Button)sender).DataContext))
+            //        {
+            //            DataTemplate baseLstItemTemplate = ((MsgView)lst_ContactList.View).ItemTemplate;
+            //            ContentPresenter myContentPresenter = FindVisualChild<ContentPresenter>(item as ListViewItem);
+            //            CheckBox chk_CheckBox = (CheckBox)baseLstItemTemplate.FindName("CheckBox", myContentPresenter);
+
+            //            chk_CheckBox.IsChecked = false;
+            //            break;
+            //        }
+            //    }
+        } 
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (CMember mem in CurrentContact.Target)
+            {
+                if (mem.IsEqual((CMember)((Button)sender).DataContext))
+                {
+                    CurrentContact.Target.Remove(mem);
+                    break;
+                }
+            }
+
+            ControlTemplate baseWindowTemplate = combox.Template;
+            ListView lst_CurrentContact = (ListView)baseWindowTemplate.FindName("lst_CurrentContact", combox);
+            ListView lst_ContactList = (ListView)baseWindowTemplate.FindName("lst_ContactList", combox);
+
+            if (null != lst_CurrentContact)
+            foreach (var item in lst_CurrentContact.Items)
+            {
+                if (((CMember)((ListViewItem)item).Content).IsEqual((CMember)((Button)sender).DataContext))
+                {
+                    lst_CurrentContact.Items.Remove(item);
+                    break;
+                }
+            }
+
+            if (null != lst_ContactList)
+            foreach (var item in lst_ContactList.Items)
+            {
+                if (((contact_str)((ListViewItem)item).Content).Contact.IsEqual((CMember)((Button)sender).DataContext))
+                {
+                    DataTemplate baseLstItemTemplate = ((MsgView)lst_ContactList.View).ItemTemplate;
+                    ContentPresenter myContentPresenter = FindVisualChild<ContentPresenter>(item as ListViewItem);
+                    if (null == myContentPresenter)
+                    {
+                        OnContactListChange("", this);
+                        break;
+                    } 
+                    CheckBox chk_CheckBox = (CheckBox)baseLstItemTemplate.FindName("CheckBox", myContentPresenter);
+                    chk_CheckBox.IsChecked = false;
+                    break;
+                }
+            }
+        }
+
+        private childItem FindVisualChild<childItem>(DependencyObject obj)
+         where childItem : DependencyObject
+        {
+            for (int i = 0; i < VisualTreeHelper.GetChildrenCount(obj); i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(obj, i);
+                if (child != null && child is childItem)
+                    return (childItem)child;
+                else
+                {
+                    childItem childOfChild = FindVisualChild<childItem>(child);
+                    if (childOfChild != null)
+                        return childOfChild;
+                }
+            }
+            return null;
         }
 
         private void lst_ContactList_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            
+        }
+
+        private void lst_ContactList_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
             ControlTemplate baseWindowTemplate = combox.Template;
             ListView lst_ContactList = (ListView)baseWindowTemplate.FindName("lst_ContactList", combox);
             ListView lst_CurrentContact = (ListView)baseWindowTemplate.FindName("lst_CurrentContact", combox);
 
+
+            if (null == lst_ContactList) return;
+
             if ((lst_ContactList.SelectedIndex < 0) || (lst_ContactList.SelectedIndex >= lst_ContactList.Items.Count)) return;
 
 
-            CurrentContact.Clear();
-            lst_CurrentContact.Items.Clear();
 
-            CurrentContact.Add(((contact_str)lst_ContactList.SelectedItem).contact);
-            lst_CurrentContact.Items.Add(((contact_str)lst_ContactList.SelectedItem).contact);
-            lst_ContactList.SelectedIndex = -1;          
+            if (IsMultiple)
+            {
+                DataTemplate baseLstItemTemplate = ((MsgView)lst_ContactList.View).ItemTemplate;
+                ContentPresenter myContentPresenter = FindVisualChild<ContentPresenter>(lst_ContactList.SelectedItem as ListViewItem);
+                CheckBox chk_CheckBox = (CheckBox)baseLstItemTemplate.FindName("CheckBox", myContentPresenter);
+
+                chk_CheckBox.IsChecked = !chk_CheckBox.IsChecked;
+            }
+            else
+            {
+                if (null == CurrentContact) CurrentContact = new CMultMember();
+                CurrentContact.Type = SelectionType.Single;
+                if (null == CurrentContact.Target) CurrentContact.Target = new List<CMember>();
+
+                CurrentContact.Target.Clear();
+                lst_CurrentContact.Items.Clear();
+
+                CurrentContact.Target.Add(((contact_str)((ListViewItem)lst_ContactList.SelectedItem).Content).Contact);
+                lst_CurrentContact.Items.Add(new ListViewItem() { Content = ((contact_str)((ListViewItem)lst_ContactList.SelectedItem).Content).Contact });
+
+                combox.IsDropDownOpen = false;
+            }
+
+            lst_ContactList.SelectedIndex = -1;
         }
     }
 }

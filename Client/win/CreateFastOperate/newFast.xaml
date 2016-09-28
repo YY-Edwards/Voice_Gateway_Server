@@ -6,7 +6,75 @@
         Icon="/TrboX;component/themes/resource/Logo.png"        
         Style="{StaticResource MyWindowStyle}"  
         Title="新建快捷操作" Height="360" Width="600" WindowStartupLocation="CenterScreen">
-    <Grid>
+    <src:MyWindow.Resources>
+        <src:OpTypeSelectToContactType x:Key="OpTypeSelectToContactType"/>
+        <src:FalselHideConverter x:Key="FalseHide" />
+        <src:ItemIconConverter x:Key="TypeToIcon" />
+        <src:MainTabIndexFromRadio x:Key="IndexFromRadio" />
+		<src:MsgView x:Key="ContactListView">
+            <src:MsgView.ItemTemplate>
+                <DataTemplate>
+                    <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2">
+                        <DockPanel ToolTip="{Binding NameInfo}" >
+                            <Image x:Name="Icon" Source="{Binding Converter= {StaticResource IconFromOrg}}" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"  Opacity="{Binding Converter={StaticResource IconOpFromOrg}}"/>
+                            <DockPanel x:Name="dck_Content" Margin="5,0" VerticalAlignment="Center" >
+                              
+                                <TextBlock Text="{Binding  Name}"  TextWrapping="NoWrap" Margin="5,0,0,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  Opacity="{Binding  Converter={StaticResource IconOpFromOrg}}"/>
+                            </DockPanel>
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+            </src:MsgView.ItemTemplate>
+        </src:MsgView>
+
+        <src:MsgView x:Key="SelectContactView">
+            <src:MsgView.ItemTemplate>
+                <DataTemplate>
+                    <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2">
+                        <DockPanel ToolTip="{Binding NameInfo}" >
+                            <Image x:Name="Icon"  Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0">
+                                <Image.Source>
+                                    <MultiBinding  Converter="{StaticResource TypeToIcon}">
+                                        <Binding  Path="Type" />
+                                        <Binding  Path="Contact" />
+                                        <Binding  Path="Operate" />
+                                    </MultiBinding>
+                                </Image.Source>
+                            </Image>
+                            <DockPanel x:Name="dck_Content" Margin="5,0" VerticalAlignment="Center" >
+                                <TextBlock Text="{Binding Name}"  TextWrapping="NoWrap" Margin="5,0,0,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"/>
+                            </DockPanel>
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+            </src:MsgView.ItemTemplate>
+        </src:MsgView>
+
+		 <src:MsgView x:Key="SelectOperateView">
+            <src:MsgView.ItemTemplate>
+                <DataTemplate>
+                    <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2">
+                        <DockPanel ToolTip="{Binding  NameInfo}" >
+                            <Image x:Name="Icon"  Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0">
+                                <Image.Source>
+                                    <MultiBinding  Converter="{StaticResource TypeToIcon}">
+                                        <Binding  Path="Type" />
+                                        <Binding  Path="Contact" />
+                                        <Binding  Path="Operate" />
+                                    </MultiBinding>
+                                </Image.Source>
+                            </Image>
+                            <DockPanel x:Name="dck_Content" Margin="5,0" VerticalAlignment="Center" >
+                                <TextBlock Text="{Binding  Name}"  TextWrapping="NoWrap" Margin="5,0,0,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"/>
+                            </DockPanel>
+                        </DockPanel>
+                    </Border>
+                </DataTemplate>
+            </src:MsgView.ItemTemplate>
+        </src:MsgView>
+
+    </src:MyWindow.Resources>      
+        <Grid>
     	<DockPanel Margin="5,0,5,5">
     		<DockPanel LastChildFill="False" Width="80">
     			<Border BorderBrush="Black" BorderThickness="1,1,0,0" DockPanel.Dock="Top">
@@ -16,18 +84,208 @@
     				</DockPanel>
     			</Border>
     		</DockPanel>
-    		<Border BorderBrush="Black" BorderThickness="1">
-    			<Border x:Name="bdr_MaskCreateTab" BorderBrush="Black" BorderThickness="0" Margin="0">
+    		<Border BorderThickness="1" Background="#CCFFFFFF">
+    			<Border x:Name="bdr_MaskCreateTab" BorderBrush="Black" BorderThickness="0" Margin="0" ClipToBounds="True">
     				<TabControl x:Name="tab_CreatFast" Margin="0,-22,0,0" Style="{DynamicResource TabControlStyleNormal}" BorderThickness="0">
-    					<TabItem Header="" Margin="-2,-3.5,-2,1.5">
-    						<Grid Background="#FFE5E5E5">
-    							<Label Content="新建常用联系人" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-    						</Grid>
+                        <TabControl.SelectedIndex>
+                            <MultiBinding Converter="{StaticResource IndexFromRadio}" Mode="OneWay">
+                                <Binding ElementName="rad_CreateContact" Path="IsChecked" />
+                                <Binding ElementName="rad_CreateFastOperate" Path="IsChecked" />
+                            </MultiBinding>
+                        </TabControl.SelectedIndex>
+                        <TabItem Header="" Margin="-2,-3.5,-2,1.5">
+    						<DockPanel>
+    							<Border BorderBrush="#FFDDDDDD" BorderThickness="0,1,0,0" Height="40" VerticalAlignment="Top" DockPanel.Dock="Bottom" Padding="0,2">
+    								<Grid Margin="0" Height="30">
+                                        <Button x:Name="btn_ContactEnter" Content="确定" HorizontalAlignment="Right" VerticalAlignment="Top" Width="100" Height="30" Margin="0,0,130,0" Click="btn_Enter_Click"/>
+                                        <Button x:Name="btn_ContactCanel" Content="取消" HorizontalAlignment="Right" VerticalAlignment="Top" Width="100" Height="30" Margin="0,0,20,0" Click="btn_Canel_Click"/>
+    								</Grid>
+    							</Border>
+    							<DockPanel LastChildFill="False" HorizontalAlignment="Left" DockPanel.Dock="Top" Margin="30,20,10,10">
+    								<DockPanel Width="180">
+    									<TextBlock TextWrapping="Wrap" Text="所有联系人" DockPanel.Dock="Top" Margin="0,0,0,5"/>
+    									<Border BorderBrush="Black" BorderThickness="1" Margin="0" DockPanel.Dock="Top">
+    										<ListView x:Name="lst_ContactList"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0"  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Grid.Row="1" >
+												<ListView.View>
+													<src:MsgView />
+												</ListView.View>
+											</ListView>
+										</Border>
+
+    								</DockPanel>
+    								<Grid Width="80">
+    									<Grid.RowDefinitions>
+    										<RowDefinition Height="50*"/>
+    										<RowDefinition Height="50*"/>
+    									</Grid.RowDefinitions>
+    									<Button x:Name="btn_AddContact" Content="=&gt;" Margin="10,0,10,5" VerticalAlignment="Bottom" Click="btn_AddContact_Click"/>
+    									<Button x:Name="btn_RemoveContact" Content="&lt;=" Margin="10,5,10,0" Grid.RowSpan="2" Grid.Row="1" VerticalAlignment="Top" Click="btn_RemoveContact_Click"/>
+    								</Grid>
+    								<DockPanel Width="180">
+    									<TextBlock TextWrapping="Wrap" Text="常用联系人" DockPanel.Dock="Top" Margin="0,0,-2,5"/>
+    									<Border BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Top" >
+    										 <ListView x:Name="lst_SelectContact"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0"  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Grid.Row="1" >
+												<ListView.View>
+													<src:MsgView />
+												</ListView.View>
+											</ListView>
+										</Border>
+    								</DockPanel>
+    							</DockPanel>
+    						</DockPanel>
     					</TabItem>   					
     					<TabItem Header="" Margin="-2,-3.5,0,-0.5">
-    						<Grid Background="#FFE5E5E5">
-    							<Label Content="新建快速操作" HorizontalAlignment="Left" VerticalAlignment="Top"/>
-    						</Grid>
+    						<DockPanel>
+    							<Border BorderBrush="#FFDDDDDD" BorderThickness="0,1,0,0" Height="40" VerticalAlignment="Top" DockPanel.Dock="Bottom" Padding="0,2">
+    								<Grid Margin="0" Height="30">
+                                        <Button x:Name="btn_OperateEnter" Content="确定" HorizontalAlignment="Right" VerticalAlignment="Top" Width="100" Height="30" Margin="0,0,130,0" Click="btn_Enter_Click" />
+                                        <Button  x:Name="btn_OperateCanel" Content="取消" HorizontalAlignment="Right" VerticalAlignment="Top" Width="100" Height="30" Margin="0,0,20,0" Click="btn_Canel_Click"/>
+    								</Grid>
+    							</Border>
+    							<DockPanel LastChildFill="False" HorizontalAlignment="Left" DockPanel.Dock="Top" Margin="30,20,10,10">
+    								<DockPanel Width="180">
+    									<TextBlock TextWrapping="Wrap" DockPanel.Dock="Top" Margin="0,0,0,5"/>
+    									<Border BorderBrush="Black" BorderThickness="1" Margin="0" DockPanel.Dock="Top">
+    										<DockPanel Margin="5">
+    											<ComboBox x:Name="cmb_OpType" Margin="0" VerticalAlignment="Center" SelectedIndex="0" DockPanel.Dock="Top" SelectionChanged="cmb_OpType_SelectionChanged" >
+    												<ComboBoxItem Content="呼叫"/>
+    												<ComboBoxItem Content="短信"/>
+    												<ComboBoxItem Content="位置查询"/>
+    												<ComboBoxItem Content="信令控制"/>
+    												<ComboBoxItem Content="工单"/>
+    											</ComboBox>
+    											<src:Contact x:Name="contact_OpTarget" VerticalAlignment="Top" IsMultiple="{Binding SelectedIndex, Converter={StaticResource OpTypeSelectToContactType}, ElementName=cmb_OpType}" DockPanel.Dock="Top" Margin="0,5" MinHeight="25" MaxHeight="49"/>
+    											<Border BorderBrush="Black" BorderThickness="0,1,0,0" DockPanel.Dock="Top" ClipToBounds="True">
+    												<TabControl SelectedIndex="{Binding SelectedIndex, ElementName=cmb_OpType}" Style="{DynamicResource TabControlStyleNormal}" Margin="0,-22,0,0" BorderThickness="0">
+    													<TabItem Header="TabItem" Width="20" Margin="0,-4.668,0,2.668">
+    														<DockPanel LastChildFill="False" Margin="0,5,0,0">
+    															<DockPanel Height="25" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0">
+    																<TextBlock TextWrapping="Wrap" Text="呼叫方式：" VerticalAlignment="Center"/>
+    																<ComboBox VerticalAlignment="Center" SelectedIndex="0">
+    																	<ComboBoxItem Content="组呼"/>
+    																	<ComboBoxItem Content="个呼"/>
+    																	<ComboBoxItem Content="全呼"/>
+    																</ComboBox>
+    															</DockPanel>
+    															<DockPanel Height="25" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0">
+    																<TextBlock TextWrapping="Wrap" Text="信　　道：" VerticalAlignment="Center"/>
+    																<ComboBox VerticalAlignment="Center" SelectedIndex="0">
+    																	<ComboBoxItem Content="信道1"/>
+    																	<ComboBoxItem Content="信道2"/>
+    																</ComboBox>
+    															</DockPanel>
+    														</DockPanel>
+    													</TabItem>
+    													<TabItem Header="TabItem" Width="20" Margin="0,-2.668,0,2.668">
+    														<DockPanel LastChildFill="False" Margin="0,5,0,0">
+    															<DockPanel Height="25" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0">
+    																<TextBlock TextWrapping="Wrap" Text="发送方式：" VerticalAlignment="Center"/>
+    																<ComboBox VerticalAlignment="Center" SelectedIndex="0">
+    																	<ComboBoxItem Content="组发"/>
+    																	<ComboBoxItem Content="个发"/>
+    																	<ComboBoxItem Content="全发"/>
+    																</ComboBox>
+    															</DockPanel>
+    															<DockPanel Height="25" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0">
+    																<TextBlock TextWrapping="Wrap" Text="信　　道：" VerticalAlignment="Center"/>
+    																<ComboBox VerticalAlignment="Center" SelectedIndex="0">
+    																	<ComboBoxItem Content="信道1"/>
+    																	<ComboBoxItem Content="信道2"/>
+    																</ComboBox>
+    															</DockPanel>
+    															<DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0">
+    																<TextBlock TextWrapping="Wrap" Text="内　　容：" VerticalAlignment="Top" Margin="0,2,0,0"/>
+    																<TextBox x:Name="txt_Message" Height="60" TextWrapping="Wrap" Text="" VerticalAlignment="Top" Margin="0,2,0,0"/>
+    															</DockPanel>
+    														</DockPanel>
+    													</TabItem>
+    													<TabItem Header="TabItem" Margin="-2,-4.668,2,2.668" Width="20">
+    														<DockPanel LastChildFill="False" Margin="0,5,0,0">
+    															<CheckBox x:Name="chk_All" Content="　查询所有" Style="{DynamicResource SimpleCheckBox}" VerticalAlignment="Top" DockPanel.Dock="Top"  Margin="0"/>
+    															<CheckBox x:Name="chk_CSBK" Content="　CSBK" Style="{DynamicResource SimpleCheckBox}" VerticalAlignment="Top" DockPanel.Dock="Top"   Checked="updatecyclelist" Unchecked="updatecyclelist" Margin="0,5,0,0"/>
+    															<CheckBox x:Name="chk_Enh" Content="　CSBK增强型" Style="{DynamicResource SimpleCheckBox}" DockPanel.Dock="Top" IsEnabled="{Binding IsChecked, ElementName=chk_CSBK}" Checked="updatecyclelist" Unchecked="updatecyclelist" Margin="0,5,0,0"/>
+    															<CheckBox x:Name="chk_Cycle" Content="　周期查询" Style="{DynamicResource SimpleCheckBox}" VerticalAlignment="Center" Margin="0,5,0,0" DockPanel.Dock="Top"/>
+    															<ComboBox x:Name="cmb_CycleLst" Style="{DynamicResource SimpleComboBox}" VerticalAlignment="Center" Visibility="{Binding IsChecked, Converter={StaticResource FalseHide}, ElementName=chk_Cycle}" Margin="0,5,0,0" SelectedIndex="0" DockPanel.Dock="Top"/>
+    														</DockPanel>
+    													</TabItem>
+    													<TabItem Header="TabItem" Margin="-2,-4.668,2,2.668" Width="20">
+    														<DockPanel LastChildFill="False" Margin="0,5,0,0">
+    															<DockPanel Height="25" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0">
+    																<TextBlock TextWrapping="Wrap" Text="发送方式：" VerticalAlignment="Center"/>
+    																<ComboBox VerticalAlignment="Center" SelectedIndex="0">
+    																	<ComboBoxItem Content="组发"/>
+    																	<ComboBoxItem Content="个发"/>
+    																	<ComboBoxItem Content="全发"/>
+    																</ComboBox>
+    															</DockPanel>
+    															<DockPanel Height="25" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0">
+    																<TextBlock TextWrapping="Wrap" Text="信　　道：" VerticalAlignment="Center"/>
+    																<ComboBox VerticalAlignment="Center" SelectedIndex="0">
+    																	<ComboBoxItem Content="信道1"/>
+    																	<ComboBoxItem Content="信道2"/>
+    																</ComboBox>
+    															</DockPanel>
+    															<DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0">
+    																<TextBlock TextWrapping="Wrap" Text="信　　令：" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0"/>
+    																<ComboBox x:Name="cmb_ControlList" VerticalAlignment="Top" SelectedIndex="0">
+    																	<ComboBoxItem Content="在线检测"/>
+    																	<ComboBoxItem Content="远程监听"/>
+    																	<ComboBoxItem Content="遥毙"/>
+    																	<ComboBoxItem Content="遥开"/>
+    																	<ComboBoxItem Content="遥晕"/>
+    																	<ComboBoxItem Content="摇醒"/>
+    																</ComboBox>
+    															</DockPanel>
+    														</DockPanel>
+    													</TabItem>
+    													<TabItem Header="TabItem" Margin="-2,-4.668,2,2.668" Width="20">
+    														<DockPanel LastChildFill="False" Margin="0,5,0,0">
+    															<DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0">
+    																<TextBlock TextWrapping="Wrap" Text="发送方式：" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,5,0"/>
+    																<ComboBox VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0" SelectedIndex="0" Style="{DynamicResource SimpleComboBox}">
+    																	<ComboBoxItem Content="组发"/>
+    																	<ComboBoxItem Content="个发"/>
+    																	<ComboBoxItem Content="全发"/>
+    																</ComboBox>
+    															</DockPanel>
+    															<DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,5,0,0">
+    																<TextBlock TextWrapping="Wrap" Text="工　　单：" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,5,0"/>
+    																<ComboBox VerticalAlignment="Top" SelectedIndex="0">
+    																	<ComboBoxItem Content="工单1"/>
+    																	<ComboBoxItem Content="工单2"/>
+    																	<ComboBoxItem Content="工单3"/>
+    																	<ComboBoxItem Content="工单4"/>
+    																	<ComboBoxItem Content="工单5"/>
+    																</ComboBox>
+    															</DockPanel>
+    														</DockPanel>
+    													</TabItem>
+    												</TabControl>
+    											</Border>
+    										</DockPanel>
+    									</Border>
+
+    								</DockPanel>
+    								<Grid Width="80">
+    									<Grid.RowDefinitions>
+    										<RowDefinition Height="50*"/>
+    										<RowDefinition Height="50*"/>
+    									</Grid.RowDefinitions>
+    									<Button x:Name="btn_AddOperate" Content="=&gt;" Margin="10,0,10,5" VerticalAlignment="Bottom" Click="btn_AddOperate_Click"/>
+                                        <Button x:Name="btn_RemoveOperate" Content="&lt;=" Margin="10,5,10,0" Grid.RowSpan="2" Grid.Row="1" VerticalAlignment="Top" Click="btn_RemoveOperate_Click"/>
+    								</Grid>
+    								<DockPanel Width="180">
+    									<TextBlock TextWrapping="Wrap" Text="快速操作" DockPanel.Dock="Top" Margin="0,0,-2,5"/>
+    									<Border BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Top" >
+    										<ListView x:Name="lst_SelectOperate"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0"  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Grid.Row="1" >
+    											<ListView.View>
+    												<src:MsgView />
+    											</ListView.View>
+    										</ListView>
+    									</Border>
+    								</DockPanel>
+    							</DockPanel>
+    						</DockPanel>
     					</TabItem>   					
     				</TabControl>
     			</Border>
