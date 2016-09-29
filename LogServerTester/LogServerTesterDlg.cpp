@@ -75,6 +75,7 @@ BEGIN_MESSAGE_MAP(CLogServerTesterDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_POWEROFF, &CLogServerTesterDlg::OnBnClickedPoweroff)
 	ON_BN_CLICKED(IDC_ONLINE, &CLogServerTesterDlg::OnBnClickedOnline)
 	ON_BN_CLICKED(IDC_WIRETAP, &CLogServerTesterDlg::OnBnClickedWiretap)
+
 END_MESSAGE_MAP()
 
 
@@ -202,10 +203,6 @@ void CLogServerTesterDlg::OnBnClickedCallbtn()
 	
 }
 
-
-
-
-
 void CLogServerTesterDlg::OnBnClickedMsgbtn()
 {
 	// TODO:  在此添加控件通知处理程序代码
@@ -261,3 +258,5 @@ void CLogServerTesterDlg::OnBnClickedWiretap()
 	std::string strCall = "{\"call\":\"wiretap\",\"param\":{\"id\":\"10\"},\"callId\":1}";
 	m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
 }
+
+
