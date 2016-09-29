@@ -35,28 +35,38 @@ namespace TrboX
     {
         Main m_Main;
         OpView m_View;
-        private CRelationShipObj m_Target = null;
-        private COperate Operate = new COperate (OPType.Dispatch, null);
+        private CMultMember m_Target = new CMultMember();
+        private COperate Operate = new COperate(OPType.Dispatch, new CMultMember() { Type = SelectionType.Single, Target = new List<CMember>() }, null);
 
         private int m_FirstUnReadMsgIndex = -1;
         private CNotification m_CurrentMsg = null;
 
         public Main OwnerWin { set { m_Main = value; } get { return m_Main; } }
 
-        public OperateWin(CRelationShipObj target)
+        public OperateWin(CMultMember target)
             : base()
         {
             InitializeComponent();
             
-
             if(null == target)return;
             m_Target = target;
 
             this.Loaded += delegate
             {
+                if (SelectionType.Single == m_Target.Type)
+                {
+                    Title = m_Target.Target[0].Name;
+                    SubTitle = m_Target.Target[0].Information;
+                }
+                else if (SelectionType.Multiple == m_Target.Type)
+                {
+                    Title = m_Target.Target[0].Name + "、" + m_Target.Target[1].Name + " 等共" + m_Target.Target.Count.ToString() + "人";
+                }
+                else
+                {
+                    return;
+                }
                 
-                Title = m_Target.KeyName;
-                SubTitle = m_Target.HeaderWithoutKey;
 
                 m_View = new OpView(this);
 
@@ -70,9 +80,8 @@ namespace TrboX
         private void OnOperateWinActivated()
         {
             UpdateNotify();
-            m_Main.MsgWin.ClearTarget(m_Target);
+            m_Main.MsgWin.ClearTarget(m_Target);                     
         }
-
 
         private void UpdateNotify()
         {
@@ -82,7 +91,7 @@ namespace TrboX
 
                 foreach (CNotification item in notify)
                 {
-                    if (true == CRelationShipObj.Compare(item.Source, Target))
+                    if(item.Source.SingleToMult().IsLike(m_Target))
                     {
                         RxMessage(item);
 
@@ -91,7 +100,7 @@ namespace TrboX
                             m_FirstUnReadMsgIndex = lst_History.Items.Count - 1;
                             bdr_UnRead.Visibility = Visibility.Visible;
                         }
-                    }                       
+                    }
                 }
 
                 lst_History.Dispatcher.BeginInvoke(new Action(() =>
@@ -122,10 +131,11 @@ namespace TrboX
             }
         }
 
-        public CRelationShipObj Target
+        public CMultMember Target
         {
             get
             {
+                if (null == m_Target) m_Target = new CMultMember();
                 return m_Target;
             }
             set
@@ -147,7 +157,7 @@ namespace TrboX
 
         private void OnChangeOperateType()
         {
-            switch (Operate.type)
+            switch (Operate.Type)
             {
                 case OPType.Dispatch:
                 case OPType.ShortMessage:
@@ -156,7 +166,6 @@ namespace TrboX
                 case OPType.Tracker:
                 default:
                     break;
-
             };
         }
 
@@ -224,11 +233,7 @@ namespace TrboX
             this.Dispatcher.Invoke(new Action(() =>
             {
                 AddMessage(ConvertToHistory(notify));
-
-                if (true == this.IsActive)
-                {
-                    m_Main.MsgWin.ClearTarget(m_Target);
-                }
+                if (true == this.IsActive) m_Main.MsgWin.ClearTarget(m_Target);                       
             }));               
         }
 
@@ -256,8 +261,10 @@ namespace TrboX
             });
         }
 
+        private bool clickincloseunread = false;
         private void bdr_UnRead_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
+            if (!clickincloseunread)            
             if (-1 != m_FirstUnReadMsgIndex)
             {
                 lst_History.SelectedIndex = m_FirstUnReadMsgIndex;
@@ -265,12 +272,19 @@ namespace TrboX
             
             m_FirstUnReadMsgIndex = -1;
             bdr_UnRead.Visibility = Visibility.Collapsed;
+
+            clickincloseunread = false;
+        }
+
+        private void btn_UnReadClose_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            clickincloseunread = true;
         }
 
         private void btn_UnReadClose_Click(object sender, RoutedEventArgs e)
         {
-            m_FirstUnReadMsgIndex = -1;
-            bdr_UnRead.Visibility = Visibility.Collapsed;
+            //m_FirstUnReadMsgIndex = -1;
+            //bdr_UnRead.Visibility = Visibility.Collapsed;
         }
 
 

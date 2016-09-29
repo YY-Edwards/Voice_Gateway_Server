@@ -103,6 +103,7 @@
   <ItemGroup>
     <ClInclude Include="..\lib\rpc\include\AbstractAction.h" />
     <ClInclude Include="..\lib\rpc\include\BaseConnector.h" />
+    <ClInclude Include="..\lib\rpc\include\request.h" />
     <ClInclude Include="..\lib\rpc\include\RpcClient.h" />
     <ClInclude Include="..\lib\rpc\include\RpcJsonParser.h" />
     <ClInclude Include="..\lib\rpc\include\TcpClientConnector.h" />

@@ -8,6 +8,9 @@
 #include "LogServerTesterDlg.h"
 #include "afxdialogex.h"
 
+#include "../lib/rpc/include/RpcJsonParser.h"
+#include "../lib/utf8/utf8.h"
+
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -181,8 +184,19 @@ void CLogServerTesterDlg::OnBnClickedBtnStop()
 
 void CLogServerTesterDlg::OnBnClickedBtnCallAppEvent()
 {
-	std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
-	m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	std::map<std::string, std::string> args;
+	args["name"] = "Radio";
+	args["content1"] = "this is test";
+	std::string callJsonStr = CRpcJsonParser::buildCall("appEvent", 223, args);
+	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+		std::string strResp = pResponse;
+		std::wstring wstr;
+		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+		TRACE("received:%s\r", wstr.c_str());
+	});
+	callJsonStr.clear();
 }
 
 

@@ -60,7 +60,7 @@
 						<Border x:Name="bdr_UnRead" BorderBrush="Black" BorderThickness="0" Height="25" VerticalAlignment="Top" DockPanel.Dock="Top" Background="#FF97C5F7" PreviewMouseLeftButtonUp="bdr_UnRead_PreviewMouseLeftButtonUp" Visibility="Collapsed">
 							<DockPanel LastChildFill="False">
 								<Label Content="有未读消息！" Height="25" VerticalAlignment="Top" Margin="5,0,0,0"/>
-								<Button x:Name="btn_UnReadClose" Content="X" Height="20" VerticalAlignment="Center" Width="20" DockPanel.Dock="Right" Margin="0,0,5,0" HorizontalAlignment="Right" Click="btn_UnReadClose_Click"/>
+								<Button x:Name="btn_UnReadClose" Content="X" Height="20" VerticalAlignment="Center" Width="20" DockPanel.Dock="Right" Margin="0,0,5,0" HorizontalAlignment="Right" Click="btn_UnReadClose_Click" PreviewMouseLeftButtonDown="btn_UnReadClose_PreviewMouseLeftButtonDown"/>
 							</DockPanel>
 						</Border>
 						<ListView x:Name="lst_History"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="#99FFF8F8" Margin="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" DockPanel.Dock="Top"  SelectionChanged="lst_History_SelectionChanged" >

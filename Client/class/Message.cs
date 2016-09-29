@@ -47,8 +47,25 @@ namespace TrboX
     public class CNotification
     {
         public NotifyType Type { set; get; }
-        public CRelationShipObj Source { set; get; }
+        public CMember Source { set; get; }
         public DateTime Time { set; get; }
         public object Content{ set; get; }
+
+        //disp
+        public string Brief {
+
+            get { 
+               
+                switch(Type)
+                {
+                    case NotifyType.Alarm:
+                        return Source.Name + "：" + ((CAlarmNotification)Content).Content;
+                    case NotifyType.Message:
+                        return Source.Name + "：" + ((CMsgNotification)Content).Content; 
+                }
+
+                return Source.Name + "：";
+            }
+        }
     }
 }

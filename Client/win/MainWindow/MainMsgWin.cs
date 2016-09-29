@@ -227,18 +227,16 @@ namespace TrboX
             }));
         }
 
-        
 
-        public void RemoveNotifyBySrc(CRelationShipObj src)
+        public void RemoveNotifyBySrc(CMember src)
         {
             List<CNotification> notify = Get();
             List<CNotification> willdel = new List<CNotification>();
             foreach (CNotification item in notify)
-                if (true == CRelationShipObj.Compare(item.Source, src)) willdel.Add(item);
+                if (item.Source.IsLike(src)) willdel.Add(item);
 
             foreach (CNotification item in willdel) Remove(item);
         }
-
     }
 
     public class MainMsgWin
@@ -280,6 +278,7 @@ namespace TrboX
        private double MsgWidth = 260;
        private void UpdateMsgWinSta()
        {
+           if (true== (bool)m_Main.chk_MaxSize.IsChecked) return;
            int show_count = 0;
            int the_last_explaner_index = -1;
            bool is_need_update_hight = false;
@@ -485,7 +484,6 @@ namespace TrboX
                 m_bdrMsgList[m_Main.bdr_Msg_Job].expanler = true;
                 m_Main.chk_MsgExp_Job.IsChecked = true;
             }
-
             UpdateMsgWinSta();
         }
 
@@ -518,9 +516,10 @@ namespace TrboX
             return notify;
         }
 
-        public void ClearTarget(CRelationShipObj target)
+        public void ClearTarget(CMultMember target)
         {
-            m_Notify.RemoveNotifyBySrc(target);
+            foreach(CMember member in target.Target)
+                m_Notify.RemoveNotifyBySrc(member);             
         }
         public void RemoveNotify(object item)
         {
@@ -547,20 +546,24 @@ namespace TrboX
             {
                 i++;
 
-                //AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Content = new CAlarmNotification() { Content = "test" + i.ToString() } });
-                //AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 3 }), Content = new CAlarmNotification() { Content = "Alarm" + i.ToString() } });
+                AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Content = new CAlarmNotification() { Content = "test" + i.ToString() } });
+                AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Content = new CAlarmNotification() { Content = "Alarm" + i.ToString() } });
 
-                //m_Notify.Add(new CNotification() { Type = NotifyType.Call, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Time = DateTime.Now });
-                //m_Notify.Add(new CNotification() { Type = NotifyType.Message, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Time = DateTime.Now, Content = new CMsgNotification() { Content = "Message" + i.ToString() } });
-                //m_Notify.Add(new CNotification() { Type = NotifyType.JobTicker, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Time = DateTime.Now });
-                //m_Notify.Add(new CNotification() { Type = NotifyType.Tracker, Source = new CRelationShipObj(OrgItemType.Type_Radio, null, null, null, new CRadio() { id = 2 }), Time = DateTime.Now });
+                AddNotify(new CNotification() { Type = NotifyType.Call, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Time = DateTime.Now });
+                AddNotify(new CNotification() { Type = NotifyType.Message, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Time = DateTime.Now, Content = new CMsgNotification() { Content = "Message" + i.ToString() } });
+                AddNotify(new CNotification() { Type = NotifyType.JobTicker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Time = DateTime.Now });
+                AddNotify(new CNotification() { Type = NotifyType.Tracker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Time = DateTime.Now });
 
+                AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Content = new CAlarmNotification() { Content = "test" + i.ToString() } });
+                AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Content = new CAlarmNotification() { Content = "Alarm" + i.ToString() } });
 
-
-
+                AddNotify(new CNotification() { Type = NotifyType.Call, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now });
+                AddNotify(new CNotification() { Type = NotifyType.Message, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now, Content = new CMsgNotification() { Content = "Message" + i.ToString() } });
+                AddNotify(new CNotification() { Type = NotifyType.JobTicker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now });
+                AddNotify(new CNotification() { Type = NotifyType.Tracker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now });
                 m_Main.EventList.AddEvent("事件" + i.ToString());
 
-                Thread.Sleep(10000);
+                Thread.Sleep(5000);
             }
         }
     }

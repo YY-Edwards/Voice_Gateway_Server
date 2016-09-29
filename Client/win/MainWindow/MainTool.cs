@@ -18,47 +18,52 @@ namespace TrboX
 
             m_Main.btn_Tool_NewFastOperate.Click += delegate
             {
-                FastOperate op = new FastOperate()
+                m_Main.WorkArea.FastPanel.Add(new FastOperate()
                 {
-                    m_Type = FastType.FastType_Operate,
-                    //m_Contact = new CRelationShipObj(OrgItemType.Type_Employee, new CGroup() { id = 1, name = "地勤", group_id = 12 }
-                    //    , new CEmployee() { id = 2, name = "崔二胯子" }
-                    //    , new CVehicle() { id = 12, number = "牛B74110" }
-                    //    , new CRadio() { id = 22, radio_id = 2314, is_online = true, type = RadioType.RIDE }),
+                    Type = FastType.FastType_Operate,
+                    Operate = new COperate(
+                        OPType.Dispatch,
+                        m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }).SingleToMult(),
+                        new CDispatch()
+                        )
+                });
 
-                    m_Operate = new COperate(OPType.Dispatch, new CDispatch()
-                    {
-                        target = new CRelationShipObj(OrgItemType.Type_Employee, new CGroup() { id = 1, name = "地勤", group_id = 12 }
-                            , new CEmployee() { id = 2, name = "崔二胯子" }
-                            , new CVehicle() { id = 12, number = "牛B74110" }
-                            , new CRadio() { id = 22, radio_id = 2314, is_online = true, type = RadioType.RIDE }),
-                        targettype = TargetType.Radio
-                    })
+                m_Main.WorkArea.FastPanel.Add(new FastOperate()
+                {
+                    Type = FastType.FastType_Operate,
+                    Operate = new COperate(
+                        OPType.ShortMessage,
+                        m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }).SingleToMult(),
+                        new CShortMessage() { Message = "hello,test msg" }
+                    )
+                });
 
-                    //m_Operate = new COperate(OPType.ShortMessage, new CShortMessage()
-                    //{
-                    //    target = new CRelationShipObj(OrgItemType.Type_Employee, new CGroup() { id = 1, name = "地勤", group_id = 12 }
-                    //        , new CEmployee() { id = 2, name = "崔二胯子" }
-                    //        , new CVehicle() { id = 12, number = "牛B74110" }
-                    //        , new CRadio() { id = 22, radio_id = 2314, is_online = true, type = RadioType.RIDE }),
-                    //    targettype = TargetType.Radio,
-                    //    message = "hello,test msg"
-                    //})
+                m_Main.WorkArea.FastPanel.Add(new FastOperate()
+                {
+                    Type = FastType.FastType_Operate,
+                    Operate = new COperate(
+                     OPType.Position,
+                     m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }).SingleToMult(),
+                     new CPosition(){IsCSBK = true,IsEnh = false,IsCycle = false,})
+                });
 
+                m_Main.WorkArea.FastPanel.Add(new FastOperate()
+                {
+                    Type = FastType.FastType_Operate,
+                    Operate = new COperate(
+                     OPType.Control,
+                     m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }).SingleToMult(),
+                     new CControl() { Type = ControlType.Check })
+                });
 
-                    //m_Operate = new COperate(OPType.Position, new CPosition()
-                    //{
-                    //    target = new CRelationShipObj(OrgItemType.Type_Employee, new CGroup() { id = 1, name = "地勤", group_id = 12 }
-                    //        , new CEmployee() { id = 2, name = "崔二胯子" }
-                    //        , new CVehicle() { id = 12, number = "牛B74110" }
-                    //        , new CRadio() { id = 22, radio_id = 2314, is_online = true, type = RadioType.RIDE }),
-                    //    targettype = TargetType.Radio,
-                    //    iscsbk = true,
-                    //    isenh = false,
-                    //    iscycle = false,
-                    //})
-                };
-                m_Main.WorkArea.FastPanel.Add(op);
+                m_Main.WorkArea.FastPanel.Add(new FastOperate()
+                {
+                    Type = FastType.FastType_Operate,
+                    Operate = new COperate(
+                     OPType.JobTicker,
+                     m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }).SingleToMult(),
+                     new CJobTicket())
+                });
             };
         }
 

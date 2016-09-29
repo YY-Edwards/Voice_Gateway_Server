@@ -65,7 +65,7 @@ int CTcpServer::start(const char* connStr)
 	return 0;
 }
 
-int CTcpServer::send(unsigned char* pData, int dataLen)
+int CTcpServer::send(const char* pData, int dataLen)
 {
 	return ::send(m_serverSocket, (char*)pData, dataLen, 0);
 }

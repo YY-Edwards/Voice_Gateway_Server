@@ -22,6 +22,5 @@ public:
 protected:
 	std::map<std::string, CAbstractAction*>  m_mpActions;
 	CBaseConnector* m_pConnector;
-	std::mutex m_actionsLocker;
 };
 

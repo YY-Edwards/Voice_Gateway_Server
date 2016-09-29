@@ -77,6 +77,8 @@
            TargetType="{x:Type ListViewItem}"
            BasedOn="{StaticResource {x:Type ListBoxItem}}">
         <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
         <Setter Property="ContentTemplate" Value="{Binding Path= View.ItemTemplate, RelativeSource={RelativeSource Mode=FindAncestor,AncestorType={x:Type ListView}}}" />
     </Style>
 

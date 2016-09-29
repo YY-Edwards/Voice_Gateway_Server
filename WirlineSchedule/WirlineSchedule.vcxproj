@@ -1,0 +1,198 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>RealTimeRecordOrPlayPcm</RootNamespace>
+    <ProjectName>WirlineSchedule</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\Debug\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>..\Release\</OutDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSLE;_USRDLL;REALTIMERECORDORPLAYPCM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;REALTIMERECORDORPLAYPCM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Ambe3000.h" />
+    <ClInclude Include="Call.h" />
+    <ClInclude Include="common.h" />
+    <ClInclude Include="HMAC_SHA1.h" />
+    <ClInclude Include="IPSCPeer.h" />
+    <ClInclude Include="Manager.h" />
+    <ClInclude Include="mutex.h" />
+    <ClInclude Include="mysql-connector-c\include\atomic\gcc_builtins.h" />
+    <ClInclude Include="mysql-connector-c\include\atomic\generic-msvc.h" />
+    <ClInclude Include="mysql-connector-c\include\atomic\nolock.h" />
+    <ClInclude Include="mysql-connector-c\include\atomic\rwlock.h" />
+    <ClInclude Include="mysql-connector-c\include\atomic\x86-gcc.h" />
+    <ClInclude Include="mysql-connector-c\include\base64.h" />
+    <ClInclude Include="mysql-connector-c\include\config-win.h" />
+    <ClInclude Include="mysql-connector-c\include\decimal.h" />
+    <ClInclude Include="mysql-connector-c\include\errmsg.h" />
+    <ClInclude Include="mysql-connector-c\include\hash.h" />
+    <ClInclude Include="mysql-connector-c\include\keycache.h" />
+    <ClInclude Include="mysql-connector-c\include\lf.h" />
+    <ClInclude Include="mysql-connector-c\include\myisampack.h" />
+    <ClInclude Include="mysql-connector-c\include\mysql.h" />
+    <ClInclude Include="mysql-connector-c\include\mysqld_error.h" />
+    <ClInclude Include="mysql-connector-c\include\mysql_com.h" />
+    <ClInclude Include="mysql-connector-c\include\mysql_time.h" />
+    <ClInclude Include="mysql-connector-c\include\mysql_version.h" />
+    <ClInclude Include="mysql-connector-c\include\mysys\rijndael.h" />
+    <ClInclude Include="mysql-connector-c\include\mysys_err.h" />
+    <ClInclude Include="mysql-connector-c\include\my_aes.h" />
+    <ClInclude Include="mysql-connector-c\include\my_alarm.h" />
+    <ClInclude Include="mysql-connector-c\include\my_alloc.h" />
+    <ClInclude Include="mysql-connector-c\include\my_atomic.h" />
+    <ClInclude Include="mysql-connector-c\include\my_attribute.h" />
+    <ClInclude Include="mysql-connector-c\include\my_base.h" />
+    <ClInclude Include="mysql-connector-c\include\my_bit.h" />
+    <ClInclude Include="mysql-connector-c\include\my_bitmap.h" />
+    <ClInclude Include="mysql-connector-c\include\my_charsets.h" />
+    <ClInclude Include="mysql-connector-c\include\my_config.h" />
+    <ClInclude Include="mysql-connector-c\include\my_dbug.h" />
+    <ClInclude Include="mysql-connector-c\include\my_dir.h" />
+    <ClInclude Include="mysql-connector-c\include\my_getopt.h" />
+    <ClInclude Include="mysql-connector-c\include\my_global.h" />
+    <ClInclude Include="mysql-connector-c\include\my_libwrap.h" />
+    <ClInclude Include="mysql-connector-c\include\my_list.h" />
+    <ClInclude Include="mysql-connector-c\include\my_md5.h" />
+    <ClInclude Include="mysql-connector-c\include\my_net.h" />
+    <ClInclude Include="mysql-connector-c\include\my_nosys.h" />
+    <ClInclude Include="mysql-connector-c\include\my_no_pthread.h" />
+    <ClInclude Include="mysql-connector-c\include\my_pthread.h" />
+    <ClInclude Include="mysql-connector-c\include\my_stacktrace.h" />
+    <ClInclude Include="mysql-connector-c\include\my_sys.h" />
+    <ClInclude Include="mysql-connector-c\include\my_time.h" />
+    <ClInclude Include="mysql-connector-c\include\my_tree.h" />
+    <ClInclude Include="mysql-connector-c\include\my_trie.h" />
+    <ClInclude Include="mysql-connector-c\include\my_uctype.h" />
+    <ClInclude Include="mysql-connector-c\include\my_vle.h" />
+    <ClInclude Include="mysql-connector-c\include\my_xml.h" />
+    <ClInclude Include="mysql-connector-c\include\m_ctype.h" />
+    <ClInclude Include="mysql-connector-c\include\m_string.h" />
+    <ClInclude Include="mysql-connector-c\include\queues.h" />
+    <ClInclude Include="mysql-connector-c\include\service_versions.h" />
+    <ClInclude Include="mysql-connector-c\include\sha1.h" />
+    <ClInclude Include="mysql-connector-c\include\sha2.h" />
+    <ClInclude Include="mysql-connector-c\include\sql_common.h" />
+    <ClInclude Include="mysql-connector-c\include\sslopt-case.h" />
+    <ClInclude Include="mysql-connector-c\include\sslopt-longopts.h" />
+    <ClInclude Include="mysql-connector-c\include\sslopt-vars.h" />
+    <ClInclude Include="mysql-connector-c\include\thr_alarm.h" />
+    <ClInclude Include="mysql-connector-c\include\thr_lock.h" />
+    <ClInclude Include="mysql-connector-c\include\typelib.h" />
+    <ClInclude Include="mysql-connector-c\include\t_ctype.h" />
+    <ClInclude Include="mysql-connector-c\include\violite.h" />
+    <ClInclude Include="mysql-connector-c\include\waiting_threads.h" />
+    <ClInclude Include="mysql-connector-c\include\wqueue.h" />
+    <ClInclude Include="MySQL.h" />
+    <ClInclude Include="RecorderServer.h" />
+    <ClInclude Include="SerialDongle.h" />
+    <ClInclude Include="SHA1.h" />
+    <ClInclude Include="Sound.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="Tool.h" />
+    <ClInclude Include="VoiceDefs.h" />
+    <ClInclude Include="WLNet.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Call.cpp" />
+    <ClCompile Include="common.cpp" />
+    <ClCompile Include="HMAC_SHA1.cpp" />
+    <ClCompile Include="IPSCPeer.cpp" />
+    <ClCompile Include="Manager.cpp" />
+    <ClCompile Include="MySQL.cpp" />
+    <ClCompile Include="RecorderServer.cpp" />
+    <ClCompile Include="WirlineSchedule.cpp" />
+    <ClCompile Include="SerialDongle.cpp" />
+    <ClCompile Include="SHA1.cpp" />
+    <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Tool.cpp" />
+    <ClCompile Include="WLNet.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="mysql-connector-c\lib\libmysql.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="mysql-connector-c\lib\libmysql.lib" />
+    <Library Include="mysql-connector-c\lib\mysqlclient.lib" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

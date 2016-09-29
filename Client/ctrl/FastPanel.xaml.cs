@@ -16,18 +16,43 @@ using System.Globalization;
 
 namespace TrboX
 {
+    public class OpTypeToContactType : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (null == value) return true;
+            if (OPType.Dispatch == ((COperate)value).Type) return false;
+            else return true;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+   
+    
     /// <summary>
     /// FastPanel.xaml 的交互逻辑
     /// </summary>
     public partial class FastPanel : UserControl
     {
+        Main main = null;
+        CMultMember SelectContact = new CMultMember();
         public FastPanel()
         {
             InitializeComponent();
             updatecyclelist(null, null);
             this.Loaded+=delegate
             {
-                //contact_box.ContactSrc = 
+                main = Main.GetWindow(this) as Main;
+                contact_box.ContactList = main.ResrcMgr.Target.TargetList;
+                contact_box.CurrentContact = (null == PanelItem.Operate)?null:PanelItem.Operate.Target;             
+            };
+
+            this.Closing += delegate
+            {
+                //SelectContact = contact_box.CurrentContact;
             };
         }
 
@@ -39,16 +64,43 @@ namespace TrboX
 
         public static readonly DependencyProperty PanelItemProperty =
             DependencyProperty.Register("PanelItem", typeof(FastOperate), typeof(FastPanel), new UIPropertyMetadata(null, delegate(DependencyObject obj, DependencyPropertyChangedEventArgs e){
-
-                if (OPType.Position == ((FastOperate)e.NewValue).m_Operate.type)
+                if (null == e.NewValue) return;
+                if ((null != ((FastOperate)e.NewValue).Operate) && (OPType.Position == ((FastOperate)e.NewValue).Operate.Type))
                 {
                     var element = obj as FastPanel;
-                    List<double> cyclelist = CPosition.UpdateCycleList(((FastOperate)e.NewValue).m_Operate.position.iscsbk, ((FastOperate)e.NewValue).m_Operate.position.isenh);
+                    List<double> cyclelist = CPosition.UpdateCycleList(((CPosition)((FastOperate)e.NewValue).Operate.Operate).IsCSBK, ((CPosition)((FastOperate)e.NewValue).Operate.Operate).IsEnh);
                     element.cmb_CycleLst.Items.Clear();
                     foreach (double cycle in cyclelist)
-                        element.cmb_CycleLst.Items.Add(new ComboBoxItem() {Content = cycle.ToString() + "s", Tag = cycle });
+                        element.cmb_CycleLst.Items.Add(new ComboBoxItem() { Content = cycle.ToString() + "s", Tag = cycle });
+                    element.cmb_CycleLst.SelectedIndex = 0;
                 }
             }));
+
+        public CMultMember CurrentContact
+        {
+            get { return (CMultMember)GetValue(CurrentContactProperty); }
+            set { SetValue(CurrentContactProperty, value); }
+        }
+
+        public static readonly DependencyProperty CurrentContactProperty =
+    DependencyProperty.Register("CurrentContact", typeof(CMultMember), typeof(FastPanel), new UIPropertyMetadata(null, delegate(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+        {
+
+        }));
+
+    //    public static readonly DependencyProperty ShortMessageProperty =
+    //DependencyProperty.Register("PanelItem", typeof(string), typeof(FastPanel), new UIPropertyMetadata(null, delegate(DependencyObject obj, DependencyPropertyChangedEventArgs e)
+    //{
+        //if ((null != ((FastOperate)e.NewValue).Operate) && (OPType.Position == ((FastOperate)e.NewValue).Operate.Type))
+        //{
+        //    var element = obj as FastPanel;
+        //    List<double> cyclelist = CPosition.UpdateCycleList(((CPosition)((FastOperate)e.NewValue).Operate.Operate).IsCSBK, ((CPosition)((FastOperate)e.NewValue).Operate.Operate).IsEnh);
+        //    element.cmb_CycleLst.Items.Clear();
+        //    foreach (double cycle in cyclelist)
+        //        element.cmb_CycleLst.Items.Add(new ComboBoxItem() { Content = cycle.ToString() + "s", Tag = cycle });
+        //}
+    //}));
+
 
         public static readonly RoutedEvent ClosingRoutedEvent =
             EventManager.RegisterRoutedEvent("Closing", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
@@ -65,6 +117,9 @@ namespace TrboX
             cmb_CycleLst.Items.Clear();
             foreach (double cycle in cyclelist)
                 cmb_CycleLst.Items.Add(new ComboBoxItem() { Content = cycle.ToString() + "s", Tag = cycle });
+            cmb_CycleLst.SelectedIndex = 0;
+
+            if (false == chk_CSBK.IsChecked) chk_Enh.IsChecked = false;
         }
 
         public static readonly RoutedEvent TitlePressedRoutedEvent =
@@ -100,6 +155,8 @@ namespace TrboX
 
         private void btn_Check_Click(object sender, RoutedEventArgs e)
         {
+            if (FastType.FastType_Contact == PanelItem.Type)
+                PanelItem.Operate = new COperate(OPType.Control, CurrentContact, new CControl() { Type = ControlType.Check });
             RoutedEventArgs newEventArgs = new RoutedEventArgs(OnlineCheckRoutedEvent);
             RaiseEvent(newEventArgs);
         }
@@ -108,6 +165,8 @@ namespace TrboX
 EventManager.RegisterRoutedEvent("Monitor", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
         private void btn_Monitor_Click(object sender, RoutedEventArgs e)
         {
+            if (FastType.FastType_Contact == PanelItem.Type)
+                PanelItem.Operate = new COperate(OPType.Control, CurrentContact, new CControl() { Type = ControlType.Monitor });
             RoutedEventArgs newEventArgs = new RoutedEventArgs(MonitorRoutedEvent);
             RaiseEvent(newEventArgs);
         }
@@ -115,6 +174,9 @@ EventManager.RegisterRoutedEvent("Monitor", RoutingStrategy.Bubble, typeof(Route
 EventManager.RegisterRoutedEvent(" Dispatch", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
         private void btn_Call_Click(object sender, RoutedEventArgs e)
         {
+            if (FastType.FastType_Contact == PanelItem.Type)
+                PanelItem.Operate = new COperate(OPType.Dispatch, CurrentContact, new CDispatch() );
+                
             RoutedEventArgs newEventArgs = new RoutedEventArgs(DispatchRoutedEvent);
             RaiseEvent(newEventArgs);
         }
@@ -122,68 +184,62 @@ EventManager.RegisterRoutedEvent(" Dispatch", RoutingStrategy.Bubble, typeof(Rou
 EventManager.RegisterRoutedEvent("Message", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
         private void btn_Message_Click(object sender, RoutedEventArgs e)
         {
+            if (FastType.FastType_Contact == PanelItem.Type)
+                PanelItem.Operate = new COperate(OPType.ShortMessage, CurrentContact, new CShortMessage() { Message = txt_ShortMessage.Text});
+
             RoutedEventArgs newEventArgs = new RoutedEventArgs(MessageRoutedEvent);
             RaiseEvent(newEventArgs);
         }
-        public static readonly RoutedEvent PositionRoutedEvent =
-EventManager.RegisterRoutedEvent("Position", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
-        private void btn_Position_Click(object sender, RoutedEventArgs e)
-        {
-            RoutedEventArgs newEventArgs = new RoutedEventArgs(PositionRoutedEvent);
-            RaiseEvent(newEventArgs);
-
-        }
-        public static readonly RoutedEvent JobTicketRoutedEvent =
-EventManager.RegisterRoutedEvent("JobTicket", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
-        private void btn_Job_Click(object sender, RoutedEventArgs e)
-        {
-            RoutedEventArgs newEventArgs = new RoutedEventArgs(JobTicketRoutedEvent);
-            RaiseEvent(newEventArgs);
-        }
-
-
 
         public static readonly RoutedEvent ShutDownRoutedEvent =
 EventManager.RegisterRoutedEvent("ShutDown", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
-        private void btn_Control_Click(object sender, RoutedEventArgs e)
+        private void btn_ShutDown_Click(object sender, RoutedEventArgs e)
         {
+            if (FastType.FastType_Contact == PanelItem.Type)
+                PanelItem.Operate = new COperate(OPType.Control, CurrentContact, new CControl() { Type = ControlType.ShutDown });
             RoutedEventArgs newEventArgs = new RoutedEventArgs(ShutDownRoutedEvent);
             RaiseEvent(newEventArgs);
         }
 
         public static readonly RoutedEvent StartUpRoutedEvent =
 EventManager.RegisterRoutedEvent("StartUp", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
-        public static readonly RoutedEvent SleepRoutedEvent =
-EventManager.RegisterRoutedEvent("Sleep", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
 
-        public static readonly RoutedEvent WeekRoutedEvent =
-EventManager.RegisterRoutedEvent("Week", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
-
-        private void btn_Control_Selected(object sender, RoutedEventArgs e)
+        private void btn_StartUp_Click(object sender, RoutedEventArgs e)
         {
-            //switch(btn_Control.SelectedIndex)
-            //{
-            //    case 0:
+            if (FastType.FastType_Contact == PanelItem.Type)
+                PanelItem.Operate = new COperate(OPType.Control, CurrentContact, new CControl() { Type = ControlType.StartUp });
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(ShutDownRoutedEvent);
+            RaiseEvent(newEventArgs);
+        }
 
-            //RaiseEvent(new RoutedEventArgs(StartUpRoutedEvent));
-            //break;
-            //    case 1:
-
-            //RaiseEvent(new RoutedEventArgs(SleepRoutedEvent));
-            //break;
-            //    case 2:
-
-            //RaiseEvent(new RoutedEventArgs(WeekRoutedEvent));
-            //break;
-            //    default:
-            //        break;
-            //}
+        public static readonly RoutedEvent MoreRoutedEvent =
+EventManager.RegisterRoutedEvent("More", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
+        private void btn_More_Click(object sender, RoutedEventArgs e)
+        {
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(MoreRoutedEvent);
+            RaiseEvent(newEventArgs);
         }
 
         public event RoutedEventHandler Monitor
         {
             add { AddHandler(MonitorRoutedEvent, value); }
             remove { RemoveHandler(MonitorRoutedEvent, value); }
+        }
+
+        public event RoutedEventHandler ShutDown
+        {
+            add { AddHandler(ShutDownRoutedEvent, value); }
+            remove { RemoveHandler(ShutDownRoutedEvent, value); }
+        }
+        public event RoutedEventHandler StartUp
+        {
+            add { AddHandler(StartUpRoutedEvent, value); }
+            remove { RemoveHandler(StartUpRoutedEvent, value); }
+        }
+        public event RoutedEventHandler More
+        {
+            add { AddHandler(MoreRoutedEvent, value); }
+            remove { RemoveHandler(MoreRoutedEvent, value); }
         }
 
         public event RoutedEventHandler Dispatch
@@ -197,41 +253,6 @@ EventManager.RegisterRoutedEvent("Week", RoutingStrategy.Bubble, typeof(RoutedEv
             add { AddHandler(MessageRoutedEvent, value); }
             remove { RemoveHandler(MessageRoutedEvent, value); }
         }
-
-        public event RoutedEventHandler Position
-        {
-            add { AddHandler(PositionRoutedEvent, value); }
-            remove { RemoveHandler(PositionRoutedEvent, value); }
-        }
-
-        public event RoutedEventHandler ShutDown
-        {
-            add { AddHandler(ShutDownRoutedEvent, value); }
-            remove { RemoveHandler(ShutDownRoutedEvent, value); }
-        }
-        public event RoutedEventHandler StartUp
-        {
-            add { AddHandler(StartUpRoutedEvent, value); }
-            remove { RemoveHandler(StartUpRoutedEvent, value); }
-        }
-        public event RoutedEventHandler Sleep
-        {
-            add { AddHandler(SleepRoutedEvent, value); }
-            remove { RemoveHandler(SleepRoutedEvent, value); }
-        }
-        public event RoutedEventHandler Week
-        {
-            add { AddHandler(WeekRoutedEvent, value); }
-            remove { RemoveHandler(WeekRoutedEvent, value); }
-        }
-
-        public event RoutedEventHandler Jobticket
-        {
-            add { AddHandler(JobTicketRoutedEvent, value); }
-            remove { RemoveHandler(JobTicketRoutedEvent, value); }
-        }
-
-
 
     }
 }
