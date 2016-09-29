@@ -14,9 +14,9 @@ BOOL g_bTX;       //Set or cleared by dongle.
 CSerialDongle* g_pDongle;
 BOOL g_dongleIsUsing;
 
-CManager::CManager()
+CManager::CManager(CMySQL *pDb)
 {
-	g_pNet = new CWLNet();
+	g_pNet = new CWLNet(pDb);
 	g_pDongle = new CSerialDongle();
 	g_pSound = new CSound();
 	g_bPTT = FALSE;
@@ -34,6 +34,7 @@ CManager::CManager()
 	}
 	m_bDongleIsOpen = FALSE;
 	g_dongleIsUsing = FALSE;
+	m_pDb = pDb;
 }
 
 CManager::~CManager()
@@ -104,7 +105,6 @@ int CManager::setLogPtr(PLogReport log_handel)
 	g_pDongle->SetLogPtr(log_handel);
 	g_pSound->SetLogPtr(log_handel);
 	g_pNet->SetLogPtr(log_handel);
-	
 	return 0;
 }
 

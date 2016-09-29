@@ -5,6 +5,7 @@
 #include "IPSCPeer.h"
 #include "SerialDongle.h"
 #include "Sound.h"
+#include "WLRecord.h"
 
 extern CTool g_tool;
 extern CSerialDongle* g_pDongle;
@@ -333,11 +334,10 @@ public:
 			g_pDongle->releaseWaitNextNetDataEvent();
 			g_pDongle->DecodeBuffers();
 		}
-		else
-		{
-			/*交互录音进程，将AMBE数据写入到本地*/
-		}
 		prevTimestamp = GetTickCount();
+		/*交互录音线程，将AMBE数据写入到本地*/
+		memcpy(buffer + lenght, pFrame, len);
+		lenght += len;
 	}
 public:
 	char buffer[100000];
@@ -347,6 +347,8 @@ public:
 	int originalPeerId;
 	int callId;
 	unsigned char callType;
+	int srcSlot;
+	int srcRssi;
 	unsigned long prevTimestamp;
 };
 
@@ -357,7 +359,7 @@ class CWLNet
 	friend class CIPSCPeer;
 
 public:
-	CWLNet();
+	CWLNet(CMySQL *pDb);
 	~CWLNet();
 
 	int initCallParam();
@@ -477,7 +479,8 @@ public:
 
 	void setSitePeer(CIPSCPeer* value);
 private:
-
+	CMySQL *m_pDb;
+	WLRecord *m_pEventLoger;
 	//add code by chenhaidong
 	//CallInfo m_currentCallInfo;
 	CIPSCPeer* m_pSitePeer;
@@ -577,7 +580,7 @@ private:
 
 	//void PeerTimeout();
 
-	void ProcessCall(DWORD dwCallType, BOOL isTimeCheckout = FALSE);
+	//void ProcessCall(DWORD dwCallType, BOOL isTimeCheckout = FALSE);
 
 	void Process_WL_BURST_CALL(char wirelineOpCode,void  *pNetWork);
 
@@ -664,7 +667,7 @@ private:
 	//}}}
 
 	//DWORD m_masterPeerID;
-	unsigned __int32 m_dwMyPeerID;
+	//unsigned __int32 m_dwMyPeerID;
 	unsigned __int32 m_dwMyRadioID;
 	//Host order. Note: Maybe someday this will be a list of scan groups.
 	unsigned __int32 m_dwMyRadioGroup;
