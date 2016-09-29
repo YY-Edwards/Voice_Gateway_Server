@@ -88,9 +88,7 @@ DWORD WINAPI CTextMsg::ReceiveDataThread(LPVOID lpParam)
 	CTextMsg * pTextMsg  = (CTextMsg *)lpParam;
 	while (1)
 	{
-	
 		pTextMsg->RecvMsg();
-
 	}
 
 	return 1;

@@ -32,7 +32,6 @@ int CConnect::run(CRemotePeer* pRemote, std::map<std::string, std::string> args,
 	{
 		string radioIP = args["radioIP"];
 		string mnisIP = args["mnisIP"];
-		int callId = atoi(args["callId"].c_str());
 		pDispatchOperate->Connect( pRemote,radioIP.c_str(), mnisIP.c_str(), callId);
 		if (m_dispatchOperate.find(pRemote) == m_dispatchOperate.end())
 		{

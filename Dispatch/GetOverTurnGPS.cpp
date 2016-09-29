@@ -30,7 +30,6 @@ int CGetOverTurnGPS::run(CRemotePeer* pRemote, std::map<std::string, std::string
 	if (args.find("ip")!=args.end() )
 	{
 		string ip = args["ip"];
-		int callId = atoi(args["callId"].c_str());
 		int result = pDispatchOperate->getOverturnGps(pRemote, ip.c_str(), callId);
 	}
 	return 0;

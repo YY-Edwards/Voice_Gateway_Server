@@ -33,7 +33,6 @@ int CSendSms::run(CRemotePeer* pRemote, std::map<std::string, std::string> args,
 		if (args.find("id") != args.end() && args.find("msg") != args.end())
 		{
 			int id = atoi(args["id"].c_str());
-			int callId = atoi(args["callId"].c_str());
 			string msg = args["msg"];
 			//string to wchar_t *
 			int msgSize = (int)(msg.length() + 1);

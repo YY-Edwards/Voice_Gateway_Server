@@ -27,8 +27,9 @@ std::string CAllCall::getName()
 
 int CAllCall::run(CRemotePeer* pRemote, std::map<std::string, std::string> args, uint64_t callId)
 {
-	DispatchOperate  * pDispatchOperate = new DispatchOperate();
-	
-	int result = pDispatchOperate->allCall(pRemote, callId);
+	if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
+	{
+		int result = m_dispatchOperate[pRemote]->allCall(pRemote, callId);
+	}
 	return 0;
 }

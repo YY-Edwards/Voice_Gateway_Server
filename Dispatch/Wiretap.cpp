@@ -32,7 +32,6 @@ int CWiretap::run(CRemotePeer* pRemote, std::map<std::string, std::string> args,
 		if (args.find("id") != args.end())
 		{
 			int id = atoi(args["id"].c_str());
-			int callId = atoi(args["callId"].c_str());
 			int result = m_dispatchOperate[pRemote]->wiretap(pRemote, id, callId);
 		}
 

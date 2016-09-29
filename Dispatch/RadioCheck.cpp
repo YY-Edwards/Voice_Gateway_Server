@@ -32,7 +32,6 @@ int CRadioCheck::run(CRemotePeer* pRemote, std::map<std::string, std::string> ar
 		if (args.find("id") != args.end())
 		{
 			int id = atoi(args["id"].c_str());
-			int callId = atoi(args["callId"].c_str());
 			int result = m_dispatchOperate[pRemote]->radioCheck(pRemote, id, callId);
 		}
 
