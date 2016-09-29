@@ -203,8 +203,21 @@ void CLogServerTesterDlg::OnBnClickedBtnCallAppEvent()
 void CLogServerTesterDlg::OnBnClickedRadiobtn()
 {
 	// TODO:  在此添加控件通知处理程序代码
-	std::string strConenct = "{\"call\":\"connect\",\"param\":{\"radioIP\":\"192.168.10.2\",\"mnisIP\":\"\"},\"callId\":1}";
-	m_rpcClient.send((PBYTE)strConenct.c_str(), strConenct.size() + 1);
+	//std::string strConenct = "{\"call\":\"connect\",\"param\":{\"radioIP\":\"192.168.10.2\",\"mnisIP\":\"\"},\"callId\":1}";
+	std::map<std::string, std::string> args;
+	args["radioIP"] = "192.168.10.2";
+	args["mnisIP"] = "";
+	std::string callJsonStr = CRpcJsonParser::buildCall("connect", 223, args);
+	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+		std::string strResp = pResponse;
+		std::wstring wstr;
+		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+		TRACE("received:%s\r", wstr.c_str());
+	});
+	callJsonStr.clear();
+	//m_rpcClient.send((PBYTE)strConenct.c_str(), strConenct.size() + 1);
 }
 
 
@@ -212,29 +225,80 @@ void CLogServerTesterDlg::OnBnClickedCallbtn()
 {
 	// TODO:  在此添加控件通知处理程序代码
 	
-		std::string strCall = "{\"call\":\"call\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-		m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+		//std::string strCall = "{\"call\":\"call\",\"param\":{\"id\":\"10\"},\"callId\":1}";
+		//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	std::map<std::string, std::string> args;
+	args["id"] = "10";
+	std::string callJsonStr = CRpcJsonParser::buildCall("call", 223, args);
+	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+		std::string strResp = pResponse;
+		std::wstring wstr;
+		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+		TRACE("received:%s\r", wstr.c_str());
+	});
+	callJsonStr.clear();
+
 	
 }
 
 void CLogServerTesterDlg::OnBnClickedMsgbtn()
 {
 	// TODO:  在此添加控件通知处理程序代码
-	std::string strMsg = "{\"call\":\"sendSms\",\"param\":{\"id\":\"10\",\"msg\":\"上海计划信息系统有限公司\"},\"callId\":1}";
-	m_rpcClient.send((PBYTE)strMsg.c_str(), strMsg.size() + 1);
+	//std::string strMsg = "{\"call\":\"sendSms\",\"param\":{\"id\":\"10\",\"msg\":\"上海计划信息系统有限公司\"},\"callId\":1}";
+	//m_rpcClient.send((PBYTE)strMsg.c_str(), strMsg.size() + 1);
+	std::map<std::string, std::string> args;
+	args["id"] = "10";
+	args["msg"] = "上海计划信息系统有限公司--单发";
+	std::string callJsonStr = CRpcJsonParser::buildCall("sendSms", 223, args);
+	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+		std::string strResp = pResponse;
+		std::wstring wstr;
+		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+		TRACE("received:%s\r", wstr.c_str());
+	});
+	callJsonStr.clear();
 }
 void CLogServerTesterDlg::OnBnClickedGroupmsg()
 {
 	// TODO:  在此添加控件通知处理程序代码
-	std::string strMsg = "{\"call\":\"sendGroupSms\",\"param\":{\"id\":\"1\",\"msg\":\"上海计划信息系统有限公司--组发\"},\"callId\":1}";
-	m_rpcClient.send((PBYTE)strMsg.c_str(), strMsg.size() + 1);
+	//std::string strMsg = "{\"call\":\"sendGroupSms\",\"param\":{\"id\":\"1\",\"msg\":\"上海计划信息系统有限公司--组发\"},\"callId\":1}";
+	//m_rpcClient.send((PBYTE)strMsg.c_str(), strMsg.size() + 1);
+	std::map<std::string, std::string> args;
+	args["id"] = "1";
+	args["msg"] = "上海计划信息系统有限公司--组发";
+	std::string callJsonStr = CRpcJsonParser::buildCall("sendGroupSms", 223, args);
+	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+		std::string strResp = pResponse;
+		std::wstring wstr;
+		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+		TRACE("received:%s\r", wstr.c_str());
+	});
+	callJsonStr.clear();
 }
 
 void CLogServerTesterDlg::OnBnClickedStopcallbtn()
 {
 	// TODO:  在此添加控件通知处理程序代码
-	std::string strCall = "{\"call\":\"stopCall\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-	m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	//std::string strCall = "{\"call\":\"stopCall\",\"param\":{\"id\":\"10\"},\"callId\":1}";
+	//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	std::map<std::string, std::string> args;
+	args["id"] = "10";
+	std::string callJsonStr = CRpcJsonParser::buildCall("stopCall", 223, args);
+	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+		std::string strResp = pResponse;
+		std::wstring wstr;
+		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+		TRACE("received:%s\r", wstr.c_str());
+	});
+	callJsonStr.clear();
 
 }
 
@@ -242,8 +306,20 @@ void CLogServerTesterDlg::OnBnClickedStopcallbtn()
 void CLogServerTesterDlg::OnBnClickedPoweron()
 {
 	// TODO:  在此添加控件通知处理程序代码
-	std::string strCall = "{\"call\":\"remotePowerOn\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-	m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	//std::string strCall = "{\"call\":\"remotePowerOn\",\"param\":{\"id\":\"10\"},\"callId\":1}";
+	//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	std::map<std::string, std::string> args;
+	args["id"] = "10";
+	std::string callJsonStr = CRpcJsonParser::buildCall("remotePowerOn", 223, args);
+	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+		std::string strResp = pResponse;
+		std::wstring wstr;
+		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+		TRACE("received:%s\r", wstr.c_str());
+	});
+	callJsonStr.clear();
 }
 
 
@@ -253,24 +329,60 @@ void CLogServerTesterDlg::OnBnClickedPoweron()
 void CLogServerTesterDlg::OnBnClickedPoweroff()
 {
 	// TODO:  在此添加控件通知处理程序代码
-	std::string strCall = "{\"call\":\"remotePowerOff\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-	m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	//std::string strCall = "{\"call\":\"remotePowerOff\",\"param\":{\"id\":\"10\"},\"callId\":1}";
+	//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	std::map<std::string, std::string> args;
+	args["id"] = "10";
+	std::string callJsonStr = CRpcJsonParser::buildCall("remotePowerOff", 223, args);
+	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+		std::string strResp = pResponse;
+		std::wstring wstr;
+		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+		TRACE("received:%s\r", wstr.c_str());
+	});
+	callJsonStr.clear();
 }
 
 
 void CLogServerTesterDlg::OnBnClickedOnline()
 {
 	// TODO:  在此添加控件通知处理程序代码
-	std::string strCall = "{\"call\":\"radioCheck\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-	m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	//std::string strCall = "{\"call\":\"radioCheck\",\"param\":{\"id\":\"10\"},\"callId\":1}";
+	//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	std::map<std::string, std::string> args;
+	args["id"] = "10";
+	std::string callJsonStr = CRpcJsonParser::buildCall("radioCheck", 223, args);
+	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+		std::string strResp = pResponse;
+		std::wstring wstr;
+		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+		TRACE("received:%s\r", wstr.c_str());
+	});
+	callJsonStr.clear();
 }
 
 
 void CLogServerTesterDlg::OnBnClickedWiretap()
 {
 	// TODO:  在此添加控件通知处理程序代码
-	std::string strCall = "{\"call\":\"wiretap\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-	m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	//std::string strCall = "{\"call\":\"wiretap\",\"param\":{\"id\":\"10\"},\"callId\":1}";
+	//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	std::map<std::string, std::string> args;
+	args["id"] = "10";
+	std::string callJsonStr = CRpcJsonParser::buildCall("wiretap", 223, args);
+	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+		std::string strResp = pResponse;
+		std::wstring wstr;
+		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+		TRACE("received:%s\r", wstr.c_str());
+	});
+	callJsonStr.clear();
 }
 
 

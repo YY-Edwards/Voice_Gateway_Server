@@ -23,15 +23,29 @@ std::string CGetGps::getName()
 	return "getGps";
 }
 
-int CGetGps::run(CRemotePeer* pRemote, std::map<std::string, std::string> args, uint64_t callId)
+int CGetGps::run(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
 {
-	DispatchOperate  * pDispatchOperate = new DispatchOperate();
-	if (args.find("id") != args.end() && args.find("cycle") != args.end() && args.find("querymode") != args.end())
+	Document d;
+	try{
+		d.Parse(param.c_str());
+		if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
+		{
+			std::map<std::string, std::string> args;
+			args["message"] = "Connect";
+			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
+			pRemote->sendResponse(strResp.c_str(), strResp.size());
+			int id = d["id"].GetInt();
+			int cycle = d["cycyle"].GetInt();
+			int querymode = d["querymode"].GetInt();
+			int result = m_dispatchOperate[pRemote]->getGps(pRemote, id, querymode, cycle, callId);
+		}
+	}
+	catch (std::exception e){
+
+	}
+	catch (...)
 	{
-		int id = atoi(args["id"].c_str());
-		int cycle = atoi(args["cycle"].c_str());
-		int querymode = atoi(args["querymode"].c_str());
-		int result = pDispatchOperate->getGps(pRemote, id, querymode, cycle, callId);
+
 	}
 
 	return 0;
