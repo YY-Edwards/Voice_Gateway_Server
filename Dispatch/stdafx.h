@@ -26,6 +26,8 @@ using namespace std;
 #include "rapidjson/reader.h"
 #include "rapidjson/writer.h"
 #include "rapidjson/stringbuffer.h"
+
+#include "../lib/rpc/include/BaseConnector.h"
 using  namespace rapidjson;
 
 #define CMD_NULL               0
@@ -66,6 +68,7 @@ typedef struct tagAllCommand
 	int timeOut;
 	int timeCount;
 	int command;
+	CRemotePeer* pRemote;
 }AllCommand;
 extern AllCommand      m_allCommand;
 extern list <AllCommand>allCommandList;

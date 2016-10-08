@@ -22,8 +22,9 @@ CRadioGps::~CRadioGps()
 		delete m_ThreadGpsOverturn;
 	}
 }
-bool CRadioGps::InitGPSSocket(DWORD dwAddress)
+bool CRadioGps::InitGPSSocket(DWORD dwAddress,  CRemotePeer * pRemote)
 {
+	pRemotePeer = pRemote;
 	//CString			 strError;
 	SOCKADDR_IN      addr;					//   The   local   interface   address   
 	WSADATA			 wsda;					//   Structure   to   store   info
@@ -495,7 +496,32 @@ void CRadioGps::RecvData()
 		{
 			return;
 		}
+		try
+		{
+			char radioID[512], strLon[512],strLat[512],strValid[512],strSpeed[512];
+			sprintf_s(radioID, 512, "%d", m_ThreadGps->radioID);
+			sprintf_s(strLon, 512, "%d", lon);
+			sprintf_s(strLat, 512, "%d", lat);
+			sprintf_s(strSpeed, 512, "%d", speed);
+			sprintf_s(strValid, 512, "%d", valid);
+			std::map<std::string, std::string> args;
+			args["id"] = radioID;
+			args["valid"] = strValid;
+			args["lon"] = strLon;
+			args["lat"] = strLat;
+			args["speed"] = strSpeed;
+			std::string callJsonStr = CRpcJsonParser::buildCall("onRecvGps", 1, args);
+			if (pRemotePeer != NULL)
+			{
+				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 
+			}
+		}
+		catch (std::exception e)
+		{
+
+		}
+	
 		/*CString str, strID, strLon, strLat;
 		strID.Format(_T("%lu"), m_ThreadGps->radioID);
 		strLon.Format(_T("%f"), lon);

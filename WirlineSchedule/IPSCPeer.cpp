@@ -194,7 +194,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 													networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 												}
 												networkData.Opcode = LE_PEER_REGISTRATION_RESPONSE;
-												networkData.peerID = m_pWLNet->m_dwMyPeerID;
+												networkData.peerID = g_localPeerId;
 
 												m_SendControlBuffer.len = Build_LE_PEER_REGISTRATION_RESPONSE(m_SendControlBuffer.buf, &networkData);
 												SendToPeer(&m_PeerAddr);
@@ -220,7 +220,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 												   networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 											   }
 											   networkData.Opcode = LE_PEER_REGISTRATION_REQUEST;
-											   networkData.peerID = m_pWLNet->m_dwMyPeerID;
+											   networkData.peerID = g_localPeerId;
 											   m_SendControlBuffer.len = Build_LE_PEER_REGISTRATION_REQUEST(m_SendControlBuffer.buf, &networkData);
 											   m_peerStatus = PEER_STATUS_REGIS_RESPONSE;
 											   m_startTickCount = GetTickCount();
@@ -312,7 +312,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 												  networkData.currentLinkProtocolVersion = LCP_CURRENTLPVERSION;
 												  networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 												  networkData.Opcode = LE_PEER_KEEP_ALIVE_RESPONSE;
-												  networkData.peerID = m_pWLNet->m_dwMyPeerID;
+												  networkData.peerID = g_localPeerId;
 												  networkData.peerMode = LCP_MODE;
 												  networkData.peerServices = LCP_SERVICES;
 												  m_SendControlBuffer.len = Build_LE_PEER_KEEP_ALIVE_RESPONSE(m_SendControlBuffer.buf, &networkData);
@@ -323,7 +323,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 												  T_LE_PROTOCOL_99 networkData = { 0 };
 												  networkData.Opcode = LE_PEER_KEEP_ALIVE_RESPONSE;
 												  ;
-												  networkData.peerID = m_pWLNet->m_dwMyPeerID;
+												  networkData.peerID = g_localPeerId;
 												  if (CPC == recordType)
 												  {
 													  networkData.peerMode = CPC_MODE;
@@ -351,7 +351,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 												 networkData.currentLinkProtocolVersion = LCP_CURRENTLPVERSION;
 												 networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 												 networkData.Opcode = LE_PEER_KEEP_ALIVE_REQUEST;
-												 networkData.peerID = m_pWLNet->m_dwMyPeerID;
+												 networkData.peerID = g_localPeerId;
 												 networkData.peerMode = LCP_MODE;
 												 networkData.peerServices = LCP_SERVICES;
 												 m_SendControlBuffer.len = Build_LE_PEER_KEEP_ALIVE_REQUEST(m_SendControlBuffer.buf, &networkData);
@@ -363,7 +363,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 											 {
 												 T_LE_PROTOCOL_98 networkData = { 0 };
 												 networkData.Opcode = LE_PEER_KEEP_ALIVE_REQUEST;
-												 networkData.peerID = m_pWLNet->m_dwMyPeerID;
+												 networkData.peerID = g_localPeerId;
 												 if (CPC == recordType)
 												 {
 													 networkData.peerMode = CPC_MODE;
@@ -425,7 +425,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 										  networkData.numberOfRegistrationEntries = NUMBER_REGIS_ENTRIES;
 										  networkData.oldestLinkProtocolVersion = Wireline_Protocol_Version;
 										  networkData.Opcode = WL_PROTOCOL;
-										  networkData.peerID = m_pWLNet->m_dwMyPeerID;
+										  networkData.peerID = g_localPeerId;
 										  networkData.registrationID = m_wRegistrationId;
 										  networkData.registrationPduID = REGISTRATION_PDU_ID;
 										  networkData.registrationSlotNumber = BOTH_SLOT1_SLOT2;
@@ -501,7 +501,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 										  networkData.currentLinkProtocolVersion = Wireline_Protocol_Version;
 										  networkData.oldestLinkProtocolVersion = Wireline_Protocol_Version;
 										  networkData.Opcode = WL_PROTOCOL;
-										  networkData.peerID = m_pWLNet->m_dwMyPeerID;
+										  networkData.peerID = g_localPeerId;
 										  networkData.preambleDuration = PREAMBLE_DURATION;
 										  networkData.sourceID = g_localRadioId;
 										  networkData.targetID = g_localGroup;
@@ -628,7 +628,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 //					networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 //				}
 //				networkData.Opcode = LE_PEER_REGISTRATION_REQUEST;
-//				networkData.peerID = m_pWLNet->m_dwMyPeerID;
+//				networkData.peerID = g_localPeerId;
 //				m_SendControlBuffer.len = Build_LE_PEER_REGISTRATION_REQUEST(m_SendControlBuffer.buf, &networkData);
 //				SendToPeer(&m_PeerAddr);
 //
@@ -654,7 +654,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 //					networkData.currentLinkProtocolVersion = LCP_CURRENTLPVERSION;
 //					networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 //					networkData.Opcode = LE_PEER_KEEP_ALIVE_REQUEST;
-//					networkData.peerID = m_pWLNet->m_dwMyPeerID;
+//					networkData.peerID = g_localPeerId;
 //					networkData.peerMode = LCP_MODE;
 //					networkData.peerServices = LCP_SERVICES;
 //					m_SendControlBuffer.len = Build_LE_PEER_KEEP_ALIVE_REQUEST(m_SendControlBuffer.buf, &networkData);
@@ -664,7 +664,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 //				{
 //					T_LE_PROTOCOL_98 networkData = { 0 };
 //					networkData.Opcode = LE_PEER_KEEP_ALIVE_REQUEST;
-//					networkData.peerID = m_pWLNet->m_dwMyPeerID;
+//					networkData.peerID = g_localPeerId;
 //					if (CPC == recordType)
 //					{
 //						networkData.peerMode = CPC_MODE;
@@ -705,7 +705,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 //					networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 //				}
 //				networkData.Opcode = LE_PEER_REGISTRATION_REQUEST;
-//				networkData.peerID = m_pWLNet->m_dwMyPeerID;
+//				networkData.peerID = g_localPeerId;
 //				m_SendControlBuffer.len = Build_LE_PEER_REGISTRATION_REQUEST(m_SendControlBuffer.buf, &networkData);
 //				//�޸ĵ�ǰpeer״̬
 //				m_dwPeerState = WAIT_LE_PEER_REGISTRATION_RESPONSE;
@@ -734,7 +734,7 @@ void CIPSCPeer::Init(BOOL isMasterPeer)
 
 // int CIPSCPeer::Build_LE_PEER_REGISTRATION_REQUEST()
 // {
-// 	DWORD temp = m_pWLNet->m_dwMyPeerID;
+// 	DWORD temp = g_localPeerId;
 // 	m_controlBuffer[4] = (char)(temp & 0x000000FF);
 // 	temp = temp >> 8;
 // 	m_controlBuffer[3] = (char)(temp & 0x000000FF);
@@ -793,7 +793,7 @@ DWORD CIPSCPeer::Build_LE_PEER_REGISTRATION_REQUEST(CHAR* pPacket, T_LE_PROTOCOL
 
 // int CIPSCPeer::Build_LE_PEER_REGISTRATION_RESPONSE()
 // {
-// 	DWORD temp = m_pWLNet->m_dwMyPeerID;
+// 	DWORD temp = g_localPeerId;
 // 	m_controlBuffer[4] = (char)(temp & 0x000000FF);
 // 	temp = temp >> 8;
 // 	m_controlBuffer[3] = (char)(temp & 0x000000FF);
@@ -854,7 +854,7 @@ DWORD CIPSCPeer::Build_LE_PEER_REGISTRATION_RESPONSE(CHAR* pPacket, T_LE_PROTOCO
 // int CIPSCPeer::Build_LE_PEER_KEEP_ALIVE_RESPONSE()
 // {
 // 	m_controlBuffer[0] = LE_PEER_KEEP_ALIVE_RESPONSE;
-// 	DWORD temp = m_pWLNet->m_dwMyPeerID;
+// 	DWORD temp = g_localPeerId;
 // 	m_controlBuffer[4] = (char)(temp & 0x000000FF);
 // 	temp = temp >> 8;
 // 	m_controlBuffer[3] = (char)(temp & 0x000000FF);
@@ -952,7 +952,7 @@ DWORD CIPSCPeer::Build_LE_PEER_KEEP_ALIVE_RESPONSE(CHAR* pPacket, T_LE_PROTOCOL_
 //{
 //	m_controlBuffer[0] = LE_PEER_KEEP_ALIVE_REQUEST;
 //
-//	DWORD temp = m_pWLNet->m_dwMyPeerID;
+//	DWORD temp = g_localPeerId;
 //	m_controlBuffer[4] = (char)(temp & 0x000000FF);
 //	temp = temp >> 8;
 //	m_controlBuffer[3] = (char)(temp & 0x000000FF);
@@ -1050,7 +1050,7 @@ DWORD CIPSCPeer::Build_LE_PEER_KEEP_ALIVE_REQUEST(CHAR* pPacket, T_LE_PROTOCOL_9
 // {
 // 	DWORD size = 0;
 // 
-// 	DWORD temp = m_pWLNet->m_dwMyPeerID;
+// 	DWORD temp = g_localPeerId;
 // 	m_controlBuffer[4] = (char)(temp & 0x000000FF);
 // 	temp = temp >> 8;
 // 	m_controlBuffer[3] = (char)(temp & 0x000000FF);

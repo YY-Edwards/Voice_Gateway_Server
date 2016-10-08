@@ -21,9 +21,10 @@ CTextMsg::~CTextMsg()
 	}
 	
 }
-bool CTextMsg::InitSocket(SOCKET *s ,DWORD dwAddress)
+bool CTextMsg::InitSocket(SOCKET *s, DWORD dwAddress, CRemotePeer * pRemote)
 {
 
+	pRemotePeer = pRemote;
 	//CString			 strError;
 	SOCKADDR_IN      addr;					//   The   local   interface   address   
 	WSADATA			 wsda;					//   Structure   to   store   info
@@ -88,22 +89,20 @@ DWORD WINAPI CTextMsg::ReceiveDataThread(LPVOID lpParam)
 	CTextMsg * pTextMsg  = (CTextMsg *)lpParam;
 	while (1)
 	{
-	
 		pTextMsg->RecvMsg();
-
 	}
 
 	return 1;
 }
 
-wstring CTextMsg::ParseUserMsg(TextMsg* HandleMsg, int * len)
+CString CTextMsg::ParseUserMsg(TextMsg* HandleMsg, int * len)
 {
 	UINT16			MsgSize;
 	FirstHeader		FstHeader;
 	SecondHeader    callIddHeader;
 	UINT8			AddressSize;
 	static TCHAR	szMessage[MAX_MESSAGE_LENGTH];
-	wstring         ParsedMsg;
+	CString         ParsedMsg;
 	int             MsgOffset;                                // 正式的Message在TextPayload中的起始偏移量
 
 	memset((char*)szMessage, 0, sizeof(szMessage));             // 不知道这里针对 unicode 使用 sizeof 是否正确。
@@ -147,7 +146,7 @@ wstring CTextMsg::ParseUserMsg(TextMsg* HandleMsg, int * len)
 	//*len = MsgSize - MsgOffset - 2;
 	//ParsedMsg = szMessage;
 	memcpy((char*)szMessage, &HandleMsg->TextPayload[MsgOffset], MsgSize - MsgOffset - 2);
-	/*ParsedMsg.Format(_T("%s"), szMessage);*/
+	ParsedMsg.Format(_T("%s"), szMessage);
 	ParsedMsg = szMessage;
 
 	return ParsedMsg;
@@ -441,11 +440,11 @@ void CTextMsg::RecvMsg()
 			{
 				if (it->ackNum == SeqNum)
 				{
-					std::map<std::string, std::string> args;
-					args["id"] = stringId;
-					std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId,0,"1", args);
-					if (pRemotePeer != NULL)
+					if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 					{
+						std::map<std::string, std::string> args;
+						args["id"] = stringId;
+						std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
 						pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 					}
 					allCommandList.erase(it++);
@@ -472,39 +471,57 @@ void CTextMsg::RecvMsg()
 		}
 		if (!FstHeader.Control)
 		{
-			CString strTime = CTime::GetCurrentTime().Format("%Y-%m-%d %H:%M:%S");                         //获取系统时间
-			wstring message = ParseUserMsg(&HandleMsg, 0);
-			string strMsg;
-			WideCharToMultiByte(CP_ACP, 0, (LPCWSTR)message.c_str(), (int)message.length(), (LPSTR)strMsg.c_str(), (int)message.length(), NULL, NULL);
-			std::map<std::string, std::string> args;
-			args["id"] = m_ThreadMsg->radioID;
-			args["date"] = (LPCSTR)&strTime;
-			args["message"] = strMsg;
-			std::string callJsonStr = CRpcJsonParser::buildCall("onRecvMsg", 1, args);
-			if (pRemotePeer != NULL)
+			try
 			{
-				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+				CString cstrTime = CTime::GetCurrentTime().Format("%Y-%m-%d %H:%M:%S");                         //获取系统时间
+				CString message = ParseUserMsg(&HandleMsg, 0);
+			
+				char radioID[512];
+				sprintf_s(radioID, 512, "%d", m_ThreadMsg->radioID);
+				//cstring to string   time
+				string strTime = WChar2Ansi(cstrTime.GetBuffer(cstrTime.GetLength()));
+				//cstring to string   message 
+				string strMsg = WChar2Ansi(message.GetBuffer(message.GetLength()));
+				std::map<std::string, std::string> args;
+				args["id"] = radioID;
+				args["date"] = strTime;
+				args["message"] = strMsg;
+				std::string callJsonStr = CRpcJsonParser::buildCall("onRecvMsg", 1, args);
+				if (pRemotePeer != NULL)
+				{
+					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 #if DEBUG_LOG
-				LOG(INFO) << "接收到短信 ： "+callJsonStr;
+					LOG(INFO) << "接收到短信 ： " + callJsonStr;
 #endif
 
-			}
-			else
-			{
+				}
+				else
+				{
 #if DEBUG_LOG
-		LOG(INFO) << "接收到短信，但是此短信的目的地没建立tcp连接！";
+					LOG(INFO) << "接收到短信，但是此短信的目的地没建立tcp连接！";
 #endif
+				}
 			}
-			
+			catch (std::exception e)
+			{
+
 			}
-			 
-		}
-		
-	
-	
+		} 
+	}
 }
 
-
+string CTextMsg::WChar2Ansi(LPCWSTR pwszSrc)
+{
+	int nLen = WideCharToMultiByte(CP_ACP, 0, pwszSrc, -1, NULL, 0, NULL, NULL);
+	if (nLen <= 0) return std::string("");
+	char* pszDst = new char[nLen];
+	if (NULL == pszDst) return std::string("");
+	WideCharToMultiByte(CP_ACP, 0, pwszSrc, -1, pszDst, nLen, NULL, NULL);
+	pszDst[nLen - 1] = 0;
+	std::string strTemp(pszDst);
+	delete[] pszDst;
+	return strTemp;
+}
 void CTextMsg::setRemotePeer(CRemotePeer * pRemote)
 {
 	pRemotePeer = pRemote;

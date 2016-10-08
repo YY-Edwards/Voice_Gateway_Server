@@ -36,7 +36,7 @@ public:
 	int mnisUdpConnect(const char* ip);
 	
 private:
-	void AddAllCommand(int callId, int command);
+	void AddAllCommand(CRemotePeer* pRemote,int callId, int command);
 	void TimeOut();
 	CXNLConnection  *pXnlConnection;
 	CTextMsg        pTextMsg;

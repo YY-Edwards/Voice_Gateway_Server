@@ -33,9 +33,9 @@ DispatchOperate::~DispatchOperate()
 int DispatchOperate::Connect(CRemotePeer* pRemote,const char* ip, const char * pIP, int callId)
 {
 	// Connection
-	pRemotePeer = pRemote;
+	
 	callID = callId;
-	AddAllCommand(callId, RADIO_CONNECT);
+	AddAllCommand(pRemote,callId, RADIO_CONNECT);
 	if (INADDR_NONE == inet_addr(pIP))
 	{
 		dwIP = inet_addr(ip);
@@ -56,7 +56,10 @@ int DispatchOperate::Connect(CRemotePeer* pRemote,const char* ip, const char * p
 	}
 	CreateThread(NULL, 0, TCPConnectionThread, this, THREAD_PRIORITY_NORMAL, NULL);
 	CreateThread(NULL, 0, TimeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
-
+	if (pRemote != NULL)
+	{
+		pRemotePeer = pRemote;
+	}
 	return 0;
 
 }
@@ -67,7 +70,7 @@ int DispatchOperate::call(CRemotePeer* pRemote, int id, int callId)
 #endif
 	unsigned long target_radio_id = id;
 	unsigned char call_type = 0x04;     //0x06 单呼
-	AddAllCommand(callId, PRIVATE_CALL);
+	AddAllCommand(pRemote,callId, PRIVATE_CALL);
 
 	try
 	{
@@ -105,7 +108,7 @@ int DispatchOperate::groupCall(CRemotePeer* pRemote, int id, int callId)
 #endif
 	unsigned long target_radio_id = id;
 	unsigned char call_type = 0x06;     //0x06 组呼
-	AddAllCommand(callId, GROUP_CALL);
+	AddAllCommand(pRemote,callId, GROUP_CALL);
 	try
 	{
 
@@ -142,7 +145,7 @@ int DispatchOperate::allCall(CRemotePeer* pRemote, int callId)
 #endif
 	unsigned long target_radio_id = 255;   //全呼
 	unsigned char call_type = 0x06;
-	AddAllCommand(callId, ALL_CALL);
+	AddAllCommand(pRemote,callId, ALL_CALL);
 	try
 	{
 		if ((pXnlConnection != NULL) && (pXnlConnection->m_bConnected == TRUE))
@@ -177,7 +180,7 @@ int DispatchOperate::stopCall(CRemotePeer* pRemote, int callId)
 	LOG(INFO) << "停止呼叫";
 #endif
 	unsigned char call_type = 0x04;
-	AddAllCommand(callId, STOP_CALL);
+	AddAllCommand(pRemote,callId, STOP_CALL);
 	try
 	{
 		if (pXnlConnection != NULL)
@@ -205,7 +208,7 @@ int DispatchOperate::remotePowerOn(CRemotePeer* pRemote, int id, int callId)
 #endif
 	unsigned long target_radio_id = 0;
 	target_radio_id = id;
-	AddAllCommand(callId, REMOTE_OPEN);
+	AddAllCommand(pRemote,callId, REMOTE_OPEN);
 	try
 	{
 		if (pXnlConnection != NULL)
@@ -239,7 +242,7 @@ int DispatchOperate::remotePowerOff(CRemotePeer* pRemote, int id, int callId)
 	LOG(INFO) << "遥闭";
 #endif
 	unsigned long target_radio_id = id;
-	AddAllCommand(callId, REMOTE_CLOSE);
+	AddAllCommand(pRemote,callId, REMOTE_CLOSE);
 	try
 	{
 		if (pXnlConnection != NULL)
@@ -273,7 +276,7 @@ int DispatchOperate::radioCheck(CRemotePeer* pRemote, int id, int callId)
 #endif
 	unsigned long target_radio_id = 0;
 	target_radio_id = id;
-	AddAllCommand(callId, CHECK_RADIO_ONLINE);
+	AddAllCommand(pRemote,callId, CHECK_RADIO_ONLINE);
 	try
 	{
 		if (pXnlConnection != NULL)
@@ -309,7 +312,7 @@ int DispatchOperate::wiretap(CRemotePeer* pRemote, int id, int callId)
 #endif
 	unsigned long target_radio_id = 0;
 	target_radio_id = id;
-	AddAllCommand(callId, REMOTE_MONITOR);
+	AddAllCommand(pRemote,callId, REMOTE_MONITOR);
 	try
 	{
 		if ((pXnlConnection != NULL) && (pXnlConnection->m_bConnected == TRUE))
@@ -342,7 +345,7 @@ int DispatchOperate::sendSms(CRemotePeer* pRemote, int id, wchar_t* message, int
 #if DEBUG_LOG
 	LOG(INFO) << "单发";
 #endif
-	AddAllCommand(callId, SEND_PRIVATE_MSG);
+	AddAllCommand(pRemote,callId, SEND_PRIVATE_MSG);
 	try
 	{
 		pTextMsg.setRemotePeer(pRemote);
@@ -372,7 +375,7 @@ int DispatchOperate::sendGroupSms(CRemotePeer* pRemote, int id, wchar_t* message
 #if DEBUG_LOG
 	LOG(INFO) << "组发";
 #endif
-	AddAllCommand(callId, SEND_GROUP_MSG);
+	AddAllCommand(pRemote,callId, SEND_GROUP_MSG);
 	pTextMsg.setRemotePeer(pRemote);
 	bool sendTextResult = pTextMsg.SendMsg(callId, message, id, 225);          //225:组发
 	try
@@ -412,22 +415,22 @@ int DispatchOperate::getGps(CRemotePeer* pRemote, int id, int queryMode, int cyc
 		switch (queryMode)
 		{
 		case GPS_IMME_COMM:
-			AddAllCommand(callId, GPS_IMME_COMM);
+			AddAllCommand(pRemote,callId, GPS_IMME_COMM);
 			break;
 		case GPS_TRIGG_COMM:
-			AddAllCommand(callId, GPS_TRIGG_COMM);
+			AddAllCommand(pRemote,callId, GPS_TRIGG_COMM);
 			break;
 		case GPS_IMME_CSBK:
-			AddAllCommand(callId, GPS_IMME_CSBK);
+			AddAllCommand(pRemote,callId, GPS_IMME_CSBK);
 			break;
 		case GPS_TRIGG_CSBK:
-			AddAllCommand(callId, GPS_TRIGG_CSBK);
+			AddAllCommand(pRemote,callId, GPS_TRIGG_CSBK);
 			break;
 		case GPS_IMME_CSBK_EGPS:
-			AddAllCommand(callId, GPS_IMME_CSBK_EGPS);
+			AddAllCommand(pRemote,callId, GPS_IMME_CSBK_EGPS);
 			break;
 		case GPS_TRIGG_CSBK_EGPS:
-			AddAllCommand(callId, GPS_TRIGG_CSBK_EGPS);
+			AddAllCommand(pRemote,callId, GPS_TRIGG_CSBK_EGPS);
 			break;
 		}
 		bool sendQueryGpsResult = pRadioGPS.SendQueryGPS(id, queryMode, cycle);
@@ -456,7 +459,7 @@ int DispatchOperate::cancelPollGps(CRemotePeer* pRemote, int id, int callId)
 #if DEBUG_LOG
 	LOG(INFO) << "取消周期查询";
 #endif
-	AddAllCommand(callId, STOP_QUERY_GPS);
+	AddAllCommand(pRemote,callId, STOP_QUERY_GPS);
 	m_queryMode = gpsDic[id];
 	try
 	{
@@ -521,7 +524,7 @@ int DispatchOperate::RadioConnect()
 	SOCKET mSokset;
 	//if (!textConnectResult)
 	{
-		textConnectResult = pTextMsg.InitSocket(&mSokset, dwIP);
+		textConnectResult = pTextMsg.InitSocket(&mSokset, dwIP, pRemotePeer);
 	}
 
 	//	ARS Connection
@@ -533,7 +536,7 @@ int DispatchOperate::RadioConnect()
 	//	GPS Connection
 	//if (!GPSConnectResult)
 	{
-		GPSConnectResult = pRadioGPS.InitGPSSocket(dwIP);
+		GPSConnectResult = pRadioGPS.InitGPSSocket(dwIP, pRemotePeer);
 	}
 
 	if (pXnlConnection == NULL)
@@ -541,6 +544,7 @@ int DispatchOperate::RadioConnect()
 		list<AllCommand>::iterator it;
 		pXnlConnection = CXNLConnection::CreatConnection(dwip, 8002, "0x152C7E9D0x38BE41C70x71E96CA40x6CAC1AFC",
 			strtoul("0x9E3779B9", NULL, 16));
+		
 		for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 		{
 			{
@@ -652,8 +656,9 @@ int DispatchOperate::RadioConnect()
 	return 0;
 }
 
-void DispatchOperate::AddAllCommand(int callId, int command)
+void DispatchOperate::AddAllCommand(CRemotePeer* pRemote,int callId, int command)
 {
+	m_allCommand.pRemote = pRemote;
 	m_allCommand.callId = callId;
 	m_allCommand.command = command;
 	m_allCommand.ackNum = 0;
@@ -875,7 +880,7 @@ int DispatchOperate::radioUdpConnect(const char* ip)
 	SOCKET mSokset;
 	//if (!textConnectResult)
 	//{
-	textConnectResult = pTextMsg.InitSocket(&mSokset, dwIP);
+	//textConnectResult = pTextMsg.InitSocket(&mSokset, dwIP);
 	//}
 
 	//	ARS Connection
@@ -886,8 +891,8 @@ int DispatchOperate::radioUdpConnect(const char* ip)
 
 	//	GPS Connection
 	//if (!GPSConnectResult)
-	//{
-	GPSConnectResult = pRadioGPS.InitGPSSocket(dwIP);
+	///{
+	//GPSConnectResult = pRadioGPS.InitGPSSocket(dwIP);
 	//}
 
 	if (textConnectResult && ARSConnectResult && GPSConnectResult)
@@ -920,7 +925,7 @@ int DispatchOperate::mnisUdpConnect(const char* ip)
 	SOCKET mSokset;
 	//if (!textConnectResult)
 	//{
-	textConnectResult = pTextMsg.InitSocket(&mSokset, dwIP);
+	//textConnectResult = pTextMsg.InitSocket(&mSokset, dwIP);
 	//}
 
 	//	ARS Connection
@@ -932,7 +937,7 @@ int DispatchOperate::mnisUdpConnect(const char* ip)
 	//	GPS Connection
 	//	if (!GPSConnectResult)
 	//{
-	GPSConnectResult = pRadioGPS.InitGPSSocket(dwIP);
+	//GPSConnectResult = pRadioGPS.InitGPSSocket(dwIP);
 	//	}
 
 	if (textConnectResult && ARSConnectResult && GPSConnectResult)

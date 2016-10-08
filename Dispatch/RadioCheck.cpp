@@ -25,17 +25,29 @@ std::string CRadioCheck::getName()
 	return "radioCheck";
 }
 
-int CRadioCheck::run(CRemotePeer* pRemote, std::map<std::string, std::string> args, uint64_t callId)
+int CRadioCheck::run(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
 {
-	if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
-	{
-		if (args.find("id") != args.end())
+	Document d;
+	try{
+		d.Parse(param.c_str());
+		if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
 		{
-			int id = atoi(args["id"].c_str());
-			int callId = atoi(args["callId"].c_str());
+			std::map<std::string, std::string> args;
+			args["message"] = "radioCheck";
+			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
+			pRemote->sendResponse(strResp.c_str(), strResp.size());
+			string temp = d["id"].GetString();
+			int id = atoi(temp.c_str());
 			int result = m_dispatchOperate[pRemote]->radioCheck(pRemote, id, callId);
 		}
+	}
+	catch (std::exception e){
 
 	}
+	catch (...)
+	{
+
+	}
+
 	return 0;
 }

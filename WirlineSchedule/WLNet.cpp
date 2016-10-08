@@ -8,7 +8,7 @@
 static const unsigned char AuthenticId[AUTHENTIC_ID_SIZE] = { 0x01, 0x02, 0x00, 0x0d };
 static const unsigned char VenderKey[VENDER_KEY_SIZE] = { 0x6b, 0xe5, 0xff, 0x95, 0x6a, 0xb5, 0xe8, 0x82, 0xa8, 0x6f, 0x29, 0x5f, 0x9d, 0x9d, 0x5e, 0xcf, 0xe6, 0x57, 0x61, 0x5a };
 
-CWLNet::CWLNet()
+CWLNet::CWLNet(CMySQL *pDb)
 : m_socket(INVALID_SOCKET)
 , m_hWorkThread(INVALID_HANDLE_VALUE)
 , m_bExit(TRUE)
@@ -58,6 +58,8 @@ CWLNet::CWLNet()
 	m_pCurrentSendVoicePeer = NULL;
 	m_pSitePeer = NULL;
 	m_retryRequestCallCount = REQUEST_CALL_REPEAT_FREQUENCY;
+	m_pEventLoger = new WLRecord(pDb);
+	m_pDb = pDb;
 }
 
 CWLNet::~CWLNet()
@@ -350,7 +352,7 @@ DWORD CWLNet::NetThread()
 void CWLNet::InitControlBuffer(DWORD dwSelfPeerId)
 {
 	DWORD temp = dwSelfPeerId;
-	m_dwMyPeerID = dwSelfPeerId;
+	g_localPeerId = dwSelfPeerId;
 	m_ControlProto[4] = (char)(temp & 0x000000FF);
 	temp = temp >> 8;
 	m_ControlProto[3] = (char)(temp & 0x000000FF);
@@ -437,7 +439,7 @@ BOOL CWLNet::StartNet(DWORD dwMasterIp
 	m_TxSlot = dwSelfSlot;
 	m_dwMyRadioGroup = dwSelfGroup;
 	//InitControlBuffer(dwSelfPeerId);
-	m_dwMyPeerID = dwSelfPeerId;
+	g_localPeerId = dwSelfPeerId;
 	m_WLStatus = STARTING;
 	m_bExit = FALSE;
 
@@ -648,7 +650,7 @@ void CWLNet::Net_RegisterLE(DWORD eventIndex)
 			networkData.leadingChannelID = LEADING_CHANNEL_ID;
 			networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 			networkData.Opcode = LE_MASTER_PEER_REGISTRATION_REQUEST;
-			networkData.peerID = m_dwMyPeerID;
+			networkData.peerID = g_localPeerId;
 			networkData.peerMode = LCP_MODE;
 			networkData.peerServices = LCP_SERVICES;
 			m_SendControlBuffer.buf = m_ControlProto;
@@ -658,7 +660,7 @@ void CWLNet::Net_RegisterLE(DWORD eventIndex)
 		{
 			T_LE_PROTOCOL_90 networkData = { 0 };
 			networkData.Opcode = LE_MASTER_PEER_REGISTRATION_REQUEST;
-			networkData.peerID = m_dwMyPeerID;
+			networkData.peerID = g_localPeerId;
 			if (IPSC == g_recordType)
 			{
 				networkData.currentLinkProtocolVersion = IPSC_CURRENTLPVERSION;
@@ -910,7 +912,7 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE(DWORD eveintIndex)
 						networkData.mapType = MAP_TYPE;
 						networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 						networkData.Opcode = LE_NOTIFICATION_MAP_REQUEST;
-						networkData.peerID = m_dwMyPeerID;
+						networkData.peerID = g_localPeerId;
 						m_SendControlBuffer.buf = m_ControlProto;
 						m_SendControlBuffer.len = Build_LE_NOTIFICATION_MAP_REQUEST(m_SendControlBuffer.buf, &networkData);
 					}
@@ -918,7 +920,7 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE(DWORD eveintIndex)
 					{
 						T_LE_PROTOCOL_92 networkData = { 0 };
 						networkData.Opcode = LE_NOTIFICATION_MAP_REQUEST;
-						networkData.peerID = m_dwMyPeerID;
+						networkData.peerID = g_localPeerId;
 						m_SendControlBuffer.buf = m_ControlProto;
 						m_SendControlBuffer.len = Build_LE_NOTIFICATION_MAP_REQUEST(m_SendControlBuffer.buf, &networkData);
 					}
@@ -988,7 +990,7 @@ void CWLNet::Net_MaintainKeepAlive()
 			networkData.leadingChannelID = LEADING_CHANNEL_ID;
 			networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 			networkData.Opcode = LE_MASTER_KEEP_ALIVE_REQUEST;
-			networkData.peerID = m_dwMyPeerID;
+			networkData.peerID = g_localPeerId;
 			networkData.peerMode = LCP_MODE;
 			networkData.peerServices = LCP_SERVICES;
 			m_SendControlBuffer.buf = m_ControlProto;
@@ -998,7 +1000,7 @@ void CWLNet::Net_MaintainKeepAlive()
 		{
 			T_LE_PROTOCOL_96 networkData = { 0 };
 			networkData.Opcode = LE_MASTER_KEEP_ALIVE_REQUEST;
-			networkData.peerID = m_dwMyPeerID;
+			networkData.peerID = g_localPeerId;
 			if (CPC == g_recordType)
 			{
 				networkData.currentLinkProtocolVersion = CPC_CURRENTLPVERSION;
@@ -1069,7 +1071,11 @@ void CWLNet::Net_MaintainAlive(DWORD eventIndex)
 			{
 			case IPSC_GRP_VOICE_CALL:
 			case IPSC_PVT_VOICE_CALL:
-				ProcessCall(*(m_CurrentRecvBuffer.buf));
+			{
+										//ProcessCall(*(m_CurrentRecvBuffer.buf));
+										sprintf_s(m_reportMsg, "now use wireline don't use p2p");
+										sendLogToWindow();
+			}
 				break;
 			case LE_MASTER_KEEP_ALIVE_RESPONSE:
 				m_dwMasterKeepAliveTime = GetTickCount();
@@ -1850,87 +1856,87 @@ CIPSCPeer* CWLNet::GetPeer(u_long peerId)
 //	}
 //}
 
-void CWLNet::ProcessCall(DWORD dwCallType, BOOL isTimeCheckout)
-{
-	/*将启用WL_LINE P2P暂时取消*/
-	return;
-
-	//如果当前dongle未打开
-	if (!g_dongle_open)
-	{
-		return;
-	}
-
-	//语音结束包超时处理
-	if (isTimeCheckout)
-	{
-		tCallParams nullValue = { 0 };
-		WriteVoiceFrame(nullValue, 0, isTimeCheckout);
-		return;
-	}
-
-	tCallParams thisCall;
-	//int CallIndex;
-	bool IsNewCallEvent;
-
-	IsNewCallEvent = FALSE;
-
-
-	thisCall.All[0] = (m_CurrentRecvBuffer.buf)[0];  //CallOpcode
-	thisCall.All[8] = (m_CurrentRecvBuffer.buf)[4];  //CallOriginatingPeerID
-	thisCall.All[9] = (m_CurrentRecvBuffer.buf)[3];  // "
-	thisCall.All[10] = (m_CurrentRecvBuffer.buf)[2];  // "
-	thisCall.All[11] = (m_CurrentRecvBuffer.buf)[1];  // "
-	thisCall.All[1] = (m_CurrentRecvBuffer.buf)[5];  //CallSequenceNumber
-	thisCall.All[16] = (m_CurrentRecvBuffer.buf)[8];  //CallSrcID
-	thisCall.All[17] = (m_CurrentRecvBuffer.buf)[7];  // "
-	thisCall.All[18] = (m_CurrentRecvBuffer.buf)[6];  // "
-	thisCall.All[19] = 0;  // "
-	thisCall.All[20] = (m_CurrentRecvBuffer.buf)[11]; //CallTgtID
-	thisCall.All[21] = (m_CurrentRecvBuffer.buf)[10]; // "
-	thisCall.All[22] = (m_CurrentRecvBuffer.buf)[9];  // "
-	thisCall.All[23] = 0;  // "
-	thisCall.All[2] = (m_CurrentRecvBuffer.buf)[12]; //CallPriority
-	thisCall.All[12] = (m_CurrentRecvBuffer.buf)[16]; //CallFloorControlTag
-	thisCall.All[13] = (m_CurrentRecvBuffer.buf)[15]; // "
-	thisCall.All[14] = (m_CurrentRecvBuffer.buf)[14]; // "
-	thisCall.All[15] = (m_CurrentRecvBuffer.buf)[13]; // "
-	thisCall.All[3] = (m_CurrentRecvBuffer.buf)[17]; //CallControlInformation
-	thisCall.All[24] = (m_CurrentRecvBuffer.buf)[25]; //RTPTimeStamp
-	thisCall.All[25] = (m_CurrentRecvBuffer.buf)[24]; // "
-	thisCall.All[26] = (m_CurrentRecvBuffer.buf)[23]; // "
-	thisCall.All[27] = (m_CurrentRecvBuffer.buf)[22]; // "
-	thisCall.All[4] = ((m_CurrentRecvBuffer.buf)[30]) & 0x7F; //RepeaterBurstDataType
-	thisCall.All[5] = (m_CurrentRecvBuffer.buf)[32]; //ESNLIEHB
-
-	//TRACE(_T("RTP 0:0x%x\r\n"), (m_CurrentRecvBuffer.buf)[30]);
-	//TRACE(_T("RTP 1:0x%x\r\n"), (m_CurrentRecvBuffer.buf)[31]);
-	//TRACE(_T("RTP 2:0x%x\r\n"), (m_CurrentRecvBuffer.buf)[32]);
-
-	//TRACE(_T("CALL SRC ID:%d\r\n"), thisCall.fld.CallSrcID);
-	//TRACE(_T("CALL Tgt ID:%d\r\n"), thisCall.fld.CallTgtID);
-	//TRACE(_T("CALL Sequence Number:%d\r\n"), thisCall.fld.CallSequenceNumber);
-
-	if (DATA_TYPE_VOICE == thisCall.fld.RepeaterBurstDataType ||
-		DATA_TYPE_VOICE_TERMINATOR == thisCall.fld.RepeaterBurstDataType)
-	{
-
-		if (!isTargetMeCall(thisCall.fld.CallTgtID))
-		{
-			return;
-		}
-
-		if (IPSC_PVT_VOICE_CALL == dwCallType)
-		{
-			WriteVoiceFrame(thisCall, IndividualCall);
-		}
-		else if (IPSC_GRP_VOICE_CALL == dwCallType)
-		{
-			WriteVoiceFrame(thisCall, GroupCall);
-		}
-
-	}
-}
+//void CWLNet::ProcessCall(DWORD dwCallType, BOOL isTimeCheckout)
+//{
+//	/*将启用WL_LINE P2P暂时取消*/
+//	return;
+//
+//	//如果当前dongle未打开
+//	if (!g_dongle_open)
+//	{
+//		return;
+//	}
+//
+//	//语音结束包超时处理
+//	if (isTimeCheckout)
+//	{
+//		tCallParams nullValue = { 0 };
+//		WriteVoiceFrame(nullValue, 0, isTimeCheckout);
+//		return;
+//	}
+//
+//	tCallParams thisCall;
+//	//int CallIndex;
+//	bool IsNewCallEvent;
+//
+//	IsNewCallEvent = FALSE;
+//
+//
+//	thisCall.All[0] = (m_CurrentRecvBuffer.buf)[0];  //CallOpcode
+//	thisCall.All[8] = (m_CurrentRecvBuffer.buf)[4];  //CallOriginatingPeerID
+//	thisCall.All[9] = (m_CurrentRecvBuffer.buf)[3];  // "
+//	thisCall.All[10] = (m_CurrentRecvBuffer.buf)[2];  // "
+//	thisCall.All[11] = (m_CurrentRecvBuffer.buf)[1];  // "
+//	thisCall.All[1] = (m_CurrentRecvBuffer.buf)[5];  //CallSequenceNumber
+//	thisCall.All[16] = (m_CurrentRecvBuffer.buf)[8];  //CallSrcID
+//	thisCall.All[17] = (m_CurrentRecvBuffer.buf)[7];  // "
+//	thisCall.All[18] = (m_CurrentRecvBuffer.buf)[6];  // "
+//	thisCall.All[19] = 0;  // "
+//	thisCall.All[20] = (m_CurrentRecvBuffer.buf)[11]; //CallTgtID
+//	thisCall.All[21] = (m_CurrentRecvBuffer.buf)[10]; // "
+//	thisCall.All[22] = (m_CurrentRecvBuffer.buf)[9];  // "
+//	thisCall.All[23] = 0;  // "
+//	thisCall.All[2] = (m_CurrentRecvBuffer.buf)[12]; //CallPriority
+//	thisCall.All[12] = (m_CurrentRecvBuffer.buf)[16]; //CallFloorControlTag
+//	thisCall.All[13] = (m_CurrentRecvBuffer.buf)[15]; // "
+//	thisCall.All[14] = (m_CurrentRecvBuffer.buf)[14]; // "
+//	thisCall.All[15] = (m_CurrentRecvBuffer.buf)[13]; // "
+//	thisCall.All[3] = (m_CurrentRecvBuffer.buf)[17]; //CallControlInformation
+//	thisCall.All[24] = (m_CurrentRecvBuffer.buf)[25]; //RTPTimeStamp
+//	thisCall.All[25] = (m_CurrentRecvBuffer.buf)[24]; // "
+//	thisCall.All[26] = (m_CurrentRecvBuffer.buf)[23]; // "
+//	thisCall.All[27] = (m_CurrentRecvBuffer.buf)[22]; // "
+//	thisCall.All[4] = ((m_CurrentRecvBuffer.buf)[30]) & 0x7F; //RepeaterBurstDataType
+//	thisCall.All[5] = (m_CurrentRecvBuffer.buf)[32]; //ESNLIEHB
+//
+//	//TRACE(_T("RTP 0:0x%x\r\n"), (m_CurrentRecvBuffer.buf)[30]);
+//	//TRACE(_T("RTP 1:0x%x\r\n"), (m_CurrentRecvBuffer.buf)[31]);
+//	//TRACE(_T("RTP 2:0x%x\r\n"), (m_CurrentRecvBuffer.buf)[32]);
+//
+//	//TRACE(_T("CALL SRC ID:%d\r\n"), thisCall.fld.CallSrcID);
+//	//TRACE(_T("CALL Tgt ID:%d\r\n"), thisCall.fld.CallTgtID);
+//	//TRACE(_T("CALL Sequence Number:%d\r\n"), thisCall.fld.CallSequenceNumber);
+//
+//	if (DATA_TYPE_VOICE == thisCall.fld.RepeaterBurstDataType ||
+//		DATA_TYPE_VOICE_TERMINATOR == thisCall.fld.RepeaterBurstDataType)
+//	{
+//
+//		if (!isTargetMeCall(thisCall.fld.CallTgtID))
+//		{
+//			return;
+//		}
+//
+//		if (IPSC_PVT_VOICE_CALL == dwCallType)
+//		{
+//			WriteVoiceFrame(thisCall, IndividualCall);
+//		}
+//		else if (IPSC_GRP_VOICE_CALL == dwCallType)
+//		{
+//			WriteVoiceFrame(thisCall, GroupCall);
+//		}
+//
+//	}
+//}
 
 //void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, bool isCheckTimeOut)
 //{
@@ -2206,6 +2212,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 							  rFile->callId = p->callID;
 							  rFile->callType = p->callType;
 							  rFile->prevTimestamp = GetTickCount();
+							  rFile->srcSlot = p->slotNumber;
 
 							  requireVoiceReocrdsLock();
 							  m_voiceReocrds.push_back(rFile);
@@ -2229,6 +2236,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 										  (*i)->tagetId == tgtId &&
 										  (*i)->callId == callId)
 									  {
+										  m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, g_recordType, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi);
 										  requireVoiceReocrdsLock();
 										  delete (*i);
 										  m_voiceReocrds.erase(i);
@@ -2285,6 +2293,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 									  (*i)->callId == callId)
 								  {
 									  ishaveRecord = true;
+									  (*i)->srcRssi = p->rawRssiValue;
 									  (*i)->WriteVoiceFrame(voiceFrame1);
 									  (*i)->WriteVoiceFrame(voiceFrame2);
 									  (*i)->WriteVoiceFrame(voiceFrame3);
@@ -2300,6 +2309,8 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 								  rFile->callId = p->callID;
 								  rFile->callType = p->callType;
 								  rFile->prevTimestamp = GetTickCount();
+								  rFile->srcSlot = p->slotNumber;
+								  rFile->srcRssi = p->rawRssiValue;
 
 								  rFile->WriteVoiceFrame(voiceFrame1);
 								  rFile->WriteVoiceFrame(voiceFrame2);
@@ -2328,6 +2339,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 											  (*i)->tagetId == tgtId &&
 											  (*i)->callId == callId)
 										  {
+											  m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, g_recordType, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi);
 											  requireVoiceReocrdsLock();
 											  delete (*i);
 											  m_voiceReocrds.erase(i);
@@ -3895,6 +3907,7 @@ bool CWLNet::FindLocalIP(WCHAR* strAddr)
 void CWLNet::SetLogPtr(PLogReport value)
 {
 	m_report = value;
+	m_pEventLoger->SetLogPtr(m_report);
 }
 
 void CWLNet::sendLogToWindow()
@@ -4177,7 +4190,7 @@ void CWLNet::InitialCallRecord()
 
 unsigned __int32 CWLNet::GetMyPeerID(void)
 {
-	return m_dwMyPeerID;
+	return g_localPeerId;
 }
 
 unsigned __int32 CWLNet::GetMyRadioID(void)
@@ -6370,7 +6383,7 @@ void CWLNet::Build_T_WL_PROTOCOL_19(T_WL_PROTOCOL_19& networkData)
 	networkData.MFID = VALUE_MFID;
 	networkData.oldestLinkProtocolVersion = Wireline_Protocol_Version;
 	networkData.Opcode = WL_PROTOCOL;
-	networkData.peerID = m_dwMyPeerID;
+	networkData.peerID = g_localPeerId;
 	networkData.RTPInformationField.header = BURST_RTP_HEADER;
 	networkData.RTPInformationField.MPT = BURST_END_RTP_MPT;
 	networkData.RTPInformationField.SequenceNumber = m_SequenceNumber;
@@ -6408,7 +6421,7 @@ void CWLNet::Build_T_WL_PROTOCOL_21(T_WL_PROTOCOL_21& networkData, bool bStart)
 	networkData.MFID = VALUE_MFID;
 	networkData.oldestLinkProtocolVersion = Wireline_Protocol_Version;
 	networkData.Opcode = WL_PROTOCOL;
-	networkData.peerID = m_dwMyPeerID;
+	networkData.peerID = g_localPeerId;
 	networkData.rawRssiValue = VALUE_RSSI;
 	networkData.RTPInformationField.header = BURST_RTP_HEADER;
 	if (bStart)

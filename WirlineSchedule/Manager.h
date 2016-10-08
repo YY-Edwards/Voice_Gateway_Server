@@ -1,6 +1,8 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
+#include "MySQL.h"
+
 class CSerialDongle;
 class CSound;
 class CTool;
@@ -20,7 +22,7 @@ extern BOOL g_dongleIsUsing;
 class CManager
 {
 public:
-	CManager();
+	CManager(CMySQL *db);
 	~CManager();
 	int initSys(char* master_ip, unsigned int master_port, unsigned int local_id, unsigned int local_radio_id, unsigned int record_type, unsigned int local_slot, unsigned int local_group, unsigned int serial_port);
 	int initWnd(HWND current_hwnd);
@@ -51,6 +53,8 @@ private:
 
 	HANDLE m_hWaitDecodeEvent;
 	BOOL m_bDongleIsOpen;
+
+	CMySQL *m_pDb;
 };
 
 

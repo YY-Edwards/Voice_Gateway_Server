@@ -25,10 +25,26 @@ std::string CAllCall::getName()
 	return "allCall";
 }
 
-int CAllCall::run(CRemotePeer* pRemote, std::map<std::string, std::string> args, uint64_t callId)
+int CAllCall::run(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
 {
-	DispatchOperate  * pDispatchOperate = new DispatchOperate();
-	
-	int result = pDispatchOperate->allCall(pRemote, callId);
+	Document d;
+	try{
+		d.Parse(param.c_str());
+	}
+	catch (std::exception e){
+
+	}
+	catch (...)
+	{
+
+	}
+	if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
+	{
+		std::map<std::string, std::string> args;
+		args["message"] = "allCall";
+		std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
+		pRemote->sendResponse(strResp.c_str(), strResp.size());
+		int result = m_dispatchOperate[pRemote]->allCall(pRemote, callId);
+	}
 	return 0;
 }

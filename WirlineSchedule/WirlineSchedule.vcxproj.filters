@@ -1,40 +1,19 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <ClCompile Include="Call.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="common.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="HMAC_SHA1.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="IPSCPeer.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="Manager.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="SerialDongle.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="SHA1.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="Sound.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>source</Filter>
     </ClCompile>
-    <ClCompile Include="Tool.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
     <ClCompile Include="WirlineSchedule.cpp">
-      <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="WLNet.cpp">
       <Filter>source</Filter>
     </ClCompile>
     <ClCompile Include="MySQL.cpp">
@@ -43,12 +22,33 @@
     <ClCompile Include="RecorderServer.cpp">
       <Filter>source\wampserver</Filter>
     </ClCompile>
+    <ClCompile Include="IPSCPeer.cpp">
+      <Filter>source\class</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager.cpp">
+      <Filter>source\class</Filter>
+    </ClCompile>
+    <ClCompile Include="SerialDongle.cpp">
+      <Filter>source\class</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>source\class</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool.cpp">
+      <Filter>source\class</Filter>
+    </ClCompile>
+    <ClCompile Include="WLNet.cpp">
+      <Filter>source\class</Filter>
+    </ClCompile>
+    <ClCompile Include="WLRecord.cpp">
+      <Filter>source\data</Filter>
+    </ClCompile>
+    <ClCompile Include="AudioLog.cpp">
+      <Filter>source\data</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ambe3000.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="Call.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="common.h">
@@ -57,19 +57,7 @@
     <ClInclude Include="HMAC_SHA1.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="IPSCPeer.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="Manager.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="SerialDongle.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="SHA1.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="Sound.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
@@ -78,13 +66,7 @@
     <ClInclude Include="targetver.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="Tool.h">
-      <Filter>include</Filter>
-    </ClInclude>
     <ClInclude Include="VoiceDefs.h">
-      <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="WLNet.h">
       <Filter>include</Filter>
     </ClInclude>
     <ClInclude Include="MySQL.h">
@@ -294,6 +276,30 @@
     <ClInclude Include="mutex.h">
       <Filter>include\wampserver</Filter>
     </ClInclude>
+    <ClInclude Include="IPSCPeer.h">
+      <Filter>include\class</Filter>
+    </ClInclude>
+    <ClInclude Include="SerialDongle.h">
+      <Filter>include\class</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound.h">
+      <Filter>include\class</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool.h">
+      <Filter>include\class</Filter>
+    </ClInclude>
+    <ClInclude Include="WLNet.h">
+      <Filter>include\class</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager.h">
+      <Filter>include\class</Filter>
+    </ClInclude>
+    <ClInclude Include="WLRecord.h">
+      <Filter>include\data</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioLog.h">
+      <Filter>include\data</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -331,6 +337,12 @@
     </Filter>
     <Filter Include="mysql-connector-c\include\mysys">
       <UniqueIdentifier>{0630fdfb-3a3d-40f8-a035-a6f44e86ce91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\class">
+      <UniqueIdentifier>{2f0f0b62-e268-44b9-9c16-0676ffb928f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\class">
+      <UniqueIdentifier>{b9dd4ab9-dda9-41cf-a964-20d04b2cc208}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

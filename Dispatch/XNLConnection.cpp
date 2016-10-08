@@ -796,159 +796,184 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 		break;
 		//在线检测
 	case 0XB41C:                         //  Remote Radio Control Broadcast
-		for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+		try
 		{
-			if (0x000B == xnl_opcode && 0xB41C == xcmp_opcode)
+			for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 			{
-
-				BOOL rmtflag = FALSE;
-				if (rmt_type_code == 0x00)                                                   //在线检测
+				if (0x000B == xnl_opcode && 0xB41C == xcmp_opcode)
 				{
-					if (0x0010 == check_result/* & 0x00FF)*/)
+
+					BOOL rmtflag = FALSE;
+					if (rmt_type_code == 0x00)                                                   //在线检测
 					{
-						rmtflag = TRUE;
-						// 1:在线
-						std::map<std::string, std::string> args;
-						//	args["id"] = stringId;
-						std::string callJsonStr = CRpcJsonParser::buildResponse("1", 0, 0, "1", args);
-						if (pRemotePeer != NULL)
+						if (0x0010 == check_result/* & 0x00FF)*/)
 						{
-							pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-						}
+							rmtflag = TRUE;
+							// 1:在线
+							std::map<std::string, std::string> args;
+							//	args["id"] = stringId;
+							std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
+							if (pRemotePeer != NULL && pRemotePeer == it->pRemote)
+							{
+								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								allCommandList.erase(it++);
+								break;
+							}
 #if DEBUG_LOG
-						LOG(INFO) << "在线";
+							LOG(INFO) << "在线";
 #endif
+							break;
+						}
+						else
+						{
+							rmtflag = false;
+							//0:不在线
+							std::map<std::string, std::string> args;
+							//args["id"] = stringId;
+							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 0, "1", args);
+							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
+							{
+								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								allCommandList.erase(it++);
+								break;
+							}
+#if DEBUG_LOG
+							LOG(INFO) << "离线";
+#endif
+							break;
+						}
+
+						allCommandList.erase(it++);
 						break;
 					}
-					else
+					else if (rmt_type_code == 0x01)
 					{
-						rmtflag = false;
-						//0:不在线
-						std::map<std::string, std::string> args;
-						//args["id"] = stringId;
-						std::string callJsonStr = CRpcJsonParser::buildResponse("0", 0, 0, "1", args);
-						if (pRemotePeer != NULL)
+						if (0x0110 == check_result/* & 0x00FF)*/)                                    //摇闭
 						{
-							pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-						}
+							rmtflag = true;                                   //成功    
+							std::map<std::string, std::string> args;
+							//args["id"] = stringId;
+							std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
+							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
+							{
+								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								allCommandList.erase(it++);
+								break;
+							}
 #if DEBUG_LOG
-						LOG(INFO) << "离线";
+							LOG(INFO) << "遥闭成功";
 #endif
+							break;
+						}
+						else
+						{
+							rmtflag = false;                               //失败
+							std::map<std::string, std::string> args;
+							//args["id"] = stringId;
+							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 0, "1", args);
+							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
+							{
+								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								allCommandList.erase(it++);
+								break;
+							}
+#if DEBUG_LOG
+							LOG(INFO) << "遥闭失败";
+#endif
+							break;
+						}
+
+						break;
+					}
+					else if (rmt_type_code == 0x02)
+					{
+						if (0x0210 == check_result/* & 0x00FF)*/)                                     //摇开
+						{
+							rmtflag = true;                                  //成功
+							std::map<std::string, std::string> args;
+							//args["id"] = stringId;
+							std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
+							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
+							{
+								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								allCommandList.erase(it++);
+								break;
+							}
+
+#if DEBUG_LOG
+							LOG(INFO) << "遥开成功";
+#endif
+							break;
+						}
+						else
+						{
+							rmtflag = FALSE;                                //失败
+							std::map<std::string, std::string> args;
+							//args["id"] = stringId;
+							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 1, "1", args);
+							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
+							{
+								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								allCommandList.erase(it++);
+								break;
+							}
+#if DEBUG_LOG
+							LOG(INFO) << "遥开失败";
+#endif
+							break;
+						}
+
+						break;
+					}
+					else if (rmt_type_code == 0x03)
+					{
+						if (0x0310 == check_result/* & 0x00FF)*/)                                    //远程监听
+						{
+							rmtflag = true;                                   //成功
+							std::map<std::string, std::string> args;
+							//args["id"] = stringId;
+							std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
+							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
+							{
+								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								allCommandList.erase(it++);
+								break;
+							}
+#if DEBUG_LOG
+							LOG(INFO) << "远程监听成功";
+#endif
+							break;
+						}
+						else
+						{
+							rmtflag = false;                                   // 失败
+							std::map<std::string, std::string> args;
+							args["id"] = stringId;
+							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 0, "1", args);
+							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
+							{
+								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								allCommandList.erase(it++);
+								break;
+							}
+#if DEBUG_LOG
+							LOG(INFO) << "远程监听失败";
+#endif
+							break;
+						}
+
+						
 						break;
 					}
 
-					allCommandList.erase(it++);
 				}
-				else if (rmt_type_code == 0x01)
-				{
-					if (0x0110 == check_result/* & 0x00FF)*/)                                    //摇闭
-					{
-						rmtflag = true;                                   //成功    
-						std::map<std::string, std::string> args;
-						//args["id"] = stringId;
-						std::string callJsonStr = CRpcJsonParser::buildResponse("1", 0, 0, "1", args);
-						if (pRemotePeer != NULL)
-						{
-							pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-						}
-#if DEBUG_LOG
-						LOG(INFO) << "遥闭成功";
-#endif
-						break;
-					}
-					else
-					{
-						rmtflag = false;                               //失败
-						std::map<std::string, std::string> args;
-						//args["id"] = stringId;
-						std::string callJsonStr = CRpcJsonParser::buildResponse("0", 0, 0, "1", args);
-						if (pRemotePeer != NULL)
-						{
-							pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-						}
-#if DEBUG_LOG
-						LOG(INFO) << "遥闭失败";
-#endif
-						break;
-					}
-
-					allCommandList.erase(it++);
-				}
-				else if (rmt_type_code == 0x02)
-				{
-					if (0x0210 == check_result/* & 0x00FF)*/)                                     //摇开
-					{
-						rmtflag = true;                                  //成功
-						std::map<std::string, std::string> args;
-						//args["id"] = stringId;
-						std::string callJsonStr = CRpcJsonParser::buildResponse("1", 0, 0, "1", args);
-						if (pRemotePeer != NULL)
-						{
-							pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-						}
-
-#if DEBUG_LOG
-						LOG(INFO) << "遥开成功";
-#endif
-						break;
-					}
-					else
-					{
-						rmtflag = FALSE;                                //失败
-						std::map<std::string, std::string> args;
-						//args["id"] = stringId;
-						std::string callJsonStr = CRpcJsonParser::buildResponse("0", 0, 1, "1", args);
-						if (pRemotePeer != NULL)
-						{
-							pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-						}
-#if DEBUG_LOG
-						LOG(INFO) << "遥开失败";
-#endif
-						break;
-					}
-
-					allCommandList.erase(it++);
-				}
-				else if (rmt_type_code == 0x03)
-				{
-					if (0x0310 == check_result/* & 0x00FF)*/)                                    //远程监听
-					{
-						rmtflag = true;                                   //成功
-						std::map<std::string, std::string> args;
-						//args["id"] = stringId;
-						std::string callJsonStr = CRpcJsonParser::buildResponse("1", 0, 0, "1", args);
-						if (pRemotePeer != NULL)
-						{
-							pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-						}
-#if DEBUG_LOG
-						LOG(INFO) << "远程监听成功";
-#endif
-						break;
-					}
-					else
-					{
-						rmtflag = false;                                   // 失败
-						std::map<std::string, std::string> args;
-						args["id"] = stringId;
-						std::string callJsonStr = CRpcJsonParser::buildResponse("0", 0, 0, "1", args);
-						if (pRemotePeer != NULL)
-						{
-							pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-						}
-#if DEBUG_LOG
-						LOG(INFO) << "远程监听失败";
-#endif
-						break;
-					}
-
-					allCommandList.erase(it++);
-				}
-
 			}
+			break;
 		}
-		break;
+		catch (std::exception e)
+		{
+
+		}
 	case 0XB413:                 //紧急报警
 		if (0x000B == xnl_opcode && 0xB413 == xcmp_opcode)
 		{
@@ -970,37 +995,51 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 #if DEBUG_LOG
 			LOG(INFO) << "呼叫开始  ";
 #endif
-			for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+			try
 			{
-				std::map<std::string, std::string> args;
-				std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
-				if (pRemotePeer != NULL)
+				for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 				{
-					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-				}
-				allCommandList.erase(it++);
+					std::map<std::string, std::string> args;
+					std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
+					if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
+					{
+						pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+					}
+					allCommandList.erase(it++);
 
+					break;
+				}
 				break;
 			}
-			break;
+			catch (std::exception e)
+			{
+
+			}
 		case 0x03:
 			 //2:呼叫结束
 #if DEBUG_LOG
 			LOG(INFO) << "呼叫结束  ";
 #endif
-			for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+			try
 			{
-				std::map<std::string, std::string> args;
-				std::string callJsonStr = CRpcJsonParser::buildResponse("2", it->callId, 0, "1", args);
-				if (pRemotePeer != NULL)
+				for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 				{
-					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-				}
-				allCommandList.erase(it++);
+					std::map<std::string, std::string> args;
+					std::string callJsonStr = CRpcJsonParser::buildResponse("2", it->callId, 0, "1", args);
+					if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
+					{
+						pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+					}
+					allCommandList.erase(it++);
 
+					break;
+				}
 				break;
 			}
-			break;
+			catch (std::exception e)
+			{
+
+			}
 		}
 
 	     default: /* just forward the xcmp message to the application */

@@ -50,7 +50,7 @@ int CRpcJsonParser::getRequest(const std::string str, std::string& callName, uin
 			callId = std::atoll(d["callId"].GetString());
 		}
 
-		if (!d.HasMember("param"))
+		if (d.HasMember("param"))
 		{
 			if (!d["param"].IsObject())
 			{

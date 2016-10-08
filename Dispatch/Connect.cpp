@@ -25,21 +25,28 @@ std::string CConnect::getName()
 	return "connect";
 }
 
-int CConnect::run(CRemotePeer* pRemote, std::map<std::string, std::string> args, uint64_t callId)
+int CConnect::run(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
 {
-	DispatchOperate  * pDispatchOperate = new DispatchOperate();
-	if (args.find("radioIP") != args.end() && args.find("mnisIP") != args.end())
-	{
-		string radioIP = args["radioIP"];
-		string mnisIP = args["mnisIP"];
-		int callId = atoi(args["callId"].c_str());
-		pDispatchOperate->Connect( pRemote,radioIP.c_str(), mnisIP.c_str(), callId);
-		if (m_dispatchOperate.find(pRemote) == m_dispatchOperate.end())
-		{
-			m_dispatchOperate[pRemote] = pDispatchOperate;
-		}
+
+	Document d;
+	try{
+		d.Parse(param.c_str());
 	}
-	
-	
+	catch (std::exception e){
+
+	}
+	catch (...)
+	{
+
+	}
+	DispatchOperate  * pDispatchOperate = new DispatchOperate();
+	m_dispatchOperate[pRemote] = pDispatchOperate;
+	std::map<std::string, std::string> args;
+	args["message"] = "connect";
+	std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
+	pRemote->sendResponse(strResp.c_str(), strResp.size());
+	string radioIP = d["radioIP"].GetString();
+	string mnisIP = d["mnisIP"].GetString();
+	int result = pDispatchOperate->Connect(pRemote, radioIP.c_str(), mnisIP.c_str(), callId);
 	return 0;
 }

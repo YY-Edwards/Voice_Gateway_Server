@@ -1,7 +1,9 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#define PATH_FILE_MAXSIZE 1024
 #define DATA_TABLE_NAME_SIZE 64
+#define FILE_NAME_MAXSIZE 64
 typedef void(*PLogReport)(char* log_msg);
 enum    ScrambleDirection  {
 	IPSCTODONGLE,

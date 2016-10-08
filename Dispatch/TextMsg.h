@@ -62,16 +62,16 @@ class MSG_DLL_API CTextMsg
 public:
 	CTextMsg();
 	~CTextMsg();
-	bool InitSocket(SOCKET *s, DWORD dwAddress);
+	bool InitSocket(SOCKET *s, DWORD dwAddress, CRemotePeer * pRemote);
 	bool CloseSocket(SOCKET* s);
 	static DWORD WINAPI ReceiveDataThread(LPVOID lpParam);
-	wstring ParseUserMsg(TextMsg* HandleMsg, int* len);
+	CString ParseUserMsg(TextMsg* HandleMsg, int* len);
 	UINT8 GetSeqNumber(TextMsg* HandleMsg);
 	bool ReplyMsgACK(ThreadMsg* Msg, UINT8 SeqNumber);
 	bool SendMsg( int callId, LPTSTR message, DWORD dwRadioID, int CaiNet);
 	void setRemotePeer(CRemotePeer * pRemote);
 	void RecvMsg();
-
+	string WChar2Ansi(LPCWSTR pwszSrc);
 private:
 	int m_nSendSequenceNumber;
 	bool m_RcvSocketOpened;

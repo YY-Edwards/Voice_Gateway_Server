@@ -21,14 +21,29 @@ std::string CCancelGps::getName()
 	return "cancelGps";
 }
 
-int CCancelGps::run(CRemotePeer* pRemote, std::map<std::string, std::string> args, uint64_t callId)
+int CCancelGps::run(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
 {
-	DispatchOperate  * pDispatchOperate = new DispatchOperate();
-	if (args.find("id") != args.end())
-	{
-		int callId = atoi(args["callId"].c_str());
-		int id = atoi(args["id"].c_str());
-		int result = pDispatchOperate->cancelPollGps(pRemote, id, callId);
+	Document d;
+	try{
+		d.Parse(param.c_str());
+		if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
+		{
+			std::map<std::string, std::string> args;
+			args["message"] = "cancelPollGps";
+			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
+			pRemote->sendResponse(strResp.c_str(), strResp.size());
+			string temp = d["id"].GetString();
+			int id = atoi(temp.c_str());
+			int result = m_dispatchOperate[pRemote]->cancelPollGps(pRemote, id, callId);
+		}
 	}
+	catch (std::exception e){
+
+	}
+	catch (...)
+	{
+
+	}
+
 	return 0;
 }

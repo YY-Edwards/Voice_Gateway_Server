@@ -195,34 +195,34 @@ BOOL CMySQL::Open(LPCSTR pstrHost, WORD port, LPCSTR pstrUserName, LPCSTR pstrPa
 		//InsertRow(migrationTableName, versionRecord);
 	}
 
-	if (CheckTableExist("tbl_user"))
-	{
-		DeleteTable("tbl_user");
-	}
+	//if (CheckTableExist("tbl_user"))
+	//{
+	//	DeleteTable("tbl_user");
+	//}
 
-	if (!CheckTableExist("tbl_account"))
-	{
-		CreateTable("CREATE TABLE IF NOT EXISTS `tbl_account` (\
-															`id` int(11) NOT NULL AUTO_INCREMENT,\
-																														`account` varchar(64) NOT NULL,\
-																																																		`password` varchar(64) NOT NULL,\
-																																																																											`name` varchar(64) NOT NULL,\
-																																																																																																									`root` int(11) NOT NULL,\
-																																																																																																																																												`radio` int(11) NOT NULL,\
-																																																																																																																																																																																				PRIMARY KEY (`id`)\
-																																																																																																																																																																																																																																	) ENGINE=InnoDB  DEFAULT CHARSET=utf8");
-	}
+	//if (!CheckTableExist("tbl_account"))
+	//{
+	//	CreateTable("CREATE TABLE IF NOT EXISTS `tbl_account` (\
+	//														`id` int(11) NOT NULL AUTO_INCREMENT,\
+	//																													`account` varchar(64) NOT NULL,\
+	//																																																	`password` varchar(64) NOT NULL,\
+	//																																																																										`name` varchar(64) NOT NULL,\
+	//																																																																																																								`root` int(11) NOT NULL,\
+	//																																																																																																																																											`radio` int(11) NOT NULL,\
+	//																																																																																																																																																																																			PRIMARY KEY (`id`)\
+	//																																																																																																																																																																																																																																) ENGINE=InnoDB  DEFAULT CHARSET=utf8");
+	//}
 
-	if (!CheckTableExist("tbl_log"))
-	{
-		CreateTable("CREATE TABLE IF NOT EXISTS `tbl_log` (\
-					`id` int(11) NOT NULL AUTO_INCREMENT,\
-					`time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\
-					`content` varchar(64) NOT NULL,\
-					`is_ui` int(11) NOT NULL DEFAULT '0', \
-					PRIMARY KEY (`id`)\
-					) ENGINE=InnoDB  DEFAULT CHARSET=utf8");
-	}
+	//if (!CheckTableExist("tbl_log"))
+	//{
+	//	CreateTable("CREATE TABLE IF NOT EXISTS `tbl_log` (\
+	//				`id` int(11) NOT NULL AUTO_INCREMENT,\
+	//				`time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\
+	//				`content` varchar(64) NOT NULL,\
+	//				`is_ui` int(11) NOT NULL DEFAULT '0', \
+	//				PRIMARY KEY (`id`)\
+	//				) ENGINE=InnoDB  DEFAULT CHARSET=utf8");
+	//}
 
 	CreateCurrentTableByYearMonth();
 
@@ -570,7 +570,7 @@ std::string CMySQL::CreateCurrentTableByYearMonth()
 
 	if (!CheckTableExist(m_strCurrentTableName))
 	{
-		char strSql[512] = { 0 };
+		char strSql[1024] = { 0 };
 		sprintf_s(strSql,
 			"CREATE TABLE IF NOT EXISTS `%s` (\
 			`id` int(11) NOT NULL AUTO_INCREMENT,\
@@ -579,14 +579,16 @@ std::string CMySQL::CreateCurrentTableByYearMonth()
 			`time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\
 			`offset` int(11) NOT NULL,\
 			`length` int(11) NOT NULL,\
-			`record_type` int(11) NOT NULL,\
+			`call_type` int(11) NOT NULL,\
 			`file_path` varchar(800) NOT NULL,\
-			`is_lcp` int(11) NOT NULL DEFAULT '0', \
-			`src_peer_id` int(11) NOT NULL DEFAULT '0', \
+			`record_type` int(11) NOT NULL, \
+			`src_peer_id` int(11) NOT NULL, \
+			`src_rssi` int(11) NOT NULL, \
+			`src_slot` int(11) NOT NULL, \
 			PRIMARY KEY(`id`)\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8 AUTO_INCREMENT = 1; ", 
 			strTableName);
-		size_t length = strlen(strSql);
+		//size_t length = strlen(strSql);
 		// create table
 		BOOL ret = CreateTable(strSql);
 		if (!ret)
