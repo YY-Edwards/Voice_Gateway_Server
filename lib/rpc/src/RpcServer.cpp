@@ -1,16 +1,23 @@
 #include "stdafx.h"
+
+#include "../../threadpool/threadpool.h"
 #include "../include/TcpServer.h"
 #include "../include/RpcServer.h"
 #include "../include/RpcJsonParser.h"
 
 CRpcServer::CRpcServer()
-	:m_pConnector(NULL)
+	: m_pConnector(NULL)
+	, m_thdPool(NULL)
 {
 }
 
 
 CRpcServer::~CRpcServer()
 {
+	if (NULL != m_thdPool)
+	{
+		delete m_thdPool;
+	}
 }
 
 int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
@@ -29,12 +36,11 @@ int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 			pRemote->sendResponse(response.c_str(), response.size());
 			throw std::exception("invalid request");
 		}
-		CAbstractAction* pAction = NULL;
-		pAction = (m_mpActions.find(callName) != m_mpActions.end()) ? m_mpActions[callName] : NULL;
+		auto actionFn = (m_mpActions.find(callName) != m_mpActions.end()) ? m_mpActions[callName] : nullptr;
 
-		if (pAction)
+		if (nullptr != actionFn)
 		{
-			pAction->run(pRemote, param, callId);
+			m_thdPool->enqueue(actionFn, pRemote, param, callId);
 		}
 	}
 	catch (std::exception& e)
@@ -50,6 +56,8 @@ int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 
 int CRpcServer::start()
 {
+	m_thdPool = new ThreadPool(ThreadCountInPool);
+
 	m_pConnector = new CTcpServer();
 	m_pConnector->setReceiveDataHandler(this);
 	m_pConnector->start();
@@ -64,20 +72,14 @@ void CRpcServer::stop()
 		delete m_pConnector;
 	}
 
-	// close and free all actions memory
-	for (auto i = m_mpActions.begin(); i != m_mpActions.end(); i++)
-	{
-		delete i->second;
-	}
-
 	m_mpActions.erase(m_mpActions.begin(), m_mpActions.end());
 }
 
-void CRpcServer::addActionHandler(CAbstractAction* pAction)
+void CRpcServer::addActionHandler(const char* pName, ACTION action)
 {
-	if ( NULL == pAction)
+	if (nullptr == action)
 	{
 		return;
 	}
-	m_mpActions[pAction->getName()] = pAction;
+	m_mpActions[pName] = action;
 }

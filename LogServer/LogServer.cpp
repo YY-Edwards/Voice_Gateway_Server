@@ -3,14 +3,13 @@
 
 #include "stdafx.h"
 
-#include "AppEventLog.h"
 #include "../lib/rpc/include/RpcServer.h"
+#include "AppEventAction.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	CAppEventLog* pEventLogAction = new CAppEventLog();
 	CRpcServer rpcServer;
-	rpcServer.addActionHandler(pEventLogAction);
+	rpcServer.addActionHandler("appEvent", appEventAction);
 	rpcServer.start();
 	while (1);
 	return 0;

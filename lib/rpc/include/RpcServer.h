@@ -1,10 +1,15 @@
 #pragma once
 
 #include <mutex>
+#include <map>
 
-#include "AbstractAction.h"
 #include "BaseConnector.h"
 
+#define		ThreadCountInPool			4
+
+typedef std::function<void(CRemotePeer*, const std::string&, uint64_t)> ACTION;
+
+class ThreadPool;
 class CRpcServer : public OnConnectorData
 {
 public:
@@ -17,10 +22,12 @@ public: // dereived from OnConnectorData
 public:
 	int start();
 	void stop();
-	void addActionHandler(CAbstractAction* pAction);
+	void addActionHandler(const char* pName, ACTION action);
 
 protected:
-	std::map<std::string, CAbstractAction*>  m_mpActions;
+	std::map<std::string, ACTION>  m_mpActions;
 	CBaseConnector* m_pConnector;
+
+	ThreadPool* m_thdPool;
 };
 

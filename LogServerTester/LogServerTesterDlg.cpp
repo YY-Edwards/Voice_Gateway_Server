@@ -203,7 +203,7 @@ void CLogServerTesterDlg::OnBnClickedRadiobtn()
 {
 	// TODO:  在此添加控件通知处理程序代码
 	std::string strConenct = "{\"call\":\"connect\",\"param\":{\"radioIP\":\"192.168.10.2\",\"mnisIP\":\"\"},\"callId\":1}";
-	m_rpcClient.send((PBYTE)strConenct.c_str(), strConenct.size() + 1);
+	m_rpcClient.send(strConenct.c_str(), strConenct.size() + 1);
 }
 
 
@@ -212,7 +212,7 @@ void CLogServerTesterDlg::OnBnClickedCallbtn()
 	// TODO:  在此添加控件通知处理程序代码
 	
 		std::string strCall = "{\"call\":\"call\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-		m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+		m_rpcClient.send(strCall.c_str(), strCall.size() + 1);
 	
 }
 
@@ -224,20 +224,20 @@ void CLogServerTesterDlg::OnBnClickedMsgbtn()
 {
 	// TODO:  在此添加控件通知处理程序代码
 	std::string strMsg = "{\"call\":\"sendSms\",\"param\":{\"id\":\"10\",\"msg\":\"上海计划信息系统有限公司\"},\"callId\":1}";
-	m_rpcClient.send((PBYTE)strMsg.c_str(), strMsg.size() + 1);
+	m_rpcClient.send(strMsg.c_str(), strMsg.size() + 1);
 }
 void CLogServerTesterDlg::OnBnClickedGroupmsg()
 {
 	// TODO:  在此添加控件通知处理程序代码
 	std::string strMsg = "{\"call\":\"sendGroupSms\",\"param\":{\"id\":\"1\",\"msg\":\"上海计划信息系统有限公司--组发\"},\"callId\":1}";
-	m_rpcClient.send((PBYTE)strMsg.c_str(), strMsg.size() + 1);
+	m_rpcClient.send(strMsg.c_str(), strMsg.size() + 1);
 }
 
 void CLogServerTesterDlg::OnBnClickedStopcallbtn()
 {
 	// TODO:  在此添加控件通知处理程序代码
 	std::string strCall = "{\"call\":\"stopCall\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-	m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	m_rpcClient.send(strCall.c_str(), strCall.size() + 1);
 
 }
 
@@ -246,7 +246,7 @@ void CLogServerTesterDlg::OnBnClickedPoweron()
 {
 	// TODO:  在此添加控件通知处理程序代码
 	std::string strCall = "{\"call\":\"remotePowerOn\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-	m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	m_rpcClient.send(strCall.c_str(), strCall.size() + 1);
 }
 
 
@@ -257,7 +257,7 @@ void CLogServerTesterDlg::OnBnClickedPoweroff()
 {
 	// TODO:  在此添加控件通知处理程序代码
 	std::string strCall = "{\"call\":\"remotePowerOff\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-	m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	m_rpcClient.send(strCall.c_str(), strCall.size() + 1);
 }
 
 
@@ -265,7 +265,7 @@ void CLogServerTesterDlg::OnBnClickedOnline()
 {
 	// TODO:  在此添加控件通知处理程序代码
 	std::string strCall = "{\"call\":\"radioCheck\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-	m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	m_rpcClient.send(strCall.c_str(), strCall.size() + 1);
 }
 
 
@@ -273,5 +273,5 @@ void CLogServerTesterDlg::OnBnClickedWiretap()
 {
 	// TODO:  在此添加控件通知处理程序代码
 	std::string strCall = "{\"call\":\"wiretap\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-	m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	m_rpcClient.send(strCall.c_str(), strCall.size() + 1);
 }
