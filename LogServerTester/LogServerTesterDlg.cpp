@@ -191,6 +191,7 @@ void CLogServerTesterDlg::OnBnClickedBtnCallAppEvent()
 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
 	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+
 		std::string strResp = pResponse;
 		std::wstring wstr;
 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));

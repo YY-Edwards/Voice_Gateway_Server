@@ -493,7 +493,6 @@ void CTextMsg::RecvMsg()
 #if DEBUG_LOG
 					LOG(INFO) << "接收到短信 ： " + callJsonStr;
 #endif
-
 				}
 				else
 				{
