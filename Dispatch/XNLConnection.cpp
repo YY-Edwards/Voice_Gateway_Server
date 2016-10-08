@@ -817,12 +817,12 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 								allCommandList.erase(it++);
+#if DEBUG_LOG
+								LOG(INFO) << "在线";
+#endif
 								break;
 							}
-#if DEBUG_LOG
-							LOG(INFO) << "在线";
-#endif
-							break;
+
 						}
 						else
 						{
@@ -835,12 +835,12 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 								allCommandList.erase(it++);
+#if DEBUG_LOG
+								LOG(INFO) << "离线";
+#endif
 								break;
 							}
-#if DEBUG_LOG
-							LOG(INFO) << "离线";
-#endif
-							break;
+
 						}
 
 						allCommandList.erase(it++);
@@ -858,12 +858,12 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 								allCommandList.erase(it++);
+#if DEBUG_LOG
+								LOG(INFO) << "遥闭成功";
+#endif
 								break;
 							}
-#if DEBUG_LOG
-							LOG(INFO) << "遥闭成功";
-#endif
-							break;
+
 						}
 						else
 						{
@@ -875,12 +875,12 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 								allCommandList.erase(it++);
+#if DEBUG_LOG
+								LOG(INFO) << "遥闭失败";
+#endif
 								break;
 							}
-#if DEBUG_LOG
-							LOG(INFO) << "遥闭失败";
-#endif
-							break;
+
 						}
 
 						break;
@@ -897,13 +897,13 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 								allCommandList.erase(it++);
+#if DEBUG_LOG
+								LOG(INFO) << "遥开成功";
+#endif
 								break;
 							}
 
-#if DEBUG_LOG
-							LOG(INFO) << "遥开成功";
-#endif
-							break;
+
 						}
 						else
 						{
@@ -915,12 +915,12 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 								allCommandList.erase(it++);
+#if DEBUG_LOG
+								LOG(INFO) << "遥开失败";
+#endif
 								break;
 							}
-#if DEBUG_LOG
-							LOG(INFO) << "遥开失败";
-#endif
-							break;
+
 						}
 
 						break;
@@ -937,12 +937,12 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 								allCommandList.erase(it++);
+#if DEBUG_LOG
+								LOG(INFO) << "远程监听成功";
+#endif
 								break;
 							}
-#if DEBUG_LOG
-							LOG(INFO) << "远程监听成功";
-#endif
-							break;
+
 						}
 						else
 						{
@@ -954,12 +954,12 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 								allCommandList.erase(it++);
+#if DEBUG_LOG
+								LOG(INFO) << "远程监听失败";
+#endif
 								break;
 							}
-#if DEBUG_LOG
-							LOG(INFO) << "远程监听失败";
-#endif
-							break;
+
 						}
 
 						
