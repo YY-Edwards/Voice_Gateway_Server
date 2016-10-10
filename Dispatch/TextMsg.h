@@ -65,7 +65,7 @@ public:
 	bool InitSocket(SOCKET *s, DWORD dwAddress, CRemotePeer * pRemote);
 	bool CloseSocket(SOCKET* s);
 	static DWORD WINAPI ReceiveDataThread(LPVOID lpParam);
-	CString ParseUserMsg(TextMsg* HandleMsg, int* len);
+	string ParseUserMsg(TextMsg* HandleMsg, int* len);
 	UINT8 GetSeqNumber(TextMsg* HandleMsg);
 	bool ReplyMsgACK(ThreadMsg* Msg, UINT8 SeqNumber);
 	bool SendMsg( int callId, LPTSTR message, DWORD dwRadioID, int CaiNet);

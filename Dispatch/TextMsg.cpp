@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "TextMsg.h"
-
+#include  "time.h"
 
 #include "../lib/rpc/include/RpcJsonParser.h"
 #pragma comment(lib, "wsock32.lib")
@@ -95,14 +95,14 @@ DWORD WINAPI CTextMsg::ReceiveDataThread(LPVOID lpParam)
 	return 1;
 }
 
-CString CTextMsg::ParseUserMsg(TextMsg* HandleMsg, int * len)
+string CTextMsg::ParseUserMsg(TextMsg* HandleMsg, int * len)
 {
 	UINT16			MsgSize;
 	FirstHeader		FstHeader;
 	SecondHeader    callIddHeader;
 	UINT8			AddressSize;
 	static TCHAR	szMessage[MAX_MESSAGE_LENGTH];
-	CString         ParsedMsg;
+	string         ParsedMsg;
 	int             MsgOffset;                                // 正式的Message在TextPayload中的起始偏移量
 
 	memset((char*)szMessage, 0, sizeof(szMessage));             // 不知道这里针对 unicode 使用 sizeof 是否正确。
@@ -146,8 +146,8 @@ CString CTextMsg::ParseUserMsg(TextMsg* HandleMsg, int * len)
 	//*len = MsgSize - MsgOffset - 2;
 	//ParsedMsg = szMessage;
 	memcpy((char*)szMessage, &HandleMsg->TextPayload[MsgOffset], MsgSize - MsgOffset - 2);
-	ParsedMsg.Format(_T("%s"), szMessage);
-	ParsedMsg = szMessage;
+//	ParsedMsg.Format(_T("%s"), szMessage);
+	ParsedMsg = HandleMsg->TextPayload[MsgOffset];
 
 	return ParsedMsg;
 }
@@ -436,6 +436,7 @@ void CTextMsg::RecvMsg()
 			UINT8 SeqNum = GetSeqNumber(&HandleMsg);
 			memset(m_ThreadMsg->RcvBuffer, 0, MESSAGE_BUFFER);		  // 接收到的消息已经被拷贝出来，这里利用接收Buffer作为发送ACK的Buffer，因此需要在使用的时候清空
 			list<AllCommand>::iterator it;
+			m_allCommandListLocker.lock();
 			for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 			{
 				if (it->ackNum == SeqNum)
@@ -451,6 +452,7 @@ void CTextMsg::RecvMsg()
 				}
 				break;
 			}
+			m_allCommandListLocker.unlock();
 	}
 	else if (ret > TEXTLENTH_2)  //User Text Message
 	{
@@ -473,19 +475,24 @@ void CTextMsg::RecvMsg()
 		{
 			try
 			{
-				CString cstrTime = CTime::GetCurrentTime().Format("%Y-%m-%d %H:%M:%S");                         //获取系统时间
-				CString message = ParseUserMsg(&HandleMsg, 0);
-			
+				//CString cstrTime = CTime::GetCurrentTime().Format("%Y-%m-%d %H:%M:%S");                         //获取系统时间
+				time_t t = time(0);
+				tm timeinfo;
+				char tmp[64];
+				localtime_s(&timeinfo, &t);
+				strftime(tmp, sizeof(tmp), "%Y/%m/%d %X %A 本年第%j天 %z", &timeinfo);
+				string message = ParseUserMsg(&HandleMsg, 0);
+				string strTime = tmp;
 				char radioID[512];
 				sprintf_s(radioID, 512, "%d", m_ThreadMsg->radioID);
 				//cstring to string   time
-				string strTime = WChar2Ansi(cstrTime.GetBuffer(cstrTime.GetLength()));
+				//string strTime = WChar2Ansi(cstrTime.GetBuffer(cstrTime.GetLength()));
 				//cstring to string   message 
-				string strMsg = WChar2Ansi(message.GetBuffer(message.GetLength()));
+				//string strMsg = WChar2Ansi(message.GetBuffer(message.GetLength()));
 				std::map<std::string, std::string> args;
 				args["id"] = radioID;
 				args["date"] = strTime;
-				args["message"] = strMsg;
+				args["message"] = message;
 				std::string callJsonStr = CRpcJsonParser::buildCall("onRecvMsg", 1, args);
 				if (pRemotePeer != NULL)
 				{

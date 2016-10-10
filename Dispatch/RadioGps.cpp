@@ -59,13 +59,13 @@ bool CRadioGps::InitGPSSocket(DWORD dwAddress,  CRemotePeer * pRemote)
 		return FALSE;
 	}
 	m_RcvSocketOpened = true;
-	CreateThread(NULL, 0, ReceiveDataThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	CreateThread(NULL,0, ReceiveDataThread, this, THREAD_PRIORITY_NORMAL, NULL);
 
 	return TRUE;
 }
 bool CRadioGps::InitGPSOverturnSocket(DWORD dwAddress)
 {
-	//CString			 strError;
+
 	SOCKADDR_IN      addr;					//   The   local   interface   address   
 	WSADATA			 wsda;					//   Structure   to   store   info
 	int ret = WSAStartup(MAKEWORD(1, 1), &wsda);     //   Load   version   1.1   of   Winsock

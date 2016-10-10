@@ -27,7 +27,6 @@ public:
 protected:
 	std::map<std::string, ACTION>  m_mpActions;
 	CBaseConnector* m_pConnector;
-
 	ThreadPool* m_thdPool;
 };
 

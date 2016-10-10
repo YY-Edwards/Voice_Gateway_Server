@@ -49,7 +49,7 @@ static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 //
 //	LOG(INFO) << "StartService Entry";
 //
-//	hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+//	hSCM = OpenSCManager(NULL,NULL,SC_MANAGER_ALL_ACCESS);
 //	if (NULL == hSCM) {
 //		throw std::system_error(GetLastError(), std::system_category(), "OpenSCManager failed");
 //	}
@@ -171,18 +171,18 @@ static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 //	std::wstring userName = _T("NT AUTHORITY\\NetworkService");
 //
 //	// build arguments to pass to service when it auto starts
-//	if (GetModuleFileName(NULL, szPath, MAX_PATH) == 0) {
+//	if (GetModuleFileName(NULL,szPath, MAX_PATH) == 0) {
 //		throw std::system_error(GetLastError(), std::system_category(), ("ServiceInstall: GetModuleFileNameA failed"));
 //	}
 //
-//	SC_HANDLE hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+//	SC_HANDLE hSCM = OpenSCManager(NULL,NULL,SC_MANAGER_ALL_ACCESS);
 //	if (NULL == hSCM)
 //	{
 //
 //		throw std::system_error(GetLastError(), std::system_category(), "OpenSCManager failed");
 //	}
 //
-//	if (GetModuleFileName(NULL, szPath, MAX_PATH) == 0) {
+//	if (GetModuleFileName(NULL,szPath, MAX_PATH) == 0) {
 //		throw std::system_error(GetLastError(), std::system_category(), "ServiceInstall: GetModuleFileNameA failed");
 //	}
 //
@@ -199,7 +199,7 @@ static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 //		SERVICE_AUTO_START,
 //		SERVICE_ERROR_NORMAL,
 //		args.str().c_str(),
-//		NULL, NULL, NULL,
+//		"","",""
 //		userName.c_str(),
 //		NULL);
 //
@@ -232,7 +232,7 @@ static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 //}
 //std::wstring getAppdataPath(){
 //	TCHAR szBuffer[MAX_PATH];
-//	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
+//	SHGetSpecialFolderPath(NULL,szBuffer, CSIDL_APPDATA, FALSE);
 //
 //	return std::wstring(szBuffer);
 //}
@@ -240,7 +240,7 @@ static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 //	SC_HANDLE hSCM;
 //	SC_HANDLE hService;
 //
-//	hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+//	hSCM = OpenSCManager(NULL,NULL,SC_MANAGER_ALL_ACCESS);
 //	if (NULL == hSCM) {
 //		throw std::system_error(GetLastError(), std::system_category(), "OpenSCManager failed");
 //	}
@@ -255,7 +255,7 @@ static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 //	SC_HANDLE hSCM;
 //	SC_HANDLE shService;
 //
-//	hSCM = OpenSCManager(NULL, NULL, SC_MANAGER_ALL_ACCESS);
+//	hSCM = OpenSCManager(NULL,NULL,SC_MANAGER_ALL_ACCESS);
 //	if (NULL == hSCM) {
 //		throw std::system_error(GetLastError(), std::system_category(), "OpenSCManager failed");
 //	}
@@ -350,7 +350,7 @@ static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 //		// memory mapped file will not be able to be created. Thus Redis will fail to start. Setting the current directory to the executable directory
 //		// should fix this.
 //		//char szFilePath[MAX_PATH];
-//		//if (GetModuleFileNameA(NULL, szFilePath, MAX_PATH) == 0) {
+//		//if (GetModuleFileNameA(NULL,szFilePath, MAX_PATH) == 0) {
 //		//	throw std::system_error(GetLastError(), std::system_category(), "ServiceWrokerThread: GetModuleFileName failed");
 //		//}
 //		//std::string currentDir = szFilePath;
@@ -415,8 +415,8 @@ static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 //		throw std::system_error(GetLastError(), std::system_category(), "SetServiceStatus failed");
 //	}
 //
-//	g_ServiceStoppedEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-//	g_ServiceStopEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+//	g_ServiceStoppedEvent = CreateEvent(NULL,TRUE, FALSE, NULL);
+//	g_ServiceStopEvent = CreateEvent(NULL,TRUE, FALSE, NULL);
 //	if (g_ServiceStopEvent == NULL) {
 //		g_ServiceStatus.dwControlsAccepted = 0;
 //		g_ServiceStatus.dwCurrentState = SERVICE_STOPPED;
@@ -440,7 +440,7 @@ static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 //		throw std::system_error(GetLastError(), std::system_category(), "SetServiceStatus failed");
 //	}
 //
-//	HANDLE hThread = CreateThread(NULL, 0, ServiceWorkerThread, NULL, 0, NULL);
+//	HANDLE hThread = CreateThread(NULL,0, ServiceWorkerThread, NULL,0, NULL);
 //
 //	WaitForSingleObject(hThread, INFINITE);
 //
@@ -461,7 +461,7 @@ static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 //	SERVICE_TABLE_ENTRY ServiceTable[] =
 //	{
 //		{ szServiceName, (LPSERVICE_MAIN_FUNCTION)ServiceMain },
-//		{ NULL, NULL }
+//		{ NULL,NULL }
 //	};
 //
 //	if (StartServiceCtrlDispatcher(ServiceTable) == FALSE) {
@@ -544,35 +544,22 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	wprintf(argv[1]);*/
-	CAllCall* pAllCall = new CAllCall();
-	CCall *pCall = new CCall();
-	CCancelGps *pCancelGps = new CCancelGps();
-	CConnect  *pConnect = new CConnect();
-	CGetGps *pGetGps = new CGetGps();
-	CGetOverTurnGPS * pGetOverTurnGPS = new CGetOverTurnGPS();
-	CGroupCall *pGroupCall = new CGroupCall();
-	CRadioCheck * pRadioCheck = new CRadioCheck();
-	CRmotePowerON * pRemotePowerOn = new CRmotePowerON();
-	CRemotePowerOff * pRemotePowerOff = new CRemotePowerOff();
-	CSendGroupSms *pSendGroupSms = new CSendGroupSms();
-	CSendSms *pSendSms = new CSendSms();
-	CStopCall *pStopCall = new CStopCall();
-	CWiretap * pWiretap = new CWiretap();
+	
 	CRpcServer rpcServer;
-	rpcServer.addActionHandler(pAllCall);
-	rpcServer.addActionHandler(pCall);
-	rpcServer.addActionHandler(pCancelGps);
-	rpcServer.addActionHandler(pConnect);
-	rpcServer.addActionHandler(pGetGps);
-	rpcServer.addActionHandler(pGetOverTurnGPS);
-	rpcServer.addActionHandler(pGroupCall);
-	rpcServer.addActionHandler(pRadioCheck);
-	rpcServer.addActionHandler(pRemotePowerOn);
-	rpcServer.addActionHandler(pRemotePowerOff);
-	rpcServer.addActionHandler(pSendGroupSms);
-	rpcServer.addActionHandler(pSendSms);
-	rpcServer.addActionHandler(pStopCall);
-	rpcServer.addActionHandler(pWiretap);
+	rpcServer.addActionHandler("allCall",allCallEventAction);
+	rpcServer.addActionHandler("call",callEventAction);
+	rpcServer.addActionHandler("cancelGps",cancelgpspEventAction);
+	rpcServer.addActionHandler("connect",connectEventAction);
+	rpcServer.addActionHandler("getGps",getGpsEventAction);
+	rpcServer.addActionHandler("getOverTurnGps",getoverturngpsEventAction);
+	rpcServer.addActionHandler("groupCall",groupcallEventAction);
+	rpcServer.addActionHandler("radioCheck",radioCheckEventAction);
+	rpcServer.addActionHandler("remotePowerOn",remotePowerOnEventAction);
+	rpcServer.addActionHandler("remotePowerOff",remotePowerOffEventAction);
+	rpcServer.addActionHandler("sendGroupSms", sendGroupSmsEventAction);
+	rpcServer.addActionHandler("sendSms", sendSmsEventAction);
+	rpcServer.addActionHandler("stopCall",stopCallEventAction);
+	rpcServer.addActionHandler("wiretap",wiretapEventAction);
 	rpcServer.start();
 	while (1);
 	return 0;
