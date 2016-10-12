@@ -44,14 +44,14 @@ class CXNLConnection
 private:
     // private constructor, can only create this class with CreatConnection()
 	
-    CXNLConnection(SOCKET s, CString auth_key, unsigned long delta);
+    CXNLConnection(SOCKET s, string auth_key, unsigned long delta);
 
 public:
     ~CXNLConnection(void);
 
 public:
     // to create a instance
-    static CXNLConnection* CreatConnection(DWORD ip_addr, int port, CString auth_key, unsigned long delta);
+    static CXNLConnection* CreatConnection(DWORD ip_addr, int port, string auth_key, unsigned long delta);
     BOOL send_xcmp_brightness_msg(unsigned char function, unsigned char intensity);
     BOOL send_xcmp_pui_brdcst(unsigned char pui_type,
                                      unsigned short pui_id,

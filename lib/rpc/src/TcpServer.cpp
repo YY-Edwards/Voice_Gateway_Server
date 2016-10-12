@@ -60,7 +60,7 @@ int CTcpServer::start(const char* connStr)
 	}
 
 	m_nServerIsRunning = ServerRunning;
-	m_hAccetpThread = CreateThread(NULL, 0, AcceptThread, this, 0, NULL);
+	m_hAccetpThread = CreateThread(NULL,0, AcceptThread, this, 0, NULL);
 
 	return 0;
 }
@@ -105,7 +105,7 @@ DWORD CTcpServer::connectHandler()
 		fdRead = allSockets;
 		fdException = allSockets;
 
-		rv = select(0, &fdRead, NULL, &fdException, &t);
+		rv = select(0, &fdRead, NULL,&fdException, &t);
 		if (SOCKET_ERROR == rv)
 		{
 			//LOG(ERROR)<<"select error, error number:"<<WSAGetLastError();
@@ -150,7 +150,7 @@ DWORD CTcpServer::connectHandler()
 						}
 						struct tcp_keepalive inVal = { 1, 1000 * 10, 1000 * 5 };
 						DWORD ret;
-						WSAIoctl(s, SIO_KEEPALIVE_VALS, &inVal, sizeof(inVal), NULL, sizeof(int), &ret, NULL, NULL);
+						WSAIoctl(s, SIO_KEEPALIVE_VALS, &inVal, sizeof(inVal), NULL,sizeof(int), &ret, NULL,NULL);
 						
 						addClient(s, clientSocketAddr);
 						FD_SET(s, &allSockets);

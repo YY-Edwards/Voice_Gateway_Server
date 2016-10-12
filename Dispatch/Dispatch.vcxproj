@@ -53,7 +53,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_AFXDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>../lib/gtest/include;../lib/glog/lib;mutex.h;../lib</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../lib/gtest/include;../lib/glog/lib;../lib</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -76,7 +76,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>mutex.h;../lib;..\lib\gtest\include;..\lib\glog\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../lib;..\lib\gtest\include;..\lib\glog\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -126,32 +126,18 @@
     <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcServer.cpp" />
     <ClCompile Include="..\lib\rpc\src\TcpServer.cpp" />
-    <ClCompile Include="AllCall.cpp" />
-    <ClCompile Include="Call.cpp" />
-    <ClCompile Include="CancelGps.cpp" />
-    <ClCompile Include="Connect.cpp" />
     <ClCompile Include="Dispatch.cpp" />
     <ClCompile Include="DispatchOperate.cpp" />
-    <ClCompile Include="GetGps.cpp" />
-    <ClCompile Include="GetOverTurnGPS.cpp" />
-    <ClCompile Include="GroupCall.cpp" />
     <ClCompile Include="RadioARS.cpp" />
-    <ClCompile Include="RadioCheck.cpp" />
     <ClCompile Include="RadioGps.cpp" />
-    <ClCompile Include="RemotePowerOff.cpp" />
-    <ClCompile Include="RmotePowerON.cpp" />
-    <ClCompile Include="SendGroupSms.cpp" />
-    <ClCompile Include="SendSms.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="StopCall.cpp" />
     <ClCompile Include="TextMsg.cpp" />
     <ClCompile Include="UnitTest.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\Dispatch\gtest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
-    <ClCompile Include="Wiretap.cpp" />
     <ClCompile Include="XNLConnection.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

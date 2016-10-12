@@ -14,12 +14,13 @@
 
 // TODO:  在此处引用程序需要的其他头文件
 
-#include <afx.h>
+//#include <afx.h>                       //引入mfc的库
 #include <deque>
 #include <WinSock2.h>
 #include <Windows.h>
 #include<list>
 using namespace std;
+#include <mutex>
 
 #include "rapidjson/rapidjson.h"
 #include "rapidjson/document.h"
@@ -68,10 +69,18 @@ typedef struct tagAllCommand
 	int timeOut;
 	int timeCount;
 	int command;
+	int radioId;
+	int cycle;
+	int querymode;
+	string radioIP;
+	string mnisIP;
+	string gpsIP;
+	wchar_t * text;
 	CRemotePeer* pRemote;
 }AllCommand;
-extern AllCommand      m_allCommand;
 extern list <AllCommand>allCommandList;
+extern std::mutex m_allCommandListLocker;
+extern CRITICAL_SECTION cs;
 
 #include"DispatchOperate.h"
 #include "../lib/rpc/include/RpcServer.h"

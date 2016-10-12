@@ -25,7 +25,7 @@
 *
 *******************************************************************************/
 
-CXNLConnection::CXNLConnection(SOCKET s, CString auth_key, unsigned long delta)
+CXNLConnection::CXNLConnection(SOCKET s, string auth_key, unsigned long delta)
 {
     m_socket = s;
   
@@ -34,7 +34,8 @@ CXNLConnection::CXNLConnection(SOCKET s, CString auth_key, unsigned long delta)
     m_hThread = 0;
     m_XnlState = XNL_WAIT_MASTER_BRDCST;
     /* Remove the space from the string */
-    auth_key.Remove(' ');
+   // auth_key.Remove(' ');
+	
     /* get the 16 bytes key from the string, now the auth_key format is similar as
      * 0x112233440x556677880x99aabbcc0xddeeff00. Start from the 1st byte, each 10 
      * bytes can be converted to a unsigned long integer.
@@ -98,7 +99,7 @@ CXNLConnection::~CXNLConnection(void)
 ///////////////////////////////////////////////////////////////////////////////
 // create an instance, return the pointer to the instance if success, else return false 
 CXNLConnection* CXNLConnection::CreatConnection(DWORD ip_addr = 0, int port = 8002, 
-                                                CString auth_key = _T(""), unsigned long delta = 0)
+	string auth_key = "", unsigned long delta = 0)
 {
 
     SOCKADDR_IN target_addr = {0};  /* The destination IP address */
@@ -704,35 +705,35 @@ void CXNLConnection::decode_xnl_data_msg_ack(char * p_msg_buf)
 
     if ((p_msg_buf != NULL) && (m_bWaitForAck == TRUE))
     {
-		list<AllCommand>::iterator it;
-		for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
-		{
-			if (it->ackNum == p_msg->msg_hdr.trans_id)
-			{
+		//list<AllCommand>::iterator it;
+		//for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+		//{
+		//	if (it->ackNum == p_msg->msg_hdr.trans_id)
+		//	{
 
-		//		if (pDispatchPort != NULL)
-				{
-					////Æ´½Ójson
-					//rapidjson::Document document;
-					//Document::AllocatorType& allocator = document.GetAllocator();
-					//Value root(kObjectType);
-					//root.AddMember("callId", it->callId, allocator);
-					//root.AddMember("status", 0, allocator);
-					//StringBuffer buffer;
-					//Writer<StringBuffer> writer(buffer);
-					//root.Accept(writer);
-					//std::string reststring = buffer.GetString();
-					//pDispatchPort->sendResultToClient(reststring);
-					//unsigned char str[30] = { 0 };
-					//sprintf_s((char *)str, sizeof(str), "result:0");
+		////		if (pDispatchPort != NULL)
+		//		{
+		//			////Æ´½Ójson
+		//			//rapidjson::Document document;
+		//			//Document::AllocatorType& allocator = document.GetAllocator();
+		//			//Value root(kObjectType);
+		//			//root.AddMember("callId", it->callId, allocator);
+		//			//root.AddMember("status", 0, allocator);
+		//			//StringBuffer buffer;
+		//			//Writer<StringBuffer> writer(buffer);
+		//			//root.Accept(writer);
+		//			//std::string reststring = buffer.GetString();
+		//			//pDispatchPort->sendResultToClient(reststring);
+		//			//unsigned char str[30] = { 0 };
+		//			//sprintf_s((char *)str, sizeof(str), "result:0");
 
-					//onData(myCallBackFunc, it->seq, it->command, (char *)str, sizeof(str));
+		//			//onData(myCallBackFunc, it->seq, it->command, (char *)str, sizeof(str));
 
-				}
-				allCommandList.erase(it++);
-				break;
-			}
-		}
+		//		}
+		//		allCommandList.erase(it++);
+		//		break;
+		//	}
+		//}
 
         /* check the xnl flag */
         if ((m_tx_xnl_flag == p_msg->msg_hdr.xnl_flag))
@@ -798,6 +799,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 	case 0XB41C:                         //  Remote Radio Control Broadcast
 		try
 		{
+			m_allCommandListLocker.lock();
 			for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 			{
 				if (0x000B == xnl_opcode && 0xB41C == xcmp_opcode)
@@ -968,6 +970,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 
 				}
 			}
+			m_allCommandListLocker.unlock();
 			break;
 		}
 		catch (std::exception e)
@@ -997,6 +1000,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 #endif
 			try
 			{
+				m_allCommandListLocker.lock();
 				for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 				{
 					std::map<std::string, std::string> args;
@@ -1009,6 +1013,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 
 					break;
 				}
+				m_allCommandListLocker.unlock();
 				break;
 			}
 			catch (std::exception e)
@@ -1022,6 +1027,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 #endif
 			try
 			{
+				m_allCommandListLocker.lock();
 				for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 				{
 					std::map<std::string, std::string> args;
@@ -1030,10 +1036,11 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					{
 						pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 					}
-					allCommandList.erase(it++);
+				//	allCommandList.erase(it++);
 
 					break;
 				}
+				m_allCommandListLocker.unlock();
 				break;
 			}
 			catch (std::exception e)
@@ -1376,14 +1383,14 @@ BOOL CXNLConnection::send_xcmp_rmt_radio_ctrl_request(unsigned char feature,
     enqueue_msg((char *)p_msg);
 
 
-	list<AllCommand>::iterator it;
-	for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
-	{
-		/*if (it->seq == seq)
-		{
-			it->ackNum = p_msg->msg_hdr.trans_id;
-		}*/
-	}
+	//list<AllCommand>::iterator it;
+	//for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+	//{
+	//	/*if (it->seq == seq)
+	//	{
+	//		it->ackNum = p_msg->msg_hdr.trans_id;
+	//	}*/
+	//}
     
     return (TRUE);
 }

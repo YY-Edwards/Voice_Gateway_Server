@@ -167,47 +167,5 @@
     <ClCompile Include="..\lib\rpc\src\TcpServer.cpp">
       <Filter>rpc\src</Filter>
     </ClCompile>
-    <ClCompile Include="Connect.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Call.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GroupCall.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="AllCall.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="RmotePowerON.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="RemotePowerOff.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="RadioCheck.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="Wiretap.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SendSms.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SendGroupSms.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GetGps.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="StopCall.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="CancelGps.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="GetOverTurnGPS.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>
