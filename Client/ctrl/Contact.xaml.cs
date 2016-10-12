@@ -224,10 +224,10 @@ namespace TrboX
             
             foreach(contact_str con in conlist)
             {
-                if (((null != con.Contact.Group) && (con.Contact.Group.GroupID.ToString().Contains(condition) || con.Contact.Group.Name.Contains(condition)))
-                  || ((null != con.Contact.Employee) && con.Contact.Employee.Name.Contains(condition))
-                  || ((null != con.Contact.Vehicle) && con.Contact.Vehicle.Number.Contains(condition))
-                  || ((null != con.Contact.Radio) && con.Contact.Radio.RadioID.ToString().Contains(condition)))
+                if (((null != con.Contact.Group) && (con.Contact.Group.GroupID.ToString().ToLower().Contains(condition.ToLower()) || con.Contact.Group.Name.ToLower().Contains(condition.ToLower())))
+                  || ((null != con.Contact.Employee) && con.Contact.Employee.Name.ToLower().Contains(condition.ToLower()))
+                  || ((null != con.Contact.Vehicle) && con.Contact.Vehicle.Number.ToLower().Contains(condition.ToLower()))
+                  || ((null != con.Contact.Radio) && con.Contact.Radio.RadioID.ToString().ToLower().Contains(condition.ToLower())))
                 {
                     //match condition
                 }

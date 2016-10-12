@@ -1,0 +1,348 @@
+﻿<src:MyWindow
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:src="clr-namespace:TrboX"
+        xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" 
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" 
+		x:Class="TrboX.Main"   
+        Icon="/TrboxMgr;component/themes/resource/Logo.png"        
+        Style="{StaticResource MyWindowStyle}"   
+        Title="TrboX 3.0 Management" Height="540" Width="840" WindowStartupLocation="CenterScreen" Closed="MyWindow_Closed" Background="{x:Null}">
+    <src:MyWindow.Resources>
+        <src:FalselHideConverter x:Key="FalselHideConverter"/>
+    </src:MyWindow.Resources>
+
+    <Grid Background="White">
+    	<Grid Margin="5">
+    		<Grid.RowDefinitions>
+    			<RowDefinition Height="*"/>
+    			<RowDefinition Height="35"/>
+    		</Grid.RowDefinitions>
+    		<Grid.ColumnDefinitions>
+    			<ColumnDefinition Width="69*"/>
+    			<ColumnDefinition Width="220*"/>
+    		</Grid.ColumnDefinitions>
+
+    		<Border BorderBrush="#FF318CE6" BorderThickness="1" Background="#CCFFFFFF" Margin="0,0,0,5">
+    			<Grid>
+    				<Grid.RowDefinitions>
+    					<RowDefinition Height="30"/>
+    					<RowDefinition Height="73*"/>
+    				</Grid.RowDefinitions>
+    				<Label Content="配置项" Background="#9970ADEE" VerticalContentAlignment="Center"/>
+    				<TreeView x:Name="tree_Options" Margin="2.5" Grid.Row="1" BorderThickness="0" Background="{x:Null}" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+    					<TreeViewItem Header="基本设置" Style="{DynamicResource TreeViewItemRoot}" Tag="0" Selected="tree_OptionsGroup_Selecteded" IsSelected="True" >
+    						<TreeViewItem Header="网络" Width="181.107" Style="{DynamicResource TreeViewItemStyleGroup}"  PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+                            <TreeViewItem Header="日志存储" Width="181.107" Style="{DynamicResource TreeViewItemStyleGroup}"  PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+    					</TreeViewItem>
+                        <TreeViewItem Header="Radio配置" Style="{DynamicResource TreeViewItemRoot}" Tag="1" Selected="tree_OptionsGroup_Selecteded" IsExpanded="{Binding IsChecked, ElementName=chk_EnableRadio}"  >
+							 <TreeViewItem Header="常规" Width="181.107" Style="{DynamicResource TreeViewItemStyleGroup}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}"/>
+                            <TreeViewItem Header="网络" Width="181.107" Style="{DynamicResource TreeViewItemStyleGroup}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}"/>
+                            <TreeViewItem Header="功能" Width="181.107" Style="{DynamicResource TreeViewItemStyleGroup}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}"/>
+    					</TreeViewItem>
+                        <TreeViewItem Header="WireLan" Style="{DynamicResource TreeViewItemRoot}" Tag="2" Selected="tree_OptionsGroup_Selecteded" >
+                            <TreeViewItem Header="网络" Width="181.107" Style="{DynamicResource TreeViewItemStyleGroup}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+                            <TreeViewItem Header="功能" Width="181.107" Style="{DynamicResource TreeViewItemStyleGroup}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+    					</TreeViewItem>
+                        <TreeViewItem Header="资源管理" Style="{DynamicResource TreeViewItemRoot}" Tag="3" Selected="tree_OptionsGroup_Selecteded" >
+                            <TreeViewItem Header="用户" Width="181.107" Style="{DynamicResource TreeViewItemStyleGroup}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+                            <TreeViewItem Header="车辆" Width="181.107" Style="{DynamicResource TreeViewItemStyleGroup}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+                            <TreeViewItem Header="组" Width="181.107" Style="{DynamicResource TreeViewItemStyleGroup}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+                            <TreeViewItem Header="对讲机" Width="181.107" Style="{DynamicResource TreeViewItemStyleGroup}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>							
+    					</TreeViewItem>
+                        <TreeViewItem Header="账号及权限" Style="{DynamicResource TreeViewItemRoot}" Tag="4" Selected="tree_OptionsGroup_Selecteded" >
+                            <TreeViewItem Header="账户" Width="181.107" Style="{DynamicResource TreeViewItemStyleGroup}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+                            <TreeViewItem Header="功能分配" Width="181.107" Style="{DynamicResource TreeViewItemStyleGroup}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+    					</TreeViewItem>
+                        <TreeViewItem Header="地图" Style="{DynamicResource TreeViewItemRoot}" Tag="5" Selected="tree_OptionsGroup_Selecteded" >
+                            <TreeViewItem Header="常规" Width="181.107" Style="{DynamicResource TreeViewItemStyleGroup}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+                            <TreeViewItem Header="BMP地图" Width="181.107" Style="{DynamicResource TreeViewItemStyleGroup}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+    					</TreeViewItem>
+    				</TreeView>
+    			</Grid>
+    		</Border>
+    		<Border BorderBrush="#FF318CE6" BorderThickness="1" Background="#CCFFFFFF" Margin="5,0,0,5" Grid.Column="1">
+    			<Grid Margin="0">
+    				<Grid.RowDefinitions>
+    					<RowDefinition Height="30"/>
+    					<RowDefinition Height="73*"/>
+    				</Grid.RowDefinitions>
+    				<Label x:Name="lab_OptionsTilte" Content="{Binding SelectedItem.Header, ElementName=tab_Options}" Background="#9970ADEE" VerticalContentAlignment="Center"/>
+    				<Border x:Name="bdr_Options" BorderBrush="Black" BorderThickness="0" Grid.Row="1" ClipToBounds="True">
+    					<TabControl x:Name="tab_Options" Margin="0,-22,0,0" BorderThickness="0" Background="{x:Null}" Style="{DynamicResource TabControlStyleNormal}" SelectedIndex="0">
+    						<TabItem Header="基本设置">
+    							<ScrollViewer x:Name="scrview_Base" VerticalScrollBarVisibility="Auto" Padding="20,2.5" Margin="0">
+    								<DockPanel LastChildFill="False" Margin="0">
+    									<DockPanel x:Name="dck_BaseNetwork"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,10,20,30">
+    										<Label Content="网络" Margin="0" DockPanel.Dock="Top" FontSize="16"/>
+    										<Separator Height="5" Margin="-20,0,-20,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
+    										<TextBlock TextWrapping="Wrap" Text="该地址用于客户端访问" DockPanel.Dock="Top" Margin="0,2.5"/>
+    										<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
+    											<Grid.ColumnDefinitions>
+    												<ColumnDefinition Width="80"/>
+    												<ColumnDefinition Width="*"/>
+    											</Grid.ColumnDefinitions>
+    											<Label Content="IP Address :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Left"/>
+    											<TextBox x:Name="txt_SvrIp1" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+    										</Grid>
+    										<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
+    											<Grid.ColumnDefinitions>
+    												<ColumnDefinition Width="80"/>
+    												<ColumnDefinition Width="*"/>
+    											</Grid.ColumnDefinitions>
+    											<Label Content="Port :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+    											<TextBox x:Name="txt_SvrPort2" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+    										</Grid>
+    									</DockPanel>
+    									<DockPanel x:Name="dck_BaseLog" LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,10,20,30">
+    										<Label  Content="日志存储" Margin="0" DockPanel.Dock="Top" FontSize="16"/>
+    										<Separator Height="5" Margin="-20,0,-20,2.5" VerticalAlignment="Top" DockPanel.Dock="Top"/>
+    										<TextBlock TextWrapping="Wrap" Text="该地址用于访问日志服务" DockPanel.Dock="Top" Margin="0,2.5"/>
+    										<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
+    											<Grid.ColumnDefinitions>
+    												<ColumnDefinition Width="80"/>
+    												<ColumnDefinition Width="335*"/>
+    												<ColumnDefinition Width="173*"/>
+    											</Grid.ColumnDefinitions>
+    											<Label Content="IP Address :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+    											<TextBox x:Name="txt_SvrIp2" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,1.5,0,1.5" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+    										</Grid>
+    										<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
+    											<Grid.ColumnDefinitions>
+    												<ColumnDefinition Width="80"/>
+    												<ColumnDefinition Width="335*"/>
+    												<ColumnDefinition Width="173*"/>
+    											</Grid.ColumnDefinitions>
+    											<Label Content="Port :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+    											<TextBox x:Name="txt_SvrIp3" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,1.5,0,1.5" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+    										</Grid>
+    										<TextBlock TextWrapping="Wrap" Text="选择您需要关心（保存）的日志类型" DockPanel.Dock="Top" Margin="0,10,0,2.5"/>
+    										<Grid DockPanel.Dock="Top" Margin="0,2.5">
+    											<Grid.ColumnDefinitions>
+    												<ColumnDefinition Width="20*"/>
+    												<ColumnDefinition Width="20*"/>
+    												<ColumnDefinition Width="20*"/>
+    												<ColumnDefinition Width="20*"/>
+    												<ColumnDefinition Width="20*"/>
+    											</Grid.ColumnDefinitions>
+    											<CheckBox Content="通话记录" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+    											<CheckBox Content="短消息记录" Margin="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+    											<CheckBox Content="位置信息记录" Margin="0" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+    											<CheckBox Content="控制记录" Margin="0" Grid.Column="3" HorizontalAlignment="Left" VerticalAlignment="Center"/>
+    										</Grid>
+    										<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,10,0,2.5" Visibility="Collapsed">
+    											<Grid.ColumnDefinitions>
+    												<ColumnDefinition Width="80"/>
+    												<ColumnDefinition Width="330"/>
+    												<ColumnDefinition Width="*"/>
+    											</Grid.ColumnDefinitions>
+    											<Label Content="储存路径 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+    											<TextBox x:Name="txt_SvrIp8" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,1.5,0,1.5" VerticalAlignment="Center" Grid.Column="1" Width="320"/>
+    											<Button Content="浏览" HorizontalAlignment="Left" VerticalAlignment="Center" Width="75" Grid.Column="2" Height="20" Margin="5,0,0,0"/>
+    										</Grid>
+    									</DockPanel>
+    								</DockPanel>
+    							</ScrollViewer>
+    						</TabItem>
+    						<TabItem Header="Radio配置">
+                                <ScrollViewer x:Name="scrview_Radio" VerticalScrollBarVisibility="Auto" Padding="20,2.5" Height="405" Margin="0">
+                                    <DockPanel LastChildFill="False" Margin="0">
+                                        <DockPanel x:Name="dck_RadioGeneric" LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="20,10,20,30">
+                                            <Label Content="常规" Margin="0" DockPanel.Dock="Top" FontSize="16"/>
+                                            <Separator Height="5" Margin="-20,0,-20,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
+                                            <TextBlock TextWrapping="Wrap" Text="使能/禁用Radio调度功能" Margin="0,2.5" Width="551.087" DockPanel.Dock="Top"/>
+                                            <CheckBox x:Name="chk_EnableRadio" Content="Radio调度" Margin="20,2.5,0,2.5" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" IsChecked="True"/>
+                                            <TextBlock TextWrapping="Wrap" Text="选择车载台工作模式" Margin="0,10,0,2.5" Width="551.087" DockPanel.Dock="Top" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}"/>
+                                            <Grid VerticalAlignment="Top" Margin="20,2.5,0,2.5" DockPanel.Dock="Top" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="83*"/>
+                                                    <ColumnDefinition Width="468*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <RadioButton x:Name="rad_RadioType" Content="车载台" HorizontalAlignment="Left" VerticalAlignment="Top" Height="14.24" Width="55" GroupName="RadioType" IsChecked="True"/>
+                                                <RadioButton x:Name="rad_RadioMnisType" Content="车载台+MNIS"  HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Height="14.24" Width="95.833" GroupName="RadioType"/>
+                                            </Grid>
+                                        </DockPanel>
+                                        <DockPanel x:Name="dck_RadioNetwork" LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,10,20,30" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}">
+                                        	<Label Content="网络" Margin="0" DockPanel.Dock="Top" FontSize="16"/>
+                                        	<Separator Height="5" Margin="-20,0,-20,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
+                                        	<TextBlock TextWrapping="Wrap" Text="该地址用于设备（车台）连接" DockPanel.Dock="Top" Margin="0,2.5"/>
+                                        	<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
+                                        		<Grid.ColumnDefinitions>
+                                        			<ColumnDefinition Width="80"/>
+                                        			<ColumnDefinition Width="*"/>
+                                        		</Grid.ColumnDefinitions>
+                                        		<Label Content="IP Address :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+                                        		<TextBox x:Name="txt_SvrIp4" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+                                        	</Grid>
+                                        	<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
+                                        		<Grid.ColumnDefinitions>
+                                        			<ColumnDefinition Width="80"/>
+                                        			<ColumnDefinition Width="*"/>
+                                        		</Grid.ColumnDefinitions>
+                                        		<Label Content="Port :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+                                        		<TextBox x:Name="txt_SvrPort1" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+                                        	</Grid>
+                                        	<Label Content="该地址用于MNIS连接" VerticalAlignment="Center" Margin="0,10,0,2.5" HorizontalAlignment="Left" IsEnabled="{Binding IsChecked, ElementName=rad_RadioMnisType}" DockPanel.Dock="Top"/>
+                                        	<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
+                                        		<Grid.ColumnDefinitions>
+                                        			<ColumnDefinition Width="80"/>
+                                        			<ColumnDefinition Width="*"/>
+                                        		</Grid.ColumnDefinitions>
+                                        		<Label Content="IP Address :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" IsEnabled="{Binding IsChecked, ElementName=rad_RadioMnisType}"/>
+                                        		<TextBox x:Name="txt_SvrIp9" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120" IsEnabled="{Binding IsChecked, ElementName=rad_RadioMnisType}"/>
+                                        	</Grid>
+                                        	<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
+                                        		<Grid.ColumnDefinitions>
+                                        			<ColumnDefinition Width="80"/>
+                                        			<ColumnDefinition Width="*"/>
+                                        		</Grid.ColumnDefinitions>
+                                        		<Label Content="Port :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" IsEnabled="{Binding IsChecked, ElementName=rad_RadioMnisType}"/>
+                                        		<TextBox x:Name="txt_SvrPort3" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120" IsEnabled="{Binding IsChecked, ElementName=rad_RadioMnisType}"/>
+                                        	</Grid>
+                                        </DockPanel>
+                                        <DockPanel x:Name="dck_RadioFunc" LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,10,20,30" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}">
+                                        	<Label Content="功能" Margin="0" DockPanel.Dock="Top" FontSize="16"/>
+                                        	<Separator Height="5" Margin="-20,0,-20,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
+                                        </DockPanel>
+                                    </DockPanel>
+                                </ScrollViewer>
+                            </TabItem>
+    						<TabItem Header="WireLan" Margin="-2,-2,-2,0">
+    							<ScrollViewer x:Name="scrview_WireLan" VerticalScrollBarVisibility="Auto" Padding="20,2.5" Height="405" Margin="0">
+    								<DockPanel LastChildFill="False" Margin="0">
+    									<DockPanel x:Name="dck_WireLanGeneric" LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="20,10,20,30">
+    										<Label  Content="常规" Margin="20,0,0,0" DockPanel.Dock="Top" FontSize="16"/>
+    										<Separator Height="5" Margin="-20,0,-20,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
+    										<TextBlock TextWrapping="Wrap" Text="使能/禁用WireLan调度功能" Margin="20,2.5,0,2.5" Width="551.087" DockPanel.Dock="Top"/>
+    										<CheckBox x:Name="chk_EnableWireLan" Content="WireLan调度" Margin="20,2.5,0,2.5" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" IsChecked="True"/>
+    										<DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="0,10,0,0">
+    											<TextBlock TextWrapping="Wrap" Text="选择工作模式" Margin="20,0,0,2.5" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}" Width="551.087" DockPanel.Dock="Top"/>
+    											<Grid VerticalAlignment="Top" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}" Width="551.087" Margin="20,2.5,0,0" DockPanel.Dock="Top">
+    												<Grid.ColumnDefinitions>
+    													<ColumnDefinition Width="83*"/>
+    													<ColumnDefinition Width="100*"/>
+    													<ColumnDefinition Width="368*"/>
+    												</Grid.ColumnDefinitions>
+    												<RadioButton x:Name="rad_IPSCType" Content="IPSC" HorizontalAlignment="Left" VerticalAlignment="Top" Height="14.24" Width="55" GroupName="WireLanType" IsChecked="True"/>
+    												<RadioButton x:Name="rad_CPCType" Content="CPC"  HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Height="14.24" Width="95.833" GroupName="WireLanType"/>
+    												<RadioButton x:Name="rad_LCPType" Content="LCP"  HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="2" Height="14.24" Width="95.833" GroupName="WireLanType"/>
+    											</Grid>
+    											<TextBlock TextWrapping="Wrap" Text="设置默认调度组及默认信道" DockPanel.Dock="Top" Margin="20,10,0,2.5" Width="551.087"/>
+    											<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Width="571.087">
+    												<Grid.ColumnDefinitions>
+    													<ColumnDefinition Width="80"/>
+    													<ColumnDefinition Width="*"/>
+    												</Grid.ColumnDefinitions>
+    												<Label Content="默认组 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+    												<TextBox x:Name="txt_SvrIp13" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+    											</Grid>
+    											<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Width="571.087">
+    												<Grid.ColumnDefinitions>
+    													<ColumnDefinition Width="80"/>
+    													<ColumnDefinition Width="*"/>
+    												</Grid.ColumnDefinitions>
+    												<Label Content="默认信道 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+    												<TextBox x:Name="txt_SvrIp14" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+    											</Grid>
+    											<TextBlock TextWrapping="Wrap" Text="通话挂起时间，应大于或等于CPS中设置的通话挂起通话挂起时间(单位：秒)" Margin="20,10,0,2.5" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}" Width="551.087" DockPanel.Dock="Top"/>
+    											<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Width="571.087">
+    												<Grid.ColumnDefinitions>
+    													<ColumnDefinition Width="100"/>
+    													<ColumnDefinition Width="*"/>
+    												</Grid.ColumnDefinitions>
+    												<Label Content="通话挂起时间 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+    												<TextBox x:Name="txt_SvrIp7" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="60"/>
+    											</Grid>
+    											<TextBlock TextWrapping="Wrap" Text="主中继台心跳包间隔时间，应小于主中继台CPS中设置的对等防火墙时间单位：秒)" Margin="20,10,0,2.5" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}" Width="551.087" DockPanel.Dock="Top"/>
+    											<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Width="571.087">
+    												<Grid.ColumnDefinitions>
+    													<ColumnDefinition Width="160"/>
+    													<ColumnDefinition Width="*"/>
+    												</Grid.ColumnDefinitions>
+    												<Label Content="主中继台心跳包间隔时间 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+    												<TextBox x:Name="txt_SvrIp10" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="60"/>
+    											</Grid>
+    											<TextBlock TextWrapping="Wrap" Text="从中继台心跳包间隔时间，应小于从中继台CPS中设置的对等防火墙时间单位：秒)" Margin="20,10,0,2.5" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}" Width="551.087" DockPanel.Dock="Top"/>
+    											<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Width="571.087">
+    												<Grid.ColumnDefinitions>
+    													<ColumnDefinition Width="160"/>
+    													<ColumnDefinition Width="*"/>
+    												</Grid.ColumnDefinitions>
+    												<Label Content="主中继台心跳包间隔时间 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+    												<TextBox x:Name="txt_SvrIp11" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="60"/>
+    											</Grid>
+    										</DockPanel>
+    									</DockPanel>
+    									<DockPanel x:Name="dck_RadioNetwork1" LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,10,20,30" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}">
+    										<Label x:Name="lab_BaseNetwork2" Content="网络" Margin="20,0,0,0" DockPanel.Dock="Top" FontSize="16"/>
+    										<Separator Height="5" Margin="-20,0,-20,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
+    										<TextBlock TextWrapping="Wrap" Text="该地址用于主中继台连接" DockPanel.Dock="Top" Margin="20,2.5,0,2.5"/>
+    										<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
+    											<Grid.ColumnDefinitions>
+    												<ColumnDefinition Width="80"/>
+    												<ColumnDefinition Width="*"/>
+    											</Grid.ColumnDefinitions>
+    											<Label Content="IP Address :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+    											<TextBox x:Name="txt_SvrIp5" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+    										</Grid>
+    										<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
+    											<Grid.ColumnDefinitions>
+    												<ColumnDefinition Width="80"/>
+    												<ColumnDefinition Width="*"/>
+    											</Grid.ColumnDefinitions>
+    											<Label Content="Port :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+    											<TextBox x:Name="txt_SvrPort4" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+    										</Grid>
+    										<TextBlock TextWrapping="Wrap" Text="设置本机参数，包括中继台ID和对讲机ID" DockPanel.Dock="Top" Margin="20,10,0,2.5"/>
+    										<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
+    											<Grid.ColumnDefinitions>
+    												<ColumnDefinition Width="80"/>
+    												<ColumnDefinition Width="*"/>
+    											</Grid.ColumnDefinitions>
+    											<Label Content="中继台ID :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+    											<TextBox x:Name="txt_SvrIp6" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+    										</Grid>
+    										<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
+    											<Grid.ColumnDefinitions>
+    												<ColumnDefinition Width="80"/>
+    												<ColumnDefinition Width="*"/>
+    											</Grid.ColumnDefinitions>
+    											<Label Content="对讲机ID :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+    											<TextBox x:Name="txt_SvrIp12" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+    										</Grid>
+    									</DockPanel>
+    									<DockPanel x:Name="dck_RadioFunc1_Copy" LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,10,20,30" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}">
+    										<Label Content="Dongle" Margin="20,0,0,0" DockPanel.Dock="Top" FontSize="16"/>
+    										<Separator Height="5" Margin="-20,0,-20,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
+                                            <TextBlock TextWrapping="Wrap" DockPanel.Dock="Top" Margin="20,2.5,0,2.5" LineHeight="20"><Run Text="Dongle用于AMBE音频编解码的设备，需要配置器端口号 "/><LineBreak/><Run Text="默认协议为 9600， 8， none， 1"/></TextBlock>
+                                            <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
+    											<Grid.ColumnDefinitions>
+    												<ColumnDefinition Width="80"/>
+    												<ColumnDefinition Width="*"/>
+    											</Grid.ColumnDefinitions>
+    											<Label Content="通讯端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+    											<TextBox x:Name="txt_SvrIp15" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+    										</Grid>
+    									</DockPanel>
+    									<DockPanel x:Name="dck_RadioFunc1" LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,10,20,30" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}">
+    										<Label Content="功能" Margin="20,0,0,0" DockPanel.Dock="Top" FontSize="16"/>
+    										<Separator Height="5" Margin="-20,0,-20,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
+    									</DockPanel>
+    								</DockPanel>
+    							</ScrollViewer>
+    						</TabItem>
+                        </TabControl>
+    				</Border>
+    			</Grid>
+    		</Border>
+    		<Border BorderBrush="#FF318CE6" BorderThickness="0,1,0,0" Background="White" Margin="0" Grid.Row="1" Grid.ColumnSpan="2" Grid.RowSpan="2">
+    			<DockPanel LastChildFill="False" VerticalAlignment="Bottom" Height="30">
+    				<Button Content="恢复默认设置" Height="29" VerticalAlignment="Center" Width="100" Margin="0" HorizontalAlignment="Left"/>
+    				<Button Content="取消" Height="29" VerticalAlignment="Center" Width="75" DockPanel.Dock="Right" Margin="0" HorizontalAlignment="Right"/>
+    				<Button Content="确定" Height="29" VerticalAlignment="Center" Width="75" DockPanel.Dock="Right" Margin="0,0,10,0" HorizontalAlignment="Right"/>
+    			</DockPanel>
+    		</Border>
+    	</Grid>
+
+	</Grid>
+</src:MyWindow>

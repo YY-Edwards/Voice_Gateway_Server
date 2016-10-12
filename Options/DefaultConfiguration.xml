@@ -1,0 +1,41 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Configuration>
+  <Base>
+    <Network>
+      <ipaddr name="Loacl" ip ="127.0.0.1" port="8000"/>      
+      <ipaddr name="Radio" ip ="127.0.0.1" port="8002"/>
+      <ipaddr name="WireLan" ip ="127.0.0.1" port="8003"/>
+    </Network>
+    <Log>
+      <ipaddr name="Log" ip ="127.0.0.1" port="8001"/>
+      <select>
+        <check name="Call" Enable="true"/>
+        <check name="Message" Enable="false"/>
+      </select>
+      <path name="Log">c:\save</path>
+    </Log>
+  </Base>
+  
+  <Ride>
+    <Network mode ="Ride">
+      <ipaddr name="Ride" ip ="127.0.0.1" port="8000"/>
+      <ipaddr name="Mnis" ip ="127.0.0.1" port="8002"/>
+    </Network>
+    
+  </Ride>
+
+  <WireLan>
+    <Network>
+      <ipaddr name="Site" ip ="127.0.0.1" port="8000"/>
+      <loacl peeric="0" radio="1" recmode="CPC" defaultgroup="2" />           
+    </Network>
+    <dongle com="0"  />
+    <time name="hungtime" value="10"/>
+    <time name="masetralive" value="10"/>
+    <time name="peeralive" value="10"/>
+  </WireLan>
+
+  <License>
+    
+  </License>
+</Configuration>
