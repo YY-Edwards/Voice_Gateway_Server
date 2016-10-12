@@ -16,12 +16,14 @@ public:
 	DWORD m_dwSrcId;
 	DWORD m_dwCallType;
 	int m_recordType;
-	int m_srcPeerId;
+	DWORD m_srcPeerId;
 	int m_srcSlot;
 	int m_srcRssi;
+	int m_callStatus;
+	SYSTEMTIME m_time;
 
 public:
-	CVoiceData(PBYTE p, DWORD len, DWORD srcId, DWORD tgtId, DWORD callType, int recordType, int srcPeerId, int srcSlot, int srcRssi){
+	CVoiceData(PBYTE p, DWORD len, DWORD srcId, DWORD tgtId, DWORD callType, int recordType, DWORD srcPeerId, int srcSlot, int srcRssi, int callStatus, SYSTEMTIME *pTime){
 		m_pData = new unsigned char[len];
 		m_dwLen = len;
 		memcpy_s(m_pData, len, p, len);
@@ -32,6 +34,8 @@ public:
 		m_srcPeerId = srcPeerId;
 		m_srcSlot = srcSlot;
 		m_srcRssi = srcRssi;
+		m_callStatus = callStatus;
+		m_time = *pTime;
 	}
 
 	~CVoiceData(){
@@ -48,7 +52,7 @@ public:
 	WLRecord(CMySQL *pDb);
 	~WLRecord();
 	BOOL WriteVoiceFile();
-	void OnNewVoiceRecord(LPBYTE pData, DWORD dwSize, DWORD srcId, DWORD tgtId, DWORD callType, int recordType, int srcPeerId, int srcSlot, int srcRssi);
+	void OnNewVoiceRecord(LPBYTE pData, DWORD dwSize, DWORD srcId, DWORD tgtId, DWORD callType, int recordType, DWORD srcPeerId, int srcSlot, int srcRssi, int callStatus, SYSTEMTIME *pTime);
 	void SetLogPtr(PLogReport value);
 private:
 	HANDLE m_hVoiceDataListLocker;

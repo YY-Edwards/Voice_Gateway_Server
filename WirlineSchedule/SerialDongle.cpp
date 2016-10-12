@@ -612,8 +612,10 @@ void CSerialDongle::ParseDVSImsg(DVSI3000struct* pMsg)
 	switch (mType)
 	{
 	case AMBE3000_AMBE_TYPE_BYTE:
-		deObfuscate(DONGLETOIPSC, (tAMBEFrame*)pMsg);
-		g_pNet->NetStuffTxVoice((unsigned char*)&(pMsg->AMBEType.theAMBEFrame.fld.ChannelBits[0]));
+	{
+									deObfuscate(DONGLETOIPSC, (tAMBEFrame*)pMsg);
+									g_pNet->NetStuffTxVoice((unsigned char*)&(pMsg->AMBEType.theAMBEFrame.fld.ChannelBits[0]));
+	}
 		break;
 	case AMBE3000_PCM_TYPE_BYTE:
 		//is a codec uncompressed 8000sps 16 bit data packet from the Dongle
@@ -748,7 +750,7 @@ unsigned __int8 CSerialDongle::CheckSum(DVSI3000struct* pMsg)
 void CSerialDongle::DecodeBuffers()
 {
 
-	if (!(m_decodeFlag&MASK_DECODE_DOING))
+	if (!(m_decodeFlag&MASK_DECODE_DOING) && changeAMBEToPCM())
 	{
 		m_decodeFlag = FLAG_DECODE_DOING;
 		readyNextWriteAMBE();
@@ -886,7 +888,7 @@ void CSerialDongle::readyNextWriteAMBE()
 
 	if (m_AMBE_CirBuff.size() > 0)
 	{
-		SetEvent(m_waitNextNetDataEvent);
+		releaseWaitNextNetDataEvent();
 	}
 
 	DWORD rlt = WaitForSingleObject(m_waitNextNetDataEvent, m_waitNextNetDataTime);
@@ -904,14 +906,13 @@ void CSerialDongle::readyNextWriteAMBE()
 		//initReadyRead();
 		m_decodeFlag = FLAG_DECODE_END;
 		g_dongleIsUsing = FALSE;
-		m_lpCmanager->ReleaseDecodeEvent();
-
 		//清除一切对当前dongle的操作
 		result = PurgeDongle(PURGE_RXABORT | PURGE_RXCLEAR | PURGE_TXCLEAR | PURGE_TXABORT, 100);
 
 		//提醒界面
 		sprintf_s(m_reportMsg, "stop decoding");
 		sendLogToWindow();
+		m_lpCmanager->ReleaseDecodeEvent();
 		return;
 	}
 

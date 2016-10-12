@@ -16,7 +16,7 @@ BOOL g_dongleIsUsing;
 
 CManager::CManager(CMySQL *pDb)
 {
-	g_pNet = new CWLNet(pDb);
+	g_pNet = new CWLNet(pDb, this);
 	g_pDongle = new CSerialDongle();
 	g_pSound = new CSound();
 	g_bPTT = FALSE;
@@ -46,30 +46,15 @@ CManager::~CManager()
 	}
 }
 
-int CManager::initSys(
-	char* master_ip, //主中继IP
-	unsigned int master_port, //主中继UDP端口
-	unsigned int local_id, //Consle ID
-	unsigned int local_radio_id,// Consle RadioId
-	//unsigned int master_id, //主中继ID
-	unsigned int record_type, //录音模式
-	unsigned int local_slot, //Consle 信道
-	unsigned int local_group, //Consle 组
-	unsigned int serial_port //dongle 端口
-	)
+int CManager::initSys()
 {
-	g_localGroup = local_group;
-	g_localPeerId = local_id;
-	g_localRadioId = local_radio_id;
-	g_recordType = (_RECORD_TYPE_VALUE)record_type;
-
 	WCHAR tmpStr[128] = { 0 };
 	LPCTSTR lpctTmpStr = tmpStr;
 	DWORD rlt = 0;
 	BOOL netRlt = FALSE;
 
 	//init net
-	g_net_connect = g_pNet->StartNet(inet_addr(master_ip), master_port, INADDR_ANY, local_id, local_radio_id, local_slot, local_group, record_type);
+	g_net_connect = g_pNet->StartNet(inet_addr(CONFIG_MASTER_IP), CONFIG_MASTER_PORT, INADDR_ANY, CONFIG_LOCAL_PEER_ID, CONFIG_LOCAL_RADIO_ID, CONFIG_RECORD_TYPE);
 	if (!g_net_connect)
 	{
 		//m_bDongleIsOpen = FALSE;
@@ -83,15 +68,15 @@ int CManager::initSys(
 	}
 	sendLogToWindow();
 
-	initDongle(serial_port);
+	initDongle(CONFIG_DONGLE_PORT);
 
 	return 0;
 }
 
 int CManager::initWnd(HWND current_hwnd)
 {
-// 	sprintf_s(m_reportMsg, "initDongle:current_hwnd:0x%x", current_hwnd);
-// 	sendLogToWindow();
+	// 	sprintf_s(m_reportMsg, "initDongle:current_hwnd:0x%x", current_hwnd);
+	// 	sendLogToWindow();
 	m_hWaitDecodeEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 	m_hwnd = current_hwnd;
 	return 0;
@@ -99,7 +84,7 @@ int CManager::initWnd(HWND current_hwnd)
 
 int CManager::setLogPtr(PLogReport log_handel)
 {
-	
+
 	m_report = log_handel;
 
 	g_pDongle->SetLogPtr(log_handel);
@@ -130,7 +115,7 @@ int CManager::play()
 		{
 			return 1;
 		}
-		
+
 		if (g_pDongle->changeAMBEToPCM())
 		{
 			LoadVoiceData(VOICE_DATA_PATH);
@@ -171,7 +156,7 @@ int CManager::play(unsigned int length, char* pData)
 
 void CManager::LoadVoiceData(LPCWSTR filePath)
 {
-//	FILE * f;
+	//	FILE * f;
 
 	DWORD result = 0;
 
@@ -214,7 +199,7 @@ void CManager::LoadVoiceData(LPCWSTR filePath)
 
 	while (readLen == 7)
 	{
-		g_pDongle->deObfuscate(IPSCTODONGLE,pAMBEFrame);
+		g_pDongle->deObfuscate(IPSCTODONGLE, pAMBEFrame);
 		g_pDongle->MarkAMBEBufferFilled();
 		pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();
 		if (NULL == pAMBEFrame)
@@ -290,27 +275,34 @@ void CManager::ReleaseDecodeEvent()
 
 
 
-int CManager::initialCall(unsigned long tartgetId, unsigned char callType)
-{	
-	g_localGroup = tartgetId;
-	g_callType = callType;
+int CManager::initialCall(char* pTartgetId, char* pCallType)
+{
+	unsigned long tartgetId = (unsigned long)atoll(pTartgetId);
+	unsigned char callType = atoi(pCallType);
 	if (m_bDongleIsOpen)
 	{
-		
+
 		if (g_pDongle->changePCMToAMBE())
 		{
 			WORD callStatus = g_pNet->GetCallStatus();
-			
+
 			//callback
 			if (callStatus == CALL_HANGUP)
 			{
 				g_bPTT = TRUE;
+				sprintf_s(m_reportMsg, "call back");
+				sendLogToWindow();
 				return g_pNet->callBack();
 			}
 			//new call
 			else if (callStatus == CALL_IDLE)
 			{
+				//CONFIG_DEFAULT_GROUP = tartgetId;
+				g_targetId = tartgetId;
+				g_targetCallType = callType;
 				g_bPTT = TRUE;
+				sprintf_s(m_reportMsg, "new call");
+				sendLogToWindow();
 				return g_pNet->newCall();
 			}
 			//other call is running
@@ -320,7 +312,7 @@ int CManager::initialCall(unsigned long tartgetId, unsigned char callType)
 				sendLogToWindow();
 				return 1;
 			}
-			
+
 		}
 		else
 		{
@@ -336,7 +328,7 @@ int CManager::initialCall(unsigned long tartgetId, unsigned char callType)
 	}
 }
 
-int CManager::stopRecord()
+int CManager::stopCall()
 {
 	g_pNet->requestRecordEndEvent();
 	g_pSound->StopRecord();
@@ -356,8 +348,8 @@ int CManager::initDongle(unsigned int serial_port)
 	WCHAR tmpStr[128] = { 0 };
 	LPCTSTR lpctTmpStr = tmpStr;
 
-// 	sprintf_s(m_reportMsg, "initDongle:serial_port:COM%u", serial_port);
-// 	sendLogToWindow();
+	// 	sprintf_s(m_reportMsg, "initDongle:serial_port:COM%u", serial_port);
+	// 	sendLogToWindow();
 
 	m_activePort = serial_port;
 	swprintf_s(tmpStr, 128, L"\\\\.\\COM%d", m_activePort);
@@ -402,5 +394,58 @@ int CManager::disConnect()
 int CManager::SendFile(unsigned int length, char* pData)
 {
 	return g_pNet->SendFile(length, pData);
+}
+
+// HANDLE CManager::getDecodeEvent()
+// {
+// 	return m_hWaitDecodeEvent;
+// }
+
+int CManager::setPlayCallOfCare(char* pCallType, char* pFrom, char* pTarget)
+{
+	return g_pNet->setPlayCallOfCare(pCallType, pFrom, pTarget);
+}
+
+int CManager::config(char* pMasterIp, char* pMasterPort, char* pLocalPeerId, char* pLocalRadioId, char* pReccordType, char* pDefaultGroup, char* pDonglePort, char* pHuangTime, char* pMasterHeartTime, char* pPeerHearTime, char* pDefaultSlot)
+{
+	int rlt = 0;
+	strcpy_s(CONFIG_MASTER_IP, pMasterIp);
+	CONFIG_MASTER_PORT = atoi(pMasterPort);
+	CONFIG_LOCAL_PEER_ID = (unsigned long)atoll(pLocalPeerId);
+	CONFIG_LOCAL_RADIO_ID = (unsigned long)atoll(pLocalRadioId);
+	if (0 == strcmp("IPSC",pReccordType))
+	{
+		CONFIG_RECORD_TYPE = IPSC;
+	}
+	else if (0 == strcmp("CPC", pReccordType))
+	{
+		CONFIG_RECORD_TYPE = CPC;
+	}
+	else if (0 == strcmp("LCP", pReccordType))
+	{
+		CONFIG_RECORD_TYPE = LCP;
+	}
+	else
+	{
+		rlt = 1;
+	}
+	CONFIG_DEFAULT_GROUP = (unsigned long)atoll(pDefaultGroup);
+	CONFIG_DONGLE_PORT = atoi(pDonglePort);
+	CONFIG_HUNG_TIME = (unsigned long)atoll(pHuangTime);
+	CONFIG_MASTER_HEART_TIME = (unsigned long)atoll(pMasterHeartTime);
+	CONFIG_PEER_HEART_AND_REG_TIME = (unsigned long)atoll(pPeerHearTime);
+	if (1 == atoi(pDefaultSlot))
+	{
+		CONFIG_DEFAULT_SLOT = SLOT1;
+	}
+	else if (2 == atoi(pDefaultSlot))
+	{
+		CONFIG_DEFAULT_SLOT = SLOT2;
+	}
+	else
+	{
+		rlt = 2;
+	}
+	return rlt;
 }
 

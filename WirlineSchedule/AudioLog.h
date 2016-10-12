@@ -16,8 +16,8 @@ private:
 private:
 	wchar_t			m_strAudioFileSaveFolderPath[PATH_FILE_MAXSIZE];
 	wchar_t			m_strCurrentFilePath[PATH_FILE_MAXSIZE];
-	FILE*			m_pFile;
+	//FILE*			m_pFile;
 
-	HANDLE hOpenFile;
+	HANDLE m_hOpenFile;
 };
 

@@ -46,6 +46,9 @@
     <ClCompile Include="AudioLog.cpp">
       <Filter>source\data</Filter>
     </ClCompile>
+    <ClCompile Include="WLRecordFile.cpp">
+      <Filter>source\class</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ambe3000.h">
@@ -299,6 +302,9 @@
     </ClInclude>
     <ClInclude Include="AudioLog.h">
       <Filter>include\data</Filter>
+    </ClInclude>
+    <ClInclude Include="WLRecordFile.h">
+      <Filter>include\class</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
