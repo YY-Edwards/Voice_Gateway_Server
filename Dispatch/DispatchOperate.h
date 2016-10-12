@@ -4,6 +4,7 @@
 #include "RadioGps.h"
 #include <map>
 #include <mutex>
+#include<list>
 #include "../lib/AES/Aes.h"
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
@@ -61,5 +62,6 @@ private:
 
 
 	std::mutex   m_addCommandLocker;
+	list <AllCommand>  commandList;
 };
 
