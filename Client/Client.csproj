@@ -88,6 +88,7 @@
     <Compile Include="class\Message.cs" />
     <Compile Include="class\Operate.cs" />
     <Compile Include="class\targetMgr.cs" />
+    <Compile Include="class\TcpInterface.cs" />
     <Compile Include="ctrl\ComboButton.xaml.cs">
       <DependentUpon>ComboButton.xaml</DependentUpon>
     </Compile>
@@ -290,6 +291,17 @@
   <ItemGroup>
     <Resource Include="themes\resource\help.png" />
     <Resource Include="themes\resource\info.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="themes\resource\viewlist.png" />
+    <Resource Include="themes\resource\viewpane.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="themes\resource\Max.png" />
+    <Resource Include="themes\resource\Min.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="themes\resource\search.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

@@ -261,6 +261,86 @@
 
             </local:MsgView.ItemTemplate>
         </local:MsgView>
+        <Style x:Key="CheckBox-View-Style" TargetType="{x:Type CheckBox}">
+        	<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        	<Setter Property="Background" Value="{StaticResource CheckBoxFillNormal}"/>
+        	<Setter Property="BorderBrush" Value="{StaticResource CheckBoxStroke}"/>
+        	<Setter Property="BorderThickness" Value="1"/>
+        	<Setter Property="FocusVisualStyle" Value="{StaticResource EmptyCheckBoxFocusVisual}"/>
+        	<Setter Property="Template">
+        		<Setter.Value>
+        			<ControlTemplate TargetType="{x:Type CheckBox}">
+        				<BulletDecorator Background="Transparent" SnapsToDevicePixels="true">
+        					<BulletDecorator.Bullet>
+        						<Border x:Name="border" BorderBrush="Black" BorderThickness="0" Height="18" Width="18">
+        							<Border.Background>
+        								<ImageBrush ImageSource="/TrboX;component/themes/resource/viewlist.png"/>
+        							</Border.Background>
+        							<Themes:BulletChrome BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" IsChecked="{TemplateBinding IsChecked}" RenderMouseOver="{TemplateBinding IsMouseOver}" RenderPressed="{TemplateBinding IsPressed}" d:IsHidden="True" Margin="0,0,18,18"/>
+        						</Border>
+        					</BulletDecorator.Bullet>
+        				</BulletDecorator>
+        				<ControlTemplate.Triggers>
+        					<Trigger Property="IsChecked" Value="False"/>
+        					<Trigger Property="IsChecked" Value="True">
+        						<Setter Property="Background" TargetName="border">
+        							<Setter.Value>
+        								<ImageBrush ImageSource="/TrboX;component/themes/resource/viewpane.png"/>
+        							</Setter.Value>
+        						</Setter>
+        					</Trigger>
+        					<Trigger Property="HasContent" Value="true">
+        						<Setter Property="FocusVisualStyle" Value="{StaticResource CheckRadioFocusVisual}"/>
+        						<Setter Property="Padding" Value="4,0,0,0"/>
+        					</Trigger>
+        					<Trigger Property="IsEnabled" Value="false">
+        						<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+        					</Trigger>
+        				</ControlTemplate.Triggers>
+        			</ControlTemplate>
+        		</Setter.Value>
+        	</Setter>
+        </Style>
+        <Style x:Key="CheckBoxStyleMaxStatus" TargetType="{x:Type CheckBox}">
+        	<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        	<Setter Property="Background" Value="{StaticResource CheckBoxFillNormal}"/>
+        	<Setter Property="BorderBrush" Value="{StaticResource CheckBoxStroke}"/>
+        	<Setter Property="BorderThickness" Value="1"/>
+        	<Setter Property="FocusVisualStyle" Value="{StaticResource EmptyCheckBoxFocusVisual}"/>
+        	<Setter Property="Template">
+        		<Setter.Value>
+        			<ControlTemplate TargetType="{x:Type CheckBox}">
+        				<BulletDecorator Background="Transparent" SnapsToDevicePixels="true">
+        					<BulletDecorator.Bullet>
+        						<Border x:Name="border" BorderBrush="Black" BorderThickness="0" Height="18" Width="18">
+        							<Border.Background>
+        								<ImageBrush ImageSource="/TrboX;component/themes/resource/Max.png"/>
+        							</Border.Background>
+        							<Themes:BulletChrome BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" IsChecked="{TemplateBinding IsChecked}" RenderMouseOver="{TemplateBinding IsMouseOver}" RenderPressed="{TemplateBinding IsPressed}" d:IsHidden="True" Margin="0,0,18,18"/>
+        						</Border>
+        					</BulletDecorator.Bullet>
+        				</BulletDecorator>
+        				<ControlTemplate.Triggers>
+        					<Trigger Property="IsChecked" Value="False"/>
+        					<Trigger Property="IsChecked" Value="True">
+        						<Setter Property="Background" TargetName="border">
+        							<Setter.Value>
+        								<ImageBrush ImageSource="/TrboX;component/themes/resource/Min.png"/>
+        							</Setter.Value>
+        						</Setter>
+        					</Trigger>
+        					<Trigger Property="HasContent" Value="true">
+        						<Setter Property="FocusVisualStyle" Value="{StaticResource CheckRadioFocusVisual}"/>
+        						<Setter Property="Padding" Value="4,0,0,0"/>
+        					</Trigger>
+        					<Trigger Property="IsEnabled" Value="false">
+        						<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+        					</Trigger>
+        				</ControlTemplate.Triggers>
+        			</ControlTemplate>
+        		</Setter.Value>
+        	</Setter>
+        </Style>
         
     </local:MyWindow.Resources>
     
@@ -380,57 +460,60 @@
                 </DockPanel>
             </Border>
             <Border BorderBrush="Black" BorderThickness="0" Height="30" DockPanel.Dock="Top" Margin="0" Panel.ZIndex="1">
-                <Border BorderBrush="White" BorderThickness="0,1,0,0" HorizontalAlignment="Left" Background="#19FFFFFF" Margin="5,0,0,0">
-                    <DockPanel LastChildFill="False" Margin="0">
-                        <Border BorderBrush="#FFEEEEEE" BorderThickness="1,0" Margin="0" Padding="3,0">
-                            <DockPanel LastChildFill="False">
-                                <local:ComboButton x:Name="cmb_Tool_New" Icon="/TrboX;component/themes/resource/new.png" Width="35" Margin="2.5,0" >
-                                    <local:ComboButton.Items>
-                                        <ComboBoxItem Content="新建短消息"/>
-                                        <ComboBoxItem Content="新建位置查询"/>
-                                        <ComboBoxItem Content="新建指令控制"/>
-                                        <ComboBoxItem Content="新建工单"/>
-                                        <ComboBoxItem Content="新建巡更任务"/>
-                                    </local:ComboButton.Items>
-                                </local:ComboButton>
-								 <local:ComboButton x:Name="cmb_Tool_Save" Icon="/TrboX;component/themes/resource/save.png" IsEnabled="{Binding NeedSave, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Main}}}" Margin="2.5,0" VerticalAlignment="Center" ToolTip="保存" />
-								 <local:ComboButton x:Name="cmb_Tool_Delete" Icon="/TrboX;component/themes/resource/delete.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="删除" />
+            	<DockPanel LastChildFill="False">
+            		<Border BorderBrush="White" BorderThickness="0,1,0,0" HorizontalAlignment="Left" Background="#19FFFFFF">
+            			<DockPanel LastChildFill="False" Margin="0">
+            				<Border BorderBrush="#FFEEEEEE" BorderThickness="1,0" Margin="0" Padding="3,0">
+            					<DockPanel LastChildFill="False">
+            						<local:ComboButton x:Name="cmb_Tool_New" Icon="/TrboX;component/themes/resource/new.png" Width="35" Margin="2.5,0" >
+            							<local:ComboButton.Items>
+            								<ComboBoxItem Content="新建短消息"/>
+            								<ComboBoxItem Content="新建位置查询"/>
+            								<ComboBoxItem Content="新建指令控制"/>
+            								<ComboBoxItem Content="新建工单"/>
+            								<ComboBoxItem Content="新建巡更任务"/>
+            							</local:ComboButton.Items>
+            						</local:ComboButton>
+            						<local:ComboButton x:Name="cmb_Tool_Save" Icon="/TrboX;component/themes/resource/save.png" IsEnabled="{Binding NeedSave, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Main}}}" Margin="2.5,0" VerticalAlignment="Center" ToolTip="保存" />
+            						<local:ComboButton x:Name="cmb_Tool_Delete" Icon="/TrboX;component/themes/resource/delete.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="删除" />
 
-                            </DockPanel>
-                        </Border>
-                        <Border x:Name="bdr_Tool_Base" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0" IsEnabled="False">
-                            <DockPanel LastChildFill="False" Margin="0">
-								<local:ComboButton x:Name="btn_Tool_PTT" Icon="/TrboX;component/themes/resource/rx.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="呼叫" />
-								<local:ComboButton x:Name="btn_Tool_Msg" Icon="/TrboX;component/themes/resource/msg.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="短消息" />
-								<local:ComboButton x:Name="btn_Tool_Position" Icon="/TrboX;component/themes/resource/position.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="位置查询" />
-								<local:ComboButton x:Name="btn_Tool_Job" Icon="/TrboX;component/themes/resource/job.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="工单" />
-							 </DockPanel>
-                        </Border>
-                        <Border x:Name="bdr_Tool_Fast" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0">
-                            <DockPanel LastChildFill="False" Margin="0">
-								<local:ComboButton x:Name="btn_Tool_NewContact" Icon="/TrboX;component/themes/resource/contact.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="添加常用联系人" />
-								<local:ComboButton x:Name="btn_Tool_NewFastOperate" Icon="/TrboX;component/themes/resource/event.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="添加快速操作" />
-                                </DockPanel>
-                        </Border>
-                        <Border x:Name="bdr_Tool_Ctrl" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0" IsEnabled="False">
-                            <DockPanel LastChildFill="False" Margin="0">
-								<local:ComboButton x:Name="btn_Tool_Check" Icon="/TrboX;component/themes/resource/check.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="在线检测" />
-								<local:ComboButton x:Name="btn_Tool_Monitor" Icon="/TrboX;component/themes/resource/monitor.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="远程监听" />
-								<local:ComboButton x:Name="btn_Tool_Start" Icon="/TrboX;component/themes/resource/start.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="遥开" />
-								<local:ComboButton x:Name="btn_Tool_Shut" Icon="/TrboX;component/themes/resource/shut.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="遥毙" />
-								<local:ComboButton x:Name="btn_Tool_Sleep" Icon="/TrboX;component/themes/resource/sleep.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="遥晕" />
+            					</DockPanel>
+            				</Border>
+            				<Border x:Name="bdr_Tool_Base" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0" IsEnabled="False">
+            					<DockPanel LastChildFill="False" Margin="0">
+            						<local:ComboButton x:Name="btn_Tool_PTT" Icon="/TrboX;component/themes/resource/rx.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="呼叫" />
+            						<local:ComboButton x:Name="btn_Tool_Msg" Icon="/TrboX;component/themes/resource/msg.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="短消息" />
+            						<local:ComboButton x:Name="btn_Tool_Position" Icon="/TrboX;component/themes/resource/position.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="位置查询" />
+            						<local:ComboButton x:Name="btn_Tool_Job" Icon="/TrboX;component/themes/resource/job.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="工单" />
+            					</DockPanel>
+            				</Border>
+            				<Border x:Name="bdr_Tool_Fast" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0">
+            					<DockPanel LastChildFill="False" Margin="0">
+            						<local:ComboButton x:Name="btn_Tool_NewContact" Icon="/TrboX;component/themes/resource/contact.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="添加常用联系人" />
+            						<local:ComboButton x:Name="btn_Tool_NewFastOperate" Icon="/TrboX;component/themes/resource/event.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="添加快速操作" />
+            					</DockPanel>
+            				</Border>
+            				<Border x:Name="bdr_Tool_Ctrl" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0" IsEnabled="False">
+            					<DockPanel LastChildFill="False" Margin="0">
+            						<local:ComboButton x:Name="btn_Tool_Check" Icon="/TrboX;component/themes/resource/check.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="在线检测" Click="btn_Tool_Check_Click" />
+            						<local:ComboButton x:Name="btn_Tool_Monitor" Icon="/TrboX;component/themes/resource/monitor.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="远程监听" Click="btn_Tool_Monitor_Click" />
+            						<local:ComboButton x:Name="btn_Tool_Start" Icon="/TrboX;component/themes/resource/start.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="遥开" />
+            						<local:ComboButton x:Name="btn_Tool_Shut" Icon="/TrboX;component/themes/resource/shut.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="遥毙" />
+            						<local:ComboButton x:Name="btn_Tool_Sleep" Icon="/TrboX;component/themes/resource/sleep.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="遥晕" />
                                
-                            </DockPanel>
-                        </Border>
-                        <Border x:Name="bdr_Tool_Help" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0">
-                            <DockPanel LastChildFill="False" Margin="0">
-								<local:ComboButton x:Name="btn_Help" Icon="/TrboX;component/themes/resource/help.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="查看帮助" />
-								<local:ComboButton x:Name="btn_About" Icon="/TrboX;component/themes/resource/info.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="关于TrboX" Click="btn_About_Click"/>
+            					</DockPanel>
+            				</Border>
+            				<Border x:Name="bdr_Tool_Help" BorderBrush="#FFEEEEEE" BorderThickness="0,0,1,0" Margin="0" Padding="3,0">
+            					<DockPanel LastChildFill="False" Margin="0">
+            						<local:ComboButton x:Name="btn_Help" Icon="/TrboX;component/themes/resource/help.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="查看帮助" />
+            						<local:ComboButton x:Name="btn_About" Icon="/TrboX;component/themes/resource/info.png" Margin="2.5,0" VerticalAlignment="Center" ToolTip="关于TrboX" Click="btn_About_Click"/>
                               
-                            </DockPanel>
-                        </Border>
-                    </DockPanel>
-                </Border>
+            					</DockPanel>
+            				</Border>
+            			</DockPanel>
+            		</Border>
+            		<DockPanel x:Name="Rx_RadioGroup" LastChildFill="False" VerticalAlignment="Bottom" DockPanel.Dock="Right" Margin="0,0,5,2"/>
+            	</DockPanel>
             </Border>
             <Border BorderBrush="Black" BorderThickness="0" Margin="0" DockPanel.Dock="Bottom" Height="30">
                 <!--<src:Contact x:Name="ChoiceContact" IsMultiple="False" DockPanel.Dock="Top" Margin="0,5,0,0"/>-->
@@ -446,10 +529,19 @@
                         <Grid x:Name="grd_Nav" Margin="0,0,5,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition x:Name="grd_Row_Mgr" MinHeight="31"/>
-                                <RowDefinition Height="121" MaxHeight="121" MinHeight="30"/>
+                                <RowDefinition Height="121"  MaxHeight="121" MinHeight="30"/>
                             </Grid.RowDefinitions>
                             <Border BorderBrush="Black" BorderThickness="1" Margin="0,0,0,5">
                                 <DockPanel>
+                                    <Border BorderBrush="Black" BorderThickness="0" Height="30" VerticalAlignment="Top" DockPanel.Dock="Top" Background="#FF97C5F7">
+                                    	<TextBlock TextWrapping="Wrap" Text="{Binding SelectedItem.Header, ElementName=tab_Mgr}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                    </Border>
+                                    <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="30" DockPanel.Dock="Top">
+                                    	<DockPanel>
+                                    		<local:ComboButton x:Name="btn_ResSearch" ToolTip="搜索" Height="20" VerticalAlignment="Center" Width="20" Icon="/TrboX;component/themes/resource/search.jpg" DockPanel.Dock="Right" Margin="5,0"/>
+                                    		<TextBox Height="20" x:Name="txt_ResCondition" TextWrapping="Wrap" VerticalAlignment="Center" Margin="5,0,0,0"/>
+                                    	</DockPanel>
+                                    </Border>
                                     <Border BorderBrush="Black" BorderThickness="0,1,0,0" DockPanel.Dock="Bottom" Height="31">
                                         <DockPanel LastChildFill="False">
                                             <RadioButton x:Name="rad_Mgr_Org" Content="组织" Style="{DynamicResource RadioButtonMgr}" GroupName="radGroup_TragetList" IsChecked="True" Width="35" BorderThickness="0,0,1,0">
@@ -488,7 +580,7 @@
                                         </DockPanel>
                                     </Border>
                                     <Border x:Name="bdr_MaskMgrTab" BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" ClipToBounds="True">
-                                        <TabControl x:Name="tab_Mgr"  BorderThickness="0" Focusable="False" IsTabStop="True" IsSynchronizedWithCurrentItem="True" Margin="0,-22,0,0" Style="{DynamicResource TabControlStyleNormal}">
+                                        <TabControl x:Name="tab_Mgr"  BorderThickness="0" Focusable="False" IsTabStop="True" IsSynchronizedWithCurrentItem="True" Margin="0,-22,0,0" Style="{DynamicResource TabControlStyleNormal}"  >
                                             <TabControl.SelectedIndex>
                                                 <MultiBinding  Converter="{StaticResource IndexFromRadio}" Mode="OneWay">
                                                     <Binding ElementName="rad_Mgr_Org" Path="IsChecked" />
@@ -500,9 +592,6 @@
                                             </TabControl.SelectedIndex>
                                             <TabItem x:Name="tab_Mgr_Org" Header="组织" Style="{DynamicResource SimpleTabItem}" Width="10">
                                                 <DockPanel>
-                                                    <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
-                                                        <Label Content="组织" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                                                    </Border>
                                                     <TreeView x:Name="tree_OrgView" Style="{DynamicResource TreeViewStyleNav}" BorderThickness="0" Margin="0" SelectedItemChanged="tree_OrgView_SelectedItemChanged" >
                                                     	<!--<TreeViewItem Header="TreeViewItem" Style="{DynamicResource TreeViewItemRoot}" Visibility="Collapsed">
                                                     		<TreeViewItem Header="TreeViewItem" Style="{DynamicResource TreeViewItemStyleGroup}"/>
@@ -521,9 +610,6 @@
                                             </TabItem>
                                             <TabItem x:Name="tab_Mgr_Group" Header="组" Style="{DynamicResource SimpleTabItem}" Width="10">
                                                 <DockPanel>
-                                                    <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
-                                                        <Label Content="组" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                                                    </Border>
                                                     <ListView x:Name="lst_Group" BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                                                         <ListView.View>
                                                             <local:MsgView />
@@ -533,9 +619,6 @@
                                             </TabItem>
                                             <TabItem x:Name="tab_Mgr_Employee" Header="人员" Style="{DynamicResource SimpleTabItem}" Width="10">
                                                 <DockPanel>
-                                                    <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
-                                                        <Label Content="人员" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                                                    </Border>
                                                     <ListView BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                                                         <ListView x:Name="lst_Employee" BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                                                             <ListView.View>
@@ -547,9 +630,6 @@
                                             </TabItem>
                                             <TabItem x:Name="tab_Mgr_Vehicle" Header="车辆" Style="{DynamicResource SimpleTabItem}" Width="10">
                                                 <DockPanel>
-                                                    <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
-                                                        <Label Content="车辆" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                                                    </Border>
                                                     <ListView BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                                                         <ListView x:Name="lst_Vehicle" BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                                                             <ListView.View>
@@ -561,9 +641,6 @@
                                             </TabItem>
                                             <TabItem x:Name="tab_Mgr_Device" Header="设备" Style="{DynamicResource SimpleTabItem}" Margin="0,0,-2,0" Width="10">
                                                 <DockPanel>
-                                                    <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
-                                                        <Label Content="设备" VerticalAlignment="Center" HorizontalAlignment="Left"/>
-                                                    </Border>
                                                     <ListView BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                                                         <ListView x:Name="lst_Radio" BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
                                                             <ListView.View>
@@ -609,8 +686,8 @@
                                                 <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
                                                 	<DockPanel LastChildFill="False">
                                                 		<Label Content="语音调度" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,2.38"/>
-                                                        <CheckBox x:Name="chk_MaxSize" Content="Max" VerticalAlignment="Center" ClipToBounds="True" DockPanel.Dock="Right" Margin="0,0,5,0"/>
-                                                        <CheckBox x:Name="chk_MinIconView" Content="" VerticalAlignment="Center" ClipToBounds="True" DockPanel.Dock="Right" IsChecked="True"/>
+                                                        <CheckBox x:Name="chk_MaxSize" Content="Max" VerticalAlignment="Center" ClipToBounds="True" DockPanel.Dock="Right" Margin="5,0" Style="{DynamicResource CheckBoxStyleMaxStatus}"/>
+                                                        <CheckBox x:Name="chk_MinIconView" Content="" VerticalAlignment="Center" ClipToBounds="True" DockPanel.Dock="Right" IsChecked="True" Style="{DynamicResource CheckBox-View-Style}"/>
                                                 	</DockPanel>
                                                 </Border>
                                                 <Grid>
