@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.21005.1
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{45E30D6B-48C5-497B-999C-91994F4B1885}"
 EndProject
@@ -16,6 +16,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MsgTester", "MsgTester\MsgTester.vcxproj", "{7812C4F1-3417-45C8-9E00-EB53369F4807}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ARSTester", "ARSTester\ARSTester.vcxproj", "{B89E76A9-E3F8-4973-ADA4-B5B20836E23B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TServer", "TServer\TServer.vcxproj", "{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -125,6 +127,20 @@ Global
 		{B89E76A9-E3F8-4973-ADA4-B5B20836E23B}.Release|Win32.Build.0 = Release|Win32
 		{B89E76A9-E3F8-4973-ADA4-B5B20836E23B}.Release|x86.ActiveCfg = Release|Win32
 		{B89E76A9-E3F8-4973-ADA4-B5B20836E23B}.Release|x86.Build.0 = Release|Win32
+		{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}.Debug|Win32.Build.0 = Debug|Win32
+		{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}.Debug|x86.ActiveCfg = Debug|Win32
+		{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}.Debug|x86.Build.0 = Debug|Win32
+		{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}.Release|Any CPU.ActiveCfg = Release|Win32
+		{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}.Release|Win32.ActiveCfg = Release|Win32
+		{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}.Release|Win32.Build.0 = Release|Win32
+		{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}.Release|x86.ActiveCfg = Release|Win32
+		{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

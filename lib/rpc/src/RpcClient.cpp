@@ -91,7 +91,7 @@ int CRpcClient::send(const char* pData, int dataLen)
 {
 	if (NULL == m_pConnector)
 	{
-		return 0;
+		return -1;
 	}
 	return m_pConnector->send(pData, dataLen);
 }
@@ -101,9 +101,11 @@ int CRpcClient::sendRequest(const char* pRequest,
 						std::function<void(const char* pResponse)> success,
 						std::function<void(const char* pResponse)> failed)
 {
+	int ret = -1;
+
 	if (NULL == pRequest)
 	{
-		return -1;
+		return ret;
 	}
 
 	std::lock_guard<std::mutex> lock(m_mtxRequest);
@@ -117,9 +119,9 @@ int CRpcClient::sendRequest(const char* pRequest,
 	if (0 == m_lstRequest.size())
 	{
 		// send request immediately
-		this->send(pReq->m_strRequest.c_str(), pReq->m_strRequest.size());
+		ret = this->send(pReq->m_strRequest.c_str(), pReq->m_strRequest.size());
 	}
 	m_lstRequest.push_back(pReq);
 
-	return 0;
+	return ret;
 }
