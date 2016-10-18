@@ -14,25 +14,25 @@ static const unsigned char VenderKey[VENDER_KEY_SIZE] = { 0x6b, 0xe5, 0xff, 0x95
 
 CIPSCPeer::CIPSCPeer(CWLNet* pLELayer, WCHAR* IP_Address, WCHAR* Port)
 : m_pWLNet(pLELayer)
-, m_dwPeerState(WAIT_LE_PEER_REGISTRATION_RESPONSE)
+//, m_dwPeerState(WAIT_LE_PEER_REGISTRATION_RESPONSE)
 , m_wRegistrationId(2)
-, m_dwRecvPeerKeepAliverTimer(0)
+//, m_dwRecvPeerKeepAliverTimer(0)
 , m_Remote3rdParty(false)
 , m_useSlot(NULL_SLOT)
 {
 	m_SendControlBuffer.buf = m_controlBuffer;
 	//memset(&m_peerSlots, 0, sizeof(PEER_SLOTS));
 	m_ulPeerID = 0; //Unknown at this point.
-	m_ucPeerMode = 0;
-	m_uPeerServices = 0;
+	//m_ucPeerMode = 0;
+	//m_uPeerServices = 0;
 
 	memset(&m_PeerAddr, 0, sizeof(m_PeerAddr));
 	m_PeerAddr.sin_addr.s_addr = inet_addr(g_tool.UnicodeToANSI(IP_Address).c_str());
 	m_PeerAddr.sin_port = htons(((u_short)(atoi(g_tool.UnicodeToANSI(Port).c_str()))));
 	m_PeerAddr.sin_family = AF_INET;
 
-	m_FirewallOpenTimerReset = FIREWALLOPENTIMER_DEFAULT;
-	m_SlotConfiguration = SLOTCONFIGURATION_DEFAULT;
+	//m_FirewallOpenTimerReset = FIREWALLOPENTIMER_DEFAULT;
+	//m_SlotConfiguration = SLOTCONFIGURATION_DEFAULT;
 	//m_timerIdWaitPeerRegistrationResponse = 0;
 	//m_timerIdWaitPeerAliveRequest = 0;
 	//m_timerIdWaitPeerAliveResponse = 0;
@@ -54,16 +54,16 @@ CIPSCPeer::CIPSCPeer(CWLNet* pLELayer, sockaddr_in* thesockaddr)
 	m_SendControlBuffer.buf = m_controlBuffer;
 	//	memset(&m_peerSlots, 0, sizeof(PEER_SLOTS));
 	m_ulPeerID = 0; //Unknown at this point.
-	m_ucPeerMode = 0;
-	m_uPeerServices = 0;
+	//m_ucPeerMode = 0;
+	//m_uPeerServices = 0;
 
 	memset(&m_PeerAddr, 0, sizeof(m_PeerAddr));
 	m_PeerAddr.sin_addr = thesockaddr->sin_addr;
 	m_PeerAddr.sin_port = thesockaddr->sin_port;
 	m_PeerAddr.sin_family = AF_INET;
 
-	m_FirewallOpenTimerReset = FIREWALLOPENTIMER_DEFAULT;
-	m_SlotConfiguration = SLOTCONFIGURATION_DEFAULT;
+	//m_FirewallOpenTimerReset = FIREWALLOPENTIMER_DEFAULT;
+	//m_SlotConfiguration = SLOTCONFIGURATION_DEFAULT;
 	//m_timerIdWaitPeerRegistrationResponse = 0;
 	//m_timerIdWaitPeerAliveRequest = 0;
 	//m_timerIdWaitPeerAliveResponse = 0;
@@ -80,25 +80,25 @@ CIPSCPeer::CIPSCPeer(CWLNet* pLELayer, sockaddr_in* thesockaddr)
 //add code by chenhaidong
 CIPSCPeer::CIPSCPeer(CWLNet* pLELayer, u_long IP_Address, u_short Port)
 : m_pWLNet(pLELayer)
-, m_dwPeerState(WAIT_LE_PEER_REGISTRATION_RESPONSE)
+//, m_dwPeerState(WAIT_LE_PEER_REGISTRATION_RESPONSE)
 , m_wRegistrationId(2)
-, m_dwRecvPeerKeepAliverTimer(0)
+//, m_dwRecvPeerKeepAliverTimer(0)
 , m_Remote3rdParty(false)
 , m_useSlot(NULL_SLOT)
 {
 	m_SendControlBuffer.buf = m_controlBuffer;
 	//	memset(&m_peerSlots, 0, sizeof(PEER_SLOTS));
 	m_ulPeerID = 0; //Unknown at this point.
-	m_ucPeerMode = 0;
-	m_uPeerServices = 0;
+	//m_ucPeerMode = 0;
+	//m_uPeerServices = 0;
 
 	memset(&m_PeerAddr, 0, sizeof(m_PeerAddr));
 	m_PeerAddr.sin_addr.s_addr = IP_Address;
 	m_PeerAddr.sin_port = htons(Port);
 	m_PeerAddr.sin_family = AF_INET;
 
-	m_FirewallOpenTimerReset = FIREWALLOPENTIMER_DEFAULT;
-	m_SlotConfiguration = SLOTCONFIGURATION_DEFAULT;
+	//m_FirewallOpenTimerReset = FIREWALLOPENTIMER_DEFAULT;
+	//m_SlotConfiguration = SLOTCONFIGURATION_DEFAULT;
 	//m_timerIdWaitPeerRegistrationResponse = 0;
 	//m_timerIdWaitPeerAliveRequest = 0;
 	//m_timerIdWaitPeerAliveResponse = 0;
@@ -156,10 +156,10 @@ void CIPSCPeer::SetPeerID(u_long PeerNetID)
 // 	return (PSOCKADDR)&m_PeerAddr;
 // }
 
-u_long CIPSCPeer::GetAddress()
-{
-	return ntohl(m_PeerAddr.sin_addr.s_addr);
-}
+// u_long CIPSCPeer::GetAddress()
+// {
+// 	return ntohl(m_PeerAddr.sin_addr.s_addr);
+// }
 
 u_long CIPSCPeer::GetPeerID()
 {
@@ -177,7 +177,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 	case LE_PEER_REGISTRATION_REQUEST_REMOTE:
 	{
 												T_LE_PROTOCOL_95 networkData = { 0 };
-												DWORD recordType = g_recordType;
+												DWORD recordType = CONFIG_RECORD_TYPE;
 												if (IPSC == recordType)
 												{
 													networkData.currentLinkProtocolVersion = IPSC_CURRENTLPVERSION;
@@ -194,7 +194,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 													networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 												}
 												networkData.Opcode = LE_PEER_REGISTRATION_RESPONSE;
-												networkData.peerID = g_localPeerId;
+												networkData.peerID = CONFIG_LOCAL_PEER_ID;
 
 												m_SendControlBuffer.len = Build_LE_PEER_REGISTRATION_RESPONSE(m_SendControlBuffer.buf, &networkData);
 												SendToPeer(&m_PeerAddr);
@@ -202,7 +202,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 		break;
 	case LE_PEER_REGISTRATION_REQUEST_LOCAL:
 	{
-											   DWORD recordType = g_recordType;
+											   DWORD recordType = CONFIG_RECORD_TYPE;
 											   T_LE_PROTOCOL_94 networkData = { 0 };
 											   if (IPSC == recordType)
 											   {
@@ -220,7 +220,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 												   networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 											   }
 											   networkData.Opcode = LE_PEER_REGISTRATION_REQUEST;
-											   networkData.peerID = g_localPeerId;
+											   networkData.peerID = CONFIG_LOCAL_PEER_ID;
 											   m_SendControlBuffer.len = Build_LE_PEER_REGISTRATION_REQUEST(m_SendControlBuffer.buf, &networkData);
 											   m_peerStatus = PEER_STATUS_REGIS_RESPONSE;
 											   m_startTickCount = GetTickCount();
@@ -272,7 +272,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 											  ////////////////////////////////////////////////////////////////////////////
 											  //m_statusWaitPeerAliveRequest = STATUS_ONTIME;
 											  m_startTickCount = GetTickCount();
-											  DWORD recordType = g_recordType;
+											  DWORD recordType = CONFIG_RECORD_TYPE;
 											  T_LE_PROTOCOL_98* p = NULL;
 											  T_LE_PROTOCOL_98_LCP* pLcp = NULL;
 											  if (LCP == recordType)
@@ -312,7 +312,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 												  networkData.currentLinkProtocolVersion = LCP_CURRENTLPVERSION;
 												  networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 												  networkData.Opcode = LE_PEER_KEEP_ALIVE_RESPONSE;
-												  networkData.peerID = g_localPeerId;
+												  networkData.peerID = CONFIG_LOCAL_PEER_ID;
 												  networkData.peerMode = LCP_MODE;
 												  networkData.peerServices = LCP_SERVICES;
 												  m_SendControlBuffer.len = Build_LE_PEER_KEEP_ALIVE_RESPONSE(m_SendControlBuffer.buf, &networkData);
@@ -323,7 +323,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 												  T_LE_PROTOCOL_99 networkData = { 0 };
 												  networkData.Opcode = LE_PEER_KEEP_ALIVE_RESPONSE;
 												  ;
-												  networkData.peerID = g_localPeerId;
+												  networkData.peerID = CONFIG_LOCAL_PEER_ID;
 												  if (CPC == recordType)
 												  {
 													  networkData.peerMode = CPC_MODE;
@@ -343,7 +343,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 		break;
 	case LE_PEER_KEEP_ALIVE_REQUEST_LOCAL:
 	{
-											 DWORD recordType = g_recordType;
+											 DWORD recordType = CONFIG_RECORD_TYPE;
 											 /*发起心跳包*/
 											 if (LCP == recordType)
 											 {
@@ -351,7 +351,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 												 networkData.currentLinkProtocolVersion = LCP_CURRENTLPVERSION;
 												 networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 												 networkData.Opcode = LE_PEER_KEEP_ALIVE_REQUEST;
-												 networkData.peerID = g_localPeerId;
+												 networkData.peerID = CONFIG_LOCAL_PEER_ID;
 												 networkData.peerMode = LCP_MODE;
 												 networkData.peerServices = LCP_SERVICES;
 												 m_SendControlBuffer.len = Build_LE_PEER_KEEP_ALIVE_REQUEST(m_SendControlBuffer.buf, &networkData);
@@ -363,7 +363,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 											 {
 												 T_LE_PROTOCOL_98 networkData = { 0 };
 												 networkData.Opcode = LE_PEER_KEEP_ALIVE_REQUEST;
-												 networkData.peerID = g_localPeerId;
+												 networkData.peerID = CONFIG_LOCAL_PEER_ID;
 												 if (CPC == recordType)
 												 {
 													 networkData.peerMode = CPC_MODE;
@@ -425,7 +425,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 										  networkData.numberOfRegistrationEntries = NUMBER_REGIS_ENTRIES;
 										  networkData.oldestLinkProtocolVersion = Wireline_Protocol_Version;
 										  networkData.Opcode = WL_PROTOCOL;
-										  networkData.peerID = g_localPeerId;
+										  networkData.peerID = CONFIG_LOCAL_PEER_ID;
 										  networkData.registrationID = m_wRegistrationId;
 										  networkData.registrationPduID = REGISTRATION_PDU_ID;
 										  networkData.registrationSlotNumber = BOTH_SLOT1_SLOT2;
@@ -436,7 +436,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 										  networkData.wlRegistrationEntries[1].VoiceAttributes = REGISTERED_VOICE_SERVICE;
 										  networkData.wlRegistrationEntries[1].AddressType = AllTalkGroupCall;
 										  //改动理由:devspec_nai_voice_csbk_0102.pdf line 998
-										  if (IPSC == g_recordType
+										  if (IPSC == CONFIG_RECORD_TYPE
 											  && !getRemote3rdParty())
 										  {
 											  networkData.registrationSlotNumber = SLOT1;
@@ -447,7 +447,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 											  m_SendControlBuffer.len = Build_WL_REGISTRATION_REQUEST(m_SendControlBuffer.buf, &networkData);
 											  SendToPeer(&m_PeerAddr);
 										  }
-										  else if ((CPC == g_recordType)
+										  else if ((CPC == CONFIG_RECORD_TYPE)
 											  && !getRemote3rdParty())
 										  {
 											  if (0 != m_ulPeerID)
@@ -461,7 +461,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 												  m_pWLNet->setSitePeer(this);
 											  }
 										  }
-										  else if (LCP == g_recordType
+										  else if (LCP == CONFIG_RECORD_TYPE
 											  && !getRemote3rdParty())
 										  {
 											  if (0x00FFFFFF & m_ulPeerID)
@@ -489,22 +489,22 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 		break;
 	case WL_VC_CHNL_CTRL_REQUEST_LOCAL:
 	{
-										  DWORD recordType = g_recordType;
+										  DWORD recordType = CONFIG_RECORD_TYPE;
 										  /*获取关键信息*/
 										  T_WL_PROTOCOL_13 networkData = { 0 };
 										  networkData.accessCriteria = Access_Criteria_Polite_Access;
 										  networkData.callAttributes = CALL_ATTRIBUTES;//clear call
 										  g_callId++;
 										  networkData.callID = g_callId;
-										  networkData.callType = g_callType;
+										  networkData.callType = g_targetCallType;
 										  networkData.CSBKArguments = CSBK_ARGUMENTS;
 										  networkData.currentLinkProtocolVersion = Wireline_Protocol_Version;
 										  networkData.oldestLinkProtocolVersion = Wireline_Protocol_Version;
 										  networkData.Opcode = WL_PROTOCOL;
-										  networkData.peerID = g_localPeerId;
+										  networkData.peerID = CONFIG_LOCAL_PEER_ID;
 										  networkData.preambleDuration = PREAMBLE_DURATION;
-										  networkData.sourceID = g_localRadioId;
-										  networkData.targetID = g_localGroup;
+										  networkData.sourceID = CONFIG_LOCAL_RADIO_ID;
+										  networkData.targetID = g_targetId;
 										  networkData.wirelineOpcode = WL_VC_CHNL_CTRL_REQUEST;
 										  if (isCallBack)
 										  {
@@ -535,17 +535,16 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 										  {
 										  case Channel_Control_Request_Status_Grant:
 										  {
-																					   g_callId = p->callID;
 																					   m_useSlot = (_SlotNumber)p->slotNumber;
 																					   m_pWLNet->setCurrentSendVoicePeer(this);
-																					   m_pWLNet->CorrectingBuffer();
+																					   m_pWLNet->CorrectingBuffer(p->callID);
 																					   m_pWLNet->releaseNewCallEvent();
 										  }
 											  break;
 										  case Channel_Control_Request_Status_Declined:
 										  {
 																						  WORD callStatus = m_pWLNet->GetCallStatus();
-																						  if (callStatus == CALL_INIT)
+																						  if (callStatus == CALL_START)
 																						  {
 																							  m_pWLNet->releaseNewCallEvent();
 																						  }
@@ -1622,7 +1621,7 @@ void CIPSCPeer::PeerStatusCheckProc()
 	{
 	case PEER_STATUS_ALIVE_REQUES:
 	{
-									 if (dif > WAIT_LE_PEER_KEEP_ALIVE_REQUEST_TIMER)
+									 if (dif > CONFIG_PEER_HEART_AND_REG_TIME)
 									 {
 										 HandlePacket(LE_PEER_KEEP_ALIVE_REQUEST_LOCAL, NULL, 0, 0);
 									 }
@@ -1640,7 +1639,7 @@ void CIPSCPeer::PeerStatusCheckProc()
 		break;
 	case PEER_STATUS_REGIS_RESPONSE:
 	{
-									   if (dif > WAIT_LE_PEER_REGISTRATION_RESPONSE_TIMER)
+									   if (dif > CONFIG_PEER_HEART_AND_REG_TIME)
 									   {
 										   sprintf_s(m_reportMsg, "PEER:%luLE注册异常,TickCount:%lu,this:%lu", m_ulPeerID, m_startTickCount, (DWORD)this);
 										   sendLogToWindow();
@@ -1673,7 +1672,7 @@ void CIPSCPeer::getCallRequestRltInfo(DECLINE_REASON_CODE_INFO &declineReasonCod
 	memset(&declineReasonCodeInfo, 0, sizeof(DECLINE_REASON_CODE_INFO));
 	declineReasonCodeInfo.Value = value;
 	declineReasonCodeInfo.BhaveGet = true;
-	DWORD recordType = g_recordType;
+	DWORD recordType = CONFIG_RECORD_TYPE;
 	switch (declineReasonCodeInfo.Value)
 	{
 	case 0x03:
@@ -1793,4 +1792,9 @@ void CIPSCPeer::getCallRequestRltInfo(DECLINE_REASON_CODE_INFO &declineReasonCod
 	default:
 		break;
 	}
+}
+
+void CIPSCPeer::setUseSlot(unsigned char value)
+{
+	m_useSlot = (_SlotNumber)value;
 }

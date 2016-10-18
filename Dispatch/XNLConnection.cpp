@@ -768,7 +768,6 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 	{
 		return;
 	}
-
 	xcmp_opcode = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t))));
 	unsigned short xnl_opcode = 0;        //add by lcc
 	unsigned short check_result = 0;       //add by lcc

@@ -72,6 +72,12 @@ namespace TrboX
                 SubWindow = new NewWinMgr(this);
 
                 OnWindowLoaded();
+                RadioButton rad_RxDefault = new RadioButton(){IsChecked = true, Content = "调度组",GroupName="rxgroup", Height = 20,Padding=new Thickness(2.5), Margin=new Thickness(2.5) ,Style = App.Current.Resources["RadioButtonStyleNav"] as Style};
+                Rx_RadioGroup.Children.Add(rad_RxDefault);
+                RadioButton rad_RxDefaultx = new RadioButton() { Content = "安保组", GroupName = "rxgroup", Height = 20, Padding = new Thickness(2.5), Margin = new Thickness(2.5), Style = App.Current.Resources["RadioButtonStyleNav"] as Style };
+                Rx_RadioGroup.Children.Add(rad_RxDefaultx);
+                RadioButton rad_RxDefaulty = new RadioButton() { Content = "餐厅", GroupName = "rxgroup", Height = 20, Padding = new Thickness(2.5), Margin = new Thickness(2.5), Style = App.Current.Resources["RadioButtonStyleNav"] as Style };
+                Rx_RadioGroup.Children.Add(rad_RxDefaulty);
             };
             this.Closed += delegate
             {
@@ -195,6 +201,18 @@ namespace TrboX
         private void tree_OrgView_SelectedItemChanged(object sender, RoutedPropertyChangedEventArgs<object> e)
         {
 
+        }
+
+        TcpInterface tcp = new TcpInterface();
+        private void btn_Tool_Check_Click(object sender, RoutedEventArgs e)
+        {
+            //TcpInterface tcp = new TcpInterface();
+           
+        }
+
+        private void btn_Tool_Monitor_Click(object sender, RoutedEventArgs e)
+        {
+            tcp.TCPTST();
         }
     }
 }

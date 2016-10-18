@@ -1,6 +1,59 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+
+//static const BYTE GROUPCALL_TYPE = 0x4f;
+//static const BYTE PRIVATE_CALL = 0x50;
+//static const BYTE ALL_CALL = 0x53;
+
+#define GROUPCALL_TYPE 0x4f//79
+#define PRIVATE_CALL 0x50//80
+#define ALL_CALL 0x53//83
+
+enum _RECORD_TYPE_VALUE
+{
+	IPSC = 0,
+	CPC,
+	LCP,
+};
+#define MAX_IP_SIZE 16
+
+enum _SlotNumber
+{
+	NULL_SLOT = 0x00,
+	SLOT1,
+	SLOT2,
+	BOTH_SLOT1_SLOT2,
+};
+
+/*配置参数区域*/
+extern char CONFIG_MASTER_IP[MAX_IP_SIZE];//MASTER IP地址
+extern unsigned short CONFIG_MASTER_PORT;//MASTER端口
+extern unsigned long CONFIG_DEFAULT_GROUP;//默认通话组
+extern unsigned long CONFIG_LOCAL_RADIO_ID;//本机RADIO ID
+extern unsigned long CONFIG_LOCAL_PEER_ID;//本机PEER ID
+extern _RECORD_TYPE_VALUE CONFIG_RECORD_TYPE;//当前的录音模式
+extern unsigned short CONFIG_DONGLE_PORT;//dongle端口
+extern long CONFIG_HUNG_TIME;//session间隔时间
+extern long CONFIG_MASTER_HEART_TIME;//主中继心跳间隔
+extern long CONFIG_PEER_HEART_AND_REG_TIME;//非主中继心跳间隔和注册间隔
+extern _SlotNumber CONFIG_DEFAULT_SLOT;//默认信道
+
+#define MAX_RECORD_BUFFER_SIZE (100*1024)
+//#define CURRENT_GROUPCALL_TYPE 0x04
+
+#define ALL_CALL_ID 255
+extern unsigned long g_targetId;//当前通话组
+extern bool g_bIsHaveDefaultGroupCall;
+extern bool g_bIsHavePrivateCall;
+extern bool g_bIsHaveAllCall;
+extern bool g_bIsHaveCurrentGroupCall;
+extern long GO_BACK_DEFAULT_GROUP_TIME;//处于非调度组的时间
+
+#define VOICE_STATUS_START 0
+#define VOICE_STATUS_CALLBACK 1
+#define VOICE_STATUS_END 2
+
 #define PATH_FILE_MAXSIZE 1024
 #define DATA_TABLE_NAME_SIZE 64
 #define FILE_NAME_MAXSIZE 64
@@ -61,35 +114,22 @@ typedef struct OutData
 #define MASK_DECODE_PREAPRE_END 0x04//准备结束解码
 #define MASK_DECODE_END 0x08//结束解码
 
-
-
 #define FLAG_DECODE_PREARE 0x01
 #define FLAG_DECODE_DOING 0x02
 #define FLAG_DECODE_PREAPRE_END 0x04
 #define FLAG_DECODE_END 0x08
 
-enum _RECORD_TYPE_VALUE
-{
-	IPSC = 0,
-	CPC,
-	LCP,
-};
-
-
 extern bool g_dongle_open;//dongle 是否开启
 extern BOOL g_net_connect;//网络是否已经连接
 
 extern unsigned long g_callId;//呼出ID
-extern unsigned long g_localGroup;//默认通话组
-extern unsigned long g_localRadioId;//本机RADIO ID
-extern unsigned long g_localPeerId;//本机PEER ID
-extern unsigned char g_callType;//呼出类型
-extern _RECORD_TYPE_VALUE g_recordType;
+extern unsigned char g_targetCallType;//呼出类型
+
 
 #define WXJ_DLL FALSE
 
 #define SEND_360MS_TIMES (2)
-#define PEER_KEEP_ALIVE_TIME (12*1000)
+//#define PEER_KEEP_ALIVE_TIME (12*1000)
 #define REGISTRATION_PDU_ID 2
 
 #define Wireline_Protocol_Version 0x04
@@ -111,10 +151,12 @@ extern _RECORD_TYPE_VALUE g_recordType;
 //#define WL_REGISTRATION_REQUEST 0xb201
 
 #define CALL_IDLE 0x0000 //通话已经结束
-#define CALL_INIT 0x0001 //请求初始化通话
+#define CALL_START 0x0001 //请求初始化通话
 #define CALL_ONGOING 0x0002 //正在通话
 #define CALL_HANGUP 0x0003 //通话挂起
-#define IDNLE_CUSHION 0x0004 //正在缓冲通话数据
+#define CALL_BACKSTAGE 0x04 //通话在后台未播放
+#define CALL_PLAY 0x05 //通话开始播放
+#define CALL_END 0x06 //通话播放完毕
 
 #define Call_Session_Call_Hang	0x0a
 #define Call_Session_End	0x0b
@@ -126,18 +168,6 @@ typedef struct SendVoiceStruct
 	char* pPackageData;
 	short sPackageLenth;
 }SendVoicePackage;
-
-
-#define HUNG_TIME (1000*4)
-
-
-enum _SlotNumber
-{
-	NULL_SLOT = 0x00,
-	SLOT1,
-	SLOT2,
-	BOTH_SLOT1_SLOT2,
-};
 
 #define STATUS_ONTIME 0x0001
 
@@ -151,10 +181,7 @@ enum _SlotNumber
 #define VOICE_END_TIMEOUT 600
 #define AUTHOR_RETRY_NUM 5
 #define AUTHOR_WAITTIME (1000*5)
-#define MASTER_HEART_TIME (1000*58)
 
-#define WAIT_LE_PEER_REGISTRATION_RESPONSE_TIMER (1000*58)
-#define WAIT_LE_PEER_KEEP_ALIVE_REQUEST_TIMER (1000*58)
 #define WAIT_LE_PEER_KEEP_ALIVE_RESPONSE_TIMER (1000)
 #define PEER_STATUS_CHECK_INTERVAL (1000)
 
@@ -199,9 +226,7 @@ enum _SlotNumber
 #define	WL_VC_CHNL_CTRL_STATUS_REMOTE			0x0E16
 #define	WL_VC_CALL_SESSION_STATUS_REMOTE		0x0E20
 
-
 #pragma region 协议结构体
-
 typedef struct
 {
 	unsigned char Opcode;
@@ -678,8 +703,8 @@ typedef struct
 typedef struct
 {
 	unsigned char Value;
-	char ReasonCode[128];
-	char FailureScenarios[128];
+	char ReasonCode[256];
+	char FailureScenarios[1024];
 	bool BhaveGet;
 	bool NewCallRetry;
 	bool HangCallRetry;

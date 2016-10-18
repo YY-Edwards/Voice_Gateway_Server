@@ -25,7 +25,11 @@ namespace TrboX
             m_Main = win;
 
             Target.UpdateTragetList();
+
             UpdateView();
+
+            m_Main.tab_Mgr.SelectionChanged += delegate {UpdateView();};
+            m_Main.btn_ResSearch.Click += delegate { UpdateView(); };
 
             Thread t = new Thread(() => { NoficationThread(); });
             t.Start();
@@ -82,6 +86,7 @@ namespace TrboX
 
             int groupcount = 0;
             List<int> radio_lst = new List<int>();
+            if (null != m_TargetList.Group)
             foreach (var group in m_TargetList.Group)
             {
                 TreeViewItem itemGroup = new TreeViewItem() { Header = group.Value.Name};
@@ -100,7 +105,7 @@ namespace TrboX
                 }
 
                 int itemcount = 0;
-               
+                if (null != m_TargetList.Employee)
                 foreach(var employee in m_TargetList.Employee)
                 {
                     if (group.Value.Group.ID != employee.Value.Group.ID) continue;
@@ -114,7 +119,7 @@ namespace TrboX
 
                     if ((null != OrginItem) && (OrginItem.Items.Count > groupcount))
                     {
-                        if ((null != (TreeViewItem)OrginItem.Items[groupcount]) && (((TreeViewItem)OrginItem.Items[itemcount]).Items.Count > itemcount))
+                        if ((null != (TreeViewItem)OrginItem.Items[groupcount]) && (((TreeViewItem)OrginItem.Items[groupcount]).Items.Count > itemcount))
                         {
                             if (true == ((TreeViewItem)((TreeViewItem)OrginItem.Items[groupcount]).Items[itemcount]).IsFocused)childitem.Focus();
                             childitem.IsSelected = ((TreeViewItem)((TreeViewItem)OrginItem.Items[groupcount]).Items[itemcount]).IsSelected;
@@ -135,6 +140,7 @@ namespace TrboX
                     itemcount++;
                 }
 
+                if (null != m_TargetList.Vehicle)
                 foreach (var vehicle in m_TargetList.Vehicle)
                 {
                     if (group.Value.Group.ID != vehicle.Value.Group.ID) continue;
@@ -148,7 +154,7 @@ namespace TrboX
 
                     if ((null != OrginItem) && (OrginItem.Items.Count > groupcount))
                     {
-                        if ((null != (TreeViewItem)OrginItem.Items[groupcount]) && (((TreeViewItem)OrginItem.Items[itemcount]).Items.Count > itemcount))
+                        if ((null != (TreeViewItem)OrginItem.Items[groupcount]) && (((TreeViewItem)OrginItem.Items[groupcount]).Items.Count > itemcount))
                         {
                             if (true == ((TreeViewItem)((TreeViewItem)OrginItem.Items[groupcount]).Items[itemcount]).IsFocused) childitem.Focus();
                             childitem.IsSelected = ((TreeViewItem)((TreeViewItem)OrginItem.Items[groupcount]).Items[itemcount]).IsSelected;
@@ -169,6 +175,7 @@ namespace TrboX
                     itemcount++;
                 }
 
+                if (null != m_TargetList.Radio)
                 foreach (var radio in m_TargetList.Radio)
                 {
                     if (group.Value.Group.ID != radio.Value.Group.ID) continue;
@@ -182,7 +189,7 @@ namespace TrboX
 
                     if ((null != OrginItem) && (OrginItem.Items.Count > groupcount))
                     {
-                        if ((null != (TreeViewItem)OrginItem.Items[groupcount]) && (((TreeViewItem)OrginItem.Items[itemcount]).Items.Count > itemcount))
+                        if ((null != (TreeViewItem)OrginItem.Items[groupcount]) && (((TreeViewItem)OrginItem.Items[groupcount]).Items.Count > itemcount))
                         {
                             if (true == ((TreeViewItem)((TreeViewItem)OrginItem.Items[groupcount]).Items[itemcount]).IsFocused) childitem.Focus();
                             childitem.IsSelected = ((TreeViewItem)((TreeViewItem)OrginItem.Items[groupcount]).Items[itemcount]).IsSelected;
@@ -342,6 +349,7 @@ namespace TrboX
         {
             m_Main.lst_Group.View = (ViewBase)m_Main.FindResource("GroupView");
             m_Main.lst_Group.Items.Clear();
+            if (null != m_TargetList.Group)
             foreach (var group in m_TargetList.Group)
             {
                 if ((null != group.Value.Group) && (-1 != group.Value.Group.ID))
@@ -357,6 +365,8 @@ namespace TrboX
         {
             m_Main.lst_Employee.View = (ViewBase)m_Main.FindResource("EmployeeView");
             m_Main.lst_Employee.Items.Clear();
+
+            if (null != m_TargetList.Employee)
             foreach (var employee in m_TargetList.Employee)
             {
                 if (null != employee.Value.Employee)
@@ -376,6 +386,8 @@ namespace TrboX
         {
             m_Main.lst_Vehicle.View = (ViewBase)m_Main.FindResource("VehicleView");
             m_Main.lst_Vehicle.Items.Clear();
+
+            if (null != m_TargetList.Vehicle)
             foreach (var vehicle in m_TargetList.Vehicle)
             {
                 if (null != vehicle.Value.Vehicle)
@@ -396,6 +408,8 @@ namespace TrboX
         {
             m_Main.lst_Radio.View = (ViewBase)m_Main.FindResource("RadioView");
             m_Main.lst_Radio.Items.Clear();
+
+            if (null != m_TargetList.Radio)
             foreach (var radio in m_TargetList.Radio)
             {
                 if (null != radio.Value.Radio)
@@ -416,12 +430,86 @@ namespace TrboX
             m_Main.Dispatcher.Invoke(new Action(() =>
             {
                 m_TargetList = Target.TargetList;
-                FillDataToOrgTreeView();
-                FillDataToGroupList();
-                FillDataToEmployeeList();
-                FillDataToVehicleList();
-                FillDataToRadioList();
+                Filter(m_Main.txt_ResCondition.Text);
+
+
+                if (null != m_Main.tab_Mgr) switch (m_Main.tab_Mgr.SelectedIndex)
+                    { 
+                
+                    case 0:
+                      FillDataToOrgTreeView();break;
+                case 1:
+                      FillDataToGroupList();break;
+                case 2:
+                      FillDataToEmployeeList();break;
+                    case 3:
+                      FillDataToVehicleList();break;
+                    case 4:
+                      FillDataToRadioList();break;
+                    default:
+                        break;
+                }
             })); 
+        }
+
+
+        private bool IsAccept(string condition, CMember dest)
+        {
+            if (((null != dest.Group) && (dest.Group.GroupID.ToString().ToLower().Contains(condition.ToLower()) || dest.Group.Name.ToLower().Contains(condition.ToLower())))
+                      || ((null != dest.Employee) && dest.Employee.Name.ToLower().Contains(condition.ToLower()))
+                      || ((null != dest.Vehicle) && dest.Vehicle.Number.ToLower().Contains(condition.ToLower()))
+                      || ((null != dest.Radio) && dest.Radio.RadioID.ToString().ToLower().Contains(condition.ToLower())))
+            {
+                return true;
+            }
+            else
+                return false;
+        }
+
+        private void Filter(string condition)
+        {
+            List<int> willdel = new List<int> ();
+            List<int> hasgroup = new List<int>();
+
+            if (null != m_TargetList.Employee)
+                foreach (var it in m_TargetList.Employee)
+                    if (!IsAccept(condition, it.Value)) willdel.Add(it.Key);
+                    else if ((null != it.Value) && (null != it.Value.Group)) hasgroup.Add(it.Value.Group.ID);
+
+            foreach (int key in willdel) m_TargetList.Employee.Remove(key);
+            willdel.Clear();
+
+            if (null != m_TargetList.Vehicle)
+                foreach (var it in m_TargetList.Vehicle)
+                    if (!IsAccept(condition, it.Value)) willdel.Add(it.Key);
+                    else if ((null != it.Value) && (null != it.Value.Group)) hasgroup.Add(it.Value.Group.ID);
+
+            foreach (int key in willdel) m_TargetList.Vehicle.Remove(key);
+            willdel.Clear();
+
+            if (null != m_TargetList.Radio)
+                foreach (var it in m_TargetList.Radio)
+                    if (!IsAccept(condition, it.Value)) willdel.Add(it.Key);
+                    else if ((null != it.Value) && (null != it.Value.Group)) hasgroup.Add(it.Value.Group.ID);
+
+            foreach (int key in willdel) m_TargetList.Radio.Remove(key);
+            willdel.Clear();
+
+            if (null != m_TargetList.Group)
+                foreach (var it in m_TargetList.Group)
+                {
+                    bool remove = true;
+                    foreach (int id in hasgroup)
+                        if ((null != it.Value) && (null != it.Value.Group) && (it.Value.Group.ID == id))
+                        {
+                            remove = false;
+                            break;
+                        }
+                    if ((remove == true) && (!IsAccept(condition, it.Value))) willdel.Add(it.Key);
+                }
+
+            foreach (int key in willdel) m_TargetList.Group.Remove(key);
+            willdel.Clear();
         }
 
         private void NoficationThread()

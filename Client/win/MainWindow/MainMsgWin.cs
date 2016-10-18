@@ -546,21 +546,21 @@ namespace TrboX
             {
                 i++;
 
-                AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Content = new CAlarmNotification() { Content = "test" + i.ToString() } });
-                AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Content = new CAlarmNotification() { Content = "Alarm" + i.ToString() } });
+                //AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Content = new CAlarmNotification() { Content = "test" + i.ToString() } });
+                //AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Content = new CAlarmNotification() { Content = "Alarm" + i.ToString() } });
 
-                AddNotify(new CNotification() { Type = NotifyType.Call, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Time = DateTime.Now });
-                AddNotify(new CNotification() { Type = NotifyType.Message, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Time = DateTime.Now, Content = new CMsgNotification() { Content = "Message" + i.ToString() } });
-                AddNotify(new CNotification() { Type = NotifyType.JobTicker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Time = DateTime.Now });
-                AddNotify(new CNotification() { Type = NotifyType.Tracker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Time = DateTime.Now });
+                //AddNotify(new CNotification() { Type = NotifyType.Call, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Time = DateTime.Now });
+                //AddNotify(new CNotification() { Type = NotifyType.Message, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Time = DateTime.Now, Content = new CMsgNotification() { Content = "Message" + i.ToString() } });
+                //AddNotify(new CNotification() { Type = NotifyType.JobTicker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Time = DateTime.Now });
+                //AddNotify(new CNotification() { Type = NotifyType.Tracker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Time = DateTime.Now });
 
-                AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Content = new CAlarmNotification() { Content = "test" + i.ToString() } });
-                AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Content = new CAlarmNotification() { Content = "Alarm" + i.ToString() } });
+                //AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Content = new CAlarmNotification() { Content = "test" + i.ToString() } });
+                //AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Content = new CAlarmNotification() { Content = "Alarm" + i.ToString() } });
 
-                AddNotify(new CNotification() { Type = NotifyType.Call, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now });
-                AddNotify(new CNotification() { Type = NotifyType.Message, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now, Content = new CMsgNotification() { Content = "Message" + i.ToString() } });
-                AddNotify(new CNotification() { Type = NotifyType.JobTicker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now });
-                AddNotify(new CNotification() { Type = NotifyType.Tracker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now });
+                //AddNotify(new CNotification() { Type = NotifyType.Call, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now });
+                //AddNotify(new CNotification() { Type = NotifyType.Message, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now, Content = new CMsgNotification() { Content = "Message" + i.ToString() } });
+                //AddNotify(new CNotification() { Type = NotifyType.JobTicker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now });
+                //AddNotify(new CNotification() { Type = NotifyType.Tracker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now });
                 m_Main.EventList.AddEvent("事件" + i.ToString());
 
                 Thread.Sleep(5000);

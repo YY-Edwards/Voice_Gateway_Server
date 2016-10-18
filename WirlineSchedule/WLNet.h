@@ -6,6 +6,8 @@
 #include "SerialDongle.h"
 #include "Sound.h"
 #include "WLRecord.h"
+#include "Manager.h"
+#include "WLRecordFile.h"
 
 extern CTool g_tool;
 extern CSerialDongle* g_pDongle;
@@ -23,8 +25,8 @@ extern BOOL g_bPTT;
 #define     PEER_ID         __TEXT("id")
 #define     PEER_PORT       __TEXT("port")
 
-#define CPC_PRIVATE_CALL		3
-#define CPC_GROUP_CALL			4
+//#define CPC_PRIVATE_CALL		3
+//#define CPC_GROUP_CALL		4
 
 static const DWORD MAXEVENTS = 3;
 static const DWORD TIMEOUT = WAIT_TIMEOUT;				//Timeout Event
@@ -54,11 +56,6 @@ static const BYTE WL_VC_PRIVACY_BURST = 0x22;
 static const BYTE WL_VC_CHNL_CTRL_REQUEST = 0x13;
 static const BYTE WL_VC_CHNL_CTRL_STATUS = 0x16;
 
-
-static const BYTE Group_Voice_Call = 0x4f;
-static const BYTE Private_Voice_Call = 0x50;
-static const BYTE All_Call = 0x53;
-
 static const BYTE Access_Criteria_Polite_Access = 0x01;
 static const BYTE Access_Criteria_Transmit_Interrupt = 0x02;
 static const BYTE Access_Criteria_Impolite_Access = 0x03;
@@ -70,51 +67,51 @@ static const BYTE Channel_Control_Request_Status_Grant = 0x04;
 static const BYTE Channel_Control_Request_Status_Declined = 0x05;
 static const BYTE Channel_Control_Request_Status_Interrupting = 0x06;
 
-const          char LE_MASTER_PEER_REGISTRATION_REQUEST = (const char)0x90;
-const int           LE_MASTER_PEER_REGISTRATION_REQUEST_L = 14;
-const int           LE_MASTER_PEER_REGISTRATION_REQUEST_LCP_L = 16;
-const          char LE_MASTER_PEER_REGISTRATION_RESPONSE = (const char)0x91;
-const int           LE_MASTER_PEER_REGISTRATION_RESPONSE_L = 16;
-const int           LE_MASTER_PEER_REGISTRATION_RESPONSE_LCP_L = 18;
-const          char LE_NOTIFICATION_MAP_REQUEST = (const char)0x92;
-const int           LE_NOTIFICATION_MAP_REQUEST_L = 5;
-const int           LE_NOTIFICATION_MAP_REQUEST_LCP_L = 10;
-const          char LE_NOTIFICATION_MAP_BROADCAST = (const char)0x93;
-const int           LE_NOTIFICATION_MAP_BROADCAST_ENTRY = 11;
-const          char LE_PEER_REGISTRATION_REQUEST = (const char)0x94;
+const char LE_MASTER_PEER_REGISTRATION_REQUEST = (const char)0x90;
+const int LE_MASTER_PEER_REGISTRATION_REQUEST_L = 14;
+const int LE_MASTER_PEER_REGISTRATION_REQUEST_LCP_L = 16;
+const char LE_MASTER_PEER_REGISTRATION_RESPONSE = (const char)0x91;
+const int LE_MASTER_PEER_REGISTRATION_RESPONSE_L = 16;
+const int LE_MASTER_PEER_REGISTRATION_RESPONSE_LCP_L = 18;
+const char LE_NOTIFICATION_MAP_REQUEST = (const char)0x92;
+const int LE_NOTIFICATION_MAP_REQUEST_L = 5;
+const int LE_NOTIFICATION_MAP_REQUEST_LCP_L = 10;
+const char LE_NOTIFICATION_MAP_BROADCAST = (const char)0x93;
+const int LE_NOTIFICATION_MAP_BROADCAST_ENTRY = 11;
+const char LE_PEER_REGISTRATION_REQUEST = (const char)0x94;
 
-const          char LE_PEER_REGISTRATION_RESPONSE = (const char)0x95;
+const char LE_PEER_REGISTRATION_RESPONSE = (const char)0x95;
 
-const          char LE_MASTER_KEEP_ALIVE_REQUEST = (const char)0x96;
-const int           LE_MASTER_KEEP_ALIVE_REQUEST_L = 14;
-const int           LE_MASTER_KEEP_ALIVE_REQUEST_LCP_L = 16;
-const          char LE_MASTER_KEEP_ALIVE_RESPONSE = (const char)0x97;
-const          char LE_PEER_KEEP_ALIVE_REQUEST = (const char)0x98;
+const char LE_MASTER_KEEP_ALIVE_REQUEST = (const char)0x96;
+const int LE_MASTER_KEEP_ALIVE_REQUEST_L = 14;
+const int LE_MASTER_KEEP_ALIVE_REQUEST_LCP_L = 16;
+const char LE_MASTER_KEEP_ALIVE_RESPONSE = (const char)0x97;
+const char LE_PEER_KEEP_ALIVE_REQUEST = (const char)0x98;
 
-const          char LE_PEER_KEEP_ALIVE_RESPONSE = (const char)0x99;
+const char LE_PEER_KEEP_ALIVE_RESPONSE = (const char)0x99;
 
-const          char LE_DEREGISTRATION_REQUEST = (const char)0x9A;
-const int           LE_DEREGISTRATION_REQUEST_L = 5;
-const          char LE_DEREGISTRATION_RESPONSE = (const char)0x9B;
-const          char IPSC_GRP_VOICE_CALL = (const char)0x80;
-const          char IPSC_PVT_VOICE_CALL = (const char)0x81;
-const          char IPSC_GRP_DATA_CALL = (const char)0x83;
-const          char IPSC_PVT_DATA_CALL = (const char)0x84;
-const		   char LE_CALL_CONTROL_INTERFACE = (const char)0xb2;
+const char LE_DEREGISTRATION_REQUEST = (const char)0x9A;
+const int LE_DEREGISTRATION_REQUEST_L = 5;
+const char LE_DEREGISTRATION_RESPONSE = (const char)0x9B;
+const char IPSC_GRP_VOICE_CALL = (const char)0x80;
+const char IPSC_PVT_VOICE_CALL = (const char)0x81;
+const char IPSC_GRP_DATA_CALL = (const char)0x83;
+const char IPSC_PVT_DATA_CALL = (const char)0x84;
+const char LE_CALL_CONTROL_INTERFACE = (const char)0xb2;
 
 //IPSC
 /************************************************************************/
 /*devspec_link_establishment_0103.pdf line 1305
 /************************************************************************/
-const          char IPSC_PEERMODE_DEFAULT = (const char)0x6a; //IPSC only
-const          char IPSC_PEERSERVICES_DEFAULT_1 = (const char)0x00;//本身为Reserve位,当且仅当为0x04才能收到0x80的语音 其余的不可(0xb2正常)
-const          char IPSC_PEERSERVICES_DEFAULT_2 = (const char)0x20;//为第三方应用
-const          char IPSC_PEERSERVICES_DEFAULT_3 = (const char)0x00;
-const          char IPSC_PEERSERVICES_DEFAULT_4 = (const char)0x00;
-const          char IPSC_CURRENTLPVERSION_DEFAULT_1 = (const char)0x05;//当前版本为2.3
-const          char IPSC_CURRENTLPVERSION_DEFAULT_2 = (const char)0x04;
-const          char IPSC_OLDESTLPVERSION_DEFAULT_1 = (const char)0x05;//仅支持2.3
-const          char IPSC_OLDESTLPVERSION_DEFAULT_2 = (const char)0x04;
+const char IPSC_PEERMODE_DEFAULT = (const char)0x6a; //IPSC only
+const char IPSC_PEERSERVICES_DEFAULT_1 = (const char)0x00;//本身为Reserve位,当且仅当为0x04才能收到0x80的语音 其余的不可(0xb2正常)
+const char IPSC_PEERSERVICES_DEFAULT_2 = (const char)0x20;//为第三方应用
+const char IPSC_PEERSERVICES_DEFAULT_3 = (const char)0x00;
+const char IPSC_PEERSERVICES_DEFAULT_4 = (const char)0x00;
+const char IPSC_CURRENTLPVERSION_DEFAULT_1 = (const char)0x05;//当前版本为2.3
+const char IPSC_CURRENTLPVERSION_DEFAULT_2 = (const char)0x04;
+const char IPSC_OLDESTLPVERSION_DEFAULT_1 = (const char)0x05;//仅支持2.3
+const char IPSC_OLDESTLPVERSION_DEFAULT_2 = (const char)0x04;
 
 #define IPSC_CURRENTLPVERSION 0x0405
 #define IPSC_OLDESTPVERSION 0x0405
@@ -122,34 +119,34 @@ const          char IPSC_OLDESTLPVERSION_DEFAULT_2 = (const char)0x04;
 #define IPSC_SERVICES 0x00002000
 
 //CPC
-const          char CPC_PEERMODE_DEFAULT = (const char)0x65; //Enabled, Digital Mode, IPSC CPC Both
-const          char CPC_PEERSERVICES_DEFAULT_1 = (const char)0x00;
-const          char CPC_PEERSERVICES_DEFAULT_2 = (const char)0x25;
-const          char CPC_PEERSERVICES_DEFAULT_3 = (const char)0x00;
-const          char CPC_PEERSERVICES_DEFAULT_4 = (const char)0x00;
+const char CPC_PEERMODE_DEFAULT = (const char)0x65; //Enabled, Digital Mode, IPSC CPC Both
+const char CPC_PEERSERVICES_DEFAULT_1 = (const char)0x00;
+const char CPC_PEERSERVICES_DEFAULT_2 = (const char)0x25;
+const char CPC_PEERSERVICES_DEFAULT_3 = (const char)0x00;
+const char CPC_PEERSERVICES_DEFAULT_4 = (const char)0x00;
 
-const          char CPC_CURRENTVERSION_DEFAULT_1 = (const char)0x05;
-const          char CPC_CURRENTVERSION_DEFAULT_2 = (const char)0x08;
-const          char CPC_OLDESTVERSION_DEFAULT_1 = (const char)0x05;
-const          char CPC_OLDESTVERSION_DEFAULT_2 = (const char)0x08;
+const char CPC_CURRENTVERSION_DEFAULT_1 = (const char)0x05;
+const char CPC_CURRENTVERSION_DEFAULT_2 = (const char)0x08;
+const char CPC_OLDESTVERSION_DEFAULT_1 = (const char)0x05;
+const char CPC_OLDESTVERSION_DEFAULT_2 = (const char)0x08;
 
 #define CPC_CURRENTLPVERSION 0x0805
 #define CPC_OLDESTPVERSION 0x0805
 #define CPC_MODE 0x65
 #define CPC_SERVICES 0x00002500
 //LCP
-const          char LCP_PEERMODE_DEFAULT_1 = (const char)0x00;
-const          char LCP_PEERMODE_DEFAULT_2 = (const char)0x9A;
+const char LCP_PEERMODE_DEFAULT_1 = (const char)0x00;
+const char LCP_PEERMODE_DEFAULT_2 = (const char)0x9A;
 
-const          char LCP_PEERSERVICES_DEFAULT_1 = (const char)0x00;
-const          char LCP_PEERSERVICES_DEFAULT_2 = (const char)0x00;
-const          char LCP_PEERSERVICES_DEFAULT_3 = (const char)0x00;
-const          char LCP_PEERSERVICES_DEFAULT_4 = (const char)0x00;
+const char LCP_PEERSERVICES_DEFAULT_1 = (const char)0x00;
+const char LCP_PEERSERVICES_DEFAULT_2 = (const char)0x00;
+const char LCP_PEERSERVICES_DEFAULT_3 = (const char)0x00;
+const char LCP_PEERSERVICES_DEFAULT_4 = (const char)0x00;
 
-const          char LCP_CURRENTVERSION_DEFAULT_1 = (const char)0x05;
-const          char LCP_CURRENTVERSION_DEFAULT_2 = (const char)0x10;
-const          char LCP_OLDESTVERSION_DEFAULT_1 = (const char)0x05;
-const          char LCP_OLDESTVERSION_DEFAULT_2 = (const char)0x10;
+const char LCP_CURRENTVERSION_DEFAULT_1 = (const char)0x05;
+const char LCP_CURRENTVERSION_DEFAULT_2 = (const char)0x10;
+const char LCP_OLDESTVERSION_DEFAULT_1 = (const char)0x05;
+const char LCP_OLDESTVERSION_DEFAULT_2 = (const char)0x10;
 
 #define LCP_CURRENTLPVERSION 0x1005
 #define LCP_OLDESTPVERSION 0x1005
@@ -178,38 +175,38 @@ const unsigned __int8 DATA_TYPE_SYNC_UNDETECT = (const unsigned __int8)0x13;
 //////////////////////////////////////////////////////////////////////////
 // Const define for XNL
 //XNL Connect
-const                char         LE_XNL = (const char)0x70;
-const                char         LE_XNL_DEVICE_MASTER_QUERY_1 = (const char)0x00;
-const                char         LE_XNL_DEVICE_MASTER_QUERY_2 = (const char)0x03;
-const int                         LE_XNL_DEVICE_MASTER_QUERY_L = 19;
-const                char         LE_XNL_MASTER_STATUS_BRDCST_1 = (const char)0x00;
-const                char         LE_XNL_MASTER_STATUS_BRDCST_2 = (const char)0x02;
-const  int                        LE_XNL_MASTER_STATUS_BRDCST_L = 26;
-const                char         LE_XNL_DEVICE_AUTH_KEY_REQUEST_1 = (const char)0x00;
-const                char         LE_XNL_DEVICE_AUTH_KEY_REQUEST_2 = (const char)0x04;
-const int                         LE_XNL_DEVICE_AUTH_KEY_REQUEST_L = 19;
-const                char         LE_XNL_DEVICE_AUTH_KEY_REPLY_1 = (const char)0x00;
-const                char         LE_XNL_DEVICE_AUTH_KEY_REPLY_2 = (const char)0x05;
-const int                         LE_XNL_DEVICE_AUTH_KEY_REPLY_L = 29;
-const                char         LE_XNL_DEVICE_CONNECT_REQUEST_1 = (const char)0x00;
-const                char         LE_XNL_DEVICE_CONNECT_REQUEST_2 = (const char)0x06;
-const int                         LE_XNL_DEVICE_CONNECT_REQUEST_L = 31;
-const                char         LE_XNL_DEVICE_CONNECT_REPLY_1 = (const char)0x00;
-const                char         LE_XNL_DEVICE_CONNECT_REPLY_2 = (const char)0x07;
-const int                         LE_XNL_DEVICE_CONNECT_REPLY_L = 33;
-const                char         LE_XNL_DEVICE_SYSMAP_BRDCST_1 = (const char)0x00;
-const                char         LE_XNL_DEVICE_SYSMAP_BRDCST_2 = (const char)0x09;
-const                char         LE_XNL_DATA_MSG_1 = (const char)0x00;
-const                char         LE_XNL_DATA_MSG_2 = (const char)0x0B;
-const                char         LE_XNL_DATA_MSG_ACK_1 = (const char)0x00;
-const                char         LE_XNL_DATA_MSG_ACK_2 = (const char)0x0C;
-const int                         LE_XNL_DATA_MSG_ACK_L = 19;
-const                char         LE_XNL_XCMP_DEVICE_INIT_1 = (const char)0xB4;
-const                char         LE_XNL_XCMP_DEVICE_INIT_2 = (const char)0x00;
-const int                         LE_XNL_XCMP_DEVICE_INIT_L = 30;
-const                char         LE_XNL_XCMP_READ_SERIAL_1 = (const char)0x00;
-const                char         LE_XNL_XCMP_READ_SERIAL_2 = (const char)0x0E;
-const int                         LE_XNL_XCMP_READ_SERIAL_L = 22;
+const char LE_XNL = (const char)0x70;
+const char LE_XNL_DEVICE_MASTER_QUERY_1 = (const char)0x00;
+const char LE_XNL_DEVICE_MASTER_QUERY_2 = (const char)0x03;
+const int LE_XNL_DEVICE_MASTER_QUERY_L = 19;
+const char LE_XNL_MASTER_STATUS_BRDCST_1 = (const char)0x00;
+const char LE_XNL_MASTER_STATUS_BRDCST_2 = (const char)0x02;
+const int LE_XNL_MASTER_STATUS_BRDCST_L = 26;
+const char LE_XNL_DEVICE_AUTH_KEY_REQUEST_1 = (const char)0x00;
+const char LE_XNL_DEVICE_AUTH_KEY_REQUEST_2 = (const char)0x04;
+const int LE_XNL_DEVICE_AUTH_KEY_REQUEST_L = 19;
+const char LE_XNL_DEVICE_AUTH_KEY_REPLY_1 = (const char)0x00;
+const char LE_XNL_DEVICE_AUTH_KEY_REPLY_2 = (const char)0x05;
+const int LE_XNL_DEVICE_AUTH_KEY_REPLY_L = 29;
+const char LE_XNL_DEVICE_CONNECT_REQUEST_1 = (const char)0x00;
+const char LE_XNL_DEVICE_CONNECT_REQUEST_2 = (const char)0x06;
+const int LE_XNL_DEVICE_CONNECT_REQUEST_L = 31;
+const char LE_XNL_DEVICE_CONNECT_REPLY_1 = (const char)0x00;
+const char LE_XNL_DEVICE_CONNECT_REPLY_2 = (const char)0x07;
+const int LE_XNL_DEVICE_CONNECT_REPLY_L = 33;
+const char LE_XNL_DEVICE_SYSMAP_BRDCST_1 = (const char)0x00;
+const char LE_XNL_DEVICE_SYSMAP_BRDCST_2 = (const char)0x09;
+const char LE_XNL_DATA_MSG_1 = (const char)0x00;
+const char LE_XNL_DATA_MSG_2 = (const char)0x0B;
+const char LE_XNL_DATA_MSG_ACK_1 = (const char)0x00;
+const char LE_XNL_DATA_MSG_ACK_2 = (const char)0x0C;
+const int LE_XNL_DATA_MSG_ACK_L = 19;
+const char LE_XNL_XCMP_DEVICE_INIT_1 = (const char)0xB4;
+const char LE_XNL_XCMP_DEVICE_INIT_2 = (const char)0x00;
+const int LE_XNL_XCMP_DEVICE_INIT_L = 30;
+const char LE_XNL_XCMP_READ_SERIAL_1 = (const char)0x00;
+const char LE_XNL_XCMP_READ_SERIAL_2 = (const char)0x0E;
+const int LE_XNL_XCMP_READ_SERIAL_L = 22;
 //
 //
 //
@@ -312,46 +309,6 @@ typedef union
 	char                 All[28];
 }tCallParams;
 
-class  CRecordFile
-{
-public:
-	CRecordFile() :lenght(0){}
-	~CRecordFile(){}
-public:
-	void WriteVoiceFrame(char* pFrame, int len = 7)
-	{
-		if ((callType == Group_Voice_Call && tagetId == g_localGroup)
-			|| (callType == Private_Voice_Call && tagetId == g_localRadioId)
-			|| (callType == All_Call))
-		{
-			//加入实时播放的buffer
-			tAMBEFrame* pAMBEFrame = NULL;
-			pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();
-			memcpy(pAMBEFrame->fld.ChannelBits, pFrame, len);
-			g_pDongle->deObfuscate(IPSCTODONGLE, pAMBEFrame);
-			g_pDongle->MarkAMBEBufferFilled();
-			//继续解码数据
-			g_pDongle->releaseWaitNextNetDataEvent();
-			g_pDongle->DecodeBuffers();
-		}
-		prevTimestamp = GetTickCount();
-		/*交互录音线程，将AMBE数据写入到本地*/
-		memcpy(buffer + lenght, pFrame, len);
-		lenght += len;
-	}
-public:
-	char buffer[100000];
-	int lenght;
-	int srcId;
-	int tagetId;
-	int originalPeerId;
-	int callId;
-	unsigned char callType;
-	int srcSlot;
-	int srcRssi;
-	unsigned long prevTimestamp;
-};
-
 typedef std::list<CRecordFile*> VoiceRecords;
 
 class CWLNet
@@ -359,7 +316,7 @@ class CWLNet
 	friend class CIPSCPeer;
 
 public:
-	CWLNet(CMySQL *pDb);
+	CWLNet(CMySQL *pDb,CManager *pManager);
 	~CWLNet();
 
 	int initCallParam();
@@ -379,7 +336,7 @@ public:
 	/************************************************************************/
 	/* 校正缓冲数据call id
 	/************************************************************************/
-	void CorrectingBuffer();
+	void CorrectingBuffer(DWORD callId);
 	//bool getIsFirstBurstA();
 	//void setIsFirstBurstA(bool value);
 	void requestRecordEndEvent();
@@ -387,6 +344,11 @@ public:
 	void waitRecordEnd();
 	void setCurrentSendVoicePeer(CIPSCPeer* value);
 	void clearPeers();
+	int checkDefaultGroup();
+	int setPlayCallOfCare(char* pCallType, char* pFrom, char* pTarget);
+	int thereIsCallOfCare(CRecordFile *pCallRecord);
+	/*告知界面当前存在需要关注的通话正在进行以及状态*/
+	int Send_CARE_CALL_STATUS(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status);
 
 protected:
 	/*
@@ -394,7 +356,7 @@ protected:
 	*/
 	static DWORD WINAPI NetThreadProc(LPVOID pVoid);
 	DWORD NetThread();
-	void InitControlBuffer(DWORD dwSelfPeerId);
+	//void InitControlBuffer(DWORD dwSelfPeerId);
 
 
 	//void Build_LE_MASTER_PEER_REGISTRATION_REQUEST();
@@ -441,7 +403,7 @@ public:
 	* @param DWORD dwSelfPeerId: self peer id
 	* @return TRUE if success, or FALSE
 	*/
-	BOOL StartNet(DWORD dwMasterIp, WORD wMasterPort, DWORD dwLocalIp, DWORD dwSelfPeerId, DWORD dwSelfRadioId, int dwSelfSlot, unsigned int dwSelfGroup, DWORD recType);
+	BOOL StartNet(DWORD dwMasterIp, WORD wMasterPort, DWORD dwLocalIp, DWORD dwSelfPeerId, DWORD dwSelfRadioId, DWORD recType);
 
 	/*
 	* Stop wirelan gateway network
@@ -467,9 +429,9 @@ public:
 
 	//Returns int selected TG ID in Host order.
 	//Simple atomic read.
-	unsigned __int32 GetSelectedTalkgroup(void);
+	//unsigned __int32 GetSelectedTalkgroup(void);
 
-	int  GetTxSlot(void);
+	//int  GetTxSlot(void);
 
 	void NetStuffTxVoice(unsigned char* pVoiceBytes);
 	void FILL_AMBE_FRAME(char* pVoiceBytes, char* pSendVoice, int txSubCount);
@@ -479,6 +441,9 @@ public:
 
 	void setSitePeer(CIPSCPeer* value);
 private:
+	DWORD m_dwChangeToCurrentTick;
+	CManager* m_pManager;
+	//HANDLE m_dongleIdleEvent;
 	CMySQL *m_pDb;
 	WLRecord *m_pEventLoger;
 	//add code by chenhaidong
@@ -501,23 +466,23 @@ private:
 
 	unsigned char m_callSequenceNumber;
 
-	void FillVoiceHeaderTerminator(IPSCVoiceTemplate* pBuffer, IPSCBurstType burstType);
+	//void FillVoiceHeaderTerminator(IPSCVoiceTemplate* pBuffer, IPSCBurstType burstType);
 
-	void FillBurstE(IPSCVoiceTemplate* pBuffer);
+	//void FillBurstE(IPSCVoiceTemplate* pBuffer);
 
 	// this function only works for burst F in the enhance privacy is off, otherwise a seperate
 	// function shall be created for burst F
-	void FillBurstBCDF(IPSCVoiceTemplate* pBuffer, IPSCBurstType burstType);
+	//void FillBurstBCDF(IPSCVoiceTemplate* pBuffer, IPSCBurstType burstType);
 
-	void FillBurstA(IPSCVoiceTemplate* pBuffer);
+	//void FillBurstA(IPSCVoiceTemplate* pBuffer);
 
-	void FillIPSCFormat(IPSCVoiceTemplate* pBuffer, IPSCBurstType burstType, bool lastBurst);
+	//void FillIPSCFormat(IPSCVoiceTemplate* pBuffer, IPSCBurstType burstType, bool lastBurst);
 
 
 	CallRecord	  myCallRecord;  //to store the consistent call data for the burst generation
 
 	//This function shall be called whenever a new call is initiated to initialize all the parameters
-	void InitialCallRecord();
+	//void InitialCallRecord();
 
 	unsigned __int16 embeddedLCCheckSumGen(unsigned __int8 * inputPtr);
 
@@ -574,7 +539,7 @@ private:
 	* @param peerId remote peer id
 	* @return TRUE is found
 	*/
-	BOOL FindPeer(u_long peerAddr);
+	//BOOL FindPeer(u_long peerAddr);
 
 	CIPSCPeer* GetPeer(u_long peerId);
 
@@ -670,8 +635,8 @@ private:
 	//unsigned __int32 m_dwMyPeerID;
 	unsigned __int32 m_dwMyRadioID;
 	//Host order. Note: Maybe someday this will be a list of scan groups.
-	unsigned __int32 m_dwMyRadioGroup;
-	int m_TxSlot;
+	//unsigned __int32 m_dwMyRadioGroup;
+	//int m_TxSlot;
 	char m_ControlProto[30];
 	//OpCode (placeholder)
 	//PeerID[3]
@@ -758,9 +723,9 @@ private:
 	bool isLicense;
 
 	/************************************************************************/
-	/*验证此语音是否发送给本机
+	/*验证此语音是否需要实时播放
 	/************************************************************************/
-	bool isTargetMeCall(unsigned int tgtId);
+	bool isTargetMeCall(unsigned int tagetId, unsigned char callType);
 public:
 	//delete old code
 	//void CloseServer();

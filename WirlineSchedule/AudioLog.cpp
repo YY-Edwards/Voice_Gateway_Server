@@ -4,15 +4,15 @@
 #pragma comment(lib,"shlwapi.lib")
 
 CAudioLog::CAudioLog()
-: m_pFile(NULL)
 {
 	ZeroMemory(m_strCurrentFilePath, sizeof(wchar_t)*PATH_FILE_MAXSIZE);
+	m_hOpenFile = NULL;
 }
 
 
 CAudioLog::~CAudioLog()
 {
-	if (hOpenFile)
+	if (m_hOpenFile)
 	{
 		//CloseHandle(hOpenFile);
 
@@ -30,13 +30,13 @@ BOOL CAudioLog::WriteAudioDataToFile(LPBYTE pByte, DWORD& dwSize, DWORD& dwOffse
 	DWORD dwWrite = 0;
 	try{
 		//fseek(m_pFile, 0, SEEK_END);
-		SetFilePointer(hOpenFile, 0, NULL, FILE_END);
+		SetFilePointer(m_hOpenFile, 0, NULL, FILE_END);
 
 		//dwOffset = ftell(m_pFile);
-		dwOffset = GetFileSize(hOpenFile, NULL);
+		dwOffset = GetFileSize(m_hOpenFile, NULL);
 		
 		 //dwWrite = fwrite(pByte, 1, dwSize, m_pFile);
-		dwWrite = WriteFile(hOpenFile, pByte, dwSize, &dwSize, NULL);
+		dwWrite = WriteFile(m_hOpenFile, pByte, dwSize, &dwSize, NULL);
 
 		//fflush(m_pFile);
 
@@ -59,8 +59,8 @@ BOOL CAudioLog::CreateNewFileByYearMonth()
 		return TRUE;
 	}
 	wcscpy_s(m_strCurrentFilePath, strFileName);
-	hOpenFile = CreateFile(m_strCurrentFilePath, GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_ALWAYS, NULL, NULL);
-	if (NULL == hOpenFile)
+	m_hOpenFile = CreateFile(m_strCurrentFilePath, GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_ALWAYS, NULL, NULL);
+	if (NULL == m_hOpenFile)
 	{
 		return FALSE;
 	}
@@ -90,6 +90,7 @@ void CAudioLog::GetCurrentAudioFileFullPath(wchar_t* pAudioFileFullPath)
 
 void CAudioLog::SetAudioFilePath(wchar_t* pAudioFilePath)
 {
+	ZeroMemory(m_strAudioFileSaveFolderPath, sizeof(wchar_t)*PATH_FILE_MAXSIZE);
 	wcscat_s(m_strAudioFileSaveFolderPath, pAudioFilePath);
 	wcscat_s(m_strAudioFileSaveFolderPath, L"\\");
 	if (!PathFileExists(m_strAudioFileSaveFolderPath))

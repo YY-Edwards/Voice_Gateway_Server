@@ -963,6 +963,10 @@ void CSound::SoundOutputControl()
 	m_bOutPcmStart = TRUE;
 	freeOutData(m_pOutCurrentData);
 	m_pOutCurrentData = NULL;
+	g_bIsHaveAllCall = false;
+	g_bIsHaveDefaultGroupCall = false;
+	g_bIsHavePrivateCall = false;
+	g_bIsHaveCurrentGroupCall = false;
 }
 
 void CSound::SoundInputControl()

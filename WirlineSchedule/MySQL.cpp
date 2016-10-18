@@ -585,6 +585,7 @@ std::string CMySQL::CreateCurrentTableByYearMonth()
 			`src_peer_id` int(11) NOT NULL, \
 			`src_rssi` int(11) NOT NULL, \
 			`src_slot` int(11) NOT NULL, \
+			`call_status` int(11) NOT NULL, \
 			PRIMARY KEY(`id`)\
 			) ENGINE = InnoDB DEFAULT CHARSET = utf8 AUTO_INCREMENT = 1; ", 
 			strTableName);

@@ -1,0 +1,16 @@
+﻿<Application x:Class="TrboX.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             StartupUri="win/Main/Main.xaml">
+    <Application.Resources>
+         
+    <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="themes/MyWindow.xaml"/>
+                <ResourceDictionary Source="themes/Simple Styles.xaml"/>
+                <ResourceDictionary Source="themes/generic.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+         
+    </Application.Resources>
+</Application>

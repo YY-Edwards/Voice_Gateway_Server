@@ -8,7 +8,7 @@
 static const unsigned char AuthenticId[AUTHENTIC_ID_SIZE] = { 0x01, 0x02, 0x00, 0x0d };
 static const unsigned char VenderKey[VENDER_KEY_SIZE] = { 0x6b, 0xe5, 0xff, 0x95, 0x6a, 0xb5, 0xe8, 0x82, 0xa8, 0x6f, 0x29, 0x5f, 0x9d, 0x9d, 0x5e, 0xcf, 0xe6, 0x57, 0x61, 0x5a };
 
-CWLNet::CWLNet(CMySQL *pDb)
+CWLNet::CWLNet(CMySQL *pDb,CManager *pManager)
 : m_socket(INVALID_SOCKET)
 , m_hWorkThread(INVALID_HANDLE_VALUE)
 , m_bExit(TRUE)
@@ -60,6 +60,9 @@ CWLNet::CWLNet(CMySQL *pDb)
 	m_retryRequestCallCount = REQUEST_CALL_REPEAT_FREQUENCY;
 	m_pEventLoger = new WLRecord(pDb);
 	m_pDb = pDb;
+	//m_dongleIdleEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
+	m_pManager = pManager;
+	m_dwChangeToCurrentTick = 0;
 }
 
 CWLNet::~CWLNet()
@@ -349,76 +352,76 @@ DWORD CWLNet::NetThread()
 	return 0;
 }
 
-void CWLNet::InitControlBuffer(DWORD dwSelfPeerId)
-{
-	DWORD temp = dwSelfPeerId;
-	g_localPeerId = dwSelfPeerId;
-	m_ControlProto[4] = (char)(temp & 0x000000FF);
-	temp = temp >> 8;
-	m_ControlProto[3] = (char)(temp & 0x000000FF);
-	temp = temp >> 8;
-	m_ControlProto[2] = (char)(temp & 0x000000FF);
-	temp = temp >> 8;
-	m_ControlProto[1] = (char)(temp & 0x000000FF);
-
-	if (g_recordType == IPSC)
-	{
-		m_ControlProto[5] = IPSC_PEERMODE_DEFAULT;
-		m_ControlProto[6] = IPSC_PEERSERVICES_DEFAULT_4;
-		m_ControlProto[7] = IPSC_PEERSERVICES_DEFAULT_3;
-		m_ControlProto[8] = IPSC_PEERSERVICES_DEFAULT_2;
-		m_ControlProto[9] = IPSC_PEERSERVICES_DEFAULT_1;
-
-		m_ControlProto[10] = IPSC_CURRENTLPVERSION_DEFAULT_2;
-		m_ControlProto[11] = IPSC_CURRENTLPVERSION_DEFAULT_1;
-		m_ControlProto[12] = IPSC_OLDESTLPVERSION_DEFAULT_2;
-		m_ControlProto[13] = IPSC_OLDESTLPVERSION_DEFAULT_1;
-	}
-	else if (g_recordType == CPC)
-	{
-		m_ControlProto[5] = CPC_PEERMODE_DEFAULT;    // PEERMODE_DEFAULT
-		m_ControlProto[6] = CPC_PEERSERVICES_DEFAULT_4;    // PEER SERVICE
-		m_ControlProto[7] = CPC_PEERSERVICES_DEFAULT_3;
-		m_ControlProto[8] = CPC_PEERSERVICES_DEFAULT_2;
-		m_ControlProto[9] = CPC_PEERSERVICES_DEFAULT_1;
-
-		m_ControlProto[10] = CPC_CURRENTVERSION_DEFAULT_2;
-		m_ControlProto[11] = CPC_CURRENTVERSION_DEFAULT_1;
-		m_ControlProto[12] = CPC_OLDESTVERSION_DEFAULT_2;
-		m_ControlProto[13] = CPC_OLDESTVERSION_DEFAULT_1;
-	}
-	else
-	{
-
-		m_ControlProto[5] = LCP_PEERMODE_DEFAULT_1;
-		m_ControlProto[6] = LCP_PEERMODE_DEFAULT_2;
-
-		m_ControlProto[7] = LCP_PEERSERVICES_DEFAULT_1;
-		m_ControlProto[8] = LCP_PEERSERVICES_DEFAULT_2;
-		m_ControlProto[9] = LCP_PEERSERVICES_DEFAULT_3;
-		m_ControlProto[10] = LCP_PEERSERVICES_DEFAULT_4;
-
-		m_ControlProto[11] = 0x00;  // leadingChannelID
-
-		m_ControlProto[12] = LCP_CURRENTVERSION_DEFAULT_2;
-		m_ControlProto[13] = LCP_CURRENTVERSION_DEFAULT_1;
-
-		m_ControlProto[14] = LCP_OLDESTVERSION_DEFAULT_2;
-		m_ControlProto[15] = LCP_OLDESTVERSION_DEFAULT_1;
-	}
-
-
-	m_SendControlBuffer.buf = &m_ControlProto[0];
-	m_SendControlBuffer.len = 0; //Not really necessary.
-}
+// void CWLNet::InitControlBuffer(DWORD dwSelfPeerId)
+// {
+// 	DWORD temp = dwSelfPeerId;
+// 	CONFIG_LOCAL_PEER_ID = dwSelfPeerId;
+// 	m_ControlProto[4] = (char)(temp & 0x000000FF);
+// 	temp = temp >> 8;
+// 	m_ControlProto[3] = (char)(temp & 0x000000FF);
+// 	temp = temp >> 8;
+// 	m_ControlProto[2] = (char)(temp & 0x000000FF);
+// 	temp = temp >> 8;
+// 	m_ControlProto[1] = (char)(temp & 0x000000FF);
+// 
+// 	if (CONFIG_RECORD_TYPE == IPSC)
+// 	{
+// 		m_ControlProto[5] = IPSC_PEERMODE_DEFAULT;
+// 		m_ControlProto[6] = IPSC_PEERSERVICES_DEFAULT_4;
+// 		m_ControlProto[7] = IPSC_PEERSERVICES_DEFAULT_3;
+// 		m_ControlProto[8] = IPSC_PEERSERVICES_DEFAULT_2;
+// 		m_ControlProto[9] = IPSC_PEERSERVICES_DEFAULT_1;
+// 
+// 		m_ControlProto[10] = IPSC_CURRENTLPVERSION_DEFAULT_2;
+// 		m_ControlProto[11] = IPSC_CURRENTLPVERSION_DEFAULT_1;
+// 		m_ControlProto[12] = IPSC_OLDESTLPVERSION_DEFAULT_2;
+// 		m_ControlProto[13] = IPSC_OLDESTLPVERSION_DEFAULT_1;
+// 	}
+// 	else if (CONFIG_RECORD_TYPE == CPC)
+// 	{
+// 		m_ControlProto[5] = CPC_PEERMODE_DEFAULT;    // PEERMODE_DEFAULT
+// 		m_ControlProto[6] = CPC_PEERSERVICES_DEFAULT_4;    // PEER SERVICE
+// 		m_ControlProto[7] = CPC_PEERSERVICES_DEFAULT_3;
+// 		m_ControlProto[8] = CPC_PEERSERVICES_DEFAULT_2;
+// 		m_ControlProto[9] = CPC_PEERSERVICES_DEFAULT_1;
+// 
+// 		m_ControlProto[10] = CPC_CURRENTVERSION_DEFAULT_2;
+// 		m_ControlProto[11] = CPC_CURRENTVERSION_DEFAULT_1;
+// 		m_ControlProto[12] = CPC_OLDESTVERSION_DEFAULT_2;
+// 		m_ControlProto[13] = CPC_OLDESTVERSION_DEFAULT_1;
+// 	}
+// 	else
+// 	{
+// 
+// 		m_ControlProto[5] = LCP_PEERMODE_DEFAULT_1;
+// 		m_ControlProto[6] = LCP_PEERMODE_DEFAULT_2;
+// 
+// 		m_ControlProto[7] = LCP_PEERSERVICES_DEFAULT_1;
+// 		m_ControlProto[8] = LCP_PEERSERVICES_DEFAULT_2;
+// 		m_ControlProto[9] = LCP_PEERSERVICES_DEFAULT_3;
+// 		m_ControlProto[10] = LCP_PEERSERVICES_DEFAULT_4;
+// 
+// 		m_ControlProto[11] = 0x00;  // leadingChannelID
+// 
+// 		m_ControlProto[12] = LCP_CURRENTVERSION_DEFAULT_2;
+// 		m_ControlProto[13] = LCP_CURRENTVERSION_DEFAULT_1;
+// 
+// 		m_ControlProto[14] = LCP_OLDESTVERSION_DEFAULT_2;
+// 		m_ControlProto[15] = LCP_OLDESTVERSION_DEFAULT_1;
+// 	}
+// 
+// 
+// 	m_SendControlBuffer.buf = &m_ControlProto[0];
+// 	m_SendControlBuffer.len = 0; //Not really necessary.
+// }
 
 BOOL CWLNet::StartNet(DWORD dwMasterIp
 	, WORD wMasterPort
 	, DWORD dwLocalIp
 	, DWORD dwSelfPeerId
 	, DWORD dwSelfRadioId
-	, int dwSelfSlot
-	, unsigned int dwSelfGroup
+	//, int dwSelfSlot
+	//, unsigned int dwSelfGroup
 	, DWORD recType
 	)
 {
@@ -436,10 +439,10 @@ BOOL CWLNet::StartNet(DWORD dwMasterIp
 	m_masterAddress = dwMasterIp;
 	m_masterPort = wMasterPort;
 	m_dwMyRadioID = dwSelfRadioId;
-	m_TxSlot = dwSelfSlot;
-	m_dwMyRadioGroup = dwSelfGroup;
+	//m_TxSlot = dwSelfSlot;
+	//m_dwMyRadioGroup = dwSelfGroup;
 	//InitControlBuffer(dwSelfPeerId);
-	g_localPeerId = dwSelfPeerId;
+	CONFIG_LOCAL_PEER_ID = dwSelfPeerId;
 	m_WLStatus = STARTING;
 	m_bExit = FALSE;
 
@@ -642,7 +645,7 @@ void CWLNet::Net_RegisterLE(DWORD eventIndex)
 
 		//Build_LE_MASTER_PEER_REGISTRATION_REQUEST();
 		//m_ControlProto[0] = LE_MASTER_PEER_REGISTRATION_REQUEST;
-		if (g_recordType == LCP)
+		if (CONFIG_RECORD_TYPE == LCP)
 		{
 			//m_SendControlBuffer.len = LE_MASTER_PEER_REGISTRATION_REQUEST_LCP_L;
 			T_LE_PROTOCOL_90_LCP networkData = { 0 };
@@ -650,7 +653,7 @@ void CWLNet::Net_RegisterLE(DWORD eventIndex)
 			networkData.leadingChannelID = LEADING_CHANNEL_ID;
 			networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 			networkData.Opcode = LE_MASTER_PEER_REGISTRATION_REQUEST;
-			networkData.peerID = g_localPeerId;
+			networkData.peerID = CONFIG_LOCAL_PEER_ID;
 			networkData.peerMode = LCP_MODE;
 			networkData.peerServices = LCP_SERVICES;
 			m_SendControlBuffer.buf = m_ControlProto;
@@ -660,8 +663,8 @@ void CWLNet::Net_RegisterLE(DWORD eventIndex)
 		{
 			T_LE_PROTOCOL_90 networkData = { 0 };
 			networkData.Opcode = LE_MASTER_PEER_REGISTRATION_REQUEST;
-			networkData.peerID = g_localPeerId;
-			if (IPSC == g_recordType)
+			networkData.peerID = CONFIG_LOCAL_PEER_ID;
+			if (IPSC == CONFIG_RECORD_TYPE)
 			{
 				networkData.currentLinkProtocolVersion = IPSC_CURRENTLPVERSION;
 				networkData.oldestLinkProtocolVersion = IPSC_OLDESTPVERSION;
@@ -846,7 +849,7 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE(DWORD eveintIndex)
 				T_LE_PROTOCOL_91_LCP networkDataLcp = { 0 };
 				T_LE_PROTOCOL_91 networkData = { 0 };
 				/*解包*/
-				if (LCP == g_recordType)
+				if (LCP == CONFIG_RECORD_TYPE)
 				{
 					networkDataLcp.length = (u_short)m_dwByteRecevied;
 					Unpack_LE_MASTER_PEER_REGISTRATION_RESPONSE(m_CurrentRecvBuffer.buf, networkDataLcp);
@@ -857,14 +860,14 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE(DWORD eveintIndex)
 					Unpack_LE_MASTER_PEER_REGISTRATION_RESPONSE(m_CurrentRecvBuffer.buf, networkData);
 				}
 				/*获取关键数据*/
-				if (LCP == g_recordType)
+				if (LCP == CONFIG_RECORD_TYPE)
 				{
 					m_ulMasterPeerID = networkDataLcp.peerID;
 					m_ucMasterMode = networkDataLcp.peerMode;
 					m_uMasterServices = networkDataLcp.peerServices;
 					ExpectedPeers = networkDataLcp.numPeers;
 				}
-				else if ((CPC == g_recordType || IPSC == g_recordType))
+				else if ((CPC == CONFIG_RECORD_TYPE || IPSC == CONFIG_RECORD_TYPE))
 				{
 					m_ulMasterPeerID = networkData.peerID;
 					m_ucMasterMode = networkData.peerMode;
@@ -905,14 +908,14 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE(DWORD eveintIndex)
 				//Need to get map.
 				else
 				{
-					if (LCP == g_recordType)
+					if (LCP == CONFIG_RECORD_TYPE)
 					{
 						T_LE_PROTOCOL_92_LCP networkData = { 0 };
 						networkData.acceptedLinkProtocolVersion = LCP_CURRENTLPVERSION;
 						networkData.mapType = MAP_TYPE;
 						networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 						networkData.Opcode = LE_NOTIFICATION_MAP_REQUEST;
-						networkData.peerID = g_localPeerId;
+						networkData.peerID = CONFIG_LOCAL_PEER_ID;
 						m_SendControlBuffer.buf = m_ControlProto;
 						m_SendControlBuffer.len = Build_LE_NOTIFICATION_MAP_REQUEST(m_SendControlBuffer.buf, &networkData);
 					}
@@ -920,7 +923,7 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE(DWORD eveintIndex)
 					{
 						T_LE_PROTOCOL_92 networkData = { 0 };
 						networkData.Opcode = LE_NOTIFICATION_MAP_REQUEST;
-						networkData.peerID = g_localPeerId;
+						networkData.peerID = CONFIG_LOCAL_PEER_ID;
 						m_SendControlBuffer.buf = m_ControlProto;
 						m_SendControlBuffer.len = Build_LE_NOTIFICATION_MAP_REQUEST(m_SendControlBuffer.buf, &networkData);
 					}
@@ -967,7 +970,8 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE(DWORD eveintIndex)
 void CWLNet::Net_MaintainKeepAlive()
 {
 	//CString strSysLog;
-	if ((GetTickCount() - m_dwMasterKeepAliveTime) > MASTER_HEART_TIME)
+	long dif = GetTickCount() - m_dwMasterKeepAliveTime;
+	if (dif > CONFIG_MASTER_HEART_TIME)
 	{
 		if (m_dwRecvMasterKeepAliveTime == m_dwMasterKeepAliveTime)
 		{
@@ -983,14 +987,14 @@ void CWLNet::Net_MaintainKeepAlive()
 		m_dwMasterKeepAliveTime = GetTickCount();
 
 		/*主动发送LE_MASTER_KEEP_ALIVE_REQUEST*/
-		if (LCP == g_recordType)
+		if (LCP == CONFIG_RECORD_TYPE)
 		{
 			T_LE_PROTOCOL_96_LCP networkData = { 0 };
 			networkData.currentLinkProtocolVersion = LCP_CURRENTLPVERSION;
 			networkData.leadingChannelID = LEADING_CHANNEL_ID;
 			networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 			networkData.Opcode = LE_MASTER_KEEP_ALIVE_REQUEST;
-			networkData.peerID = g_localPeerId;
+			networkData.peerID = CONFIG_LOCAL_PEER_ID;
 			networkData.peerMode = LCP_MODE;
 			networkData.peerServices = LCP_SERVICES;
 			m_SendControlBuffer.buf = m_ControlProto;
@@ -1000,8 +1004,8 @@ void CWLNet::Net_MaintainKeepAlive()
 		{
 			T_LE_PROTOCOL_96 networkData = { 0 };
 			networkData.Opcode = LE_MASTER_KEEP_ALIVE_REQUEST;
-			networkData.peerID = g_localPeerId;
-			if (CPC == g_recordType)
+			networkData.peerID = CONFIG_LOCAL_PEER_ID;
+			if (CPC == CONFIG_RECORD_TYPE)
 			{
 				networkData.currentLinkProtocolVersion = CPC_CURRENTLPVERSION;
 				networkData.oldestLinkProtocolVersion = CPC_OLDESTPVERSION;
@@ -1036,16 +1040,11 @@ void CWLNet::Net_MaintainKeepAlive()
 
 void CWLNet::Net_MaintainAlive(DWORD eventIndex)
 {
+	/*进行调度组检查*/
+	checkDefaultGroup();
 	int    rc;
-	//进行超时检查
-	//if (m_dwRecType == CPC || m_dwRecType == LCP)
-	//{
+	/*进行语音记录检查*/
 	Process_WL_BURST_CALL(WL_BURST_CHECK_TIMEOUT, NULL);
-	//}
-	//else if (m_dwRecType == IPSC)
-	//{
-	//	ProcessCall(0, TRUE);
-	//}
 
 	switch (eventIndex)
 	{
@@ -1098,7 +1097,7 @@ void CWLNet::Net_MaintainAlive(DWORD eventIndex)
 											   T_LE_PROTOCOL_98 networkData = { 0 };
 											   T_LE_PROTOCOL_98_LCP networkDataLcp = { 0 };
 											   CIPSCPeer* peer = NULL;
-											   if (LCP == g_recordType)
+											   if (LCP == CONFIG_RECORD_TYPE)
 											   {
 												   networkDataLcp.length = (u_short)m_dwByteRecevied;
 												   Unpack_LE_PEER_KEEP_ALIVE_REQUEST(m_CurrentRecvBuffer.buf, networkDataLcp);
@@ -1122,7 +1121,7 @@ void CWLNet::Net_MaintainAlive(DWORD eventIndex)
 												T_LE_PROTOCOL_99 networkData = { 0 };
 												T_LE_PROTOCOL_99_LCP networkDataLcp = { 0 };
 												CIPSCPeer* peer = NULL;
-												if (LCP == g_recordType)
+												if (LCP == CONFIG_RECORD_TYPE)
 												{
 													networkDataLcp.length = (u_short)m_dwByteRecevied;
 													Unpack_LE_PEER_KEEP_ALIVE_RESPONSE(m_CurrentRecvBuffer.buf, networkDataLcp);
@@ -1330,7 +1329,7 @@ void CWLNet::Net_MaintainAlive(DWORD eventIndex)
 												  /*解包*/
 												  T_LE_PROTOCOL_93 networkData = { 0 };
 												  T_LE_PROTOCOL_93_LCP networkDataLcp = { 0 };
-												  if (LCP == g_recordType)
+												  if (LCP == CONFIG_RECORD_TYPE)
 												  {
 													  networkDataLcp.length = (u_short)m_RecvMap;
 													  Unpack_LE_NOTIFICATION_MAP_BROADCAST(m_CurrentRecvBuffer.buf, networkDataLcp);
@@ -1474,7 +1473,7 @@ void CWLNet::Net_WAITFOR_LE_NOTIFICATION_MAP_BROADCAST(DWORD eventIndex)
 				/*解包*/
 				T_LE_PROTOCOL_93 networkData = { 0 };
 				T_LE_PROTOCOL_93_LCP networkDataLcp = { 0 };
-				if (LCP == g_recordType)
+				if (LCP == CONFIG_RECORD_TYPE)
 				{
 					networkDataLcp.length = (u_short)m_RecvMap;
 					Unpack_LE_NOTIFICATION_MAP_BROADCAST(m_CurrentRecvBuffer.buf, networkDataLcp);
@@ -1667,7 +1666,7 @@ void CWLNet::Net_WAITFOR_LE_NOTIFICATION_MAP_BROADCAST(DWORD eventIndex)
 //}
 void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 {
-	if (LCP == g_recordType)
+	if (LCP == CONFIG_RECORD_TYPE)
 	{
 		int mapNums = pLcp->mapNums;
 		m_PeerCount = mapNums;
@@ -1810,23 +1809,23 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 // 	return size;
 // }
 
-BOOL CWLNet::FindPeer(u_long peerAddr)
-{
-	if (0 == peerAddr)
-	{
-		return TRUE;
-	}
-
-	for (auto i = m_pPeers.begin(); i != m_pPeers.end(); i++)
-	{
-		if ((*i)->GetAddress() == peerAddr)
-		{
-			return TRUE;
-		}
-	}
-
-	return FALSE;
-}
+// BOOL CWLNet::FindPeer(u_long peerAddr)
+// {
+// 	if (0 == peerAddr)
+// 	{
+// 		return TRUE;
+// 	}
+// 
+// 	for (auto i = m_pPeers.begin(); i != m_pPeers.end(); i++)
+// 	{
+// 		if ((*i)->GetAddress() == peerAddr)
+// 		{
+// 			return TRUE;
+// 		}
+// 	}
+// 
+// 	return FALSE;
+// }
 
 CIPSCPeer* CWLNet::GetPeer(u_long peerId)
 {
@@ -2183,15 +2182,33 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 								   /*结束超时的语音*/
 								   for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
 								   {
-									   CRecordFile *p = (CRecordFile*)(*i);
-									   long diffTimestamp = currentTimestamp - p->prevTimestamp;
-									   if (diffTimestamp > VOICE_END_TIMEOUT)
+									   long diffTimestamp = currentTimestamp - (*i)->prevTimestamp;
+									   CRecordFile* p = (CRecordFile*)(*i);
+									   if (diffTimestamp > CONFIG_HUNG_TIME && VOICE_STATUS_CALLBACK == (*i)->callStatus)
 									   {
+										   m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, CONFIG_RECORD_TYPE, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi, (*i)->callStatus, &((*i)->recordTime));
 										   requireVoiceReocrdsLock();
-										   delete p;
+										   delete (*i);
 										   m_voiceReocrds.erase(i);
 										   releaseVoiceReocrdsLock();
-										   sprintf_s(m_reportMsg, "call %lu timeout,then end %ld", p->callId, diffTimestamp);
+										   sprintf_s(m_reportMsg, "call back,then voice end %ld", diffTimestamp);
+										   sendLogToWindow();
+										   break;
+									   }
+									   else if (diffTimestamp > VOICE_END_TIMEOUT && VOICE_STATUS_CALLBACK != (*i)->callStatus)
+									   {
+										   if (isTargetMeCall((*i)->tagetId, (*i)->callType) && !g_dongleIsUsing)
+										   {
+											   SetCallStatus(CALL_IDLE);
+										   }
+										   (*i)->callStatus = VOICE_STATUS_END;
+										   GetLocalTime(&((*i)->recordTime));
+										   m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, CONFIG_RECORD_TYPE, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi,(*i)->callStatus,&((*i)->recordTime));
+										   requireVoiceReocrdsLock();
+										   delete (*i);
+										   m_voiceReocrds.erase(i);
+										   releaseVoiceReocrdsLock();
+										   sprintf_s(m_reportMsg, "call timeout,then end %ld", diffTimestamp);
 										   sendLogToWindow();
 										   break;
 									   }
@@ -2201,7 +2218,8 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 		/*recive a voice statrt of a call*/
 	case WL_VC_VOICE_START:
 	{
-							  g_pDongle->changeAMBEToPCM();
+							  //SetCallStatus(CALL_START);
+							  //g_pDongle->changeAMBEToPCM();
 
 							  T_WL_PROTOCOL_18 *p = (T_WL_PROTOCOL_18*)pNetWork;
 							  /*建立语音记录*/
@@ -2213,6 +2231,12 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 							  rFile->callType = p->callType;
 							  rFile->prevTimestamp = GetTickCount();
 							  rFile->srcSlot = p->slotNumber;
+							  rFile->callStatus = VOICE_STATUS_START;
+
+							  if (isTargetMeCall(p->targetID, p->callType))
+							  {
+								  SetCallStatus(CALL_START);
+							  }
 
 							  requireVoiceReocrdsLock();
 							  m_voiceReocrds.push_back(rFile);
@@ -2236,11 +2260,12 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 										  (*i)->tagetId == tgtId &&
 										  (*i)->callId == callId)
 									  {
-										  m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, g_recordType, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi);
-										  requireVoiceReocrdsLock();
-										  delete (*i);
-										  m_voiceReocrds.erase(i);
-										  releaseVoiceReocrdsLock();
+										  GetLocalTime(&((*i)->recordTime));
+										  //m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, g_recordType, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi, (*i)->callStatus, &((*i)->recordTime));
+										  //requireVoiceReocrdsLock();
+										  //delete (*i);
+										  //m_voiceReocrds.erase(i);
+										  //releaseVoiceReocrdsLock();
 										  sprintf_s(m_reportMsg, "Voice end");
 										  sendLogToWindow();
 										  break;
@@ -2251,6 +2276,8 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 		/*recive a voice data of a call*/
 	case WL_VC_VOICE_BURST:
 	{
+
+							  //SetCallStatus(CALL_ONGOING);
 							  char voiceFrame1[7] = { 0 };
 							  char voiceFrame2[7] = { 0 };
 							  char voiceFrame3[7] = { 0 };
@@ -2259,6 +2286,12 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 							  srcId = p->sourceID;
 							  tgtId = p->targetID;
 							  bool ishaveRecord = false;
+
+							  if (isTargetMeCall(p->targetID, p->callType))
+							  {
+								  SetCallStatus(CALL_ONGOING);
+							  }
+
 							  char* pAmbePacket = &(p->AMBEVoiceEncodedFrames.data[0]);
 
 							  voiceFrame1[0] = pAmbePacket[1];
@@ -2311,6 +2344,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 								  rFile->prevTimestamp = GetTickCount();
 								  rFile->srcSlot = p->slotNumber;
 								  rFile->srcRssi = p->rawRssiValue;
+								  rFile->callStatus = VOICE_STATUS_START;
 
 								  rFile->WriteVoiceFrame(voiceFrame1);
 								  rFile->WriteVoiceFrame(voiceFrame2);
@@ -2332,35 +2366,68 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 									  callId = p->callID;
 									  srcId = p->sourceID;
 									  tgtId = p->targetID;
-									  /*结束本次语音*/
-									  for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
-									  {
-										  if ((*i)->srcId == callId &&
-											  (*i)->tagetId == tgtId &&
-											  (*i)->callId == callId)
-										  {
-											  m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, g_recordType, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi);
-											  requireVoiceReocrdsLock();
-											  delete (*i);
-											  m_voiceReocrds.erase(i);
-											  releaseVoiceReocrdsLock();
-											  sprintf_s(m_reportMsg, "Voice end");
-											  sendLogToWindow();
-											  break;
-										  }
-									  }
+
 									  switch (p->callSessionStatus)
 									  {
 									  case Call_Session_End:
 									  {
-															   /*结束本次通话*/
-															   SetCallStatus(CALL_IDLE);
+															   if (isTargetMeCall(p->targetID, p->callType))
+															   {
+																   SetCallStatus(CALL_IDLE);
+															   }
+															   ///*结束本次通话*/
+															   for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+															   {
+																   if ((*i)->srcId == srcId &&
+																	   (*i)->tagetId == tgtId &&
+																	   (*i)->callId == callId)
+																   {
+																	   (*i)->callStatus = VOICE_STATUS_END;
+																	   //GetLocalTime(&((*i)->recordTime));
+																	   m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, CONFIG_RECORD_TYPE, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi, (*i)->callStatus, &((*i)->recordTime));
+																	   requireVoiceReocrdsLock();
+																	   delete (*i);
+																	   m_voiceReocrds.erase(i);
+																	   releaseVoiceReocrdsLock();
+																	   sprintf_s(m_reportMsg, "Voice session end");
+																	   sendLogToWindow();
+																	   break;
+																   }
+															   }
 									  }
 										  break;
 									  case Call_Session_Call_Hang:
 									  {
-																	 /*进入挂起状态*/
-																	 SetCallStatus(CALL_HANGUP);
+
+																	 /*设置当前可通话peer相关属性*/
+
+																	 if (isTargetMeCall(p->targetID, p->callType))
+																	 {
+																		 SetCallStatus(CALL_HANGUP);
+																		 CIPSCPeer *peer = GetPeer(p->peerID);
+																		 peer->setUseSlot(p->slotNumber);
+																		 setCurrentSendVoicePeer(peer);
+																		 g_targetId = p->targetID;
+																		 g_targetCallType = p->callType;
+																	 }
+																	 for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+																	 {
+																		 if ((*i)->srcId == srcId &&
+																			 (*i)->tagetId == tgtId &&
+																			 (*i)->callId == callId)
+																		 {
+																			 (*i)->callStatus = VOICE_STATUS_CALLBACK;
+																			 //GetLocalTime(&((*i)->recordTime));
+																			 //m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, g_recordType, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi, (*i)->callStatus, &((*i)->recordTime));
+																			 //requireVoiceReocrdsLock();
+																			 //delete (*i);
+																			 //m_voiceReocrds.erase(i);
+																			 //releaseVoiceReocrdsLock();
+																			 sprintf_s(m_reportMsg, "Voice hang up");
+																			 sendLogToWindow();
+																			 break;
+																		 }
+																	 }
 									  }
 										  break;
 									  default:
@@ -4066,131 +4133,131 @@ void CWLNet::NetTx(bool Start)
 
 
 
-void CWLNet::InitialCallRecord()
-{
-	int tmp_peer_id;
-	int tmp_src_ID;
-	int tmp_tgt_ID;
-	unsigned __int16 tmp_crc;
-	unsigned __int16 reorder_bits[8];
-
-	//set everything to 0
-	memset(&myCallRecord, 0, sizeof(CallRecord));
-
-	// *************** Start to fill in the IPSC header ******************
-	// set the Opcode, assume it is always a group call
-	myCallRecord.CommonField.fld.CallOpcode = IPSC_GRP_VOICE_CALL;
-
-	//Set the peer ID
-	tmp_peer_id = GetMyPeerID();
-	myCallRecord.CommonField.fld.CallOriginatingPeerID[0] = tmp_peer_id >> 24;
-	myCallRecord.CommonField.fld.CallOriginatingPeerID[1] = (tmp_peer_id >> 16) & 0x000000FF;
-	myCallRecord.CommonField.fld.CallOriginatingPeerID[2] = (tmp_peer_id >> 8) & 0x000000FF;
-	myCallRecord.CommonField.fld.CallOriginatingPeerID[3] = tmp_peer_id & 0x000000FF;
-
-	// the Call sequence number is initialized at the application initialization phase
-
-	// Increment the Call Sequence Number
-	if (m_callSequenceNumber < MAXCALLSEQUENCE)
-	{
-		m_callSequenceNumber++;
-	}
-	else
-	{
-		m_callSequenceNumber = 0x00;
-	}
-
-	myCallRecord.CommonField.fld.CallSequenceNumber = m_callSequenceNumber;
-
-
-	tmp_src_ID = GetMyRadioID();
-	//	myCallRecord.CommonField.fld.srcID[0] = tmp_src_ID >> 24;
-	//	myCallRecord.CommonField.fld.srcID[1] = (tmp_src_ID >> 16) & 0x0000FF00;
-	//	myCallRecord.CommonField.fld.srcID[2] = (tmp_src_ID >> 8) & 0x000000FF;
-
-	myCallRecord.CommonField.fld.srcID[0] = (tmp_src_ID >> 16) & 0x000000FF;
-	myCallRecord.CommonField.fld.srcID[1] = (tmp_src_ID >> 8) & 0x000000FF;
-	myCallRecord.CommonField.fld.srcID[2] = (tmp_src_ID)& 0x000000FF;
-
-	// set it to 0 now, we are not implementing floor control yet
-	myCallRecord.CommonField.fld.CallFloorControlTag[0] = 0;
-	myCallRecord.CommonField.fld.CallFloorControlTag[1] = 0;
-	myCallRecord.CommonField.fld.CallFloorControlTag[2] = 0;
-	myCallRecord.CommonField.fld.CallFloorControlTag[3] = 0;
-
-
-	tmp_tgt_ID = GetSelectedTalkgroup();
-	myCallRecord.CommonField.fld.tgtID[0] = (tmp_tgt_ID >> 16) & 0x000000FF;
-	myCallRecord.CommonField.fld.tgtID[1] = (tmp_tgt_ID >> 8) & 0x000000FF;
-	myCallRecord.CommonField.fld.tgtID[2] = (tmp_tgt_ID)& 0x000000FF;
-
-	myCallRecord.CommonField.fld.CallPriority = IPSC_HEADER_PRIORITY_VOICE;
-
-	// assume it is always non-secure call
-	myCallRecord.CommonField.fld.CallControlInformation = 0;  // by default,it is set to non-secure, non-last packet,and the the slot number of 1 
-
-	if (GetTxSlot() == 1)
-	{
-		myCallRecord.CommonField.fld.CallControlInformation |= IPSC_HEADER_CALL_CONTROL_SLOT2;
-	}
-
-	//*************** Start to fill in the RTP header ******************
-
-	// set the first byte of the RTP header
-	myCallRecord.CommonField.fld.RTP_VPXCC = RTP_VPXCC_VALUE;
-
-	// set the second byte of the RTP header
-	myCallRecord.CommonField.fld.RTP_MPT = RTP_NON_LAST_PAYLOAD_TYPE;
-
-
-	myCallRecord.CommonField.fld.RTPSequence[0] = 0;             //Host order   10
-	myCallRecord.CommonField.fld.RTPSequence[1] = 0;
-
-	myCallRecord.CommonField.fld.RTPTimeStamp[0] = 0;  //Host order
-	myCallRecord.CommonField.fld.RTPTimeStamp[1] = 0;
-	myCallRecord.CommonField.fld.RTPTimeStamp[2] = 0;
-	myCallRecord.CommonField.fld.RTPTimeStamp[3] = 0;
-
-	myCallRecord.CommonField.fld.RTPSSRC[0] = 0;  //Always 0
-	myCallRecord.CommonField.fld.RTPSSRC[1] = 0;
-	myCallRecord.CommonField.fld.RTPSSRC[2] = 0;
-	myCallRecord.CommonField.fld.RTPSSRC[3] = 0;
-
-	//*************  Start to fill in the RTP Payload header ******************
-	// init the RepeaterBurstDataType, the value will be filled based on the burst type
-	myCallRecord.CommonField.fld.RepeaterBurstDataType = 0;
-
-	// ************  initialize the timestampe
-	myCallRecord.SampleTimeStamp = 100;			// just assign an non-zero number to begin with
-
-	// ************  create the LC msg
-	//	assume the call is non-emergency, non privacy, group call, non Open Voice Call Mode, and priority level of lowest (0)
-	myCallRecord.LCField.fld.PRFLCO = 0;			// set the field to 0, so that the bit 7 (PF) and bit 6(reserved) are set to 0
-	myCallRecord.LCField.fld.PRFLCO = myCallRecord.LCField.fld.PRFLCO | (const unsigned __int8)(LC_STANDARD_FID >> 2);			// set the FID to standard one
-	myCallRecord.LCField.fld.ServiceOptions = 0;
-	memcpy(myCallRecord.LCField.fld.TargetAddress, myCallRecord.CommonField.fld.tgtID, 3);
-	memcpy(myCallRecord.LCField.fld.SourceAddress, myCallRecord.CommonField.fld.srcID, 3);
-
-	// calculate the 5-bit embedded LC CRC
-	tmp_crc = embeddedLCCheckSumGen(myCallRecord.LCField.All);
-
-	//tmp_crc = tmp_crc << 11;				//Change the right justified data to left justified
-	myCallRecord.EmbeddedLCCRC = tmp_crc;   //the most significant 5 bits contain the crc
-
-	// calculate the EmLC hard bits for burst B-E, the output is un-interleaved hardbits
-	//SQZ start ?????? 2/25/2010
-	memset(reorder_bits, 0, 8);
-	//SQZ end ?????? 2/25/2010
-	FECEncoding(&myCallRecord, reorder_bits);
-
-	// interleave the 16-byte integer into 8-byte order
-	Interleave(reorder_bits, &myCallRecord);
-	return;
-}
+// void CWLNet::InitialCallRecord()
+// {
+// 	int tmp_peer_id;
+// 	int tmp_src_ID;
+// 	int tmp_tgt_ID;
+// 	unsigned __int16 tmp_crc;
+// 	unsigned __int16 reorder_bits[8];
+// 
+// 	//set everything to 0
+// 	memset(&myCallRecord, 0, sizeof(CallRecord));
+// 
+// 	// *************** Start to fill in the IPSC header ******************
+// 	// set the Opcode, assume it is always a group call
+// 	myCallRecord.CommonField.fld.CallOpcode = IPSC_GRP_VOICE_CALL;
+// 
+// 	//Set the peer ID
+// 	tmp_peer_id = GetMyPeerID();
+// 	myCallRecord.CommonField.fld.CallOriginatingPeerID[0] = tmp_peer_id >> 24;
+// 	myCallRecord.CommonField.fld.CallOriginatingPeerID[1] = (tmp_peer_id >> 16) & 0x000000FF;
+// 	myCallRecord.CommonField.fld.CallOriginatingPeerID[2] = (tmp_peer_id >> 8) & 0x000000FF;
+// 	myCallRecord.CommonField.fld.CallOriginatingPeerID[3] = tmp_peer_id & 0x000000FF;
+// 
+// 	// the Call sequence number is initialized at the application initialization phase
+// 
+// 	// Increment the Call Sequence Number
+// 	if (m_callSequenceNumber < MAXCALLSEQUENCE)
+// 	{
+// 		m_callSequenceNumber++;
+// 	}
+// 	else
+// 	{
+// 		m_callSequenceNumber = 0x00;
+// 	}
+// 
+// 	myCallRecord.CommonField.fld.CallSequenceNumber = m_callSequenceNumber;
+// 
+// 
+// 	tmp_src_ID = GetMyRadioID();
+// 	//	myCallRecord.CommonField.fld.srcID[0] = tmp_src_ID >> 24;
+// 	//	myCallRecord.CommonField.fld.srcID[1] = (tmp_src_ID >> 16) & 0x0000FF00;
+// 	//	myCallRecord.CommonField.fld.srcID[2] = (tmp_src_ID >> 8) & 0x000000FF;
+// 
+// 	myCallRecord.CommonField.fld.srcID[0] = (tmp_src_ID >> 16) & 0x000000FF;
+// 	myCallRecord.CommonField.fld.srcID[1] = (tmp_src_ID >> 8) & 0x000000FF;
+// 	myCallRecord.CommonField.fld.srcID[2] = (tmp_src_ID)& 0x000000FF;
+// 
+// 	// set it to 0 now, we are not implementing floor control yet
+// 	myCallRecord.CommonField.fld.CallFloorControlTag[0] = 0;
+// 	myCallRecord.CommonField.fld.CallFloorControlTag[1] = 0;
+// 	myCallRecord.CommonField.fld.CallFloorControlTag[2] = 0;
+// 	myCallRecord.CommonField.fld.CallFloorControlTag[3] = 0;
+// 
+// 
+// 	tmp_tgt_ID = GetSelectedTalkgroup();
+// 	myCallRecord.CommonField.fld.tgtID[0] = (tmp_tgt_ID >> 16) & 0x000000FF;
+// 	myCallRecord.CommonField.fld.tgtID[1] = (tmp_tgt_ID >> 8) & 0x000000FF;
+// 	myCallRecord.CommonField.fld.tgtID[2] = (tmp_tgt_ID)& 0x000000FF;
+// 
+// 	myCallRecord.CommonField.fld.CallPriority = IPSC_HEADER_PRIORITY_VOICE;
+// 
+// 	// assume it is always non-secure call
+// 	myCallRecord.CommonField.fld.CallControlInformation = 0;  // by default,it is set to non-secure, non-last packet,and the the slot number of 1 
+// 
+// 	if (GetTxSlot() == 1)
+// 	{
+// 		myCallRecord.CommonField.fld.CallControlInformation |= IPSC_HEADER_CALL_CONTROL_SLOT2;
+// 	}
+// 
+// 	//*************** Start to fill in the RTP header ******************
+// 
+// 	// set the first byte of the RTP header
+// 	myCallRecord.CommonField.fld.RTP_VPXCC = RTP_VPXCC_VALUE;
+// 
+// 	// set the second byte of the RTP header
+// 	myCallRecord.CommonField.fld.RTP_MPT = RTP_NON_LAST_PAYLOAD_TYPE;
+// 
+// 
+// 	myCallRecord.CommonField.fld.RTPSequence[0] = 0;             //Host order   10
+// 	myCallRecord.CommonField.fld.RTPSequence[1] = 0;
+// 
+// 	myCallRecord.CommonField.fld.RTPTimeStamp[0] = 0;  //Host order
+// 	myCallRecord.CommonField.fld.RTPTimeStamp[1] = 0;
+// 	myCallRecord.CommonField.fld.RTPTimeStamp[2] = 0;
+// 	myCallRecord.CommonField.fld.RTPTimeStamp[3] = 0;
+// 
+// 	myCallRecord.CommonField.fld.RTPSSRC[0] = 0;  //Always 0
+// 	myCallRecord.CommonField.fld.RTPSSRC[1] = 0;
+// 	myCallRecord.CommonField.fld.RTPSSRC[2] = 0;
+// 	myCallRecord.CommonField.fld.RTPSSRC[3] = 0;
+// 
+// 	//*************  Start to fill in the RTP Payload header ******************
+// 	// init the RepeaterBurstDataType, the value will be filled based on the burst type
+// 	myCallRecord.CommonField.fld.RepeaterBurstDataType = 0;
+// 
+// 	// ************  initialize the timestampe
+// 	myCallRecord.SampleTimeStamp = 100;			// just assign an non-zero number to begin with
+// 
+// 	// ************  create the LC msg
+// 	//	assume the call is non-emergency, non privacy, group call, non Open Voice Call Mode, and priority level of lowest (0)
+// 	myCallRecord.LCField.fld.PRFLCO = 0;			// set the field to 0, so that the bit 7 (PF) and bit 6(reserved) are set to 0
+// 	myCallRecord.LCField.fld.PRFLCO = myCallRecord.LCField.fld.PRFLCO | (const unsigned __int8)(LC_STANDARD_FID >> 2);			// set the FID to standard one
+// 	myCallRecord.LCField.fld.ServiceOptions = 0;
+// 	memcpy(myCallRecord.LCField.fld.TargetAddress, myCallRecord.CommonField.fld.tgtID, 3);
+// 	memcpy(myCallRecord.LCField.fld.SourceAddress, myCallRecord.CommonField.fld.srcID, 3);
+// 
+// 	// calculate the 5-bit embedded LC CRC
+// 	tmp_crc = embeddedLCCheckSumGen(myCallRecord.LCField.All);
+// 
+// 	//tmp_crc = tmp_crc << 11;				//Change the right justified data to left justified
+// 	myCallRecord.EmbeddedLCCRC = tmp_crc;   //the most significant 5 bits contain the crc
+// 
+// 	// calculate the EmLC hard bits for burst B-E, the output is un-interleaved hardbits
+// 	//SQZ start ?????? 2/25/2010
+// 	memset(reorder_bits, 0, 8);
+// 	//SQZ end ?????? 2/25/2010
+// 	FECEncoding(&myCallRecord, reorder_bits);
+// 
+// 	// interleave the 16-byte integer into 8-byte order
+// 	Interleave(reorder_bits, &myCallRecord);
+// 	return;
+// }
 
 unsigned __int32 CWLNet::GetMyPeerID(void)
 {
-	return g_localPeerId;
+	return CONFIG_LOCAL_PEER_ID;
 }
 
 unsigned __int32 CWLNet::GetMyRadioID(void)
@@ -4198,15 +4265,15 @@ unsigned __int32 CWLNet::GetMyRadioID(void)
 	return m_dwMyRadioID;
 }
 
-unsigned __int32 CWLNet::GetSelectedTalkgroup(void)
-{
-	return m_dwMyRadioGroup;
-}
+//unsigned __int32 CWLNet::GetSelectedTalkgroup(void)
+//{
+//	return m_dwMyRadioGroup;
+//}
 
-int CWLNet::GetTxSlot(void)
-{
-	return m_TxSlot;
-}
+// int CWLNet::GetTxSlot(void)
+// {
+// 	return m_TxSlot;
+// }
 
 unsigned __int16 CWLNet::embeddedLCCheckSumGen(unsigned __int8 * inputPtr)
 {
@@ -4387,109 +4454,109 @@ void CWLNet::Interleave(unsigned __int16 *reorder_bits, CallRecord * myCallRecor
 	}
 }
 
-void CWLNet::FillIPSCFormat(IPSCVoiceTemplate* pBuffer, IPSCBurstType burstType, bool lastBurst)
-{
-	// check if this is the last packet
-	if (lastBurst == TRUE)
-	{
-		myCallRecord.CommonField.fld.CallControlInformation |= IPSC_HEADER_CALL_CONTROL_LAST_PACKET;
-
-		// set the second byte of the RTP header mean this is last pack
-		myCallRecord.CommonField.fld.RTP_MPT = RTP_LAST_PAYLOAD_TYPE;
-	}
-
-	//check if the RTP sequence number and Timestamp have to be reset
-	//	if (restartSequence == TRUE)
-	//	{
-	//		myCallRecord.CommonField.fld.RTPSequence[0] = 0;             //Host order   10
-	//		myCallRecord.CommonField.fld.RTPSequence[1] = 0;
-
-	//		myCallRecord.SampleTimeStamp = 100;			// just assign an non-zero number to begin with
-
-	//	}
-	//	else
-	//	{
-	// increment the RTP Sequence number;
-	myCallRecord.CommonField.fld.RTPSequence[1]++;
-	if (myCallRecord.CommonField.fld.RTPSequence[1] == 0)
-	{
-		myCallRecord.CommonField.fld.RTPSequence[0]++;
-	}
-
-	// increment the timestamp
-	myCallRecord.SampleTimeStamp += RTP_TIMESTAMP_INTERVAL;    // each packet will contain 60ms audio frame.
-
-	//	}
-
-	myCallRecord.CommonField.fld.RTPTimeStamp[0] = (unsigned __int8)(myCallRecord.SampleTimeStamp >> 24) & 0x000000FF;  //Host order
-	myCallRecord.CommonField.fld.RTPTimeStamp[1] = (unsigned __int8)(myCallRecord.SampleTimeStamp >> 16) & 0x000000FF;
-	myCallRecord.CommonField.fld.RTPTimeStamp[2] = (unsigned __int8)(myCallRecord.SampleTimeStamp >> 8) & 0x000000FF;
-	myCallRecord.CommonField.fld.RTPTimeStamp[3] = (unsigned __int8)myCallRecord.SampleTimeStamp & 0x000000FF;
-
-
-
-	// fill in the common header parts first which includes the IPSC, RTP headers
-	memcpy(pBuffer, &myCallRecord.CommonField.fld, 35);
-
-	// fill in the RepeaterBurstType based on the input
-	switch (burstType){
-	case VOICEBURST_A:
-		FillBurstA(pBuffer);
-		break;
-	case VOICEBURST_B:
-		FillBurstBCDF(pBuffer, burstType);
-		break;
-	case VOICEBURST_C:
-		FillBurstBCDF(pBuffer, burstType);
-		break;
-	case VOICEBURST_D:
-		FillBurstBCDF(pBuffer, burstType);
-		break;
-	case VOICEBURST_E:
-		FillBurstE(pBuffer);
-		break;
-	case VOICEBURST_F:
-		FillBurstBCDF(pBuffer, burstType);
-		break;
-	case VOICEHEADER1:
-	case VOICEHEADER2:
-	case VOICETERMINATOR:
-		FillVoiceHeaderTerminator(pBuffer, burstType);
-		break;
-	case PREAMBLECBSK:
-	default:
-		break;
-	}
-}
+//void CWLNet::FillIPSCFormat(IPSCVoiceTemplate* pBuffer, IPSCBurstType burstType, bool lastBurst)
+//{
+//	// check if this is the last packet
+//	if (lastBurst == TRUE)
+//	{
+//		myCallRecord.CommonField.fld.CallControlInformation |= IPSC_HEADER_CALL_CONTROL_LAST_PACKET;
+//
+//		// set the second byte of the RTP header mean this is last pack
+//		myCallRecord.CommonField.fld.RTP_MPT = RTP_LAST_PAYLOAD_TYPE;
+//	}
+//
+//	//check if the RTP sequence number and Timestamp have to be reset
+//	//	if (restartSequence == TRUE)
+//	//	{
+//	//		myCallRecord.CommonField.fld.RTPSequence[0] = 0;             //Host order   10
+//	//		myCallRecord.CommonField.fld.RTPSequence[1] = 0;
+//
+//	//		myCallRecord.SampleTimeStamp = 100;			// just assign an non-zero number to begin with
+//
+//	//	}
+//	//	else
+//	//	{
+//	// increment the RTP Sequence number;
+//	myCallRecord.CommonField.fld.RTPSequence[1]++;
+//	if (myCallRecord.CommonField.fld.RTPSequence[1] == 0)
+//	{
+//		myCallRecord.CommonField.fld.RTPSequence[0]++;
+//	}
+//
+//	// increment the timestamp
+//	myCallRecord.SampleTimeStamp += RTP_TIMESTAMP_INTERVAL;    // each packet will contain 60ms audio frame.
+//
+//	//	}
+//
+//	myCallRecord.CommonField.fld.RTPTimeStamp[0] = (unsigned __int8)(myCallRecord.SampleTimeStamp >> 24) & 0x000000FF;  //Host order
+//	myCallRecord.CommonField.fld.RTPTimeStamp[1] = (unsigned __int8)(myCallRecord.SampleTimeStamp >> 16) & 0x000000FF;
+//	myCallRecord.CommonField.fld.RTPTimeStamp[2] = (unsigned __int8)(myCallRecord.SampleTimeStamp >> 8) & 0x000000FF;
+//	myCallRecord.CommonField.fld.RTPTimeStamp[3] = (unsigned __int8)myCallRecord.SampleTimeStamp & 0x000000FF;
+//
+//
+//
+//	// fill in the common header parts first which includes the IPSC, RTP headers
+//	memcpy(pBuffer, &myCallRecord.CommonField.fld, 35);
+//
+//	// fill in the RepeaterBurstType based on the input
+//	switch (burstType){
+//	case VOICEBURST_A:
+//		FillBurstA(pBuffer);
+//		break;
+//	case VOICEBURST_B:
+//		FillBurstBCDF(pBuffer, burstType);
+//		break;
+//	case VOICEBURST_C:
+//		FillBurstBCDF(pBuffer, burstType);
+//		break;
+//	case VOICEBURST_D:
+//		FillBurstBCDF(pBuffer, burstType);
+//		break;
+//	case VOICEBURST_E:
+//		FillBurstE(pBuffer);
+//		break;
+//	case VOICEBURST_F:
+//		FillBurstBCDF(pBuffer, burstType);
+//		break;
+//	case VOICEHEADER1:
+//	case VOICEHEADER2:
+//	case VOICETERMINATOR:
+//		FillVoiceHeaderTerminator(pBuffer, burstType);
+//		break;
+//	case PREAMBLECBSK:
+//	default:
+//		break;
+//	}
+//}
 
 //The RTP payload format for Burst A is defined as below.All three voice frames in Burst
 //A are sent in one RTP message.
-void CWLNet::FillBurstA(IPSCVoiceTemplate* pBuffer)
-{
-	//the actual length of the burst A in the buffer
-	pBuffer->BurstA.fld.Length = SIZEOFVOICEBURSTA;
-
-	// set the slot number to 0 first
-	pBuffer->BurstA.fld.RepeaterBurstDataType = 0x00;
-
-	if (GetTxSlot() == 1)
-	{
-		//if slot number 2 is used, set bit 7 to 1
-		pBuffer->BurstA.fld.RepeaterBurstDataType |= 0x80;
-	}
-	pBuffer->BurstA.fld.RepeaterBurstDataType |= DATA_TYPE_VOICE;
-
-	//fill in lengthinbytes
-	pBuffer->BurstA.fld.LengthInBytes = RTP_PAYLOAD_BURST_A_LEN_IN_BYTES;
-
-	//fill in control field for voice
-	//Embedded-LC Parity, Sync,  NULL LC, 72 Bit EMB LC, Ignore Sig Bits,  EMB,  Emb_LC Hard Bits, Bad Voice Burst
-
-	pBuffer->BurstA.fld.ESNEIEHB = 0; // reset all the bits to 0, in most case 0 means success
-	pBuffer->BurstA.fld.ESNEIEHB |= RTP_PAYLOAD_VOICE_CONTROL_FIELD_SYNC_DETECTED; // SET SYNC bit
-
-	//the Voice[19] bytes will be filled by the other function calls
-}
+// void CWLNet::FillBurstA(IPSCVoiceTemplate* pBuffer)
+// {
+// 	//the actual length of the burst A in the buffer
+// 	pBuffer->BurstA.fld.Length = SIZEOFVOICEBURSTA;
+// 
+// 	// set the slot number to 0 first
+// 	pBuffer->BurstA.fld.RepeaterBurstDataType = 0x00;
+// 
+// 	if (GetTxSlot() == 1)
+// 	{
+// 		//if slot number 2 is used, set bit 7 to 1
+// 		pBuffer->BurstA.fld.RepeaterBurstDataType |= 0x80;
+// 	}
+// 	pBuffer->BurstA.fld.RepeaterBurstDataType |= DATA_TYPE_VOICE;
+// 
+// 	//fill in lengthinbytes
+// 	pBuffer->BurstA.fld.LengthInBytes = RTP_PAYLOAD_BURST_A_LEN_IN_BYTES;
+// 
+// 	//fill in control field for voice
+// 	//Embedded-LC Parity, Sync,  NULL LC, 72 Bit EMB LC, Ignore Sig Bits,  EMB,  Emb_LC Hard Bits, Bad Voice Burst
+// 
+// 	pBuffer->BurstA.fld.ESNEIEHB = 0; // reset all the bits to 0, in most case 0 means success
+// 	pBuffer->BurstA.fld.ESNEIEHB |= RTP_PAYLOAD_VOICE_CONTROL_FIELD_SYNC_DETECTED; // SET SYNC bit
+// 
+// 	//the Voice[19] bytes will be filled by the other function calls
+// }
 
 
 //Voice Bursts B, C and D have the same RTP packet format.All three voice frames for
@@ -4497,208 +4564,208 @@ void CWLNet::FillBurstA(IPSCVoiceTemplate* pBuffer)
 //LC.
 //All three voice frames in Burst F are sent in one RTP message with 7 bits decoded EMB
 //and 43 crypto parameter bits.
-void CWLNet::FillBurstBCDF(IPSCVoiceTemplate* pBuffer, IPSCBurstType burstType)
-{
-	int i;
-
-	//the actual length of the burst B,C,D,F in the buffer
-	pBuffer->BurstBCDF.fld.Length = SIZEOFVOICEBURSTBCDF;
-
-	// set the slot number to 0 first
-	pBuffer->BurstBCDF.fld.RepeaterBurstDataType = 0x00;
-
-	if (GetTxSlot() == 1)
-	{
-		//if slot number 2 is used, set bit 7 to 1
-		pBuffer->BurstBCDF.fld.RepeaterBurstDataType |= 0x80;
-	}
-	pBuffer->BurstBCDF.fld.RepeaterBurstDataType |= DATA_TYPE_VOICE;
-
-	//fill in lengthinbytes
-	pBuffer->BurstBCDF.fld.LengthInBytes = RTP_PAYLOAD_BURST_BCDF_LEN_IN_BYTES;
-
-	//fill in control field for voice
-	//Embedded-LC Parity, Sync,  NULL LC, 72 Bit EMB LC, Ignore Sig Bits,  EMB,  Emb_LC Hard Bits, Bad Voice Burst
-
-	pBuffer->BurstBCDF.fld.ESNEIEHB = 0; // reset all the bits to 0, in most case 0 means success, the 7-bit EMB field will be set by the repeater
-	pBuffer->BurstBCDF.fld.ESNEIEHB |= RTP_PAYLOAD_VOICE_CONTROL_FIELD_EMB_LC_HARDBITS_PRESENT; // SET EMB LC hard bit present
-	//csz013 may 10
-	pBuffer->BurstBCDF.fld.ESNEIEHB |= RTP_PAYLOAD_VOICE_CONTROL_FIELD_EMB_PRESENT; // set the EMB field present, the actually emb field is set to 0
-
-
-	//the Voice[19] bytes will be filled by the other function calls
-
-	//fill the EMB hard bits
-	if (burstType == VOICEBURST_B)
-	{
-		for (i = 0; i < 4; i++)
-		{
-			pBuffer->BurstBCDF.fld.HardBits[i] = myCallRecord.EmbeddedHardBitLC.fld.BurstB[i];
-		}
-	}
-
-	if (burstType == VOICEBURST_C)
-	{
-		for (i = 0; i < 4; i++)
-		{
-			pBuffer->BurstBCDF.fld.HardBits[i] = myCallRecord.EmbeddedHardBitLC.fld.BurstC[i];
-		}
-	}
-
-	if (burstType == VOICEBURST_D)
-	{
-		for (i = 0; i < 4; i++)
-		{
-			pBuffer->BurstBCDF.fld.HardBits[i] = myCallRecord.EmbeddedHardBitLC.fld.BurstD[i];
-		}
-	}
-
-	if (burstType == VOICEBURST_F)
-	{
-		for (i = 0; i < 4; i++)
-		{
-			pBuffer->BurstBCDF.fld.HardBits[i] = 0;
-		}
-	}
-
-	pBuffer->BurstBCDF.fld.EMB7 = 0xA0;
-
-	//the EMB field does not have to be filled
-
-	return;
-}
+//void CWLNet::FillBurstBCDF(IPSCVoiceTemplate* pBuffer, IPSCBurstType burstType)
+//{
+//	int i;
+//
+//	//the actual length of the burst B,C,D,F in the buffer
+//	pBuffer->BurstBCDF.fld.Length = SIZEOFVOICEBURSTBCDF;
+//
+//	// set the slot number to 0 first
+//	pBuffer->BurstBCDF.fld.RepeaterBurstDataType = 0x00;
+//
+//	if (GetTxSlot() == 1)
+//	{
+//		//if slot number 2 is used, set bit 7 to 1
+//		pBuffer->BurstBCDF.fld.RepeaterBurstDataType |= 0x80;
+//	}
+//	pBuffer->BurstBCDF.fld.RepeaterBurstDataType |= DATA_TYPE_VOICE;
+//
+//	//fill in lengthinbytes
+//	pBuffer->BurstBCDF.fld.LengthInBytes = RTP_PAYLOAD_BURST_BCDF_LEN_IN_BYTES;
+//
+//	//fill in control field for voice
+//	//Embedded-LC Parity, Sync,  NULL LC, 72 Bit EMB LC, Ignore Sig Bits,  EMB,  Emb_LC Hard Bits, Bad Voice Burst
+//
+//	pBuffer->BurstBCDF.fld.ESNEIEHB = 0; // reset all the bits to 0, in most case 0 means success, the 7-bit EMB field will be set by the repeater
+//	pBuffer->BurstBCDF.fld.ESNEIEHB |= RTP_PAYLOAD_VOICE_CONTROL_FIELD_EMB_LC_HARDBITS_PRESENT; // SET EMB LC hard bit present
+//	//csz013 may 10
+//	pBuffer->BurstBCDF.fld.ESNEIEHB |= RTP_PAYLOAD_VOICE_CONTROL_FIELD_EMB_PRESENT; // set the EMB field present, the actually emb field is set to 0
+//
+//
+//	//the Voice[19] bytes will be filled by the other function calls
+//
+//	//fill the EMB hard bits
+//	if (burstType == VOICEBURST_B)
+//	{
+//		for (i = 0; i < 4; i++)
+//		{
+//			pBuffer->BurstBCDF.fld.HardBits[i] = myCallRecord.EmbeddedHardBitLC.fld.BurstB[i];
+//		}
+//	}
+//
+//	if (burstType == VOICEBURST_C)
+//	{
+//		for (i = 0; i < 4; i++)
+//		{
+//			pBuffer->BurstBCDF.fld.HardBits[i] = myCallRecord.EmbeddedHardBitLC.fld.BurstC[i];
+//		}
+//	}
+//
+//	if (burstType == VOICEBURST_D)
+//	{
+//		for (i = 0; i < 4; i++)
+//		{
+//			pBuffer->BurstBCDF.fld.HardBits[i] = myCallRecord.EmbeddedHardBitLC.fld.BurstD[i];
+//		}
+//	}
+//
+//	if (burstType == VOICEBURST_F)
+//	{
+//		for (i = 0; i < 4; i++)
+//		{
+//			pBuffer->BurstBCDF.fld.HardBits[i] = 0;
+//		}
+//	}
+//
+//	pBuffer->BurstBCDF.fld.EMB7 = 0xA0;
+//
+//	//the EMB field does not have to be filled
+//
+//	return;
+//}
 
 //All three voice frames in Burst E are sent in one RTP message with 7 bits decoded
 //EMB, 32 bits of raw LC and 72 bits of decoded LC.The payload length is 35 bytes.
-void CWLNet::FillBurstE(IPSCVoiceTemplate* pBuffer)
-{
-	int i;
-
-	//the actual length of the burst E in the buffer
-	pBuffer->BurstE.fld.Length = SIZEOFVOICEBURSTE;
-
-	// set the slot number to 0 first
-	pBuffer->BurstE.fld.RepeaterBurstDataType = 0x00;
-
-	if (GetTxSlot() == 1)
-	{
-		//if slot number 2 is used, set bit 7 to 1
-		pBuffer->BurstE.fld.RepeaterBurstDataType |= 0x80;
-	}
-	pBuffer->BurstE.fld.RepeaterBurstDataType |= DATA_TYPE_VOICE;
-
-	//fill in lengthinbytes
-	pBuffer->BurstBCDF.fld.LengthInBytes = RTP_PAYLOAD_BURST_E_LEN_IN_BYTES;
-
-	//fill in control field for voice
-	//Embedded-LC Parity, Sync,  NULL LC, 72 Bit EMB LC, Ignore Sig Bits,  EMB,  Emb_LC Hard Bits, Bad Voice Burst
-
-	pBuffer->BurstE.fld.ESNEIEHB = 0; // reset all the bits to 0, in most case 0 means success, the 7-bit EMB field will be set by the repeater
-	pBuffer->BurstE.fld.ESNEIEHB |= RTP_PAYLOAD_VOICE_CONTROL_FIELD_EMB_LC_HARDBITS_PRESENT; // SET EMB LC hard bit present
-	pBuffer->BurstE.fld.ESNEIEHB |= RTP_PAYLOAD_VOICE_CONTROL_FIELD_72_EMB_LC_PRESENT; // set 72 bit EMB LC present
-
-	////test code
-	//pBuffer->BurstE.fld.ESNEIEHB |= RTP_PAYLOAD_VOICE_CONTROL_FIELD_EMB_PRESENT; // set the EMB field present, the actually emb field is set to 0
-
-
-	//the Voice[19] bytes will be filled by the other function calls
-
-	//fill the EMB hard bits
-	for (i = 0; i < 4; i++)
-	{
-		pBuffer->BurstE.fld.HardBits[i] = myCallRecord.EmbeddedHardBitLC.fld.BurstE[i];
-	}
-
-	//fill the 72 bit LC
-	for (i = 0; i < 9; i++)
-	{
-		pBuffer->BurstE.fld.LC_copy[i] = myCallRecord.LCField.All[i];
-	}
-
-	pBuffer->BurstE.fld.EMB7 = 0xA0;
-
-	//the EMB field does not have to be filled
-
-	return;
-}
+// void CWLNet::FillBurstE(IPSCVoiceTemplate* pBuffer)
+// {
+// 	int i;
+// 
+// 	//the actual length of the burst E in the buffer
+// 	pBuffer->BurstE.fld.Length = SIZEOFVOICEBURSTE;
+// 
+// 	// set the slot number to 0 first
+// 	pBuffer->BurstE.fld.RepeaterBurstDataType = 0x00;
+// 
+// 	if (GetTxSlot() == 1)
+// 	{
+// 		//if slot number 2 is used, set bit 7 to 1
+// 		pBuffer->BurstE.fld.RepeaterBurstDataType |= 0x80;
+// 	}
+// 	pBuffer->BurstE.fld.RepeaterBurstDataType |= DATA_TYPE_VOICE;
+// 
+// 	//fill in lengthinbytes
+// 	pBuffer->BurstBCDF.fld.LengthInBytes = RTP_PAYLOAD_BURST_E_LEN_IN_BYTES;
+// 
+// 	//fill in control field for voice
+// 	//Embedded-LC Parity, Sync,  NULL LC, 72 Bit EMB LC, Ignore Sig Bits,  EMB,  Emb_LC Hard Bits, Bad Voice Burst
+// 
+// 	pBuffer->BurstE.fld.ESNEIEHB = 0; // reset all the bits to 0, in most case 0 means success, the 7-bit EMB field will be set by the repeater
+// 	pBuffer->BurstE.fld.ESNEIEHB |= RTP_PAYLOAD_VOICE_CONTROL_FIELD_EMB_LC_HARDBITS_PRESENT; // SET EMB LC hard bit present
+// 	pBuffer->BurstE.fld.ESNEIEHB |= RTP_PAYLOAD_VOICE_CONTROL_FIELD_72_EMB_LC_PRESENT; // set 72 bit EMB LC present
+// 
+// 	////test code
+// 	//pBuffer->BurstE.fld.ESNEIEHB |= RTP_PAYLOAD_VOICE_CONTROL_FIELD_EMB_PRESENT; // set the EMB field present, the actually emb field is set to 0
+// 
+// 
+// 	//the Voice[19] bytes will be filled by the other function calls
+// 
+// 	//fill the EMB hard bits
+// 	for (i = 0; i < 4; i++)
+// 	{
+// 		pBuffer->BurstE.fld.HardBits[i] = myCallRecord.EmbeddedHardBitLC.fld.BurstE[i];
+// 	}
+// 
+// 	//fill the 72 bit LC
+// 	for (i = 0; i < 9; i++)
+// 	{
+// 		pBuffer->BurstE.fld.LC_copy[i] = myCallRecord.LCField.All[i];
+// 	}
+// 
+// 	pBuffer->BurstE.fld.EMB7 = 0xA0;
+// 
+// 	//the EMB field does not have to be filled
+// 
+// 	return;
+// }
 
 //The Voice Header is used to initiate a voice call.And the Voice Terminator is used to
 // terminate a voice call.Both the Voice Header and Voice Terminator are transmitted as a
 // data burst and have the same RTP payload format shown as below.The field of
 // RepeaterBurstDataType in the RTP packet differentiates the Voice Header and the Voice
 // Terminator.
-void CWLNet::FillVoiceHeaderTerminator(IPSCVoiceTemplate* pBuffer, IPSCBurstType burstType)
-{
-	pBuffer->Control.fld.Length = SIZEOFVOICEHEADER; //the actual length of the voice header and terminator in the buffer
-
-	if (burstType == VOICEHEADER1 || burstType == VOICEHEADER2)
-	{
-		pBuffer->Control.fld.RepeaterBurstDataType = DATA_TYPE_VOICE_HEADER;
-	}
-	else if (burstType == VOICETERMINATOR)
-	{
-		pBuffer->Control.fld.RepeaterBurstDataType = DATA_TYPE_VOICE_TERMINATOR;
-	}
-
-	// set the slot number to 0 first, set the RSSI status to above threshold, set the LC, RS and CRC parity to 0 (success)
-	pBuffer->Control.fld.RepeaterBurstDataStatus = 0x00;
-
-	if (GetTxSlot() == 1)
-	{
-		//if slot number 2 is used, set bit 7 to 1
-		pBuffer->Control.fld.RepeaterBurstDataStatus |= 0x80;
-	}
-
-	pBuffer->Control.fld.LengthInWords[0] = 0x00;
-	pBuffer->Control.fld.LengthInWords[1] = RTP_PAYLOAD_VOICE_HEADER_OR_TERMINATOR_LENGTH_IN_WORD_NO_RSSI;
-
-	//The RSSI is set to not present (0) at bit 7, Burst Source at bit -4 is set to present (1) so that the repeater will calculate the CRC for the LC
-	pBuffer->Control.fld.RepeterBurstEmbSigBits[0] = RTP_PAYLOADD_EMBSIGBIT_FIELD_BURST_SOURCE_REPEATER;
-
-	////test code
-	//pBuffer->Control.fld.RepeterBurstEmbSigBits[0] = (unsigned __int8)0x80;
-
-	//The Sync hard bits at bit 6 is set to no error (0), slot type at bit 3 is set to present (1), sync at bit 1 and 0 are set to DATA sync (%10)
-	pBuffer->Control.fld.RepeterBurstEmbSigBits[1] = RTP_PAYLOADD_EMBSIGBIT_FIELD_SLOT_TYPE_PRESENT | RTP_PAYLOADD_EMBSIGBIT_FIELD_DATA_SYNC_DETECTED;
-
-
-	//fill in RepeaterBurstDataSize in bits
-	pBuffer->Control.fld.RepeterBurstDataSize[0] = 0x00;
-	pBuffer->Control.fld.RepeterBurstDataSize[1] = (unsigned __int8)VOICEHEADER_REPEATER_BURST_DATA_SIZE;
-
-
-	//fill in the LC bytes
-
-	pBuffer->Control.fld.LC_PFFLCO = myCallRecord.LCField.fld.PRFLCO;
-	pBuffer->Control.fld.LC_FID = myCallRecord.LCField.fld.FID;
-	pBuffer->Control.fld.LC_ServiceOptions = myCallRecord.LCField.fld.ServiceOptions;
-	pBuffer->Control.fld.LC_tgtID[0] = myCallRecord.LCField.fld.TargetAddress[0];
-	pBuffer->Control.fld.LC_tgtID[1] = myCallRecord.LCField.fld.TargetAddress[1];
-	pBuffer->Control.fld.LC_tgtID[2] = myCallRecord.LCField.fld.TargetAddress[2];
-
-	pBuffer->Control.fld.LC_srcID[0] = myCallRecord.LCField.fld.SourceAddress[0];
-	pBuffer->Control.fld.LC_srcID[1] = myCallRecord.LCField.fld.SourceAddress[1];
-	pBuffer->Control.fld.LC_srcID[2] = myCallRecord.LCField.fld.SourceAddress[2];
-
-	// the repeater will do the CRC calculation, therefore we can just fill in 0 here
-	pBuffer->Control.fld.LC_CRC[0] = 0;
-	pBuffer->Control.fld.LC_CRC[1] = 0;
-	pBuffer->Control.fld.LC_CRC[2] = 0;
-
-	pBuffer->Control.fld.reserved1 = 0;
-
-	//fill in slot byte at the least significant 4 bits. The repeater will fill in the color code
-	if (burstType == VOICEHEADER1 || burstType == VOICEHEADER2)
-	{
-		pBuffer->Control.fld.SlotType = SLOT_TYPE_VOICE_HEADER;
-	}
-	else if (burstType == VOICETERMINATOR)
-	{
-		pBuffer->Control.fld.SlotType = SLOT_TYPE_VOICE_TERMINATOR;
-	}
-
-	return;
-}
+// void CWLNet::FillVoiceHeaderTerminator(IPSCVoiceTemplate* pBuffer, IPSCBurstType burstType)
+// {
+// 	pBuffer->Control.fld.Length = SIZEOFVOICEHEADER; //the actual length of the voice header and terminator in the buffer
+// 
+// 	if (burstType == VOICEHEADER1 || burstType == VOICEHEADER2)
+// 	{
+// 		pBuffer->Control.fld.RepeaterBurstDataType = DATA_TYPE_VOICE_HEADER;
+// 	}
+// 	else if (burstType == VOICETERMINATOR)
+// 	{
+// 		pBuffer->Control.fld.RepeaterBurstDataType = DATA_TYPE_VOICE_TERMINATOR;
+// 	}
+// 
+// 	// set the slot number to 0 first, set the RSSI status to above threshold, set the LC, RS and CRC parity to 0 (success)
+// 	pBuffer->Control.fld.RepeaterBurstDataStatus = 0x00;
+// 
+// 	if (GetTxSlot() == 1)
+// 	{
+// 		//if slot number 2 is used, set bit 7 to 1
+// 		pBuffer->Control.fld.RepeaterBurstDataStatus |= 0x80;
+// 	}
+// 
+// 	pBuffer->Control.fld.LengthInWords[0] = 0x00;
+// 	pBuffer->Control.fld.LengthInWords[1] = RTP_PAYLOAD_VOICE_HEADER_OR_TERMINATOR_LENGTH_IN_WORD_NO_RSSI;
+// 
+// 	//The RSSI is set to not present (0) at bit 7, Burst Source at bit -4 is set to present (1) so that the repeater will calculate the CRC for the LC
+// 	pBuffer->Control.fld.RepeterBurstEmbSigBits[0] = RTP_PAYLOADD_EMBSIGBIT_FIELD_BURST_SOURCE_REPEATER;
+// 
+// 	////test code
+// 	//pBuffer->Control.fld.RepeterBurstEmbSigBits[0] = (unsigned __int8)0x80;
+// 
+// 	//The Sync hard bits at bit 6 is set to no error (0), slot type at bit 3 is set to present (1), sync at bit 1 and 0 are set to DATA sync (%10)
+// 	pBuffer->Control.fld.RepeterBurstEmbSigBits[1] = RTP_PAYLOADD_EMBSIGBIT_FIELD_SLOT_TYPE_PRESENT | RTP_PAYLOADD_EMBSIGBIT_FIELD_DATA_SYNC_DETECTED;
+// 
+// 
+// 	//fill in RepeaterBurstDataSize in bits
+// 	pBuffer->Control.fld.RepeterBurstDataSize[0] = 0x00;
+// 	pBuffer->Control.fld.RepeterBurstDataSize[1] = (unsigned __int8)VOICEHEADER_REPEATER_BURST_DATA_SIZE;
+// 
+// 
+// 	//fill in the LC bytes
+// 
+// 	pBuffer->Control.fld.LC_PFFLCO = myCallRecord.LCField.fld.PRFLCO;
+// 	pBuffer->Control.fld.LC_FID = myCallRecord.LCField.fld.FID;
+// 	pBuffer->Control.fld.LC_ServiceOptions = myCallRecord.LCField.fld.ServiceOptions;
+// 	pBuffer->Control.fld.LC_tgtID[0] = myCallRecord.LCField.fld.TargetAddress[0];
+// 	pBuffer->Control.fld.LC_tgtID[1] = myCallRecord.LCField.fld.TargetAddress[1];
+// 	pBuffer->Control.fld.LC_tgtID[2] = myCallRecord.LCField.fld.TargetAddress[2];
+// 
+// 	pBuffer->Control.fld.LC_srcID[0] = myCallRecord.LCField.fld.SourceAddress[0];
+// 	pBuffer->Control.fld.LC_srcID[1] = myCallRecord.LCField.fld.SourceAddress[1];
+// 	pBuffer->Control.fld.LC_srcID[2] = myCallRecord.LCField.fld.SourceAddress[2];
+// 
+// 	// the repeater will do the CRC calculation, therefore we can just fill in 0 here
+// 	pBuffer->Control.fld.LC_CRC[0] = 0;
+// 	pBuffer->Control.fld.LC_CRC[1] = 0;
+// 	pBuffer->Control.fld.LC_CRC[2] = 0;
+// 
+// 	pBuffer->Control.fld.reserved1 = 0;
+// 
+// 	//fill in slot byte at the least significant 4 bits. The repeater will fill in the color code
+// 	if (burstType == VOICEHEADER1 || burstType == VOICEHEADER2)
+// 	{
+// 		pBuffer->Control.fld.SlotType = SLOT_TYPE_VOICE_HEADER;
+// 	}
+// 	else if (burstType == VOICETERMINATOR)
+// 	{
+// 		pBuffer->Control.fld.SlotType = SLOT_TYPE_VOICE_TERMINATOR;
+// 	}
+// 
+// 	return;
+// }
 
 void CWLNet::requireReadySendVoicesLock()
 {
@@ -4712,6 +4779,18 @@ void CWLNet::releaseReadySendVoicesLock()
 
 void CWLNet::NetStuffTxVoice(unsigned char* pVoiceBytes)
 {
+	/*将当前AMBE数据写入对应的语音记录*/
+	for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+	{
+		/*存在则记录语音*/
+		if ((*i)->srcId == CONFIG_LOCAL_RADIO_ID &&
+			(*i)->tagetId == g_targetId &&
+			(*i)->callId == g_callId)
+		{
+			(*i)->WriteVoiceFrame((char*)pVoiceBytes, 7, true);
+			break;
+		}
+	}
 
 	switch (m_TxSubCount)
 	{
@@ -4765,6 +4844,18 @@ void CWLNet::NetStuffTxVoice(unsigned char* pVoiceBytes)
 
 void CWLNet::FILL_AMBE_FRAME(char* pVoiceBytes, char* pSendVoice, int txSubCount)
 {
+	/*将当前AMBE数据写入对应的语音记录*/
+	for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+	{
+		/*存在则记录语音*/
+		if ((*i)->srcId == CONFIG_LOCAL_RADIO_ID &&
+			(*i)->tagetId == g_targetId &&
+			(*i)->callId == g_callId)
+		{
+			(*i)->WriteVoiceFrame((char*)pVoiceBytes, 7, true);
+			break;
+		}
+	}
 	switch (txSubCount)
 	{
 	case 0:
@@ -4858,19 +4949,14 @@ void CWLNet::NetWorker_TxIfCall(void)
 	}
 }
 
-bool CWLNet::isTargetMeCall(unsigned int tgtId)
+bool CWLNet::isTargetMeCall(unsigned int tagetId, unsigned char callType)
 {
 	//sprintf_s(m_reportMsg, "recive a call to %u,local raidoId is %u,local radioGroup is %u", tgtId, m_dwMyRadioID, m_dwMyRadioGroup);
 	//sendLogToWindow();
 
 	//return true;
 
-	if (tgtId == g_localRadioId
-		|| tgtId == g_localGroup)
-	{
-		return true;
-	}
-	return false;
+	return (callType == GROUPCALL_TYPE && tagetId == CONFIG_DEFAULT_GROUP) || (callType == PRIVATE_CALL && tagetId == CONFIG_LOCAL_RADIO_ID) || (callType == ALL_CALL) || (callType == GROUPCALL_TYPE && tagetId == g_targetId);
 }
 
 void CWLNet::requireVoiceReocrdsLock()
@@ -5062,7 +5148,7 @@ int CWLNet::initCallParam()
 	//m_isRequestNewCall = false;
 	m_SequenceNumber = 1;
 	m_Timestamp = 0;
-	SetCallStatus(CALL_INIT);
+	SetCallStatus(CALL_START);
 	//memset(&m_currentCallInfo, 0, sizeof(CallInfo));
 	clearSendVoices();
 	return 0;
@@ -5070,6 +5156,12 @@ int CWLNet::initCallParam()
 
 int CWLNet::SendFile(unsigned int length, char* pData)
 {
+	if (length > MAX_RECORD_BUFFER_SIZE)
+	{
+		sprintf_s(m_reportMsg, "this voice file is too large");
+		sendLogToWindow();
+		return 1;
+	}
 	bool requestCallSuccess = false;
 	m_retryRequestCallCount = REQUEST_CALL_REPEAT_FREQUENCY;
 	initCallParam();
@@ -5077,7 +5169,7 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 	char* pAmbeData = pData;
 
 	m_pCurrentSendVoicePeer = GetPeer(m_ulMasterPeerID);//192.168.2.121：50000
-	if (IPSC == g_recordType)
+	if (IPSC == CONFIG_RECORD_TYPE)
 	{
 		if (m_pCurrentSendVoicePeer)
 		{
@@ -5109,8 +5201,6 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 					}
 				}
 			}
-			//networkData.slotNumber = 1;
-			//networkData.callID = g_callId+1;
 			m_pSendVoicePackage->sPackageLenth = Build_WL_VC_VOICE_BURST(m_pVoice, &networkData, false);
 			m_pSendVoicePackage->pPackageData = m_pVoice;
 			requireReadySendVoicesLock();
@@ -5147,8 +5237,6 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 						}
 					}
 				}
-				//networkData.slotNumber = 1;
-				//networkData.callID = g_callId + 1;
 				m_pSendVoicePackage->sPackageLenth = Build_WL_VC_VOICE_BURST(m_pVoice, &networkData, false);
 				m_pSendVoicePackage->pPackageData = m_pVoice;
 				requireReadySendVoicesLock();
@@ -5163,8 +5251,6 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 				m_pVoice = (char*)calloc(MAX_PACKET_SIZE, sizeof(char));
 				T_WL_PROTOCOL_21 networkData = { 0 };
 				Build_T_WL_PROTOCOL_21(networkData, false);
-				//networkData.slotNumber = 1;
-				//networkData.callID = g_callId + 1;
 				m_pSendVoicePackage->sPackageLenth = Build_WL_VC_VOICE_BURST(m_pVoice, &networkData, false);
 				m_pSendVoicePackage->pPackageData = m_pVoice;
 				requireReadySendVoicesLock();
@@ -5176,8 +5262,6 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			m_pVoice = (char*)calloc(MAX_PACKET_SIZE, sizeof(char));
 			T_WL_PROTOCOL_19 networkData_19 = { 0 };
 			Build_T_WL_PROTOCOL_19(networkData_19);
-			//networkData.slotNumber = 1;
-			//networkData.callID = g_callId + 1;
 			m_pSendVoicePackage->sPackageLenth = Build_WL_VC_VOICE_END_BURST(m_pVoice, &networkData_19);
 			m_pSendVoicePackage->pPackageData = m_pVoice;
 			requireReadySendVoicesLock();
@@ -5383,6 +5467,18 @@ void CWLNet::releaseNewCallEvent()
 
 void CWLNet::NetWorker_SendCallByWL(void)
 {
+	/*更新时间戳*/
+	for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+	{
+		/*存在则记录语音*/
+		if ((*i)->srcId == CONFIG_LOCAL_RADIO_ID &&
+			(*i)->tagetId == g_targetId &&
+			(*i)->callId == g_callId)
+		{
+			(*i)->prevTimestamp = GetTickCount();
+			break;
+		}
+	}
 	/*每60ms发送一次数据*/
 	int rc = 0;
 	if (m_sendVoices.size() > 0)
@@ -5415,7 +5511,18 @@ void CWLNet::NetWorker_SendCallByWL(void)
 				/*当前语音信息为结束标识，启动HangTimer*/
 				if (temp->pPackageData[5] == WL_VC_VOICE_END_BURST)
 				{
-					timeSetEvent(HUNG_TIME, 1, HangTimerCallProc, (DWORD)this, TIME_ONESHOT);
+					for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+					{
+						/*存在则记录语音*/
+						if ((*i)->srcId == CONFIG_LOCAL_RADIO_ID &&
+							(*i)->tagetId == g_targetId &&
+							(*i)->callId == g_callId)
+						{
+							GetLocalTime(&((*i)->recordTime));
+							break;
+						}
+					}
+					timeSetEvent(CONFIG_HUNG_TIME, 1, HangTimerCallProc, (DWORD)this, TIME_ONESHOT);
 				}
 				free(temp->pPackageData);
 				temp->pPackageData = NULL;
@@ -5976,14 +6083,21 @@ WORD CWLNet::GetCallStatus()
 
 void CWLNet::SetCallStatus(WORD value)
 {
-	WORD prev = m_callStatus;
-	m_callStatus = value;
-	sprintf_s(m_reportMsg, "CALL_STATUS:%u->%u", prev, m_callStatus);
-	sendLogToWindow();
+	if (value != m_callStatus)
+	{
+		WORD prev = m_callStatus;
+		m_callStatus = value;
+		sprintf_s(m_reportMsg, "CALL_STATUS:%u->%u", prev, m_callStatus);
+		sendLogToWindow();
+	}
 }
 
 int CWLNet::callBack()
 {
+	if (g_targetId != CONFIG_DEFAULT_GROUP && g_targetCallType == GROUPCALL_TYPE)
+	{
+		m_dwChangeToCurrentTick = GetTickCount();
+	}
 	bool requestCallSuccess = false;
 	m_retryRequestCallCount = REQUEST_CALL_REPEAT_FREQUENCY;
 	if (m_pCurrentSendVoicePeer)
@@ -6003,7 +6117,7 @@ int CWLNet::callBack()
 			}
 			else
 			{
-				if ((IPSC == g_recordType && g_callRequstDeclineReasonCodeInfo.RetryOfIPSC)
+				if ((IPSC == CONFIG_RECORD_TYPE && g_callRequstDeclineReasonCodeInfo.RetryOfIPSC)
 					|| g_callRequstDeclineReasonCodeInfo.HangCallRetry)
 				{
 					m_retryRequestCallCount--;
@@ -6040,15 +6154,19 @@ int CWLNet::callBack()
 
 int CWLNet::newCall()
 {
+	if (g_targetId != CONFIG_DEFAULT_GROUP && g_targetCallType == GROUPCALL_TYPE)
+	{
+		m_dwChangeToCurrentTick = GetTickCount();
+	}
 	bool requestCallSuccess = false;
 	m_retryRequestCallCount = REQUEST_CALL_REPEAT_FREQUENCY;
-	if (IPSC == g_recordType)
+	if (IPSC == CONFIG_RECORD_TYPE)
 	{
 		/*获取当前主中继相关信息*/
 		m_pCurrentSendVoicePeer = GetPeer(m_ulMasterPeerID);//192.168.2.121：50000
 		if (m_pCurrentSendVoicePeer)
 		{
-			_SlotNumber registerSlot = SLOT1;
+			_SlotNumber registerSlot = CONFIG_DEFAULT_SLOT;
 			while (m_retryRequestCallCount)
 			{
 				/*初始化*/
@@ -6066,10 +6184,23 @@ int CWLNet::newCall()
 				if (g_callRequstDeclineReasonCodeInfo.RetryOfIPSC)
 				{
 					m_retryRequestCallCount--;
-					if (m_retryRequestCallCount == 0 && registerSlot == SLOT1)
+					if (m_retryRequestCallCount == 0 && registerSlot == CONFIG_DEFAULT_SLOT)
 					{
 						m_retryRequestCallCount = REQUEST_CALL_REPEAT_FREQUENCY;
-						registerSlot = SLOT2;
+						if (SLOT1 == CONFIG_DEFAULT_SLOT)
+						{
+							registerSlot = SLOT2;
+						}
+						else if (SLOT2 == CONFIG_DEFAULT_SLOT)
+						{
+							registerSlot = SLOT1;
+						}
+						else
+						{
+							sprintf_s(m_reportMsg, "error default slot");
+							sendLogToWindow();
+							break;
+						}
 					}
 				}
 				else
@@ -6087,7 +6218,7 @@ int CWLNet::newCall()
 			}
 		}
 	}
-	else if (CPC == g_recordType)
+	else if (CPC == CONFIG_RECORD_TYPE)
 	{
 
 		if (m_pSitePeer)
@@ -6126,7 +6257,7 @@ int CWLNet::newCall()
 			}
 		}
 	}
-	else if (LCP == g_recordType)
+	else if (LCP == CONFIG_RECORD_TYPE)
 	{
 		if (m_pSitePeer)
 		{
@@ -6272,9 +6403,25 @@ short CWLNet::Build_WL_VC_VOICE_END_BURST(CHAR* pPacket, T_WL_PROTOCOL_19* pData
 	return size;
 }
 
-void CWLNet::CorrectingBuffer()
+void CWLNet::CorrectingBuffer(DWORD callId)
 {
+
+	
 	_SlotNumber slot = m_pCurrentSendVoicePeer->getUseSlot();
+	/*核对语音记录信息*/
+	for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+	{
+		/*存在则记录语音*/
+		if ((*i)->srcId == CONFIG_LOCAL_RADIO_ID &&
+			(*i)->callStatus == VOICE_STATUS_START)
+		{
+			(*i)->callId = callId;
+			(*i)->srcSlot = slot;
+			break;
+		}
+	}
+	g_callId = callId;
+
 	requireReadySendVoicesLock();
 	for (auto i = m_sendVoices.begin(); i != m_sendVoices.end(); i++)
 	{
@@ -6347,11 +6494,11 @@ void PASCAL CWLNet::HangTimerCallProc(UINT wTimerID, UINT msg, DWORD dwUser, DWO
 
 void CWLNet::HangTimerCallCheck()
 {
-	//if (!(GetCallStatus() == CALL_HANGUP || GetCallStatus() == CALL_IDLE))
-	//{
-	//	SetCallStatus(CALL_HANGUP);
-	//	SetCallStatus(CALL_IDLE);
-	//}
+	if (!(GetCallStatus() == CALL_HANGUP || GetCallStatus() == CALL_IDLE || g_dongleIsUsing))
+	{
+		SetCallStatus(CALL_HANGUP);
+		SetCallStatus(CALL_IDLE);
+	}
 }
 
 void CWLNet::setSitePeer(CIPSCPeer* value)
@@ -6378,12 +6525,12 @@ void CWLNet::Build_T_WL_PROTOCOL_19(T_WL_PROTOCOL_19& networkData)
 {
 	networkData.burstType = m_burstType;
 	networkData.callID = g_callId;
-	networkData.callType = g_callType;
+	networkData.callType = g_targetCallType;
 	networkData.currentLinkProtocolVersion = Wireline_Protocol_Version;
 	networkData.MFID = VALUE_MFID;
 	networkData.oldestLinkProtocolVersion = Wireline_Protocol_Version;
 	networkData.Opcode = WL_PROTOCOL;
-	networkData.peerID = g_localPeerId;
+	networkData.peerID = CONFIG_LOCAL_PEER_ID;
 	networkData.RTPInformationField.header = BURST_RTP_HEADER;
 	networkData.RTPInformationField.MPT = BURST_END_RTP_MPT;
 	networkData.RTPInformationField.SequenceNumber = m_SequenceNumber;
@@ -6398,8 +6545,8 @@ void CWLNet::Build_T_WL_PROTOCOL_19(T_WL_PROTOCOL_19& networkData)
 	{
 		networkData.slotNumber = NULL_SLOT;
 	}
-	networkData.sourceID = g_localRadioId;
-	networkData.targetID = g_localGroup;
+	networkData.sourceID = CONFIG_LOCAL_RADIO_ID;
+	networkData.targetID = g_targetId;
 	networkData.wirelineOpcode = WL_VC_VOICE_END_BURST;
 }
 
@@ -6414,19 +6561,42 @@ void CWLNet::Build_T_WL_PROTOCOL_21(T_WL_PROTOCOL_21& networkData, bool bStart)
 	m_burstType++;
 	networkData.callAttributes = CALL_ATTRIBUTES;
 	networkData.callID = g_callId;
-	networkData.callType = g_callType;
+	networkData.callType = g_targetCallType;
 	networkData.currentLinkProtocolVersion = Wireline_Protocol_Version;
 	networkData.IV = VALUE_IV;
 	networkData.keyID = KEY_ID;
 	networkData.MFID = VALUE_MFID;
 	networkData.oldestLinkProtocolVersion = Wireline_Protocol_Version;
 	networkData.Opcode = WL_PROTOCOL;
-	networkData.peerID = g_localPeerId;
+	networkData.peerID = CONFIG_LOCAL_PEER_ID;
 	networkData.rawRssiValue = VALUE_RSSI;
 	networkData.RTPInformationField.header = BURST_RTP_HEADER;
+	networkData.sourceID = CONFIG_LOCAL_RADIO_ID;
+	networkData.targetID = g_targetId;
+	if (m_pCurrentSendVoicePeer)
+	{
+		networkData.slotNumber = m_pCurrentSendVoicePeer->getUseSlot();
+	}
+	else
+	{
+		networkData.slotNumber = NULL_SLOT;
+	}
 	if (bStart)
 	{
 		networkData.RTPInformationField.MPT = BURST_START_RTP_MPT;
+		/*生成语音记录相关信息*/
+		CRecordFile* rFile = new CRecordFile();
+		rFile->originalPeerId = networkData.peerID;
+		rFile->srcId = networkData.sourceID;
+		rFile->tagetId = networkData.targetID;
+		rFile->callId = networkData.callID;
+		rFile->callType = networkData.callType;
+		rFile->prevTimestamp = GetTickCount();
+		rFile->srcSlot = networkData.slotNumber;
+		rFile->callStatus = VOICE_STATUS_START;
+		requireVoiceReocrdsLock();
+		m_voiceReocrds.push_back(rFile);
+		releaseVoiceReocrdsLock();
 	}
 	else
 	{
@@ -6438,16 +6608,6 @@ void CWLNet::Build_T_WL_PROTOCOL_21(T_WL_PROTOCOL_21& networkData, bool bStart)
 	networkData.RTPInformationField.Timestamp = m_Timestamp;
 	m_Timestamp += 480;
 	networkData.serviceOption = BURST_SERVICEOPTION;
-	if (m_pCurrentSendVoicePeer)
-	{
-		networkData.slotNumber = m_pCurrentSendVoicePeer->getUseSlot();
-	}
-	else
-	{
-		networkData.slotNumber = NULL_SLOT;
-	}
-	networkData.sourceID = g_localRadioId;
-	networkData.targetID = g_localGroup;
 	networkData.wirelineOpcode = WL_VC_VOICE_BURST;
 }
 
@@ -6906,6 +7066,85 @@ void CWLNet::clearPeers()
 		(*i)->destroy();
 		delete (*i);
 	}
+}
+
+int CWLNet::checkDefaultGroup()
+{
+	if (g_targetId != CONFIG_DEFAULT_GROUP && g_targetCallType == GROUPCALL_TYPE)
+	{
+		long dif = GetTickCount() - m_dwChangeToCurrentTick;
+		if (dif > GO_BACK_DEFAULT_GROUP_TIME)
+		{
+			g_targetId = CONFIG_DEFAULT_GROUP;
+		}
+	}
+	return 0;
+}
+
+
+
+int CWLNet::setPlayCallOfCare(char* pCallType, char* pFrom, char* pTarget)
+{
+	int type = atoi(pCallType);
+	unsigned long src = (unsigned long)atoll(pFrom);
+	unsigned long tgt = (unsigned long)atoll(pTarget);
+	switch (type)
+	{
+	case GROUPCALL_TYPE:
+	{
+						   if (tgt != CONFIG_DEFAULT_GROUP)
+						   {
+							   g_targetId = tgt;
+							   g_bIsHaveCurrentGroupCall = true;
+							   g_bIsHaveDefaultGroupCall = false;
+							   g_bIsHaveAllCall = false;
+							   g_bIsHavePrivateCall = false;
+						   }
+						   else
+						   {
+							   g_bIsHaveCurrentGroupCall = false;
+							   g_bIsHaveDefaultGroupCall = true;
+							   g_bIsHaveAllCall = false;
+							   g_bIsHavePrivateCall = false;
+						   }
+	}
+		break;
+	case PRIVATE_CALL:
+	{
+						 g_bIsHaveCurrentGroupCall = false;
+						 g_bIsHaveDefaultGroupCall = false;
+						 g_bIsHaveAllCall = false;
+						 g_bIsHavePrivateCall = true;
+	}
+		break;
+	case ALL_CALL:
+	{
+					 g_bIsHaveCurrentGroupCall = false;
+					 g_bIsHaveDefaultGroupCall = false;
+					 g_bIsHaveAllCall = true;
+					 g_bIsHavePrivateCall = false;
+	}
+		break;
+	default:
+	{
+			   return 1;
+	}
+		break;
+	}
+	return 0;
+}
+
+int CWLNet::thereIsCallOfCare(CRecordFile *pCallRecord)
+{
+	Send_CARE_CALL_STATUS(pCallRecord->callType, pCallRecord->srcId, pCallRecord->tagetId, CALL_BACKSTAGE);
+	return 0;
+}
+
+int CWLNet::Send_CARE_CALL_STATUS(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status)
+{
+	/*将参数打包成json格式*/
+	/*发送到Client*/
+	return 0;
 }
 
 //bool CWLNet::getIsFirstBurstA()
