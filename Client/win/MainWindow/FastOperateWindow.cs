@@ -24,7 +24,7 @@ namespace TrboX
             if (null == win) return;
             m_mainWin = win;
 
-            m_FastOperateListPath = AppDomain.CurrentDomain.BaseDirectory + "SDGESRWE123SDAWE123SFREWE123RGVAWEFAW.tmp";
+            m_FastOperateListPath = AppInformation.WorkSpaceTempPath;
 
             Stream FastOperateListFile = new FileStream(m_FastOperateListPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
 

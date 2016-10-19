@@ -83,14 +83,23 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="class\JsonParse.cs" />
+    <Compile Include="class\ResourceMgr.cs" />
+    <Compile Include="class\SettingFile.cs" />
+    <Compile Include="class\SettingMgr.cs" />
     <Compile Include="class\targetMgr.cs" />
     <Compile Include="class\TcpInterface.cs" />
+    <Compile Include="ctrl\ComboButton.xaml.cs">
+      <DependentUpon>ComboButton.xaml</DependentUpon>
+    </Compile>
     <Compile Include="themes\convertor.cs" />
     <Compile Include="themes\exproperty.cs" />
     <Compile Include="themes\layout.cs" />
     <Compile Include="themes\MyWindow.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="win\Main\ResourceComponents.cs" />
+    <Compile Include="win\Main\SettingComponents.cs" />
     <Compile Include="win\WarnningWindow.xaml.cs">
       <DependentUpon>WarnningWindow.xaml</DependentUpon>
     </Compile>
@@ -134,6 +143,10 @@
     <Resource Include="themes\resource\Logo.png" />
   </ItemGroup>
   <ItemGroup>
+    <Page Include="ctrl\ComboButton.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="themes\generic.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -226,7 +239,7 @@
     <Resource Include="themes\resource\search.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="DefaultConfiguration.xml" />
+    <Resource Include="DefaultConfiguration.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

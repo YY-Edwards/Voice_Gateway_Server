@@ -7,17 +7,31 @@
 #include "Settings.h"
 
 #include "StartAction.h"
-#include "SetRadioIpAction.h"
+#include "SettingAction.h"
+
+
+#include <shlobj.h> 
+#include <Shlwapi.h>
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	//CSettings::instance()->setRadioIp("192.168.2.1");
-	//std::string radioIp = CSettings::instance()->getRadioIp();
+	//CSettings::instance()->getResponse("sucess", 1, 200, "", rapidjson::Value(NULL));
+	//std::string str =  CSettings::instance()->getResponse("sucess", 1, 200, "", "");
+	//CSettings::instance()->setValue("tst", rapidjson::Value(NULL));
 
 	CRpcServer rpcServer;
 	
 	rpcServer.addActionHandler("start", startAction);
-	rpcServer.addActionHandler("setRadioIp", setRadioIpAction);
+
+	rpcServer.addActionHandler("setBase", setBaseAction);
+	rpcServer.addActionHandler("getBase", getBaseAction);
+
+	rpcServer.addActionHandler("setRadio", setRadioAction);
+	rpcServer.addActionHandler("getRadio", getRadioAction);
+
+	rpcServer.addActionHandler("setRepeater", setRepeaterAction);
+	rpcServer.addActionHandler("getRepeater", getRepeaterAction);
+
 
 	rpcServer.start();
 	while (1);

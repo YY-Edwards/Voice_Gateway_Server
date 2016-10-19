@@ -16,6 +16,35 @@ using System.Windows.Forms.Integration;
 
 namespace TrboX
 {
+
+    public class AppInformation
+    {
+        public static string CompanyName = "JiHua Information";
+        public static string AppName = "TrboX";
+        public static string AppVersion = "3.0";
+        public static string NotifyTempFile = "tmp.notify";
+        public static string WorkSpaceTempFile = "tmp.workspace";
+
+        public static string NotifyTempPath
+        {
+            get
+            {
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + AppInformation.CompanyName
+                   + "\\" + AppInformation.AppName + "\\" + AppInformation.AppVersion + "\\" + NotifyTempFile;
+                return path;
+            }
+        }
+        public static string WorkSpaceTempPath
+        {
+            get
+            {
+                string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + AppInformation.CompanyName
+                   + "\\" + AppInformation.AppName + "\\" + AppInformation.AppVersion + "\\" + WorkSpaceTempFile;
+                return path;
+            }
+        }
+    };
+   
   /// <summary>
     /// Main.xaml 的交互逻辑
     /// </summary>

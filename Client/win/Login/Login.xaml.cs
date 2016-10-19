@@ -23,7 +23,7 @@ namespace TrboX
         {
             InitializeComponent();
         }
-        private void MyWindow_Closed(object sender, EventArgs e)
+       private void MyWindow_Closed(object sender, EventArgs e)
         {
             Environment.Exit(0);
         }

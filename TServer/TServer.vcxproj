@@ -88,7 +88,7 @@
     <ClInclude Include="..\lib\rpc\include\TcpServer.h" />
     <ClInclude Include="..\lib\strutil\strutil.h" />
     <ClInclude Include="Broker.h" />
-    <ClInclude Include="SetRadioIpAction.h" />
+    <ClInclude Include="SettingAction.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="StartAction.h" />
     <ClInclude Include="stdafx.h" />
