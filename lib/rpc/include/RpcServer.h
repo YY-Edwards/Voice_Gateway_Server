@@ -16,11 +16,15 @@ public:
 	CRpcServer();
 	~CRpcServer();
 
+	enum _ConnectorType{
+		TCP = 1,
+	};
+
 public: // dereived from OnConnectorData
 	virtual int onReceive(CRemotePeer* pRemote, char* pData, int dataLen);
 
 public:
-	int start();
+	int start(unsigned short port = 8000, int type = CRpcServer::TCP);
 	void stop();
 	void addActionHandler(const char* pName, ACTION action);
 

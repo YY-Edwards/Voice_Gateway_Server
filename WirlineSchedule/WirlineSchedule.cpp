@@ -115,14 +115,6 @@
 //#endif
 
 
-#define MASTER_IP			"192.168.2.121"
-#define MASTER_PORT			50000
-#define LOCAL_PEER_ID		120
-#define LOCAL_RADIO_ID		5
-#define RECORD_TYPE			CPC
-#define DEFAULT_SLOT		SLOT1
-#define DEFAULT_GROUP		9
-#define DONGLE_PORT			8
 #define DEFAULT_CALLTYPE	0x4f
 
 #define DB_HOST				"127.0.0.1"
@@ -186,6 +178,8 @@ int main()
 	int cmd = 0;
 	bool run = true;
 	PLogReport m_report = handleLog;
+	/*配置参数*/
+	m_pManager->config("192.168.1.121", "50000", "120", "5", "CPC", "9", "7", "4000", "60000", "600000","1");
 	/*当前句柄获取*/
 	HWND m_hwnd = GetConsoleHwnd();
 	/*初始化日志回调*/
@@ -214,7 +208,7 @@ int main()
 		handleLog("Initialization system success");
 
 	}
-	returnValue = m_pManager->initSys(MASTER_IP, MASTER_PORT, LOCAL_PEER_ID, LOCAL_RADIO_ID, RECORD_TYPE, DEFAULT_SLOT, DEFAULT_GROUP, DONGLE_PORT);
+	returnValue = m_pManager->initSys();
 	if (returnValue != 0)
 	{
 		handleLog("Initialization system fail");
@@ -229,24 +223,52 @@ int main()
 	/*进入菜单选项*/
 	while (run)
 	{
-		printf_s("/************/\n/* 1.按下PTT\n/* 2.松开PTT\n/* 3.录音回放\n/* 0.退出\n/************/\n\r");
+		printf_s("/************/\n/* 1.按下PTT\n/* 2.松开PTT\n/* 3.录音回放\n/* 4.发送语音\n/* 9.清屏\n/* 0.退出\n/************/\n\r");
 		scanf_s("%d", &cmd, 1);
 		switch (cmd)
 		{
 		case 0x01:
 		{
-					 m_pManager->initialCall(DEFAULT_GROUP, DEFAULT_CALLTYPE);
+					 m_pManager->initialCall("9", "79");
 		}
 			break;
 		case 0x02:
 		{
-					 m_pManager->stopRecord();
+					 m_pManager->stopCall();
 		}
 			break;
 		case 0x03:
 		{
-					 /*播放指定语音*/
 					 m_pManager->play();
+		}
+			break;
+		case 0x04:
+		{
+					 HANDLE file = CreateFile(L"D:\\WirelineScheduleVoiceData\\201610.bit", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
+					 if (INVALID_HANDLE_VALUE == file)
+					 {
+						 handleLog("CreateFile fail");
+					 }
+					 else
+					 {
+						 DWORD len = 0;
+						 DWORD readLen = 0;
+						 len = GetFileSize(file, 0);
+						 if (len > 0)
+						 {
+							 char* pBuffer = new char[len];
+							 ReadFile(file, pBuffer, len, &readLen, NULL);
+							 CloseHandle(file);
+							 m_pManager->SendFile(readLen, pBuffer);
+							 delete[] pBuffer;
+						 }
+					 }
+
+		}
+			break;
+		case 0x09:
+		{
+					 system("cls");
 		}
 			break;
 		default:

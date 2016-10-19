@@ -87,6 +87,12 @@ int CRpcClient::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 	return 0;
 }
 
+void CRpcClient::setIncomeDataHandler(IncomeDataHandler handler)
+{
+	m_fnIncomeHandler = handler;
+}
+
+
 int CRpcClient::send(const char* pData, int dataLen)
 {
 	if (NULL == m_pConnector)

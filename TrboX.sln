@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.21005.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{45E30D6B-48C5-497B-999C-91994F4B1885}"
 EndProject
@@ -24,6 +24,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Options", "Options\Options.csproj", "{F9613FD5-3826-4911-AC1D-5C38408E708D}"
 EndProject
 Project("{6141683F-8A12-4E36-9623-2EB02B2C2303}") = "TrboX 3.0 SetUp", "TrboX 3.0 SetUp\TrboX 3.0 SetUp.isproj", "{06125E6F-925B-478C-8847-594E3D33A148}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "WirelineSchedule", "WirlineSchedule\WirlineSchedule.vcxproj", "{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -416,6 +418,41 @@ Global
 		{06125E6F-925B-478C-8847-594E3D33A148}.SingleImage|Win32.Build.0 = SingleImage
 		{06125E6F-925B-478C-8847-594E3D33A148}.SingleImage|x86.ActiveCfg = SingleImage
 		{06125E6F-925B-478C-8847-594E3D33A148}.SingleImage|x86.Build.0 = SingleImage
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.CD_ROM|Any CPU.ActiveCfg = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.CD_ROM|Mixed Platforms.ActiveCfg = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.CD_ROM|Mixed Platforms.Build.0 = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.CD_ROM|Win32.ActiveCfg = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.CD_ROM|Win32.Build.0 = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.CD_ROM|x86.ActiveCfg = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.CD_ROM|x86.Build.0 = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.Debug|Win32.Build.0 = Debug|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.Debug|x86.ActiveCfg = Debug|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.Debug|x86.Build.0 = Debug|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.DVD-5|Any CPU.ActiveCfg = Debug|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.DVD-5|Mixed Platforms.ActiveCfg = Debug|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.DVD-5|Mixed Platforms.Build.0 = Debug|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.DVD-5|Win32.ActiveCfg = Debug|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.DVD-5|Win32.Build.0 = Debug|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.DVD-5|x86.ActiveCfg = Debug|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.DVD-5|x86.Build.0 = Debug|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.Release|Any CPU.ActiveCfg = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.Release|Win32.ActiveCfg = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.Release|Win32.Build.0 = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.Release|x86.ActiveCfg = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.Release|x86.Build.0 = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.SingleImage|Any CPU.ActiveCfg = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.SingleImage|Mixed Platforms.ActiveCfg = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.SingleImage|Mixed Platforms.Build.0 = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.SingleImage|Win32.ActiveCfg = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.SingleImage|Win32.Build.0 = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.SingleImage|x86.ActiveCfg = Release|Win32
+		{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}.SingleImage|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

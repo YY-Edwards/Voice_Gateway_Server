@@ -8,6 +8,10 @@
 #include <mutex>
 #include <list>
 
+#ifndef IncomeDataHandler
+typedef std::function<void(CBaseConnector*, const char*, int) > IncomeDataHandler;
+#endif
+
 class CRpcClient : public OnConnectorData
 {
 public:
@@ -25,11 +29,12 @@ public:
 				uint64_t nCallId, 
 				std::function<void (const char* pResponse)> success, 
 				std::function<void(const char* pResponse)> failed = nullptr);
+	void setIncomeDataHandler(IncomeDataHandler handler);
 
 protected:
 	CBaseConnector* m_pConnector;
 	std::list<CRequest*> m_lstRequest;
 	std::mutex m_mtxRequest;
-	std::function<void(CBaseConnector*, const char* pIncomeData, int dataLen)> m_fnIncomeHandler;
+	IncomeDataHandler m_fnIncomeHandler;
 };
 
