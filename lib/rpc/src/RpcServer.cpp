@@ -54,13 +54,16 @@ int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 	return 0;
 }
 
-int CRpcServer::start()
+int CRpcServer::start(unsigned short port, int type)
 {
 	m_thdPool = new ThreadPool(ThreadCountInPool);
 
-	m_pConnector = new CTcpServer();
-	m_pConnector->setReceiveDataHandler(this);
-	m_pConnector->start();
+	if (CRpcServer::TCP == type)
+	{
+		m_pConnector = new CTcpServer();
+		m_pConnector->setReceiveDataHandler(this);
+		m_pConnector->start(std::to_string(port).c_str());
+	}
 
 	return 0;
 }
