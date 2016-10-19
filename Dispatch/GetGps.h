@@ -14,12 +14,15 @@ void getGpsEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t 
 		if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
 		{
 			std::map<std::string, std::string> args;
-			args["message"] = "Connect";
+			args["message"] = "getGps";
 			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
-			int id = d["id"].GetInt();
-			int cycle = d["cycyle"].GetInt();
-			int querymode = d["querymode"].GetInt();
+			string temp = d["id"].GetString();
+			int id = atoi(temp.c_str());
+			string tempCycle = d["cycle"].GetString();
+			int cycle = atoi(tempCycle.c_str());
+			string tempMode = d["queryMode"].GetString();
+			int querymode = atoi(tempMode.c_str());
 			switch (querymode)
 			{
 			case GPS_IMME_COMM:
