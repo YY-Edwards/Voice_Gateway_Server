@@ -10,11 +10,9 @@ class CWLNet;
 
 extern CTool g_tool;
 extern BOOL g_bPTT;      //Set or cleared by user interface.
-//extern BOOL g_bTX;       //Set or cleared by dongle.
 
 extern CSerialDongle* g_pDongle;
 extern CSound* g_pSound;
-//temp delete
 extern CWLNet* g_pNet;
 
 extern BOOL g_dongleIsUsing;
@@ -24,37 +22,61 @@ class CManager
 public:
 	CManager(CMySQL *db);
 	~CManager();
-	int initSys(char* master_ip, unsigned int master_port, unsigned int local_id, unsigned int local_radio_id, unsigned int record_type, unsigned int local_slot, unsigned int local_group, unsigned int serial_port);
+	/*初始化系统*/
+	int initSys();
+	/*获取句柄*/
 	int initWnd(HWND current_hwnd);
+	/*设置日志回调方法*/
 	int setLogPtr(PLogReport log_handel);
-
-	int play(); 
-	int initialCall(unsigned long tartgetId, unsigned char callType);
-	int stopRecord();
-
+	/*播放默认文件语音*/
+	int play();
+	/*建立通话*/
+	int initialCall(char* pTartgetId, char* pCallType);
+	/*松开PTT*/
+	int stopCall();
+	/*解码加锁*/
 	void RequireDecodeEvent();
+	/*解码解锁*/
 	void ReleaseDecodeEvent();
-
+	/*初始化dongle*/
 	int initDongle(unsigned int serial_port);
-
+	/*播放指定数据*/
 	int play(unsigned int length, char* pData);
+	/*加载指定音频数据*/
 	int LoadVoiceData(unsigned int length, char* pData);
+	/*断开与主中继的连接*/
 	int disConnect();
+	/*建立通话并发送文件语音*/
 	int SendFile(unsigned int length, char* pData);
+	//HANDLE getDecodeEvent();
+	/*设置当前语音的播放模式*/
+	int setPlayCallOfCare(char* pCallType,char* pFrom, char* pTarget);
+	/*配置参数*/
+	int config(char* pMasterIp
+		,char* pMasterPort
+		,char* pLocalPeerId
+		,char* pLocalRadioId
+		,char* pReccordType
+		,char* pDefaultGroup
+		,char* pDonglePort
+		,char* pHuangTime
+		,char* pMasterHeartTime
+		,char* pPeerHearTime
+		,char* pDefaultSlot);
 private:
 	PLogReport m_report;
 	HWND m_hwnd;
 	char m_reportMsg[512];
 	int m_activePort;
 	TIMECAPS m_theTimeCaps;
-
-	void sendLogToWindow();
-	void LoadVoiceData(LPCWSTR filePath);
-
 	HANDLE m_hWaitDecodeEvent;
 	BOOL m_bDongleIsOpen;
-
 	CMySQL *m_pDb;
+
+	/*推送日志到回调*/
+	void sendLogToWindow();
+	/*加载指定文件的语音数据*/
+	void LoadVoiceData(LPCWSTR filePath);
 };
 
 

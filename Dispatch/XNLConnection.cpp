@@ -762,31 +762,32 @@ void CXNLConnection::decode_xnl_data_msg_ack(char * p_msg_buf)
 
 void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 {
-	unsigned short xcmp_opcode = 0;
+	
 
 	if (pBuf == NULL)
 	{
 		return;
 	}
 
-	xcmp_opcode = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t))));
-	unsigned short xnl_opcode = 0;        //add by lcc
-	unsigned short check_result = 0;       //add by lcc
-	unsigned char rmt_fuction = 0;
+	unsigned short xnl_opcode = 0;        
+	unsigned short xcmp_opcode = 0;
+	unsigned short check_result = 0;       
+//	unsigned char rmt_fuction = 0;
 	unsigned char  rmt_type_code = 0;
-	unsigned char  rmt_result_code = 0;
-	unsigned short xnl_transationid = 0;
-	unsigned long  indicatorid = 0;
+	unsigned long rmt_addr = 0;
+	//unsigned short xnl_transationid = 0;
 	
-	xnl_opcode = ntohs(*((unsigned short *)(pBuf + 2)));  // add by lcc
-	xnl_transationid = ntohs(*((unsigned short *)(pBuf + 5)));
-	check_result = ntohs(*((unsigned short *)(pBuf + 16)));  // add by lcc
-	rmt_fuction = ntohs(*((unsigned short *)(pBuf + 18)));
-	rmt_type_code = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+1)));
-	rmt_result_code = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+1)));
-	indicatorid = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+ 5)));
+	
+	xnl_opcode = ntohs(*((unsigned short *)(pBuf + 2))); 
+	xcmp_opcode = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t))));
+	rmt_type_code = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+1)));             //feature  or result
+	//xnl_transationid = ntohs(*((unsigned short *)(pBuf + 5)));
+	check_result = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+2)));              //status
+	//rmt_fuction = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+4)));               //function
+	unsigned long temp = ntohl(*((unsigned long *)(pBuf + sizeof(xnl_msg_hdr_t)+6)));
+	rmt_addr = temp >> 8;
 	char s[12];
-	sprintf_s(s, "%d", indicatorid);
+	sprintf_s(s, "%d", rmt_addr);
 	string stringId = s;
 	list<AllCommand>::iterator it;
 	switch (xcmp_opcode)
@@ -796,7 +797,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 		send_xcmp_radio_status_request(0x08);             //read serial
 		break;
 		//在线检测
-	case 0XB41C:                         //  Remote Radio Control Broadcast
+	case XCMP_RMT_RADIO_CTRL_BRDCST:                         //  Remote Radio Control Broadcast
 		try
 		{
 			m_allCommandListLocker.lock();
@@ -813,7 +814,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							rmtflag = TRUE;
 							// 1:在线
 							std::map<std::string, std::string> args;
-							//	args["id"] = stringId;
+							args["id"] = stringId;
 							std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
 							if (pRemotePeer != NULL && pRemotePeer == it->pRemote)
 							{
@@ -826,12 +827,12 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							}
 
 						}
-						else
+						else if (0x0011 == check_result)
 						{
 							rmtflag = false;
 							//0:不在线
 							std::map<std::string, std::string> args;
-							//args["id"] = stringId;
+							args["id"] = stringId;
 							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 0, "1", args);
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
@@ -854,7 +855,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						{
 							rmtflag = true;                                   //成功    
 							std::map<std::string, std::string> args;
-							//args["id"] = stringId;
+							args["id"] = stringId;
 							std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
@@ -867,11 +868,11 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							}
 
 						}
-						else
+						else if (0x0111 == check_result)
 						{
 							rmtflag = false;                               //失败
 							std::map<std::string, std::string> args;
-							//args["id"] = stringId;
+							args["id"] = stringId;
 							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 0, "1", args);
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
@@ -893,7 +894,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						{
 							rmtflag = true;                                  //成功
 							std::map<std::string, std::string> args;
-							//args["id"] = stringId;
+							args["id"] = stringId;
 							std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
@@ -907,11 +908,11 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 
 
 						}
-						else
+						else if (0x0211 == check_result)
 						{
 							rmtflag = FALSE;                                //失败
 							std::map<std::string, std::string> args;
-							//args["id"] = stringId;
+							args["id"] = stringId;
 							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 1, "1", args);
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
@@ -933,7 +934,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						{
 							rmtflag = true;                                   //成功
 							std::map<std::string, std::string> args;
-							//args["id"] = stringId;
+							args["id"] = stringId;
 							std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
@@ -946,7 +947,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							}
 
 						}
-						else
+						else if (0x0311 == check_result)
 						{
 							rmtflag = false;                                   // 失败
 							std::map<std::string, std::string> args;
@@ -983,7 +984,16 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 			
 		}
 		break;
-	case 0X841C:              //Remote Radio Control Reply
+	case XCMP_RMT_RADIO_CTRL_REPLY:              //Remote Radio Control Reply
+		switch (*((unsigned char*)(pBuf + sizeof(xnl_msg_hdr_t)+1)))
+		{
+		case 0x0:                                                         //sucess
+			break;
+		case 0x01:                                                        //failure
+			break;
+		case 0x02:                                                        //The radio is not in the mode required（信道被占）
+			break;
+		}
 		break;
 	case XCMP_RADIO_STATUS_REPLY:
 		{

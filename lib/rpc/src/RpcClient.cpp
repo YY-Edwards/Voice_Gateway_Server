@@ -46,25 +46,25 @@ int CRpcClient::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 		int errCode = 0;
 		uint64_t callId = 0;
 		std::string content;
-		if (0 != parser.getResponse(str, status, statusText, errCode, callId, content))
-		{
-			throw std::exception("invalid request");
-		}
-
 		bool isResponse = false;
-		std::lock_guard<std::mutex> lock(m_mtxRequest);
-		// remove the front request in list, if the call id is match
-		for (auto itr = m_lstRequest.begin(); itr != m_lstRequest.end(); ++itr){
-			if (callId == (*itr)->m_nCallId)
-			{
-				isResponse = true;
-				// handle response
-				(*itr)->success(content.c_str());
+		if (0 == parser.getResponse(str, status, statusText, errCode, callId, content))
+		{
+			// it's valid response
+			std::lock_guard<std::mutex> lock(m_mtxRequest);
+			// remove the front request in list, if the call id is match
+			for (auto itr = m_lstRequest.begin(); itr != m_lstRequest.end(); ++itr){
+				if (callId == (*itr)->m_nCallId)
+				{
+					isResponse = true;
+					// handle response
+					(*itr)->success(content.c_str());
 
-				delete *itr;
-				m_lstRequest.remove(*itr);
-				break;
+					delete *itr;
+					m_lstRequest.remove(*itr);
+					break;
+				}
 			}
+
 		}
 
 		if (!isResponse)
@@ -86,6 +86,12 @@ int CRpcClient::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 	}
 	return 0;
 }
+
+void CRpcClient::setIncomeDataHandler(IncomeDataHandler handler)
+{
+	m_fnIncomeHandler = handler;
+}
+
 
 int CRpcClient::send(const char* pData, int dataLen)
 {

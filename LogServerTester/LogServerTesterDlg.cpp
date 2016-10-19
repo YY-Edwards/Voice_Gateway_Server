@@ -186,7 +186,7 @@ void CLogServerTesterDlg::OnBnClickedBtnCallAppEvent()
 {
 	std::map<std::string, std::string> args;
 	args["ip"] = "10.2.9.11";
-	std::string callJsonStr = CRpcJsonParser::buildCall("setRadioIp", 223, args);
+	std::string callJsonStr = CRpcJsonParser::buildCall("start", 223, args);
 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
 	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){

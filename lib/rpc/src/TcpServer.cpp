@@ -39,10 +39,12 @@ int CTcpServer::start(const char* connStr)
 		return SOCKET_ERROR;
 	}
 
+	u_short port = std::atoi(connStr);
+
 	SOCKADDR_IN serverAddr;
 	memset(&serverAddr, 0, sizeof(serverAddr));
 	serverAddr.sin_family = AF_INET;
-	serverAddr.sin_port = htons(ServerPORT);
+	serverAddr.sin_port = htons(port);
 	serverAddr.sin_addr.s_addr = INADDR_ANY;
 
 	ret = ::bind(m_serverSocket, (struct sockaddr*)&serverAddr, sizeof(serverAddr));

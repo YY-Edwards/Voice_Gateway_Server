@@ -528,7 +528,7 @@ int DispatchOperate::RadioConnect()
 		pXnlConnection = CXNLConnection::CreatConnection(dwip, 8002, "0x152C7E9D0x38BE41C70x71E96CA40x6CAC1AFC",
 			strtoul("0x9E3779B9", NULL, 16));
 		//std::lock_guard <std::mutex> locker(m_allCommandListLocker);
-		m_allCommandListLocker.lock();
+		//m_allCommandListLocker.lock();
 		//::EnterCriticalSection(&cs);
 		for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 		{
@@ -624,7 +624,7 @@ int DispatchOperate::RadioConnect()
 				}
 			
 		}
-		m_allCommandListLocker.unlock();
+		//m_allCommandListLocker.unlock();
 	//	::LeaveCriticalSection(&cs);
 	}
 	return 0;
@@ -648,60 +648,54 @@ void DispatchOperate::AddAllCommand(CRemotePeer* pRemote, int command, string ra
 	m_allCommand.gpsIP = gpsIP;
 	m_allCommand.text = text;
 	allCommandList.push_back(m_allCommand);
+	commandList.push_back(m_allCommand);
 }
 DWORD WINAPI DispatchOperate::TimeOutThread(LPVOID lpParam)
 {
 	DispatchOperate * pDispatchOperate = (DispatchOperate *)(lpParam);
-	pDispatchOperate->TimeOut();
+	while (true)
+	{
+		pDispatchOperate->TimeOut();
+		Sleep(100);
+	}
 	return 1;
 }
 void DispatchOperate::TimeOut()
-{/*
+{
 	list<AllCommand>::iterator it;
-	while (true)
+	std::lock_guard <std::mutex> locker(m_allCommandListLocker);
+	for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 	{
-
-		for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+		it->timeCount++;
+		//if (it->timeCount>= 3)                       //超时3次则返回发送失败      
+		//{
+		//	allCommandList.erase(it);
+		//	if (pRemotePeer != NULL && pRemotePeer == it->pRemote)
+		//	{
+		//		std::map<std::string, std::string> args;
+		//		std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
+		//		pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());	
+		//	}
+		//}
+		//else if (it->timeOut==30000)     //超时时间为30s
+		//{
+		//	allCommandList.erase(it);
+		//	commandList.push_back(*it);
+	//	}
+		if (it->timeCount % (it->timeOut / 100) == 0)
 		{
-			it->timeCount++;
-			if (it->timeCount % (it->timeOut / 100) == 0)
-			{*/
-				//if (myCallBackFunc != NULL)
-				//{
-				//	unsigned char str[30] = { 0 };
-				//	/*if ((it->command == REMOTE_CLOSE) || (it->command == REMOTE_OPEN) || (it->command == REMOTE_MONITOR) || (it->command == CHECK_RADIO_ONLINE))
-				//	{
-				//	allCommandList.erase(it);
-				//	continue;
-				//	}
-				//	else*/
-				//	//{
-				//	sprintf_s((char *)str, sizeof(str), "result:1");
-				//	//}
-
-				//	onData(myCallBackFunc, it->seq, it->command, (char *)str, sizeof(str));
-
-				//	for (list<AllCommand>::iterator ittmp = allCommandList.begin(); ittmp != allCommandList.end(); ++ittmp)
-				//	{
-
-				//		if ((ittmp->command == SEND_PRIVATE_MSG) || (ittmp->command == SEND_GROUP_MSG))
-				//		{
-				//			//allCommandList.erase(ittmp);
-				//			ittmp->timeCount = 150;
-				//			//allCommandList.push_back(*ittmp);
-				//		}
-				//	}
-
-				//	allCommandList.erase(it);
-
-				//	break;
-				//}
-
-	//		}
-
-	/*	}
-		Sleep(100);
-	}*/
+			
+			if (pRemotePeer != NULL && pRemotePeer == it->pRemote)
+			{
+				std::map<std::string, std::string> args;
+				std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
+				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());	
+				allCommandList.erase(it);
+			}
+		
+		}
+		break;
+	}
 }
 int DispatchOperate::getLic(const char* licPath)
 {
@@ -950,15 +944,15 @@ DWORD WINAPI DispatchOperate::WorkThread(LPVOID lpParam)
 	while (true)
 	{
 		pDispatchOperate->WorkThreadFunc();
-		Sleep(3000);
+		Sleep(10);
 	}
 	return 1;
 }
 void DispatchOperate::WorkThreadFunc()
 {
 	list<AllCommand>::iterator it;
-	std::lock_guard <std::mutex> locker(m_allCommandListLocker);
-	for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+	//std::lock_guard <std::mutex> locker(m_allCommandListLocker);
+	for (it = commandList.begin(); it != commandList.end(); ++it)
 	{
 		switch (it->command)
 		{
@@ -1017,6 +1011,7 @@ void DispatchOperate::WorkThreadFunc()
 		default:
 			break;
 		}
+		commandList.erase(it);
 		break;	
 	}
 }
