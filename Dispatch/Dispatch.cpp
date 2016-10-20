@@ -560,7 +560,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("sendSms", sendSmsEventAction);
 	rpcServer.addActionHandler("stopCall",stopCallEventAction);
 	rpcServer.addActionHandler("wiretap",wiretapEventAction);
-	rpcServer.start();
+	rpcServer.start(9001,1);
 	while (1);
 	return 0;
 }

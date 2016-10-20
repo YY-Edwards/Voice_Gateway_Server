@@ -123,7 +123,7 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,int cycle)
 	{
 		memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
 		m_ThreadGps->SendBuffer[0] = 0x05;   //Immediate Location Request
-		m_ThreadGps->SendBuffer[1] = 0x08;   //XML协议报中包含8组数据
+		m_ThreadGps->SendBuffer[1] = 0x0a;   //XML协议报中包含8组数据
 		m_ThreadGps->SendBuffer[2] = 0x22;   //Start of request-id element
 		m_ThreadGps->SendBuffer[3] = 0x04;   //request-id value Start
 		m_ThreadGps->SendBuffer[4] = 0x12;
@@ -131,9 +131,10 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,int cycle)
 		m_ThreadGps->SendBuffer[6] = 0x56;
 		m_ThreadGps->SendBuffer[7] = 0x78;   //request-id value End
 		m_ThreadGps->SendBuffer[8] = 0x51;   //Start of ret-info element, "ret-info-time" and "ret-info-accuracy" is specified as "YES"
-		m_ThreadGps->SendBuffer[9] = 0x62;   //Start of request-speed-hor element
-		m_ThreadGps->SendBuffer[10] = 0x55;  //Specifies that altitude information is required
-		m_ThreadGps->SendBuffer[11] = 0x57;  //Specifies that horizontal direction information is requested
+		m_ThreadGps->SendBuffer[9] = 0x55;  //Specifies that altitude information is required
+		m_ThreadGps->SendBuffer[10] = 0x57;  //Specifies that horizontal direction information is requested
+		m_ThreadGps->SendBuffer[11] = 0x62;   //Start of request-speed-hor element
+		
 		m_ThreadGps->gpsLength = SEND_IMM_QUERY_LENTH;
 	}
 		break;
@@ -149,10 +150,10 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,int cycle)
 		m_ThreadGps->SendBuffer[6] = 0xAC;
 		m_ThreadGps->SendBuffer[7] = 0xE0;
 		m_ThreadGps->SendBuffer[8] = 0x34;
-		m_ThreadGps->SendBuffer[9] = 0x31;
+		m_ThreadGps->SendBuffer[9] = 0x54;
 		m_ThreadGps->SendBuffer[10] = 0xff&cycle;
-		m_ThreadGps->SendBuffer[11] = 0x54;  //Specifies that altitude information is required
-		m_ThreadGps->SendBuffer[12] = 0x57;  //Specifies that horizontal direction information is requested
+		//m_ThreadGps->SendBuffer[11] = 0x54;  //Specifies that altitude information is required
+		//m_ThreadGps->SendBuffer[12] = 0x57;  //Specifies that horizontal direction information is requested
 		m_ThreadGps->gpsLength = SEND_TRG_QUERY_LENTH;
 	}
 		break;

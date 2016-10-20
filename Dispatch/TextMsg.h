@@ -13,7 +13,7 @@
 #define UINT16   unsigned   __int16
 #define TEXTLENTH_1   5
 #define TEXTLENTH_2   6
-
+#include <string>
 typedef struct tagThreadMsg
 {
 	SOCKET           mySocket;
@@ -77,7 +77,7 @@ private:
 	bool m_RcvSocketOpened;
 	ThreadMsg * m_ThreadMsg;
 	CRemotePeer* pRemotePeer;
-	
+	std::string TCHAR2STRING(TCHAR *  STR);
 	
 };
 

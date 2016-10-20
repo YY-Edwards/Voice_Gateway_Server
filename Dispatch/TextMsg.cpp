@@ -142,15 +142,31 @@ string CTextMsg::ParseUserMsg(TextMsg* HandleMsg, int * len)
 		}
 	}
 
-	//memcpy((char*)szMessage, &HandleMsg->TextPayload[MsgOffset], MsgSize - MsgOffset - 2);
-	//*len = MsgSize - MsgOffset - 2;
-	//ParsedMsg = szMessage;
 	memcpy((char*)szMessage, &HandleMsg->TextPayload[MsgOffset], MsgSize - MsgOffset - 2);
+	//*len = MsgSize - MsgOffset - 2;
+	ParsedMsg = TCHAR2STRING( szMessage);
+//	memcpy((char*)szMessage, &HandleMsg->TextPayload[MsgOffset], MsgSize - MsgOffset - 2);
 //	ParsedMsg.Format(_T("%s"), szMessage);
-	ParsedMsg = HandleMsg->TextPayload[MsgOffset];
+	//ParsedMsg = HandleMsg->TextPayload[MsgOffset];
 
 	return ParsedMsg;
 }
+std::string CTextMsg::TCHAR2STRING(TCHAR * STR)
+
+{
+
+	int iLen = WideCharToMultiByte(CP_ACP, 0, STR, -1, NULL, 0, NULL, NULL);
+
+	char* chRtn = new char[iLen*sizeof(char)];
+
+	WideCharToMultiByte(CP_ACP, 0, STR, -1, chRtn, iLen, NULL, NULL);
+
+	std::string str(chRtn);
+
+	return str;
+
+}
+
 
 UINT8 CTextMsg::GetSeqNumber(TextMsg* HandleMsg)
 {
@@ -480,7 +496,7 @@ void CTextMsg::RecvMsg()
 				tm timeinfo;
 				char tmp[64];
 				localtime_s(&timeinfo, &t);
-				strftime(tmp, sizeof(tmp), "%Y/%m/%d %X %A 本年第%j天 %z", &timeinfo);
+				strftime(tmp, sizeof(tmp), "%Y/%m/%d  %H:%M:%S", &timeinfo);
 				string message = ParseUserMsg(&HandleMsg, 0);
 				string strTime = tmp;
 				char radioID[512];
