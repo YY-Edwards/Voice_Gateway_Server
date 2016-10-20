@@ -6,7 +6,7 @@
 #include "../lib/rpc/include/RpcJsonParser.h"
 
 
-void sendSmsEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
+void sendSmsEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	Document d;
 	try{

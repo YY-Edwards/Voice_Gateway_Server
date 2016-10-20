@@ -16,7 +16,7 @@
 #include "../lib/rpc/include/RpcJsonParser.h"
 #include "Settings.h"
 
-void setRadioIpAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
+void setRadioIpAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
 
