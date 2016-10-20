@@ -12,7 +12,7 @@
 * JSON format: param{name:xx,phone:123333, username:xx, password:xxxx}
 */
 
-void addStaffAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
+void addStaffAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	Document d;
 	std::map<std::string, std::string> args;

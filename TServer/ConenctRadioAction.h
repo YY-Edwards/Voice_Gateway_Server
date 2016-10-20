@@ -3,9 +3,8 @@
 #include "../lib/type.h"
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
-#include"Settings.h"
 
-void connectRadioAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
+void connectRadioAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
 

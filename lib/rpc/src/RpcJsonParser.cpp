@@ -14,7 +14,7 @@ CRpcJsonParser::~CRpcJsonParser()
 {
 }
 
-int CRpcJsonParser::getRequest(const std::string str, std::string& callName, uint64_t& callId, std::string& args)
+int CRpcJsonParser::getRequest(const std::string str, std::string& callName, uint64_t& callId, std::string& args, std::string& type)
 {
 	int ret = 0;
 
@@ -39,6 +39,11 @@ int CRpcJsonParser::getRequest(const std::string str, std::string& callName, uin
 		if (!d.HasMember("callId"))
 		{
 			throw std::exception("call id not exist");
+		}
+
+		if (d.HasMember("type"))
+		{
+			type = d["type"].GetString();
 		}
 
 		callName = d["call"].GetString();

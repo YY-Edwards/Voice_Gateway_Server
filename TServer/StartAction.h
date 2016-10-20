@@ -19,7 +19,7 @@
 
 #include "Broker.h"
 
-void startAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
+void startAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
 	std::lock_guard<std::mutex> locker(lock);
