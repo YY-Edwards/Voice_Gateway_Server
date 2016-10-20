@@ -8,20 +8,20 @@
 #include <shlobj.h>  
 #include "Util.h"
 #include "../lib/rpc/include/RpcServer.h"
-#include"AllCall.h"
-#include"Call.h"
-#include"CancelGps.h"
-#include"Connect.h"
-#include"GetGps.h"
-#include "GetOverTurnGPS.h"
-#include"GroupCall.h"
-#include "RadioCheck.h"
-#include "RemotePowerOff.h"
-#include "RmotePowerON.h"
-#include "SendGroupSms.h"
-#include "SendSms.h"
-#include "StopCall.h"
-#include "Wiretap.h"
+#include"AllCallEventAction.h"
+#include"CallEventAction.h"
+#include"CancelgpspEventAction.h"
+#include"ConnectEventAction.h"
+#include"GetGpsEventAction.h"
+#include "GetOverTurnGpsEventAction.h"
+#include"GroupCallEventAction.h"
+#include "RadioCheckEventAction.h"
+#include "RemotePowerOffEventAction.h"
+#include "RemotePowerOnEventAction.h"
+#include "SendGroupSmsEventAction.h"
+#include "SendSmsEventAction.h"
+#include "StopCallEventAction.h"
+#include "WiretapEventAction.h"
 
 
 #pragma comment(lib, "Shlwapi.lib")
@@ -551,8 +551,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("cancelGps",cancelgpspEventAction);
 	rpcServer.addActionHandler("connect",connectEventAction);
 	rpcServer.addActionHandler("getGps",getGpsEventAction);
-	rpcServer.addActionHandler("getOverTurnGps",getoverturngpsEventAction);
-	rpcServer.addActionHandler("groupCall",groupcallEventAction);
+	rpcServer.addActionHandler("getOverTurnGps",getOverTurnGpsEventAction);
+	rpcServer.addActionHandler("groupCall",groupCallEventAction);
 	rpcServer.addActionHandler("radioCheck",radioCheckEventAction);
 	rpcServer.addActionHandler("remotePowerOn",remotePowerOnEventAction);
 	rpcServer.addActionHandler("remotePowerOff",remotePowerOffEventAction);
