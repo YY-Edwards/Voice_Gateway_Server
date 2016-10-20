@@ -78,6 +78,9 @@
     <ClInclude Include="Broker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ConenctRadioAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
