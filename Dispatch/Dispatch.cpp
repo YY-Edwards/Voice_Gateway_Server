@@ -34,7 +34,7 @@ static SERVICE_STATUS g_ServiceStatus = { 0 };
 static HANDLE g_ServiceStopEvent = INVALID_HANDLE_VALUE;
 static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 
-
+#define  TCP_PORT 9001
 
 
 //void StartService()
@@ -560,7 +560,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("sendSms", sendSmsEventAction);
 	rpcServer.addActionHandler("stopCall",stopCallEventAction);
 	rpcServer.addActionHandler("wiretap",wiretapEventAction);
-	rpcServer.start(9001,1);
+	rpcServer.start(TCP_PORT, rpcServer.TCP);
 	while (1);
 	return 0;
 }

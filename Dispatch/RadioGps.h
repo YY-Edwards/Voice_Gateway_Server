@@ -3,7 +3,7 @@
 //#include <Windows.h>
 #include "../lib/rpc/include/BaseConnector.h"
 #pragma once
-#define SEND_IMM_QUERY_LENTH   12
+#define SEND_IMM_QUERY_LENTH   10
 #define SEND_TRG_QUERY_LENTH   11
 #define SEND_IMM_CSBK_QUERY_LENTH   10
 #define SEND_TRG_CSBK_QUERY_LENTH   14
