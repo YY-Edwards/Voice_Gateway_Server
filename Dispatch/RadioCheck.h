@@ -6,7 +6,7 @@
 #include "../lib/rpc/include/RpcJsonParser.h"
 
 
-void radioCheckEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
+void radioCheckEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	Document d;
 	try{

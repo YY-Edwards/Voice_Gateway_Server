@@ -6,7 +6,8 @@
 #include "../lib/rpc/include/RpcJsonParser.h"
 
 map<CRemotePeer *, DispatchOperate*>  m_dispatchOperate;
-void allCallEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
+
+void allCallEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	
 	Document d;
