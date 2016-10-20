@@ -8,7 +8,7 @@
 
 #include "StartAction.h"
 #include "SetRadioIpAction.h"
-
+#include "ConenctRadioAction.h"
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//CSettings::instance()->setRadioIp("192.168.2.1");
@@ -18,7 +18,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	rpcServer.addActionHandler("start", startAction);
 	rpcServer.addActionHandler("setRadioIp", setRadioIpAction);
-
+	rpcServer.addActionHandler("connect", connectRadioAction);
 	rpcServer.start();
 	while (1);
 	return 0;
