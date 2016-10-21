@@ -21,7 +21,6 @@ namespace TrboX
             if((null != value) && ((int)value == 0) ) return false;
 
             return true;
-
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

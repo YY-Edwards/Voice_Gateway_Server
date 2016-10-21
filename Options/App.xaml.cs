@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Windows;
+using Newtonsoft.Json;
 
 namespace TrboX
 {
@@ -38,6 +39,19 @@ namespace TrboX
                 return Directory + ResourceTempFile;
             }
         }
-
     }
+
+    public class Trbox
+    {
+        public static bool IsNumber(string str)
+        {
+            return ((str != "") && System.Text.RegularExpressions.Regex.IsMatch(str, @"^\d+$"));
+        }
+
+        public static bool Compare(object src, object dest)
+        {
+            return JsonConvert.SerializeObject(src) == JsonConvert.SerializeObject(dest);
+        }
+    }
+
 }

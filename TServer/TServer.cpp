@@ -23,14 +23,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	rpcServer.addActionHandler("start", startAction);
 
-	rpcServer.addActionHandler("setBase", setBaseAction);
-	rpcServer.addActionHandler("getBase", getBaseAction);
+	rpcServer.addActionHandler("setBaseSetting", setBaseAction);
+	rpcServer.addActionHandler("getBaseSetting", getBaseAction);
 
-	rpcServer.addActionHandler("setRadio", setRadioAction);
-	rpcServer.addActionHandler("getRadio", getRadioAction);
+	rpcServer.addActionHandler("setRadioSetting", setRadioAction);
+	rpcServer.addActionHandler("getRadioSetting", getRadioAction);
 
-	rpcServer.addActionHandler("setRepeater", setRepeaterAction);
-	rpcServer.addActionHandler("getRepeater", getRepeaterAction);
+	rpcServer.addActionHandler("setRepeaterSetting", setRepeaterAction);
+	rpcServer.addActionHandler("getRepeaterSetting", getRepeaterAction);
 
 
 	rpcServer.start();
