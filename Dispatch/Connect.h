@@ -17,6 +17,7 @@ void connectEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 		args["message"] = "connect";
 		std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
 		pRemote->sendResponse(strResp.c_str(), strResp.size());
+		printf("received connect action and sent response\r\n");
 		string radioIP = d["radioIP"].GetString();
 		string mnisIP = d["mnisIP"].GetString();
 		m_dispatchOperate[pRemote]->AddAllCommand(pRemote, RADIO_CONNECT, radioIP, mnisIP, "", 0, _T(""), 0, 0, callId);

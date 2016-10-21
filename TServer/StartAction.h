@@ -46,7 +46,8 @@ void startAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 			int ret = CBroker::instance()->getRadioClient()->sendRequest(callJsonStr.c_str(),
 				clientCallId,
-				[&](const char* pResponse){
+				pRemote,
+				[&](const char* pResponse, void*){
 					std::map<std::string, std::string> args;
 					std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
 					pRemote->sendResponse(strResp.c_str(), strResp.size());
