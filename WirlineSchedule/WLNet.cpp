@@ -8,6 +8,7 @@
 static const unsigned char AuthenticId[AUTHENTIC_ID_SIZE] = { 0x01, 0x02, 0x00, 0x0d };
 static const unsigned char VenderKey[VENDER_KEY_SIZE] = { 0x6b, 0xe5, 0xff, 0x95, 0x6a, 0xb5, 0xe8, 0x82, 0xa8, 0x6f, 0x29, 0x5f, 0x9d, 0x9d, 0x5e, 0xcf, 0xe6, 0x57, 0x61, 0x5a };
 
+
 CWLNet::CWLNet(CMySQL *pDb,CManager *pManager)
 : m_socket(INVALID_SOCKET)
 , m_hWorkThread(INVALID_HANDLE_VALUE)
@@ -63,6 +64,7 @@ CWLNet::CWLNet(CMySQL *pDb,CManager *pManager)
 	//m_dongleIdleEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
 	m_pManager = pManager;
 	m_dwChangeToCurrentTick = 0;
+	m_pPlayCall = NULL;
 }
 
 CWLNet::~CWLNet()
@@ -2186,6 +2188,10 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 									   CRecordFile* p = (CRecordFile*)(*i);
 									   if (diffTimestamp > CONFIG_HUNG_TIME && VOICE_STATUS_CALLBACK == (*i)->callStatus)
 									   {
+										   if (isTargetMeCall(p->tagetId, p->callType))
+										   {
+											   Send_CARE_CALL_STATUS(p->callType, p->srcId, p->tagetId, END_CALL_NO_PLAY);
+										   }
 										   m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, CONFIG_RECORD_TYPE, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi, (*i)->callStatus, &((*i)->recordTime));
 										   requireVoiceReocrdsLock();
 										   delete (*i);
@@ -2203,6 +2209,11 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 										   }
 										   (*i)->callStatus = VOICE_STATUS_END;
 										   GetLocalTime(&((*i)->recordTime));
+
+										   if (isTargetMeCall(p->tagetId, p->callType))
+										   {
+											   Send_CARE_CALL_STATUS(p->callType, p->srcId, p->tagetId, END_CALL_NO_PLAY);
+										   }
 										   m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, CONFIG_RECORD_TYPE, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi,(*i)->callStatus,&((*i)->recordTime));
 										   requireVoiceReocrdsLock();
 										   delete (*i);
@@ -2371,9 +2382,10 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 									  {
 									  case Call_Session_End:
 									  {
-															   if (isTargetMeCall(p->targetID, p->callType))
+															   if (isTargetMeCall(tgtId, p->callType))
 															   {
 																   SetCallStatus(CALL_IDLE);
+																   Send_CARE_CALL_STATUS(p->callType, srcId, tgtId, END_CALL_NO_PLAY);
 															   }
 															   ///*结束本次通话*/
 															   for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
@@ -6148,6 +6160,7 @@ int CWLNet::callBack()
 	}
 	else
 	{
+		Send_CARE_CALL_STATUS(g_targetCallType, CONFIG_LOCAL_RADIO_ID, g_targetId, NEW_CALL_END);
 		return 1;
 	}
 }
@@ -6301,6 +6314,7 @@ int CWLNet::newCall()
 	}
 	else
 	{
+		Send_CARE_CALL_STATUS(g_targetCallType, CONFIG_LOCAL_RADIO_ID, g_targetId, NEW_CALL_END);
 		return 1;
 	}
 }
@@ -6405,8 +6419,6 @@ short CWLNet::Build_WL_VC_VOICE_END_BURST(CHAR* pPacket, T_WL_PROTOCOL_19* pData
 
 void CWLNet::CorrectingBuffer(DWORD callId)
 {
-
-	
 	_SlotNumber slot = m_pCurrentSendVoicePeer->getUseSlot();
 	/*核对语音记录信息*/
 	for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
@@ -6417,6 +6429,7 @@ void CWLNet::CorrectingBuffer(DWORD callId)
 		{
 			(*i)->callId = callId;
 			(*i)->srcSlot = slot;
+			//callType = (*i)->callType;
 			break;
 		}
 	}
@@ -6432,6 +6445,8 @@ void CWLNet::CorrectingBuffer(DWORD callId)
 		getWirelineAuthentication(p->pPackageData, size);
 	}
 	releaseReadySendVoicesLock();
+
+	Send_CARE_CALL_STATUS(g_targetCallType, CONFIG_LOCAL_RADIO_ID, g_targetId,NEW_CALL_START);
 }
 
 void CWLNet::requestRecordEndEvent()
@@ -7083,12 +7098,12 @@ int CWLNet::checkDefaultGroup()
 
 
 
-int CWLNet::setPlayCallOfCare(char* pCallType, char* pFrom, char* pTarget)
+int CWLNet::setPlayCallOfCare(unsigned char calltype, unsigned long srcId, unsigned long targetId)
 {
-	int type = atoi(pCallType);
-	unsigned long src = (unsigned long)atoll(pFrom);
-	unsigned long tgt = (unsigned long)atoll(pTarget);
-	switch (type)
+	//int type = atoi(pCallType);
+	unsigned long src = srcId;
+	unsigned long tgt = targetId;
+	switch (calltype)
 	{
 	case GROUPCALL_TYPE:
 	{
@@ -7136,15 +7151,62 @@ int CWLNet::setPlayCallOfCare(char* pCallType, char* pFrom, char* pTarget)
 
 int CWLNet::thereIsCallOfCare(CRecordFile *pCallRecord)
 {
-	Send_CARE_CALL_STATUS(pCallRecord->callType, pCallRecord->srcId, pCallRecord->tagetId, CALL_BACKSTAGE);
+	Send_CARE_CALL_STATUS(pCallRecord->callType, pCallRecord->srcId, pCallRecord->tagetId, HAVE_CALL_NO_PLAY);
 	return 0;
 }
 
 int CWLNet::Send_CARE_CALL_STATUS(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status)
 {
 	/*将参数打包成json格式*/
+	std::map<std::string, std::string> args;
+	char temp[128] = { 0 };
+	sprintf_s(temp, "%u", callType);
+	args["callType"] = temp;
+	sprintf_s(temp, "%lu", srcId);
+	args["srcId"] = temp;
+	sprintf_s(temp, "%lu", tgtId);
+	args["tgtId"] = temp;
+	sprintf_s(temp, "%d", status);
+	args["status"] = temp;
+	args["module"] = "wl";
+	std::string strRequest = CRpcJsonParser::buildCall("Send_CARE_CALL_STATUS",++g_sn,args);
+	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
+	sendLogToWindow();
 	/*发送到Client*/
+	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end();i++)
+	{
+		TcpClient* p = *i;
+		try
+		{
+			p->sendResponse(strRequest.c_str(), strRequest.size());
+		}
+		catch (...)
+		{
+			sprintf_s(m_reportMsg, "Send_CARE_CALL_STATUS fail, socket:%lu", p->s);
+			sendLogToWindow();
+		}
+	}
 	return 0;
+}
+
+void CWLNet::setWlStatus(WLStatus value)
+{
+	m_WLStatus = value;
+}
+
+WLStatus CWLNet::getWlStatus()
+{
+	return m_WLStatus;
+}
+
+CRecordFile* CWLNet::getCurrentPlayInfo()
+{
+	return m_pPlayCall;
+}
+
+void CWLNet::setCurrentPlayInfo(CRecordFile *value)
+{
+	m_pPlayCall = value;
 }
 
 //bool CWLNet::getIsFirstBurstA()

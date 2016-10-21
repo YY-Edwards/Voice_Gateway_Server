@@ -15,7 +15,6 @@ extern CSound* g_pSound;
 extern BOOL g_dongleIsUsing;
 extern BOOL g_bPTT;
 
-
 #define     SYS_SECTION   __TEXT("sys")
 #define     CONNECT_RESULT  __TEXT("connect")
 #define     PEER_COUNT      __TEXT("peercount")
@@ -231,40 +230,6 @@ enum _EventIndex
 	TxEvent,
 	TickEvent,
 };
-enum  WLStatus
-{
-	STARTING = 0,
-	WAITFOR_LE_MASTER_PEER_REGISTRATION_TX,
-	WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE,
-	WAITFOR_MAP_REQUEST_TX,
-	WAITFOR_LE_NOTIFICATION_MAP_BROADCAST,
-
-	//xnl connect
-	XNL_CONNECT,
-	WAITFOR_XNL_DEVICE_MASTER_QUERY_TX,
-	WAITFOR_XNL_MASTER_STATUS_BROADCAST,
-	WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX,
-	WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY,
-	WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX,
-	WAITFOR_XNL_DEVICE_CONNECT_REPLY,
-	WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST,
-	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1,
-	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2,
-	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2_TX,
-	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3_TX,
-	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3,
-	WAITFOR_XNL_XCMP_READ_SERIAL,
-	WAITFOR_XNL_XCMP_READ_SERIAL_RESULT,
-
-	ALIVE,
-	TRANSMITTING1,
-	TRANSMITTING2,
-	WAITINGFOR_LE_DEREGISTRATION_TXFREE,
-	WAITINGFOR_LE_DEREGISTRATION_TRANSMISSION,
-	BAILOUT
-};
-
-
 
 enum _AddressType{
 	IndividualCall = 0x01,
@@ -345,7 +310,7 @@ public:
 	void setCurrentSendVoicePeer(CIPSCPeer* value);
 	void clearPeers();
 	int checkDefaultGroup();
-	int setPlayCallOfCare(char* pCallType, char* pFrom, char* pTarget);
+	int setPlayCallOfCare(unsigned char calltype, unsigned long srcId, unsigned long targetId);
 	int thereIsCallOfCare(CRecordFile *pCallRecord);
 	/*告知界面当前存在需要关注的通话正在进行以及状态*/
 	int Send_CARE_CALL_STATUS(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status);
@@ -715,21 +680,24 @@ public:
 private:
 	//delete old code
 	//CString m_strLicenseFilePath;
+	CRecordFile* m_pPlayCall;
 public:
 	void RestartLE();
 	DWORD GetIpList(void * iplist);
 	bool FindLocalIP(WCHAR* strAddr);
 private:
 	bool isLicense;
-
+public:
+	//delete old code
+	//void CloseServer();
+	void setWlStatus(WLStatus value);
+	WLStatus getWlStatus();
 	/************************************************************************/
 	/*验证此语音是否需要实时播放
 	/************************************************************************/
 	bool isTargetMeCall(unsigned int tagetId, unsigned char callType);
-public:
-	//delete old code
-	//void CloseServer();
-
+	CRecordFile* getCurrentPlayInfo();
+	void setCurrentPlayInfo(CRecordFile *value);
 };
 
 #endif

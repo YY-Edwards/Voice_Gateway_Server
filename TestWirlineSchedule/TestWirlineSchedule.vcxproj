@@ -11,9 +11,10 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{1B9D30FE-4CF7-4B77-B53B-5AEF9B59EBE2}</ProjectGuid>
-    <Keyword>Win32Proj</Keyword>
-    <RootNamespace>Dispatch</RootNamespace>
+    <ProjectGuid>{954BDDEF-CBBE-4D7C-822E-1C7AB4F896F7}</ProjectGuid>
+    <RootNamespace>LogServerTester</RootNamespace>
+    <Keyword>MFCProj</Keyword>
+    <ProjectName>TestWirlineSchedule</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -21,6 +22,7 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
@@ -28,6 +30,7 @@
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
+    <UseOfMfc>Dynamic</UseOfMfc>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -41,6 +44,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>..\Debug\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -50,21 +54,23 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_AFXDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>false</SDLCheck>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <AdditionalIncludeDirectories>../lib/gtest/include;../lib/glog/lib;../lib</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <StackReserveSize>
-      </StackReserveSize>
-      <StackCommitSize>
-      </StackCommitSize>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
     </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -73,74 +79,70 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>../lib;..\lib\gtest\include;..\lib\glog\lib;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies />
     </Link>
+    <Midl>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>true</ValidateAllParameters>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </Midl>
+    <ResourceCompile>
+      <Culture>0x0409</Culture>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\glog\logging.h" />
     <ClInclude Include="..\lib\rpc\include\AbstractAction.h" />
     <ClInclude Include="..\lib\rpc\include\BaseConnector.h" />
+    <ClInclude Include="..\lib\rpc\include\request.h" />
+    <ClInclude Include="..\lib\rpc\include\RpcClient.h" />
     <ClInclude Include="..\lib\rpc\include\RpcJsonParser.h" />
-    <ClInclude Include="..\lib\rpc\include\RpcServer.h" />
-    <ClInclude Include="..\lib\rpc\include\TcpServer.h" />
-    <ClInclude Include="AllCallEventAction.h" />
-    <ClInclude Include="CallEventAction.h" />
-    <ClInclude Include="CancelgpspEventAction.h" />
-    <ClInclude Include="ConnectEventAction.h" />
-    <ClInclude Include="DispatchOperate.h" />
-    <ClInclude Include="GetGpsEventAction.h" />
-    <ClInclude Include="GetOverTurnGpsEventAction.h" />
-    <ClInclude Include="GroupCallEventAction.h" />
-    <ClInclude Include="RadioARS.h" />
-    <ClInclude Include="RadioCheckEventAction.h" />
-    <ClInclude Include="RadioGps.h" />
-    <ClInclude Include="RemotePowerOffEventAction.h" />
-    <ClInclude Include="RemotePowerOnEventAction.h" />
-    <ClInclude Include="SendGroupSmsEventAction.h" />
-    <ClInclude Include="SendSmsEventAction.h" />
+    <ClInclude Include="..\lib\rpc\include\TcpClientConnector.h" />
+    <ClInclude Include="..\lib\utf8\utf8.h" />
+    <ClInclude Include="LogServerTester.h" />
+    <ClInclude Include="LogServerTesterDlg.h" />
+    <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="StopCallEventAction.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="TextMsg.h" />
-    <ClInclude Include="UnitTest.h" />
-    <ClInclude Include="Util.h" />
-    <ClInclude Include="WiretapEventAction.h" />
-    <ClInclude Include="xcmp_msg_defs.h" />
-    <ClInclude Include="XNLConnection.h" />
-    <ClInclude Include="xnl_messages_def.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\lib\rpc\src\RpcClient.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp" />
-    <ClCompile Include="..\lib\rpc\src\RpcServer.cpp" />
-    <ClCompile Include="..\lib\rpc\src\TcpServer.cpp" />
-    <ClCompile Include="Dispatch.cpp" />
-    <ClCompile Include="DispatchOperate.cpp" />
-    <ClCompile Include="RadioARS.cpp" />
-    <ClCompile Include="RadioGps.cpp" />
+    <ClCompile Include="..\lib\rpc\src\TcpClientConnector.cpp" />
+    <ClCompile Include="..\lib\strutil\strutil.cpp" />
+    <ClCompile Include="LogServerTester.cpp" />
+    <ClCompile Include="LogServerTesterDlg.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TextMsg.cpp" />
-    <ClCompile Include="UnitTest.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\Dispatch\gtest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
-    <ClCompile Include="XNLConnection.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="LogServerTester.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\LogServerTester.rc2" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\LogServerTester.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties RESOURCE_FILE="LogServerTester.rc" />
+    </VisualStudio>
+  </ProjectExtensions>
 </Project>
