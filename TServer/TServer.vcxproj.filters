@@ -81,6 +81,45 @@
     <ClInclude Include="ConenctRadioAction.h">
       <Filter>action</Filter>
     </ClInclude>
+    <ClInclude Include="AllCallAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="CallAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="CancelGpsAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="GetGpsAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="GetOverTurnGpsAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="GroupCallAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="RadioCheckAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="RemotePowerOffAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="RemotePowerOnAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="SendGroupSmsAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="SendSmsAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="StopCallAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="WiretapAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

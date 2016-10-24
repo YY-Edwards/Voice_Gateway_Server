@@ -37,6 +37,19 @@ static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 #define  TCP_PORT 9001
 
 
+//¼ì²éÄÚ´æÐ¹Â©
+#ifdef _DEBUG
+#define DEBUG_CLIENTBLOCK new( _CLIENT_BLOCK, __FILE__, __LINE__)
+#else
+#define DEBUG_CLIENTBLOCK
+#endif  // _DEBUG
+#define _CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+#ifdef _DEBUG
+#define new DEBUG_CLIENTBLOCK
+#endif  // _DEBUG
+
 //void StartService()
 //{
 //	SC_HANDLE hSCM;
@@ -561,6 +574,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("stopCall",stopCallEventAction);
 	rpcServer.addActionHandler("wiretap",wiretapEventAction);
 	rpcServer.start(TCP_PORT, rpcServer.TCP);
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);                    //¼ì²éÄÚ´æÐ¹Â©
 	while (1);
 	return 0;
 }
