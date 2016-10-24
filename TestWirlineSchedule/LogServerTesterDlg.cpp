@@ -61,6 +61,7 @@ TestWirlineScheduleDlg::TestWirlineScheduleDlg(CWnd* pParent /*=NULL*/)
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	g_hwnd = GetSafeHwnd();
 	m_bRunHandleServerProc = false;
+	m_bupdateData = false;
 }
 
 void TestWirlineScheduleDlg::DoDataExchange(CDataExchange* pDX)
@@ -93,6 +94,7 @@ BEGIN_MESSAGE_MAP(TestWirlineScheduleDlg, CDialogEx)
 	ON_BN_CLICKED(INIT_CALL, &TestWirlineScheduleDlg::OnBnClickedCall)
 	ON_BN_CLICKED(STOP_CALL, &TestWirlineScheduleDlg::OnBnClickedStopCall)
 	ON_BN_CLICKED(IDC_BUTTON1, &TestWirlineScheduleDlg::OnBnClickedSetPlayCallOfCare)
+	ON_MESSAGE(WM_UPDATE_DATA,OnUpdateData)
 END_MESSAGE_MAP()
 
 
@@ -425,9 +427,10 @@ void TestWirlineScheduleDlg::OnBnClickedBtnConfig()
 	std::string callJsonStr = CRpcJsonParser::buildCall("config", ++g_sn, args);
 	m_rpcClient.sendRequest(callJsonStr.c_str(), g_sn, [](const char* pResponse){
 		std::string strResp = pResponse;
-		std::wstring wstr;
-		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		TRACE("received:%s\r", wstr.c_str());
+		TRACE("%s\r", strResp.c_str());
+		//std::wstring wstr;
+		//utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+		//TRACE("received:%s\r", wstr.c_str());
 	});
 	callJsonStr.clear();
 }
@@ -498,13 +501,14 @@ void TestWirlineScheduleDlg::OnBnClickedCall()
 	m_rpcClient.sendRequest(callJsonStr.c_str(), g_sn, [](const char* pResponse){
 		/*处理返回值*/
 		std::string strResp = pResponse;
-		std::wstring wstr;
-		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		TRACE("received:%s\r", wstr.c_str());
+		TRACE("%s\r",strResp.c_str());
+		//std::wstring wstr;
+		//utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+		//TRACE("received:%s\r", wstr.c_str());
 	});
 	callJsonStr.clear();
 	m_call.EnableWindow(FALSE);
-	m_stopCall.EnableWindow(TRUE);
+	m_stopCall.EnableWindow(FALSE);
 }
 
 
@@ -519,12 +523,13 @@ void TestWirlineScheduleDlg::OnBnClickedStopCall()
 	m_rpcClient.sendRequest(callJsonStr.c_str(), g_sn, [](const char* pResponse){
 		/*处理返回值*/
 		std::string strResp = pResponse;
-		std::wstring wstr;
-		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		TRACE("received:%s\r", wstr.c_str());
+		TRACE("%s\r", strResp.c_str());
+		//std::wstring wstr;
+		//utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+		//TRACE("received:%s\r", wstr.c_str());
 	});
 	callJsonStr.clear();
-	m_call.EnableWindow(TRUE);
+	m_call.EnableWindow(FALSE);
 	m_stopCall.EnableWindow(FALSE);
 }
 
@@ -580,11 +585,12 @@ void TestWirlineScheduleDlg::OnServerRequest(CBaseConnector* pServer, const char
 	try
 	{
 		std::string str(pData, dataLen);
-		TRACE("received data:%s", str.c_str());
+		TRACE("received data:%s\r", str.c_str());
 		std::string callName;
+		std::string type;
 		uint64_t callId = 0;
 		std::string param = "";
-		if (0 != CRpcJsonParser::getRequest(str, callName, callId, param))
+		if (0 != CRpcJsonParser::getRequest(str, callName, callId, param, type))
 		{
 			// send error response
 			std::string response = CRpcJsonParser::buildResponse("failed", callId, 404, "Invalid request");
@@ -597,7 +603,7 @@ void TestWirlineScheduleDlg::OnServerRequest(CBaseConnector* pServer, const char
 		if (0 == strcmp(callName.c_str(),"Send_CARE_CALL_STATUS"))
 		{
 			g_pNewRequest = new SERVER_REQUEST;
-			g_pNewRequest->cmd = WM_Send_CARE_CALL_STATUS;
+			g_pNewRequest->cmd = WM_UPDATE_DATA;
 			g_pNewRequest->info.callInfo.callType = atoi(d["callType"].GetString());
 			g_pNewRequest->info.callInfo.src = (unsigned long)atoll(d["srcId"].GetString());
 			g_pNewRequest->info.callInfo.status = atoi(d["status"].GetString());
@@ -632,6 +638,8 @@ void TestWirlineScheduleDlg::HandleServerRequest()
 		if (g_requests.size() > 0)
 		{
 			//UpdateData(FALSE);
+			m_bupdateData = FALSE;
+			PostMessage(WM_UPDATE_DATA, 0, 0);
 			SERVER_REQUEST *p = new SERVER_REQUEST;
 			SERVER_REQUEST *temp = g_requests.front();
 			memcpy(p, temp, sizeof(SERVER_REQUEST));
@@ -699,10 +707,18 @@ void TestWirlineScheduleDlg::HandleServerRequest()
 				break;
 			}
 			//UpdateData(TRUE);
+			m_bupdateData = TRUE;
+			PostMessage(WM_UPDATE_DATA, 0, 0);
 		}
 		else
 		{
 			Sleep(50);
 		}
 	}
+}
+
+LRESULT  TestWirlineScheduleDlg::OnUpdateData(WPARAM w, LPARAM l)
+{
+	UpdateData(m_bupdateData);
+	return 0;
 }

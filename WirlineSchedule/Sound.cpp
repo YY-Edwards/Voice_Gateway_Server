@@ -1044,9 +1044,9 @@ void CSound::StartRecord()
 	SetEvent(m_hRecordEvent);
 }
 
-void CSound::StopRecord()
+void CSound::setbRecord(BOOL value)
 {
-	m_bShouldStopRecording = TRUE;
+	m_bShouldStopRecording = (value == FALSE);
 }
 
 void CSound::closeFile()
@@ -1072,4 +1072,9 @@ void CSound::immediatelyPlay()
 		m_bOutPcmStart = TRUE;
 		SetEvent(m_hPlaySongEvent);
 	}
+}
+
+bool CSound::getbRecord()
+{
+	return (m_bShouldStopRecording == FALSE);
 }

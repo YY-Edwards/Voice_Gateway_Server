@@ -294,7 +294,8 @@ int CManager::initialCall(unsigned long targetId, unsigned char callTyp)
 			WORD callStatus = g_pNet->GetCallStatus();
 
 			//callback
-			if (callStatus == CALL_HANGUP)
+			if (callStatus == CALL_HANGUP
+				&& targetId == g_targetId)
 			{
 				g_bPTT = TRUE;
 				sprintf_s(m_reportMsg, "call back");
@@ -317,18 +318,21 @@ int CManager::initialCall(unsigned long targetId, unsigned char callTyp)
 			{
 				sprintf_s(m_reportMsg, "Other Call Is Running");
 				sendLogToWindow();
+				g_pNet->Send_CARE_CALL_STATUS(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, NEW_CALL_END);
 				return 1;
 			}
 
 		}
 		else
 		{
+			g_pNet->Send_CARE_CALL_STATUS(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, NEW_CALL_END);
 			return 1;
 		}
 		return 0;
 	}
 	else
 	{
+		g_pNet->Send_CARE_CALL_STATUS(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, NEW_CALL_END);
 		sprintf_s(m_reportMsg, "dongle is not open");
 		sendLogToWindow();
 		return 1;
@@ -337,9 +341,12 @@ int CManager::initialCall(unsigned long targetId, unsigned char callTyp)
 
 int CManager::stopCall()
 {
-	g_pNet->requestRecordEndEvent();
-	g_pSound->StopRecord();
-	g_pNet->waitRecordEnd();
+	if (g_pNet->canStopRecord())
+	{
+		g_pNet->requestRecordEndEvent();
+		g_pSound->setbRecord(FALSE);
+		g_pNet->waitRecordEnd();
+	}
 	return 0;
 }
 
@@ -581,6 +588,10 @@ void CManager::handleRemoteTask()
 									if (g_pNet->getWlStatus() == ALIVE)
 									{
 										initialCall(task.param.info.callParam.tartgetId, task.param.info.callParam.callType);
+									}
+									else
+									{
+										g_pNet->Send_CARE_CALL_STATUS(task.param.info.callParam.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.tartgetId, NEW_CALL_END);
 									}
 			}
 				break;

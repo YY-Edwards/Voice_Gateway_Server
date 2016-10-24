@@ -26,15 +26,23 @@ void CRecordFile::WriteVoiceFrame(char* pFrame, int len /*= 7*/, bool bLocalRequ
 	//如果是本地发起的呼叫，则不需要播放
 	if (bLocalRequest)
 	{
+		if (callType == GROUPCALL_TYPE && tagetId == g_targetId && tagetId != CONFIG_DEFAULT_GROUP)
+		{
+			g_pNet->updateChangeToCurrentTick();
+		}
 		goto RECORD_VOICE_DATA;
 	}
-	if ((callType == GROUPCALL_TYPE && tagetId == CONFIG_DEFAULT_GROUP)
+	if (
+		(callType == GROUPCALL_TYPE && tagetId == CONFIG_DEFAULT_GROUP)
 		|| (callType == PRIVATE_CALL && tagetId == CONFIG_LOCAL_RADIO_ID)
-		|| (callType == ALL_CALL && tagetId == ALL_CALL_ID))
+		|| (callType == ALL_CALL && tagetId == ALL_CALL_ID)
+		|| (callType == GROUPCALL_TYPE && tagetId == g_targetId)
+		)
 	{
 		//当前组组呼
 		if (callType == GROUPCALL_TYPE && tagetId == g_targetId && g_targetId != CONFIG_DEFAULT_GROUP)
 		{
+			g_pNet->updateChangeToCurrentTick();
 			if (!g_bIsHaveAllCall && !g_bIsHaveDefaultGroupCall && !g_bIsHavePrivateCall)
 			{
 				g_bIsHaveCurrentGroupCall = true;

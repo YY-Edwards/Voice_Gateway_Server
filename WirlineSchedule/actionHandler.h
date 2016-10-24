@@ -72,7 +72,7 @@ inline void addCRemotePeer(TcpClient* client)
 	}
 }
 
-inline void configActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn)
+inline void configActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
 	g_sn = sn;
 	addCRemotePeer((TcpClient*)pRemote);
@@ -126,7 +126,7 @@ inline void configActionHandler(CRemotePeer* pRemote, const std::string& param, 
 	}
 }
 
-inline void initialCallActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn)
+inline void initialCallActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
 	g_sn = sn;
 	addCRemotePeer((TcpClient*)pRemote);
@@ -163,7 +163,7 @@ inline void initialCallActionHandler(CRemotePeer* pRemote, const std::string& pa
 	{
 	}
 }
-inline void stopCallActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn)
+inline void stopCallActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
 	g_sn = sn;
 	addCRemotePeer((TcpClient*)pRemote);
@@ -194,7 +194,7 @@ inline void stopCallActionHandler(CRemotePeer* pRemote, const std::string& param
 	{
 	}
 }
-inline void setPlayCallOfCareActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn)
+inline void setPlayCallOfCareActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn,const std::string& type)
 {
 	g_sn = sn;
 	addCRemotePeer((TcpClient*)pRemote);
