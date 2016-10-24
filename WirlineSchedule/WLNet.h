@@ -309,7 +309,12 @@ public:
 	void waitRecordEnd();
 	void setCurrentSendVoicePeer(CIPSCPeer* value);
 	void clearPeers();
+	void clearPeer(CIPSCPeer *p);
 	int checkDefaultGroup();
+	/************************************************************************/
+	/* 刷新停留在非调度组的时间戳
+	/************************************************************************/
+	int updateChangeToCurrentTick();
 	int setPlayCallOfCare(unsigned char calltype, unsigned long srcId, unsigned long targetId);
 	int thereIsCallOfCare(CRecordFile *pCallRecord);
 	/*告知界面当前存在需要关注的通话正在进行以及状态*/
@@ -698,6 +703,7 @@ public:
 	bool isTargetMeCall(unsigned int tagetId, unsigned char callType);
 	CRecordFile* getCurrentPlayInfo();
 	void setCurrentPlayInfo(CRecordFile *value);
+	bool canStopRecord();
 };
 
 #endif

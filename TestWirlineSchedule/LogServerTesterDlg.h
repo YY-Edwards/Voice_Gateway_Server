@@ -10,7 +10,7 @@
 extern unsigned long long g_sn;
 extern HWND g_hwnd;
 
-#define WM_Send_CARE_CALL_STATUS WM_USER+100
+#define WM_UPDATE_DATA WM_USER+100
 typedef struct
 {
 	int callType;
@@ -84,11 +84,13 @@ public:
 	CButton m_call;
 	CComboBox m_careCalls;
 	afx_msg void OnBnClickedSetPlayCallOfCare();
+	afx_msg LRESULT OnUpdateData(WPARAM w, LPARAM l);
 	void HandleServerRequest();
 private:
 	static void OnServerRequest(CBaseConnector* pServer, const char* pData, int dataLen);
 	static UINT HandleServerRequestProc(LPVOID pParam);
 	bool m_bRunHandleServerProc;
 	//std::map<std::string, int> m_callNames;
+	BOOL m_bupdateData;
 public:
 };

@@ -167,7 +167,7 @@ void handleLog(char *pLog)
 {
 	SYSTEMTIME now = { 0 };
 	GetLocalTime(&now);
-	printf_s("%04u-%02u-%02u %02u:%02u:%02u %03u %s\n", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond, now.wMilliseconds, pLog);
+	printf_s("\r\n%04u-%02u-%02u %02u:%02u:%02u %03u %s\r\n", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond, now.wMilliseconds, pLog);
 }
 
 static CMySQL g_db;
@@ -207,6 +207,7 @@ int main()
 	}
 	handleLog("input any for end");
 	scanf_s("%c", &m_temp, 1);
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	return 0;
 
 
