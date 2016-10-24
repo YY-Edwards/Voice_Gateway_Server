@@ -22,14 +22,25 @@ void connectRadioAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 			std::map<std::string, std::string> args;
 			args["radioIP"] = radioIP;
 			args["mnisIP"] = mnisIP;
+			int clientCallId = CBroker::instance()->getCallId();
+			std::string callJsonStr = CRpcJsonParser::buildCall("connect", clientCallId, args);
 
-			std::string strCall = CRpcJsonParser::buildCall("connect", callId, args);
-			CBroker::instance()->getRadioClient()->sendRequest(strCall.c_str(), callId, pRemote, [&](const char* pResponse, void* data){
+			int ret = CBroker::instance()->getRadioClient()->sendRequest(callJsonStr.c_str(),
+				clientCallId,
+				pRemote,
+				[&](const char* pResponse, void*){
+				std::map<std::string, std::string> args;
 				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
-				CRemotePeer* pCommandSender = (CRemotePeer*)data;
-				pCommandSender->sendResponse(pResponse, strlen(pResponse));
-				printf("recevied: %s\r\n", pResponse);
-			});
+				pRemote->sendResponse(strResp.c_str(), strResp.size());
+			}, nullptr);
+
+			if (-1 == ret)
+			{
+				// remote error or disconnected
+				std::map<std::string, std::string> args;
+				std::string strResp = CRpcJsonParser::buildResponse("failed", callId, 404, "", args);
+				pRemote->sendResponse(strResp.c_str(), strResp.size());
+			}
 		}
 	}
 	catch (std::exception e){
