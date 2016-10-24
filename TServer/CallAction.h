@@ -30,7 +30,7 @@ void callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			}, nullptr);
 
 			if (-1 == ret)
-			{
+			{ 
 				// remote error or disconnected
 				std::map<std::string, std::string> args;
 				std::string strResp = CRpcJsonParser::buildResponse("failed", callId, 404, "", args);

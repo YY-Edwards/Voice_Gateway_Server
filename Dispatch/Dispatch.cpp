@@ -574,8 +574,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("stopCall",stopCallEventAction);
 	rpcServer.addActionHandler("wiretap",wiretapEventAction);
 	rpcServer.start(TCP_PORT, rpcServer.TCP);
+	
+	while (1){
+		Sleep(10);
+	};
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);                    //¼ì²éÄÚ´æÐ¹Â©
-	while (1);
 	return 0;
 }
 
