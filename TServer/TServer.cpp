@@ -9,7 +9,7 @@
 #include "StartAction.h"
 #include "SetRadioIpAction.h"
 #include "ConenctRadioAction.h"
-<<<<<<< HEAD
+
 #include"AllCallAction.h"
 #include"CallAction.h"
 #include "CancelGpsAction.h"
@@ -23,10 +23,9 @@
 #include"SendGroupSmsAction.h"
 #include"SendSmsAction.h"
 #include"StopCallAction.h"
-=======
 
 #define			SelfPort			9000
->>>>>>> 554e3450ddf4239700b15c50316587c75f12b3ee
+
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -44,7 +43,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("call", callAction);
 	rpcServer.addActionHandler("cancelGps", cancelGpsAction);
 	rpcServer.addActionHandler("connect", connectRadioAction);
-<<<<<<< HEAD
 	rpcServer.addActionHandler("getGps", getGpsAction);
 	rpcServer.addActionHandler("getOverTurnGps",getOverTurnGpsAction);
 	rpcServer.addActionHandler("groupCall", groupCallAction);
@@ -56,9 +54,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("stopCall", stopCallAction);
 	rpcServer.addActionHandler("wiretap", wiretapAction);
 	rpcServer.start();
-=======
+
 	rpcServer.start(SelfPort, CRpcServer::TCP);
->>>>>>> 554e3450ddf4239700b15c50316587c75f12b3ee
+
 	while (1);
 	return 0;
 }
