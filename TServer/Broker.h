@@ -32,6 +32,9 @@ public:
 		return callId++;
 	}
 
+public:
+	int connect();
+
 protected:
 	CBroker();
 	~CBroker();
