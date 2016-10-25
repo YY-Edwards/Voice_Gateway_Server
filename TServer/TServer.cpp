@@ -13,6 +13,22 @@
 #include <shlobj.h> 
 #include <Shlwapi.h>
 
+
+#include"AllCallAction.h"
+#include"CallAction.h"
+#include "CancelGpsAction.h"
+#include "ConenctRadioAction.h"
+#include "GetGpsAction.h"
+#include"GetOverTurnGpsAction.h"
+#include"GroupCallAction.h"
+#include"RadioCheckAction.h"
+#include"RemotePowerOffAction.h"
+#include"RemotePowerOnAction.h"
+#include"WiretapAction.h"
+#include"SendGroupSmsAction.h"
+#include"SendSmsAction.h"
+#include"StopCallAction.h"
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//CSettings::instance()->getResponse("sucess", 1, 200, "", rapidjson::Value(NULL));
@@ -32,6 +48,21 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("setRepeaterSetting", setRepeaterAction);
 	rpcServer.addActionHandler("getRepeaterSetting", getRepeaterAction);
 
+	//radio
+	rpcServer.addActionHandler("allCall", allCallAction);
+	rpcServer.addActionHandler("call", callAction);
+	rpcServer.addActionHandler("cancelGps", cancelGpsAction);
+	rpcServer.addActionHandler("connect", connectRadioAction);
+	rpcServer.addActionHandler("getGps", getGpsAction);
+	rpcServer.addActionHandler("getOverTurnGps", getOverTurnGpsAction);
+	rpcServer.addActionHandler("groupCall", groupCallAction);
+	rpcServer.addActionHandler("radioCheck", radioCheckAction);
+	rpcServer.addActionHandler("remotePowerOn", remotePowerOnAction);
+	rpcServer.addActionHandler("remotePowerOff", remotePowerOffAction);
+	rpcServer.addActionHandler("sendGroupSms", sendGroupSmsAction);
+	rpcServer.addActionHandler("sendSms", sendSmsAction);
+	rpcServer.addActionHandler("stopCall", stopCallAction);
+	rpcServer.addActionHandler("wiretap", wiretapAction);
 
 	rpcServer.start();
 	while (1);

@@ -72,6 +72,7 @@ public:
 	void setRemotePeer(CRemotePeer * pRemote);
 	void RecvMsg();
 	string WChar2Ansi(LPCWSTR pwszSrc);
+	string TCHAR2STRING(TCHAR * STR);
 private:
 	int m_nSendSequenceNumber;
 	bool m_RcvSocketOpened;
