@@ -26,8 +26,6 @@ using System.Diagnostics;
 
 using System.Threading;
 
-
-using System.Windows.Forms;
 namespace TrboX
 {
     /// <summary>
@@ -204,7 +202,7 @@ namespace TrboX
         {
             try
             {
-                FolderBrowserDialog fbd = new FolderBrowserDialog();
+                System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
 
                 if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
@@ -220,7 +218,7 @@ namespace TrboX
 
         private void import()
         {
-            OpenFileDialog openFileDialog = new OpenFileDialog();
+            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
             openFileDialog.Title = "选择文件";
             openFileDialog.Filter = "配置文件|*.cfg|资源文件|*.res|所有文件|*.*";
             openFileDialog.FileName = string.Empty;
@@ -256,6 +254,18 @@ namespace TrboX
             {
                 import();
             }
+        }
+
+        private void btn_SaveUser_Click(object sender, RoutedEventArgs e)
+        {
+            UserStr User = new UserStr(){
+                username=txt_UserName.Text,
+                password = psd_UserPassword.Password,
+            };
+
+
+           // lst_User.Items.Add(new ListViewItem() { Content = User });
+            lst_User.Items.Add(User);
         }
      
     }

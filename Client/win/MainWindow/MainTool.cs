@@ -15,7 +15,6 @@ namespace TrboX
             if (null == win) return;
             m_Main = win;
 
-
             m_Main.btn_Tool_NewFastOperate.Click += delegate
             {
                 m_Main.WorkArea.FastPanel.Add(new FastOperate()

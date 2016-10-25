@@ -15,36 +15,7 @@ using System.Windows.Forms.Integration;
 
 
 namespace TrboX
-{
-
-    public class AppInformation
-    {
-        public static string CompanyName = "JiHua Information";
-        public static string AppName = "TrboX";
-        public static string AppVersion = "3.0";
-        public static string NotifyTempFile = "tmp.notify";
-        public static string WorkSpaceTempFile = "tmp.workspace";
-
-        public static string NotifyTempPath
-        {
-            get
-            {
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + AppInformation.CompanyName
-                   + "\\" + AppInformation.AppName + "\\" + AppInformation.AppVersion + "\\" + NotifyTempFile;
-                return path;
-            }
-        }
-        public static string WorkSpaceTempPath
-        {
-            get
-            {
-                string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + AppInformation.CompanyName
-                   + "\\" + AppInformation.AppName + "\\" + AppInformation.AppVersion + "\\" + WorkSpaceTempFile;
-                return path;
-            }
-        }
-    };
-   
+{   
   /// <summary>
     /// Main.xaml 的交互逻辑
     /// </summary>
@@ -63,6 +34,9 @@ namespace TrboX
 
         public NewWinMgr SubWindow;
 
+        public Status StatusBar;
+
+        public RpcInterface Rpc;
 
         public CMultMember CurrentTraget = null;
 
@@ -87,8 +61,11 @@ namespace TrboX
             {
                 WindowState = WindowState.Maximized;
 
+
+
                 MenuBar = new MainMenu(this);
                 ToolBar = new MainTool(this);
+                StatusBar = new Status(this);
 
                 View = new MainView(this);
 
@@ -98,7 +75,10 @@ namespace TrboX
                 MsgWin = new MainMsgWin(this);
                 MsgWin.Initialize();
 
+               
+
                 SubWindow = new NewWinMgr(this);
+                Rpc = new RpcInterface();
 
                 OnWindowLoaded();
                 RadioButton rad_RxDefault = new RadioButton(){IsChecked = true, Content = "调度组",GroupName="rxgroup", Height = 20,Padding=new Thickness(2.5), Margin=new Thickness(2.5) ,Style = App.Current.Resources["RadioButtonStyleNav"] as Style};
@@ -232,7 +212,7 @@ namespace TrboX
 
         }
 
-        TcpInterface tcp = new TcpInterface();
+        //TcpInterface tcp = new TcpInterface();
         private void btn_Tool_Check_Click(object sender, RoutedEventArgs e)
         {
             //TcpInterface tcp = new TcpInterface();
@@ -241,7 +221,7 @@ namespace TrboX
 
         private void btn_Tool_Monitor_Click(object sender, RoutedEventArgs e)
         {
-            tcp.TCPTST();
+           // tcp.TCPTST();
         }
     }
 }

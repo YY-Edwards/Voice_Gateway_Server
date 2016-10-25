@@ -85,8 +85,13 @@
     </Compile>
     <Compile Include="class\Event.cs" />
     <Compile Include="class\FastOperate.cs" />
+    <Compile Include="class\JsonParse.cs" />
     <Compile Include="class\Message.cs" />
     <Compile Include="class\Operate.cs" />
+    <Compile Include="class\RadioOperate.cs" />
+    <Compile Include="class\ResourceMgr.cs" />
+    <Compile Include="class\RpcInterface.cs" />
+    <Compile Include="class\SettingMgr.cs" />
     <Compile Include="class\targetMgr.cs" />
     <Compile Include="class\TcpInterface.cs" />
     <Compile Include="ctrl\ComboButton.xaml.cs">
@@ -114,6 +119,7 @@
     <Compile Include="win\MainWindow\MainResourceMgr.cs" />
     <Compile Include="win\MainWindow\MainTool.cs" />
     <Compile Include="win\MainWindow\NewWinMgr.cs" />
+    <Compile Include="win\MainWindow\Status.cs" />
     <Compile Include="win\WarnningWindow.xaml.cs">
       <DependentUpon>WarnningWindow.xaml</DependentUpon>
     </Compile>

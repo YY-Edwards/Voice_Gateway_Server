@@ -24,7 +24,7 @@ namespace TrboX
             if (null == win) return;
             m_mainWin = win;
 
-            m_FastOperateListPath = AppInformation.WorkSpaceTempPath;
+            m_FastOperateListPath = App.WorkSpaceTempPath;
 
             Stream FastOperateListFile = new FileStream(m_FastOperateListPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
 

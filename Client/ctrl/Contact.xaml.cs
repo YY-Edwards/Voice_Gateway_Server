@@ -70,7 +70,7 @@ namespace TrboX
             set { SetValue(IsMultipleProperty, value); }
         }
 
-        public new static readonly DependencyProperty IsMultipleProperty =
+        public static readonly DependencyProperty IsMultipleProperty =
             DependencyProperty.Register("IsMultiple", typeof(bool), typeof(Contact), new UIPropertyMetadata(true));
 
         public CTargetRes ContactList
@@ -138,7 +138,7 @@ namespace TrboX
 
         private static List<contact_str> ConvertToList(CTargetRes targetlist, CMultMember selected)
         {
-            List<int> existraido = new List<int>();
+            List<long> existraido = new List<long>();
             List<contact_str> res = new List<contact_str>();
 
             if (null != targetlist.Group)
@@ -161,10 +161,10 @@ namespace TrboX
                 res.Add(con);
             }
 
-            if (null != targetlist.Employee)
-            foreach (var employee in targetlist.Employee)
+            if (null != targetlist.Staff)
+                foreach (var staff in targetlist.Staff)
             {
-                contact_str con = new contact_str() { IsSel = false, Contact = employee.Value, };
+                contact_str con = new contact_str() { IsSel = false, Contact = staff.Value, };
                 if ((null != selected) && (null != selected.Target))              
                         foreach (var item in selected.Target)
                             if (item.IsEqual(con.Contact))
@@ -174,25 +174,8 @@ namespace TrboX
                             }
                  res.Add(con);
 
-                if (null != employee.Value.Radio) existraido.Add(employee.Value.Radio.RadioID);
+                 if (null != staff.Value.Radio) existraido.Add(staff.Value.Radio.RadioID);
                     
-            }
-
-            if (null != targetlist.Vehicle)
-            foreach (var vehicle in targetlist.Vehicle)
-            {
-                contact_str con = new contact_str() { IsSel = false, Contact = vehicle.Value, };
-                if ((null != selected) && (null != selected.Target))               
-                    foreach (var item in selected.Target)
-                        if (item.IsEqual(con.Contact))
-                        {
-                            con.IsSel = true;
-                            break;
-                        }
-                
-                res.Add(con);
-
-                if (null != vehicle.Value.Radio) existraido.Add(vehicle.Value.Radio.RadioID);
             }
 
             if (null != targetlist.Radio)
@@ -225,8 +208,7 @@ namespace TrboX
             foreach(contact_str con in conlist)
             {
                 if (((null != con.Contact.Group) && (con.Contact.Group.GroupID.ToString().ToLower().Contains(condition.ToLower()) || con.Contact.Group.Name.ToLower().Contains(condition.ToLower())))
-                  || ((null != con.Contact.Employee) && con.Contact.Employee.Name.ToLower().Contains(condition.ToLower()))
-                  || ((null != con.Contact.Vehicle) && con.Contact.Vehicle.Number.ToLower().Contains(condition.ToLower()))
+                  || ((null != con.Contact.Staff) && con.Contact.Staff.Name.ToLower().Contains(condition.ToLower()))
                   || ((null != con.Contact.Radio) && con.Contact.Radio.RadioID.ToString().ToLower().Contains(condition.ToLower())))
                 {
                     //match condition

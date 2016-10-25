@@ -776,10 +776,13 @@
                                             <Separator Height="5" Margin="-20,0,-20,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
                                             <!--TextBlock TextWrapping="Wrap" Text="服务端地址，该地址用于客户端访问" DockPanel.Dock="Top" Margin="0,2.5"/-->
                                             <DockPanel LastChildFill="False" DockPanel.Dock="Top">
-                                                <ListView Height="220" Width="160" Margin="0,0,5,0">
+                                                <ListView x:Name="lst_User"  Height="214" Width="160" Margin="0,0,5,0">
                                                     <ListView.View>
                                                         <GridView>
-                                                            <GridViewColumn/>
+                                                            <GridView.Columns>
+                                                                <GridViewColumn Header="账户" DisplayMemberBinding="{Binding Path=username}"/>
+                                                                <GridViewColumn Header="账户" DisplayMemberBinding="{Binding username}"/>
+                                                            </GridView.Columns>
                                                         </GridView>
                                                     </ListView.View>
                                                 </ListView>
@@ -795,7 +798,7 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="账号 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <TextBox x:Name="txt_SvrIp13" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+                                                    <TextBox x:Name="txt_UserName" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
                                                 </Grid>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
@@ -803,24 +806,27 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="密码 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <PasswordBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Height="22" Grid.Column="1" Margin="5,0,0,0"/>
+                                                    <PasswordBox x:Name="psd_UserPassword" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Height="22" Grid.Column="1" Margin="5,0,0,0"/>
                                                 </Grid>
-                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
+                                                <!--<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="80"/>
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="姓名 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <TextBox x:Name="txt_SvrIp36" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
-                                                </Grid>
+                                                    <TextBox x:Name="txt_UserName" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+                                                </Grid>-->
                                                 <Grid DockPanel.Dock="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="80"/>
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="备注 :" VerticalAlignment="Top" Margin="0" HorizontalAlignment="Right"/>
-                                                    <TextBox x:Name="txt_SvrIp38" TextWrapping="Wrap" Padding="0,2.5" Margin="5,1.5,0,0" VerticalAlignment="Center" Grid.Column="1" Height="80"/>
+                                                    <TextBox x:Name="txt_UserMark" TextWrapping="Wrap" Padding="0,2.5" Margin="5,2,0,0" VerticalAlignment="Center" Grid.Column="1" Height="80"/>
                                                 </Grid>
+                                                <DockPanel LastChildFill="False" Height="29.5" DockPanel.Dock="Top" Margin="85,0,0,0">
+                                                    <Button x:Name="btn_SaveUser" Content="Save" VerticalAlignment="Center" Width="60" Margin="2.5,0" Click="btn_SaveUser_Click"/>
+                                                </DockPanel>
                                             </DockPanel>
 
                                         </DockPanel>
