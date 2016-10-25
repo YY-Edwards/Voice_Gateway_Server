@@ -1,60 +1,10 @@
 #ifndef COMMON_H
 #define COMMON_H
-#include <process.h>
-#include "Ambe3000.h"
-#include <MMSystem.h>
-#pragma comment(lib, "winmm.lib")
-#include "VoiceDefs.h"
-
-#include <winsock2.h>
-#pragma comment(lib, "ws2_32.lib")
-
-#include "Tool.h"
-#include <list>
-#include "../lib/rpc/include/TcpServer.h"
-#include "../lib/rpc/include/RpcJsonParser.h"
-
-
 
 
 //static const BYTE GROUPCALL_TYPE = 0x4f;
 //static const BYTE PRIVATE_CALL = 0x50;
 //static const BYTE ALL_CALL = 0x53;
-
-#define WL_SERVER_PORT 9002
-
-enum WLStatus
-{
-	STARTING = 0,
-	WAITFOR_LE_MASTER_PEER_REGISTRATION_TX,
-	WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE,
-	WAITFOR_MAP_REQUEST_TX,
-	WAITFOR_LE_NOTIFICATION_MAP_BROADCAST,
-
-	//xnl connect
-	XNL_CONNECT,
-	WAITFOR_XNL_DEVICE_MASTER_QUERY_TX,
-	WAITFOR_XNL_MASTER_STATUS_BROADCAST,
-	WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX,
-	WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY,
-	WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX,
-	WAITFOR_XNL_DEVICE_CONNECT_REPLY,
-	WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST,
-	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1,
-	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2,
-	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2_TX,
-	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3_TX,
-	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3,
-	WAITFOR_XNL_XCMP_READ_SERIAL,
-	WAITFOR_XNL_XCMP_READ_SERIAL_RESULT,
-
-	ALIVE,
-	TRANSMITTING1,
-	TRANSMITTING2,
-	WAITINGFOR_LE_DEREGISTRATION_TXFREE,
-	WAITINGFOR_LE_DEREGISTRATION_TRANSMISSION,
-	BAILOUT
-};
 
 #define GROUPCALL_TYPE 0x4f//79
 #define PRIVATE_CALL 0x50//80
@@ -89,64 +39,8 @@ extern long CONFIG_MASTER_HEART_TIME;//主中继心跳间隔
 extern long CONFIG_PEER_HEART_AND_REG_TIME;//非主中继心跳间隔和注册间隔
 extern _SlotNumber CONFIG_DEFAULT_SLOT;//默认信道
 
-//////////////////////////////////////////////////////////////////////////
-/*信号*/
-extern HANDLE g_taskLockerEvent;
-/*JSON相关远程命令*/
-#define REMOTE_CMD_CONFIG 0x01
-#define REMOTE_CMD_CALL 0x02
-#define REMOTE_CMD_STOP_CALL 0x03
-#define REMOTE_CMD_SET_PLAY_CALL 0x04
-/*JSON相关结构体*/
-typedef struct
-{
-	char masterIp[MAX_IP_SIZE];
-	unsigned short masterPort;
-	unsigned long defaultGroup;
-	unsigned long localRadioId;
-	unsigned long localPeerId;
-	_RECORD_TYPE_VALUE recordType;
-	unsigned short donglePort;
-	long hangTime;
-	long masterHeartTime;
-	long peerHeartTime;
-	_SlotNumber defaultSlot;
-}CONFIG_PARAM;
-typedef struct
-{
-	unsigned long tartgetId;
-	unsigned char callType;
-}CALL_PARAM;
-typedef struct
-{
-	unsigned char callType;
-	unsigned long srcId;
-	unsigned long tgtId;
-}SET_CARE_CALL_PARAM;
-typedef struct
-{
-	union
-	{
-		CONFIG_PARAM configParam;
-		CALL_PARAM callParam;
-		SET_CARE_CALL_PARAM setCareCallParam;
-	}info;
-}JSON_PARAM;
-/*远程命令*/
-typedef struct
-{
-	unsigned long long sn;
-	CRemotePeer *pRemote;
-	int cmd;
-	JSON_PARAM param;
-}REMOTE_TASK;
-/*远程命令任务队列*/
-extern std::list<REMOTE_TASK*> g_remoteCommandTaskQueue;
-extern REMOTE_TASK *g_pNewTask;
-extern unsigned long long g_sn;
-extern std::list<TcpClient*> g_onLineClients;
-extern TcpClient *g_pTempClient;
-//////////////////////////////////////////////////////////////////////////
+#define MAX_RECORD_BUFFER_SIZE (100*1024)
+//#define CURRENT_GROUPCALL_TYPE 0x04
 
 #define ALL_CALL_ID 255
 extern unsigned long g_targetId;//当前通话组
@@ -194,7 +88,7 @@ typedef struct OutData
 }OUTDATA;
 
 
-#define WL_RETURN_OK  0
+#define RTTOPP_SUCCESS  0
 #define PLAY_FRAMES (50*2)
 #define PLAY_BUFFER_TIME (28 * 20)
 
@@ -260,12 +154,9 @@ extern unsigned char g_targetCallType;//呼出类型
 #define CALL_START 0x0001 //请求初始化通话
 #define CALL_ONGOING 0x0002 //正在通话
 #define CALL_HANGUP 0x0003 //通话挂起
-#define HAVE_CALL_NO_PLAY 0x04 //通话在后台未播放
-#define HAVE_CALL_START_PLAY 0x05 //通话开始播放
-#define HAVE_CALL_END_PLAY 0x06 //通话播放完毕
-#define END_CALL_NO_PLAY 0x07//在后台未播放的通话结束
-#define NEW_CALL_START 0x08//发起的通话开始
-#define NEW_CALL_END 0x09//发起的通话结束
+#define CALL_BACKSTAGE 0x04 //通话在后台未播放
+#define CALL_PLAY 0x05 //通话开始播放
+#define CALL_END 0x06 //通话播放完毕
 
 #define Call_Session_Call_Hang	0x0a
 #define Call_Session_End	0x0b

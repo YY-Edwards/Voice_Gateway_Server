@@ -80,7 +80,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\lib\hash\md5.h" />
-    <ClInclude Include="..\lib\MySQL\criteria.h" />
     <ClInclude Include="..\lib\MySQL\MySQL.h" />
     <ClInclude Include="..\lib\rapidjson\allocators.h" />
     <ClInclude Include="..\lib\rapidjson\document.h" />
@@ -110,7 +109,6 @@
     <ClInclude Include="AddStaffAction.h" />
     <ClInclude Include="AppEventAction.h" />
     <ClInclude Include="Db.h" />
-    <ClInclude Include="DbGetUserAction.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>

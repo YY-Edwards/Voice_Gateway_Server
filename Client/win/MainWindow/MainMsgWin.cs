@@ -43,7 +43,7 @@ namespace TrboX
             if (null == win) return;
             m_Main = win;
 
-            m_NotifySavePath = AppDomain.CurrentDomain.BaseDirectory + "SRWYREGB34THEWTR2Q3WG4WUJ6JNWEG243G.tmp";
+            m_NotifySavePath = App.NotifyTempPath;
 
             Stream NotifySaveFile = new FileStream(m_NotifySavePath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
 
@@ -561,7 +561,7 @@ namespace TrboX
                 //AddNotify(new CNotification() { Type = NotifyType.Message, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now, Content = new CMsgNotification() { Content = "Message" + i.ToString() } });
                 //AddNotify(new CNotification() { Type = NotifyType.JobTicker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now });
                 //AddNotify(new CNotification() { Type = NotifyType.Tracker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now });
-                m_Main.EventList.AddEvent("事件" + i.ToString());
+                //m_Main.EventList.AddEvent("事件" + i.ToString());
 
                 Thread.Sleep(5000);
             }

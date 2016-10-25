@@ -79,8 +79,23 @@ CSerialDongle::~CSerialDongle()
 DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice, HWND hParentWnd, CManager* lpCmanager)
 {
 	m_lpCmanager = lpCmanager;
+
+	if (RTTOPP_SUCCESS != g_pSound->StartSound(hParentWnd, 0, 0))
+	{
+		sprintf_s(m_reportMsg, "start sound fail");
+		sendLogToWindow();
+	}
+	else
+	{
+		sprintf_s(m_reportMsg, "start sound success");
+		sendLogToWindow();
+	}
+
+
 	//≥ı ºªØevents
 	m_waitNextNetDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+
+
 	DWORD result;
 
 	m_hParentWnd = hParentWnd; //Save parent window in case

@@ -57,7 +57,7 @@ int CRpcClient::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 				{
 					isResponse = true;
 					// handle response
-					(*itr)->success(str.c_str(), (*itr)->data);
+					(*itr)->success(content.c_str());
 
 					delete *itr;
 					m_lstRequest.remove(*itr);
@@ -104,9 +104,8 @@ int CRpcClient::send(const char* pData, int dataLen)
 
 int CRpcClient::sendRequest(const char* pRequest,
 						uint64_t nCallId,
-						void* data,
-						std::function<void(const char* pResponse, void*)> success,
-						std::function<void(const char* pResponse, void*)> failed)
+						std::function<void(const char* pResponse)> success,
+						std::function<void(const char* pResponse)> failed)
 {
 	int ret = -1;
 
@@ -122,7 +121,6 @@ int CRpcClient::sendRequest(const char* pRequest,
 	pReq->m_nCallId = nCallId;
 	pReq->success = success;
 	pReq->failed = failed;
-	pReq->data = data;
 
 	if (0 == m_lstRequest.size())
 	{

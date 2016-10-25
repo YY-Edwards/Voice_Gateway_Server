@@ -24,11 +24,3 @@ long CONFIG_MASTER_HEART_TIME = 60000;//主中继心跳间隔
 long CONFIG_PEER_HEART_AND_REG_TIME = 60000;//非主中继心跳间隔和注册间隔
 long GO_BACK_DEFAULT_GROUP_TIME = 12000;
 _SlotNumber CONFIG_DEFAULT_SLOT = SLOT1;
-
-std::list<REMOTE_TASK*> g_remoteCommandTaskQueue;
-REMOTE_TASK *g_pNewTask = NULL;
-
-HANDLE g_taskLockerEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
-unsigned long long g_sn = 0;
-std::list<TcpClient*> g_onLineClients;
-TcpClient *g_pTempClient = NULL;

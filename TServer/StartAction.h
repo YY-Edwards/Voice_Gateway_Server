@@ -19,7 +19,7 @@
 
 #include "Broker.h"
 
-void startAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
+void startAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
 {
 	static std::mutex lock;
 	std::lock_guard<std::mutex> locker(lock);
@@ -46,8 +46,7 @@ void startAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 			int ret = CBroker::instance()->getRadioClient()->sendRequest(callJsonStr.c_str(),
 				clientCallId,
-				pRemote,
-				[&](const char* pResponse, void*){
+				[&](const char* pResponse){
 					std::map<std::string, std::string> args;
 					std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
 					pRemote->sendResponse(strResp.c_str(), strResp.size());

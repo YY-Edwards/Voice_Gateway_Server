@@ -45,6 +45,5 @@ public:
 	const char* getLastError() const;
 	bool auth(const char* username, const char* password);
 	bool insertUser(const char* name, const char* phone, const char* username, const char* password);
-	int query(const char* table, const char* condition, std::list<recordType>& records);
 };
 

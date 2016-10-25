@@ -939,8 +939,6 @@ void CSound::SoundOutputControl()
 		{
 			sprintf_s(m_reportMsg, "start play");
 			sendLogToWindow();
-			CRecordFile *p = g_pNet->getCurrentPlayInfo();
-			g_pNet->Send_CARE_CALL_STATUS(p->callType, p->srcId, p->tagetId, HAVE_CALL_START_PLAY);
 			for (int i = 0; i < NUM_OUT_BUFFERS; i++)
 			{
 				ResetEvent(m_pOutDSPosNotifyEvents[i]);
@@ -961,8 +959,6 @@ void CSound::SoundOutputControl()
 	m_lpOutputDSB2->Stop();
 	sprintf_s(m_reportMsg, "stop play");
 	sendLogToWindow();
-	CRecordFile *p = g_pNet->getCurrentPlayInfo();
-	g_pNet->Send_CARE_CALL_STATUS(p->callType, p->srcId, p->tagetId, HAVE_CALL_END_PLAY);
 	//本次播放完毕,初始下次播放变量
 	m_bOutPcmStart = TRUE;
 	freeOutData(m_pOutCurrentData);

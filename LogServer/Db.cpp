@@ -17,8 +17,6 @@ void migrate_v100(CMySQL* pMySQL){
 							`id` INT(11) NOT NULL AUTO_INCREMENT, \
 							`username` VARCHAR(45) NOT NULL, \
 							`password` VARCHAR(300) NOT NULL, \
-							`type` VARCHAR(45) NOT NULL DEFAULT 'radio', \
-							`authority` TinyText NOT NULL, \
 							`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
 							PRIMARY KEY(`id`), \
 							UNIQUE INDEX `id_UNIQUE` (`id` ASC), \
@@ -290,9 +288,4 @@ bool CDb::auth(const char* username, const char* password)
 	}
 	
 	return true;
-}
-
-int CDb::query(const char* table, const char* condition, std::list<recordType>& records)
-{
-	return m_pMySQLDb->find(table, condition, records);
 }

@@ -13,8 +13,6 @@ public:
 	std::string m_strRequest;
 	uint64_t m_nCallId;
 
-	std::function<void(const char*, void*)> success;
-	std::function<void(const char*, void*)> failed;
-
-	void* data;
+	std::function<void(const char*)> success;
+	std::function<void(const char*)> failed;
 };

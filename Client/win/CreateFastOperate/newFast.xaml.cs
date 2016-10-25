@@ -21,7 +21,6 @@ namespace TrboX
             if((null != value) && ((int)value == 0) ) return false;
 
             return true;
-
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -76,7 +75,7 @@ namespace TrboX
 
             CTargetRes TargetRes = m_Main.ResrcMgr.Target.TargetList;
 
-            List<int> existraido = new List<int>();
+            List<long> existraido = new List<long>();
 
             lst_ContactList.Items.Clear();
 
@@ -88,18 +87,11 @@ namespace TrboX
                 lst_ContactList.Items.Add(new ListViewItem() { Content = group.Value });
             }
 
-            if (null != TargetRes.Employee)
-                foreach (var employee in TargetRes.Employee)
+            if (null != TargetRes.Staff)
+                foreach (var staff in TargetRes.Staff)
             {
-                lst_ContactList.Items.Add(new ListViewItem() { Content = employee.Value });
-                if (null != employee.Value.Radio) existraido.Add(employee.Value.Radio.RadioID);                 
-            }
-
-            if (null != TargetRes.Vehicle)
-                foreach (var vehicle in TargetRes.Vehicle)
-            {
-                lst_ContactList.Items.Add(new ListViewItem() { Content = vehicle.Value });
-                if (null != vehicle.Value.Radio) existraido.Add(vehicle.Value.Radio.RadioID);
+                lst_ContactList.Items.Add(new ListViewItem() { Content = staff.Value });
+                if (null != staff.Value.Radio) existraido.Add(staff.Value.Radio.RadioID);
             }
 
             if (null != TargetRes.Radio)

@@ -7,24 +7,33 @@
 #include "Settings.h"
 
 #include "StartAction.h"
-#include "SetRadioIpAction.h"
-#include "ConenctRadioAction.h"
+#include "SettingAction.h"
 
-#define			SelfPort			9000
+
+#include <shlobj.h> 
+#include <Shlwapi.h>
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	//CSettings::instance()->setRadioIp("192.168.2.1");
-	//std::string radioIp = CSettings::instance()->getRadioIp();
-
-	CBroker::instance()->connect();
+	//CSettings::instance()->getResponse("sucess", 1, 200, "", rapidjson::Value(NULL));
+	//std::string str =  CSettings::instance()->getResponse("sucess", 1, 200, "", "");
+	//CSettings::instance()->setValue("tst", rapidjson::Value(NULL));
 
 	CRpcServer rpcServer;
 	
 	rpcServer.addActionHandler("start", startAction);
-	rpcServer.addActionHandler("setRadioIp", setRadioIpAction);
-	rpcServer.addActionHandler("connect", connectRadioAction);
-	rpcServer.start(SelfPort, CRpcServer::TCP);
+
+	rpcServer.addActionHandler("setBaseSetting", setBaseAction);
+	rpcServer.addActionHandler("getBaseSetting", getBaseAction);
+
+	rpcServer.addActionHandler("setRadioSetting", setRadioAction);
+	rpcServer.addActionHandler("getRadioSetting", getRadioAction);
+
+	rpcServer.addActionHandler("setRepeaterSetting", setRepeaterAction);
+	rpcServer.addActionHandler("getRepeaterSetting", getRepeaterAction);
+
+
+	rpcServer.start();
 	while (1);
 	return 0;
 }
