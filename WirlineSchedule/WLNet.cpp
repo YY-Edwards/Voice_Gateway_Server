@@ -7346,7 +7346,7 @@ int CWLNet::thereIsCallOfCare(CRecordFile *pCallRecord)
 int CWLNet::Send_CARE_CALL_STATUS(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status)
 {
 	/*将参数打包成json格式*/
-	std::map<std::string, std::string> args;
+	ArgumentType args;
 	char temp[128] = { 0 };
 	sprintf_s(temp, "%u", callType);
 	args["callType"] = temp;
