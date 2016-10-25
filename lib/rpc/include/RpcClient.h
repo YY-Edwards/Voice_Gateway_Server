@@ -25,11 +25,10 @@ public:
 	int start(const char* connStr);
 	void stop();
 	int send(const char* pData, int dataLen);
-	int sendRequest(const char* pRequest,
-				uint64_t nCallId,
-				void* data,
-				std::function<void (const char* pResponse, void*)> success, 
-				std::function<void(const char* pResponse, void*)> failed = nullptr);
+	int sendRequest(const char* pRequest, 
+				uint64_t nCallId, 
+				std::function<void (const char* pResponse)> success, 
+				std::function<void(const char* pResponse)> failed = nullptr);
 	void setIncomeDataHandler(IncomeDataHandler handler);
 
 protected:

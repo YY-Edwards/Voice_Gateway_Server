@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Windows;
+using Newtonsoft.Json;
 
 namespace TrboX
 {
@@ -12,5 +13,63 @@ namespace TrboX
     /// </summary>
     public partial class App : Application
     {
+
+        public static string Company = "JiHua Information";
+        public static string Name = "TrboX";
+        public static string Version = "3.0";
+        public static string NotifyTempFile = "tmp.notify";
+        public static string WorkSpaceTempFile = "tmp.workspace";
+        public static string SettingTempFile = "tmp.setting.xml";
+        public static string ResourceTempFile = "tmp.Resource.db";
+
+        public static string Directory
+        {
+            get
+            {
+                return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + Company + "\\" + Name + "\\" + Version + "\\";
+            }
+        }
+        public static string SettingTempPath
+        {
+            get
+            {
+                return Directory + SettingTempFile;
+            }
+        }
+        public static string ResourceTempPath
+        {
+            get
+            {
+                return Directory + ResourceTempFile;
+            }
+        }
+        public static string NotifyTempPath
+        {
+            get
+            {
+                return Directory + NotifyTempFile;
+            }
+        }
+        public static string WorkSpaceTempPath
+        {
+            get
+            {
+                return Directory + WorkSpaceTempFile;
+            }
+        }
+
+    }
+
+    public class Trbox
+    {
+        public static bool IsNumber(string str)
+        {
+            return ((str != null) && (str != "") && System.Text.RegularExpressions.Regex.IsMatch(str, @"^-*\d+$"));
+        }
+
+        public static bool Compare(object src, object dest)
+        {
+            return JsonConvert.SerializeObject(src) == JsonConvert.SerializeObject(dest);
+        }
     }
 }

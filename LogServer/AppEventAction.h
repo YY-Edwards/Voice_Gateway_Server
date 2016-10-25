@@ -5,7 +5,7 @@
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
 
-void appEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
+void appEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
 {
 	Document d;
 	try{

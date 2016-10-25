@@ -50,8 +50,8 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>DEBUG_LOG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>false</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_AFXDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <SDLCheck>true</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalIncludeDirectories>../lib/gtest/include;../lib/glog/lib;../lib</AdditionalIncludeDirectories>
     </ClCompile>
@@ -96,28 +96,28 @@
     <ClInclude Include="..\lib\rpc\include\RpcJsonParser.h" />
     <ClInclude Include="..\lib\rpc\include\RpcServer.h" />
     <ClInclude Include="..\lib\rpc\include\TcpServer.h" />
-    <ClInclude Include="AllCallEventAction.h" />
-    <ClInclude Include="CallEventAction.h" />
-    <ClInclude Include="CancelgpspEventAction.h" />
-    <ClInclude Include="ConnectEventAction.h" />
+    <ClInclude Include="AllCall.h" />
+    <ClInclude Include="Call.h" />
+    <ClInclude Include="CancelGps.h" />
+    <ClInclude Include="Connect.h" />
     <ClInclude Include="DispatchOperate.h" />
-    <ClInclude Include="GetGpsEventAction.h" />
-    <ClInclude Include="GetOverTurnGpsEventAction.h" />
-    <ClInclude Include="GroupCallEventAction.h" />
+    <ClInclude Include="GetGps.h" />
+    <ClInclude Include="GetOverTurnGPS.h" />
+    <ClInclude Include="GroupCall.h" />
     <ClInclude Include="RadioARS.h" />
-    <ClInclude Include="RadioCheckEventAction.h" />
+    <ClInclude Include="RadioCheck.h" />
     <ClInclude Include="RadioGps.h" />
-    <ClInclude Include="RemotePowerOffEventAction.h" />
-    <ClInclude Include="RemotePowerOnEventAction.h" />
-    <ClInclude Include="SendGroupSmsEventAction.h" />
-    <ClInclude Include="SendSmsEventAction.h" />
+    <ClInclude Include="RemotePowerOff.h" />
+    <ClInclude Include="RmotePowerON.h" />
+    <ClInclude Include="SendGroupSms.h" />
+    <ClInclude Include="SendSms.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="StopCallEventAction.h" />
+    <ClInclude Include="StopCall.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="TextMsg.h" />
     <ClInclude Include="UnitTest.h" />
     <ClInclude Include="Util.h" />
-    <ClInclude Include="WiretapEventAction.h" />
+    <ClInclude Include="Wiretap.h" />
     <ClInclude Include="xcmp_msg_defs.h" />
     <ClInclude Include="XNLConnection.h" />
     <ClInclude Include="xnl_messages_def.h" />

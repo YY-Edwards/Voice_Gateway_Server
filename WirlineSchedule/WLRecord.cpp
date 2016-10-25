@@ -33,12 +33,6 @@ void WLRecord::OnNewVoiceRecord(LPBYTE pData, DWORD dwSize, DWORD srcId, DWORD t
 	}
 	//sprintf_s(m_reportMsg, "OnNewVoiceRecord start push");
 	//sendLogToWindow();
-
-	//if (g_pNet->isTargetMeCall(tgtId,callType))
-	//{
-	//	g_pNet->Send_CARE_CALL_STATUS(callType, srcId, tgtId, END_CALL_NO_PLAY);
-	//}
-
 	CVoiceData *pVoiceData = new CVoiceData(pData, dwSize, srcId, tgtId, callType, recordType, srcPeerId, srcSlot, srcRssi,callStatus,pTime);
 	WaitForSingleObject(m_hVoiceDataListLocker, INFINITE);
 	m_voiceDataList.push_back(pVoiceData);

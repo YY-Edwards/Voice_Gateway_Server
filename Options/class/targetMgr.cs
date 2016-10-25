@@ -1045,7 +1045,7 @@ namespace TrboX
         + "{'id':20, 'radioid':130, 'isonline':true},"
         + "{'id':21, 'radioid':131, 'isonline':true},"
         + "{'id':22, 'radioid':132, 'isonline':true},"
-        + "{'id':23, 'radioid':133, 'isonline':true},"
+        + "{'id':23, 'radioid':133, 'isonline':true}," 
         + "{'id':24, 'radioid':134, 'isonline':true}"
         + "]";
 
@@ -1113,6 +1113,8 @@ namespace TrboX
 
         public void UpdateTragetList()
         {
+
+
             CEmployee[] employeearr = JsonConvert.DeserializeObject(employee, typeof(CEmployee[])) as CEmployee[];
             foreach (CEmployee em in employeearr) g_EmployeeList.Add(em.ID, em);
             g_EmployeeList.Add(-1, null);

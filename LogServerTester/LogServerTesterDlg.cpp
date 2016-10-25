@@ -78,7 +78,7 @@ BEGIN_MESSAGE_MAP(CLogServerTesterDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_POWEROFF, &CLogServerTesterDlg::OnBnClickedPoweroff)
 	ON_BN_CLICKED(IDC_ONLINE, &CLogServerTesterDlg::OnBnClickedOnline)
 	ON_BN_CLICKED(IDC_WIRETAP, &CLogServerTesterDlg::OnBnClickedWiretap)
-	ON_BN_CLICKED(IDC_BTN_RADIO_CONNECT, &CLogServerTesterDlg::OnBnClickedBtnRadioConnect)
+
 END_MESSAGE_MAP()
 
 
@@ -169,7 +169,7 @@ HCURSOR CLogServerTesterDlg::OnQueryDragIcon()
 }
 
 
-#define CONNSTR  "tcp://127.0.0.1:9000"
+#define CONNSTR  "tcp://127.0.0.1:8000"
 void CLogServerTesterDlg::OnBnClickedBtnConnect()
 {
 	m_rpcClient.start(CONNSTR);
@@ -189,7 +189,7 @@ void CLogServerTesterDlg::OnBnClickedBtnCallAppEvent()
 	std::string callJsonStr = CRpcJsonParser::buildCall("start", 223, args);
 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223,NULL, [](const char* pResponse , void* data){
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
 
 		std::string strResp = pResponse;
 		std::wstring wstr;
@@ -210,7 +210,7 @@ void CLogServerTesterDlg::OnBnClickedRadiobtn()
 	std::string callJsonStr = CRpcJsonParser::buildCall("connect", 223, args);
 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, NULL, [](const char* pResponse, void* data){
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
 		std::string strResp = pResponse;
 		std::wstring wstr;
 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
@@ -232,7 +232,7 @@ void CLogServerTesterDlg::OnBnClickedCallbtn()
 	std::string callJsonStr = CRpcJsonParser::buildCall("call", 223, args);
 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, NULL, [](const char* pResponse, void* data){
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
 		std::string strResp = pResponse;
 		std::wstring wstr;
 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
@@ -254,7 +254,7 @@ void CLogServerTesterDlg::OnBnClickedMsgbtn()
 	std::string callJsonStr = CRpcJsonParser::buildCall("sendSms", 223, args);
 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, NULL, [](const char* pResponse, void* data){
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
 		std::string strResp = pResponse;
 		std::wstring wstr;
 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
@@ -273,7 +273,7 @@ void CLogServerTesterDlg::OnBnClickedGroupmsg()
 	std::string callJsonStr = CRpcJsonParser::buildCall("sendGroupSms", 223, args);
 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, NULL, [](const char* pResponse, void* data){
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
 		std::string strResp = pResponse;
 		std::wstring wstr;
 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
@@ -292,7 +292,7 @@ void CLogServerTesterDlg::OnBnClickedStopcallbtn()
 	std::string callJsonStr = CRpcJsonParser::buildCall("stopCall", 223, args);
 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, NULL,[](const char* pResponse, void* data){
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
 		std::string strResp = pResponse;
 		std::wstring wstr;
 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
@@ -313,7 +313,7 @@ void CLogServerTesterDlg::OnBnClickedPoweron()
 	std::string callJsonStr = CRpcJsonParser::buildCall("remotePowerOn", 223, args);
 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, NULL, [](const char* pResponse, void* data){
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
 		std::string strResp = pResponse;
 		std::wstring wstr;
 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
@@ -336,7 +336,7 @@ void CLogServerTesterDlg::OnBnClickedPoweroff()
 	std::string callJsonStr = CRpcJsonParser::buildCall("remotePowerOff", 223, args);
 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, NULL, [](const char* pResponse, void* data){
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
 		std::string strResp = pResponse;
 		std::wstring wstr;
 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
@@ -356,7 +356,7 @@ void CLogServerTesterDlg::OnBnClickedOnline()
 	std::string callJsonStr = CRpcJsonParser::buildCall("radioCheck", 223, args);
 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, NULL, [](const char* pResponse, void* data){
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
 		std::string strResp = pResponse;
 		std::wstring wstr;
 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
@@ -376,7 +376,7 @@ void CLogServerTesterDlg::OnBnClickedWiretap()
 	std::string callJsonStr = CRpcJsonParser::buildCall("wiretap", 223, args);
 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, NULL, [](const char* pResponse, void* data){
+	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
 		std::string strResp = pResponse;
 		std::wstring wstr;
 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
@@ -386,20 +386,3 @@ void CLogServerTesterDlg::OnBnClickedWiretap()
 }
 
 
-void CLogServerTesterDlg::OnBnClickedBtnRadioConnect()
-{
-	std::map<std::string, std::string> args;
-	args["radioIP"] = "192.168.10.2";
-	args["mnisIP"] = "192.168.10.2";
-	std::string callJsonStr = CRpcJsonParser::buildCall("connect", 123, args);
-	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
-	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 123, NULL, [](const char* pResponse, void* data){
-
-		std::string strResp = pResponse;
-		std::wstring wstr;
-		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		TRACE("received:%s\r", wstr.c_str());
-	});
-	callJsonStr.clear();
-}

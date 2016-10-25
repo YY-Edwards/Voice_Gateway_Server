@@ -7,6 +7,8 @@
 #include "../lib/strutil/strutil.h"
 #include "Settings.h"
 
+#include <map>
+
 #pragma comment(lib, "Shlwapi.lib")
 
 std::auto_ptr<CSettings> CSettings::m_instance;
@@ -48,27 +50,95 @@ int CSettings::getRoot(rapidjson::Document& d)
 	return 0;
 }
 
-std::string CSettings::getRadioIp()
+std::string CSettings::getValue(const char* type)
 {
-	std::string ip="";
+	std::map<std::string, std::string> contents;
 
 	rapidjson::Document d;
 	if (0 == getRoot(d))
 	{
-		if (d.HasMember("radio") && d["radio"].IsObject())
+		if (d.HasMember(type) && d[type].IsObject())
 		{
-			rapidjson::Value objRadio = d["radio"].GetObject();
-			if (objRadio.HasMember("ip") && rapidjson::kStringType == objRadio["ip"].GetType())
-			{
-				ip = objRadio["ip"].GetString();
-			}
+			rapidjson::StringBuffer buffer;
+			rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+			d[type].Accept(writer); // Accept() traverses the DOM and generates Handler events.
+			std::string jsonStr = buffer.GetString();
+
+			return jsonStr;
 		}
 	}
-
-	return ip;
+	return "";
 }
 
-int CSettings::setRadioIp(const char* ip)
+
+std::string replace(std::string str, const std::string & strsrc, const std::string &strdst)
+{
+	std::string::size_type pos = 0;//位置 
+	std::string::size_type srclen = strsrc.size();//要替换的字符串大小 
+	std::string::size_type dstlen = strdst.size();//目标字符串大小 
+	while ((pos = str.find(strsrc, pos)) != std::string::npos)
+	{
+		str.replace(pos, srclen, strdst);
+		pos += dstlen;
+	}
+
+	return str;
+}
+
+
+std::string CSettings::getResponse(char* pStatus, uint64_t callId, int errCode, const char* statusText, std::string contents)
+{
+	std::string jsonStr = "";
+	char str[2048];
+
+	try{
+		rapidjson::Document d;
+
+		d.SetObject();
+		rapidjson::Value statusEl(rapidjson::kStringType);
+		statusEl.SetString(pStatus, d.GetAllocator());
+
+		rapidjson::Value callIdEl(rapidjson::kNumberType);
+		callIdEl.SetUint64(callId);
+
+		rapidjson::Value errCodeEl(rapidjson::kNumberType);
+		errCodeEl.SetInt(errCode);
+
+		rapidjson::Value statusTextEl(rapidjson::kStringType);
+		statusTextEl.SetString(statusText, d.GetAllocator());
+
+		rapidjson::Value contentsEl(rapidjson::kStringType);
+		contentsEl.SetString("%s", d.GetAllocator());
+
+		d.AddMember("status", statusEl, d.GetAllocator());
+		d.AddMember("statusText", statusTextEl, d.GetAllocator());
+		d.AddMember("callId", callIdEl, d.GetAllocator());
+		d.AddMember("errCode", errCodeEl, d.GetAllocator());
+
+		if ("" != contents)
+		{
+			d.AddMember("contents", contentsEl, d.GetAllocator());
+		}
+
+		rapidjson::StringBuffer buffer;
+		rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+		d.Accept(writer); // Accept() traverses the DOM and generates Handler events.
+		jsonStr = replace(buffer.GetString(), "\"\%s\"", "%s");		
+		sprintf_s(str, jsonStr.c_str(), contents.c_str());
+		d.RemoveAllMembers();
+	}
+	catch (std::exception& e)
+	{
+
+	}
+	catch (...)
+	{
+
+	}
+	return std::string(str);
+}
+
+int CSettings::setValue(const char* type,  rapidjson::Value obj)
 {
 	try{
 		rapidjson::Document d;
@@ -79,23 +149,14 @@ int CSettings::setRadioIp(const char* ip)
 			d.SetObject();
 		}
 
-		if (!d.HasMember("radio"))
+		if (d.HasMember(type))
 		{
-			rapidjson::Value radioEl(rapidjson::kObjectType);
-			d.AddMember("radio", radioEl, d.GetAllocator());
+			d.EraseMember(rapidjson::StringRef(type));
 		}
-	
-		if (d["radio"].HasMember("ip"))
-		{
-			rapidjson::Value& ipEl = d["radio"]["ip"];
-			ipEl.SetString(rapidjson::StringRef(ip));
-		}
-		else
-		{
-			rapidjson::Value ipEl(rapidjson::kStringType);
-			ipEl.SetString(rapidjson::StringRef(ip));
-			d["radio"].AddMember("ip", ipEl, d.GetAllocator());
-		}
+
+		if ((rapidjson::Value)NULL != obj)
+		d.AddMember(rapidjson::StringRef(type), obj, d.GetAllocator());
+
 
 		std::lock_guard<std::mutex> locker(m_writeLocker);
 
@@ -105,6 +166,13 @@ int CSettings::setRadioIp(const char* ip)
 		rapidjson::Writer<rapidjson::OStreamWrapper> writer(osw);
 		d.Accept(writer);
 		ofs.close();
+
+
+		rapidjson::StringBuffer buffer;
+		rapidjson::Writer<rapidjson::StringBuffer> writer1(buffer);
+		d.Accept(writer1); // Accept() traverses the DOM and generates Handler events.
+		std::string jsonStr = buffer.GetString();
+
 	}
 	catch (...)
 	{
@@ -120,7 +188,24 @@ std::wstring CSettings::getFilePath()
 	SHGetSpecialFolderPath(NULL, appDir, CSIDL_APPDATA, 0);
 	std::wstring filePath = appDir;
 	filePath += L"\\";
+	filePath += ConmpanyName;
+	
+	if (!PathFileExists(filePath.c_str()))
+	{
+		CreateDirectory(filePath.c_str(), NULL);
+	}
+
+	filePath += L"\\";
 	filePath += AppName;
+
+	if (!PathFileExists(filePath.c_str()))
+	{
+		CreateDirectory(filePath.c_str(), NULL);
+	}
+
+
+	filePath += L"\\";
+	filePath += AppVersion;
 
 	if (!PathFileExists(filePath.c_str()))
 	{

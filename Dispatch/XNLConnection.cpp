@@ -282,7 +282,6 @@ unsigned int CXNLConnection::run(void)
         {
             break;
         }
-		Sleep(10);
     }
 
     closesocket(m_socket);
@@ -337,7 +336,6 @@ BOOL CXNLConnection::recv_xnl_message(char * * pp_rcv_msg)
             total_size += len;
             p_cur_buf += len;
         }
-		
     }
     if (ret == FALSE)
     {

@@ -135,15 +135,18 @@ namespace TrboX
                             {
                                 case MemberType.Group:
                                     return new BitmapImage(new Uri("pack://application:,,,/themes/resource/group.png"));
-                                case MemberType.Employee:
-                                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/contact.png"));
-                                case MemberType.Vehicle:
-                                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/vehicle.png"));
+                                case MemberType.Staff:
+                                    if (null != member.Target[0].Staff)
+                                    {
+                                        if (StaffType.Staff == member.Target[0].Staff.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/contact.png"));
+                                        if (StaffType.Vehicle == member.Target[0].Staff.Type)  return new BitmapImage(new Uri("pack://application:,,,/themes/resource/vehicle.png"));
+                                    }
+                                    return null;
                                 case MemberType.Radio:
                                     if (null != member.Target[0].Radio)
                                     {
-                                        if (RadioType.RADIO == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/radio.png"));
-                                        if (RadioType.RIDE == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/ride.png"));
+                                        if (RadioType.Radio == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/radio.png"));
+                                        if (RadioType.Ride == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/ride.png"));
                                     }
                                     return null;
                                 default:
@@ -377,15 +380,18 @@ namespace TrboX
                 {
                     case MemberType.Group:
                         return new BitmapImage(new Uri("pack://application:,,,/themes/resource/group.png"));
-                    case MemberType.Employee:
-                        return new BitmapImage(new Uri("pack://application:,,,/themes/resource/contact.png"));
-                    case MemberType.Vehicle:
-                        return new BitmapImage(new Uri("pack://application:,,,/themes/resource/vehicle.png"));
+                    case MemberType.Staff:
+                        if (null != member.Target[0].Staff)
+                        {
+                            if (StaffType.Staff == member.Target[0].Staff.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/contact.png"));
+                            if (StaffType.Vehicle == member.Target[0].Staff.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/vehicle.png"));
+                        }
+                        break;
                     case MemberType.Radio:
                         if (null != member.Target[0].Radio)
                         {
-                            if (RadioType.RADIO == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/radio.png"));
-                            if (RadioType.RIDE == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/ride.png"));
+                            if (RadioType.Radio == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/radio.png"));
+                            if (RadioType.Ride == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/ride.png"));
                         }
                         break;
                     default: return null;

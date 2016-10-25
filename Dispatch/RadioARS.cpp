@@ -106,7 +106,6 @@ DWORD WINAPI CRadioARS::ReceiveDataThread(LPVOID lpParam)
 	while (1)
 	{
 		radioARS->RecvData();
-		Sleep(20);
 	
 	}
 	return 1;

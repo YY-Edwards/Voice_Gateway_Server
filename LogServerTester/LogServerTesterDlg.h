@@ -45,6 +45,4 @@ public:
 	afx_msg void OnBnClickedOnline();
 	afx_msg void OnBnClickedWiretap();
 	
-	afx_msg void OnBnClickedButton1();
-	afx_msg void OnBnClickedBtnRadioConnect();
 };

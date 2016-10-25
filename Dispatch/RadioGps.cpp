@@ -121,25 +121,6 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,int cycle)
 	{
 	case GPS_IMME_COMM:
 	{
-
-						 //point-3d
-		//memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
-		//m_ThreadGps->SendBuffer[0] = 0x05;   //Immediate Location Request
-		//m_ThreadGps->SendBuffer[1] = 0x0a;   //XML协议报中包含8组数据
-		//m_ThreadGps->SendBuffer[2] = 0x22;   //Start of request-id element
-		//m_ThreadGps->SendBuffer[3] = 0x04;   //request-id value Start
-		//m_ThreadGps->SendBuffer[4] = 0x12;
-		//m_ThreadGps->SendBuffer[5] = 0x34;
-		//m_ThreadGps->SendBuffer[6] = 0x56;
-		//m_ThreadGps->SendBuffer[7] = 0x78;   //request-id value End
-		//m_ThreadGps->SendBuffer[8] = 0x51;   //Start of ret-info element, "ret-info-time" and "ret-info-accuracy" is specified as "YES"
-		//m_ThreadGps->SendBuffer[9] = 0x55;  //Specifies that altitude information is required
-		//m_ThreadGps->SendBuffer[10] = 0x57;  //Specifies that horizontal direction information is requested
-		//m_ThreadGps->SendBuffer[11] = 0x62;   //Start of request-speed-hor element
-		//
-		//m_ThreadGps->gpsLength = SEND_IMM_QUERY_LENTH;
-
-         //point-2d
 		memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
 		m_ThreadGps->SendBuffer[0] = 0x05;   //Immediate Location Request
 		m_ThreadGps->SendBuffer[1] = 0x08;   //XML协议报中包含8组数据
@@ -151,6 +132,8 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,int cycle)
 		m_ThreadGps->SendBuffer[7] = 0x78;   //request-id value End
 		m_ThreadGps->SendBuffer[8] = 0x51;   //Start of ret-info element, "ret-info-time" and "ret-info-accuracy" is specified as "YES"
 		m_ThreadGps->SendBuffer[9] = 0x62;   //Start of request-speed-hor element
+		m_ThreadGps->SendBuffer[10] = 0x55;  //Specifies that altitude information is required
+		m_ThreadGps->SendBuffer[11] = 0x57;  //Specifies that horizontal direction information is requested
 		m_ThreadGps->gpsLength = SEND_IMM_QUERY_LENTH;
 	}
 		break;
@@ -167,7 +150,9 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,int cycle)
 		m_ThreadGps->SendBuffer[7] = 0xE0;
 		m_ThreadGps->SendBuffer[8] = 0x34;
 		m_ThreadGps->SendBuffer[9] = 0x31;
-		m_ThreadGps->SendBuffer[10] = 0xff & cycle;
+		m_ThreadGps->SendBuffer[10] = 0xff&cycle;
+		m_ThreadGps->SendBuffer[11] = 0x54;  //Specifies that altitude information is required
+		m_ThreadGps->SendBuffer[12] = 0x57;  //Specifies that horizontal direction information is requested
 		m_ThreadGps->gpsLength = SEND_TRG_QUERY_LENTH;
 	}
 		break;
@@ -518,24 +503,18 @@ void CRadioGps::RecvData()
 		}
 		try
 		{
-			time_t t = time(0);
-			tm timeinfo;
-			char tmp[64];
-			localtime_s(&timeinfo, &t);
-			strftime(tmp, sizeof(tmp), "%Y/%m/%d  %H:%M:%S", &timeinfo);
-			char radioID[MAX_RECV_LENGTH], strLon[MAX_RECV_LENGTH], strLat[MAX_RECV_LENGTH], strValid[MAX_RECV_LENGTH], strSpeed[MAX_RECV_LENGTH];
-			sprintf_s(radioID, MAX_RECV_LENGTH, "%d", m_ThreadGps->radioID);
-			sprintf_s(strLon, MAX_RECV_LENGTH, "%lf", lon);
-			sprintf_s(strLat, MAX_RECV_LENGTH, "%lf", lat);
-			sprintf_s(strSpeed, MAX_RECV_LENGTH, "%lf", speed);
-			sprintf_s(strValid, MAX_RECV_LENGTH, "%d", valid);
+			char radioID[512], strLon[512],strLat[512],strValid[512],strSpeed[512];
+			sprintf_s(radioID, 512, "%d", m_ThreadGps->radioID);
+			sprintf_s(strLon, 512, "%d", lon);
+			sprintf_s(strLat, 512, "%d", lat);
+			sprintf_s(strSpeed, 512, "%d", speed);
+			sprintf_s(strValid, 512, "%d", valid);
 			std::map<std::string, std::string> args;
 			args["id"] = radioID;
 			args["valid"] = strValid;
 			args["lon"] = strLon;
 			args["lat"] = strLat;
 			args["speed"] = strSpeed;
-			args["date"] = tmp;
 			std::string callJsonStr = CRpcJsonParser::buildCall("onRecvGps", 1, args);
 			if (pRemotePeer != NULL)
 			{

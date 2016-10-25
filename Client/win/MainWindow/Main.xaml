@@ -516,6 +516,17 @@
             	</DockPanel>
             </Border>
             <Border BorderBrush="Black" BorderThickness="0" Margin="0" DockPanel.Dock="Bottom" Height="30">
+            	<DockPanel LastChildFill="False">
+            		<Border BorderBrush="White" BorderThickness="0,0,1,0" Height="30" VerticalAlignment="Top">
+            			<DockPanel x:Name="dck_RadioStatus1" Height="30" LastChildFill="False" VerticalAlignment="Top" Margin="0">
+            				<Image Height="20" VerticalAlignment="Center" Width="20" Source="/TrboX;component/themes/resource/check.png"/>
+                            <Label x:Name="lab_DeviceSta" Content="车载台：192.168.2.10" Height="30" VerticalAlignment="Center" VerticalContentAlignment="Center" Foreground="White"/>
+                        </DockPanel>
+            		</Border>
+            		<Border BorderBrush="#FFA68989" BorderThickness="1,0,0,0" VerticalAlignment="Top" DockPanel.Dock="Right">
+            			<Label x:Name="lab_SysTime" Content="0000/00/00 00:00:00" Height="30" VerticalAlignment="Top" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Margin="0" Foreground="White"/>
+            		</Border>
+            	</DockPanel>
                 <!--<src:Contact x:Name="ChoiceContact" IsMultiple="False" DockPanel.Dock="Top" Margin="0,5,0,0"/>-->
             </Border>
             <Grid Background="White" Margin="0">

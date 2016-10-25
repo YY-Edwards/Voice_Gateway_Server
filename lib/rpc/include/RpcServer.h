@@ -7,7 +7,7 @@
 
 #define		ThreadCountInPool			4
 
-typedef std::function<void(CRemotePeer*, const std::string&, uint64_t, const std::string&)> ACTION;
+typedef std::function<void(CRemotePeer*, const std::string&, uint64_t)> ACTION;
 
 class ThreadPool;
 class CRpcServer : public OnConnectorData

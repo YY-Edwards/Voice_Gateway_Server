@@ -17,56 +17,39 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
-using System.Linq;
 using System.Xml.Linq;
+
+
+using System.Windows.Threading;
+
+using System.Diagnostics;
+
+using System.Threading;
 
 namespace TrboX
 {
-
-   
     /// <summary>
     /// Login.xaml 的交互逻辑
     /// </summary>
     public partial class Main : MyWindow
     {
-        public XmlDocument xmlDoc = new XmlDocument();
+        public SettingComponents SettingComponents;
+        public ResourceComponents ResourceComponents;
+
+        SettingMgr m_SettingMgr = new SettingMgr();
+
         public Main()
         {
             InitializeComponent();
             this.Loaded += delegate
             {
-                //check conf files
-                string path = AppDomain.CurrentDomain.BaseDirectory + "conf.xml";
-                if (!File.Exists(path))
-                {
-                    Uri uri = new Uri("/DefaultConfiguration.xml", UriKind.Relative);
-                    StreamResourceInfo info = Application.GetResourceStream(uri);
-                    StreamWriter sw = new StreamWriter(path);
-                    info.Stream.CopyTo(sw.BaseStream);
-                    sw.Flush();
-                    sw.Close();
-                }
-
-                try
-                {
-                    xmlDoc.Load(path);
-                   // FileStream ConfFile = new FileStream(path, FileMode.Open);
-                }
-                catch
-                {
-                    Console.Write("找不到配置文件 conf.xml");
-                }
-
-                InitializeComponentContent();
-               
+                SettingComponents = new SettingComponents(this);
+                ResourceComponents = new ResourceComponents(this); 
+                SettingComponents.Set(m_SettingMgr.Get());
             };
         }
 
-        private void InitializeComponentContent()
-        {
-
-        }
-        
+       
         private void MyWindow_Closed(object sender, EventArgs e)
         {
             Environment.Exit(0);
@@ -90,9 +73,8 @@ namespace TrboX
         private double PosInScrView(ScrollViewer scr, FrameworkElement element)
         {
             GeneralTransform transform = element.TransformToVisual(bdr_Options);
-                
-               // element.TransformToVisual(scr);
-            return transform.Transform(new Point(element.Margin.Left, element.Margin.Top)).Y - 10; 
+            double pos = transform.Transform(new Point(element.Margin.Left, element.Margin.Top)).Y;
+            return scr.ContentVerticalOffset + pos - 22.5; 
         }
 
         private void tree_OptionsItem_PreviewMouseLeftButtonUp(object sender, MouseButtonEventArgs e)
@@ -141,9 +123,150 @@ namespace TrboX
                             break;
                     }
                     break;
+                case "WireLan":
+                    switch ((string)item.Header)
+                    {
+                        case "常规":
+                            scrview_WireLan.ScrollToVerticalOffset(PosInScrView(scrview_WireLan, dck_WireLanGeneric as FrameworkElement));
+                            break;
+                        case "网络":
+                            scrview_WireLan.ScrollToVerticalOffset(PosInScrView(scrview_WireLan, dck_WireLanNetwork as FrameworkElement));
+                            break;
+                        case "Dongle":
+                            scrview_WireLan.ScrollToVerticalOffset(PosInScrView(scrview_WireLan, dck_WireLanDongle as FrameworkElement));
+                            break;
+                        case "功能":
+                            scrview_WireLan.ScrollToVerticalOffset(PosInScrView(scrview_WireLan, dck_WireLanFunc as FrameworkElement));
+                            break;
+                    }
+                    break;
+               case "资源管理":
+                    switch ((string)item.Header)
+                    {
+                        case "供应商":
+                            scrview_ResManager.ScrollToVerticalOffset(PosInScrView(scrview_ResManager, dck_ResManagerCompany as FrameworkElement));
+                            break;
+                        case "部门":
+                            scrview_ResManager.ScrollToVerticalOffset(PosInScrView(scrview_ResManager, dck_ResManagerPartment as FrameworkElement));
+                            break;
+                        case "人员":
+                            scrview_ResManager.ScrollToVerticalOffset(PosInScrView(scrview_ResManager, dck_ResManagerEmployee as FrameworkElement));
+                            break;
+                        case "车辆":
+                            scrview_ResManager.ScrollToVerticalOffset(PosInScrView(scrview_ResManager, dck_ResManagerVehicle as FrameworkElement));
+                            break;
+                        case "组":
+                            scrview_ResManager.ScrollToVerticalOffset(PosInScrView(scrview_ResManager, dck_ResManagerGroup as FrameworkElement));
+                            break;
+                        case "终端":
+                            scrview_ResManager.ScrollToVerticalOffset(PosInScrView(scrview_ResManager, dck_ResManagerRadio as FrameworkElement));
+                            break;
+                        case "绑定/分配":
+                            scrview_ResManager.ScrollToVerticalOffset(PosInScrView(scrview_ResManager, dck_ResManagerRelationship as FrameworkElement));
+                            break;
+                    }
+                    break;
+               case "账号及权限":
+                    switch ((string)item.Header)
+                    {
+                        case "账户":
+                            scrview_UserRoot.ScrollToVerticalOffset(PosInScrView(scrview_UserRoot, dck_User as FrameworkElement));
+                            break;
+                        case "功能分配":
+                            scrview_UserRoot.ScrollToVerticalOffset(PosInScrView(scrview_UserRoot, dck_Root as FrameworkElement));
+                            break;
+                    }
+                    break;
                 default: break;
+
+                    
             }
 
         }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+        }
+
+        private void btn_Apply_Click(object sender, RoutedEventArgs e)
+        {
+            m_SettingMgr.Set(SettingComponents.Get());
+        }
+
+        private void btn_SetDefault_Click(object sender, RoutedEventArgs e)
+        {
+            SettingComponents.Set(m_SettingMgr.GetDefalut());
+        }
+
+        private void export()
+        {
+            try
+            {
+                System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
+
+                if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                {
+                    string path = fbd.SelectedPath;
+                    SettingFile.ExportSetting(path, SettingComponents.Get());
+                }
+            }
+            catch
+            {
+
+            }
+        }
+
+        private void import()
+        {
+            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            openFileDialog.Title = "选择文件";
+            openFileDialog.Filter = "配置文件|*.cfg|资源文件|*.res|所有文件|*.*";
+            openFileDialog.FileName = string.Empty;
+            openFileDialog.FilterIndex = 1;
+            openFileDialog.RestoreDirectory = true;
+
+            if (openFileDialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+
+                string fileName = openFileDialog.FileName;
+                string extd = fileName.Substring(fileName.LastIndexOf(".") + 1, (fileName.Length - fileName.LastIndexOf(".") - 1));
+
+                if (extd == "cfg")
+                {
+                    SettingComponents.Set(SettingFile.ImportSetting(fileName));
+                }
+
+            }
+        }
+
+        private void cmb_ImExPort_Click(object sender, RoutedEventArgs e)
+        {
+            export();
+        }
+
+        private void cmb_ImExPort_Selected(object sender, RoutedEventArgs e)
+        {
+            if (cmb_ImExPort.SelectedIndex == 0)//export
+            {
+                export();
+            }
+            else if (cmb_ImExPort.SelectedIndex == 1)//import
+            {
+                import();
+            }
+        }
+
+        private void btn_SaveUser_Click(object sender, RoutedEventArgs e)
+        {
+            UserStr User = new UserStr(){
+                username=txt_UserName.Text,
+                password = psd_UserPassword.Password,
+            };
+
+
+           // lst_User.Items.Add(new ListViewItem() { Content = User });
+            lst_User.Items.Add(User);
+        }
+     
     }
 }

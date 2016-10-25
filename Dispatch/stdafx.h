@@ -95,6 +95,6 @@ extern map<CRemotePeer *, DispatchOperate*>  m_dispatchOperate;
 #pragma comment(lib,"../lib/glog/lib/libglog.lib")
 
 
-//#define DEBUG_LOG  TRUE
+#define DEBUG_LOG  TRUE
 #pragma warning(disable:4996)
 #undef ERROR

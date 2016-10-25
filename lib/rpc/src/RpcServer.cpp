@@ -29,8 +29,7 @@ int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 		std::string callName;
 		uint64_t callId = 0;
 		std::string param = "";
-		std::string type = "";
-		if (0 != CRpcJsonParser::getRequest(str, callName, callId, param, type))
+		if (0 != CRpcJsonParser::getRequest(str, callName, callId, param))
 		{
 			// send error response
 			std::string response = CRpcJsonParser::buildResponse("failed", callId, 404, "Invalid request");
@@ -41,7 +40,7 @@ int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 
 		if (nullptr != actionFn)
 		{
-			m_thdPool->enqueue(actionFn, pRemote, param, callId, type);
+			m_thdPool->enqueue(actionFn, pRemote, param, callId);
 		}
 	}
 	catch (std::exception& e)

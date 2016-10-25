@@ -15,6 +15,7 @@
 
 #include <memory>
 #include <mutex>
+#include <map>
 #include <fstream>
 #include "../lib/rapidjson/document.h"
 #include "../lib/rapidjson/istreamwrapper.h"
@@ -22,7 +23,9 @@
 #include "../lib/rapidjson/writer.h"
 
 #define			SettingFile				L"setting.dat"
-#define			AppName					L"trbox"
+#define			ConmpanyName			L"JiHua Information"
+#define			AppName					L"Trbox"
+#define			AppVersion				L"3.0"
 
 class CSettings
 {
@@ -44,9 +47,9 @@ public:
 		return m_instance.get();
 	}
 
-	std::string getRadioIp();
-	int setRadioIp(const char* ip);
-
+	std::string getValue(const char* type);
+	int setValue(const char* type, rapidjson::Value obj);
+	std::string CSettings::getResponse(char* pStatus, uint64_t callId, int errCode, const char* statusText, std::string contents);
 
 protected:
 	int getRoot(rapidjson::Document& d);
