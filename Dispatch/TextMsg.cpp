@@ -90,7 +90,6 @@ DWORD WINAPI CTextMsg::ReceiveDataThread(LPVOID lpParam)
 	while (1)
 	{
 		pTextMsg->RecvMsg();
-		Sleep(20);
 	}
 
 	return 1;
@@ -163,8 +162,6 @@ std::string CTextMsg::TCHAR2STRING(TCHAR * STR)
 	WideCharToMultiByte(CP_ACP, 0, STR, -1, chRtn, iLen, NULL, NULL);
 
 	std::string str(chRtn);
-
-	delete [] chRtn;
 
 	return str;
 

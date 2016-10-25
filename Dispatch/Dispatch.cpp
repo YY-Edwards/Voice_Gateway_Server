@@ -578,7 +578,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	while (1){
 		Sleep(10);
 	};
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);                    //检查内存泄漏
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);                    //检查内存泄漏
 	return 0;
 }
 
