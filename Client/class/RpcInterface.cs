@@ -17,7 +17,7 @@ namespace TrboX
     }
     public class RpcInterface
     {
-        private TcpInterface TServer = new TcpInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9001));
+       // private TcpInterface TServer = new TcpInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9001));
 
         public delegate object ParseResult(RequestType type, object res);
         private ParseResult m_Rx = null;

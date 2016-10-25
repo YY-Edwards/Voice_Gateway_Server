@@ -12,8 +12,6 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using System.Windows.Forms.Integration;
 
-
-
 namespace TrboX
 {   
   /// <summary>
@@ -40,6 +38,7 @@ namespace TrboX
 
         public CMultMember CurrentTraget = null;
 
+
         public bool g_IsNeedSaveWorkSpace
         {
             get {
@@ -60,8 +59,6 @@ namespace TrboX
             this.Loaded += delegate
             {
                 WindowState = WindowState.Maximized;
-
-
 
                 MenuBar = new MainMenu(this);
                 ToolBar = new MainTool(this);

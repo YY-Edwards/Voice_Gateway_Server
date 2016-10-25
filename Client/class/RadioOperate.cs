@@ -22,6 +22,18 @@ namespace TrboX
     }
     public class RadioOperate
     {
+        public RadioOperate(COperate operate)
+        {
+
+        }
+
+
+        public string Parse(COperate op, long PN)
+        {
+            return "";
+        }
+
+
         public static object Convert(COperate op)
         {
             switch(GetRequest(op))
@@ -32,6 +44,9 @@ namespace TrboX
             
             return null;
         }
+
+
+
 
         public static RequestType GetRequest(COperate op)
         {

@@ -8,53 +8,7 @@ using Newtonsoft.Json.Linq;
 
 namespace TrboX
 {
-    public enum RequestType
-    {
-        None,
-        //base
-        setBaseSetting,
-        getBaseSetting,
-        setRadioSetting,
-        getRadioSetting,
-        setRepeaterSetting,
-        getRepeaterSetting,
-
-        getUser,
-        getUserCount,
-        addUser,
-        deleteUser,
-        updateUser,
-
-        getStaff,
-        getStaffCount,
-        addStaff,
-        deleteStaff,
-        updateStaff,
-
-        getDepartment,
-        getDepartmentCount,
-        addDepartment,
-        deleteDepartment,
-        updateDepartment,
-
-        getRadio,
-        getRadioCount,
-        addRadio,
-        deleteRadio,
-        updateRadio,
-
-        getRadioBelong,
-        getRadioBelongCount,
-        addRadioBelong,
-        deleteRadioBelong,
-        updateRadioBelong,
-
-
-        call,
-        groupCall,
-        allCall,
-
-    };
+   
 
 
     public class TcpRequset

@@ -9,10 +9,12 @@ using System.Threading;
 
 namespace TrboX
 {
+    public delegate void OnTcpRx(string str);
     public class TcpInterface
     {
+        private OnTcpRx m_OnRx = null;
+     
         private Socket clientSocket;
-
         private Dictionary<Int64, object> ReceiveStr = new Dictionary<Int64, object>();
 
         public TcpInterface(IPEndPoint addr)
@@ -32,7 +34,27 @@ namespace TrboX
             ThreadStart threadStart = new ThreadStart(delegate() { while (true)ReceiveString(); });
             Thread th = new Thread(threadStart);
             th.Start();
+        }
 
+        public TcpInterface(IPEndPoint addr, OnTcpRx OnRx)
+        {
+            clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            try
+            {
+                clientSocket.Connect(addr); //配置服务器IP与端口  
+                Console.WriteLine("连接服务器成功");
+            }
+            catch
+            {
+                Console.WriteLine("连接服务器失败，请按回车键退出！");
+                return;
+            }
+
+            m_OnRx = OnRx;
+
+            ThreadStart threadStart = new ThreadStart(delegate() { while (true)ReceiveString(); });
+            Thread th = new Thread(threadStart);
+            th.Start();
         }
 
         public void Close()
@@ -77,20 +99,22 @@ namespace TrboX
                 int receiveLength = clientSocket.Receive(result);
                 string rxstr = Encoding.ASCII.GetString(result, 0, receiveLength);
 
-                object res = JsonParse.Json2Rep(rxstr);
-                if (null == res) return;
+                m_OnRx(rxstr);
 
-                lock (ReceiveStr)
-                {
-                    if (res is TcpResponse)
-                    {
-                        ReceiveStr.Add(((TcpResponse)res).callId, (TcpResponse)res);
-                    }
-                    else if (res is TcpRequset)
-                    {
-                        ReceiveStr.Add(((TcpRequset)res).callId, (TcpRequset)res);
-                    }
-                }
+                //object res = JsonParse.Json2Rep(rxstr);
+                //if (null == res) return;
+
+                //lock (ReceiveStr)
+                //{
+                //    if (res is TcpResponse)
+                //    {
+                //        ReceiveStr.Add(((TcpResponse)res).callId, (TcpResponse)res);
+                //    }
+                //    else if (res is TcpRequset)
+                //    {
+                //        ReceiveStr.Add(((TcpRequset)res).callId, (TcpRequset)res);
+                //    }
+                //}
                 Console.WriteLine("接收消息：{0}", rxstr);
             }
             catch

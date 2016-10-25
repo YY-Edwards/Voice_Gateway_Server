@@ -259,5 +259,10 @@ namespace TrboX
             Target = target;
             Operate = obj;           
         }
+
+        public void Exec()
+        {
+            TServer.Write(this);
+        }
     }
 }
