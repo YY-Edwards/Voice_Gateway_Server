@@ -8,7 +8,7 @@
 
 #include "StartAction.h"
 #include "SettingAction.h"
-#include "ConenctRadioAction.h"
+
 
 
 #include <shlobj.h> 
@@ -40,7 +40,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	rpcServer.addActionHandler("start", startAction);
 
-	rpcServer.addActionHandler("connect", connectRadioAction);
+
 
 	rpcServer.addActionHandler("setBaseSetting", setBaseAction);
 	rpcServer.addActionHandler("getBaseSetting", getBaseAction);

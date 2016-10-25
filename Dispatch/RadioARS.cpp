@@ -166,8 +166,8 @@ void CRadioARS::RecvData()
 #if DEBUG_LOG
 		LOG(INFO) << stringId +" 号对讲机上线";
 #endif
-		std::map<std::string, std::string> args;
-		args["id"] = stringId;
+		ArgumentType args;
+		args["id"] = FieldValue( stringId.c_str());
 		std::string callJsonStr = CRpcJsonParser::buildResponse("0", 0, 0, "0", args);
 		if (pRemotePeer != NULL)
 		{
@@ -182,8 +182,8 @@ void CRadioARS::RecvData()
 #if DEBUG_LOG
 			LOG(INFO) << stringId + " 号对讲机下线";
 #endif
-			std::map<std::string, std::string> args;
-			args["id"] = stringId;
+			ArgumentType args;
+			args["id"] = FieldValue( stringId.c_str());
 			std::string callJsonStr = CRpcJsonParser::buildResponse("1", 0, 0, "1", args);
 			if (pRemotePeer != NULL)
 			{

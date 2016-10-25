@@ -16,8 +16,8 @@ void getOverTurnGpsAction(CRemotePeer* pRemote, const std::string& param, uint64
 		if (d.HasMember("ip"))
 		{
 			std::string ip = d["ip"].GetString();
-			std::map<std::string, std::string> args;
-			args["ip"] = ip;
+			ArgumentType args;
+			args["ip"] = FieldValue(ip.c_str());
 			int clientCallId = CBroker::instance()->getCallId();
 			std::string callJsonStr = CRpcJsonParser::buildCall("getOverTurnGps", clientCallId, args);
 
@@ -25,16 +25,14 @@ void getOverTurnGpsAction(CRemotePeer* pRemote, const std::string& param, uint64
 				clientCallId,
 				pRemote,
 				[&](const char* pResponse, void*){
-				std::map<std::string, std::string> args;
-				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
-				pRemote->sendResponse(strResp.c_str(), strResp.size());
+				pRemote->sendResponse(pResponse, strlen(pResponse));
 			}, nullptr);
 
 			if (-1 == ret)
 			{
 				// remote error or disconnected
 				std::map<std::string, std::string> args;
-				std::string strResp = CRpcJsonParser::buildResponse("failed", callId, 404, "", args);
+				std::string strResp = CRpcJsonParser::buildResponse("failed", callId, 404, "", ArgumentType());
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
 			}
 		}

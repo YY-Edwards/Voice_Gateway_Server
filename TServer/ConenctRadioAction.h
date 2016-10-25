@@ -34,7 +34,6 @@ void connectRadioAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 					CRemotePeer* pCommandSender = (CRemotePeer*)data;
 					pCommandSender->sendResponse(pResponse, strlen(pResponse));
 			}, nullptr);
-
 			if (-1 == ret)
 			{
 				// remote error or disconnected
