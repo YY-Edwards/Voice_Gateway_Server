@@ -78,6 +78,9 @@
     <ClInclude Include="SettingAction.h">
       <Filter>action</Filter>
     </ClInclude>
+    <ClInclude Include="AllCallAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
     <ClInclude Include="CallAction.h">
       <Filter>action</Filter>
     </ClInclude>
@@ -111,7 +114,10 @@
     <ClInclude Include="SendSmsAction.h">
       <Filter>action</Filter>
     </ClInclude>
-    <ClInclude Include="SetRadioIpAction.h">
+    <ClInclude Include="StopCallAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="WiretapAction.h">
       <Filter>action</Filter>
     </ClInclude>
   </ItemGroup>

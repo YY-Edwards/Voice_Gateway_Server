@@ -87,6 +87,7 @@
     <ClInclude Include="..\lib\rpc\include\TcpClientConnector.h" />
     <ClInclude Include="..\lib\rpc\include\TcpServer.h" />
     <ClInclude Include="..\lib\strutil\strutil.h" />
+    <ClInclude Include="AllCallAction.h" />
     <ClInclude Include="Broker.h" />
     <ClInclude Include="CallAction.h" />
     <ClInclude Include="CancelGpsAction.h" />
@@ -99,12 +100,13 @@
     <ClInclude Include="RemotePowerOnAction.h" />
     <ClInclude Include="SendGroupSmsAction.h" />
     <ClInclude Include="SendSmsAction.h" />
-    <ClInclude Include="SetRadioIpAction.h" />
     <ClInclude Include="SettingAction.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="StartAction.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="StopCallAction.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="WiretapAction.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\lib\rpc\src\RpcClient.cpp" />

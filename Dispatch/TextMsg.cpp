@@ -151,7 +151,7 @@ string CTextMsg::ParseUserMsg(TextMsg* HandleMsg, int * len)
 
 	return ParsedMsg;
 }
-<<<<<<< HEAD
+
 std::string CTextMsg::TCHAR2STRING(TCHAR * STR)
 
 {
@@ -168,8 +168,7 @@ std::string CTextMsg::TCHAR2STRING(TCHAR * STR)
 
 }
 
-=======
->>>>>>> 06c157d7bc56873625196b47515d183215480f1b
+
 
 UINT8 CTextMsg::GetSeqNumber(TextMsg* HandleMsg)
 {
