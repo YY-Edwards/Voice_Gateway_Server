@@ -34,6 +34,9 @@
     <Filter Include="rpc\src">
       <UniqueIdentifier>{be7734da-0899-47a3-85a3-2b5dfd4faa1d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="action">
+      <UniqueIdentifier>{ffa4ffb6-ee39-445c-a281-04020f7a259e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -90,47 +93,47 @@
     <ClInclude Include="..\lib\rpc\include\TcpServer.h">
       <Filter>rpc\include</Filter>
     </ClInclude>
-    <ClInclude Include="Connect.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="AllCallEventAction.h">
+      <Filter>action</Filter>
     </ClInclude>
-    <ClInclude Include="Call.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="CallEventAction.h">
+      <Filter>action</Filter>
     </ClInclude>
-    <ClInclude Include="GroupCall.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="CancelgpspEventAction.h">
+      <Filter>action</Filter>
     </ClInclude>
-    <ClInclude Include="AllCall.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="ConnectEventAction.h">
+      <Filter>action</Filter>
     </ClInclude>
-    <ClInclude Include="RmotePowerON.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="GetGpsEventAction.h">
+      <Filter>action</Filter>
     </ClInclude>
-    <ClInclude Include="RemotePowerOff.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="GetOverTurnGpsEventAction.h">
+      <Filter>action</Filter>
     </ClInclude>
-    <ClInclude Include="RadioCheck.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="GroupCallEventAction.h">
+      <Filter>action</Filter>
     </ClInclude>
-    <ClInclude Include="Wiretap.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="RadioCheckEventAction.h">
+      <Filter>action</Filter>
     </ClInclude>
-    <ClInclude Include="SendSms.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="RemotePowerOffEventAction.h">
+      <Filter>action</Filter>
     </ClInclude>
-    <ClInclude Include="SendGroupSms.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="RemotePowerOnEventAction.h">
+      <Filter>action</Filter>
     </ClInclude>
-    <ClInclude Include="GetGps.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="SendGroupSmsEventAction.h">
+      <Filter>action</Filter>
     </ClInclude>
-    <ClInclude Include="StopCall.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="SendSmsEventAction.h">
+      <Filter>action</Filter>
     </ClInclude>
-    <ClInclude Include="CancelGps.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="StopCallEventAction.h">
+      <Filter>action</Filter>
     </ClInclude>
-    <ClInclude Include="GetOverTurnGPS.h">
-      <Filter>头文件</Filter>
+    <ClInclude Include="WiretapEventAction.h">
+      <Filter>action</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -22,7 +22,7 @@ void sendResponse(CRemotePeer* pRemote, const char* pData, int dataLen)
 	printf("send data£º%s\r\n", pData);
 }
 
-void setBaseAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
+void setBaseAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
 
@@ -46,7 +46,7 @@ void setBaseAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 	}
 }
 
-void getBaseAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
+void getBaseAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
 
@@ -68,7 +68,7 @@ void getBaseAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 }
 
 
-void setRadioAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
+void setRadioAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
 
@@ -92,7 +92,7 @@ void setRadioAction(CRemotePeer* pRemote, const std::string& param, uint64_t cal
 	}
 }
 
-void getRadioAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
+void getRadioAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
 
@@ -113,7 +113,7 @@ void getRadioAction(CRemotePeer* pRemote, const std::string& param, uint64_t cal
 	}
 }
 
-void setRepeaterAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
+void setRepeaterAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
 
@@ -137,7 +137,7 @@ void setRepeaterAction(CRemotePeer* pRemote, const std::string& param, uint64_t 
 	}
 }
 
-void getRepeaterAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
+void getRepeaterAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
 

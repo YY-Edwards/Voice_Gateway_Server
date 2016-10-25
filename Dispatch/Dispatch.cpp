@@ -8,21 +8,22 @@
 #include <shlobj.h>  
 #include "Util.h"
 #include "../lib/rpc/include/RpcServer.h"
-#include"AllCall.h"
-#include"Call.h"
-#include"CancelGps.h"
-#include"Connect.h"
-#include"GetGps.h"
-#include "GetOverTurnGPS.h"
-#include"GroupCall.h"
-#include "RadioCheck.h"
-#include "RemotePowerOff.h"
-#include "RmotePowerON.h"
-#include "SendGroupSms.h"
-#include "SendSms.h"
-#include "StopCall.h"
-#include "Wiretap.h"
+#include"AllCallEventAction.h"
+#include"CallEventAction.h"
+#include"CancelgpspEventAction.h"
+#include"ConnectEventAction.h"
+#include"GetGpsEventAction.h"
+#include "GetOverTurnGpsEventAction.h"
+#include"GroupCallEventAction.h"
+#include "RadioCheckEventAction.h"
+#include "RemotePowerOffEventAction.h"
+#include "RemotePowerOnEventAction.h"
+#include "SendGroupSmsEventAction.h"
+#include "SendSmsEventAction.h"
+#include "StopCallEventAction.h"
+#include "WiretapEventAction.h"
 
+#define TCP_PORT 9001
 
 #pragma comment(lib, "Shlwapi.lib")
 static TCHAR szServiceName[] = _T("Dispatch");
@@ -551,8 +552,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("cancelGps",cancelgpspEventAction);
 	rpcServer.addActionHandler("connect",connectEventAction);
 	rpcServer.addActionHandler("getGps",getGpsEventAction);
-	rpcServer.addActionHandler("getOverTurnGps",getoverturngpsEventAction);
-	rpcServer.addActionHandler("groupCall",groupcallEventAction);
+	rpcServer.addActionHandler("getOverTurnGps",getOverTurnGpsEventAction);
+	rpcServer.addActionHandler("groupCall",groupCallEventAction);
 	rpcServer.addActionHandler("radioCheck",radioCheckEventAction);
 	rpcServer.addActionHandler("remotePowerOn",remotePowerOnEventAction);
 	rpcServer.addActionHandler("remotePowerOff",remotePowerOffEventAction);
@@ -560,17 +561,17 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("sendSms", sendSmsEventAction);
 	rpcServer.addActionHandler("stopCall",stopCallEventAction);
 	rpcServer.addActionHandler("wiretap",wiretapEventAction);
-<<<<<<< HEAD
+
 	rpcServer.start(TCP_PORT, rpcServer.TCP);
 	
 	while (1){
-		Sleep(10);
+		
 	};
 	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);                    //¼ì²éÄÚ´æÐ¹Â©
-=======
+
 	rpcServer.start();
 	while (1);
->>>>>>> 06c157d7bc56873625196b47515d183215480f1b
+
 	return 0;
 }
 

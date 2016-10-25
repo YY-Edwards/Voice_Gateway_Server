@@ -19,7 +19,7 @@
 
 #include "Broker.h"
 
-void startAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId)
+void startAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
 	std::lock_guard<std::mutex> locker(lock);
@@ -39,23 +39,25 @@ void startAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 			// 发送消息到进程
 			std::string ip = d["radio"]["ip"].GetString();
-			std::map<std::string, std::string> args;
-			args["ip"] = ip;
+			ArgumentType args;
+			args["ip"] = FieldValue(ip.c_str());
 			int clientCallId = CBroker::instance()->getCallId();
 			std::string callJsonStr = CRpcJsonParser::buildCall("start", clientCallId, args);
 
 			int ret = CBroker::instance()->getRadioClient()->sendRequest(callJsonStr.c_str(),
 				clientCallId,
-				[&](const char* pResponse){
-					std::map<std::string, std::string> args;
+				pRemote,
+				[&](const char* pResponse, void* data){
+					ArgumentType args;
 					std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
-					pRemote->sendResponse(strResp.c_str(), strResp.size());
+					CRemotePeer* pCommandSender = (CRemotePeer*)data;
+					pCommandSender->sendResponse(strResp.c_str(), strResp.size());
 			}, nullptr);
 
 			if (-1 == ret)
 			{
 				// remote error or disconnected
-				std::map<std::string, std::string> args;
+				ArgumentType args;
 				std::string strResp = CRpcJsonParser::buildResponse("failed", callId, 404, "", args);
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
 			}
