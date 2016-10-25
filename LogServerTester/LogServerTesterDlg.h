@@ -47,4 +47,5 @@ public:
 	
 	afx_msg void OnBnClickedButton1();
 	afx_msg void OnBnClickedBtnRadioConnect();
+	afx_msg void OnBnClickedDbTest1();
 };

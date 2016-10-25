@@ -166,7 +166,58 @@ int CRpcJsonParser::getResponse(const std::string str,
 	return ret;
 }
 
-std::string CRpcJsonParser::buildCall(char* pCallName, uint64_t callId, std::map<std::string, std::string> params)
+rapidjson::Value CRpcJsonParser::toNode(const char* str)
+{
+	rapidjson::Document d;
+	rapidjson::Value node(kStringType);
+	node.SetString(rapidjson::StringRef(str), d.GetAllocator());
+	return node;
+}
+
+rapidjson::Value CRpcJsonParser::toNode(FieldValue& v, rapidjson::Document& d)
+{
+	if (FieldValue::TString == v.getType())
+	{
+		rapidjson::Value val(kStringType);
+		val.SetString(StringRef(v.getString().c_str()), d.GetAllocator());
+
+		return val;
+	} 
+	else if (FieldValue::TInt == v.getType())
+	{
+		rapidjson::Value val(kNumberType);
+		val.SetInt(v.getInt());
+
+		return val;
+	}
+	else if (FieldValue::TArray == v.getType())
+	{
+		rapidjson::Value val(kArrayType);
+		val.SetArray();
+
+		std::list<FieldValue> ar = v.getArray();
+		for (auto i = ar.begin(); i != ar.end(); i++)
+		{
+			val.PushBack(toNode(*i, d), d.GetAllocator());
+		}
+		return val;
+	}
+	else if (FieldValue::TObject == v.getType())
+	{
+		rapidjson::Value val(kObjectType);
+		val.SetObject();
+		std::map<std::string, FieldValue> obj = v.getObject();
+		for (auto i = obj.begin(); i != obj.end(); i++){
+			val.AddMember(Value(i->first.c_str(), d.GetAllocator()).Move(), toNode(i->second, d), d.GetAllocator());
+		}
+
+		return val;
+	}
+
+	return rapidjson::Value(kNullType);
+}
+
+std::string CRpcJsonParser::buildCall(char* pCallName, uint64_t callId, ArgumentType params)
 {
 	std::string jsonStr = "";
 
@@ -182,9 +233,9 @@ std::string CRpcJsonParser::buildCall(char* pCallName, uint64_t callId, std::map
 		Value paramEl(kObjectType);
 		for (auto p = params.begin(); p != params.end(); ++p)
 		{
-			Value el(kStringType);
-			el.SetString(p->second.c_str(), d.GetAllocator());
-			paramEl.AddMember( StringRef( p->first.c_str()), el, d.GetAllocator());
+			paramEl.AddMember(Value(p->first.c_str(), d.GetAllocator()).Move(),
+				CRpcJsonParser::toNode(p->second, d),
+				d.GetAllocator());
 		}
 		
 		d.AddMember("call", callNameEl, d.GetAllocator());
@@ -209,7 +260,15 @@ std::string CRpcJsonParser::buildCall(char* pCallName, uint64_t callId, std::map
 	return jsonStr;
 }
 
-std::string CRpcJsonParser::buildResponse(char* pStatus, uint64_t callId, int errCode, const char* statusText, std::map<std::string, std::string> contents)
+std::string CRpcJsonParser::toString(rapidjson::Value& v)
+{
+	StringBuffer sb;
+	Writer<StringBuffer> writer(sb);
+	v.Accept(writer); // Accept() traverses the DOM and generates Handler events.
+	return sb.GetString();
+}
+
+std::string CRpcJsonParser::buildResponse(char* pStatus, uint64_t callId, int errCode, const char* statusText, ArgumentType contents)
 {
 	std::string jsonStr = "";
 
@@ -231,9 +290,9 @@ std::string CRpcJsonParser::buildResponse(char* pStatus, uint64_t callId, int er
 		Value contentEl(kObjectType);
 		for (auto p = contents.begin(); p != contents.end(); ++p)
 		{
-			Value el(kStringType);
-			el.SetString(p->second.c_str(), d.GetAllocator());
-			contentEl.AddMember(StringRef(p->first.c_str()), el, d.GetAllocator());
+			contentEl.AddMember(Value(p->first.c_str(), d.GetAllocator()).Move(), 
+				CRpcJsonParser::toNode(p->second, d),
+				d.GetAllocator());
 		}
 
 		d.AddMember("status", statusEl, d.GetAllocator());
@@ -261,4 +320,95 @@ std::string CRpcJsonParser::buildResponse(char* pStatus, uint64_t callId, int er
 	}
 
 	return jsonStr;
+}
+
+
+std::list<CCriteria> CRpcJsonParser::parseCondition(rapidjson::Value v)
+{
+	std::list<CCriteria> condition;
+
+	try
+	{
+		if (!v.IsArray())
+		{
+			throw std::exception("value is not array");
+		}
+
+		for (size_t i = 0; i < v.Size(); i++)
+		{
+			if (v[i].IsArray() && (v[i].Size() >= 3))
+			{
+				CCriteria critera;
+
+				if (v[i].Size() > 3)
+				{
+					critera.releation = v[i][0].GetString();
+					critera.compare = v[i][1].GetString();
+					critera.field = v[i][2].GetString();
+					critera.val = v[i][3].GetString();
+				} 
+				else
+				{
+					critera.compare = v[i][0].GetString();
+					critera.field = v[i][1].GetString();
+					critera.val = v[i][2].GetString();
+				}
+
+				condition.push_back(critera);
+			}
+		}
+	}
+	catch (std::exception e)
+	{
+
+	}
+	catch (...)
+	{
+
+	}
+	
+
+	return condition;
+}
+
+std::string CRpcJsonParser::listToString(std::list<std::map<std::string, std::string> >& lstVal)
+{
+	std::string val;
+
+	try
+	{
+		rapidjson::Document d;
+
+		d.SetArray();
+
+		for (auto i = lstVal.begin(); i != lstVal.end(); i++)
+		{
+			rapidjson::Value vObj;
+			vObj.SetObject();
+
+			for (auto j = (*i).begin(); j != (*i).end(); j++)
+			{
+				Value vStr(kStringType);
+				vStr.SetString( StringRef(j->second.c_str()), d.GetAllocator());
+				vObj.AddMember(StringRef(j->first.c_str()), vStr, d.GetAllocator());
+			}
+
+			d.PushBack(vObj, d.GetAllocator());
+		}
+
+		StringBuffer sb;
+		Writer<StringBuffer> writer(sb);
+		d.Accept(writer); // Accept() traverses the DOM and generates Handler events.
+		val = sb.GetString();
+	}
+	catch (std::exception e)
+	{
+
+	}
+	catch (...)
+	{
+
+	}
+
+	return val;
 }

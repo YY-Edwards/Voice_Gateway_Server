@@ -19,8 +19,10 @@ void appEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t cal
 	{
 
 	}
-	std::map<std::string, std::string> args;
-	args["message"] = "first temp message";
+	ArgumentType args;
+	FieldValue fMsg(FieldValue::TString);
+	fMsg.setString("this is first message");
+	args["message"] = fMsg;
 	std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
 	pRemote->sendResponse(strResp.c_str(), strResp.size());
 	printf("send response:%s\r", strResp.c_str());

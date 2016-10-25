@@ -15,7 +15,7 @@
 void addStaffAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	Document d;
-	std::map<std::string, std::string> args;
+	ArgumentType args;
 	std::string strResp;
 	try{
 		d.Parse(param.c_str());
@@ -31,18 +31,24 @@ void addStaffAction(CRemotePeer* pRemote, const std::string& param, uint64_t cal
 		}
 		else
 		{
-			args["message"] = "write record failed";
+			FieldValue fMsg(FieldValue::TString);
+			fMsg.setString("insert record failed");
+			args["message"] = fMsg;
 			std::string strResp = CRpcJsonParser::buildResponse("failed", callId, 500, "", args);
 			
 		}
 	}
 	catch (std::exception e){
-		args["message"] = e.what();
+		FieldValue fMsg(FieldValue::TString);
+		fMsg.setString(e.what());
+		args["message"] = fMsg;
 		std::string strResp = CRpcJsonParser::buildResponse("failed", callId, 500, "", args);
 	}
 	catch (...)
 	{
-		args["message"] = "unknow error";
+		FieldValue fMsg(FieldValue::TString);
+		fMsg.setString("unknow error");
+		args["message"] = fMsg;
 		std::string strResp = CRpcJsonParser::buildResponse("failed", callId, 500, "", args);
 	}
 	pRemote->sendResponse(strResp.c_str(), strResp.size());

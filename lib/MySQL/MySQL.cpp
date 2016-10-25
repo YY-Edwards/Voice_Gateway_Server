@@ -20,7 +20,7 @@ CMySQL::~CMySQL(void)
 {
 	m_bStoped = true;
 	m_hExitEvent.notify_all();
-	m_pingThread.join();
+	//m_pingThread.join();
 }
 
 bool CMySQL::open(const char* host, unsigned short port, const char* user, const char* pass, const char* db)
