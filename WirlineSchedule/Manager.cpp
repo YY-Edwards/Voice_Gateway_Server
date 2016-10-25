@@ -1,9 +1,12 @@
 
 #include "stdafx.h"
+#include <process.h>
 #include "Manager.h"
 #include "SerialDongle.h"
 #include "Sound.h"
 #include "WLNet.h"
+#include "actionHandler.h"
+
 //temp delete
 //#include "Net.h"
 
@@ -35,6 +38,10 @@ CManager::CManager(CMySQL *pDb)
 	m_bDongleIsOpen = FALSE;
 	g_dongleIsUsing = FALSE;
 	m_pDb = pDb;
+	m_hRemoteTaskThread = NULL;
+	m_remoteTaskThreadId = 0;
+	m_bRemoteTaskThreadRun = false;
+	m_bIsHaveConfig = false;
 }
 
 CManager::~CManager()
@@ -275,10 +282,10 @@ void CManager::ReleaseDecodeEvent()
 
 
 
-int CManager::initialCall(char* pTartgetId, char* pCallType)
+int CManager::initialCall(unsigned long targetId, unsigned char callTyp)
 {
-	unsigned long tartgetId = (unsigned long)atoll(pTartgetId);
-	unsigned char callType = atoi(pCallType);
+	unsigned long tartgetId = targetId;
+	unsigned char callType = callTyp;
 	if (m_bDongleIsOpen)
 	{
 
@@ -287,7 +294,8 @@ int CManager::initialCall(char* pTartgetId, char* pCallType)
 			WORD callStatus = g_pNet->GetCallStatus();
 
 			//callback
-			if (callStatus == CALL_HANGUP)
+			if (callStatus == CALL_HANGUP
+				&& targetId == g_targetId)
 			{
 				g_bPTT = TRUE;
 				sprintf_s(m_reportMsg, "call back");
@@ -310,18 +318,21 @@ int CManager::initialCall(char* pTartgetId, char* pCallType)
 			{
 				sprintf_s(m_reportMsg, "Other Call Is Running");
 				sendLogToWindow();
+				g_pNet->Send_CARE_CALL_STATUS(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, NEW_CALL_END);
 				return 1;
 			}
 
 		}
 		else
 		{
+			g_pNet->Send_CARE_CALL_STATUS(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, NEW_CALL_END);
 			return 1;
 		}
 		return 0;
 	}
 	else
 	{
+		g_pNet->Send_CARE_CALL_STATUS(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, NEW_CALL_END);
 		sprintf_s(m_reportMsg, "dongle is not open");
 		sendLogToWindow();
 		return 1;
@@ -330,9 +341,12 @@ int CManager::initialCall(char* pTartgetId, char* pCallType)
 
 int CManager::stopCall()
 {
-	g_pNet->requestRecordEndEvent();
-	g_pSound->StopRecord();
-	g_pNet->waitRecordEnd();
+	if (g_pNet->canStopRecord())
+	{
+		g_pNet->requestRecordEndEvent();
+		g_pSound->setbRecord(FALSE);
+		g_pNet->waitRecordEnd();
+	}
 	return 0;
 }
 
@@ -401,51 +415,211 @@ int CManager::SendFile(unsigned int length, char* pData)
 // 	return m_hWaitDecodeEvent;
 // }
 
-int CManager::setPlayCallOfCare(char* pCallType, char* pFrom, char* pTarget)
+int CManager::setPlayCallOfCare(unsigned char calltype, unsigned long srcId, unsigned long targetId)
 {
-	return g_pNet->setPlayCallOfCare(pCallType, pFrom, pTarget);
+	return g_pNet->setPlayCallOfCare( calltype,srcId,targetId);
 }
 
-int CManager::config(char* pMasterIp, char* pMasterPort, char* pLocalPeerId, char* pLocalRadioId, char* pReccordType, char* pDefaultGroup, char* pDonglePort, char* pHuangTime, char* pMasterHeartTime, char* pPeerHearTime, char* pDefaultSlot)
+int CManager::config(CONFIG_PARAM* pConfig)
 {
 	int rlt = 0;
-	strcpy_s(CONFIG_MASTER_IP, pMasterIp);
-	CONFIG_MASTER_PORT = atoi(pMasterPort);
-	CONFIG_LOCAL_PEER_ID = (unsigned long)atoll(pLocalPeerId);
-	CONFIG_LOCAL_RADIO_ID = (unsigned long)atoll(pLocalRadioId);
-	if (0 == strcmp("IPSC",pReccordType))
+	bool bMasterChange = false;
+	bool bDongleChange = false;
+	if (0 != strcmp(CONFIG_MASTER_IP,pConfig->masterIp))
 	{
-		CONFIG_RECORD_TYPE = IPSC;
+		strcpy_s(CONFIG_MASTER_IP, pConfig->masterIp);
+		bMasterChange = true;
 	}
-	else if (0 == strcmp("CPC", pReccordType))
+	if (CONFIG_MASTER_PORT != pConfig->masterPort)
 	{
-		CONFIG_RECORD_TYPE = CPC;
+		CONFIG_MASTER_PORT = pConfig->masterPort;
+		bMasterChange = true;
 	}
-	else if (0 == strcmp("LCP", pReccordType))
+	if (CONFIG_LOCAL_PEER_ID != pConfig->localPeerId)
 	{
-		CONFIG_RECORD_TYPE = LCP;
+		CONFIG_LOCAL_PEER_ID = pConfig->localPeerId;
+		if (!bMasterChange)
+		{
+			g_pNet->setWlStatus(STARTING);
+		}
 	}
-	else
+	CONFIG_LOCAL_RADIO_ID = pConfig->localRadioId;
+	if (CONFIG_RECORD_TYPE != pConfig->recordType)
 	{
-		rlt = 1;
+		CONFIG_RECORD_TYPE = pConfig->recordType;
+		if (!bMasterChange)
+		{
+			g_pNet->setWlStatus(STARTING);
+		}
 	}
-	CONFIG_DEFAULT_GROUP = (unsigned long)atoll(pDefaultGroup);
-	CONFIG_DONGLE_PORT = atoi(pDonglePort);
-	CONFIG_HUNG_TIME = (unsigned long)atoll(pHuangTime);
-	CONFIG_MASTER_HEART_TIME = (unsigned long)atoll(pMasterHeartTime);
-	CONFIG_PEER_HEART_AND_REG_TIME = (unsigned long)atoll(pPeerHearTime);
-	if (1 == atoi(pDefaultSlot))
+	CONFIG_DEFAULT_GROUP = pConfig->defaultGroup;
+	if (CONFIG_DONGLE_PORT != pConfig->donglePort)
 	{
-		CONFIG_DEFAULT_SLOT = SLOT1;
+		CONFIG_DONGLE_PORT = pConfig->donglePort;
+		bDongleChange = true;
 	}
-	else if (2 == atoi(pDefaultSlot))
+	CONFIG_HUNG_TIME = pConfig->hangTime;
+	CONFIG_MASTER_HEART_TIME = pConfig->masterHeartTime;
+	CONFIG_PEER_HEART_AND_REG_TIME = pConfig->peerHeartTime;
+	CONFIG_DEFAULT_SLOT = pConfig->defaultSlot;
+	if (!m_bIsHaveConfig)
 	{
-		CONFIG_DEFAULT_SLOT = SLOT2;
+		//////////////////////////////////////////////////////////////////////////
+		//程序启动后第一次获取配置
+		//////////////////////////////////////////////////////////////////////////
+		/*与主中继相连*/
+		if (!g_pNet->StartNet(inet_addr(CONFIG_MASTER_IP), CONFIG_MASTER_PORT, INADDR_ANY, CONFIG_LOCAL_PEER_ID, CONFIG_LOCAL_RADIO_ID, CONFIG_RECORD_TYPE))
+		{
+			sprintf_s(m_reportMsg,"net initial fail");
+			sendLogToWindow();
+		}
+		/*配置麦克风和扬声器*/
+		if (WL_RETURN_OK != g_pSound->StartSound(m_hwnd, 0, 0))
+		{
+			sprintf_s(m_reportMsg, "sound initial fail");
+			sendLogToWindow();
+		}
+		else
+		{
+			sprintf_s(m_reportMsg, "sound initial success");
+			sendLogToWindow();
+		}
+		/*配置dongle*/
+		WCHAR tmpStr[128] = { 0 };
+		swprintf_s(tmpStr, 128, L"\\\\.\\COM%d", CONFIG_DONGLE_PORT);
+		if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, m_hwnd, this))
+		{
+			m_bDongleIsOpen = FALSE;
+			g_dongle_open = false;
+			sprintf_s(m_reportMsg, "open dongle fail");
+			sendLogToWindow();
+		}
+		else
+		{
+			m_bDongleIsOpen = TRUE;
+			g_dongle_open = true;
+			sprintf_s(m_reportMsg, "open dongle success");
+			sendLogToWindow();
+		}
+		m_bIsHaveConfig = true;
 	}
-	else
+	else if (bMasterChange)
 	{
-		rlt = 2;
+		/*重新与主中继相连接*/
+		if (g_pNet->StartNet(inet_addr(CONFIG_MASTER_IP), CONFIG_MASTER_PORT, INADDR_ANY, CONFIG_LOCAL_PEER_ID, CONFIG_LOCAL_RADIO_ID, CONFIG_RECORD_TYPE))
+		{
+			sprintf_s(m_reportMsg, "net initial fail");
+			sendLogToWindow();
+		}
+	}
+	else if (bDongleChange)
+	{
+		/*重新配置dongle*/
+		WCHAR tmpStr[128] = { 0 };
+		swprintf_s(tmpStr, 128, L"\\\\.\\COM%d", CONFIG_DONGLE_PORT);
+		if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, m_hwnd, this))
+		{
+			m_bDongleIsOpen = FALSE;
+			g_dongle_open = false;
+			sprintf_s(m_reportMsg, "initDongle:open dongle fail");
+			sendLogToWindow();
+		}
+		else
+		{
+			m_bDongleIsOpen = TRUE;
+			g_dongle_open = true;
+			sprintf_s(m_reportMsg, "open dongle success");
+			sendLogToWindow();
+		}
 	}
 	return rlt;
+}
+
+void CManager::startHandleRemoteTask()
+{
+	if (m_bRemoteTaskThreadRun)
+	{
+		return;
+	}
+	m_hRemoteTaskThread = (HANDLE)_beginthreadex(NULL,         // security
+		0,            // stack size
+		HandleRemoteTaskProc,
+		this,           // arg list
+		CREATE_SUSPENDED,  // so we can later call ResumeThread()
+		&m_remoteTaskThreadId);
+	m_bRemoteTaskThreadRun = true;
+	ResumeThread(m_hRemoteTaskThread);
+	
+}
+
+unsigned __stdcall CManager::HandleRemoteTaskProc(void * pThis)
+{
+	CManager* p = (CManager*)pThis;
+	if (p)
+	{
+		p->handleRemoteTask();
+	}
+	return 0;
+}
+
+void CManager::handleRemoteTask()
+{
+	REMOTE_TASK task = { 0 };
+	while (m_bRemoteTaskThreadRun)
+	{
+		if (g_remoteCommandTaskQueue.size() > 0)
+		{
+			//sprintf_s(m_reportMsg, "have task");
+			//sendLogToWindow();
+			/*处理任务*/
+			get_front_task(task);
+			erase_front_task();
+			switch (task.cmd)
+			{
+			case REMOTE_CMD_CONFIG:
+			{
+									  sprintf_s(m_reportMsg,"Handle REMOTE_CMD_CONFIG");
+									  sendLogToWindow();
+									  config(&(task.param.info.configParam));
+			}
+				break;
+			case REMOTE_CMD_CALL:
+			{
+									if (g_pNet->getWlStatus() == ALIVE)
+									{
+										initialCall(task.param.info.callParam.tartgetId, task.param.info.callParam.callType);
+									}
+									else
+									{
+										g_pNet->Send_CARE_CALL_STATUS(task.param.info.callParam.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.tartgetId, NEW_CALL_END);
+									}
+			}
+				break;
+			case REMOTE_CMD_SET_PLAY_CALL:
+			{
+											 setPlayCallOfCare(task.param.info.setCareCallParam.callType, task.param.info.setCareCallParam.srcId, task.param.info.setCareCallParam.tgtId);
+			}
+				break;
+			case REMOTE_CMD_STOP_CALL:
+			{
+										 if (CALL_ONGOING == g_pNet->GetCallStatus())
+										 {
+											 stopCall();
+										 }
+			}
+				break;
+			default:
+				break;
+			}
+		}
+		else
+		{
+			//sprintf_s(m_reportMsg, "0 task");
+			//sendLogToWindow();
+			/*休眠*/
+			Sleep(20);
+			continue;
+		}
+	}
 }
 

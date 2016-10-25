@@ -4,7 +4,8 @@
 #include "stdafx.h"
 #include "Manager.h"
 #include "MySQL.h"
-
+#include "../lib/rpc/include/RpcServer.h"
+#include "actionHandler.h"
 
 //#ifndef DLLEXPORT
 //#define DLLEXPORT extern "C" _declspec(dllexport)
@@ -166,117 +167,170 @@ void handleLog(char *pLog)
 {
 	SYSTEMTIME now = { 0 };
 	GetLocalTime(&now);
-	printf_s("%04u-%02u-%02u %02u:%02u:%02u %03u %s\n", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond, now.wMilliseconds, pLog);
+	printf_s("\r\n%04u-%02u-%02u %02u:%02u:%02u %03u %s\r\n", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond, now.wMilliseconds, pLog);
 }
 
 int main()
 {
-	/*局部变量声明*/
-	int returnValue;
-	CMySQL m_db;
-	CManager *m_pManager = new CManager(&m_db);
-	int cmd = 0;
-	bool run = true;
-	PLogReport m_report = handleLog;
-	/*配置参数*/
-	m_pManager->config("192.168.1.121", "50000", "120", "5", "CPC", "9", "7", "4000", "60000", "600000","1");
-	/*当前句柄获取*/
-	HWND m_hwnd = GetConsoleHwnd();
-	/*初始化日志回调*/
+	//_CrtSetBreakAlloc(358);
+	CMySQL *m_pDb = new CMySQL();;
+	CManager *m_pManager = new CManager(m_pDb);
+	/*声明变量并初始化*/
+	BOOL m_ret = FALSE;
+	PLogReport m_report = NULL;
+	HWND m_hwnd = NULL;
+	char m_temp = 0x00;
+	CRpcServer rpcServer;
+
+	/*设置基本参数*/
+	m_report = handleLog;
+	m_hwnd = GetConsoleHwnd();
+	m_pManager->initWnd(m_hwnd);
+	m_pDb->SetLogPtr(m_report);
 	m_pManager->setLogPtr(m_report);
-	m_db.SetLogPtr(m_report);
+	/*开启远程任务处理线程*/
+	m_pManager->startHandleRemoteTask();
+	/*初始化服务部分*/
+	rpcServer.addActionHandler("config", configActionHandler);
+	rpcServer.addActionHandler("initialCall", initialCallActionHandler);
+	rpcServer.addActionHandler("stopCall", stopCallActionHandler);
+	rpcServer.addActionHandler("setPlayCallOfCare", setPlayCallOfCareActionHandler);
+	rpcServer.start(WL_SERVER_PORT);
+
 	/*初始化数据库*/
-	BOOL ret = m_db.Open(DB_HOST, DB_PORT, DB_USER, DB_PWD, DB_NAME);
-	if (!ret)
+	m_ret = m_pDb->Open(DB_HOST, DB_PORT, DB_USER, DB_PWD, DB_NAME);
+	if (!m_ret)
 	{
 		handleLog("open data server fail");
-		char temp = 0x00;
-		scanf_s("%c", &temp, 1);
+		scanf_s("%c", &m_temp, 1);
 		return 0;
 	}
-	/*初始化网络、Dongle、Sound*/
-	returnValue = m_pManager->initWnd(m_hwnd);
-	if (returnValue != 0)
-	{
-		handleLog("Initialization system fail");
-		char temp = 0x00;
-		scanf_s("%c", &temp, 1);
-		return 0;
-	}
-	else
-	{
-		handleLog("Initialization system success");
+	handleLog("input any for end");
+	scanf_s("%c", &m_temp, 1);
 
-	}
-	returnValue = m_pManager->initSys();
-	if (returnValue != 0)
+	//if (m_pDb)
+	//{
+	//	delete m_pDb;
+	//	m_pDb = NULL;
+	//}
+	if (m_pManager)
 	{
-		handleLog("Initialization system fail");
-		char temp = 0x00;
-		scanf_s("%c", &temp, 1);
-		return 0;
+		delete m_pManager;
+		m_pManager = NULL;
 	}
-	else
-	{
-		handleLog("Initialization system success");
-	}
-	/*进入菜单选项*/
-	while (run)
-	{
-		printf_s("/************/\n/* 1.按下PTT\n/* 2.松开PTT\n/* 3.录音回放\n/* 4.发送语音\n/* 9.清屏\n/* 0.退出\n/************/\n\r");
-		scanf_s("%d", &cmd, 1);
-		switch (cmd)
-		{
-		case 0x01:
-		{
-					 m_pManager->initialCall("9", "79");
-		}
-			break;
-		case 0x02:
-		{
-					 m_pManager->stopCall();
-		}
-			break;
-		case 0x03:
-		{
-					 m_pManager->play();
-		}
-			break;
-		case 0x04:
-		{
-					 HANDLE file = CreateFile(L"D:\\WirelineScheduleVoiceData\\201610.bit", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
-					 if (INVALID_HANDLE_VALUE == file)
-					 {
-						 handleLog("CreateFile fail");
-					 }
-					 else
-					 {
-						 DWORD len = 0;
-						 DWORD readLen = 0;
-						 len = GetFileSize(file, 0);
-						 if (len > 0)
-						 {
-							 char* pBuffer = new char[len];
-							 ReadFile(file, pBuffer, len, &readLen, NULL);
-							 CloseHandle(file);
-							 m_pManager->SendFile(readLen, pBuffer);
-							 delete[] pBuffer;
-						 }
-					 }
 
-		}
-			break;
-		case 0x09:
-		{
-					 system("cls");
-		}
-			break;
-		default:
-		{
-				   run = false;
-		}
-			break;
-		}
-	}
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	return 0;
+
+
+//#pragma region 原有代码
+//	/*局部变量声明*/
+//	int returnValue;
+//	CMySQL m_db;
+//	CManager *m_pManager = new CManager(&m_db);
+//	int cmd = 0;
+//	bool run = true;
+//	PLogReport m_report = handleLog;
+//	/*配置参数*/
+//	m_pManager->config("192.168.1.121", "50000", "120", "5", "CPC", "9", "7", "4000", "60000", "600000","1");
+//	/*当前句柄获取*/
+//	HWND m_hwnd = GetConsoleHwnd();
+//	/*初始化日志回调*/
+//	m_pManager->setLogPtr(m_report);
+//	m_db.SetLogPtr(m_report);
+//	/*初始化数据库*/
+//	BOOL ret = m_db.Open(DB_HOST, DB_PORT, DB_USER, DB_PWD, DB_NAME);
+//	if (!ret)
+//	{
+//		handleLog("open data server fail");
+//		char temp = 0x00;
+//		scanf_s("%c", &temp, 1);
+//		return 0;
+//	}
+//	/*初始化网络、Dongle、Sound*/
+//	returnValue = m_pManager->initWnd(m_hwnd);
+//	if (returnValue != 0)
+//	{
+//		handleLog("Initialization system fail");
+//		char temp = 0x00;
+//		scanf_s("%c", &temp, 1);
+//		return 0;
+//	}
+//	else
+//	{
+//		handleLog("Initialization system success");
+//
+//	}
+//	returnValue = m_pManager->initSys();
+//	if (returnValue != 0)
+//	{
+//		handleLog("Initialization system fail");
+//		char temp = 0x00;
+//		scanf_s("%c", &temp, 1);
+//		return 0;
+//	}
+//	else
+//	{
+//		handleLog("Initialization system success");
+//	}
+//	/*进入菜单选项*/
+//	while (run)
+//	{
+//		printf_s("/************/\n/* 1.按下PTT\n/* 2.松开PTT\n/* 3.录音回放\n/* 4.发送语音\n/* 9.清屏\n/* 0.退出\n/************/\n\r");
+//		scanf_s("%d", &cmd, 1);
+//		switch (cmd)
+//		{
+//		case 0x01:
+//		{
+//					 m_pManager->initialCall("9", "79");
+//		}
+//			break;
+//		case 0x02:
+//		{
+//					 m_pManager->stopCall();
+//		}
+//			break;
+//		case 0x03:
+//		{
+//					 m_pManager->play();
+//		}
+//			break;
+//		case 0x04:
+//		{
+//					 HANDLE file = CreateFile(L"D:\\WirelineScheduleVoiceData\\201610.bit", GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
+//					 if (INVALID_HANDLE_VALUE == file)
+//					 {
+//						 handleLog("CreateFile fail");
+//					 }
+//					 else
+//					 {
+//						 DWORD len = 0;
+//						 DWORD readLen = 0;
+//						 len = GetFileSize(file, 0);
+//						 if (len > 0)
+//						 {
+//							 char* pBuffer = new char[len];
+//							 ReadFile(file, pBuffer, len, &readLen, NULL);
+//							 CloseHandle(file);
+//							 m_pManager->SendFile(readLen, pBuffer);
+//							 delete[] pBuffer;
+//						 }
+//					 }
+//
+//		}
+//			break;
+//		case 0x09:
+//		{
+//					 system("cls");
+//		}
+//			break;
+//		default:
+//		{
+//				   run = false;
+//		}
+//			break;
+//		}
+//	}
+//	return 0;
+//#pragma endregion
 }
