@@ -322,3 +322,8 @@ bool CDb::updateUser(const char* condition, recordType& val)
 {
 	return m_pMySQLDb->update("user", val, condition);
 }
+
+bool CDb::del(const char* table, const char* condition)
+{
+	return (m_pMySQLDb->del(table, condition) > 0);
+}
