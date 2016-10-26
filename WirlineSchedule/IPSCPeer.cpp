@@ -43,7 +43,10 @@ CIPSCPeer::CIPSCPeer(CWLNet* pLELayer, WCHAR* IP_Address, WCHAR* Port)
 	m_startTickCount = 0;
 	m_timerIdPeerStatusCheck = 0;
 	m_bKillTimer = false;
-	Init();
+	m_bIsMaster = false;
+	m_bFirstInit = true;
+	m_bFirstWlRegistration = true;
+	//peerInit();
 }
 
 CIPSCPeer::CIPSCPeer(CWLNet* pLELayer, sockaddr_in* thesockaddr)
@@ -74,7 +77,10 @@ CIPSCPeer::CIPSCPeer(CWLNet* pLELayer, sockaddr_in* thesockaddr)
 	m_startTickCount = 0;
 	m_timerIdPeerStatusCheck = 0;
 	m_bKillTimer = false;
-	Init();
+	m_bIsMaster = false;
+	m_bFirstInit = true;
+	m_bFirstWlRegistration = true;
+	//peerInit();
 }
 
 //add code by chenhaidong
@@ -108,7 +114,10 @@ CIPSCPeer::CIPSCPeer(CWLNet* pLELayer, u_long IP_Address, u_short Port)
 	m_peerStatus = PEER_STATUS_NULL;
 	m_startTickCount = 0;
 	m_bKillTimer = false;
-	Init(TRUE);
+	m_bIsMaster = true;
+	m_bFirstInit = true;
+	m_bFirstWlRegistration = true;
+	//peerInit(TRUE);
 }
 
 CIPSCPeer::~CIPSCPeer()
@@ -420,6 +429,8 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 		break;
 	case WL_REGISTRATION_REQUEST_LOCAL:
 	{
+
+										  m_bFirstWlRegistration = false;
 										  T_WL_PROTOCOL_01 networkData = { 0 };
 										  networkData.currentLinkProtocolVersion = Wireline_Protocol_Version;
 										  networkData.numberOfRegistrationEntries = NUMBER_REGIS_ENTRIES;
@@ -552,9 +563,13 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 																						  {
 																							  sprintf_s(m_reportMsg, "call end:%s", g_callRequstDeclineReasonCodeInfo.ReasonCode);
 																							  sendLogToWindow();
-																							  g_pNet->requestRecordEndEvent();
-																							  g_pSound->StopRecord();
-																							  g_pNet->waitRecordEnd();
+																							  /*当前是否可以停止录音*/
+																							  if (g_pNet->canStopRecord())
+																							  {
+																								  g_pNet->requestRecordEndEvent();
+																								  g_pSound->setbRecord(FALSE);
+																								  g_pNet->waitRecordEnd();
+																							  }
 																						  }
 										  }
 											  break;
@@ -718,16 +733,14 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 //	}
 //}
 
-void CIPSCPeer::Init(BOOL isMasterPeer)
+void CIPSCPeer::peerInit()
 {
-	//m_LocalToRemoteState = WAIT_SEND_REGISTRATION_REQUEST_TO_REMOTE;
-	//m_RemoteToLocalState = WAIT_REMOTE_REQUEST;
 
-
-	if (!isMasterPeer)
+	if (!m_bIsMaster)
 	{
 		m_timerIdPeerStatusCheck = timeSetEvent(PEER_STATUS_CHECK_INTERVAL, 1, PeerStatusCheck, (DWORD)this, TIME_PERIODIC);
 		HandlePacket(LE_PEER_REGISTRATION_REQUEST_LOCAL, NULL, 0, 0);
+		m_bFirstInit = false;
 	}
 }
 
@@ -1655,14 +1668,17 @@ void CIPSCPeer::PeerStatusCheckProc()
 void CIPSCPeer::destroy()
 {
 	m_bKillTimer = true;
-	if (timeKillEvent(m_timerIdPeerStatusCheck))
+	if (0 != m_timerIdPeerStatusCheck)
 	{
+		if (timeKillEvent(m_timerIdPeerStatusCheck))
+		{
 
-	}
-	else
-	{
-		//sprintf_s(m_reportMsg, "timeKillEvent fail");
-		//sendLogToWindow();
+		}
+		else
+		{
+			//sprintf_s(m_reportMsg, "timeKillEvent fail");
+			//sendLogToWindow();
+		}
 	}
 }
 
@@ -1797,4 +1813,28 @@ void CIPSCPeer::getCallRequestRltInfo(DECLINE_REASON_CODE_INFO &declineReasonCod
 void CIPSCPeer::setUseSlot(unsigned char value)
 {
 	m_useSlot = (_SlotNumber)value;
+}
+
+bool CIPSCPeer::isSame(CIPSCPeer *pPeer)
+{
+	if (pPeer->GetPeerID() == m_ulPeerID)
+	{
+		sockaddr_in sockAddrIn = pPeer->GetPeerAddressOfSockaddrin();
+		if (sockAddrIn.sin_port == m_PeerAddr.sin_port
+			&& sockAddrIn.sin_addr.S_un.S_addr == m_PeerAddr.sin_addr.S_un.S_addr)
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+bool CIPSCPeer::getbFirstWlRegistration()
+{
+	return m_bFirstWlRegistration;
+}
+
+bool CIPSCPeer::getbFirstInit()
+{
+	return m_bFirstInit;
 }

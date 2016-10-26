@@ -8,6 +8,7 @@
 static const unsigned char AuthenticId[AUTHENTIC_ID_SIZE] = { 0x01, 0x02, 0x00, 0x0d };
 static const unsigned char VenderKey[VENDER_KEY_SIZE] = { 0x6b, 0xe5, 0xff, 0x95, 0x6a, 0xb5, 0xe8, 0x82, 0xa8, 0x6f, 0x29, 0x5f, 0x9d, 0x9d, 0x5e, 0xcf, 0xe6, 0x57, 0x61, 0x5a };
 
+
 CWLNet::CWLNet(CMySQL *pDb,CManager *pManager)
 : m_socket(INVALID_SOCKET)
 , m_hWorkThread(INVALID_HANDLE_VALUE)
@@ -63,6 +64,7 @@ CWLNet::CWLNet(CMySQL *pDb,CManager *pManager)
 	//m_dongleIdleEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
 	m_pManager = pManager;
 	m_dwChangeToCurrentTick = 0;
+	m_pPlayCall = NULL;
 }
 
 CWLNet::~CWLNet()
@@ -887,7 +889,6 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE(DWORD eveintIndex)
 
 					/*对主中继进行wireline注册*/
 					clearPeers();
-					m_pPeers.clear();
 					CIPSCPeer *peer = new CIPSCPeer(this, m_masterAddress, m_masterPort);
 					peer->setRemote3rdParty(false);
 					peer->SetPeerID(m_ulMasterPeerID);
@@ -1666,12 +1667,13 @@ void CWLNet::Net_WAITFOR_LE_NOTIFICATION_MAP_BROADCAST(DWORD eventIndex)
 //}
 void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 {
+	//用来比对的peers
+	std::list<CIPSCPeer*> pPeers;
 	if (LCP == CONFIG_RECORD_TYPE)
 	{
 		int mapNums = pLcp->mapNums;
 		m_PeerCount = mapNums;
-		clearPeers();
-		m_pPeers.clear();
+		//clearPeers();
 		if (mapNums > 0)
 		{
 			for (int i = 0; i < mapNums; i++)
@@ -1687,15 +1689,82 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 					CIPSCPeer *peer = new CIPSCPeer(this, m_addr, m_port);
 					peer->SetPeerID(pLcp->mapPayload.wideMapPeers[i].remotePeerID);
 					peer->setLogPtr(m_report);
-					m_pPeers.push_back(peer);
+					CIPSCPeer* tempP = GetPeer(pLcp->mapPayload.wideMapPeers[i].remotePeerID);
+					//增加到比对队列
+					pPeers.push_back(peer);
+					/*更新map*/
+					if (tempP && tempP->isSame(peer))
+					{
+						//do nothing
+					}
+					else
+					{
+						//存在则删除
+						if (tempP)
+						{
+							clearPeer(tempP);
+						}
+						//增加新的peer到map队列
+						m_pPeers.push_back(peer);
+					}
 				}
 			}
+
+
 			//get master ip from setting,then add to peer
 			CIPSCPeer *peer = new CIPSCPeer(this, m_masterAddress, m_masterPort);
 			peer->setRemote3rdParty(false);
 			peer->SetPeerID(m_ulMasterPeerID);
 			peer->setLogPtr(m_report);
-			m_pPeers.push_back(peer);
+
+			CIPSCPeer *tempP3 = GetPeer(m_ulMasterPeerID);
+			if (!(NULL != tempP3 && tempP3->isSame(peer)))
+			{
+				m_pPeers.push_back(peer);
+			}
+
+			pPeers.push_back(peer);
+
+			/************************************************************************/
+			/* 核对peer
+			/************************************************************************/
+			bool checkEnd = false;
+			int count = 0;
+			while (!checkEnd)
+			{
+				/*核对map*/
+				CIPSCPeer *pNeedDelete = NULL;
+				count = m_pPeers.size();
+				for (auto i = m_pPeers.begin(); i != m_pPeers.end(); i++)
+				{
+					count--;
+					bool isHave = false;
+					CIPSCPeer* tempP1 = *i;
+					for (auto j = pPeers.begin(); j != pPeers.end(); j++)
+					{
+						CIPSCPeer* tempP2 = *j;
+						if (tempP2->isSame(tempP1))
+						{
+							isHave = true;
+							break;
+						}
+					}
+					if (!isHave)
+					{
+						pNeedDelete = tempP1;
+						break;
+					}
+				}
+				/*存在多余的peer*/
+				if (pNeedDelete)
+				{
+					clearPeer(pNeedDelete);
+				}
+				if (0 == count)
+				{
+					checkEnd = true;
+				}
+			}
 
 			sprintf_s(m_reportMsg, "MAP peers:");
 			sendLogToWindow();
@@ -1703,18 +1772,24 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 			for (auto i = m_pPeers.begin(); i != m_pPeers.end(); i++)
 			{
 				(*i)->printInfo();
+				if ((*i)->getbFirstInit())
+				{
+					(*i)->peerInit();
+				}
 			}
 			//cycle WL register
 			for (auto i = m_pPeers.begin(); i != m_pPeers.end(); i++)
 			{
-				(*i)->HandlePacket(WL_REGISTRATION_REQUEST_LOCAL, NULL, m_masterAddress, m_masterPort, FALSE);
+				//if ((*i)->getbFirstWlRegistration())
+				//{
+					(*i)->HandlePacket(WL_REGISTRATION_REQUEST_LOCAL, NULL, m_masterAddress, m_masterPort, FALSE);
+				//}
 			}
 		}
 	}
 	else
 	{
-		clearPeers();
-		m_pPeers.clear();
+		//clearPeers();
 		int mapNums = p->mapNums;
 		m_PeerCount = mapNums;
 		if (mapNums > 0)
@@ -1731,18 +1806,83 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 				if (!FindLocalIP(m_addr))
 				{
 					CIPSCPeer *peer = new CIPSCPeer(this, m_addr, m_port);
-
 					peer->SetPeerID(p->mapPeers[i].remotePeerID);
 					peer->setLogPtr(m_report);
-					m_pPeers.push_back(peer);
+					CIPSCPeer* tempP = GetPeer(p->mapPeers[i].remotePeerID);
+					//增加到比对队列
+					pPeers.push_back(peer);
+					/*更新map*/
+					if (tempP && tempP->isSame(peer))
+					{
+						//do nothing
+					}
+					else
+					{
+						//存在则删除
+						if (tempP)
+						{
+							clearPeer(tempP);
+						}
+						//增加新的peer到map队列
+						m_pPeers.push_back(peer);
+					}
 				}
 			}
+
 			//get master ip from setting,then add to peer
 			CIPSCPeer *peer = new CIPSCPeer(this, m_masterAddress, m_masterPort);
 			peer->setRemote3rdParty(false);
 			peer->SetPeerID(m_ulMasterPeerID);
 			peer->setLogPtr(m_report);
-			m_pPeers.push_back(peer);
+
+			CIPSCPeer *tempP3 = GetPeer(m_ulMasterPeerID);
+			if (!(NULL != tempP3 && tempP3->isSame(peer)))
+			{
+				m_pPeers.push_back(peer);
+			}
+
+			pPeers.push_back(peer);
+
+			/************************************************************************/
+			/* 核对peer
+			/************************************************************************/
+			bool checkEnd = false;
+			int count = 0;
+			while (!checkEnd)
+			{
+				/*核对map*/
+				CIPSCPeer *pNeedDelete = NULL;
+				count = m_pPeers.size();
+				for (auto i = m_pPeers.begin(); i != m_pPeers.end(); i++)
+				{
+					count--;
+					bool isHave = false;
+					CIPSCPeer* tempP1 = *i;
+					for (auto j = pPeers.begin(); j != pPeers.end(); j++)
+					{
+						CIPSCPeer* tempP2 = *j;
+						if (tempP2->isSame(tempP1))
+						{
+							isHave = true;
+							break;
+						}
+					}
+					if (!isHave)
+					{
+						pNeedDelete = tempP1;
+						break;
+					}
+				}
+				/*存在多余的peer*/
+				if (pNeedDelete)
+				{
+					clearPeer(pNeedDelete);
+				}
+				if (0 == count)
+				{
+					checkEnd = true;
+				}
+			}
 
 			sprintf_s(m_reportMsg, "MAP peers:");
 			sendLogToWindow();
@@ -1750,11 +1890,19 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 			for (auto i = m_pPeers.begin(); i != m_pPeers.end(); i++)
 			{
 				(*i)->printInfo();
+				if ((*i)->getbFirstInit())
+				{
+					(*i)->peerInit();
+				}
+				
 			}
 			//cycle WL register
 			for (auto i = m_pPeers.begin(); i != m_pPeers.end(); i++)
 			{
-				(*i)->HandlePacket(WL_REGISTRATION_REQUEST_LOCAL, NULL, m_masterAddress, m_masterPort);
+				//if ((*i)->getbFirstWlRegistration())
+				//{
+					(*i)->HandlePacket(WL_REGISTRATION_REQUEST_LOCAL, NULL, m_masterAddress, m_masterPort);
+				//}
 			}
 		}
 	}
@@ -2186,6 +2334,17 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 									   CRecordFile* p = (CRecordFile*)(*i);
 									   if (diffTimestamp > CONFIG_HUNG_TIME && VOICE_STATUS_CALLBACK == (*i)->callStatus)
 									   {
+										   if (isTargetMeCall(p->tagetId, p->callType))
+										   {
+											   if (p->srcId != CONFIG_LOCAL_RADIO_ID)
+											   {
+												   Send_CARE_CALL_STATUS(p->callType, p->srcId, p->tagetId, END_CALL_NO_PLAY);
+											   }
+											   else
+											   {
+												   Send_CARE_CALL_STATUS(p->callType, p->srcId, p->tagetId, NEW_CALL_END);
+											   }
+										   }
 										   m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, CONFIG_RECORD_TYPE, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi, (*i)->callStatus, &((*i)->recordTime));
 										   requireVoiceReocrdsLock();
 										   delete (*i);
@@ -2203,6 +2362,18 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 										   }
 										   (*i)->callStatus = VOICE_STATUS_END;
 										   GetLocalTime(&((*i)->recordTime));
+
+										   if (isTargetMeCall(p->tagetId, p->callType))
+										   {
+											   if (p->srcId != CONFIG_LOCAL_RADIO_ID)
+											   {
+												   Send_CARE_CALL_STATUS(p->callType, p->srcId, p->tagetId, END_CALL_NO_PLAY);
+											   }
+											   else
+											   {
+												   Send_CARE_CALL_STATUS(p->callType, p->srcId, p->tagetId, NEW_CALL_END);
+											   }
+										   }
 										   m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, CONFIG_RECORD_TYPE, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi,(*i)->callStatus,&((*i)->recordTime));
 										   requireVoiceReocrdsLock();
 										   delete (*i);
@@ -2371,7 +2542,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 									  {
 									  case Call_Session_End:
 									  {
-															   if (isTargetMeCall(p->targetID, p->callType))
+															   if (isTargetMeCall(tgtId, p->callType))
 															   {
 																   SetCallStatus(CALL_IDLE);
 															   }
@@ -2382,6 +2553,18 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 																	   (*i)->tagetId == tgtId &&
 																	   (*i)->callId == callId)
 																   {
+																	   if (isTargetMeCall(tgtId, p->callType))
+																	   {
+																		   SetCallStatus(CALL_IDLE);
+																		   if (srcId != CONFIG_LOCAL_RADIO_ID)
+																		   {
+																			   Send_CARE_CALL_STATUS(p->callType, srcId, tgtId, END_CALL_NO_PLAY);
+																		   }
+																		   else
+																		   {
+																			   Send_CARE_CALL_STATUS(p->callType, p->sourceID, p->targetID, NEW_CALL_END);
+																		   }
+																	   }
 																	   (*i)->callStatus = VOICE_STATUS_END;
 																	   //GetLocalTime(&((*i)->recordTime));
 																	   m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, CONFIG_RECORD_TYPE, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi, (*i)->callStatus, &((*i)->recordTime));
@@ -2409,6 +2592,10 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 																		 setCurrentSendVoicePeer(peer);
 																		 g_targetId = p->targetID;
 																		 g_targetCallType = p->callType;
+																		 //if (p->sourceID == CONFIG_LOCAL_RADIO_ID)
+																		 //{
+																			// Send_CARE_CALL_STATUS(p->callType, p->sourceID, p->targetID, NEW_CALL_END);
+																		 //}
 																	 }
 																	 for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
 																	 {
@@ -5498,6 +5685,7 @@ void CWLNet::NetWorker_SendCallByWL(void)
 				//发送语音数据包失败
 				char* tempAddr = inet_ntoa(m_peerAddr.sin_addr);
 				printf_s("WSASendTo %s error,error no:%d\r\n", tempAddr, rc);
+				releaseReadySendVoicesLock();
 				return;
 			}
 		}
@@ -6096,7 +6284,7 @@ int CWLNet::callBack()
 {
 	if (g_targetId != CONFIG_DEFAULT_GROUP && g_targetCallType == GROUPCALL_TYPE)
 	{
-		m_dwChangeToCurrentTick = GetTickCount();
+		updateChangeToCurrentTick();
 	}
 	bool requestCallSuccess = false;
 	m_retryRequestCallCount = REQUEST_CALL_REPEAT_FREQUENCY;
@@ -6148,6 +6336,7 @@ int CWLNet::callBack()
 	}
 	else
 	{
+		Send_CARE_CALL_STATUS(g_targetCallType, CONFIG_LOCAL_RADIO_ID, g_targetId, NEW_CALL_END);
 		return 1;
 	}
 }
@@ -6156,7 +6345,7 @@ int CWLNet::newCall()
 {
 	if (g_targetId != CONFIG_DEFAULT_GROUP && g_targetCallType == GROUPCALL_TYPE)
 	{
-		m_dwChangeToCurrentTick = GetTickCount();
+		updateChangeToCurrentTick();
 	}
 	bool requestCallSuccess = false;
 	m_retryRequestCallCount = REQUEST_CALL_REPEAT_FREQUENCY;
@@ -6301,6 +6490,7 @@ int CWLNet::newCall()
 	}
 	else
 	{
+		Send_CARE_CALL_STATUS(g_targetCallType, CONFIG_LOCAL_RADIO_ID, g_targetId, NEW_CALL_END);
 		return 1;
 	}
 }
@@ -6405,8 +6595,6 @@ short CWLNet::Build_WL_VC_VOICE_END_BURST(CHAR* pPacket, T_WL_PROTOCOL_19* pData
 
 void CWLNet::CorrectingBuffer(DWORD callId)
 {
-
-	
 	_SlotNumber slot = m_pCurrentSendVoicePeer->getUseSlot();
 	/*核对语音记录信息*/
 	for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
@@ -6417,6 +6605,7 @@ void CWLNet::CorrectingBuffer(DWORD callId)
 		{
 			(*i)->callId = callId;
 			(*i)->srcSlot = slot;
+			//callType = (*i)->callType;
 			break;
 		}
 	}
@@ -6432,15 +6621,21 @@ void CWLNet::CorrectingBuffer(DWORD callId)
 		getWirelineAuthentication(p->pPackageData, size);
 	}
 	releaseReadySendVoicesLock();
+
+	Send_CARE_CALL_STATUS(g_targetCallType, CONFIG_LOCAL_RADIO_ID, g_targetId,NEW_CALL_START);
 }
 
 void CWLNet::requestRecordEndEvent()
 {
+	sprintf_s(m_reportMsg, "requestRecordEndEvent");
+	sendLogToWindow();
 	ResetEvent(m_endRecordEvent);
 }
 
 void CWLNet::releaseRecordEndEvent()
 {
+	sprintf_s(m_reportMsg, "releaseRecordEndEvent");
+	sendLogToWindow();
 	SetEvent(m_endRecordEvent);
 }
 
@@ -7063,9 +7258,17 @@ void CWLNet::clearPeers()
 {
 	for (auto i = m_pPeers.begin(); i != m_pPeers.end(); i++)
 	{
-		(*i)->destroy();
-		delete (*i);
+		CIPSCPeer *p = *i;
+		clearPeer(p);
 	}
+}
+
+void CWLNet::clearPeer(CIPSCPeer *p)
+{
+	m_pPeers.remove(p);
+	p->destroy();
+	delete p;
+	p = NULL;
 }
 
 int CWLNet::checkDefaultGroup()
@@ -7075,20 +7278,20 @@ int CWLNet::checkDefaultGroup()
 		long dif = GetTickCount() - m_dwChangeToCurrentTick;
 		if (dif > GO_BACK_DEFAULT_GROUP_TIME)
 		{
+			sprintf_s(m_reportMsg, "GO_BACK_DEFAULT_GROUP");
+			sendLogToWindow();
 			g_targetId = CONFIG_DEFAULT_GROUP;
 		}
 	}
 	return 0;
 }
 
-
-
-int CWLNet::setPlayCallOfCare(char* pCallType, char* pFrom, char* pTarget)
+int CWLNet::setPlayCallOfCare(unsigned char calltype, unsigned long srcId, unsigned long targetId)
 {
-	int type = atoi(pCallType);
-	unsigned long src = (unsigned long)atoll(pFrom);
-	unsigned long tgt = (unsigned long)atoll(pTarget);
-	switch (type)
+	//int type = atoi(pCallType);
+	unsigned long src = srcId;
+	unsigned long tgt = targetId;
+	switch (calltype)
 	{
 	case GROUPCALL_TYPE:
 	{
@@ -7136,15 +7339,76 @@ int CWLNet::setPlayCallOfCare(char* pCallType, char* pFrom, char* pTarget)
 
 int CWLNet::thereIsCallOfCare(CRecordFile *pCallRecord)
 {
-	Send_CARE_CALL_STATUS(pCallRecord->callType, pCallRecord->srcId, pCallRecord->tagetId, CALL_BACKSTAGE);
+	Send_CARE_CALL_STATUS(pCallRecord->callType, pCallRecord->srcId, pCallRecord->tagetId, HAVE_CALL_NO_PLAY);
 	return 0;
 }
 
 int CWLNet::Send_CARE_CALL_STATUS(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status)
 {
 	/*将参数打包成json格式*/
+	ArgumentType args;
+	char temp[128] = { 0 };
+	sprintf_s(temp, "%u", callType);
+	args["callType"] = temp;
+	sprintf_s(temp, "%lu", srcId);
+	args["srcId"] = temp;
+	sprintf_s(temp, "%lu", tgtId);
+	args["tgtId"] = temp;
+	sprintf_s(temp, "%d", status);
+	args["status"] = temp;
+	args["module"] = "wl";
+	std::string strRequest = CRpcJsonParser::buildCall("Send_CARE_CALL_STATUS",++g_sn,args);
+	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
+	sendLogToWindow();
 	/*发送到Client*/
+	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end();i++)
+	{
+		TcpClient* p = *i;
+		try
+		{
+			p->sendResponse(strRequest.c_str(), strRequest.size());
+		}
+		catch (...)
+		{
+			sprintf_s(m_reportMsg, "Send_CARE_CALL_STATUS fail, socket:%lu", p->s);
+			sendLogToWindow();
+		}
+	}
 	return 0;
+}
+
+void CWLNet::setWlStatus(WLStatus value)
+{
+	m_WLStatus = value;
+}
+
+WLStatus CWLNet::getWlStatus()
+{
+	return m_WLStatus;
+}
+
+CRecordFile* CWLNet::getCurrentPlayInfo()
+{
+	return m_pPlayCall;
+}
+
+void CWLNet::setCurrentPlayInfo(CRecordFile *value)
+{
+	m_pPlayCall = value;
+}
+
+int CWLNet::updateChangeToCurrentTick()
+{
+	m_dwChangeToCurrentTick = GetTickCount();
+	//sprintf_s(m_reportMsg, "m_dwChangeToCurrentTick:%lu", m_dwChangeToCurrentTick);
+	//sendLogToWindow();
+	return 0;
+}
+
+bool CWLNet::canStopRecord()
+{
+
+	return g_pSound->getbRecord();
 }
 
 //bool CWLNet::getIsFirstBurstA()

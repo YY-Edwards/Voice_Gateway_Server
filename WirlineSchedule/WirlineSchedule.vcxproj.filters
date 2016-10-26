@@ -49,6 +49,15 @@
     <ClCompile Include="WLRecordFile.cpp">
       <Filter>source\class</Filter>
     </ClCompile>
+    <ClCompile Include="..\lib\rpc\src\TcpServer.cpp">
+      <Filter>rpc\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\rpc\src\RpcServer.cpp">
+      <Filter>rpc\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp">
+      <Filter>rpc\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ambe3000.h">
@@ -306,6 +315,24 @@
     <ClInclude Include="WLRecordFile.h">
       <Filter>include\class</Filter>
     </ClInclude>
+    <ClInclude Include="..\lib\rpc\include\request.h">
+      <Filter>rpc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\rpc\include\BaseConnector.h">
+      <Filter>rpc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\rpc\include\RpcJsonParser.h">
+      <Filter>rpc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\rpc\include\RpcServer.h">
+      <Filter>rpc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\rpc\include\TcpServer.h">
+      <Filter>rpc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="actionHandler.h">
+      <Filter>action-handler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -349,6 +376,18 @@
     </Filter>
     <Filter Include="source\class">
       <UniqueIdentifier>{b9dd4ab9-dda9-41cf-a964-20d04b2cc208}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rpc">
+      <UniqueIdentifier>{2489940c-fab1-4b66-8561-5c7c7e6424ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rpc\include">
+      <UniqueIdentifier>{48caf54f-5e09-48e2-804b-0ac7b2b04340}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="rpc\source">
+      <UniqueIdentifier>{468e6bea-90e2-4f18-bf6f-944acc05d795}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="action-handler">
+      <UniqueIdentifier>{17d8350c-801e-472f-81ef-85ebb7e5cadd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
