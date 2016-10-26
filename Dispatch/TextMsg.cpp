@@ -142,14 +142,16 @@ string CTextMsg::ParseUserMsg(TextMsg* HandleMsg, int * len)
 		}
 	}
 
-	//memcpy((char*)szMessage, &HandleMsg->TextPayload[MsgOffset], MsgSize - MsgOffset - 2);
-	//*len = MsgSize - MsgOffset - 2;
-	//ParsedMsg = szMessage;
+
 	memcpy((char*)szMessage, &HandleMsg->TextPayload[MsgOffset], MsgSize - MsgOffset - 2);
-//	ParsedMsg.Format(_T("%s"), szMessage);
-	ParsedMsg = HandleMsg->TextPayload[MsgOffset];
+	//*len = MsgSize - MsgOffset - 2;
+	ParsedMsg = TCHAR2STRING(szMessage);
+	//	memcpy((char*)szMessage, &HandleMsg->TextPayload[MsgOffset], MsgSize - MsgOffset - 2);
+	//	ParsedMsg.Format(_T("%s"), szMessage);
+	//ParsedMsg = HandleMsg->TextPayload[MsgOffset];
 
 	return ParsedMsg;
+
 }
 
 std::string CTextMsg::TCHAR2STRING(TCHAR * STR)
@@ -461,8 +463,8 @@ void CTextMsg::RecvMsg()
 				{
 					if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 					{
-						std::map<std::string, std::string> args;
-						args["id"] = stringId;
+						ArgumentType args;
+						args["id"] = FieldValue( stringId.c_str());
 						std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
 						pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 					}
@@ -498,7 +500,7 @@ void CTextMsg::RecvMsg()
 				tm timeinfo;
 				char tmp[64];
 				localtime_s(&timeinfo, &t);
-				strftime(tmp, sizeof(tmp), "%Y/%m/%d %X %A 本年第%j天 %z", &timeinfo);
+				strftime(tmp, sizeof(tmp), "%Y/%m/%d %H:%M:%S", &timeinfo);
 				string message = ParseUserMsg(&HandleMsg, 0);
 				string strTime = tmp;
 				char radioID[512];
@@ -507,10 +509,10 @@ void CTextMsg::RecvMsg()
 				//string strTime = WChar2Ansi(cstrTime.GetBuffer(cstrTime.GetLength()));
 				//cstring to string   message 
 				//string strMsg = WChar2Ansi(message.GetBuffer(message.GetLength()));
-				std::map<std::string, std::string> args;
-				args["id"] = radioID;
-				args["date"] = strTime;
-				args["message"] = message;
+				ArgumentType args;
+				args["id"] = FieldValue(radioID);
+				args["message"] = FieldValue(message.c_str());
+				args["date"] = FieldValue(strTime.c_str());
 				std::string callJsonStr = CRpcJsonParser::buildCall("onRecvMsg", 1, args);
 				if (pRemotePeer != NULL)
 				{
@@ -543,7 +545,6 @@ string CTextMsg::WChar2Ansi(LPCWSTR pwszSrc)
 	WideCharToMultiByte(CP_ACP, 0, pwszSrc, -1, pszDst, nLen, NULL, NULL);
 	pszDst[nLen - 1] = 0;
 	std::string strTemp(pszDst);
-	delete[] pszDst;
 	return strTemp;
 }
 void CTextMsg::setRemotePeer(CRemotePeer * pRemote)

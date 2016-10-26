@@ -31,5 +31,6 @@ public: // static memebers
 	static std::string listToString(std::list<std::map<std::string, std::string> >& lstVal);
 	static std::string toString(rapidjson::Value& v);
 
+	static std::string mergeCommand(const char* command, uint64_t callId, const char* param);
 };
 

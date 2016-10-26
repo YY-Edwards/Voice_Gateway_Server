@@ -18,7 +18,7 @@ void sendGroupSmsEventAction(CRemotePeer* pRemote, const std::string& param, uin
 		{
 			if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
 			{
-				std::map<std::string, std::string> args;
+				ArgumentType args;
 				args["message"] = "sendGroupSms";
 				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
@@ -30,7 +30,7 @@ void sendGroupSmsEventAction(CRemotePeer* pRemote, const std::string& param, uin
 				MultiByteToWideChar(CP_ACP, 0, msg.c_str(), -1, text, msgSize);
 				//	AddAllCommand(pRemote,callId, SEND_GROUP_MSG);
 				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, SEND_GROUP_MSG, "", "", "", id, text, 0, 0, callId);
-				delete[] text;
+	
 			}
 		}
 		

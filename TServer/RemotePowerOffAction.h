@@ -16,25 +16,24 @@ void remotePowerOffAction(CRemotePeer* pRemote, const std::string& param, uint64
 		if (d.HasMember("id"))
 		{
 			std::string id = d["id"].GetString();
-			std::map<std::string, std::string> args;
-			args["id"] = id;
+			ArgumentType args;
+			args["id"] = FieldValue(id.c_str());
 			int clientCallId = CBroker::instance()->getCallId();
 			std::string callJsonStr = CRpcJsonParser::buildCall("remotePowerOff", clientCallId, args);
 
 			int ret = CBroker::instance()->getRadioClient()->sendRequest(callJsonStr.c_str(),
 				clientCallId,
 				pRemote,
-				[&](const char* pResponse, void*){
-				std::map<std::string, std::string> args;
-				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
-				pRemote->sendResponse(strResp.c_str(), strResp.size());
+				[&](const char* pResponse, void* data){
+				CRemotePeer* pCommandSender = (CRemotePeer*)data;
+				pCommandSender->sendResponse(pResponse, strlen(pResponse));
 			}, nullptr);
 
 			if (-1 == ret)
 			{
 				// remote error or disconnected
 				std::map<std::string, std::string> args;
-				std::string strResp = CRpcJsonParser::buildResponse("failed", callId, 404, "", args);
+				std::string strResp = CRpcJsonParser::buildResponse("failed", callId, 404, "", ArgumentType());
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
 			}
 		}

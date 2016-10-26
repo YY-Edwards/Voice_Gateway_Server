@@ -11,17 +11,8 @@
 // Windows м╥нд╪Ч: 
 #include <windows.h>
 #include <stdio.h>
-#include <process.h>
 #include "common.h"
-#include "Ambe3000.h"
-#include <MMSystem.h>
-#pragma comment(lib, "winmm.lib")
-#include "VoiceDefs.h"
 
-#include <winsock2.h>
-#pragma comment(lib, "ws2_32.lib")
-
-#include "Tool.h"
 
 
 

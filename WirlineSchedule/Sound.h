@@ -92,11 +92,12 @@ public:
 	void PleaseShutDown(void);//关闭音频输出、输入设备
 	void SetLogPtr(PLogReport value);//设置log回调
 	void StartRecord();
-	void StopRecord();
+	void setbRecord(BOOL value);
 	FILE* m_pInputFile;
 	//FILE* m_pInputFile1;
 	void closeFile();
 	void immediatelyPlay();
+	bool getbRecord();
 
 private:
 	BOOL m_bShouldStopRecording;//当前是否应该停止录制

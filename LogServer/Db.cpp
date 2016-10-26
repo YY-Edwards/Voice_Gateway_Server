@@ -217,7 +217,7 @@ const char* CDb::getLastError() const
 	return m_strLastError.c_str();
 }
 
-bool CDb::insertUser(const char* name, const char* phone, const char* username, const char* password)
+bool CDb::insertUser(const char* name, const char* phone, const char* username, const char* password, const char* authority, const char* type)
 {
 	m_pMySQLDb->startTransaction();
 	try{
@@ -225,6 +225,8 @@ bool CDb::insertUser(const char* name, const char* phone, const char* username, 
 		recordType staff;
 
 		user["username"] = username;
+		user["authority"] = authority;
+		user["type"] = type;
 
 		if (m_pMySQLDb->recordExist("user", user))
 		{
@@ -265,6 +267,20 @@ bool CDb::insertUser(const char* name, const char* phone, const char* username, 
 	return true;
 }
 
+std::string CDb::md5(const char* p)
+{
+	std::string md5Str;
+	if (NULL == p)
+	{
+		return md5Str;
+	}
+	MD5 md5;
+	md5.add(p, strlen(p));
+	md5Str = md5.getHash();
+
+	return md5Str;
+}
+
 bool CDb::auth(const char* username, const char* password)
 {
 	try{
@@ -295,4 +311,14 @@ bool CDb::auth(const char* username, const char* password)
 int CDb::query(const char* table, const char* condition, std::list<recordType>& records)
 {
 	return m_pMySQLDb->find(table, condition, records);
+}
+
+int CDb::count(const char* table, const char* condition)
+{
+	return m_pMySQLDb->count(table, condition);
+}
+
+bool CDb::updateUser(const char* condition, recordType& val)
+{
+	return m_pMySQLDb->update("user", val, condition);
 }

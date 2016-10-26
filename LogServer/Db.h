@@ -26,6 +26,8 @@ public:
 		return m_instance.get();
 	}
 
+	static std::string md5(const char* p);
+
 private:
 	CDb();
 	~CDb();
@@ -44,8 +46,10 @@ public:
 	int checkDbVersion();
 	const char* getLastError() const;
 	bool auth(const char* username, const char* password);
-	bool insertUser(const char* name, const char* phone, const char* username, const char* password);
+	bool insertUser(const char* name, const char* phone, const char* username, const char* password, const char* authority, const char* type);
+	bool updateUser(const char* condition, recordType& val);
 
 	int query(const char* table, const char* condition, std::list<recordType>& records);
+	int count(const char* table, const char* condition);
 };
 

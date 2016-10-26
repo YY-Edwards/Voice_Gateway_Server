@@ -813,8 +813,8 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						{
 							rmtflag = TRUE;
 							// 1:在线
-							std::map<std::string, std::string> args;
-							args["id"] = stringId;
+							ArgumentType args;
+							args["id"] = FieldValue(stringId.c_str());
 							std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
 							if (pRemotePeer != NULL && pRemotePeer == it->pRemote)
 							{
@@ -831,8 +831,8 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						{
 							rmtflag = false;
 							//0:不在线
-							std::map<std::string, std::string> args;
-							args["id"] = stringId;
+							ArgumentType args;
+							args["id"] = FieldValue(stringId.c_str());
 							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 0, "1", args);
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
@@ -854,8 +854,8 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						if (0x0110 == check_result/* & 0x00FF)*/)                                    //摇闭
 						{
 							rmtflag = true;                                   //成功    
-							std::map<std::string, std::string> args;
-							args["id"] = stringId;
+							ArgumentType args;
+							args["id"] = FieldValue( stringId.c_str());
 							std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
@@ -871,8 +871,8 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						else if (0x0111 == check_result)
 						{
 							rmtflag = false;                               //失败
-							std::map<std::string, std::string> args;
-							args["id"] = stringId;
+							ArgumentType args;
+							args["id"] = FieldValue( stringId.c_str());
 							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 0, "1", args);
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
@@ -893,8 +893,8 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						if (0x0210 == check_result/* & 0x00FF)*/)                                     //摇开
 						{
 							rmtflag = true;                                  //成功
-							std::map<std::string, std::string> args;
-							args["id"] = stringId;
+							ArgumentType args;
+							args["id"] = FieldValue( stringId.c_str());
 							std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
@@ -911,8 +911,8 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						else if (0x0211 == check_result)
 						{
 							rmtflag = FALSE;                                //失败
-							std::map<std::string, std::string> args;
-							args["id"] = stringId;
+							ArgumentType args;
+							args["id"] = FieldValue( stringId.c_str());
 							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 1, "1", args);
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
@@ -933,8 +933,8 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						if (0x0310 == check_result/* & 0x00FF)*/)                                    //远程监听
 						{
 							rmtflag = true;                                   //成功
-							std::map<std::string, std::string> args;
-							args["id"] = stringId;
+							ArgumentType args;
+							args["id"] = FieldValue( stringId.c_str());
 							std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
@@ -950,8 +950,8 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						else if (0x0311 == check_result)
 						{
 							rmtflag = false;                                   // 失败
-							std::map<std::string, std::string> args;
-							args["id"] = stringId;
+							ArgumentType args;
+							args["id"] = FieldValue( stringId.c_str());
 							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 0, "1", args);
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
@@ -1013,7 +1013,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 				m_allCommandListLocker.lock();
 				for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 				{
-					std::map<std::string, std::string> args;
+					ArgumentType args;
 					std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
 					if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 					{
@@ -1040,7 +1040,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 				m_allCommandListLocker.lock();
 				for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 				{
-					std::map<std::string, std::string> args;
+					ArgumentType args;
 					std::string callJsonStr = CRpcJsonParser::buildResponse("2", it->callId, 0, "1", args);
 					if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 					{

@@ -36,12 +36,13 @@ public:
 	bool createTable(const char* tbSql);
 	int insert(const char* table, recordType &record);
 	int del(const char* table, const char* condition);
-	int update(const char* table, recordType val, const char* condition);
+	int update(const char* table, recordType& val, const char* condition);
 	int find(const char* table, const char* condition, std::list<recordType> &records);
 	int findLastOne(const char* table, recordType& record);
 	void startTransaction();
 	void commit();
 	void rollback();
 	bool recordExist(const char* table, recordType record);
+	int count(const char* table, const char* condition);
 };
 
