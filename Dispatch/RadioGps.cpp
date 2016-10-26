@@ -509,7 +509,7 @@ void CRadioGps::RecvData()
 			sprintf_s(strLat, 512, "%d", lat);
 			sprintf_s(strSpeed, 512, "%d", speed);
 			sprintf_s(strValid, 512, "%d", valid);
-			std::map<std::string, std::string> args;
+			ArgumentType args;
 			args["id"] = radioID;
 			args["valid"] = strValid;
 			args["lon"] = strLon;

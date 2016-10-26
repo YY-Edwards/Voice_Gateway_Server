@@ -31,7 +31,7 @@ public:
 	/*播放默认文件语音*/
 	int play();
 	/*建立通话*/
-	int initialCall(char* pTartgetId, char* pCallType);
+	int initialCall(unsigned long targetId, unsigned char callTyp);
 	/*松开PTT*/
 	int stopCall();
 	/*解码加锁*/
@@ -50,19 +50,11 @@ public:
 	int SendFile(unsigned int length, char* pData);
 	//HANDLE getDecodeEvent();
 	/*设置当前语音的播放模式*/
-	int setPlayCallOfCare(char* pCallType,char* pFrom, char* pTarget);
+	int setPlayCallOfCare(unsigned char calltype, unsigned long srcId, unsigned long targetId);
 	/*配置参数*/
-	int config(char* pMasterIp
-		,char* pMasterPort
-		,char* pLocalPeerId
-		,char* pLocalRadioId
-		,char* pReccordType
-		,char* pDefaultGroup
-		,char* pDonglePort
-		,char* pHuangTime
-		,char* pMasterHeartTime
-		,char* pPeerHearTime
-		,char* pDefaultSlot);
+	int config(CONFIG_PARAM* pConfig);
+	void startHandleRemoteTask();
+	void handleRemoteTask();
 private:
 	PLogReport m_report;
 	HWND m_hwnd;
@@ -72,11 +64,17 @@ private:
 	HANDLE m_hWaitDecodeEvent;
 	BOOL m_bDongleIsOpen;
 	CMySQL *m_pDb;
-
+	HANDLE m_hRemoteTaskThread;
+	UINT m_remoteTaskThreadId;
+	bool m_bRemoteTaskThreadRun;
+	/*是否已经获取过配置*/
+	bool m_bIsHaveConfig;
 	/*推送日志到回调*/
 	void sendLogToWindow();
 	/*加载指定文件的语音数据*/
 	void LoadVoiceData(LPCWSTR filePath);
+
+	static unsigned __stdcall HandleRemoteTaskProc(void * pThis);
 };
 
 

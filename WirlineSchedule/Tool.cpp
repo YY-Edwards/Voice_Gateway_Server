@@ -29,7 +29,8 @@ bool CTool::GetApplicationPath(wchar_t(&des)[MAX_PATH])
 	{
 		return false;
 	}
-	wcscat_s(des, ANSIToUnicode(strPath).c_str());
+	//wcscat_s(des, ANSIToUnicode(strPath).c_str());
+	wcscpy_s(des, ANSIToUnicode(strPath).c_str());
 	return true;
 }
 

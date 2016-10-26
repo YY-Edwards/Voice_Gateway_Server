@@ -67,9 +67,11 @@ public:
 	void setUseSlot(unsigned char value);
 	/*关闭定时器*/
 	void destroy();
-protected:
 	/*开启定时器并进行LE注册*/
-	void Init(BOOL isMasterPeer = FALSE);
+	void peerInit();
+	bool getbFirstWlRegistration();
+	bool getbFirstInit();
+protected:
 	//int Build_LE_PEER_REGISTRATION_REQUEST();
 	DWORD Build_LE_PEER_REGISTRATION_REQUEST(CHAR* pPacket, T_LE_PROTOCOL_94* pData);
 	//int Build_LE_PEER_REGISTRATION_RESPONSE();
@@ -132,6 +134,8 @@ public:
 	bool getRemote3rdParty();
 	/*设置当前是否为第三方*/
 	void setRemote3rdParty(bool value);
+	/*比较指定的peer和当前的peer是否为同一个peer*/
+	bool isSame(CIPSCPeer *pPeer);
 private:
 	bool m_bKillTimer;
 	DWORD m_startTickCount;
@@ -157,6 +161,10 @@ private:
 	static void PASCAL PeerStatusCheck(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2);
 	/*获取请求通话结果相关信息*/
 	void getCallRequestRltInfo(DECLINE_REASON_CODE_INFO &declineReasonCodeInfo);
+
+	bool m_bIsMaster;
+	bool m_bFirstInit;
+	bool m_bFirstWlRegistration;
 };
 
 #endif

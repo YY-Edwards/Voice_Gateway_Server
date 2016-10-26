@@ -49,7 +49,8 @@ public:
 
 	std::string getValue(const char* type);
 	int setValue(const char* type, rapidjson::Value obj);
-	std::string CSettings::getResponse(char* pStatus, uint64_t callId, int errCode, const char* statusText, std::string contents);
+	std::string getResponse(char* pStatus, uint64_t callId, int errCode, const char* statusText, std::string contents);
+	std::string getRequest(char* pCall, char * type, uint64_t callId, std::string contents);
 
 protected:
 	int getRoot(rapidjson::Document& d);

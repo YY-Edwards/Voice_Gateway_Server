@@ -57,7 +57,8 @@ std::string CSettings::getValue(const char* type)
 	rapidjson::Document d;
 	if (0 == getRoot(d))
 	{
-		if (d.HasMember(type) && d[type].IsObject())
+		if (d.HasMember(type) )
+		if (d[type].IsObject())
 		{
 			rapidjson::StringBuffer buffer;
 			rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
@@ -124,6 +125,55 @@ std::string CSettings::getResponse(char* pStatus, uint64_t callId, int errCode, 
 		rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 		d.Accept(writer); // Accept() traverses the DOM and generates Handler events.
 		jsonStr = replace(buffer.GetString(), "\"\%s\"", "%s");		
+		sprintf_s(str, jsonStr.c_str(), contents.c_str());
+		d.RemoveAllMembers();
+	}
+	catch (std::exception& e)
+	{
+
+	}
+	catch (...)
+	{
+
+	}
+	return std::string(str);
+}
+
+std::string CSettings::getRequest(char* pCall, char * type, uint64_t callId, std::string contents)
+{
+	std::string jsonStr = "";
+	char str[2048];
+
+	try{
+		rapidjson::Document d;
+
+		d.SetObject();
+		rapidjson::Value callEl(rapidjson::kStringType);
+		callEl.SetString(pCall, d.GetAllocator());
+
+
+		rapidjson::Value typeEl(rapidjson::kStringType);
+		typeEl.SetString(type, d.GetAllocator());
+
+		rapidjson::Value callIdEl(rapidjson::kNumberType);
+		callIdEl.SetUint64(callId);
+		
+		rapidjson::Value contentsEl(rapidjson::kStringType);
+		contentsEl.SetString("%s", d.GetAllocator());
+
+		d.AddMember("call", callEl, d.GetAllocator());
+		d.AddMember("type", typeEl, d.GetAllocator());
+		d.AddMember("callId", callIdEl, d.GetAllocator());
+
+		if ("" != contents)
+		{
+			d.AddMember("contents", contentsEl, d.GetAllocator());
+		}
+
+		rapidjson::StringBuffer buffer;
+		rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
+		d.Accept(writer); // Accept() traverses the DOM and generates Handler events.
+		jsonStr = replace(buffer.GetString(), "\"\%s\"", "%s");
 		sprintf_s(str, jsonStr.c_str(), contents.c_str());
 		d.RemoveAllMembers();
 	}

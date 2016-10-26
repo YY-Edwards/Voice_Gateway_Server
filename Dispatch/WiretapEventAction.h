@@ -18,7 +18,7 @@ void wiretapEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 		{
 			if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
 			{
-				std::map<std::string, std::string> args;
+				ArgumentType args;
 				args["message"] = "wiretap";
 				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
 				pRemote->sendResponse(strResp.c_str(), strResp.size());

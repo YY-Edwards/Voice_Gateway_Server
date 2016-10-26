@@ -543,8 +543,8 @@ int DispatchOperate::RadioConnect()
 #endif
 						if (it->callId == callID)
 						{
-							std::map<std::string, std::string> args;
-							std::string callJsonStr = CRpcJsonParser::buildResponse("2", it->callId, 0, "2", args);
+							
+							std::string callJsonStr = CRpcJsonParser::buildResponse("2", it->callId, 0, "2", ArgumentType());
 							if (pRemotePeer != NULL)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
@@ -563,8 +563,8 @@ int DispatchOperate::RadioConnect()
 #endif
 						if (it->callId == callID)
 						{
-							std::map<std::string, std::string> args;
-							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 0, "0", args);
+							
+							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 0, "0", ArgumentType());
 							if (pRemotePeer != NULL)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
@@ -587,8 +587,8 @@ int DispatchOperate::RadioConnect()
 						
 							if (it->callId == callID)
 							{
-								std::map<std::string, std::string> args;
-								std::string callJsonStr = CRpcJsonParser::buildResponse("3", it->callId, 0, "3", args);
+							
+								std::string callJsonStr = CRpcJsonParser::buildResponse("3", it->callId, 0, "3", ArgumentType());
 								if (pRemotePeer != NULL)
 								{
 									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
@@ -609,8 +609,8 @@ int DispatchOperate::RadioConnect()
 #endif
 						if (it->callId == callID)
 						{
-							std::map<std::string, std::string> args;
-							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 1, "1", args);
+							
+							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 1, "1", ArgumentType());
 							if (pRemotePeer != NULL)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
@@ -687,8 +687,8 @@ void DispatchOperate::TimeOut()
 			
 			if (pRemotePeer != NULL && pRemotePeer == it->pRemote)
 			{
-				std::map<std::string, std::string> args;
-				std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
+				
+				std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", ArgumentType());
 				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());	
 				allCommandList.erase(it);
 			}
