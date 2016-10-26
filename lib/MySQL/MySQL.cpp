@@ -284,10 +284,12 @@ int CMySQL::update(const char* table, recordType& val, const char* condition)
 			throw std::exception(pstrError);
 		}
 
-		if (mysql_affected_rows(m_pMysqlConnection) <= 0)
-		{
-			throw std::exception("affect 0 row");
-		}
+		commit();
+
+		//if (mysql_affected_rows(m_pMysqlConnection) <= 0)
+		//{
+		//	throw std::exception("affect 0 row");
+		//}
 	}
 	catch (std::exception e)
 	{
