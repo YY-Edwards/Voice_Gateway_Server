@@ -240,12 +240,12 @@ namespace TrboX
 
         private void btn_PTT_Click(object sender, RoutedEventArgs e)
         {
-            m_Main.Rpc.ExecuteOperate(new COperate()
-            {
-                Type = OPType.Dispatch,
-                Target = m_Target,
-                Operate = new CDispatch()
-            });
+             new COperate()
+             {
+                 Type = OPType.Dispatch,
+                 Target = m_Target,
+                 Operate = new CDispatch()
+             }.Exec();
 
             AddMessage(new CHistory()
             { 
@@ -258,6 +258,13 @@ namespace TrboX
 
         private void btn_SendMsg_Click(object sender, RoutedEventArgs e)
         {
+
+            new COperate()
+            {
+                Type = OPType.ShortMessage,
+                Target = m_Target,
+                Operate = new CShortMessage() { Message = txt_Message.Text },
+            }.Exec();
 
             AddMessage(new CHistory()
             { 

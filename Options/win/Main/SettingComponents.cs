@@ -23,22 +23,51 @@ namespace TrboX
             if (null != main) m_Main = main;
         }
 
-        public void Set(Setting setting)
+        public void Set(List<Setting> setting)
         {
-           SetBaseSetting(setting.Base);
-           SetRadioSetting(setting.Radio);
-           SetWireLanSetting(setting.WireLan);
+            if (null == setting) return;
+           foreach(Setting set in setting)
+           {
+               switch(set.Type)
+               {
+                   case SettingType.Base:
+                       SetBaseSetting(set.Configure as BaseSetting);break;
+                   case SettingType.Radio:
+                       SetRadioSetting(set.Configure as RadioSetting);break;
+                   case SettingType.WireLan:
+                       SetWireLanSetting(set.Configure as WireLanSetting);break;
+               }
+           }
         }
 
-        public Setting Get()
+        public List<Setting> Get()
         {
-            Setting setting = new Setting();
-            setting.Base = GetBaseSetting();
-            setting.Radio = GetRadioSetting();
-            setting.WireLan = GetWireLanSetting();
+            return Get(new SettingType[] {
+                SettingType .Base,
+                SettingType .Radio,
+                SettingType .WireLan,
+            });
+        }
+        public List<Setting> Get(SettingType[] lst)
+        {
+            List<Setting> setting = new List<Setting>();
 
+            foreach (SettingType type in lst)
+            {
+                switch (type)
+                {
+                    case SettingType.Base:
+                        setting.Add(new Setting() { Type = SettingType.Base, Configure = GetBaseSetting()}); break;
+                    case SettingType.Radio:
+                        setting.Add(new Setting() { Type = SettingType.Radio, Configure = GetRadioSetting() });break;
+                    case SettingType.WireLan:
+                        setting.Add(new Setting() { Type = SettingType.WireLan, Configure = GetWireLanSetting() });break;
+                }
+            }
             return setting;
         }
+
+
 
         private BaseSetting GetBaseSetting()
         {    
@@ -294,7 +323,7 @@ namespace TrboX
                 }
                 catch { }
 
-                WireLan.Dongle.Com = m_Main.cmb_DongleCom.SelectedIndex + 1;
+                WireLan.Dongle = new DongleSetting() { Com = m_Main.cmb_DongleCom.SelectedIndex + 1 };
             }
             catch
             {

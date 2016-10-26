@@ -34,9 +34,9 @@ namespace TrboX
 
         public Status StatusBar;
 
-        public RpcInterface Rpc;
-
         public CMultMember CurrentTraget = null;
+
+
 
 
         public bool g_IsNeedSaveWorkSpace
@@ -58,6 +58,8 @@ namespace TrboX
             InitializeComponent();
             this.Loaded += delegate
             {
+                TServer.InitializeTServer();  
+     
                 WindowState = WindowState.Maximized;
 
                 MenuBar = new MainMenu(this);
@@ -72,10 +74,10 @@ namespace TrboX
                 MsgWin = new MainMsgWin(this);
                 MsgWin.Initialize();
 
-               
+                       
 
                 SubWindow = new NewWinMgr(this);
-                Rpc = new RpcInterface();
+                //Rpc = new RpcInterface();
 
                 OnWindowLoaded();
                 RadioButton rad_RxDefault = new RadioButton(){IsChecked = true, Content = "调度组",GroupName="rxgroup", Height = 20,Padding=new Thickness(2.5), Margin=new Thickness(2.5) ,Style = App.Current.Resources["RadioButtonStyleNav"] as Style};

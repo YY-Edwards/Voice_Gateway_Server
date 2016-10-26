@@ -85,11 +85,12 @@
     </Compile>
     <Compile Include="class\Event.cs" />
     <Compile Include="class\FastOperate.cs" />
-    <Compile Include="class\JsonParse.cs" />
     <Compile Include="class\Message.cs" />
     <Compile Include="class\Operate.cs" />
     <Compile Include="class\RadioOperate.cs" />
-    <Compile Include="class\ResourceMgr.cs" />
+    <Compile Include="class\ResourceMgr.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="class\RpcInterface.cs" />
     <Compile Include="class\SettingMgr.cs" />
     <Compile Include="class\targetMgr.cs" />

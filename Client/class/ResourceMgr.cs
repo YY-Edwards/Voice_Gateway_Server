@@ -542,7 +542,7 @@ namespace TrboX
         private List<Dictionary<ItemIndex, TabOperate>> m_OperateList = new List<Dictionary<ItemIndex, TabOperate>>();
         private int AddTempIndex = -1;
 
-        delegate object ParseResult(TcpResponse res);
+        delegate object ParseResult(object res);
         delegate void UpdateRes(List<object> add, List<string> del, List<ModifyObjStr> modify);
 
         private UpdateRes[] UpdateResFunc;
@@ -682,11 +682,11 @@ namespace TrboX
         }
 
 
-        private object ParseStatus(TcpResponse res)
-        {
-            if (null == res) return false;
-            return res.IsSuccess;
-        }
+        //private object ParseStatus(object obj)
+        //{
+        //    if (null == res) return false;
+        //    return res.IsSuccess;
+        //}
 
         private object CallRpc(RequestType type, ParseResult Response = null)
         {
@@ -695,8 +695,8 @@ namespace TrboX
 
         private object CallRpc(RequestType type, object param, ParseResult Response = null)
         {
-            TServer.WriteString(JsonParse.Req2Json(type, param));
-            if (null != Response) return Response(TServer.ReadString(JsonParse.CallID) as TcpResponse);
+            //TServer.WriteString(JsonParse.Req2Json(type, param));
+            //if (null != Response) return Response(TServer.ReadString(JsonParse.CallID) as TcpResponse);
             return null;
         }
 
@@ -723,34 +723,34 @@ namespace TrboX
 
         private void UpdateUser(List<object> add, List<string> del, List<ModifyObjStr> modify)
         {
-            ExecUpdate(RequestType.addUser, add, ParseStatus);
-            ExecUpdate(RequestType.deleteUser, del, ParseStatus);
-            ExecUpdate(RequestType.updateUser, modify, ParseStatus);
+            //ExecUpdate(RequestType.addUser, add, ParseStatus);
+            //ExecUpdate(RequestType.deleteUser, del, ParseStatus);
+            //ExecUpdate(RequestType.updateUser, modify, ParseStatus);
         }
 
         private void UpdateStaff(List<object> add, List<string> del, List<ModifyObjStr> modify)
         {
-            ExecUpdate(RequestType.addStaff, add, ParseStatus);
-            ExecUpdate(RequestType.deleteStaff, del, ParseStatus);
-            ExecUpdate(RequestType.updateStaff, modify, ParseStatus);
+            //ExecUpdate(RequestType.addStaff, add, ParseStatus);
+            //ExecUpdate(RequestType.deleteStaff, del, ParseStatus);
+            //ExecUpdate(RequestType.updateStaff, modify, ParseStatus);
         }
         private void UpdateDepartment(List<object> add, List<string> del, List<ModifyObjStr> modify)
         {
-            ExecUpdate(RequestType.addDepartment, add, ParseStatus);
-            ExecUpdate(RequestType.deleteDepartment, del, ParseStatus);
-            ExecUpdate(RequestType.updateDepartment, modify, ParseStatus);
+            //ExecUpdate(RequestType.addDepartment, add, ParseStatus);
+            //ExecUpdate(RequestType.deleteDepartment, del, ParseStatus);
+            //ExecUpdate(RequestType.updateDepartment, modify, ParseStatus);
         }
         private void UpdateRadio(List<object> add, List<string> del, List<ModifyObjStr> modify)
         {
-            ExecUpdate(RequestType.addRadio, add, ParseStatus);
-            ExecUpdate(RequestType.deleteRadio, del, ParseStatus);
-            ExecUpdate(RequestType.updateRadio, modify, ParseStatus);
+            //ExecUpdate(RequestType.addRadio, add, ParseStatus);
+            //ExecUpdate(RequestType.deleteRadio, del, ParseStatus);
+            //ExecUpdate(RequestType.updateRadio, modify, ParseStatus);
         }
         private void UpdateRadioBelong(List<object> add, List<string> del, List<ModifyObjStr> modify)
         {
-            ExecUpdate(RequestType.addRadioBelong, add, ParseStatus);
-            ExecUpdate(RequestType.deleteRadioBelong, del, ParseStatus);
-            ExecUpdate(RequestType.updateRadioBelong, modify, ParseStatus);
+            //ExecUpdate(RequestType.addRadioBelong, add, ParseStatus);
+            //ExecUpdate(RequestType.deleteRadioBelong, del, ParseStatus);
+            //ExecUpdate(RequestType.updateRadioBelong, modify, ParseStatus);
         }
 
 

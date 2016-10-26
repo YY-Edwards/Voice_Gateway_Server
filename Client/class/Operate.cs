@@ -23,9 +23,16 @@ namespace TrboX
     //    All,
     //};
 
+    public enum ExecType
+    {
+        Start = 0,
+        Stop = 1,
+    }
+
      [Serializable]
     public class CDispatch
     {
+         public ExecType Exec{ set; get; }
          public bool IsEqual(CDispatch dispatch)
          {
              return true;
@@ -262,7 +269,7 @@ namespace TrboX
 
         public void Exec()
         {
-            TServer.Write(this);
+            TServer.Call(this);
         }
     }
 }

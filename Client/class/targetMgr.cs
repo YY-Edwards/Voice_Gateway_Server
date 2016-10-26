@@ -225,9 +225,10 @@ namespace TrboX
     [Serializable]
     public enum TargetType
     {
-        All, 
-        Group,
-        Private
+        None = 0,
+        All = 1,
+        Group = 2,
+        Private = 3,
     };
 
     [Serializable]

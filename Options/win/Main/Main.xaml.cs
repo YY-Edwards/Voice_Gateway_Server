@@ -36,16 +36,16 @@ namespace TrboX
         public SettingComponents SettingComponents;
         public ResourceComponents ResourceComponents;
 
-        SettingMgr m_SettingMgr = new SettingMgr();
-
         public Main()
         {
             InitializeComponent();
             this.Loaded += delegate
             {
+                TServer.InitializeTServer();
                 SettingComponents = new SettingComponents(this);
-                ResourceComponents = new ResourceComponents(this); 
-                SettingComponents.Set(m_SettingMgr.Get());
+                ResourceComponents = new ResourceComponents(this);
+
+                SettingComponents.Set(SettingMgr.Get());
             };
         }
 
@@ -190,12 +190,12 @@ namespace TrboX
 
         private void btn_Apply_Click(object sender, RoutedEventArgs e)
         {
-            m_SettingMgr.Set(SettingComponents.Get());
+           SettingMgr.Set(SettingComponents.Get());
         }
 
         private void btn_SetDefault_Click(object sender, RoutedEventArgs e)
         {
-            SettingComponents.Set(m_SettingMgr.GetDefalut());
+           // SettingComponents.Set(m_SettingMgr.GetDefalut());
         }
 
         private void export()
@@ -207,7 +207,7 @@ namespace TrboX
                 if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     string path = fbd.SelectedPath;
-                    SettingFile.ExportSetting(path, SettingComponents.Get());
+                    //SettingFile.ExportSetting(path, SettingComponents.Get());
                 }
             }
             catch
@@ -233,7 +233,7 @@ namespace TrboX
 
                 if (extd == "cfg")
                 {
-                    SettingComponents.Set(SettingFile.ImportSetting(fileName));
+                    //SettingComponents.Set(SettingFile.ImportSetting(fileName));
                 }
 
             }
