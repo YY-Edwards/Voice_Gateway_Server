@@ -249,7 +249,7 @@ void CMySQL::close()
 	}
 }
 
-int CMySQL::update(const char* table, recordType val, const char* condition)
+int CMySQL::update(const char* table, recordType& val, const char* condition)
 {
 	try{
 		if (NULL == table || NULL == condition)
@@ -486,4 +486,63 @@ bool CMySQL::recordExist(const char* table, recordType record)
 
 	int ret = find(table, condition.c_str(), records);
 	return (ret > 0);
+}
+
+int CMySQL::count(const char* table, const char* condition)
+{
+	int total = 0;
+	try{
+		if (NULL == table)
+		{
+			throw std::exception("table not found");
+		}
+
+		std::string sql = "select count(*) as total from ";
+		sql += table;
+		if (condition)
+		{
+			sql += " ";
+			sql += condition;
+		}
+
+		std::lock_guard<std::mutex> locker(m_tcpChannelUseLocker);
+		if (mysql_real_query(m_pMysqlConnection, sql.c_str(), sql.size()))
+		{
+			const char* pstrError = mysql_error(m_pMysqlConnection);
+			throw std::exception(pstrError);
+		}
+
+		MYSQL_RES *result = NULL;
+
+		result = mysql_store_result(m_pMysqlConnection);
+		if (result)
+		{
+			MYSQL_ROW	row;
+			if ((row = mysql_fetch_row(result)))
+			{
+				total = std::atoi(row[0]);
+			}
+		}
+		else
+		{
+			/*int affectRows = mysql_affected_rows(m_pMysqlConnection);*/
+			//LOG(INFO) << "no data" << mysql_error(m_pMysqlConnection);
+			throw std::exception(mysql_error(m_pMysqlConnection));
+		}
+
+		if (result)
+		{
+			mysql_free_result(result);
+		}
+	}
+	catch (std::exception e)
+	{
+		return 0;
+	}
+	catch (...)
+	{
+		return 0;
+	}
+
+	return total;
 }

@@ -412,3 +412,42 @@ std::string CRpcJsonParser::listToString(std::list<std::map<std::string, std::st
 
 	return val;
 }
+
+std::string CRpcJsonParser::mergeCommand(const char* command, uint64_t callId, const char* param)
+{
+	std::string str;
+	try
+	{
+		rapidjson::Document d;
+		d.Parse(param);
+
+		rapidjson::Document dOut;
+		dOut.SetObject();
+
+		rapidjson::Value vCall(kStringType);
+		vCall.SetString(StringRef(command), dOut.GetAllocator());
+		dOut.AddMember("call", vCall, dOut.GetAllocator());
+
+		rapidjson::Value nCallId(kNumberType);
+		nCallId.SetInt64(callId);
+		dOut.AddMember("callId", nCallId, dOut.GetAllocator());
+
+		dOut.AddMember("param", d, dOut.GetAllocator());
+
+
+		StringBuffer sb;
+		Writer<StringBuffer> writer(sb);
+		d.Accept(writer); // Accept() traverses the DOM and generates Handler events.
+		str = sb.GetString();
+	}
+	catch (std::exception e)
+	{
+
+	}
+	catch (...)
+	{
+
+	}
+
+	return str;
+}
