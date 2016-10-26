@@ -15,17 +15,18 @@ void groupCallAction(CRemotePeer* pRemote, const std::string& param, uint64_t ca
 		d.Parse(param.c_str());
 		if (d.HasMember("id") )
 		{
-			std::string id = d["id"].GetString();
+			int id = d["id"].GetInt();
 			ArgumentType args;
-			args["id"] = FieldValue(id.c_str());
+			args["id"] = id;
 			int clientCallId = CBroker::instance()->getCallId();
 			std::string callJsonStr = CRpcJsonParser::buildCall("groupCall", clientCallId, args);
 
 			int ret = CBroker::instance()->getRadioClient()->sendRequest(callJsonStr.c_str(),
 				clientCallId,
 				pRemote,
-				[&](const char* pResponse, void*){
-				pRemote->sendResponse(pResponse, strlen(pResponse));
+				[&](const char* pResponse, void* data){
+				CRemotePeer* pCommandSender = (CRemotePeer*)data;
+				pCommandSender->sendResponse(pResponse, strlen(pResponse));
 			}, nullptr);
 
 			if (-1 == ret)

@@ -97,6 +97,7 @@
     <ClInclude Include="..\lib\rpc\include\RpcServer.h" />
     <ClInclude Include="..\lib\rpc\include\TcpServer.h" />
     <ClInclude Include="AllCallEventAction.h" />
+    <ClInclude Include="CallAction.h" />
     <ClInclude Include="CallEventAction.h" />
     <ClInclude Include="CancelgpspEventAction.h" />
     <ClInclude Include="ConnectEventAction.h" />

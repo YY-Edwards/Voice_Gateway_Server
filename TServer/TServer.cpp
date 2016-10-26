@@ -36,8 +36,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	//std::string str =  CSettings::instance()->getResponse("sucess", 1, 200, "", "");
 	//CSettings::instance()->setValue("tst", rapidjson::Value(NULL));
 
+	CBroker::instance();
+
 	CRpcServer rpcServer;
-	
+
 	rpcServer.addActionHandler("start", startAction);
 
 
@@ -67,7 +69,33 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("stopCall", stopCallAction);
 	rpcServer.addActionHandler("wiretap", wiretapAction);
 
+	//std::string  str = CSettings::instance()->getValue("radio");
+	Sleep(1000);
+	while (CBroker::instance()->getRadioClient() != nullptr){
+
+	//CBroker::instance()->getRadioClient()->send(str.c_str(), strlen(str.c_str()));
+
+	//std::string callJsonStr = buildCall("connect", 0, args);
+	std::string callJsonStr = CSettings::instance()->getRequest("connect", "radio", 0, CSettings::instance()->getValue("radio"));
+
+
+	int ret = CBroker::instance()->getRadioClient()->sendRequest(callJsonStr.c_str(),
+		0,
+		NULL,
+		[&](const char* pResponse, void* data){
+		CRemotePeer* pCommandSender = (CRemotePeer*)data;
+		pCommandSender->sendResponse(pResponse, strlen(pResponse));
+	}, nullptr);
+	if (-1 != ret)break;
+	
+	Sleep(50);
+
+}
+
+		
+	
 	rpcServer.start();
+
 	while (1);
 	return 0;
 }

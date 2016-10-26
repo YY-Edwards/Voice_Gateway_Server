@@ -23,8 +23,9 @@ void callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			int ret = CBroker::instance()->getRadioClient()->sendRequest(callJsonStr.c_str(),
 				clientCallId,
 				pRemote,
-				[&](const char* pResponse, void*){
-				pRemote->sendResponse(pResponse, strlen(pResponse));
+				[&](const char* pResponse, void* data){
+				CRemotePeer* pCommandSender = (CRemotePeer*)data;
+				pCommandSender->sendResponse(pResponse, strlen(pResponse));
 			}, nullptr);
 
 			if (-1 == ret)
