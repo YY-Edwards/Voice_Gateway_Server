@@ -12,7 +12,7 @@ void connectEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 
 	std::lock_guard<std::mutex> locker(lock);
 	try{
-		Document d;
+		/*Document d;
 		d.Parse(param.c_str());
 		if (d.HasMember("radioIP") && d.HasMember("mnisIP"))
 		{
@@ -26,7 +26,7 @@ void connectEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 			string mnisIP = d["mnisIP"].GetString();
 			m_dispatchOperate[pRemote]->AddAllCommand(pRemote, RADIO_CONNECT, radioIP, mnisIP, "", 0, _T(""), 0, 0, callId);
 			
-		}
+		}*/
 	}
 	catch (std::exception e){
 
