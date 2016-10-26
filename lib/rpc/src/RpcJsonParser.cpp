@@ -437,7 +437,7 @@ std::string CRpcJsonParser::mergeCommand(const char* command, uint64_t callId, c
 
 		StringBuffer sb;
 		Writer<StringBuffer> writer(sb);
-		d.Accept(writer); // Accept() traverses the DOM and generates Handler events.
+		dOut.Accept(writer); // Accept() traverses the DOM and generates Handler events.
 		str = sb.GetString();
 	}
 	catch (std::exception e)

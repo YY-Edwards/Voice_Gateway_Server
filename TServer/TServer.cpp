@@ -14,21 +14,27 @@
 #include <shlobj.h> 
 #include <Shlwapi.h>
 
+//
+//#include"AllCallAction.h"
+//#include"PrivateCallAction.h"
+//#include "CancelGpsAction.h"
+//#include "ConenctRadioAction.h"
+//#include "GetGpsAction.h"
+//#include"GetOverTurnGpsAction.h"
+//#include"GroupCallAction.h"
+//#include"RadioCheckAction.h"
+//#include"RemotePowerOffAction.h"
+//#include"RemotePowerOnAction.h"
+//#include"WiretapAction.h"
+//#include"SendGroupSmsAction.h"
+//#include"SendSmsAction.h"
+//#include"StopCallAction.h"
 
-#include"AllCallAction.h"
-#include"CallAction.h"
-#include "CancelGpsAction.h"
-#include "ConenctRadioAction.h"
-#include "GetGpsAction.h"
-#include"GetOverTurnGpsAction.h"
-#include"GroupCallAction.h"
-#include"RadioCheckAction.h"
-#include"RemotePowerOffAction.h"
-#include"RemotePowerOnAction.h"
-#include"WiretapAction.h"
-#include"SendGroupSmsAction.h"
-#include"SendSmsAction.h"
-#include"StopCallAction.h"
+
+#include "CallAction.h"
+#include "ControlAction.h"
+#include "GpsAction.h"
+#include "MsgAction.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -53,39 +59,43 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("setRepeaterSetting", setRepeaterAction);
 	rpcServer.addActionHandler("getRepeaterSetting", getRepeaterAction);
 
-	//radio
-	rpcServer.addActionHandler("allCall", allCallAction);
-	rpcServer.addActionHandler("call", callAction);
-	rpcServer.addActionHandler("cancelGps", cancelGpsAction);
-	rpcServer.addActionHandler("connect", connectRadioAction);
-	rpcServer.addActionHandler("getGps", getGpsAction);
-	rpcServer.addActionHandler("getOverTurnGps", getOverTurnGpsAction);
-	rpcServer.addActionHandler("groupCall", groupCallAction);
-	rpcServer.addActionHandler("radioCheck", radioCheckAction);
-	rpcServer.addActionHandler("remotePowerOn", remotePowerOnAction);
-	rpcServer.addActionHandler("remotePowerOff", remotePowerOffAction);
-	rpcServer.addActionHandler("sendGroupSms", sendGroupSmsAction);
-	rpcServer.addActionHandler("sendSms", sendSmsAction);
-	rpcServer.addActionHandler("stopCall", stopCallAction);
-	rpcServer.addActionHandler("wiretap", wiretapAction);
+	////radio
+	//rpcServer.addActionHandler("allCall", allCallAction);
+	//rpcServer.addActionHandler("call", callAction);
+	//rpcServer.addActionHandler("cancelGps", cancelGpsAction);
+	//rpcServer.addActionHandler("connect", connectRadioAction);
+	//rpcServer.addActionHandler("getGps", getGpsAction);
+	//rpcServer.addActionHandler("getOverTurnGps", getOverTurnGpsAction);
+	//rpcServer.addActionHandler("groupCall", groupCallAction);
+	//rpcServer.addActionHandler("radioCheck", radioCheckAction);
+	//rpcServer.addActionHandler("remotePowerOn", remotePowerOnAction);
+	//rpcServer.addActionHandler("remotePowerOff", remotePowerOffAction);
+	//rpcServer.addActionHandler("sendGroupSms", sendGroupSmsAction);
+	//rpcServer.addActionHandler("sendSms", sendSmsAction);
+	//rpcServer.addActionHandler("stopCall", stopCallAction);
+	//rpcServer.addActionHandler("wiretap", wiretapAction);
 
-	//std::string  str = CSettings::instance()->getValue("radio");
+	rpcServer.addActionHandler("call",callAction);
+	rpcServer.addActionHandler("control",controlAction);
+	rpcServer.addActionHandler("queryGps", gpsAction);
+	rpcServer.addActionHandler("message", msgAction);
+
 	Sleep(1000);
 	while (CBroker::instance()->getRadioClient() != nullptr){
 
-	//CBroker::instance()->getRadioClient()->send(str.c_str(), strlen(str.c_str()));
 
-	//std::string callJsonStr = buildCall("connect", 0, args);
+
 	std::string callJsonStr = CSettings::instance()->getRequest("connect", "radio", 0, CSettings::instance()->getValue("radio"));
 
-
-	int ret = CBroker::instance()->getRadioClient()->sendRequest(callJsonStr.c_str(),
+	std::string callCommand = CRpcJsonParser::mergeCommand("connect", 0, callJsonStr.c_str());
+	int ret = CBroker::instance()->getRadioClient()->sendRequest(callCommand.c_str(),
 		0,
 		NULL,
 		[&](const char* pResponse, void* data){
-		CRemotePeer* pCommandSender = (CRemotePeer*)data;
-		pCommandSender->sendResponse(pResponse, strlen(pResponse));
+		//CRemotePeer* pCommandSender = (CRemotePeer*)data;
+		//pCommandSender->sendResponse(pResponse, strlen(pResponse));
 	}, nullptr);
+
 	if (-1 != ret)break;
 	
 	Sleep(50);

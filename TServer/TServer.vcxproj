@@ -90,6 +90,10 @@
     <ClInclude Include="AllCallAction.h" />
     <ClInclude Include="Broker.h" />
     <ClInclude Include="CallAction.h" />
+    <ClInclude Include="ControlAction.h" />
+    <ClInclude Include="GpsAction.h" />
+    <ClInclude Include="MsgAction.h" />
+    <ClInclude Include="PrivateCallAction.h" />
     <ClInclude Include="CancelGpsAction.h" />
     <ClInclude Include="ConenctRadioAction.h" />
     <ClInclude Include="GetGpsAction.h" />

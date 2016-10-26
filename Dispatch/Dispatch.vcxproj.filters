@@ -37,6 +37,9 @@
     <Filter Include="action">
       <UniqueIdentifier>{ffa4ffb6-ee39-445c-a281-04020f7a259e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="eventAction">
+      <UniqueIdentifier>{652a4a6d-4504-4a70-a50a-b28ea229082e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -136,7 +139,19 @@
       <Filter>action</Filter>
     </ClInclude>
     <ClInclude Include="CallAction.h">
-      <Filter>action</Filter>
+      <Filter>eventAction</Filter>
+    </ClInclude>
+    <ClInclude Include="MsgAction.h">
+      <Filter>eventAction</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlAction.h">
+      <Filter>eventAction</Filter>
+    </ClInclude>
+    <ClInclude Include="GpsAction.h">
+      <Filter>eventAction</Filter>
+    </ClInclude>
+    <ClInclude Include="ConnectAction.h">
+      <Filter>eventAction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

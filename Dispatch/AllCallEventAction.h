@@ -16,16 +16,20 @@ void allCallEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 	try{
 		Document d;
 		d.Parse(param.c_str());
-		if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
+		if (d.HasMember("id") && d["id"].IsInt())
 		{
-			ArgumentType args;
-			args["message"] = "allCall";
-			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
-			pRemote->sendResponse(strResp.c_str(), strResp.size());
-			m_dispatchOperate[pRemote]->AddAllCommand(pRemote, ALL_CALL, "", "", "", 0, _T(""), 0, 0, callId);
+			if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
+			{
+				ArgumentType args;
+				args["message"] = "allCall";
+				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
+				pRemote->sendResponse(strResp.c_str(), strResp.size());
+				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, ALL_CALL, "", "", "", 0, _T(""), 0, 0, callId);
 
-			//int result = m_dispatchOperate[pRemote]->allCall(pRemote, callId);
+				//int result = m_dispatchOperate[pRemote]->allCall(pRemote, callId);
+			}
 		}
+	
 	}
 	catch (std::exception e){
 

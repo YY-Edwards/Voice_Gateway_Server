@@ -30,6 +30,8 @@ public:
 public:
 	int sendResponse(const char* pData, int dataLen)
 	{
+		printf("send data£º%s\r\n", pData);
+
 		return ::send(s, pData, dataLen, 0);
 	}
 };

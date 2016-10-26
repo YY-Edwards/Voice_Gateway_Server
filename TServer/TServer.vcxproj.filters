@@ -31,6 +31,9 @@
     <Filter Include="action">
       <UniqueIdentifier>{433da747-3f74-4924-ab1c-e936aefaaca2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="eventAction">
+      <UniqueIdentifier>{0a8462f7-4c7a-435a-bc94-e5cfc681b257}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -81,9 +84,6 @@
     <ClInclude Include="AllCallAction.h">
       <Filter>action</Filter>
     </ClInclude>
-    <ClInclude Include="CallAction.h">
-      <Filter>action</Filter>
-    </ClInclude>
     <ClInclude Include="CancelGpsAction.h">
       <Filter>action</Filter>
     </ClInclude>
@@ -119,6 +119,21 @@
     </ClInclude>
     <ClInclude Include="WiretapAction.h">
       <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="PrivateCallAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="CallAction.h">
+      <Filter>eventAction</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlAction.h">
+      <Filter>eventAction</Filter>
+    </ClInclude>
+    <ClInclude Include="GpsAction.h">
+      <Filter>eventAction</Filter>
+    </ClInclude>
+    <ClInclude Include="MsgAction.h">
+      <Filter>eventAction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

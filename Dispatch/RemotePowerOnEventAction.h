@@ -14,7 +14,7 @@ void remotePowerOnEventAction(CRemotePeer* pRemote, const std::string& param, ui
 	try{
 		Document d;
 		d.Parse(param.c_str());
-		if (d.HasMember("id"))
+		if (d.HasMember("id") && d["id"].IsInt())
 		{
 			if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
 			{
@@ -22,8 +22,7 @@ void remotePowerOnEventAction(CRemotePeer* pRemote, const std::string& param, ui
 				args["message"] = "remotePowerOn";
 				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
-				string temp = d["id"].GetString();
-				int id = atoi(temp.c_str());
+				int id = d["id"].GetInt();
 				//AddAllCommand(pRemote, callId, REMOTE_OPEN);
 				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, REMOTE_OPEN, "", "", "", id, _T(""), 0, 0, callId);
 			}

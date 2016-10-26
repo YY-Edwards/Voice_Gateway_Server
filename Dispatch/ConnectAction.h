@@ -6,7 +6,7 @@
 #include "../lib/rpc/include/RpcJsonParser.h"
 
 
-void connectEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
+void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
 
@@ -31,7 +31,7 @@ void connectEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 					if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
 					{
 						radioIP = objRadio["Ip"].GetString();
-						
+
 					}
 				}
 				//mnisIP
@@ -64,11 +64,11 @@ void connectEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "sucess", args);
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
 
-				
+
 
 			}
 		}
-		
+
 	}
 	catch (std::exception e){
 
@@ -77,5 +77,5 @@ void connectEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 	{
 
 	}
-	
+
 }

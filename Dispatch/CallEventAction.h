@@ -15,7 +15,7 @@ void callEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t ca
 	try{
 		Document d;
 		d.Parse(param.c_str());
-		if (d.HasMember("id"))
+		if (d.HasMember("id")&& d["id"].IsInt())
 		{
 			if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
 			{
@@ -23,8 +23,7 @@ void callEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t ca
 				args["message"] = "call";
 				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
-				string temp = d["id"].GetString();
-				int id = atoi(temp.c_str());
+				int id = d["id"].GetInt();
 				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, PRIVATE_CALL, "", "", "", id, _T(""), 0, 0, callId);
 			}
 		}

@@ -503,19 +503,37 @@ void CRadioGps::RecvData()
 		}
 		try
 		{
+			time_t t = time(0);
+			tm timeinfo;
+			char tmp[64];
+			localtime_s(&timeinfo, &t);
+			strftime(tmp, sizeof(tmp), "%Y/%m/%d %H:%M:%S", &timeinfo);
+			string strTime = tmp;
 			char radioID[512], strLon[512],strLat[512],strValid[512],strSpeed[512];
 			sprintf_s(radioID, 512, "%d", m_ThreadGps->radioID);
 			sprintf_s(strLon, 512, "%d", lon);
 			sprintf_s(strLat, 512, "%d", lat);
 			sprintf_s(strSpeed, 512, "%d", speed);
 			sprintf_s(strValid, 512, "%d", valid);
+
+
 			ArgumentType args;
-			args["id"] = radioID;
+			FieldValue gps(FieldValue::TObject);
+			gps.setKeyVal("lon", FieldValue(strLon));
+			gps.setKeyVal("lat", FieldValue(strLat));
+			gps.setKeyVal("valid", FieldValue(strValid));
+			gps.setKeyVal("speed", FieldValue(strSpeed));
+			gps.setKeyVal("date", FieldValue(strTime.c_str()));
+			FieldValue result(FieldValue::TObject);
+			result.setKeyVal("Source", FieldValue(radioID));
+			result.setKeyVal("gps",gps);
+			args["param"] = result;
+			/*args["id"] = radioID;
 			args["valid"] = strValid;
 			args["lon"] = strLon;
 			args["lat"] = strLat;
-			args["speed"] = strSpeed;
-			std::string callJsonStr = CRpcJsonParser::buildCall("onRecvGps", 1, args);
+			args["speed"] = strSpeed;*/
+			std::string callJsonStr = CRpcJsonParser::buildCall("SendGps", ++seq, args);
 			if (pRemotePeer != NULL)
 			{
 				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-
+int seq;
 list <AllCommand>allCommandList;
 std::mutex m_allCommandListLocker;
 CRITICAL_SECTION cs;
@@ -530,7 +530,7 @@ int DispatchOperate::RadioConnect()
 		//std::lock_guard <std::mutex> locker(m_allCommandListLocker);
 		//m_allCommandListLocker.lock();
 		//::EnterCriticalSection(&cs);
-		for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+		for (it = allCommandList.begin(); it != allCommandList.end(); it++)
 		{
 			
 				if (pXnlConnection == NULL)    //0:调度业务和数据业务都连接失败 1： 调度业务连接成功，数据业务连接失败 2：调度业务连接失败，数据业务连接成功 3. 调度业务和数据业务都连接成功
@@ -548,7 +548,7 @@ int DispatchOperate::RadioConnect()
 							if (pRemotePeer != NULL)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								allCommandList.erase(it++);
+								allCommandList.erase(it);
 								break;
 							}
 							
@@ -568,7 +568,8 @@ int DispatchOperate::RadioConnect()
 							if (pRemotePeer != NULL)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								allCommandList.erase(it++);
+							   
+								allCommandList.erase(it);
 								break;
 							}
 
@@ -592,7 +593,7 @@ int DispatchOperate::RadioConnect()
 								if (pRemotePeer != NULL)
 								{
 									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-									allCommandList.erase(it++);
+									allCommandList.erase(it);
 									break;
 								}
 							
@@ -614,7 +615,7 @@ int DispatchOperate::RadioConnect()
 							if (pRemotePeer != NULL)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								allCommandList.erase(it++);
+								allCommandList.erase(it);
 								break;
 							}
 								
@@ -649,6 +650,8 @@ void DispatchOperate::AddAllCommand(CRemotePeer* pRemote, int command, string ra
 	m_allCommand.text = text;
 	allCommandList.push_back(m_allCommand);
 	commandList.push_back(m_allCommand);
+
+	seq = callId;
 }
 DWORD WINAPI DispatchOperate::TimeOutThread(LPVOID lpParam)
 {
@@ -963,6 +966,7 @@ void DispatchOperate::WorkThreadFunc()
 			m_dispatchOperate[it->pRemote]->call(it->pRemote, it->radioId, it->callId);
 			break;
 		case GROUP_CALL:
+			m_dispatchOperate[it->pRemote]->groupCall(it->pRemote, it->radioId, it->callId);
 			break;
 		case ALL_CALL:
 			m_dispatchOperate[it->pRemote]->allCall(it->pRemote, it->callId);
@@ -1007,6 +1011,7 @@ void DispatchOperate::WorkThreadFunc()
 			m_dispatchOperate[it->pRemote]->cancelPollGps(it->pRemote, it->radioId, it->callId);
 			break;
 		case STOP_CALL:
+			m_dispatchOperate[it->pRemote]->stopCall(it->pRemote, it->callId);
 			break;
 		default:
 			break;

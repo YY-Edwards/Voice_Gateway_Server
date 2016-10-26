@@ -62,6 +62,14 @@ using  namespace rapidjson;
 #define LICENSE                28
 #define CALL_START             29
 #define CALL_END               30
+   
+#define START                   0
+#define STOP                    1
+#define NONE                    0
+#define ALL                     1
+#define GROUP                   2
+#define PRIVATE                 3
+
 typedef struct tagAllCommand
 {
 	int callId;
@@ -87,7 +95,7 @@ extern CRITICAL_SECTION cs;
 
 extern map<CRemotePeer *, DispatchOperate*>  m_dispatchOperate;
 
-
+extern  int  seq;
 
 #define GOOGLE_GLOG_DLL_DECL           // 使用静态glog库用这个
 #define GLOG_NO_ABBREVIATED_SEVERITIES // 没这个编译会出错,传说因为和Windows.h冲突

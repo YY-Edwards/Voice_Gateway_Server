@@ -13,7 +13,7 @@ void groupCallEventAction(CRemotePeer* pRemote, const std::string& param, uint64
 	try{
 		Document d;
 		d.Parse(param.c_str());
-		if (d.HasMember("id"))
+		if (d.HasMember("id") && d["id"].IsInt())
 		{
 			if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
 			{
@@ -21,8 +21,7 @@ void groupCallEventAction(CRemotePeer* pRemote, const std::string& param, uint64
 				args["message"] = "groupCall";
 				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
-				string temp = d["id"].GetString();
-				int id = atoi(temp.c_str());
+				int id = d["id"].GetInt();
 				//int result = m_dispatchOperate[pRemote]->groupCall(pRemote, id, callId);
 				//AddAllCommand(pRemote, callId, GROUP_CALL);
 				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, GROUP_CALL, "", "", "", id, _T(""), 0, 0, callId);

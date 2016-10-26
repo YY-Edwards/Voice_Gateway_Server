@@ -377,8 +377,12 @@ bool CTextMsg::SendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet)
 
 
 	int len = wcslen(message) * 2;
-	wcscpy_s((LPTSTR)&buf[OffSet], len, message);
-	memcpy(m_ThreadMsg->SendBuffer, buf, m_ThreadMsg->MsgLength);
+	if (len != 0)
+	{
+		wcscpy_s((LPTSTR)&buf[OffSet], len, message);
+		memcpy(m_ThreadMsg->SendBuffer, buf, m_ThreadMsg->MsgLength);
+	}
+
 
 	//½«m_nSendSequenceNumberÐ´Èëlist
 	list<AllCommand>::iterator it;
@@ -465,7 +469,7 @@ void CTextMsg::RecvMsg()
 					{
 						ArgumentType args;
 						args["id"] = FieldValue( stringId.c_str());
-						std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
+						std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "sucess", args);
 						pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 					}
 					allCommandList.erase(it++);
@@ -510,10 +514,10 @@ void CTextMsg::RecvMsg()
 				//cstring to string   message 
 				//string strMsg = WChar2Ansi(message.GetBuffer(message.GetLength()));
 				ArgumentType args;
-				args["id"] = FieldValue(radioID);
-				args["message"] = FieldValue(message.c_str());
-				args["date"] = FieldValue(strTime.c_str());
-				std::string callJsonStr = CRpcJsonParser::buildCall("onRecvMsg", 1, args);
+				args["Source"] = FieldValue(radioID);
+				args["contents"] = FieldValue(message.c_str());
+				args["type"] = FieldValue("Private");
+				std::string callJsonStr = CRpcJsonParser::buildCall("message", ++seq, args);
 				if (pRemotePeer != NULL)
 				{
 					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
