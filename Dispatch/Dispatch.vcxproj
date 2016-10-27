@@ -51,7 +51,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_AFXDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalIncludeDirectories>../lib/gtest/include;../lib/glog/lib;../lib</AdditionalIncludeDirectories>
     </ClCompile>
@@ -132,7 +132,9 @@
     <ClCompile Include="..\lib\rpc\src\RpcServer.cpp" />
     <ClCompile Include="..\lib\rpc\src\TcpServer.cpp" />
     <ClCompile Include="Dispatch.cpp" />
-    <ClCompile Include="DispatchOperate.cpp" />
+    <ClCompile Include="DispatchOperate.cpp">
+      <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</SDLCheck>
+    </ClCompile>
     <ClCompile Include="RadioARS.cpp" />
     <ClCompile Include="RadioGps.cpp" />
     <ClCompile Include="stdafx.cpp">

@@ -10,6 +10,7 @@ CBroker::CBroker()
 	: m_wirelanClient(NULL)
 	, m_radioClient(NULL)
 	, m_rpcServer(NULL)
+	, m_logClient(NULL)
 	, callId(1)
 {
 
@@ -22,6 +23,18 @@ CBroker::~CBroker()
 	{
 		m_radioClient->stop();
 		delete m_radioClient;
+	}
+
+	if (m_logClient)
+	{
+		m_logClient->stop();
+		delete m_logClient;
+	}
+
+	if (m_rpcServer)
+	{
+		m_rpcServer->stop();
+		delete m_rpcServer;
 	}
 }
 
@@ -77,5 +90,13 @@ void CBroker::startRadioClient(std::map<std::string, ACTION> clientActions)
 		m_radioClient->sendRequest(connectCommand.c_str(), callId, NULL, [](const char* pResponse, void* data){
 			printf("recevied response:%s\r\n",pResponse);
 		}, nullptr, 60);
+	}
+}
+void CBroker::startLogClient()
+{
+	if (NULL == m_logClient)
+	{
+		m_logClient = new CRpcClient();
+		m_logClient->start("tcp://127.0.0.1:9003");
 	}
 }

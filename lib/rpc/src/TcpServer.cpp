@@ -256,3 +256,8 @@ void CTcpServer::stop()
 {
 
 }
+
+bool CTcpServer::isConnected()
+{
+	return (m_mpClients.size() > 0);
+}

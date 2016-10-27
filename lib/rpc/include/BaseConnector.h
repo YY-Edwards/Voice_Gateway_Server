@@ -30,6 +30,8 @@ public:
 		m_hReceiveData = handler;
 	}
 
+	virtual bool isConnected() = 0;
+
 protected:
 	OnConnectorData* m_hReceiveData;
 };

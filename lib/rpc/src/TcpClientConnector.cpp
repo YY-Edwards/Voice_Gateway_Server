@@ -37,12 +37,6 @@ int CTcpClientConnector::start(const char* connStr)
 		return FALSE;
 	}
 #endif
-	m_clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-	if (m_clientSocket == SOCKET_ERROR)
-	{
-		return SOCKET_ERROR;
-	}
-
 	// start net monitor thread
 	m_nClientRunning = ClientRunning;
 	m_recvThread = CreateThread(NULL, 0, NetThread, this, 0, NULL);
@@ -159,6 +153,7 @@ DWORD CTcpClientConnector::netHandler()
 		}
 		else {
 			// connect or re-connect server
+			Sleep(1000 * 10);
 			connect(m_strConnStr.c_str());
 		}
 	}
@@ -200,6 +195,12 @@ int CTcpClientConnector::connect(const char* connStr)
 			throw std::exception("get host address failed");
 		}
 
+		m_clientSocket = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+		if (m_clientSocket == SOCKET_ERROR)
+		{
+			throw std::exception("create client socket failed");
+		}
+
 		// Attempt to connect to an address until one succeeds
 		for (ptr = result; ptr != NULL; ptr = ptr->ai_next) {
 			// Connect to server.
@@ -225,3 +226,7 @@ int CTcpClientConnector::connect(const char* connStr)
 	return ret;
 }
 
+bool CTcpClientConnector::isConnected()
+{
+	return (Connected == m_nConnected);
+}

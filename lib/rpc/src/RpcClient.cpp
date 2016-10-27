@@ -41,6 +41,12 @@ int CRpcClient::start(const char* connStr)
 			std::unique_lock<std::mutex> lk(m_mtxQuit);
 			if (std::cv_status::timeout ==  m_evQuit.wait_for(lk, std::chrono::seconds(1)))
 			{
+				if (!m_pConnector->isConnected())
+				{
+					// disconnected status, stop timeout check and don't send ping command
+					continue;
+				}
+
 				if (++nSecondCount > 30){
 					nSecondCount = 0;
 					// send ping command
@@ -122,7 +128,7 @@ int CRpcClient::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 					}
 
 					delete *itr;
-					m_lstRequest.remove(*itr);
+					m_lstRequest.erase(itr);
 					break;
 				}
 			}

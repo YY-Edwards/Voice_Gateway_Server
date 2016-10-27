@@ -19,6 +19,7 @@ public: // dereived from CAbstractConnector
 	virtual void stop();
 	virtual int send(const char* pData, int dataLen);
 	virtual int connect(const char* connStr);
+	virtual bool isConnected();
 
 protected:
 	static DWORD WINAPI NetThread(LPVOID pVoid);

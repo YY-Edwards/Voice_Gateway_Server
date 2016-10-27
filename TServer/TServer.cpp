@@ -86,6 +86,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	clientActions["message"] = recvMsgAction;
 
+	//CBroker::instance()->startLogClient();
 	CBroker::instance()->startRadioClient(clientActions);
 	CBroker::instance()->startRpcServer(serverActions);
 
