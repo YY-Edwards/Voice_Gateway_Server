@@ -18,40 +18,55 @@ void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 		{
 			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
+
+			int operate = -1;
+			int opterateType = -1;;
+			int id = -1;;
 			if (d.HasMember("Operate") && d["Operate"].IsInt())
 			{
-				int operate = d["Operate"].GetInt();
-				int opterateType;
-				int id;
-				if (d.HasMember("Type") && d["Type"].IsInt())
-				{
-					opterateType = d["Type"].GetInt();
-				}
-				if (d.HasMember("Target") && d["Target"].IsInt())
-				{
-					id = d["Target"].GetInt();
-				}
-				if (operate == START)
-				{
-					if (opterateType == ALL)
-					{
-						m_dispatchOperate[pRemote]->AddAllCommand(pRemote, ALL_CALL, "", "", "", id, _T(""), 0, 0, callId);
-					}
-					else if (opterateType == GROUP)
-					{
-						m_dispatchOperate[pRemote]->AddAllCommand(pRemote, GROUP_CALL, "", "", "", id, _T(""), 0, 0, callId);
-					}
-					else if (opterateType == PRIVATE)
-					{
-						m_dispatchOperate[pRemote]->AddAllCommand(pRemote, PRIVATE_CALL, "", "", "", id, _T(""), 0, 0, callId);
-					}
-				}
-				else  if (operate == STOP)
-				{
-					m_dispatchOperate[pRemote]->AddAllCommand(pRemote, STOP_CALL, "", "", "", id, _T(""), 0, 0, callId);
-				}
-
+				 operate = d["Operate"].GetInt();
 			}
+			if (d.HasMember("Type") && d["Type"].IsInt())
+			{
+				opterateType = d["Type"].GetInt();
+			}
+			if (d.HasMember("Target") && d["Target"].IsInt())
+			{
+				id = d["Target"].GetInt();
+			}
+			if (operate == START)
+			{
+				if (opterateType == ALL)
+				{
+					m_dispatchOperate[pRemote]->AddAllCommand(pRemote, ALL_CALL, "", "", "", id, _T(""), 0, 0, callId);
+				}
+				else if (opterateType == GROUP)
+				{
+					m_dispatchOperate[pRemote]->AddAllCommand(pRemote, GROUP_CALL, "", "", "", id, _T(""), 0, 0, callId);
+				}
+				else if (opterateType == PRIVATE)
+				{
+					m_dispatchOperate[pRemote]->AddAllCommand(pRemote, PRIVATE_CALL, "", "", "", id, _T(""), 0, 0, callId);
+				}
+				else
+				{
+#if DEBUG_LOG
+					LOG(INFO) << "opterateType 参数不对 ";
+#endif
+				}
+			}
+			else  if (operate == STOP)
+			{
+				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, STOP_CALL, "", "", "", id, _T(""), 0, 0, callId);
+			}
+			else
+			{
+#if DEBUG_LOG
+				LOG(INFO) << "Operate 参数不对 ";
+#endif
+			}
+
+			
 		}
 		else
 		{

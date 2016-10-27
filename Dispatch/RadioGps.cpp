@@ -122,37 +122,37 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,int cycle)
 	case GPS_IMME_COMM:
 	{
 		memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
-		m_ThreadGps->SendBuffer[0] = 0x05;   //Immediate Location Request
-		m_ThreadGps->SendBuffer[1] = 0x08;   //XML协议报中包含8组数据
-		m_ThreadGps->SendBuffer[2] = 0x22;   //Start of request-id element
-		m_ThreadGps->SendBuffer[3] = 0x04;   //request-id value Start
+		m_ThreadGps->SendBuffer[0] = Immediate_Location_Request;
+		m_ThreadGps->SendBuffer[1] = Immediate_Location_Request_Tokens_Length;  
+		m_ThreadGps->SendBuffer[2] = Location_RequestID_Start;
+		m_ThreadGps->SendBuffer[3] = 0x04;   
 		m_ThreadGps->SendBuffer[4] = 0x12;
 		m_ThreadGps->SendBuffer[5] = 0x34;
 		m_ThreadGps->SendBuffer[6] = 0x56;
-		m_ThreadGps->SendBuffer[7] = 0x78;   //request-id value End
-		m_ThreadGps->SendBuffer[8] = 0x51;   //Start of ret-info element, "ret-info-time" and "ret-info-accuracy" is specified as "YES"
-		m_ThreadGps->SendBuffer[9] = 0x62;   //Start of request-speed-hor element
-		m_ThreadGps->SendBuffer[10] = 0x55;  //Specifies that altitude information is required
-		m_ThreadGps->SendBuffer[11] = 0x57;  //Specifies that horizontal direction information is requested
+		m_ThreadGps->SendBuffer[7] = 0x78;  
+		m_ThreadGps->SendBuffer[8] = Immediate_Location_Request_Time;   
+		m_ThreadGps->SendBuffer[9] = Immediate_Location_RequestID_Speed;   
+		//m_ThreadGps->SendBuffer[10] = 0x55;  //Specifies that altitude information is required
+		//m_ThreadGps->SendBuffer[11] = 0x57;  //Specifies that horizontal direction information is requested
 		m_ThreadGps->gpsLength = SEND_IMM_QUERY_LENTH;
 	}
 		break;
 	case GPS_TRIGG_COMM:
 	{
 		memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
-		m_ThreadGps->SendBuffer[0] = 0x09;
-		m_ThreadGps->SendBuffer[1] = 0x09;
-		m_ThreadGps->SendBuffer[2] = 0x22;
+		m_ThreadGps->SendBuffer[0] = Triggered_Location_Request;
+		m_ThreadGps->SendBuffer[1] = Triggered_Location_Request_Tokens_Length;
+		m_ThreadGps->SendBuffer[2] = Location_RequestID_Start;
 		m_ThreadGps->SendBuffer[3] = 0x04;
 		m_ThreadGps->SendBuffer[4] = 0x24;
 		m_ThreadGps->SendBuffer[5] = 0x68;
 		m_ThreadGps->SendBuffer[6] = 0xAC;
 		m_ThreadGps->SendBuffer[7] = 0xE0;
-		m_ThreadGps->SendBuffer[8] = 0x34;
-		m_ThreadGps->SendBuffer[9] = 0x31;
+		m_ThreadGps->SendBuffer[8] = Start_Trigger_Element;
+		m_ThreadGps->SendBuffer[9] = Start_Interval_Element_uint;
 		m_ThreadGps->SendBuffer[10] = 0xff&cycle;
-		m_ThreadGps->SendBuffer[11] = 0x54;  //Specifies that altitude information is required
-		m_ThreadGps->SendBuffer[12] = 0x57;  //Specifies that horizontal direction information is requested
+		//m_ThreadGps->SendBuffer[11] = 0x54;  //Specifies that altitude information is required
+		//m_ThreadGps->SendBuffer[12] = 0x57;  //Specifies that horizontal direction information is requested
 		m_ThreadGps->gpsLength = SEND_TRG_QUERY_LENTH;
 	}
 		break;
@@ -160,45 +160,44 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,int cycle)
    {
 		memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
 		memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
-		m_ThreadGps->SendBuffer[0] = 0x05;   //Immediate Location Request
-		m_ThreadGps->SendBuffer[1] = 0x08;   //XML协议报中包含8组数据
-		m_ThreadGps->SendBuffer[2] = 0x22;   //Start of request-id element
-		m_ThreadGps->SendBuffer[3] = 0x03;   //request-id value Start
+		m_ThreadGps->SendBuffer[0] = Immediate_Location_Request;   
+		m_ThreadGps->SendBuffer[1] = Immediate_Location_Request_Tokens_Length;  
+		m_ThreadGps->SendBuffer[2] = Location_RequestID_Start;   
+		m_ThreadGps->SendBuffer[3] = 0x03;  
 		m_ThreadGps->SendBuffer[4] = 0x00;
 		m_ThreadGps->SendBuffer[5] = 0x00;
 		m_ThreadGps->SendBuffer[6] = 0x01;
-		m_ThreadGps->SendBuffer[7] = 0x40;   //CSBK
-		m_ThreadGps->SendBuffer[8] = 0x01;   //CSBK
-		m_ThreadGps->SendBuffer[9] = 0x41;    //CSBK
+		m_ThreadGps->SendBuffer[7] = CSBK_Start_Require_Data;   
+		m_ThreadGps->SendBuffer[8] = CSBK_Require_Data_Length;  
+		m_ThreadGps->SendBuffer[9] = Request_LRRP_CSBK;   
 		m_ThreadGps->gpsLength = SEND_IMM_CSBK_QUERY_LENTH;
 	}
 		break;
 	case GPS_TRIGG_CSBK:
 	{
 		memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
-		m_ThreadGps->SendBuffer[0] = 0x09;
-		
-		m_ThreadGps->SendBuffer[2] = 0x22;
+		m_ThreadGps->SendBuffer[0] = Triggered_Location_Request;
+		m_ThreadGps->SendBuffer[2] = Location_RequestID_Start;
 		m_ThreadGps->SendBuffer[3] = 0x03;
 		m_ThreadGps->SendBuffer[4] = 0x00;
 		m_ThreadGps->SendBuffer[5] = 0x00;
 		m_ThreadGps->SendBuffer[6] = 0x01;
-		m_ThreadGps->SendBuffer[7] = 0x40;
-		m_ThreadGps->SendBuffer[8] = 0x01;
-		m_ThreadGps->SendBuffer[9] = 0x41;
-		m_ThreadGps->SendBuffer[10] = 0x34;
+		m_ThreadGps->SendBuffer[7] = CSBK_Start_Require_Data;
+		m_ThreadGps->SendBuffer[8] = CSBK_Require_Data_Length;
+		m_ThreadGps->SendBuffer[9] = Request_LRRP_CSBK;
+		m_ThreadGps->SendBuffer[10] = Start_Trigger_Element;
 		if (cycle == 7)
 		{
-			m_ThreadGps->SendBuffer[1] = 0x0C;
-			m_ThreadGps->SendBuffer[11] = 0x32;
+			m_ThreadGps->SendBuffer[1] = CSBK_Triggered_Location_Request_Tokens_Length_ufloat;
+			m_ThreadGps->SendBuffer[11] = Start_Interval_Element_ufloat;
 			m_ThreadGps->SendBuffer[12] = 0x07;
 			m_ThreadGps->SendBuffer[13] = 0x40;            //7.5s
 			m_ThreadGps->gpsLength = SEND_TRG_CSBK_QUERY_LENTH;
 		}
 		else
 		{
-			m_ThreadGps->SendBuffer[1] = 0x0B;
-			m_ThreadGps->SendBuffer[11] = 0x31;
+			m_ThreadGps->SendBuffer[1] = CSBK_Triggered_Location_Request_Tokens_Length_uint;
+			m_ThreadGps->SendBuffer[11] = Start_Interval_Element_uint;
 			m_ThreadGps->SendBuffer[12] = 0xff&cycle;
 			m_ThreadGps->gpsLength = SEND_TRG_CSBK_QUERY_LENTH-1;
 		}
@@ -208,43 +207,42 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,int cycle)
 	case GPS_IMME_CSBK_EGPS:
 	{
 		memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
-		m_ThreadGps->SendBuffer[0] = 0x05;
-		m_ThreadGps->SendBuffer[1] = 0x08;
-		m_ThreadGps->SendBuffer[2] = 0x22;
+		m_ThreadGps->SendBuffer[0] = Immediate_Location_Request;
+		m_ThreadGps->SendBuffer[1] = Immediate_Location_Request_Tokens_Length;
+		m_ThreadGps->SendBuffer[2] = Location_RequestID_Start;
 		m_ThreadGps->SendBuffer[3] = 0x03;
 		m_ThreadGps->SendBuffer[4] = 0x00;
 		m_ThreadGps->SendBuffer[5] = 0x00;
 		m_ThreadGps->SendBuffer[6] = 0x01;
-		m_ThreadGps->SendBuffer[7] = 0x52;
-		m_ThreadGps->SendBuffer[8] = 0x74;
-		m_ThreadGps->SendBuffer[9] = 0x69;
-		m_ThreadGps->SendBuffer[10] = 0x40;
-		m_ThreadGps->SendBuffer[11] = 0x01;
-		m_ThreadGps->SendBuffer[12] = 0x41;          
+		m_ThreadGps->SendBuffer[7] = CSBK_Location_Request_Time;
+		m_ThreadGps->SendBuffer[8] = CSBK_Require_Speed_Horizontal;
+		m_ThreadGps->SendBuffer[9] = CSBK_Require_Direction_Horizontal;
+		m_ThreadGps->SendBuffer[10] = CSBK_Start_Require_Data;
+		m_ThreadGps->SendBuffer[11] = CSBK_Require_Data_Length;
+		m_ThreadGps->SendBuffer[12] = Request_LRRP_CSBK;
 		m_ThreadGps->gpsLength = SEND_IMM_CSBK_EGPD_QUERY_LENTH;
 	}
 		break;
 	case GPS_TRIGG_CSBK_EGPS:
 	{
 			memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
-			m_ThreadGps->SendBuffer[0] = 0x09;
-		
-			m_ThreadGps->SendBuffer[2] = 0x22;
+			m_ThreadGps->SendBuffer[0] = Triggered_Location_Request;
+			m_ThreadGps->SendBuffer[2] = Location_RequestID_Start;
 			m_ThreadGps->SendBuffer[3] = 0x03;
 			m_ThreadGps->SendBuffer[4] = 0x00;
 			m_ThreadGps->SendBuffer[5] = 0x00;
 			m_ThreadGps->SendBuffer[6] = 0x01;
-			m_ThreadGps->SendBuffer[7] = 0x52;
-			m_ThreadGps->SendBuffer[8] = 0x62;
-			m_ThreadGps->SendBuffer[9] = 0x57;
-			m_ThreadGps->SendBuffer[10] = 0x40;
-			m_ThreadGps->SendBuffer[11] = 0x01;
-			m_ThreadGps->SendBuffer[12] = 0x41;
-			m_ThreadGps->SendBuffer[13] = 0x34;
+			m_ThreadGps->SendBuffer[7] = CSBK_Location_Request_Time;
+			m_ThreadGps->SendBuffer[8] = CSBK_Require_Speed_Horizontal;
+			m_ThreadGps->SendBuffer[9] = CSBK_Require_Direction_Horizontal;
+			m_ThreadGps->SendBuffer[10] = CSBK_Start_Require_Data;
+			m_ThreadGps->SendBuffer[11] = CSBK_Require_Data_Length;
+			m_ThreadGps->SendBuffer[12] = Request_LRRP_CSBK;
+			m_ThreadGps->SendBuffer[13] = Start_Trigger_Element;
 			if (cycle == 7)
 			{
 				m_ThreadGps->SendBuffer[1] = 0x0f;
-				m_ThreadGps->SendBuffer[14] = 0x32;
+				m_ThreadGps->SendBuffer[14] = Start_Interval_Element_ufloat;
 				m_ThreadGps->SendBuffer[15] = 0x07;
 				m_ThreadGps->SendBuffer[16] = 0x40;            //7.5s
 				m_ThreadGps->gpsLength = SEND_TRG_CSBK_EGPD_QUERY_LENTH + 1;
@@ -252,7 +250,7 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,int cycle)
 			else if (cycle == 480)
 			{
 				m_ThreadGps->SendBuffer[1] = 0x0f;
-				m_ThreadGps->SendBuffer[14] = 0x31;
+				m_ThreadGps->SendBuffer[14] = Start_Interval_Element_uint;
 				m_ThreadGps->SendBuffer[15] = 0x01;
 				m_ThreadGps->SendBuffer[16] = 0xE0;            //480s
 				m_ThreadGps->gpsLength = SEND_TRG_CSBK_EGPD_QUERY_LENTH + 1;
@@ -260,7 +258,7 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,int cycle)
 			else
 			{
 				m_ThreadGps->SendBuffer[1] = 0x0e;
-				m_ThreadGps->SendBuffer[14] = 0x31;
+				m_ThreadGps->SendBuffer[14] = Start_Interval_Element_uint;
 				m_ThreadGps->SendBuffer[15] = 0xff & cycle;
 				m_ThreadGps->gpsLength = SEND_TRG_CSBK_EGPD_QUERY_LENTH;
 			}
@@ -395,7 +393,7 @@ void CRadioGps::RecvData()
 	if (ret != SOCKET_ERROR || bytes != SOCKET_ERROR)
 	{
 		m_ThreadGps->radioID = (m_ThreadGps->remote_addr.sin_addr.S_un.S_un_b.s_b2 << 16) + (m_ThreadGps->remote_addr.sin_addr.S_un.S_un_b.s_b3 << 8) + m_ThreadGps->remote_addr.sin_addr.S_un.S_un_b.s_b4;
-		if ((ret == RECV_IMME_LENTH || bytes == RECV_IMME_LENTH) && m_ThreadGps->RcvBuffer[0] == 0x07 && m_ThreadGps->RcvBuffer[1] == 0x1a)
+		if ((ret == RECV_IMME_LENTH || bytes == RECV_IMME_LENTH) && m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report && m_ThreadGps->RcvBuffer[1] == 0x1a)
 		{
 			unsigned long llat = 0, llon = 0;
 			unsigned long a = 0, b = 0, c = 0, d = 0;
@@ -420,7 +418,7 @@ void CRadioGps::RecvData()
 			b = ((unsigned long)m_ThreadGps->RcvBuffer[27]) & 0xff;
 			speed = (((float)a) + ((float)b) / 128.0f)*3.6f;
 		}
-		else if ((ret == RECV_TRG_LENTH || bytes == RECV_TRG_LENTH) && m_ThreadGps->RcvBuffer[0] == 0x0D && m_ThreadGps->RcvBuffer[1] == 0x0F)
+		else if ((ret == RECV_TRG_LENTH || bytes == RECV_TRG_LENTH) && m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report && m_ThreadGps->RcvBuffer[1] == 0x0F)
 		{
 			unsigned long llat = 0, llon = 0;
 			unsigned long a = 0, b = 0, c = 0, d = 0;
@@ -444,7 +442,7 @@ void CRadioGps::RecvData()
 			speed = -1;
 
 		}
-		else if ((ret == RECV_CSBK_LENTH || bytes == RECV_CSBK_LENTH) && (m_ThreadGps->RcvBuffer[0] == 0x07 || m_ThreadGps->RcvBuffer[0] == 0x0d) && m_ThreadGps->RcvBuffer[1] == 0x11)
+		else if ((ret == RECV_CSBK_LENTH || bytes == RECV_CSBK_LENTH) && (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report || m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report) && m_ThreadGps->RcvBuffer[1] == 0x11)
 		{
 
 			unsigned long llat = 0, llon = 0;
@@ -467,7 +465,7 @@ void CRadioGps::RecvData()
 			lon = ((double)llon) / 2147483648 * 180;
 			speed = -1;
 		}
-		else if (/*(ret == RECV_CSBK_EGPS_LENTH || bytes == RECV_CSBK_EGPS_LENTH) &&*/ (m_ThreadGps->RcvBuffer[0] == 0x07 || m_ThreadGps->RcvBuffer[0] == 0x0d) && (m_ThreadGps->RcvBuffer[1] == 0x1e || m_ThreadGps->RcvBuffer[1] == 0x1c))
+		else if (/*(ret == RECV_CSBK_EGPS_LENTH || bytes == RECV_CSBK_EGPS_LENTH) &&*/ (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report || m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report) && (m_ThreadGps->RcvBuffer[1] == 0x1e || m_ThreadGps->RcvBuffer[1] == 0x1c))
 		{
 			unsigned long llat = 0, llon = 0;
 			unsigned long a = 0, b = 0, c = 0, d = 0;
@@ -492,7 +490,7 @@ void CRadioGps::RecvData()
 			b = ((unsigned long)m_ThreadGps->RcvBuffer[24]) & 0xff;
 			speed = (((float)a) + ((float)b) / 128.0f)*3.6f;
 		}
-		else if ((ret == 9 || bytes == 9 || ret == 10 || bytes == 10) && (m_ThreadGps->RcvBuffer[0] == 0x07 || m_ThreadGps->RcvBuffer[0] == 0x0d))
+		else if ((ret == 9 || bytes == 9 || ret == 10 || bytes == 10) && (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report || m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report))
 		{
 			valid = 0;
 			speed = -1;
@@ -527,18 +525,34 @@ void CRadioGps::RecvData()
 			FieldValue result(FieldValue::TObject);
 			result.setKeyVal("Source", FieldValue(radioID));
 			result.setKeyVal("gps",gps);
-			args["param"] = result;
+			
+
+			if (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report)
+			{
+				args["contents"] = result;
+				std::string callJsonStr = CRpcJsonParser::buildCall("SendGps", ++seq, args);
+				if (pRemotePeer != NULL)
+				{
+					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+
+				}
+			}
+			else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report)
+			{
+				args["param"] = result;
+				std::string callJsonStr = CRpcJsonParser::buildCall("SendGps", ++seq, args);
+				if (pRemotePeer != NULL)
+				{
+					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+
+				}
+			}
 			/*args["id"] = radioID;
 			args["valid"] = strValid;
 			args["lon"] = strLon;
 			args["lat"] = strLat;
 			args["speed"] = strSpeed;*/
-			std::string callJsonStr = CRpcJsonParser::buildCall("SendGps", ++seq, args);
-			if (pRemotePeer != NULL)
-			{
-				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-
-			}
+			
 		}
 		catch (std::exception e)
 		{

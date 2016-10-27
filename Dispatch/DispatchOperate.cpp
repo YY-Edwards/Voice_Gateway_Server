@@ -548,7 +548,7 @@ int DispatchOperate::RadioConnect()
 							if (pRemotePeer != NULL)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								allCommandList.erase(it);
+								it = allCommandList.erase(it);
 								break;
 							}
 							
@@ -568,8 +568,7 @@ int DispatchOperate::RadioConnect()
 							if (pRemotePeer != NULL)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-							   
-								allCommandList.erase(it);
+								it = allCommandList.erase(it);
 								break;
 							}
 
@@ -593,12 +592,11 @@ int DispatchOperate::RadioConnect()
 								if (pRemotePeer != NULL)
 								{
 									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-									allCommandList.erase(it);
+									it = allCommandList.erase(it);
 									break;
 								}
 							
 							}
-							
 				
 						return 3;
 					}
@@ -615,7 +613,7 @@ int DispatchOperate::RadioConnect()
 							if (pRemotePeer != NULL)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								allCommandList.erase(it);
+								it = allCommandList.erase(it);
 								break;
 							}
 								
@@ -693,7 +691,7 @@ void DispatchOperate::TimeOut()
 				
 				std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", ArgumentType());
 				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());	
-				allCommandList.erase(it);
+				it = allCommandList.erase(it);
 			}
 		
 		}
@@ -1016,7 +1014,7 @@ void DispatchOperate::WorkThreadFunc()
 		default:
 			break;
 		}
-		commandList.erase(it);
+		it = commandList.erase(it);
 		break;	
 	}
 }

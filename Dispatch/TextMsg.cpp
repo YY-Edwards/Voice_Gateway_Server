@@ -471,8 +471,10 @@ void CTextMsg::RecvMsg()
 						args["id"] = FieldValue( stringId.c_str());
 						std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "sucess", args);
 						pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+						it = allCommandList.erase(it);
+						break;
 					}
-					allCommandList.erase(it++);
+					
 				}
 				break;
 			}

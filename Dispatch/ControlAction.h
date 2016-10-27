@@ -15,9 +15,7 @@ void  controlAction(CRemotePeer* pRemote, const std::string& param, uint64_t cal
 		d.Parse(param.c_str());
 		if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
 		{
-			ArgumentType args;
-			args["message"] = "control";
-			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
+			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
 			string opterateType;
 			int id;

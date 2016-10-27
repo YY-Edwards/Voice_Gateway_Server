@@ -70,6 +70,28 @@ using  namespace rapidjson;
 #define GROUP                   2
 #define PRIVATE                 3
 
+#define Immediate_Location_Request                      0x05       //Immediate Location Request
+#define Immediate_Location_Request_Tokens_Length        0x08       //XML协议报中包含8组数据
+#define Location_RequestID_Start                        0x22       //Start of request-id element
+#define Immediate_Location_Request_Time                 0x51       //Start of ret-info element, "ret-info-time" and "ret-info-accuracy" is specified as "YES"
+#define Immediate_Location_RequestID_Speed              0x62       //Start of request-speed-hor element
+#define Immediate_Location_Report                       0x07       //Immediate Location Report
+
+#define Triggered_Location_Request                      0x09
+#define Triggered_Location_Request_Tokens_Length        0x09
+#define Start_Interval_Element_uint                     0x31       //START of interval element, indicating that a uintvar follows
+#define Start_Interval_Element_ufloat                   0x32       //START of interval element, indicating that a ufloat follows
+#define Start_Trigger_Element                           0x34
+#define Triggered_Location_Report                       0x0D
+
+#define CSBK_Start_Require_Data                         0x40
+#define CSBK_Require_Data_Length                        0x01
+#define Request_LRRP_CSBK                               0x41
+#define CSBK_Triggered_Location_Request_Tokens_Length_uint                     0x0B         //interval value: uintvar
+#define CSBK_Triggered_Location_Request_Tokens_Length_ufloat                   0x0C         //interval value: ufloat
+#define CSBK_Location_Request_Time                                             0x52
+#define CSBK_Require_Speed_Horizontal                                          0x74
+#define CSBK_Require_Direction_Horizontal                                      0x69
 typedef struct tagAllCommand
 {
 	int callId;
