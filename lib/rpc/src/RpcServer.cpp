@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+#include "../include/request.h"
 #include "../../threadpool/threadpool.h"
 #include "../include/TcpServer.h"
 #include "../include/RpcServer.h"
@@ -86,4 +87,39 @@ void CRpcServer::addActionHandler(const char* pName, ACTION action)
 		return;
 	}
 	m_mpActions[pName] = action;
+}
+
+int CRpcServer::sendRequest(const char* pRequest,
+	uint64_t nCallId,
+	void* data,
+	std::function<void(const char* pResponse, void*)> success,
+	std::function<void(const char* pResponse, void*)> failed,
+	int nTimeoutSeconds)
+{
+	int ret = -1;
+
+	if (NULL == pRequest)
+	{
+		return ret;
+	}
+
+	std::lock_guard<std::mutex> lock(m_mtxRequest);
+
+	CRequest* pReq = new CRequest();
+	pReq->m_strRequest = pRequest;
+	pReq->m_nCallId = nCallId;
+	pReq->success = success;
+	pReq->failed = failed;
+	pReq->data = data;
+	pReq->nTimeoutSeconds = nTimeoutSeconds;
+
+	if (0 == m_lstRequest.size())
+	{
+		// send request immediately, to all clients
+		//ret = this->send(pReq->m_strRequest.c_str(), pReq->m_strRequest.size());
+		m_pConnector->send(pReq->m_strRequest.c_str(), pReq->m_strRequest.size());
+	}
+	m_lstRequest.push_back(pReq);
+
+	return ret;
 }

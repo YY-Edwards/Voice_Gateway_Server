@@ -42,22 +42,66 @@ int _tmain(int argc, _TCHAR* argv[])
 	//std::string str =  CSettings::instance()->getResponse("sucess", 1, 200, "", "");
 	//CSettings::instance()->setValue("tst", rapidjson::Value(NULL));
 
-	CBroker::instance();
+//	CBroker::instance();
+//
+//	Sleep(1000);
+//	while (CBroker::instance()->getRadioClient() != nullptr){
+//
+//
+//
+//	std::string callJsonStr = CSettings::instance()->getRequest("connect", "radio", 0, CSettings::instance()->getValue("radio"));
+//
+//	std::string callCommand = CRpcJsonParser::mergeCommand("connect", 0, callJsonStr.c_str());
+//	int ret = CBroker::instance()->getRadioClient()->sendRequest(callCommand.c_str(),
+//		0,
+//		NULL,
+//		[&](const char* pResponse, void* data){
+//		//CRemotePeer* pCommandSender = (CRemotePeer*)data;
+//		//pCommandSender->sendResponse(pResponse, strlen(pResponse));
+//	}, nullptr);
+//
+//	if (-1 != ret)break;
+//	
+//	Sleep(50);
+//
+//}
 
-	CRpcServer rpcServer;
+	std::map<std::string, ACTION> serverActions, clientActions;
 
-	rpcServer.addActionHandler("start", startAction);
+	serverActions["start"] = startAction;
+
+	serverActions["setBaseSetting"] = setBaseAction;
+	serverActions["getBaseSetting"] = getBaseAction;
+	serverActions["setRadioSetting"] = setRadioAction;
+	serverActions["getRadioSetting"] = getRadioAction;
+	serverActions["setRepeaterSetting"] = setRepeaterAction;
+	serverActions["getRepeaterSetting"] = getRepeaterAction;
+
+	serverActions["call"] = callAction;
+	serverActions["control"] = controlAction;
+	serverActions["queryGps"] = gpsAction;
+	serverActions["message"] = msgAction;
+
+	CBroker::instance()->startRadioClient(clientActions);
+	CBroker::instance()->startRpcServer(serverActions);
+
+	//rpcServer.addActionHandler("call", callAction);
+	//rpcServer.addActionHandler("control", controlAction);
+	//rpcServer.addActionHandler("queryGps", gpsAction);
+	//rpcServer.addActionHandler("message", msgAction);
+
+	//rpcServer.addActionHandler("start", startAction);
 
 
 
-	rpcServer.addActionHandler("setBaseSetting", setBaseAction);
-	rpcServer.addActionHandler("getBaseSetting", getBaseAction);
+	//rpcServer.addActionHandler("setBaseSetting", setBaseAction);
+	//rpcServer.addActionHandler("getBaseSetting", getBaseAction);
 
-	rpcServer.addActionHandler("setRadioSetting", setRadioAction);
-	rpcServer.addActionHandler("getRadioSetting", getRadioAction);
+	//rpcServer.addActionHandler("setRadioSetting", setRadioAction);
+	//rpcServer.addActionHandler("getRadioSetting", getRadioAction);
 
-	rpcServer.addActionHandler("setRepeaterSetting", setRepeaterAction);
-	rpcServer.addActionHandler("getRepeaterSetting", getRepeaterAction);
+	//rpcServer.addActionHandler("setRepeaterSetting", setRepeaterAction);
+	//rpcServer.addActionHandler("getRepeaterSetting", getRepeaterAction);
 
 	////radio
 	//rpcServer.addActionHandler("allCall", allCallAction);
@@ -75,36 +119,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	//rpcServer.addActionHandler("stopCall", stopCallAction);
 	//rpcServer.addActionHandler("wiretap", wiretapAction);
 
-	rpcServer.addActionHandler("call",callAction);
-	rpcServer.addActionHandler("control",controlAction);
-	rpcServer.addActionHandler("queryGps", gpsAction);
-	rpcServer.addActionHandler("message", msgAction);
-
-	Sleep(1000);
-	while (CBroker::instance()->getRadioClient() != nullptr){
-
-
-
-	std::string callJsonStr = CSettings::instance()->getRequest("connect", "radio", 0, CSettings::instance()->getValue("radio"));
-
-	std::string callCommand = CRpcJsonParser::mergeCommand("connect", 0, callJsonStr.c_str());
-	int ret = CBroker::instance()->getRadioClient()->sendRequest(callCommand.c_str(),
-		0,
-		NULL,
-		[&](const char* pResponse, void* data){
-		//CRemotePeer* pCommandSender = (CRemotePeer*)data;
-		//pCommandSender->sendResponse(pResponse, strlen(pResponse));
-	}, nullptr);
-
-	if (-1 != ret)break;
-	
-	Sleep(50);
-
-}
-
-		
-	
-	rpcServer.start();
+	//rpcServer.addActionHandler("call", callAction);
+	//rpcServer.addActionHandler("control", controlAction);
+	//rpcServer.addActionHandler("queryGps", gpsAction);
+	//rpcServer.addActionHandler("message", msgAction);
+	//
+	//rpcServer.start();
 
 	while (1);
 	return 0;

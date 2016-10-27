@@ -69,7 +69,17 @@ int CTcpServer::start(const char* connStr)
 
 int CTcpServer::send(const char* pData, int dataLen)
 {
-	return ::send(m_serverSocket, (char*)pData, dataLen, 0);
+	//return ::send(m_serverSocket, (char*)pData, dataLen, 0);
+
+	if (m_mpClients.size() > 0)
+	{
+		for (auto client = m_mpClients.begin(); client != m_mpClients.end(); ++client)
+		{
+			(*client).second->sendCommand(pData, dataLen);
+		}
+	}
+
+	return -1;
 }
 
 int CTcpServer::connect(const char* connStr)

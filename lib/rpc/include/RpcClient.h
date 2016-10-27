@@ -5,8 +5,11 @@
 #include "BaseConnector.h"
 #include "request.h"
 
+#include <atomic>
+#include <condition_variable>
 #include <mutex>
 #include <list>
+#include <thread>
 
 #ifndef IncomeDataHandler
 typedef std::function<void(CBaseConnector*, const char*, int) > IncomeDataHandler;
@@ -29,13 +32,26 @@ public:
 				uint64_t nCallId,
 				void* data,
 				std::function<void (const char* pResponse, void*)> success, 
-				std::function<void(const char* pResponse, void*)> failed = nullptr);
+				std::function<void(const char* pResponse, void*)> failed = nullptr,
+				int nTimeoutSeconds = 10);
 	void setIncomeDataHandler(IncomeDataHandler handler);
+	uint64_t getCallId();
+
+	void addActionHandler(const char* pName, ACTION action);
 
 protected:
 	CBaseConnector* m_pConnector;
 	std::list<CRequest*> m_lstRequest;
 	std::mutex m_mtxRequest;
 	IncomeDataHandler m_fnIncomeHandler;
+	std::thread	m_maintainThread;
+	std::mutex m_mtxQuit;
+	std::condition_variable m_evQuit;
+	std::atomic<bool> m_bQuit;
+
+	uint64_t m_nCallId;
+
+	// for handle income command
+	std::map<std::string, ACTION>  m_mpActions;
 };
 

@@ -16,5 +16,7 @@ public:
 	std::function<void(const char*, void*)> success;
 	std::function<void(const char*, void*)> failed;
 
+	int nTimeoutSeconds;
+
 	void* data;
 };
