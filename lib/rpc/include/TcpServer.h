@@ -11,10 +11,6 @@
 #include <map>
 #include <mutex>
 
-#ifndef SOCKET_ERROR
-#define SOCKET_ERROR            (-1)
-#endif
-
 #include "BaseConnector.h"
 
 #define		ServerRunning		1
@@ -29,6 +25,13 @@ public:
 	SOCKADDR_IN addr;
 public:
 	int sendResponse(const char* pData, int dataLen)
+	{
+		printf("send data£º%s\r\n", pData);
+
+		return ::send(s, pData, dataLen, 0);
+	}
+
+	int sendCommand(const char* pData, int dataLen)
 	{
 		printf("send data£º%s\r\n", pData);
 
