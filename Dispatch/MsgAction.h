@@ -43,6 +43,12 @@ void  msgAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			{
 				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, SEND_PRIVATE_MSG, "", "", "", id, text, 0, 0, callId);
 			}
+			else
+			{
+#if DEBUG_LOG
+				LOG(INFO) << "opterateType 参数不对 ";
+#endif
+			}
 				
 		}
 		else

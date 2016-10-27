@@ -819,7 +819,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							if (pRemotePeer != NULL && pRemotePeer == it->pRemote)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								allCommandList.erase(it++);
+								it = allCommandList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "在线";
 #endif
@@ -837,7 +837,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								allCommandList.erase(it++);
+								it = allCommandList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "离线";
 #endif
@@ -845,8 +845,6 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							}
 
 						}
-
-						allCommandList.erase(it++);
 						break;
 					}
 					else if (rmt_type_code == 0x01)
@@ -860,7 +858,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								allCommandList.erase(it++);
+								it = allCommandList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "遥闭成功";
 #endif
@@ -877,7 +875,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								allCommandList.erase(it++);
+								it = allCommandList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "遥闭失败";
 #endif
@@ -899,7 +897,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								allCommandList.erase(it++);
+								it = allCommandList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "遥开成功";
 #endif
@@ -917,7 +915,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								allCommandList.erase(it++);
+								it = allCommandList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "遥开失败";
 #endif
@@ -939,7 +937,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								allCommandList.erase(it++);
+								it = allCommandList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "远程监听成功";
 #endif
@@ -956,7 +954,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								allCommandList.erase(it++);
+								it = allCommandList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "远程监听失败";
 #endif
@@ -1018,9 +1016,9 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 					{
 						pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+						it = allCommandList.erase(it);
+						break;
 					}
-					allCommandList.erase(it++);
-
 					break;
 				}
 				m_allCommandListLocker.unlock();
@@ -1046,8 +1044,6 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					{
 						pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 					}
-				//	allCommandList.erase(it++);
-
 					break;
 				}
 				m_allCommandListLocker.unlock();
