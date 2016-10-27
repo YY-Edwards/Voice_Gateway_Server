@@ -38,11 +38,21 @@ int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 			pRemote->sendResponse(response.c_str(), response.size());
 			throw std::exception("invalid request");
 		}
-		auto actionFn = (m_mpActions.find(callName) != m_mpActions.end()) ? m_mpActions[callName] : nullptr;
 
-		if (nullptr != actionFn)
+		// test if it's ping command, direct send response when receive ping command
+		if (0==callName.compare("ping"))
 		{
-			m_thdPool->enqueue(actionFn, pRemote, param, callId, type);
+			std::string pingResponse = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
+			pRemote->sendResponse(pingResponse.c_str(), pingResponse.size());
+		}
+		else // other command, call command handler
+		{
+			auto actionFn = (m_mpActions.find(callName) != m_mpActions.end()) ? m_mpActions[callName] : nullptr;
+
+			if (nullptr != actionFn)
+			{
+				m_thdPool->enqueue(actionFn, pRemote, param, callId, type);
+			}
 		}
 	}
 	catch (std::exception& e)
