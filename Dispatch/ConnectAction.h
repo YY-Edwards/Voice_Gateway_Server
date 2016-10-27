@@ -17,17 +17,17 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 
 		string radioIP = "";
 		string mnisIP = "";
-		Document doc;
-		doc.Parse(param.c_str());
-		if (doc.HasMember("param"))
-		if (doc["param"].IsObject())
+		Document d;
+		d.Parse(param.c_str());
+	/*	if (doc.HasMember("param"))
+		if (doc["param"].IsObject())*/
 		{
-			Value obj = doc["param"].GetObject();
+			//Value obj = doc["param"].GetObject();
 
 			//radioIP
-			if (obj.HasMember("Ride") && obj["Ride"].IsObject())
+			if (d.HasMember("Radio") && d["Radio"].IsObject())
 			{
-				Value objRadio = obj["Ride"].GetObject();
+				Value objRadio = d["Radio"].GetObject();
 				if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
 				{
 					radioIP = objRadio["Ip"].GetString();
@@ -35,9 +35,9 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 				}
 			}
 			//mnisIP
-			if (obj.HasMember("Mnis") && obj["Mnis"].IsObject())
+			if (d.HasMember("Mnis") && d["Mnis"].IsObject())
 			{
-				Value objRadio = obj["Mnis"].GetObject();
+				Value objRadio = d["Mnis"].GetObject();
 				if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
 				{
 					mnisIP = objRadio["Ip"].GetString();
@@ -46,9 +46,9 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 				}
 			}
 			//GPS ·­×ªIP
-			if (obj.HasMember("Gps") && obj["Gps"].IsObject())
+			if (d.HasMember("Gps") && d["Gps"].IsObject())
 			{
-				Value objRadio = obj["Gps"].GetObject();
+				Value objRadio = d["Gps"].GetObject();
 				if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
 				{
 					//radioIP = objRadio["Ip"].GetString();

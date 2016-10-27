@@ -31,8 +31,11 @@
     <Filter Include="action">
       <UniqueIdentifier>{433da747-3f74-4924-ab1c-e936aefaaca2}</UniqueIdentifier>
     </Filter>
-    <Filter Include="eventAction">
+    <Filter Include="serverAction">
       <UniqueIdentifier>{0a8462f7-4c7a-435a-bc94-e5cfc681b257}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="clientAction">
+      <UniqueIdentifier>{953314cb-fdfc-4e31-8dbb-f76bd7e01bd2}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -124,16 +127,19 @@
       <Filter>action</Filter>
     </ClInclude>
     <ClInclude Include="CallAction.h">
-      <Filter>eventAction</Filter>
+      <Filter>serverAction</Filter>
     </ClInclude>
     <ClInclude Include="ControlAction.h">
-      <Filter>eventAction</Filter>
+      <Filter>serverAction</Filter>
     </ClInclude>
     <ClInclude Include="GpsAction.h">
-      <Filter>eventAction</Filter>
+      <Filter>serverAction</Filter>
     </ClInclude>
     <ClInclude Include="MsgAction.h">
-      <Filter>eventAction</Filter>
+      <Filter>serverAction</Filter>
+    </ClInclude>
+    <ClInclude Include="recvMessageAction.h">
+      <Filter>clientAction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

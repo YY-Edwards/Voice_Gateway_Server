@@ -36,6 +36,8 @@
 #include "GpsAction.h"
 #include "MsgAction.h"
 
+#include "recvMessageAction.h"
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//CSettings::instance()->getResponse("sucess", 1, 200, "", rapidjson::Value(NULL));
@@ -81,6 +83,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	serverActions["control"] = controlAction;
 	serverActions["queryGps"] = gpsAction;
 	serverActions["message"] = msgAction;
+
+	clientActions["message"] = recvMsgAction;
 
 	CBroker::instance()->startRadioClient(clientActions);
 	CBroker::instance()->startRpcServer(serverActions);
