@@ -61,7 +61,7 @@ void CBroker::startRadioClient(std::map<std::string, ACTION> clientActions)
 		radioP.setKeyVal("Port", FieldValue(0));
 
 		FieldValue mnisP(FieldValue::TObject);
-		mnisP.setKeyVal("Ip", FieldValue("192.168.11.2"));
+		mnisP.setKeyVal("Ip", FieldValue(""));
 		mnisP.setKeyVal("Port", FieldValue(0));
 
 		FieldValue gpsP(FieldValue::TObject);
@@ -75,6 +75,7 @@ void CBroker::startRadioClient(std::map<std::string, ACTION> clientActions)
 		uint64_t callId = m_radioClient->getCallId();
 		std::string connectCommand = CRpcJsonParser::buildCall("connect", callId, args);
 		m_radioClient->sendRequest(connectCommand.c_str(), callId, NULL, [](const char* pResponse, void* data){
+			printf("recevied response:%s\r\n",pResponse);
 		}, nullptr, 60);
 	}
 }

@@ -42,6 +42,7 @@ int CRpcClient::start(const char* connStr)
 			if (std::cv_status::timeout ==  m_evQuit.wait_for(lk, std::chrono::seconds(1)))
 			{
 				if (++nSecondCount > 30){
+					nSecondCount = 0;
 					// send ping command
 					uint64_t callId = getCallId();
 					std::string pingRequest = CRpcJsonParser::buildCall("ping", callId, ArgumentType());
@@ -115,7 +116,10 @@ int CRpcClient::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 				{
 					bHandled = true;
 					// handle response
-					(*itr)->success(str.c_str(), (*itr)->data);
+					if (nullptr != (*itr)->success)
+					{
+						(*itr)->success(str.c_str(), (*itr)->data);
+					}
 
 					delete *itr;
 					m_lstRequest.remove(*itr);

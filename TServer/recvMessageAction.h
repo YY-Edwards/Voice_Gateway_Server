@@ -17,8 +17,10 @@ void recvMsgAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 				callId,
 				pRemote,
 				[&](const char* pResponse, void* data){
-				CRemotePeer* pCommandSender = (CRemotePeer*)data;
-				pCommandSender->sendResponse(pResponse, strlen(pResponse));
+			
+			//CBroker::instance()->getRadioClient()-
+				/*CRemotePeer* pCommandSender = (CRemotePeer*)data;
+				pCommandSender->sendResponse(pResponse, strlen(pResponse));*/
 			}, nullptr);
 		if (-1 == ret)
 		{
