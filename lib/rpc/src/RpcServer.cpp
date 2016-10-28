@@ -127,7 +127,7 @@ int CRpcServer::sendRequest(const char* pRequest,
 	{
 		// send request immediately, to all clients
 		//ret = this->send(pReq->m_strRequest.c_str(), pReq->m_strRequest.size());
-		m_pConnector->send(pReq->m_strRequest.c_str(), pReq->m_strRequest.size());
+		ret = m_pConnector->send(pReq->m_strRequest.c_str(), pReq->m_strRequest.size());
 	}
 	m_lstRequest.push_back(pReq);
 

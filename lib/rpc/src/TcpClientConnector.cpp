@@ -10,6 +10,7 @@ CTcpClientConnector::CTcpClientConnector()
 	: m_nConnected(NotConnect)
 	, m_clientSocket(INVALID_SOCKET)
 	, m_nClientRunning(ClientNotRunning)
+	, m_pRemoteServer(NULL)
 {
 }
 
@@ -60,6 +61,11 @@ void CTcpClientConnector::stop()
 		}
 
 		m_nConnected = NotConnect;
+	}
+
+	if (m_pRemoteServer)
+	{
+		delete m_pRemoteServer;
 	}
 }
 
@@ -130,7 +136,7 @@ DWORD CTcpClientConnector::netHandler()
 							}
 							if (m_hReceiveData)
 							{
-								m_hReceiveData->onReceive(NULL, buf, n);
+								m_hReceiveData->onReceive(m_pRemoteServer, buf, n);
 							}
 						}
 
@@ -218,6 +224,13 @@ int CTcpClientConnector::connect(const char* connStr)
 			{
 				m_fnConnectEvent();
 			}
+
+			if (NULL != m_pRemoteServer)
+			{
+				m_pRemoteServer = new CRemoteServer();
+				((CRemoteServer*)m_pRemoteServer)->s = m_clientSocket;
+			}
+
 			break;
 		}
 	}
