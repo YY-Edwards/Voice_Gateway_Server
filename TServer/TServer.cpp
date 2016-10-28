@@ -44,6 +44,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	//std::string str =  CSettings::instance()->getResponse("sucess", 1, 200, "", "");
 	//CSettings::instance()->setValue("tst", rapidjson::Value(NULL));
 
+	//std::string dsd = CRpcJsonParser::buildCall("dd", 3, ArgumentType(), "raio");
+	//std::string ddddd = CRpcJsonParser::mergeCommand("c", 33, "d", "radio");
+
 //	CBroker::instance();
 //
 //	Sleep(1000);

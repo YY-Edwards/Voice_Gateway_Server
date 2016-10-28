@@ -79,7 +79,7 @@ int CTcpServer::send(const char* pData, int dataLen)
 		}
 	}
 
-	return -1;
+	return 0;
 }
 
 int CTcpServer::connect(const char* connStr)

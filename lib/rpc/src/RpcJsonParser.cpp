@@ -217,7 +217,7 @@ rapidjson::Value CRpcJsonParser::toNode(FieldValue& v, rapidjson::Document& d)
 	return rapidjson::Value(kNullType);
 }
 
-std::string CRpcJsonParser::buildCall(char* pCallName, uint64_t callId, ArgumentType params)
+std::string CRpcJsonParser::buildCall(char* pCallName, uint64_t callId, ArgumentType params, const char* type)
 {
 	std::string jsonStr = "";
 
@@ -229,6 +229,13 @@ std::string CRpcJsonParser::buildCall(char* pCallName, uint64_t callId, Argument
 		
 		Value callIdEl(kNumberType);
 		callIdEl.SetUint64(callId);
+
+		if (NULL != type)
+		{
+			Value typeEl(kStringType);
+			typeEl.SetString(type, d.GetAllocator());
+			d.AddMember("type", typeEl, d.GetAllocator());
+		}
 
 		Value paramEl(kObjectType);
 		for (auto p = params.begin(); p != params.end(); ++p)
@@ -413,7 +420,7 @@ std::string CRpcJsonParser::listToString(std::list<std::map<std::string, std::st
 	return val;
 }
 
-std::string CRpcJsonParser::mergeCommand(const char* command, uint64_t callId, const char* param)
+std::string CRpcJsonParser::mergeCommand(const char* command, uint64_t callId, const char* param, const char* type)
 {
 	std::string str;
 	try
@@ -434,6 +441,12 @@ std::string CRpcJsonParser::mergeCommand(const char* command, uint64_t callId, c
 
 		dOut.AddMember("param", d, dOut.GetAllocator());
 
+		if (NULL != type)
+		{
+			Value typeEl(kStringType);
+			typeEl.SetString(StringRef(type), d.GetAllocator());
+			dOut.AddMember("type", typeEl, d.GetAllocator());
+		}
 
 		StringBuffer sb;
 		Writer<StringBuffer> writer(sb);

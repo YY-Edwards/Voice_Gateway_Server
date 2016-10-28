@@ -519,7 +519,7 @@ void CTextMsg::RecvMsg()
 				args["Source"] = FieldValue(radioID);
 				args["contents"] = FieldValue(message.c_str());
 				args["type"] = FieldValue("Private");
-				std::string callJsonStr = CRpcJsonParser::buildCall("message", ++seq, args);
+				std::string callJsonStr = CRpcJsonParser::buildCall("message", ++seq, args,"radio");
 				if (pRemotePeer != NULL)
 				{
 					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());

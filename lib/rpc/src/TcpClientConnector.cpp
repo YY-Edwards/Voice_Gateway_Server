@@ -227,9 +227,11 @@ int CTcpClientConnector::connect(const char* connStr)
 
 			if (NULL != m_pRemoteServer)
 			{
-				m_pRemoteServer = new CRemoteServer();
-				((CRemoteServer*)m_pRemoteServer)->s = m_clientSocket;
+				delete m_pRemoteServer;
 			}
+
+			m_pRemoteServer = new CRemoteServer();
+			((CRemoteServer*)m_pRemoteServer)->s = m_clientSocket;
 
 			break;
 		}
