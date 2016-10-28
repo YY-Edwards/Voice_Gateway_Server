@@ -214,6 +214,10 @@ int CTcpClientConnector::connect(const char* connStr)
 			}
 
 			m_nConnected = Connected;
+			if (nullptr != m_fnConnectEvent)
+			{
+				m_fnConnectEvent();
+			}
 			break;
 		}
 	}

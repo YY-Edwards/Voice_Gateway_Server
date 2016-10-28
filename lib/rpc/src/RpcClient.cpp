@@ -30,6 +30,13 @@ int CRpcClient::start(const char* connStr)
 {
 	m_pConnector = new CTcpClientConnector();
 	m_pConnector->setReceiveDataHandler(this);
+	m_pConnector->setConnectEvent([&](){
+		if (m_lstRequest.size() > 0)
+		{
+			auto first = m_lstRequest.begin();
+			send((*first)->m_strRequest.c_str(), (*first)->m_strRequest.size());
+		}
+	});
 	m_pConnector->start(connStr);
 
 	// start maintain thread
@@ -61,6 +68,7 @@ int CRpcClient::start(const char* connStr)
 					if (m_lstRequest.size() > 0)
 					{
 						auto first = m_lstRequest.begin();
+						(*first)->nTimeoutSeconds--;
 						if ((*first)->nTimeoutSeconds < 0)
 						{
 							// command timeout
