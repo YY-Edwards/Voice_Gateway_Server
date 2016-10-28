@@ -138,7 +138,13 @@
     <ClInclude Include="MsgAction.h">
       <Filter>serverAction</Filter>
     </ClInclude>
-    <ClInclude Include="recvMessageAction.h">
+    <ClInclude Include="RecvGpsAction.h">
+      <Filter>clientAction</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvArsAction.h">
+      <Filter>clientAction</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvMessageAction.h">
       <Filter>clientAction</Filter>
     </ClInclude>
   </ItemGroup>

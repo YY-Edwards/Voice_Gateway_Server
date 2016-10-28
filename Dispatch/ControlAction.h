@@ -5,6 +5,10 @@
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
 
+#define  CHECK    0
+#define  MONITOR  1
+#define  OFF      2
+#define  ON       3
 
 void  controlAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
@@ -13,35 +17,38 @@ void  controlAction(CRemotePeer* pRemote, const std::string& param, uint64_t cal
 	try{
 		Document d;
 		d.Parse(param.c_str());
-		if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
+		TcpClient * client = new TcpClient();
+		SOCKET s = client->s = ((TcpClient *)pRemote)->s;
+		client->addr = ((TcpClient *)pRemote)->addr;
+		if (m_dispatchOperate.find(s) != m_dispatchOperate.end())
 		{
 			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
-			string opterateType;
+			int  opterateType;
 			int id;
-			if (d.HasMember("Type") && d["Type"].IsString())
+			if (d.HasMember("Type") && d["Type"].IsInt())
 			{
-				opterateType = d["Type"].GetString();
+				opterateType = d["Type"].GetInt();
 			}
 			if (d.HasMember("Target") && d["Target"].IsInt())
 			{
 				id = d["Target"].GetInt();
 			}
-			if (opterateType == "Startup")
+			if (opterateType == ON)
 			{
-				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, REMOTE_OPEN, "", "", "", id, _T(""), 0, 0, callId);
+				m_dispatchOperate[s]->AddAllCommand(client, s,REMOTE_OPEN, "", "", "", id, _T(""), 0, 0, callId);
 			}
-			else if (opterateType == "Off")
+			else if (opterateType == OFF)
 			{
-				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, REMOTE_CLOSE, "", "", "", id, _T(""), 0, 0, callId);
+				m_dispatchOperate[s]->AddAllCommand(client,s, REMOTE_CLOSE, "", "", "", id, _T(""), 0, 0, callId);
 			}
-			else if (opterateType == "Check")
+			else if (opterateType == CHECK)
 			{
-				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, CHECK_RADIO_ONLINE, "", "", "", id, _T(""), 0, 0, callId);
+				m_dispatchOperate[s]->AddAllCommand(client,s, CHECK_RADIO_ONLINE, "", "", "", id, _T(""), 0, 0, callId);
 			}
-			else if (opterateType == "Wiretap")
+			else if (opterateType == MONITOR)
 			{
-				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, REMOTE_MONITOR, "", "", "", id, _T(""), 0, 0, callId);
+				m_dispatchOperate[s]->AddAllCommand(client,s, REMOTE_MONITOR, "", "", "", id, _T(""), 0, 0, callId);
 			}
 		}
 		else

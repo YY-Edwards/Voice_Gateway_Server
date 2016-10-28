@@ -169,7 +169,7 @@ void CRadioARS::RecvData()
 		ArgumentType args;
 		args["Target"] = FieldValue(stringId.c_str());
 		args["IsOnline"] = FieldValue("True");
-		std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, args);
+		std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, args,"radio");
 		if (pRemotePeer != NULL)
 		{
 			pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
@@ -186,7 +186,7 @@ void CRadioARS::RecvData()
 			ArgumentType args;
 			args["Target"] = FieldValue( stringId.c_str());
 			args["IsOnline"] = FieldValue("False");
-			std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", ++seq, args);
+			std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", ++seq, args, "radio");
 			if (pRemotePeer != NULL)
 			{
 				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());

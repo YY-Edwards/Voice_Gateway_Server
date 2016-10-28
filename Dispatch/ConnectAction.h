@@ -4,7 +4,7 @@
 #include "../lib/type.h"
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
-
+#include "../lib/rpc/include/TcpServer.h"
 
 void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
@@ -14,6 +14,10 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 	try{
 		std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "sucess", ArgumentType());
 		pRemote->sendResponse(strResp.c_str(), strResp.size());
+
+		TcpClient * client = new TcpClient();
+		SOCKET s = client->s = ((TcpClient *)pRemote)->s;
+		client->addr = ((TcpClient *)pRemote)->addr;
 
 		string radioIP = "";
 		string mnisIP = "";
@@ -56,8 +60,8 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 				}
 			}
 			DispatchOperate  * pDispatchOperate = new DispatchOperate();
-			m_dispatchOperate[pRemote] = pDispatchOperate;
-			m_dispatchOperate[pRemote]->AddAllCommand(pRemote, RADIO_CONNECT, radioIP, mnisIP, "", 0, _T(""), 0, 0, callId);
+			m_dispatchOperate[s] = pDispatchOperate;
+			m_dispatchOperate[s]->AddAllCommand(client,s, RADIO_CONNECT, radioIP, mnisIP, "", 0, _T(""), 0, 0, callId);
 		}
 
 	}

@@ -14,7 +14,10 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 	try{
 		Document d;
 		d.Parse(param.c_str());
-		if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
+		TcpClient * client = new TcpClient();
+		SOCKET s = client->s = ((TcpClient *)pRemote)->s;
+		client->addr = ((TcpClient *)pRemote)->addr;
+		if (m_dispatchOperate.find(s) != m_dispatchOperate.end())
 		{
 			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
@@ -44,22 +47,22 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 				switch (querymode)
 				{
 				case GPS_IMME_COMM:
-					m_dispatchOperate[pRemote]->AddAllCommand(pRemote, GPS_IMME_COMM, "", "", "", id, _T(""), cycle, querymode, callId);
+					m_dispatchOperate[s]->AddAllCommand(client,s, GPS_IMME_COMM, "", "", "", id, _T(""), cycle, querymode, callId);
 					break;
 				case GPS_TRIGG_COMM:
-					m_dispatchOperate[pRemote]->AddAllCommand(pRemote, GPS_TRIGG_COMM, "", "", "", id, _T(""), cycle, querymode, callId);
+					m_dispatchOperate[s]->AddAllCommand(client,s, GPS_TRIGG_COMM, "", "", "", id, _T(""), cycle, querymode, callId);
 					break;
 				case GPS_IMME_CSBK:
-					m_dispatchOperate[pRemote]->AddAllCommand(pRemote, GPS_IMME_CSBK, "", "", "", id, _T(""), cycle, querymode, callId);
+					m_dispatchOperate[s]->AddAllCommand(client, s,GPS_IMME_CSBK, "", "", "", id, _T(""), cycle, querymode, callId);
 					break;
 				case GPS_TRIGG_CSBK:
-					m_dispatchOperate[pRemote]->AddAllCommand(pRemote, GPS_TRIGG_CSBK, "", "", "", id, _T(""), cycle, querymode, callId);
+					m_dispatchOperate[s]->AddAllCommand(client,s, GPS_TRIGG_CSBK, "", "", "", id, _T(""), cycle, querymode, callId);
 					break;
 				case GPS_IMME_CSBK_EGPS:
-					m_dispatchOperate[pRemote]->AddAllCommand(pRemote, GPS_IMME_CSBK_EGPS, "", "", "", id, _T(""), cycle, querymode, callId);
+					m_dispatchOperate[s]->AddAllCommand(client,s, GPS_IMME_CSBK_EGPS, "", "", "", id, _T(""), cycle, querymode, callId);
 					break;
 				case GPS_TRIGG_CSBK_EGPS:
-					m_dispatchOperate[pRemote]->AddAllCommand(pRemote, GPS_TRIGG_CSBK_EGPS, "", "", "", id, _T(""), cycle, querymode, callId);
+					m_dispatchOperate[s]->AddAllCommand(client,s, GPS_TRIGG_CSBK_EGPS, "", "", "", id, _T(""), cycle, querymode, callId);
 					break;
 				default:
 #if DEBUG_LOG
@@ -70,7 +73,7 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			}
 			else  if (operate == STOP)
 			{
-				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, STOP_QUERY_GPS, "", "", "", id, _T(""), 0, 0, callId);
+				m_dispatchOperate[s]->AddAllCommand(client,s, STOP_QUERY_GPS, "", "", "", id, _T(""), 0, 0, callId);
 			}
 			else
 			{

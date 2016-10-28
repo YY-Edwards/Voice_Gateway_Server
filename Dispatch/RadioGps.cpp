@@ -521,7 +521,7 @@ void CRadioGps::RecvData()
 			gps.setKeyVal("lat", FieldValue(strLat));
 			gps.setKeyVal("valid", FieldValue(strValid));
 			gps.setKeyVal("speed", FieldValue(strSpeed));
-			gps.setKeyVal("date", FieldValue(strTime.c_str()));
+			//gps.setKeyVal("date", FieldValue(strTime.c_str()));
 			FieldValue result(FieldValue::TObject);
 			result.setKeyVal("Source", FieldValue(radioID));
 			result.setKeyVal("gps",gps);
@@ -530,7 +530,7 @@ void CRadioGps::RecvData()
 			if (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report)
 			{
 				args["contents"] = result;
-				std::string callJsonStr = CRpcJsonParser::buildCall("SendGps", ++seq, args);
+				std::string callJsonStr = CRpcJsonParser::buildCall("SendGps", ++seq, args, "radio");
 				if (pRemotePeer != NULL)
 				{
 					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
@@ -540,7 +540,7 @@ void CRadioGps::RecvData()
 			else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report)
 			{
 				args["param"] = result;
-				std::string callJsonStr = CRpcJsonParser::buildCall("SendGps", ++seq, args);
+				std::string callJsonStr = CRpcJsonParser::buildCall("SendGps", ++seq, args, "radio");
 				if (pRemotePeer != NULL)
 				{
 					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());

@@ -5,7 +5,13 @@
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
 
-map<CRemotePeer *, DispatchOperate*>  m_dispatchOperate;
+map<SOCKET, DispatchOperate*>  m_dispatchOperate;
+#define START                   0
+#define STOP                    1
+#define NONE                    0
+#define ALL                     1
+#define GROUP                   2
+#define PRIVATE                 3
 
 void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
@@ -14,7 +20,10 @@ void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 	try{
 		Document d;
 		d.Parse(param.c_str());
-		if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
+		TcpClient * client = new TcpClient();
+		SOCKET s = client->s = ((TcpClient *)pRemote)->s;
+		client->addr = ((TcpClient *)pRemote)->addr;
+		if (m_dispatchOperate.find(s) != m_dispatchOperate.end())
 		{
 			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
@@ -38,15 +47,15 @@ void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 			{
 				if (opterateType == ALL)
 				{
-					m_dispatchOperate[pRemote]->AddAllCommand(pRemote, ALL_CALL, "", "", "", id, _T(""), 0, 0, callId);
+					m_dispatchOperate[s]->AddAllCommand(client,s, ALL_CALL, "", "", "", id, _T(""), 0, 0, callId);
 				}
 				else if (opterateType == GROUP)
 				{
-					m_dispatchOperate[pRemote]->AddAllCommand(pRemote, GROUP_CALL, "", "", "", id, _T(""), 0, 0, callId);
+					m_dispatchOperate[s]->AddAllCommand(client, s,GROUP_CALL, "", "", "", id, _T(""), 0, 0, callId);
 				}
 				else if (opterateType == PRIVATE)
 				{
-					m_dispatchOperate[pRemote]->AddAllCommand(pRemote, PRIVATE_CALL, "", "", "", id, _T(""), 0, 0, callId);
+					m_dispatchOperate[s]->AddAllCommand(client, s,PRIVATE_CALL, "", "", "", id, _T(""), 0, 0, callId);
 				}
 				else
 				{
@@ -57,7 +66,7 @@ void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 			}
 			else  if (operate == STOP)
 			{
-				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, STOP_CALL, "", "", "", id, _T(""), 0, 0, callId);
+				m_dispatchOperate[s]->AddAllCommand(client,s, STOP_CALL, "", "", "", id, _T(""), 0, 0, callId);
 			}
 			else
 			{

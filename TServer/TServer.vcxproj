@@ -100,7 +100,9 @@
     <ClInclude Include="GetOverTurnGpsAction.h" />
     <ClInclude Include="GroupCallAction.h" />
     <ClInclude Include="RadioCheckAction.h" />
-    <ClInclude Include="recvMessageAction.h" />
+    <ClInclude Include="RecvArsAction.h" />
+    <ClInclude Include="RecvGpsAction.h" />
+    <ClInclude Include="RecvMessageAction.h" />
     <ClInclude Include="RemotePowerOffAction.h" />
     <ClInclude Include="RemotePowerOnAction.h" />
     <ClInclude Include="SendGroupSmsAction.h" />

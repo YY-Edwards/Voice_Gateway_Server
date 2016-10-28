@@ -36,7 +36,9 @@
 #include "GpsAction.h"
 #include "MsgAction.h"
 
-#include "recvMessageAction.h"
+#include "RecvMessageAction.h"
+#include "RecvArsAction.h"
+#include "RecvGpsAction.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -88,6 +90,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	serverActions["message"] = msgAction;
 
 	clientActions["message"] = recvMsgAction;
+	clientActions["SendArs"] = recvArsAction;
+	clientActions["SendGps"] = recvGpsAction;
 
 	//CBroker::instance()->startLogClient();
 	CBroker::instance()->startRadioClient(clientActions);

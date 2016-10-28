@@ -13,7 +13,10 @@ void  msgAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 	try{
 		Document d;
 		d.Parse(param.c_str());
-		if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
+		TcpClient * client = new TcpClient();
+		SOCKET s = client->s = ((TcpClient *)pRemote)->s;
+		client->addr = ((TcpClient *)pRemote)->addr;
+		if (m_dispatchOperate.find(s) != m_dispatchOperate.end())
 		{
 			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
@@ -37,11 +40,11 @@ void  msgAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			MultiByteToWideChar(CP_ACP, 0, msg.c_str(), -1, text, msgSize);
 			if (opterateType == GROUP)
 			{
-				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, SEND_GROUP_MSG, "", "", "", id, text, 0, 0, callId);
+				m_dispatchOperate[s]->AddAllCommand(client,s, SEND_GROUP_MSG, "", "", "", id, text, 0, 0, callId);
 			}
 			else if (opterateType == PRIVATE)
 			{
-				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, SEND_PRIVATE_MSG, "", "", "", id, text, 0, 0, callId);
+				m_dispatchOperate[s]->AddAllCommand(client,s, SEND_PRIVATE_MSG, "", "", "", id, text, 0, 0, callId);
 			}
 			else
 			{

@@ -9,6 +9,7 @@
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
 #pragma once
+extern  bool udpIsConnect;
 class DispatchOperate
 {
 public:
@@ -19,7 +20,7 @@ public:
 	static DWORD WINAPI TimeOutThread(LPVOID lpParam);
 	static DWORD WINAPI WorkThread(LPVOID lpParam);
 
-	void AddAllCommand(CRemotePeer* pRemote, int command, string radioIP, string mnisIP, string gpsIP, int id,wchar_t* text, int cycle, int querymode, int callId);
+	void AddAllCommand(CRemotePeer* pRemote,SOCKET s, int command, string radioIP, string mnisIP, string gpsIP, int id,wchar_t* text, int cycle, int querymode, int callId);
 private:
 	void WorkThreadFunc();
 	void TimeOut();
