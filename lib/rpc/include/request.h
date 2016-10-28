@@ -7,6 +7,7 @@
 typedef unsigned long long uint64_t;
 #endif
 
+#define				PingTime				30			// 30 seconds
 
 class CRequest{
 public:

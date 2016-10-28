@@ -39,8 +39,10 @@ int CTcpClientConnector::start(const char* connStr)
 #endif
 	// start net monitor thread
 	m_nClientRunning = ClientRunning;
-	m_recvThread = CreateThread(NULL, 0, NetThread, this, 0, NULL);
 
+	connect(connStr);
+
+	m_recvThread = CreateThread(NULL, 0, NetThread, this, 0, NULL);
 	return 0;
 }
 

@@ -47,7 +47,7 @@ int CRpcClient::start(const char* connStr)
 					continue;
 				}
 
-				if (++nSecondCount > 30){
+				if (++nSecondCount > PingTime){
 					nSecondCount = 0;
 					// send ping command
 					uint64_t callId = getCallId();
@@ -189,7 +189,7 @@ int CRpcClient::sendRequest(const char* pRequest,
 {
 	int ret = -1;
 
-	if (NULL == pRequest)
+	if (NULL == pRequest || !m_pConnector->isConnected())
 	{
 		return ret;
 	}
