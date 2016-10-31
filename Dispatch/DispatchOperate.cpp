@@ -649,7 +649,7 @@ void DispatchOperate::AddAllCommand(CRemotePeer* pRemote,SOCKET s, int command, 
 	allCommandList.push_back(m_allCommand);
 	commandList.push_back(m_allCommand);
 
-	seq = callId;
+	seq = callId +1;
 }
 DWORD WINAPI DispatchOperate::TimeOutThread(LPVOID lpParam)
 {

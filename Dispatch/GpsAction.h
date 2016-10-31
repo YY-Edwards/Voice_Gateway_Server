@@ -70,10 +70,29 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 #endif
 					break;
 				}
+				char *buf = new char();
+				itoa(id, buf, 10); 
+				if (radioStatus.find(buf) == radioStatus.end())
+				{
+					status st;
+					st.gpsQueryMode = querymode;
+					radioStatus[buf] = st;
+				}
+				else
+				{
+					radioStatus[buf].gpsQueryMode = querymode;
+				}
 			}
 			else  if (operate == STOP)
 			{
-				m_dispatchOperate[s]->AddAllCommand(client,s, STOP_QUERY_GPS, "", "", "", id, _T(""), 0, 0, callId);
+				char *buf = new char();
+				itoa(id, buf, 10);
+				if (radioStatus.find(buf) != radioStatus.end())
+				{
+					querymode = radioStatus[buf].gpsQueryMode;
+				}
+			
+				m_dispatchOperate[s]->AddAllCommand(client, s, STOP_QUERY_GPS, "", "", "", id, _T(""), 0, querymode, callId);
 			}
 			else
 			{
@@ -81,6 +100,7 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 				LOG(INFO) << "Operate 参数不对 ";
 #endif
 			}
+		
 		}
 		else
 		{

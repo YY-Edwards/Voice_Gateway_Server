@@ -811,22 +811,35 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					{
 						if (0x0010 == check_result/* & 0x00FF)*/)
 						{
-					
 							// 1:在线
 							ArgumentType args;
 							args["id"] = FieldValue(stringId.c_str());
 							std::string callJsonStrRes = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
-							ArgumentType arg;
-							arg["Target"] = FieldValue(stringId.c_str());
-							arg["IsOnline"] = FieldValue("True");
-							std::string callJsonStrCall = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
 							if (pRemotePeer != NULL && pRemotePeer == it->pRemote)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-								pRemotePeer->sendResponse((const char *)callJsonStrCall.c_str(), callJsonStrCall.size());
 								it = allCommandList.erase(it);
-							
-								
+								//查看状态，状态发生改变时，通知特Tserver
+								ArgumentType arg;
+								arg["Target"] = FieldValue(stringId.c_str());
+								if (radioStatus.find(stringId) == radioStatus.end())
+								{
+									status st;
+									st.status = 1;
+									radioStatus[stringId] = st;
+									arg["IsOnline"] = FieldValue("True");
+									std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								}
+								else if (radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
+								{
+									radioStatus[stringId].status = RADIO_STATUS_ONLINE;
+									
+									arg["IsOnline"] = FieldValue("True");
+									std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								}
+
 #if DEBUG_LOG
 								LOG(INFO) << "在线";
 #endif
@@ -836,22 +849,37 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						}
 						else if (0x0011 == check_result)
 						{
-					
-					
+
+
 							rmtflag = false;
 							//0:不在线
 							ArgumentType args;
 							args["id"] = FieldValue(stringId.c_str());
 							std::string callJsonStrRes = CRpcJsonParser::buildResponse("0", it->callId, 0, "1", args);
-							ArgumentType arg;
-							arg["Target"] = FieldValue(stringId.c_str());
-							arg["IsOnline"] = FieldValue("false");
-							std::string callJsonStrCall = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-								pRemotePeer->sendResponse((const char *)callJsonStrCall.c_str(), callJsonStrCall.size());
 								it = allCommandList.erase(it);
+								//查看状态，状态发生改变时，通知特Tserver
+								ArgumentType arg;
+								arg["Target"] = FieldValue(stringId.c_str());
+								if (radioStatus.find(stringId) == radioStatus.end())
+								{
+									status st;
+									st.status = 0;
+									radioStatus[stringId] = st;
+									arg["IsOnline"] = FieldValue("False");
+									std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								}
+								else if (radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
+								{
+									radioStatus[stringId].status = RADIO_STATUS_ONLINE;
+									
+									arg["IsOnline"] = FieldValue("False");
+									std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								}
 #if DEBUG_LOG
 								LOG(INFO) << "离线";
 #endif
@@ -869,16 +897,11 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 
 							rmtflag = true;                                   //成功    
 							ArgumentType args;
-							args["id"] = FieldValue( stringId.c_str());
+							args["id"] = FieldValue(stringId.c_str());
 							std::string callJsonStrRes = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
-							ArgumentType arg;
-							arg["Target"] = FieldValue(stringId.c_str());
-							arg["IsOnline"] = FieldValue("True");
-							std::string callJsonStrCall = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-								pRemotePeer->sendResponse((const char *)callJsonStrCall.c_str(), callJsonStrCall.size());
 								it = allCommandList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "遥闭成功";
@@ -889,18 +912,13 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						}
 						else if (0x0111 == check_result)
 						{
-							rmtflag = false;                               //失败
+							//rmtflag = false;                               //失败
 							ArgumentType args;
-							args["id"] = FieldValue( stringId.c_str());
+							args["id"] = FieldValue(stringId.c_str());
 							std::string callJsonStrRes = CRpcJsonParser::buildResponse("0", it->callId, 0, "1", args);
-						/*	ArgumentType arg;
-							arg["Target"] = FieldValue(stringId.c_str());
-							arg["IsOnline"] = FieldValue("True");
-							std::string callJsonStrCall = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");*/
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-								//pRemotePeer->sendResponse((const char *)callJsonStrCall.c_str(), callJsonStrCall.size());
 								it = allCommandList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "遥闭失败";
@@ -918,17 +936,29 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						{
 							rmtflag = true;                                  //成功
 							ArgumentType args;
-							args["id"] = FieldValue( stringId.c_str());
+							args["id"] = FieldValue(stringId.c_str());
 							std::string callJsonStrRes = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
-							ArgumentType arg;
-							arg["Target"] = FieldValue(stringId.c_str());
-							arg["IsOnline"] = FieldValue("True");
-							std::string callJsonStrCall = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-								pRemotePeer->sendResponse((const char *)callJsonStrCall.c_str(), callJsonStrCall.size());
 								it = allCommandList.erase(it);
+
+								//查看状态，状态发生改变时，通知特Tserver
+								if (radioStatus.find(stringId) == radioStatus.end())
+								{
+									status st;
+									st.status = RADIO_STATUS_ONLINE;
+									radioStatus[stringId] = st;
+								}
+								else if (radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
+								{
+									radioStatus[stringId].status = RADIO_STATUS_ONLINE;
+									ArgumentType arg;
+									arg["Target"] = FieldValue(stringId.c_str());
+									arg["IsOnline"] = FieldValue("True");
+									std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								}
 #if DEBUG_LOG
 								LOG(INFO) << "遥开成功";
 #endif
@@ -939,20 +969,14 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						}
 						else if (0x0211 == check_result)
 						{
-							rmtflag = FALSE;                                //失败
+							//rmtflag = FALSE;                                //失败
 							ArgumentType args;
-							args["id"] = FieldValue( stringId.c_str());
+							args["id"] = FieldValue(stringId.c_str());
 							std::string callJsonStrRes = CRpcJsonParser::buildResponse("0", it->callId, 1, "1", args);
-							/*ArgumentType arg;
-							arg["Target"] = FieldValue(stringId.c_str());
-							arg["IsOnline"] = FieldValue("True");
-							std::string callJsonStrCall = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");*/
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
 
 								pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-								/*pRemotePeer->sendResponse((const char *)callJsonStrCall.c_str(), callJsonStrCall.size());*/
-
 								it = allCommandList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "遥开失败";
@@ -970,17 +994,29 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						{
 							rmtflag = true;                                   //成功
 							ArgumentType args;
-							args["id"] = FieldValue( stringId.c_str());
+							args["id"] = FieldValue(stringId.c_str());
 							std::string callJsonStrRes = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
-							ArgumentType arg;
-							arg["Target"] = FieldValue(stringId.c_str());
-							arg["IsOnline"] = FieldValue("True");
-							std::string callJsonStrCall = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-								std::string callJsonStrCall = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
 								it = allCommandList.erase(it);
+
+								//查看状态，状态发生改变时，通知特Tserver
+								if (radioStatus.find(stringId) == radioStatus.end())
+								{
+									status st;
+									st.status = RADIO_STATUS_ONLINE;
+									radioStatus[stringId] = st;
+								}
+								else if (radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
+								{
+									radioStatus[stringId].status = RADIO_STATUS_ONLINE;
+									ArgumentType arg;
+									arg["Target"] = FieldValue(stringId.c_str());
+									arg["IsOnline"] = FieldValue("True");
+									std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+								}
 #if DEBUG_LOG
 								LOG(INFO) << "远程监听成功";
 #endif
@@ -990,9 +1026,9 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						}
 						else if (0x0311 == check_result)
 						{
-							rmtflag = false;                                   // 失败
+							//rmtflag = false;                                   // 失败
 							ArgumentType args;
-							args["id"] = FieldValue( stringId.c_str());
+							args["id"] = FieldValue(stringId.c_str());
 							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 0, "1", args);
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 							{
@@ -1006,30 +1042,9 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 
 						}
 
-						
+
 						break;
 					}
-					char*  buf = new char();
-					ltoa(rmt_addr, buf, 10);
-					if (radioStatus.find(buf) == radioStatus.end())
-					{
-						status st;
-						st.status = 0;
-					}
-					else
-					{
-
-						if (rmtflag)
-						{ 
-							radioStatus[buf].status = 0;              //online
-						}
-						else
-						{
-							radioStatus[buf].status = 1;                //offline
-						}
-						
-					}
-					delete buf;
 				}
 				
 			}
@@ -1077,15 +1092,27 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 				{
 					ArgumentType args;
 					std::string callJsonStrRes = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", args);
-					ArgumentType arg;
-					arg["Target"] = FieldValue(stringId.c_str());
-					arg["IsOnline"] = FieldValue("True");
-					std::string callJsonStrCall = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+			
 					if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 					{
 						pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-						std::string callJsonStrCall = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
 						it = allCommandList.erase(it);
+						//查看状态，状态发生改变时，通知特Tserver
+						if (radioStatus.find(stringId) == radioStatus.end())
+						{
+							status st;
+							st.status = RADIO_STATUS_ONLINE;
+							radioStatus[stringId] = st;
+						}
+						else if (radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
+						{
+							radioStatus[stringId].status = RADIO_STATUS_ONLINE;
+							ArgumentType arg;
+							arg["Target"] = FieldValue(stringId.c_str());
+							arg["IsOnline"] = FieldValue("True");
+							std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+							pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+						}
 						break;
 					}
 					break;

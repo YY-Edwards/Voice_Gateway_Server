@@ -513,40 +513,90 @@ void CRadioGps::RecvData()
 			sprintf_s(strLat, 512, "%d", lat);
 			sprintf_s(strSpeed, 512, "%d", speed);
 			sprintf_s(strValid, 512, "%d", valid);
-
-
+			BOOL result = false;
+			if (strValid == "0")
+			{
+				result = false;                      //无效
+			}
+			else if (strValid == "1")
+			{
+				result = true;                     //有效
+			}
 			ArgumentType args;
-			FieldValue gps(FieldValue::TObject);
-			gps.setKeyVal("lon", FieldValue(strLon));
-			gps.setKeyVal("lat", FieldValue(strLat));
-			gps.setKeyVal("valid", FieldValue(strValid));
-			gps.setKeyVal("speed", FieldValue(strSpeed));
+			FieldValue Gps(FieldValue::TObject);
+			Gps.setKeyVal("Lon", FieldValue(strLon));
+			Gps.setKeyVal("Lat", FieldValue(strLat));
+			Gps.setKeyVal("Valid", FieldValue(result));
+			Gps.setKeyVal("Speed", FieldValue(strSpeed));
 			//gps.setKeyVal("date", FieldValue(strTime.c_str()));
-			FieldValue result(FieldValue::TObject);
-			result.setKeyVal("Source", FieldValue(radioID));
-			result.setKeyVal("gps",gps);
-			
-
-			if (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report)
+			//FieldValue result(FieldValue::TObject);
+			//result.setKeyVal("Source", FieldValue(radioID));
+			//result.setKeyVal("Gps",Gps);
+			args["Source"] = radioID;
+			args["Gps"] = Gps;
+			//if (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report)
 			{
-				args["contents"] = result;
-				std::string callJsonStr = CRpcJsonParser::buildCall("SendGps", ++seq, args, "radio");
-				if (pRemotePeer != NULL)
+				//args["contents"] = result;
+				list<AllCommand>::iterator it;
+				for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
 				{
-					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+					if (it->radioId == atoi(radioID))
+					{
+						std::string callJsonStrRes = CRpcJsonParser::buildCall("SendGps", it->callId, args, "radio");
+						if (pRemotePeer != NULL)
+						{
+							pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
+							it = allCommandList.erase(it);
+							//查看状态，状态发生改变时，通知特Tserver
+							ArgumentType arg;
+							arg["Target"] = FieldValue(radioID);
+							if (radioStatus.find(radioID) == radioStatus.end())
+							{
+								status st;
+								st.status = RADIO_STATUS_ONLINE;
+								radioStatus[radioID] = st;
+								arg["IsOnline"] = FieldValue("True");
+								std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 
+							}
+							else if (radioStatus[radioID].status == RADIO_STATUS_OFFLINE)
+							{
+								radioStatus[radioID].status = RADIO_STATUS_ONLINE;
+								arg["IsOnline"] = FieldValue("True");
+								std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+							}
+							break;
+						}
+					}
 				}
+				
 			}
-			else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report)
+			//else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report)
+			//{
+			//	//args["param"] = result;
+			//	std::string callJsonStrRes = CRpcJsonParser::buildCall("SendGps", ++seq, args, "radio")；
+			//	if (pRemotePeer != NULL)
+			//	{
+			//		pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
+			//		pRemotePeer->sendResponse((const char *)callJsonStrCall.c_str(), callJsonStrCall.size());
+			//		/*it = allCommandList.erase(it);
+			//		break;*/
+			//	}
+			//}
+
+			if (radioStatus.find(radioID) == radioStatus.end())
 			{
-				args["param"] = result;
-				std::string callJsonStr = CRpcJsonParser::buildCall("SendGps", ++seq, args, "radio");
-				if (pRemotePeer != NULL)
-				{
-					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-
-				}
+				status st;
+				st.status = 0;
+				radioStatus[radioID] = st;
 			}
+			else
+			{
+				radioStatus[radioID].status = 0;
+			}
+
 			/*args["id"] = radioID;
 			args["valid"] = strValid;
 			args["lon"] = strLon;
