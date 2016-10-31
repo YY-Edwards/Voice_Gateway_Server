@@ -811,6 +811,12 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					{
 						if (0x0010 == check_result/* & 0x00FF)*/)
 						{
+							char buf[MAX_MESSAGE_LENGTH];
+						/*	if (radioStatus.find(ltoa(rmt_addr,buf,10)) != radioStatus.end)
+							{
+
+							}*/
+
 							rmtflag = TRUE;
 							// 1:ÔÚÏß
 							ArgumentType args;

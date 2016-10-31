@@ -1,9 +1,9 @@
 #include "stdafx.h"
-
 int seq;
 list <AllCommand>allCommandList;
 std::mutex m_allCommandListLocker;
-CRITICAL_SECTION cs;bool isUdpConnect = false;
+bool isUdpConnect = false;
+map <string, status> radioStatus;
 DispatchOperate::DispatchOperate()
 {
 	m_queryMode = -1;
