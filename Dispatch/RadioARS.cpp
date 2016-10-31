@@ -176,7 +176,7 @@ void CRadioARS::RecvData()
 			if (radioStatus.find(stringId) == radioStatus.end())
 			{
 				status st;
-				st.status = 1;
+				st.status = RADIO_STATUS_ONLINE;
 				radioStatus[stringId] = st;
 				arg["IsOnline"] = FieldValue("True");
 				std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
@@ -209,7 +209,7 @@ void CRadioARS::RecvData()
 			if (radioStatus.find(stringId) == radioStatus.end())
 			{
 				status st;
-				st.status = 1;
+				st.status = RADIO_STATUS_OFFLINE;
 				radioStatus[stringId] = st;
 				arg["IsOnline"] = FieldValue("False");
 				std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
@@ -226,23 +226,5 @@ void CRadioARS::RecvData()
 				seq++;
 			}
 		}
-	}
-	if (radioStatus.find(stringId.c_str()) == radioStatus.end())
-	{
-		status st;
-		st.status = 0;
-		radioStatus[stringId.c_str()] = st;
-	}
-	else
-	{
-		if (ars_code == 0x31)
-		{
-			radioStatus[stringId.c_str()].status = 1;
-		}
-		else if (xcmp_opcode == 0xf020 || xcmp_opcode == 0xf040)
-		{
-			radioStatus[stringId.c_str()].status = 0;
-		}
-		
 	}
 }
