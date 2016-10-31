@@ -79,12 +79,8 @@ int CRpcClient::start(const char* connStr)
 							delete (*first);
 							m_lstRequest.pop_front();
 
-							// TODO: send next command
-							if (m_lstRequest.size() > 0)
-							{
-								auto head = m_lstRequest.begin();
-								this->send((*head)->m_strRequest.c_str(), (*head)->m_strRequest.size());
-							}
+							// send next command
+							sendNextCommands();
 						}
 					}
 				}
@@ -137,6 +133,9 @@ int CRpcClient::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 
 					delete *itr;
 					m_lstRequest.erase(itr);
+
+					// send next command
+					sendNextCommands();
 					break;
 				}
 			}
@@ -173,6 +172,26 @@ int CRpcClient::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 	return 0;
 }
 
+int CRpcClient::sendNextCommands()
+{
+	for (auto j = m_lstRequest.begin(); j != m_lstRequest.end();)
+	{
+		if ((*j)->m_bNeedResponse)
+		{
+			this->send((*j)->m_strRequest.c_str(), (*j)->m_strRequest.size());
+			break;
+		}
+		else
+		{
+			this->send((*j)->m_strRequest.c_str(), (*j)->m_strRequest.size());
+			delete *j;
+			j = m_lstRequest.erase(j);
+		}
+	}
+
+	return 0;
+}
+
 void CRpcClient::setIncomeDataHandler(IncomeDataHandler handler)
 {
 	m_fnIncomeHandler = handler;
@@ -193,9 +212,10 @@ int CRpcClient::sendRequest(const char* pRequest,
 						void* data,
 						std::function<void(const char* pResponse, void*)> success,
 						std::function<void(const char* pResponse, void*)> failed,
-						int nTimeoutSeconds)
+						int nTimeoutSeconds,
+						bool bNeedResponse)
 {
-	int ret = -1;
+	int ret = 0;
 
 	if (NULL == pRequest || !m_pConnector->isConnected())
 	{
@@ -211,13 +231,22 @@ int CRpcClient::sendRequest(const char* pRequest,
 	pReq->failed = failed;
 	pReq->data = data;
 	pReq->nTimeoutSeconds = nTimeoutSeconds;
+	pReq->m_bNeedResponse = bNeedResponse;
 
 	if (0 == m_lstRequest.size())
 	{
 		// send request immediately
 		ret = this->send(pReq->m_strRequest.c_str(), pReq->m_strRequest.size());
+		if (bNeedResponse)
+		{
+			m_lstRequest.push_back(pReq);
+		}
 	}
-	m_lstRequest.push_back(pReq);
+	else
+	{
+		m_lstRequest.push_back(pReq);
+	}
+	
 
 	return ret;
 }

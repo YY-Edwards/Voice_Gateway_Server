@@ -9,6 +9,7 @@
 CRpcServer::CRpcServer()
 	: m_pConnector(NULL)
 	, m_thdPool(NULL)
+	, m_bQuit(false)
 {
 }
 
@@ -71,10 +72,26 @@ int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 					m_Clients[pRemote]->m_lstRequest.pop_front();
 
 					// send next command
-					if (m_Clients[pRemote]->m_lstRequest.size() > 0){
-						auto head = m_Clients[pRemote]->m_lstRequest.front();
-						pRemote->sendCommand(head->m_strRequest.c_str(), head->m_strRequest.size());
+					for (auto i = m_Clients[pRemote]->m_lstRequest.begin(); 
+						i != m_Clients[pRemote]->m_lstRequest.end(); )
+					{
+						if ((*i)->m_bNeedResponse)
+						{
+							pRemote->sendCommand((*i)->m_strRequest.c_str(), (*i)->m_strRequest.size());
+							break;		// wait response
+						}
+						else
+						{
+							pRemote->sendCommand((*i)->m_strRequest.c_str(), (*i)->m_strRequest.size());
+							// don't wait response
+							delete (*i);
+							i = m_Clients[pRemote]->m_lstRequest.erase(i);
+						}
 					}
+					//if (m_Clients[pRemote]->m_lstRequest.size() > 0){
+					//	auto head = m_Clients[pRemote]->m_lstRequest.front();
+					//	pRemote->sendCommand(head->m_strRequest.c_str(), head->m_strRequest.size());
+					//}
 				}
 			}
 		}
@@ -119,6 +136,60 @@ int CRpcServer::start(unsigned short port, int type)
 		});
 	}
 
+	m_maintainThread = std::thread([&](){
+		while (!m_bQuit)
+		{
+			std::unique_lock<std::mutex> lk(m_mtxQuit);
+			if (std::cv_status::timeout == m_evQuit.wait_for(lk, std::chrono::seconds(1)))
+			{
+				// check all commands
+				for (auto c = m_Clients.begin(); c != m_Clients.end(); c++)
+				{
+					std::lock_guard<std::mutex> clientLk(c->second->m_mtxRequest);
+					if (c->second->m_lstRequest.size() <= 0)
+					{
+						continue;
+					}
+					auto request = c->second->m_lstRequest.begin();
+					(*request)->nTimeoutSeconds--;
+					if ((*request)->nTimeoutSeconds < 0)
+					{
+						if (nullptr != (*request)->failed)
+						{
+							(*request)->failed(NULL, NULL);
+						}
+
+						delete *request;
+						c->second->m_lstRequest.pop_front();
+
+						// send next commands
+						sendNextCommands(c->first, c->second->m_lstRequest);
+					}
+				}
+			}
+		}
+	});
+
+	return 0;
+}
+
+int CRpcServer::sendNextCommands(CRemotePeer* remote, std::list<CRequest*>& lstCommands)
+{
+	for (auto request = lstCommands.begin(); request != lstCommands.end(); )
+	{
+		if ((*request)->m_bNeedResponse)
+		{
+			remote->sendCommand((*request)->m_strRequest.c_str(), (*request)->m_strRequest.size());
+			break;
+		}
+		else
+		{
+			remote->sendCommand((*request)->m_strRequest.c_str(), (*request)->m_strRequest.size());
+
+			delete *request;
+			request = lstCommands.erase(request);
+		}
+	}
 	return 0;
 }
 
@@ -146,7 +217,8 @@ int CRpcServer::sendRequest(const char* pRequest,
 	void* data,
 	std::function<void(const char* pResponse, void*)> success,
 	std::function<void(const char* pResponse, void*)> failed,
-	int nTimeoutSeconds)
+	int nTimeoutSeconds,
+	bool bNeedResponse)
 {
 	int ret = 0;
 
@@ -167,13 +239,21 @@ int CRpcServer::sendRequest(const char* pRequest,
 		pReq->failed = failed;
 		pReq->data = data;
 		pReq->nTimeoutSeconds = nTimeoutSeconds;
+		pReq->m_bNeedResponse = bNeedResponse;
 
 		if (0 == i->second->m_lstRequest.size())
 		{
 			ret = i->first->sendCommand(pReq->m_strRequest.c_str(), pReq->m_strRequest.size());
+			if (bNeedResponse)
+			{
+				i->second->m_lstRequest.push_back(pReq);
+			}
+		}
+		else
+		{
+			i->second->m_lstRequest.push_back(pReq);
 		}
 
-		i->second->m_lstRequest.push_back(pReq);
 	}
 
 	return ret;

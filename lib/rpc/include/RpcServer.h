@@ -3,6 +3,8 @@
 #include <mutex>
 #include <map>
 #include <list>
+#include <thread>
+#include <condition_variable>
 
 #include "BaseConnector.h"
 
@@ -40,7 +42,11 @@ public:
 		void* data,
 		std::function<void(const char* pResponse, void*)> success = nullptr,
 		std::function<void(const char* pResponse, void*)> failed = nullptr,
-		int nTimeoutSeconds = 10);
+		int nTimeoutSeconds = 10,
+		bool bNeedResponse = true);
+
+protected:
+	int sendNextCommands(CRemotePeer* remote, std::list<CRequest*>& lstCommands);
 
 protected:
 	std::map<std::string, ACTION>  m_mpActions;
@@ -48,7 +54,10 @@ protected:
 	ThreadPool* m_thdPool;
 
 	std::map<CRemotePeer*, CClient*> m_Clients;
-	//std::list<CRequest*> m_lstRequest;
-	//std::mutex m_mtxRequest;
+
+	std::thread	m_maintainThread;
+	bool m_bQuit;
+	std::mutex m_mtxQuit;
+	std::condition_variable m_evQuit;
 };
 
