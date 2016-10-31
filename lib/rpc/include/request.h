@@ -13,6 +13,7 @@ class CRequest{
 public:
 	std::string m_strRequest;
 	uint64_t m_nCallId;
+	bool m_bNeedResponse;
 
 	std::function<void(const char*, void*)> success;
 	std::function<void(const char*, void*)> failed;

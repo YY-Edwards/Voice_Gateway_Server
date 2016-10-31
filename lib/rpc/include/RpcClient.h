@@ -33,11 +33,15 @@ public:
 				void* data,
 				std::function<void (const char* pResponse, void*)> success, 
 				std::function<void(const char* pResponse, void*)> failed = nullptr,
-				int nTimeoutSeconds = 10);
+				int nTimeoutSeconds = 10,
+				bool bNeedResponse = true);
 	void setIncomeDataHandler(IncomeDataHandler handler);
 	uint64_t getCallId();
 
 	void addActionHandler(const char* pName, ACTION action);
+
+protected:
+	int sendNextCommands();
 
 protected:
 	CBaseConnector* m_pConnector;
