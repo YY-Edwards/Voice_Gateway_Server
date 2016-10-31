@@ -134,7 +134,14 @@ int CRpcJsonParser::getResponse(const std::string str,
 		
 		if (d.HasMember("statusText"))
 		{
-			statusText = d["statusText"].GetString();
+			if (d["statusText"].IsNull())
+			{
+				statusText = "";
+			}
+			else
+			{
+				statusText = d["statusText"].GetString();
+			}
 		}
 		
 		if (d.HasMember("errCode"))
@@ -144,15 +151,22 @@ int CRpcJsonParser::getResponse(const std::string str,
 
 		if (d.HasMember("contents"))
 		{
-			if (!d["contents"].IsObject())
-			{
-				throw std::exception("content is not object");
-			}
+			//if (!d["contents"].IsObject())
+			//{
+			//	throw std::exception("content is not object");
+			//}
 
-			StringBuffer sb;
-			Writer<StringBuffer> writer(sb);
-			d["contents"].Accept(writer); // Accept() traverses the DOM and generates Handler events.
-			content = sb.GetString();
+			if (!d["contents"].IsNull()){
+				StringBuffer sb;
+				Writer<StringBuffer> writer(sb);
+				d["contents"].Accept(writer); // Accept() traverses the DOM and generates Handler events.
+				content = sb.GetString();
+			}
+			else
+			{
+				content = "";
+			}
+			
 		}
 	}
 	catch (std::exception& e){

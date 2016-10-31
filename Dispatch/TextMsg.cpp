@@ -519,12 +519,17 @@ void CTextMsg::RecvMsg()
 				args["Source"] = FieldValue(radioID);
 				args["contents"] = FieldValue(message.c_str());
 				args["type"] = FieldValue("Private");
-				std::string callJsonStr = CRpcJsonParser::buildCall("message", ++seq, args,"radio");
+				std::string callJsonStrRes = CRpcJsonParser::buildCall("message", ++seq, args,"radio");
+				ArgumentType arg;
+				arg["Target"] = FieldValue(stringId.c_str());
+				arg["IsOnline"] = FieldValue("True");
+				std::string callJsonStrCall = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
 				if (pRemotePeer != NULL)
 				{
-					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+					pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
+					pRemotePeer->sendResponse((const char *)callJsonStrCall.c_str(), callJsonStrCall.size());
 #if DEBUG_LOG
-					LOG(INFO) << "接收到短信 ： " + callJsonStr;
+					LOG(INFO) << "接收到短信 ： " + callJsonStrRes;
 #endif
 				}
 				else

@@ -148,7 +148,7 @@ int CRpcServer::sendRequest(const char* pRequest,
 	std::function<void(const char* pResponse, void*)> failed,
 	int nTimeoutSeconds)
 {
-	int ret = -1;
+	int ret = 0;
 
 	if (NULL == pRequest)
 	{

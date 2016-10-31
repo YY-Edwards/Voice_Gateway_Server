@@ -10,7 +10,7 @@
 #include "../lib/rpc/include/RpcJsonParser.h"
 #pragma once
 extern  bool udpIsConnect;
-extern map<string, status> radioStatus;
+
 
 
 #define CMD_NULL               0
@@ -44,9 +44,31 @@ extern map<string, status> radioStatus;
 #define LICENSE                28
 #define CALL_START             29
 #define CALL_END               30
-
-
-
+typedef  struct tagradioStatus{
+	int status;
+	int    gpsQueryMode;
+} status;
+extern map<string, status> radioStatus;
+typedef struct tagAllCommand
+{
+	int callId;
+	int ackNum;
+	int timeOut;
+	int timeCount;
+	int command;
+	int radioId;
+	int cycle;
+	int querymode;
+	string radioIP;
+	string mnisIP;
+	string gpsIP;
+	wchar_t * text;
+	CRemotePeer* pRemote;
+	SOCKET s;
+}AllCommand;
+extern list <AllCommand>allCommandList;
+extern  int  seq;
+extern std::mutex m_allCommandListLocker;
 class DispatchOperate
 {
 public:
