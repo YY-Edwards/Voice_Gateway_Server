@@ -20,6 +20,14 @@ public:
 		TCP = 1,
 	};
 
+	class CClient{
+	public:
+		CClient(){}
+	public:
+		std::mutex m_mtxRequest;
+		std::list<CRequest*> m_lstRequest;
+	};
+
 public: // dereived from OnConnectorData
 	virtual int onReceive(CRemotePeer* pRemote, char* pData, int dataLen);
 
@@ -39,7 +47,8 @@ protected:
 	CBaseConnector* m_pConnector;
 	ThreadPool* m_thdPool;
 
-	std::list<CRequest*> m_lstRequest;
-	std::mutex m_mtxRequest;
+	std::map<CRemotePeer*, CClient*> m_Clients;
+	//std::list<CRequest*> m_lstRequest;
+	//std::mutex m_mtxRequest;
 };
 

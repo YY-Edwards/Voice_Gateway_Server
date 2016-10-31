@@ -30,7 +30,7 @@ int CRpcClient::start(const char* connStr)
 {
 	m_pConnector = new CTcpClientConnector();
 	m_pConnector->setReceiveDataHandler(this);
-	m_pConnector->setConnectEvent([&](){
+	m_pConnector->setConnectEvent([&](CRemotePeer*){
 		if (m_lstRequest.size() > 0)
 		{
 			auto first = m_lstRequest.begin();

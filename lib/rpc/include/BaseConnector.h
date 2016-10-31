@@ -30,16 +30,22 @@ public:
 		m_hReceiveData = handler;
 	}
 
-	void setConnectEvent(std::function<void(void)> fnEvent)
+	void setConnectEvent(std::function<void(CRemotePeer*)> fnEvent)
 	{
 		m_fnConnectEvent = fnEvent;
+	}
+
+	void setDisconnectEvent(std::function<void(CRemotePeer*)> fnEvent)
+	{
+		m_fnDisconnectEvent = fnEvent;
 	}
 
 	virtual bool isConnected() = 0;
 
 protected:
 	OnConnectorData* m_hReceiveData;
-	std::function<void(void)> m_fnConnectEvent;
+	std::function<void(CRemotePeer*)> m_fnDisconnectEvent;
+	std::function<void(CRemotePeer*)> m_fnConnectEvent;
 };
 
 #ifndef uint64_t

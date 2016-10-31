@@ -31,29 +31,54 @@ int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 		uint64_t callId = 0;
 		std::string param = "";
 		std::string type = "";
-		if (0 != CRpcJsonParser::getRequest(str, callName, callId, param, type))
-		{
-			// send error response
-			std::string response = CRpcJsonParser::buildResponse("failed", callId, 404, "Invalid request");
-			pRemote->sendResponse(response.c_str(), response.size());
-			throw std::exception("invalid request");
-		}
 
-		// test if it's ping command, direct send response when receive ping command
-		if (0==callName.compare("ping"))
-		{
-			std::string pingResponse = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
-			pRemote->sendResponse(pingResponse.c_str(), pingResponse.size());
-		}
-		else // other command, call command handler
-		{
-			auto actionFn = (m_mpActions.find(callName) != m_mpActions.end()) ? m_mpActions[callName] : nullptr;
+		std::string status, statusText, content;
+		int errCode = 0;
 
-			if (nullptr != actionFn)
+		if (0 == CRpcJsonParser::getRequest(str, callName, callId, param, type))
+		{
+			// test if it's ping command, direct send response when receive ping command
+			if (0 == callName.compare("ping"))
 			{
-				m_thdPool->enqueue(actionFn, pRemote, param, callId, type);
+				std::string pingResponse = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
+				pRemote->sendResponse(pingResponse.c_str(), pingResponse.size());
+			}
+			else // other command, call command handler
+			{
+				auto actionFn = (m_mpActions.find(callName) != m_mpActions.end()) ? m_mpActions[callName] : nullptr;
+
+				if (nullptr != actionFn)
+				{
+					m_thdPool->enqueue(actionFn, pRemote, param, callId, type);
+				}
 			}
 		}
+		else if (0 == CRpcJsonParser::getResponse(str, status, statusText, errCode, callId, content))
+		{
+			// find which client send the response
+			if (m_Clients.end() != m_Clients.find(pRemote))
+			{
+				std::lock_guard<std::mutex> lk(m_Clients[pRemote]->m_mtxRequest);
+
+				auto firstRequest = m_Clients[pRemote]->m_lstRequest.begin();
+				if (callId == (*firstRequest)->m_nCallId)
+				{
+					if (nullptr != (*firstRequest)->success)
+					{
+						(*firstRequest)->success(str.c_str(), (*firstRequest)->data);
+					}
+					delete *firstRequest;
+					m_Clients[pRemote]->m_lstRequest.pop_front();
+
+					// send next command
+					if (m_Clients[pRemote]->m_lstRequest.size() > 0){
+						auto head = m_Clients[pRemote]->m_lstRequest.front();
+						pRemote->sendCommand(head->m_strRequest.c_str(), head->m_strRequest.size());
+					}
+				}
+			}
+		}
+		
 	}
 	catch (std::exception& e)
 	{
@@ -75,6 +100,23 @@ int CRpcServer::start(unsigned short port, int type)
 		m_pConnector = new CTcpServer();
 		m_pConnector->setReceiveDataHandler(this);
 		m_pConnector->start(std::to_string(port).c_str());
+
+		m_pConnector->setConnectEvent([&](CRemotePeer* remotePeer){
+			auto itr = m_Clients.find(remotePeer);
+			if (m_Clients.end() == itr)
+			{
+				CClient* client = new CClient();
+				m_Clients[remotePeer] = client;
+			}
+		});
+		m_pConnector->setDisconnectEvent([&](CRemotePeer* remotePeer){
+			auto itr = m_Clients.find(remotePeer);
+			if (m_Clients.end() != itr)
+			{
+				delete itr->second;
+				m_Clients.erase(itr);
+			}
+		});
 	}
 
 	return 0;
@@ -113,23 +155,26 @@ int CRpcServer::sendRequest(const char* pRequest,
 		return ret;
 	}
 
-	std::lock_guard<std::mutex> lock(m_mtxRequest);
-
-	CRequest* pReq = new CRequest();
-	pReq->m_strRequest = pRequest;
-	pReq->m_nCallId = nCallId;
-	pReq->success = success;
-	pReq->failed = failed;
-	pReq->data = data;
-	pReq->nTimeoutSeconds = nTimeoutSeconds;
-
-	if (0 == m_lstRequest.size())
+	// send to all clients
+	for (auto i = m_Clients.begin(); i != m_Clients.end(); i++)
 	{
-		// send request immediately, to all clients
-		//ret = this->send(pReq->m_strRequest.c_str(), pReq->m_strRequest.size());
-		ret = m_pConnector->send(pReq->m_strRequest.c_str(), pReq->m_strRequest.size());
+		std::lock_guard<std::mutex> lock(i->second->m_mtxRequest);
+
+		CRequest* pReq = new CRequest();
+		pReq->m_strRequest = pRequest;
+		pReq->m_nCallId = nCallId;
+		pReq->success = success;
+		pReq->failed = failed;
+		pReq->data = data;
+		pReq->nTimeoutSeconds = nTimeoutSeconds;
+
+		if (0 == i->second->m_lstRequest.size())
+		{
+			ret = i->first->sendCommand(pReq->m_strRequest.c_str(), pReq->m_strRequest.size());
+		}
+
+		i->second->m_lstRequest.push_back(pReq);
 	}
-	m_lstRequest.push_back(pReq);
 
 	return ret;
 }
