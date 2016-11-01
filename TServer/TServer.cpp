@@ -39,6 +39,7 @@
 #include "RecvMessageAction.h"
 #include "RecvArsAction.h"
 #include "RecvGpsAction.h"
+#include "RecvConnectResultAction.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -92,7 +93,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	clientActions["message"] = recvMsgAction;
 	clientActions["SendArs"] = recvArsAction;
 	clientActions["SendGps"] = recvGpsAction;
-
+	clientActions["connectStatus"] = recvConnetResultAction;
 	//CBroker::instance()->startLogClient();
 	CBroker::instance()->startRadioClient(clientActions);
 	CBroker::instance()->startRpcServer(serverActions);

@@ -410,6 +410,37 @@ bool CTextMsg::SendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet)
 	if (-1 == bytesSend)
 	{
 		int a = GetLastError();
+
+		list<AllCommand>::iterator it;
+		m_allCommandListLocker.lock();
+		for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+		{
+			//if (it->ackNum == SeqNum)
+			{
+				if (pRemotePeer != NULL&& pRemotePeer == it->pRemote &&it->radioId == m_ThreadMsg->radioID)
+				{
+					ArgumentType args;
+					args["Source"] = FieldValue(m_ThreadMsg->radioID);
+					args["contents"] = FieldValue(NULL);
+					args["status"] = FieldValue(REMOTE_FAILED);
+					if (it->command == SEND_PRIVATE_MSG)
+					{
+						args["type"] = FieldValue(PRIVATE);
+					}
+					else if (it->command == SEND_GROUP_MSG)
+					{
+						args["type"] = FieldValue(GROUP);
+					}
+					std::string callJsonStr = CRpcJsonParser::buildCall("messageStatus", ++seq, args, "radio");
+					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+					it = allCommandList.erase(it);
+					break;
+				}
+
+			}
+			break;
+		}
+		m_allCommandListLocker.unlock();
 #if DEBUG_LOG
 		LOG(INFO) << "·¢ËÍ¶ÌÐÅÊ§°Ü";
 #endif
@@ -465,11 +496,21 @@ void CTextMsg::RecvMsg()
 			{
 				if (it->ackNum == SeqNum)
 				{
-					if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
+					if (pRemotePeer != NULL&& pRemotePeer == it->pRemote &&it->radioId == m_ThreadMsg->radioID)
 					{
 						ArgumentType args;
-						args["id"] = FieldValue( stringId.c_str());
-						std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "sucess", args);
+						args["Source"] = FieldValue(m_ThreadMsg->radioID);
+						args["contents"] = FieldValue(NULL);
+						args["status"] = FieldValue(REMOTE_SUCESS);
+						if (it->command == SEND_PRIVATE_MSG)
+						{
+							args["type"] = FieldValue(PRIVATE);
+						}
+						else if (it->command == SEND_GROUP_MSG)
+						{
+							args["type"] = FieldValue(GROUP);
+						}						
+						std::string callJsonStr = CRpcJsonParser::buildCall("messageStatus", ++seq, args, "radio");
 						pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 						it = allCommandList.erase(it);
 						break;
@@ -518,7 +559,7 @@ void CTextMsg::RecvMsg()
 				ArgumentType args;
 				args["Source"] = FieldValue(radioID);
 				args["contents"] = FieldValue(message.c_str());
-				args["type"] = FieldValue("Private");
+				args["type"] = FieldValue(PRIVATE);
 				std::string callJsonStrRes = CRpcJsonParser::buildCall("message", ++seq, args,"radio");
 		
 				if (pRemotePeer != NULL)

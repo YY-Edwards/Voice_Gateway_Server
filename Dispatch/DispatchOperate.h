@@ -48,6 +48,24 @@ extern  bool udpIsConnect;
 #define RADIO_STATUS_OFFLINE   0
 #define RADIO_STATUS_ONLINE    1
 
+#define DATA_SUCESS_DISPATCH_SUCESS      0
+#define DATA_FAILED_DISPATCH_SUCESS      1
+#define DATA_SUCESS_DISPATCH_FAILED      2
+#define DATA_FAILED_DISPATCH_FAILED      3
+
+
+#define CALL_FAILED              0
+#define CALL_START               1
+#define CALL_END                 2
+
+#define REMOTE_SUCESS             0
+#define REMOTE_FAILED             1
+
+#define ALL                     1
+#define GROUP                   2
+#define PRIVATE                 3
+
+
 typedef  struct tagradioStatus{
 	int status;
 	int    gpsQueryMode;

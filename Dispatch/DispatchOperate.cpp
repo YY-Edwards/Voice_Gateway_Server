@@ -538,12 +538,13 @@ int DispatchOperate::RadioConnect()
 						
 						
 #if DEBUG_LOG
-						LOG(INFO) << "数据连接成功，调度业务连接失败";
+						LOG(INFO) << "数据连接成功，调度业务连接失败";              //DATA_SUCESS_DISPATCH_FAIL
 #endif
 						if (it->callId == callID && pRemotePeer ==it->pRemote)
 						{
-							
-							std::string callJsonStr = CRpcJsonParser::buildResponse("2", it->callId, 0, "数据连接成功，调度业务连接失败", ArgumentType());
+							ArgumentType args;
+							args["status"] = FieldValue(DATA_SUCESS_DISPATCH_FAILED);
+							std::string callJsonStr = CRpcJsonParser::buildCall("connectStatus", ++seq,args,"radio" );
 							if (pRemotePeer != NULL )
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
@@ -558,12 +559,14 @@ int DispatchOperate::RadioConnect()
 					{
 						
 #if DEBUG_LOG
-						LOG(INFO) << "数据连接失败，调度业务连接失败";
+						LOG(INFO) << "数据连接失败，调度业务连接失败";     //DATA_FAIL_DISPATCH_FAIL
 #endif
 						if (it->callId == callID && pRemotePeer == it->pRemote)
 						{
 							
-							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 0, "数据连接失败，调度业务连接失败", ArgumentType());
+							ArgumentType args;
+							args["status"] = FieldValue(DATA_FAILED_DISPATCH_FAILED);
+							std::string callJsonStr = CRpcJsonParser::buildCall("connectStatus", ++seq, args, "radio");
 							if (pRemotePeer != NULL)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
@@ -581,13 +584,15 @@ int DispatchOperate::RadioConnect()
 					{
 						
 #if DEBUG_LOG
-						LOG(INFO) << "数据连接成功，调度业务连接成功";
+						LOG(INFO) << "数据连接成功，调度业务连接成功";      //DATA_SUCESS_DISPATCH_SUCESS
 #endif
 						
 						if (it->callId == callID && pRemotePeer == it->pRemote)
 							{
 							
-								std::string callJsonStr = CRpcJsonParser::buildResponse("3", it->callId, 0, "数据连接成功，调度业务连接成功", ArgumentType());
+							ArgumentType args;
+							args["status"] = FieldValue(DATA_SUCESS_DISPATCH_SUCESS);
+							std::string callJsonStr = CRpcJsonParser::buildCall("connectStatus", ++seq, args, "radio");
 								if (pRemotePeer != NULL)
 								{
 									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
@@ -603,12 +608,14 @@ int DispatchOperate::RadioConnect()
 					{
 					
 #if DEBUG_LOG
-						LOG(INFO) << "数据连接失败，调度业务连接成功";
+						LOG(INFO) << "数据连接失败，调度业务连接成功";                 //DATA_FAIL_DISPATCH_SUCESS
 #endif
-						if (it->callId == callID && pRemotePeer == it->pRemote)
+						if (it->callId == callID && pRemotePeer == it->pRemote) 
 						{
 							
-							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 1, "数据连接失败，调度业务连接成功", ArgumentType());
+							ArgumentType args;
+							args["status"] = FieldValue(DATA_FAILED_DISPATCH_SUCESS);
+							std::string callJsonStr = CRpcJsonParser::buildCall("connectStatus", ++seq, args, "radio");
 							if (pRemotePeer != NULL)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());

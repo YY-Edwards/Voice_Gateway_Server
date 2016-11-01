@@ -147,6 +147,15 @@
     <ClInclude Include="RecvMessageAction.h">
       <Filter>clientAction</Filter>
     </ClInclude>
+    <ClInclude Include="RecvConnectResultAction.h">
+      <Filter>clientAction</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvControlResultAction.h">
+      <Filter>clientAction</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvMessageResultAction.h">
+      <Filter>clientAction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
