@@ -89,7 +89,7 @@ public:
 	~CSound();
 	void BigEndianSoundOut(unsigned __int8* pSamples, DWORD dwCurrentDecodeSize);//Dongle数据大小端你转换
 	DWORD StartSound(HWND hParentWnd, int uInDeviceID, int uOutDeviceID);//sound启动
-	void PleaseShutDown(void);//关闭音频输出、输入设备
+	void stop(void);//关闭音频输出、输入设备
 	void SetLogPtr(PLogReport value);//设置log回调
 	void StartRecord();
 	void setbRecord(BOOL value);

@@ -71,6 +71,7 @@ public:
 	void peerInit();
 	bool getbFirstWlRegistration();
 	bool getbFirstInit();
+	bool m_bIsTemp;
 protected:
 	//int Build_LE_PEER_REGISTRATION_REQUEST();
 	DWORD Build_LE_PEER_REGISTRATION_REQUEST(CHAR* pPacket, T_LE_PROTOCOL_94* pData);
