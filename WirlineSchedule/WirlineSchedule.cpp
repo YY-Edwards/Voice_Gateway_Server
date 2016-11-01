@@ -6,6 +6,9 @@
 #include "MySQL.h"
 #include "../lib/rpc/include/RpcServer.h"
 #include "actionHandler.h"
+#include "WLNet.h"
+
+extern CWLNet* g_pNet;
 
 //#ifndef DLLEXPORT
 //#define DLLEXPORT extern "C" _declspec(dllexport)
@@ -180,7 +183,7 @@ int main()
 	PLogReport m_report = NULL;
 	HWND m_hwnd = NULL;
 	char m_temp = 0x00;
-	CRpcServer rpcServer;
+	CRpcServer *m_pRpcServer = new CRpcServer();
 
 	/*设置基本参数*/
 	m_report = handleLog;
@@ -191,11 +194,11 @@ int main()
 	/*开启远程任务处理线程*/
 	m_pManager->startHandleRemoteTask();
 	/*初始化服务部分*/
-	rpcServer.addActionHandler("config", configActionHandler);
-	rpcServer.addActionHandler("initialCall", initialCallActionHandler);
-	rpcServer.addActionHandler("stopCall", stopCallActionHandler);
-	rpcServer.addActionHandler("setPlayCallOfCare", setPlayCallOfCareActionHandler);
-	rpcServer.start(WL_SERVER_PORT);
+	m_pRpcServer->addActionHandler("connect", connectActionHandler);
+	m_pRpcServer->addActionHandler("call", callActionHandler);
+	//rpcServer.addActionHandler("stopCall", stopCallActionHandler);
+	//rpcServer.addActionHandler("setPlayCallOfCare", setPlayCallOfCareActionHandler);
+	m_pRpcServer->start(WL_SERVER_PORT);
 
 	/*初始化数据库*/
 	m_ret = m_pDb->Open(DB_HOST, DB_PORT, DB_USER, DB_PWD, DB_NAME);
@@ -208,15 +211,54 @@ int main()
 	handleLog("input any for end");
 	scanf_s("%c", &m_temp, 1);
 
-	//if (m_pDb)
-	//{
-	//	delete m_pDb;
-	//	m_pDb = NULL;
-	//}
 	if (m_pManager)
 	{
+		m_pManager->stop();
 		delete m_pManager;
 		m_pManager = NULL;
+	}
+	if (g_pNet)
+	{
+		g_pNet->stop();
+		delete g_pNet;
+		g_pNet = NULL;
+	}
+	while (g_onLineClients.size() > 0)
+	{
+		TcpClient *p = g_onLineClients.front();
+		g_onLineClients.pop_front();
+		if (p)
+		{
+			delete p;
+			p = NULL;
+		}
+	}
+	if (m_pRpcServer)
+	{
+		m_pRpcServer->stop();
+		delete m_pRpcServer;
+		m_pRpcServer = NULL;
+	}
+
+	if (g_pSound)
+	{
+		g_pSound->stop();
+		delete g_pSound;
+		g_pSound = NULL;
+	}
+
+	if (g_pDongle)
+	{
+		g_pDongle->stop();
+		delete g_pDongle;
+		g_pDongle = NULL;
+	}
+
+	if (m_pDb)
+	{
+		m_pDb->stop();
+		delete m_pDb;
+		m_pDb = NULL;
 	}
 
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);

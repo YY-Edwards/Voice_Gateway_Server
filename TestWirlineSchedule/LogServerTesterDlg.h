@@ -6,6 +6,12 @@
 
 #include "../lib/rpc/include/rpcclient.h"
 #include "afxwin.h"
+#include "../lib/rpc/include/RpcJsonParser.h"
+#include "../lib/utf8/utf8.h"
+#define StartCall 0x01
+#define StopCall 0x02
+#define SetPlayCall 0x03
+#define SendCallStatus 0x04
 
 extern unsigned long long g_sn;
 extern HWND g_hwnd;
@@ -92,5 +98,4 @@ private:
 	bool m_bRunHandleServerProc;
 	//std::map<std::string, int> m_callNames;
 	BOOL m_bupdateData;
-public:
 };

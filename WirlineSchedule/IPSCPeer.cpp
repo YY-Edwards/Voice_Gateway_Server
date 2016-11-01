@@ -46,6 +46,7 @@ CIPSCPeer::CIPSCPeer(CWLNet* pLELayer, WCHAR* IP_Address, WCHAR* Port)
 	m_bIsMaster = false;
 	m_bFirstInit = true;
 	m_bFirstWlRegistration = true;
+	m_bIsTemp = false;
 	//peerInit();
 }
 
@@ -80,6 +81,7 @@ CIPSCPeer::CIPSCPeer(CWLNet* pLELayer, sockaddr_in* thesockaddr)
 	m_bIsMaster = false;
 	m_bFirstInit = true;
 	m_bFirstWlRegistration = true;
+	m_bIsTemp = false;
 	//peerInit();
 }
 
@@ -117,6 +119,7 @@ CIPSCPeer::CIPSCPeer(CWLNet* pLELayer, u_long IP_Address, u_short Port)
 	m_bIsMaster = true;
 	m_bFirstInit = true;
 	m_bFirstWlRegistration = true;
+	m_bIsTemp = false;
 	//peerInit(TRUE);
 }
 
@@ -1609,6 +1612,7 @@ void CIPSCPeer::getWirelineAuthentication(char* pPacket, DWORD &size)
 
 void PASCAL CIPSCPeer::PeerStatusCheck(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2)
 {
+	//printf_s("1");
 	CIPSCPeer* p = (CIPSCPeer*)dwUser;
 	if (p)
 	{

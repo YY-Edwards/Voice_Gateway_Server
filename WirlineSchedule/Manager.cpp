@@ -206,6 +206,8 @@ void CManager::LoadVoiceData(LPCWSTR filePath)
 
 	while (readLen == 7)
 	{
+		//sprintf_s(m_reportMsg, "1");
+		//sendLogToWindow();
 		g_pDongle->deObfuscate(IPSCTODONGLE, pAMBEFrame);
 		g_pDongle->MarkAMBEBufferFilled();
 		pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();
@@ -249,6 +251,8 @@ int CManager::LoadVoiceData(unsigned int length, char* pData)
 
 	while (readLen == 7)
 	{
+		//sprintf_s(m_reportMsg, "2");
+		//sendLogToWindow();
 		g_pDongle->deObfuscate(IPSCTODONGLE, pAMBEFrame);
 		g_pDongle->MarkAMBEBufferFilled();
 		pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();
@@ -318,21 +322,21 @@ int CManager::initialCall(unsigned long targetId, unsigned char callTyp)
 			{
 				sprintf_s(m_reportMsg, "Other Call Is Running");
 				sendLogToWindow();
-				g_pNet->Send_CARE_CALL_STATUS(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, NEW_CALL_END);
+				g_pNet->sendCallStatus(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, NEW_CALL_END);
 				return 1;
 			}
 
 		}
 		else
 		{
-			g_pNet->Send_CARE_CALL_STATUS(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, NEW_CALL_END);
+			g_pNet->sendCallStatus(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, NEW_CALL_END);
 			return 1;
 		}
 		return 0;
 	}
 	else
 	{
-		g_pNet->Send_CARE_CALL_STATUS(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, NEW_CALL_END);
+		g_pNet->sendCallStatus(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, NEW_CALL_END);
 		sprintf_s(m_reportMsg, "dongle is not open");
 		sendLogToWindow();
 		return 1;
@@ -399,9 +403,9 @@ int CManager::initDongle(unsigned int serial_port)
 
 int CManager::disConnect()
 {
-	g_pNet->StopNet();
-	g_pDongle->CloseDongle();
-	g_pSound->PleaseShutDown();
+	g_pNet->stop();
+	g_pDongle->stop();
+	g_pSound->stop();
 	return 0;
 }
 
@@ -567,6 +571,8 @@ void CManager::handleRemoteTask()
 	REMOTE_TASK task = { 0 };
 	while (m_bRemoteTaskThreadRun)
 	{
+		//sprintf_s(m_reportMsg, "3");
+		//sendLogToWindow();
 		if (g_remoteCommandTaskQueue.size() > 0)
 		{
 			//sprintf_s(m_reportMsg, "have task");
@@ -591,7 +597,7 @@ void CManager::handleRemoteTask()
 									}
 									else
 									{
-										g_pNet->Send_CARE_CALL_STATUS(task.param.info.callParam.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.tartgetId, NEW_CALL_END);
+										g_pNet->sendCallStatus(task.param.info.callParam.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.tartgetId, NEW_CALL_END);
 									}
 			}
 				break;
@@ -620,6 +626,16 @@ void CManager::handleRemoteTask()
 			Sleep(20);
 			continue;
 		}
+	}
+}
+
+void CManager::stop()
+{
+	if (m_hRemoteTaskThread)
+	{
+		m_bRemoteTaskThreadRun = false;
+		WaitForSingleObject(m_hRemoteTaskThread, 1000);
+		CloseHandle(m_hRemoteTaskThread);
 	}
 }
 

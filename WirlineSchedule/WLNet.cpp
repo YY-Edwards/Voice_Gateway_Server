@@ -1,7 +1,7 @@
 ﻿#include "stdafx.h"
 #include "WLNet.h"
 #include <string>
-
+#include "actionHandler.h"
 
 #define AUTHENTIC_ID_SIZE	4
 #define VENDER_KEY_SIZE		20
@@ -65,6 +65,7 @@ CWLNet::CWLNet(CMySQL *pDb,CManager *pManager)
 	m_pManager = pManager;
 	m_dwChangeToCurrentTick = 0;
 	m_pPlayCall = NULL;
+	//m_startTalkTickcount = 0;
 }
 
 CWLNet::~CWLNet()
@@ -244,6 +245,8 @@ DWORD CWLNet::NetThread()
 	// issue a first read request
 	while (WSA_IO_PENDING != rc)
 	{
+		//sprintf_s(m_reportMsg, "4");
+		//sendLogToWindow();
 		rc = IssueReadRequest();
 		//LogEvent(StartListener, _T("Start To Receive Network Packet"));
 
@@ -254,6 +257,8 @@ DWORD CWLNet::NetThread()
 
 	while (!m_bExit)
 	{
+		//sprintf_s(m_reportMsg, "5");
+		//sendLogToWindow();
 		switch (m_WLStatus)
 		{
 			//发送0x90
@@ -429,7 +434,7 @@ BOOL CWLNet::StartNet(DWORD dwMasterIp
 {
 	if (g_net_connect)
 	{
-		StopNet();
+		stop();
 	}
 	sprintf_s(m_reportMsg, "StartNetWork");
 	sendLogToWindow();
@@ -459,7 +464,7 @@ BOOL CWLNet::StartNet(DWORD dwMasterIp
 		sprintf_s(m_reportMsg, "CreateEventFail:Rx Event");
 		sendLogToWindow();
 
-		StopNet();
+		stop();
 		return FALSE;
 	}
 	m_RxOverlapped.hEvent = m_eventArray[RxEvent];
@@ -470,7 +475,7 @@ BOOL CWLNet::StartNet(DWORD dwMasterIp
 		sprintf_s(m_reportMsg, "CreateEventFail:Tx Event");
 		sendLogToWindow();
 
-		StopNet();
+		stop();
 		return FALSE;
 	}
 	m_TxOverlapped.hEvent = m_eventArray[TxEvent];
@@ -481,7 +486,7 @@ BOOL CWLNet::StartNet(DWORD dwMasterIp
 		sprintf_s(m_reportMsg, "CreateEventFail:Tick Event");
 		sendLogToWindow();
 
-		StopNet();
+		stop();
 		return FALSE;
 	}
 
@@ -497,7 +502,7 @@ BOOL CWLNet::StartNet(DWORD dwMasterIp
 		sprintf_s(m_reportMsg, "WSASocket Failed, Reason:%d", GetLastError());
 		sendLogToWindow();
 
-		StopNet();
+		stop();
 		return FALSE;
 	}
 
@@ -517,7 +522,7 @@ BOOL CWLNet::StartNet(DWORD dwMasterIp
 		{
 			if (port == 50000)
 			{
-				StopNet();
+				stop();
 				sprintf_s(m_reportMsg, "bind error:%d", GetLastError());
 				sendLogToWindow();
 
@@ -538,11 +543,20 @@ BOOL CWLNet::StartNet(DWORD dwMasterIp
 	return FALSE;
 }
 
-void CWLNet::StopNet()
+void CWLNet::stop()
 {
 
 	sprintf_s(m_reportMsg, "↓start stop net↓");
 	sendLogToWindow();
+
+	clearPeers();
+
+	if (m_pEventLoger)
+	{
+		m_pEventLoger->stop();
+		delete m_pEventLoger;
+		m_pEventLoger = NULL;
+	}
 
 	if (m_bExit)
 	{
@@ -580,6 +594,8 @@ void CWLNet::StopNet()
 	sendLogToWindow();
 
 	WSACleanup();
+
+	clearSendVoices();
 
 	sprintf_s(m_reportMsg, "↑stop net success↑");
 	sendLogToWindow();
@@ -1042,7 +1058,7 @@ void CWLNet::Net_MaintainKeepAlive()
 void CWLNet::Net_MaintainAlive(DWORD eventIndex)
 {
 	/*进行调度组检查*/
-	checkDefaultGroup();
+	checkDefaultGroupAndTalkTime();
 	int    rc;
 	/*进行语音记录检查*/
 	Process_WL_BURST_CALL(WL_BURST_CHECK_TIMEOUT, NULL);
@@ -1695,7 +1711,7 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 					/*更新map*/
 					if (tempP && tempP->isSame(peer))
 					{
-						//do nothing
+						peer->m_bIsTemp = true;
 					}
 					else
 					{
@@ -1722,6 +1738,10 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 			{
 				m_pPeers.push_back(peer);
 			}
+			else
+			{
+				peer->m_bIsTemp = true;
+			}
 
 			pPeers.push_back(peer);
 
@@ -1732,6 +1752,8 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 			int count = 0;
 			while (!checkEnd)
 			{
+				//sprintf_s(m_reportMsg, "6");
+				//sendLogToWindow();
 				/*核对map*/
 				CIPSCPeer *pNeedDelete = NULL;
 				count = m_pPeers.size();
@@ -1814,7 +1836,7 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 					/*更新map*/
 					if (tempP && tempP->isSame(peer))
 					{
-						//do nothing
+						peer->m_bIsTemp = true;
 					}
 					else
 					{
@@ -1840,6 +1862,10 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 			{
 				m_pPeers.push_back(peer);
 			}
+			else
+			{
+				peer->m_bIsTemp = true;
+			}
 
 			pPeers.push_back(peer);
 
@@ -1850,6 +1876,8 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 			int count = 0;
 			while (!checkEnd)
 			{
+				//sprintf_s(m_reportMsg, "7");
+				//sendLogToWindow();
 				/*核对map*/
 				CIPSCPeer *pNeedDelete = NULL;
 				count = m_pPeers.size();
@@ -1909,6 +1937,22 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 	WCHAR str[8] = { 0 };
 	swprintf_s(str, __TEXT("%d"), m_PeerCount);
 	WritePrivateProfileString(SYS_SECTION, PEER_COUNT, str, m_strSettingFilePath);
+	
+	int elementCount = pPeers.size();
+	while (pPeers.size() && elementCount)
+	{
+		elementCount = pPeers.size();
+		for (auto i = pPeers.begin(); i != pPeers.end(); i++)
+		{
+			elementCount--;
+			if ((*i)->m_bIsTemp)
+			{
+				delete (*i);
+				pPeers.erase(i);
+				break;
+			}
+		}
+	}
 }
 
 // void CWLNet::AMBE2FrameToAMBE3000Frame(char* pFrame)
@@ -2338,11 +2382,11 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 										   {
 											   if (p->srcId != CONFIG_LOCAL_RADIO_ID)
 											   {
-												   Send_CARE_CALL_STATUS(p->callType, p->srcId, p->tagetId, END_CALL_NO_PLAY);
+												   sendCallStatus(p->callType, p->srcId, p->tagetId, END_CALL_NO_PLAY);
 											   }
 											   else
 											   {
-												   Send_CARE_CALL_STATUS(p->callType, p->srcId, p->tagetId, NEW_CALL_END);
+												   sendCallStatus(p->callType, p->srcId, p->tagetId, NEW_CALL_END);
 											   }
 										   }
 										   m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, CONFIG_RECORD_TYPE, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi, (*i)->callStatus, &((*i)->recordTime));
@@ -2367,11 +2411,11 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 										   {
 											   if (p->srcId != CONFIG_LOCAL_RADIO_ID)
 											   {
-												   Send_CARE_CALL_STATUS(p->callType, p->srcId, p->tagetId, END_CALL_NO_PLAY);
+												   sendCallStatus(p->callType, p->srcId, p->tagetId, END_CALL_NO_PLAY);
 											   }
 											   else
 											   {
-												   Send_CARE_CALL_STATUS(p->callType, p->srcId, p->tagetId, NEW_CALL_END);
+												   sendCallStatus(p->callType, p->srcId, p->tagetId, NEW_CALL_END);
 											   }
 										   }
 										   m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, CONFIG_RECORD_TYPE, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi,(*i)->callStatus,&((*i)->recordTime));
@@ -2558,11 +2602,11 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 																		   SetCallStatus(CALL_IDLE);
 																		   if (srcId != CONFIG_LOCAL_RADIO_ID)
 																		   {
-																			   Send_CARE_CALL_STATUS(p->callType, srcId, tgtId, END_CALL_NO_PLAY);
+																			   sendCallStatus(p->callType, srcId, tgtId, END_CALL_NO_PLAY);
 																		   }
 																		   else
 																		   {
-																			   Send_CARE_CALL_STATUS(p->callType, p->sourceID, p->targetID, NEW_CALL_END);
+																			   sendCallStatus(p->callType, p->sourceID, p->targetID, NEW_CALL_END);
 																		   }
 																	   }
 																	   (*i)->callStatus = VOICE_STATUS_END;
@@ -2878,7 +2922,8 @@ void CWLNet::calEnciphe()
 	//加密计算
 	while (n-- > 0)
 	{
-
+		//sprintf_s(m_reportMsg, "8");
+		//sendLogToWindow();
 		sum += delta;
 		v0 += ((v1 << 4) + u_auth_key[0]) ^ (v1 + sum) ^ ((v1 >> 5) + u_auth_key[1]);
 		v1 += ((v0 << 4) + u_auth_key[2]) ^ (v0 + sum) ^ ((v0 >> 5) + u_auth_key[3]);
@@ -4175,8 +4220,6 @@ void CWLNet::sendLogToWindow()
 	}
 }
 
-
-//DWORD prev = 0;
 void CWLNet::NetTx(bool Start)
 {
 	bool last = false;
@@ -4186,16 +4229,8 @@ void CWLNet::NetTx(bool Start)
 		//初始化各个标识位
 		//m_TxBurstType = VOICEHEADER0;
 		m_TxSubCount = 0;
-
-		////初始化数据
-		//m_pCurrentBuildSendvoice = new IPSCVoiceTemplate;
-		//memset(m_pCurrentBuildSendvoice, 0, sizeof(IPSCVoiceTemplate));
-
-		////初始化New Call参数
-		//InitialCallRecord();
-
 		/************************************************************************/
-		/* WL部分初始化                                                                     */
+		/* WL部分初始化
 		/************************************************************************/
 		/*初始化关键参数*/
 		initCallParam();
@@ -4232,78 +4267,9 @@ void CWLNet::NetTx(bool Start)
 	}
 	else
 	{
-		//{
-		//	//Depending on what was sent LAST time:
-		//	switch (m_TxBurstType)
-		//	{
-		//	case VOICEBURST_A:
-		//		//m_TxBurstType += 1;
-		//		m_TxBurstType = VOICEBURST_B;
-		//		break;
-		//	case VOICEBURST_B:
-		//		m_TxBurstType = VOICEBURST_C;
-		//		break;
-		//	case VOICEBURST_C:
-		//		m_TxBurstType = VOICEBURST_D;
-		//		break;
-		//	case VOICEBURST_D:
-		//		m_TxBurstType = VOICEBURST_E;
-		//		break;
-		//	case VOICEBURST_E:
-		//		//松开了PTT
-		//		if (!g_bPTT)
-		//		{
-		//			printf_s("松开了PTT\r\n");
-		//			last = TRUE;
-		//		}
-		//		m_TxBurstType = VOICEBURST_F;
-		//		break;
-		//	case VOICEBURST_F:
-		//		//当前仍然在通话中
-		//		if (g_bPTT)
-		//		{    //Start transmitting next super frame.
-		//			m_TxBurstType = VOICEBURST_A;
-		//		}
-		//		//本次通话结束
-		//		else
-		//		{
-		//			//Last super frame has been transmitted.
-		//			m_TxBurstType = VOICETERMINATOR;
-		//			//g_bTX = FALSE;
-		//		}
-		//		break;
-		//	case VOICEHEADER1:
-		//		m_TxBurstType = VOICEHEADER2;
-		//		break;
-		//	case VOICEHEADER2:
-		//		m_TxBurstType = VOICEBURST_A;
-		//		break;
-		//	case VOICEHEADER0:
-		//		m_TxBurstType = VOICEHEADER1;
-		//		break;
-		//		//Shouldn't get here, but if does, do nothing.
-		//	case VOICETERMINATOR:
-		//	case PREAMBLECBSK:
-		//	default:
-		//		return;
-		//	}
-		//}
-
-		////填充音频数据
-		//FillIPSCFormat(m_pCurrentBuildSendvoice, m_TxBurstType, last);
-
-
-
-		//push the data which build success to list 
 		requireReadySendVoicesLock();
-		//m_readySendVoices.push_back(m_pCurrentBuildSendvoice);
 		m_sendVoices.push_back(m_pSendVoicePackage);
 		releaseReadySendVoicesLock();
-
-		//init the next data which will build
-		//m_pCurrentBuildSendvoice = NULL;
-		//m_pCurrentBuildSendvoice = new IPSCVoiceTemplate;
-		//memset(m_pCurrentBuildSendvoice, 0, sizeof(IPSCVoiceTemplate));
 
 		m_pSendVoicePackage = new SendVoicePackage;
 		m_pVoice = (char*)calloc(MAX_PACKET_SIZE, sizeof(char));
@@ -4477,6 +4443,8 @@ unsigned __int16 CWLNet::embeddedLCCheckSumGen(unsigned __int8 * inputPtr)
 
 	while (generatedCrc>31)					//Total result of temporary mod with value 31
 	{
+		//sprintf_s(m_reportMsg, "9");
+		//sendLogToWindow();
 		generatedCrc -= 31;
 	}
 
@@ -5158,7 +5126,7 @@ void CWLNet::releaseVoiceReocrdsLock()
 
 void PASCAL CWLNet::OneMilliSecondProc(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2)
 {
-
+	//printf_s("1");
 	CWLNet* p = (CWLNet *)dwUser;
 
 	if (NULL == p)
@@ -5182,6 +5150,12 @@ void PASCAL CWLNet::OneMilliSecondProc(UINT wTimerID, UINT msg, DWORD dwUser, DW
 						   else
 						   {
 							   p->NetWorker_SendCallByWL();
+							   if (p->m_sendVoices.size() < 1)
+							   {
+								   REMOTE_TASK *p = new REMOTE_TASK;
+								   p->cmd = REMOTE_CMD_STOP_CALL;
+								   push_back_task(p);
+							   }
 						   }
 	}
 		break;
@@ -5397,6 +5371,8 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			while (lengthAmbe > 0
 				&& pAmbeData)
 			{
+// 				sprintf_s(m_reportMsg, "10");
+// 				sendLogToWindow();
 				m_pSendVoicePackage = new SendVoicePackage;
 				m_pVoice = (char*)calloc(MAX_PACKET_SIZE, sizeof(char));
 				T_WL_PROTOCOL_21 networkData = { 0 };
@@ -5434,6 +5410,8 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			/*填充超级帧*/
 			while (m_burstType != (char)BURST_T)
 			{
+// 				sprintf_s(m_reportMsg, "11");
+// 				sendLogToWindow();
 				m_pSendVoicePackage = new SendVoicePackage;
 				m_pVoice = (char*)calloc(MAX_PACKET_SIZE, sizeof(char));
 				T_WL_PROTOCOL_21 networkData = { 0 };
@@ -5458,10 +5436,12 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			_SlotNumber registSlotNumber = SLOT1;
 			while (m_retryRequestCallCount)
 			{
+// 				sprintf_s(m_reportMsg, "12");
+// 				sendLogToWindow();
 				/*申请通话*/
 				requestNewCallEvent();
 				m_pCurrentSendVoicePeer->HandlePacket(WL_VC_CHNL_CTRL_REQUEST_LOCAL, &registSlotNumber, 0, 0, 0);
-				WaitForSingleObject(m_wlInitNewCallEvent, INFINITE);
+				WaitForSingleObject(m_wlInitNewCallEvent, REQUEST_CALL_OUT_TIMER);
 				if (g_callRequstDeclineReasonCodeInfo.BhaveGet && 0x00 == g_callRequstDeclineReasonCodeInfo.Value)
 				{
 					/*开始发送文件数据*/
@@ -5538,6 +5518,8 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			while (lengthAmbe > 0
 				&& pAmbeData)
 			{
+// 				sprintf_s(m_reportMsg, "13");
+// 				sendLogToWindow();
 				m_pSendVoicePackage = new SendVoicePackage;
 				m_pVoice = (char*)calloc(MAX_PACKET_SIZE, sizeof(char));
 				T_WL_PROTOCOL_21 networkData = { 0 };
@@ -5575,6 +5557,8 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			/*填充超级帧*/
 			while (m_burstType != (char)BURST_T)
 			{
+// 				sprintf_s(m_reportMsg, "14");
+// 				sendLogToWindow();
 				m_pSendVoicePackage = new SendVoicePackage;
 				m_pVoice = (char*)calloc(MAX_PACKET_SIZE, sizeof(char));
 				T_WL_PROTOCOL_21 networkData = { 0 };
@@ -5598,6 +5582,8 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 
 			while (m_retryRequestCallCount)
 			{
+// 				sprintf_s(m_reportMsg, "15");
+// 				sendLogToWindow();
 				/*申请通话*/
 				requestNewCallEvent();
 				m_pSitePeer->HandlePacket(WL_VC_CHNL_CTRL_REQUEST_LOCAL, NULL, 0, 0, 0);
@@ -6248,6 +6234,8 @@ void CWLNet::clearSendVoices()
 	requireReadySendVoicesLock();
 	while (m_sendVoices.size() > 0)
 	{
+// 		sprintf_s(m_reportMsg, "16");
+// 		sendLogToWindow();
 		SendVoicePackage* p = m_sendVoices.front();
 		m_sendVoices.pop_front();
 		if (p)
@@ -6292,6 +6280,8 @@ int CWLNet::callBack()
 	{
 		while (m_retryRequestCallCount)
 		{
+// 			sprintf_s(m_reportMsg, "17");
+// 			sendLogToWindow();
 			NetTx(true);
 			requestNewCallEvent();
 			/*初始化通话*/
@@ -6336,7 +6326,7 @@ int CWLNet::callBack()
 	}
 	else
 	{
-		Send_CARE_CALL_STATUS(g_targetCallType, CONFIG_LOCAL_RADIO_ID, g_targetId, NEW_CALL_END);
+		sendCallStatus(g_targetCallType, CONFIG_LOCAL_RADIO_ID, g_targetId, NEW_CALL_END);
 		return 1;
 	}
 }
@@ -6358,6 +6348,8 @@ int CWLNet::newCall()
 			_SlotNumber registerSlot = CONFIG_DEFAULT_SLOT;
 			while (m_retryRequestCallCount)
 			{
+// 				sprintf_s(m_reportMsg, "18");
+// 				sendLogToWindow();
 				/*初始化*/
 				NetTx(true);
 				requestNewCallEvent();
@@ -6414,6 +6406,8 @@ int CWLNet::newCall()
 		{
 			while (m_retryRequestCallCount)
 			{
+// 				sprintf_s(m_reportMsg, "19");
+// 				sendLogToWindow();
 				/*初始化*/
 				NetTx(true);
 				requestNewCallEvent();
@@ -6452,6 +6446,8 @@ int CWLNet::newCall()
 		{
 			while (m_retryRequestCallCount)
 			{
+// 				sprintf_s(m_reportMsg, "20");
+// 				sendLogToWindow();
 				/*初始化*/
 				NetTx(true);
 				requestNewCallEvent();
@@ -6490,7 +6486,7 @@ int CWLNet::newCall()
 	}
 	else
 	{
-		Send_CARE_CALL_STATUS(g_targetCallType, CONFIG_LOCAL_RADIO_ID, g_targetId, NEW_CALL_END);
+		sendCallStatus(g_targetCallType, CONFIG_LOCAL_RADIO_ID, g_targetId, NEW_CALL_END);
 		return 1;
 	}
 }
@@ -6595,6 +6591,7 @@ short CWLNet::Build_WL_VC_VOICE_END_BURST(CHAR* pPacket, T_WL_PROTOCOL_19* pData
 
 void CWLNet::CorrectingBuffer(DWORD callId)
 {
+	//m_startTalkTickcount = GetTickCount();
 	_SlotNumber slot = m_pCurrentSendVoicePeer->getUseSlot();
 	/*核对语音记录信息*/
 	for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
@@ -6622,7 +6619,7 @@ void CWLNet::CorrectingBuffer(DWORD callId)
 	}
 	releaseReadySendVoicesLock();
 
-	Send_CARE_CALL_STATUS(g_targetCallType, CONFIG_LOCAL_RADIO_ID, g_targetId,NEW_CALL_START);
+	sendCallStatus(g_targetCallType, CONFIG_LOCAL_RADIO_ID, g_targetId,NEW_CALL_START);
 }
 
 void CWLNet::requestRecordEndEvent()
@@ -6645,6 +6642,8 @@ void CWLNet::waitRecordEnd()
 	/*填充超级帧*/
 	while (m_burstType != (char)BURST_T)
 	{
+// 		sprintf_s(m_reportMsg, "21");
+// 		sendLogToWindow();
 		long tempLength = 0;
 		m_pSendVoicePackage = new SendVoicePackage;
 		m_pVoice = (char*)calloc(MAX_PACKET_SIZE, sizeof(char));
@@ -6680,6 +6679,7 @@ void CWLNet::setCurrentSendVoicePeer(CIPSCPeer* value)
 
 void PASCAL CWLNet::HangTimerCallProc(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2)
 {
+	//printf_s("1");
 	CWLNet* p = (CWLNet *)dwUser;
 	if (p)
 	{
@@ -6926,6 +6926,8 @@ void CWLNet::Unpack_LE_NOTIFICATION_MAP_BROADCAST(char* pData, T_LE_PROTOCOL_93&
 	unsigned short index = 0;
 	while (dataLength)
 	{
+		//sprintf_s(m_reportMsg, "22");
+		//sendLogToWindow();
 		networkData.mapPeers[index].remotePeerID = ntohl(*((DWORD*)(&pData[7 + (index * 11)])));
 		networkData.mapPeers[index].remoteIPAddr = ntohl(*((DWORD*)(&pData[11 + (index * 11)])));
 		networkData.mapPeers[index].remotePort = ntohs(*((WORD*)(&pData[15 + (index * 11)])));
@@ -6958,6 +6960,8 @@ void CWLNet::Unpack_LE_NOTIFICATION_MAP_BROADCAST(char* pData, T_LE_PROTOCOL_93_
 		length -= 12;
 		while (length)
 		{
+// 			sprintf_s(m_reportMsg, "23");
+// 			sendLogToWindow();
 			networkData.mapPayload.wideMapPeers[index].remotePeerID = ntohl(*((DWORD*)(&pData[8 + (index * 13)])));
 			networkData.mapPayload.wideMapPeers[index].remoteIPAddr = ntohl(*((DWORD*)(&pData[12 + (index * 13)])));
 			networkData.mapPayload.wideMapPeers[index].remotePort = ntohs(*((WORD*)(&pData[16 + (index * 13)])));
@@ -7256,10 +7260,13 @@ void CWLNet::Unpack_WL_VC_VOICE_BURST(char* pData, T_WL_PROTOCOL_21& networkData
 
 void CWLNet::clearPeers()
 {
-	for (auto i = m_pPeers.begin(); i != m_pPeers.end(); i++)
+	while (m_pPeers.size() > 0)
 	{
-		CIPSCPeer *p = *i;
-		clearPeer(p);
+		CIPSCPeer *p = m_pPeers.front();
+		if (p)
+		{
+			clearPeer(p);
+		}
 	}
 }
 
@@ -7271,7 +7278,7 @@ void CWLNet::clearPeer(CIPSCPeer *p)
 	p = NULL;
 }
 
-int CWLNet::checkDefaultGroup()
+int CWLNet::checkDefaultGroupAndTalkTime()
 {
 	if (g_targetId != CONFIG_DEFAULT_GROUP && g_targetCallType == GROUPCALL_TYPE)
 	{
@@ -7339,27 +7346,26 @@ int CWLNet::setPlayCallOfCare(unsigned char calltype, unsigned long srcId, unsig
 
 int CWLNet::thereIsCallOfCare(CRecordFile *pCallRecord)
 {
-	Send_CARE_CALL_STATUS(pCallRecord->callType, pCallRecord->srcId, pCallRecord->tagetId, HAVE_CALL_NO_PLAY);
+	sendCallStatus(pCallRecord->callType, pCallRecord->srcId, pCallRecord->tagetId, HAVE_CALL_NO_PLAY);
 	return 0;
 }
 
-int CWLNet::Send_CARE_CALL_STATUS(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status)
+int CWLNet::sendCallStatus(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status)
 {
 	/*将参数打包成json格式*/
 	ArgumentType args;
-	char temp[128] = { 0 };
-	sprintf_s(temp, "%u", callType);
-	args["callType"] = temp;
-	sprintf_s(temp, "%lu", srcId);
-	args["srcId"] = temp;
-	sprintf_s(temp, "%lu", tgtId);
-	args["tgtId"] = temp;
-	sprintf_s(temp, "%d", status);
-	args["status"] = temp;
-	args["module"] = "wl";
-	std::string strRequest = CRpcJsonParser::buildCall("Send_CARE_CALL_STATUS",++g_sn,args);
+	//char temp[128] = { 0 };
+	args["Operate"] = SendCallStatus;
+	args["Type"] = callType;
+	args["Src"] = srcId;
+	args["Target"] = tgtId;
+	args["Status"] = status;
+	//args["module"] = "wl";
+	std::string strRequest = CRpcJsonParser::buildCall("call",++g_sn,args);
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
+
+	TcpClient *redayDelete = NULL;
 	/*发送到Client*/
 	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end();i++)
 	{
@@ -7370,7 +7376,8 @@ int CWLNet::Send_CARE_CALL_STATUS(unsigned char callType, unsigned long srcId, u
 		}
 		catch (...)
 		{
-			sprintf_s(m_reportMsg, "Send_CARE_CALL_STATUS fail, socket:%lu", p->s);
+			redayDelete = p;
+			sprintf_s(m_reportMsg, "sendCallStatus fail, socket:%lu", p->s);
 			sendLogToWindow();
 		}
 	}
@@ -7409,6 +7416,19 @@ bool CWLNet::canStopRecord()
 {
 
 	return g_pSound->getbRecord();
+}
+
+void CWLNet::clearVoiceRecords()
+{
+	while (m_voiceReocrds.size() > 0)
+	{
+		CRecordFile *p = m_voiceReocrds.front();
+		if (p)
+		{
+			delete p;
+			p = NULL;
+		}
+	}
 }
 
 //bool CWLNet::getIsFirstBurstA()

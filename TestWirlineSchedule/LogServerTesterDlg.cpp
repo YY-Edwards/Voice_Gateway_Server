@@ -8,9 +8,6 @@
 #include "LogServerTesterDlg.h"
 #include "afxdialogex.h"
 
-#include "../lib/rpc/include/RpcJsonParser.h"
-#include "../lib/utf8/utf8.h"
-
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -27,13 +24,13 @@ class CAboutDlg : public CDialogEx
 public:
 	CAboutDlg();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_ABOUTBOX };
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
-// Implementation
+	// Implementation
 protected:
 	DECLARE_MESSAGE_MAP()
 };
@@ -56,7 +53,7 @@ END_MESSAGE_MAP()
 
 
 TestWirlineScheduleDlg::TestWirlineScheduleDlg(CWnd* pParent /*=NULL*/)
-	: CDialogEx(TestWirlineScheduleDlg::IDD, pParent)
+: CDialogEx(TestWirlineScheduleDlg::IDD, pParent)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	g_hwnd = GetSafeHwnd();
@@ -94,7 +91,7 @@ BEGIN_MESSAGE_MAP(TestWirlineScheduleDlg, CDialogEx)
 	ON_BN_CLICKED(INIT_CALL, &TestWirlineScheduleDlg::OnBnClickedCall)
 	ON_BN_CLICKED(STOP_CALL, &TestWirlineScheduleDlg::OnBnClickedStopCall)
 	ON_BN_CLICKED(IDC_BUTTON1, &TestWirlineScheduleDlg::OnBnClickedSetPlayCallOfCare)
-	ON_MESSAGE(WM_UPDATE_DATA,OnUpdateData)
+	ON_MESSAGE(WM_UPDATE_DATA, OnUpdateData)
 END_MESSAGE_MAP()
 
 
@@ -207,142 +204,142 @@ void TestWirlineScheduleDlg::OnBnClickedBtnStop()
 
 void TestWirlineScheduleDlg::OnBnClickedBtnCallAppEvent()
 {
-	std::map<std::string, std::string> args;
-	args["ip"] = "10.2.9.11";
-	std::string callJsonStr = CRpcJsonParser::buildCall("setRadioIp", 223, args);
-	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
-	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+	//ArgumentType args;
+	//args["ip"] = "10.2.9.11";
+	//std::string callJsonStr = CRpcJsonParser::buildCall("setRadioIp", 223, args);
+	////std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	////m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	//m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
 
-		std::string strResp = pResponse;
-		std::wstring wstr;
-		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		TRACE("received:%s\r", wstr.c_str());
-	});
-	callJsonStr.clear();
+	//	std::string strResp = pResponse;
+	//	std::wstring wstr;
+	//	utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+	//	TRACE("received:%s\r", wstr.c_str());
+	//});
+	//callJsonStr.clear();
 }
 
 
 void TestWirlineScheduleDlg::OnBnClickedRadiobtn()
 {
-	// TODO:  在此添加控件通知处理程序代码
-	//std::string strConenct = "{\"call\":\"connect\",\"param\":{\"radioIP\":\"192.168.10.2\",\"mnisIP\":\"\"},\"callId\":1}";
-	std::map<std::string, std::string> args;
-	args["radioIP"] = "192.168.10.2";
-	args["mnisIP"] = "";
-	std::string callJsonStr = CRpcJsonParser::buildCall("connect", 223, args);
-	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
-	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
-		std::string strResp = pResponse;
-		std::wstring wstr;
-		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		TRACE("received:%s\r", wstr.c_str());
-	});
-	callJsonStr.clear();
-	//m_rpcClient.send((PBYTE)strConenct.c_str(), strConenct.size() + 1);
+	// 	// TODO:  在此添加控件通知处理程序代码
+	// 	//std::string strConenct = "{\"call\":\"connect\",\"param\":{\"radioIP\":\"192.168.10.2\",\"mnisIP\":\"\"},\"callId\":1}";
+	// 	ArgumentType args;
+	// 	args["radioIP"] = "192.168.10.2";
+	// 	args["mnisIP"] = "";
+	// 	std::string callJsonStr = CRpcJsonParser::buildCall("connect", 223, args);
+	// 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	// 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	// 	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+	// 		std::string strResp = pResponse;
+	// 		std::wstring wstr;
+	// 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+	// 		TRACE("received:%s\r", wstr.c_str());
+	// 	});
+	// 	callJsonStr.clear();
+	// 	//m_rpcClient.send((PBYTE)strConenct.c_str(), strConenct.size() + 1);
 }
 
 
 void TestWirlineScheduleDlg::OnBnClickedCallbtn()
 {
-	// TODO:  在此添加控件通知处理程序代码
-	
-		//std::string strCall = "{\"call\":\"call\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-		//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
-	std::map<std::string, std::string> args;
-	args["id"] = "10";
-	std::string callJsonStr = CRpcJsonParser::buildCall("call", 223, args);
-	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
-	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
-		std::string strResp = pResponse;
-		std::wstring wstr;
-		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		TRACE("received:%s\r", wstr.c_str());
-	});
-	callJsonStr.clear();
+	// 	// TODO:  在此添加控件通知处理程序代码
+	// 	
+	// 		//std::string strCall = "{\"call\":\"call\",\"param\":{\"id\":\"10\"},\"callId\":1}";
+	// 		//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	// 	std::map<std::string, std::string> args;
+	// 	args["id"] = "10";
+	// 	std::string callJsonStr = CRpcJsonParser::buildCall("call", 223, args);
+	// 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	// 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	// 	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+	// 		std::string strResp = pResponse;
+	// 		std::wstring wstr;
+	// 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+	// 		TRACE("received:%s\r", wstr.c_str());
+	// 	});
+	// 	callJsonStr.clear();
 
-	
+
 }
 
 void TestWirlineScheduleDlg::OnBnClickedMsgbtn()
 {
-	// TODO:  在此添加控件通知处理程序代码
-	//std::string strMsg = "{\"call\":\"sendSms\",\"param\":{\"id\":\"10\",\"msg\":\"上海计划信息系统有限公司\"},\"callId\":1}";
-	//m_rpcClient.send((PBYTE)strMsg.c_str(), strMsg.size() + 1);
-	std::map<std::string, std::string> args;
-	args["id"] = "10";
-	args["msg"] = "上海计划信息系统有限公司--单发";
-	std::string callJsonStr = CRpcJsonParser::buildCall("sendSms", 223, args);
-	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
-	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
-		std::string strResp = pResponse;
-		std::wstring wstr;
-		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		TRACE("received:%s\r", wstr.c_str());
-	});
-	callJsonStr.clear();
+	// 	// TODO:  在此添加控件通知处理程序代码
+	// 	//std::string strMsg = "{\"call\":\"sendSms\",\"param\":{\"id\":\"10\",\"msg\":\"上海计划信息系统有限公司\"},\"callId\":1}";
+	// 	//m_rpcClient.send((PBYTE)strMsg.c_str(), strMsg.size() + 1);
+	// 	ArgumentType args;
+	// 	args["id"] = "10";
+	// 	args["msg"] = "上海计划信息系统有限公司--单发";
+	// 	std::string callJsonStr = CRpcJsonParser::buildCall("sendSms", 223, args);
+	// 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	// 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	// 	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+	// 		std::string strResp = pResponse;
+	// 		std::wstring wstr;
+	// 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+	// 		TRACE("received:%s\r", wstr.c_str());
+	// 	});
+	// 	callJsonStr.clear();
 }
 void TestWirlineScheduleDlg::OnBnClickedGroupmsg()
 {
-	// TODO:  在此添加控件通知处理程序代码
-	//std::string strMsg = "{\"call\":\"sendGroupSms\",\"param\":{\"id\":\"1\",\"msg\":\"上海计划信息系统有限公司--组发\"},\"callId\":1}";
-	//m_rpcClient.send((PBYTE)strMsg.c_str(), strMsg.size() + 1);
-	std::map<std::string, std::string> args;
-	args["id"] = "1";
-	args["msg"] = "上海计划信息系统有限公司--组发";
-	std::string callJsonStr = CRpcJsonParser::buildCall("sendGroupSms", 223, args);
-	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
-	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
-		std::string strResp = pResponse;
-		std::wstring wstr;
-		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		TRACE("received:%s\r", wstr.c_str());
-	});
-	callJsonStr.clear();
+	// 	// TODO:  在此添加控件通知处理程序代码
+	// 	//std::string strMsg = "{\"call\":\"sendGroupSms\",\"param\":{\"id\":\"1\",\"msg\":\"上海计划信息系统有限公司--组发\"},\"callId\":1}";
+	// 	//m_rpcClient.send((PBYTE)strMsg.c_str(), strMsg.size() + 1);
+	// 	std::map<std::string, std::string> args;
+	// 	args["id"] = "1";
+	// 	args["msg"] = "上海计划信息系统有限公司--组发";
+	// 	std::string callJsonStr = CRpcJsonParser::buildCall("sendGroupSms", 223, args);
+	// 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	// 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	// 	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+	// 		std::string strResp = pResponse;
+	// 		std::wstring wstr;
+	// 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+	// 		TRACE("received:%s\r", wstr.c_str());
+	// 	});
+	// 	callJsonStr.clear();
 }
 
 void TestWirlineScheduleDlg::OnBnClickedStopcallbtn()
 {
-	// TODO:  在此添加控件通知处理程序代码
-	//std::string strCall = "{\"call\":\"stopCall\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-	//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
-	std::map<std::string, std::string> args;
-	args["id"] = "10";
-	std::string callJsonStr = CRpcJsonParser::buildCall("stopCall", 223, args);
-	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
-	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
-		std::string strResp = pResponse;
-		std::wstring wstr;
-		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		TRACE("received:%s\r", wstr.c_str());
-	});
-	callJsonStr.clear();
+	// 	// TODO:  在此添加控件通知处理程序代码
+	// 	//std::string strCall = "{\"call\":\"stopCall\",\"param\":{\"id\":\"10\"},\"callId\":1}";
+	// 	//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	// 	std::map<std::string, std::string> args;
+	// 	args["id"] = "10";
+	// 	std::string callJsonStr = CRpcJsonParser::buildCall("stopCall", 223, args);
+	// 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	// 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	// 	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+	// 		std::string strResp = pResponse;
+	// 		std::wstring wstr;
+	// 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+	// 		TRACE("received:%s\r", wstr.c_str());
+	// 	});
+	// 	callJsonStr.clear();
 
 }
 
 
 void TestWirlineScheduleDlg::OnBnClickedPoweron()
 {
-	// TODO:  在此添加控件通知处理程序代码
-	//std::string strCall = "{\"call\":\"remotePowerOn\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-	//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
-	std::map<std::string, std::string> args;
-	args["id"] = "10";
-	std::string callJsonStr = CRpcJsonParser::buildCall("remotePowerOn", 223, args);
-	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
-	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
-		std::string strResp = pResponse;
-		std::wstring wstr;
-		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		TRACE("received:%s\r", wstr.c_str());
-	});
-	callJsonStr.clear();
+	// 	// TODO:  在此添加控件通知处理程序代码
+	// 	//std::string strCall = "{\"call\":\"remotePowerOn\",\"param\":{\"id\":\"10\"},\"callId\":1}";
+	// 	//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	// 	std::map<std::string, std::string> args;
+	// 	args["id"] = "10";
+	// 	std::string callJsonStr = CRpcJsonParser::buildCall("remotePowerOn", 223, args);
+	// 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	// 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	// 	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+	// 		std::string strResp = pResponse;
+	// 		std::wstring wstr;
+	// 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+	// 		TRACE("received:%s\r", wstr.c_str());
+	// 	});
+	// 	callJsonStr.clear();
 }
 
 
@@ -351,92 +348,98 @@ void TestWirlineScheduleDlg::OnBnClickedPoweron()
 
 void TestWirlineScheduleDlg::OnBnClickedPoweroff()
 {
-	// TODO:  在此添加控件通知处理程序代码
-	//std::string strCall = "{\"call\":\"remotePowerOff\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-	//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
-	std::map<std::string, std::string> args;
-	args["id"] = "10";
-	std::string callJsonStr = CRpcJsonParser::buildCall("remotePowerOff", 223, args);
-	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
-	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
-		std::string strResp = pResponse;
-		std::wstring wstr;
-		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		TRACE("received:%s\r", wstr.c_str());
-	});
-	callJsonStr.clear();
+	// 	// TODO:  在此添加控件通知处理程序代码
+	// 	//std::string strCall = "{\"call\":\"remotePowerOff\",\"param\":{\"id\":\"10\"},\"callId\":1}";
+	// 	//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	// 	std::map<std::string, std::string> args;
+	// 	args["id"] = "10";
+	// 	std::string callJsonStr = CRpcJsonParser::buildCall("remotePowerOff", 223, args);
+	// 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	// 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	// 	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+	// 		std::string strResp = pResponse;
+	// 		std::wstring wstr;
+	// 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+	// 		TRACE("received:%s\r", wstr.c_str());
+	// 	});
+	// 	callJsonStr.clear();
 }
 
 
 void TestWirlineScheduleDlg::OnBnClickedOnline()
 {
-	// TODO:  在此添加控件通知处理程序代码
-	//std::string strCall = "{\"call\":\"radioCheck\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-	//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
-	std::map<std::string, std::string> args;
-	args["id"] = "10";
-	std::string callJsonStr = CRpcJsonParser::buildCall("radioCheck", 223, args);
-	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
-	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
-		std::string strResp = pResponse;
-		std::wstring wstr;
-		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		TRACE("received:%s\r", wstr.c_str());
-	});
-	callJsonStr.clear();
+	// 	// TODO:  在此添加控件通知处理程序代码
+	// 	//std::string strCall = "{\"call\":\"radioCheck\",\"param\":{\"id\":\"10\"},\"callId\":1}";
+	// 	//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	// 	std::map<std::string, std::string> args;
+	// 	args["id"] = "10";
+	// 	std::string callJsonStr = CRpcJsonParser::buildCall("radioCheck", 223, args);
+	// 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	// 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	// 	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+	// 		std::string strResp = pResponse;
+	// 		std::wstring wstr;
+	// 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+	// 		TRACE("received:%s\r", wstr.c_str());
+	// 	});
+	// 	callJsonStr.clear();
 }
 
 
 void TestWirlineScheduleDlg::OnBnClickedWiretap()
 {
-	// TODO:  在此添加控件通知处理程序代码
-	//std::string strCall = "{\"call\":\"wiretap\",\"param\":{\"id\":\"10\"},\"callId\":1}";
-	//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
-	std::map<std::string, std::string> args;
-	args["id"] = "10";
-	std::string callJsonStr = CRpcJsonParser::buildCall("wiretap", 223, args);
-	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
-	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
-	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
-		std::string strResp = pResponse;
-		std::wstring wstr;
-		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		TRACE("received:%s\r", wstr.c_str());
-	});
-	callJsonStr.clear();
+	// 	// TODO:  在此添加控件通知处理程序代码
+	// 	//std::string strCall = "{\"call\":\"wiretap\",\"param\":{\"id\":\"10\"},\"callId\":1}";
+	// 	//m_rpcClient.send((PBYTE)strCall.c_str(), strCall.size() + 1);
+	// 	std::map<std::string, std::string> args;
+	// 	args["id"] = "10";
+	// 	std::string callJsonStr = CRpcJsonParser::buildCall("wiretap", 223, args);
+	// 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
+	// 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
+	// 	m_rpcClient.sendRequest(callJsonStr.c_str(), 223, [](const char* pResponse){
+	// 		std::string strResp = pResponse;
+	// 		std::wstring wstr;
+	// 		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
+	// 		TRACE("received:%s\r", wstr.c_str());
+	// 	});
+	// 	callJsonStr.clear();
 }
 
 void TestWirlineScheduleDlg::OnBnClickedBtnConfig()
 {
 	// TODO:  在此添加控件通知处理程序代码
-	std::map<std::string, std::string> args;
-	args["module"] = "wl";
-	args["MASTER_IP"] = "192.168.2.121";
-	args["MASTER_PORT"] = "50000";
-	args["LOCAL_PEER_ID"] = "120";
-	args["LOCAL_RADIO_ID"] = "5";
-	args["RECORD_TYPE"] = "CPC";
-	args["DEFAULT_GROUP"] = "9";
-	args["DONGLE_PORT"] = "7";
-	args["HUNG_TIME"] = "4";
-	args["MASTER_HEART_TIME"] = "59";
-	args["PEER_HEART_TIME"] = "59";
-	args["DEFAULT_SLOT"] = "1";
-	std::string callJsonStr = CRpcJsonParser::buildCall("config", ++g_sn, args);
-	m_rpcClient.sendRequest(callJsonStr.c_str(), g_sn, [](const char* pResponse){
+	ArgumentType args;
+
+	FieldValue Master(FieldValue::TObject);
+	FieldValue Ip(FieldValue::TString);
+	FieldValue Port(FieldValue::TInt);
+	Ip.setString("192.168.2.121");
+	Port.setInt(50000);
+	Master.setKeyVal("Port", Port);
+	Master.setKeyVal("Ip", Ip);
+
+	FieldValue Dongle(FieldValue::TObject);
+	FieldValue Com(FieldValue::TInt);
+	Com.setInt(7);
+	Dongle.setKeyVal("Com", Com);
+
+	args["Master"] = Master;
+	args["Dongle"] = Dongle;
+	args["LocalPeerId"] = 120;
+	args["LocalRadioId"] = 5;
+	args["Type"] = "CPC";
+	args["DefaultGroupId"] = 9;
+	args["MinHungTime"] = 4;
+	args["MaxSiteAliveTime"] = 59;
+	args["MaxPeerAliveTime"] = 59;
+	args["DefaultChannel"] = 1;
+	std::string callJsonStr = CRpcJsonParser::buildCall("connect", ++g_sn, args);
+	m_rpcClient.sendRequest(callJsonStr.c_str(), g_sn, NULL, [](const char* pResponse, void *pData){
 		std::string strResp = pResponse;
 		TRACE("%s\r", strResp.c_str());
-		//std::wstring wstr;
-		//utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		//TRACE("received:%s\r", wstr.c_str());
 	});
 	callJsonStr.clear();
 }
-
-
-
 
 void TestWirlineScheduleDlg::OnBnClickedCall()
 {
@@ -490,21 +493,16 @@ void TestWirlineScheduleDlg::OnBnClickedCall()
 		return;
 	}
 	/*构建json*/
-	std::map<std::string, std::string> args;
-	args["module"] = "wl";
-	sprintf_s(temp, "%d", callType);
-	args["callType"] = temp;
-	sprintf_s(temp, "%lu", tartgetId);
-	args["tartgetId"] = temp;
+	ArgumentType args;
+	args["Operate"] = StartCall;
+	args["Type"] = callType;
+	args["Target"] = tartgetId;
 	/*发送请求*/
-	std::string callJsonStr = CRpcJsonParser::buildCall("initialCall", ++g_sn, args);
-	m_rpcClient.sendRequest(callJsonStr.c_str(), g_sn, [](const char* pResponse){
+	std::string callJsonStr = CRpcJsonParser::buildCall("call", ++g_sn, args);
+	m_rpcClient.sendRequest(callJsonStr.c_str(), g_sn, NULL, [](const char* pResponse, void *pData){
 		/*处理返回值*/
 		std::string strResp = pResponse;
-		TRACE("%s\r",strResp.c_str());
-		//std::wstring wstr;
-		//utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		//TRACE("received:%s\r", wstr.c_str());
+		TRACE("%s\r", strResp.c_str());
 	});
 	callJsonStr.clear();
 	m_call.EnableWindow(FALSE);
@@ -516,11 +514,11 @@ void TestWirlineScheduleDlg::OnBnClickedStopCall()
 {
 	// TODO:  在此添加控件通知处理程序代码
 	/*构建json*/
-	std::map<std::string, std::string> args;
-	args["module"] = "wl";
+	ArgumentType args;
+	args["Operate"] = StopCall;
 	/*发送请求*/
-	std::string callJsonStr = CRpcJsonParser::buildCall("stopCall", ++g_sn, args);
-	m_rpcClient.sendRequest(callJsonStr.c_str(), g_sn, [](const char* pResponse){
+	std::string callJsonStr = CRpcJsonParser::buildCall("call", ++g_sn, args);
+	m_rpcClient.sendRequest(callJsonStr.c_str(), g_sn, NULL, [](const char* pResponse, void *pData){
 		/*处理返回值*/
 		std::string strResp = pResponse;
 		TRACE("%s\r", strResp.c_str());
@@ -557,23 +555,19 @@ void TestWirlineScheduleDlg::OnBnClickedSetPlayCallOfCare()
 	unsigned long srcId = 0;
 	unsigned long tgtId = 0;
 	/*构建json*/
-	std::map<std::string, std::string> args;
+	ArgumentType args;
 	swscanf_s(selectedInfo, L"%u;%lu;%lu", &callType, &srcId, &tgtId);
-	sprintf_s(temp, "%u", callType);
-	args["callType"] = temp;
-	sprintf_s(temp, "%lu", srcId);
-	args["srcId"] = temp;
-	sprintf_s(temp, "%lu", tgtId);
-	args["tgtId"] = temp;
-	args["module"] = "wl";
+	args["Operate"] = SetPlayCall;
+	args["Type"] = callType;
+	args["Src"] = srcId;
+	args["Target"] = tgtId;
 	/*发送请求*/
-	std::string callJsonStr = CRpcJsonParser::buildCall("setPlayCallOfCare", ++g_sn, args);
-	m_rpcClient.sendRequest(callJsonStr.c_str(), g_sn, [](const char* pResponse){
+	std::string callJsonStr = CRpcJsonParser::buildCall("call", ++g_sn, args);
+	m_rpcClient.sendRequest(callJsonStr.c_str(), g_sn, NULL, [](const char* pResponse, void *pData){
 		/*处理返回值*/
 		std::string strResp = pResponse;
-		std::wstring wstr;
-		utf8::utf8to16(strResp.begin(), strResp.end(), std::back_inserter(wstr));
-		TRACE("received:%s\r", wstr.c_str());
+		TRACE("received:%s\r", strResp.c_str());
+
 	});
 	callJsonStr.clear();
 	m_call.EnableWindow(TRUE);
@@ -600,14 +594,15 @@ void TestWirlineScheduleDlg::OnServerRequest(CBaseConnector* pServer, const char
 		g_sn = callId;
 		Document d;
 		d.Parse(param.c_str());
-		if (0 == strcmp(callName.c_str(),"Send_CARE_CALL_STATUS"))
+		int operate = d["Operate"].GetInt();
+		if (0 == strcmp(callName.c_str(), "call") && SendCallStatus == operate)
 		{
 			g_pNewRequest = new SERVER_REQUEST;
 			g_pNewRequest->cmd = WM_UPDATE_DATA;
-			g_pNewRequest->info.callInfo.callType = atoi(d["callType"].GetString());
-			g_pNewRequest->info.callInfo.src = (unsigned long)atoll(d["srcId"].GetString());
-			g_pNewRequest->info.callInfo.status = atoi(d["status"].GetString());
-			g_pNewRequest->info.callInfo.tgt = (unsigned long)atoll(d["tgtId"].GetString());
+			g_pNewRequest->info.callInfo.callType = d["Type"].GetInt();
+			g_pNewRequest->info.callInfo.src = (unsigned long)d["Src"].GetInt();
+			g_pNewRequest->info.callInfo.status = d["Status"].GetInt();
+			g_pNewRequest->info.callInfo.tgt = (unsigned long)d["Target"].GetInt();
 			g_requests.push_back(g_pNewRequest);
 		}
 	}
@@ -651,11 +646,11 @@ void TestWirlineScheduleDlg::HandleServerRequest()
 			int count = m_careCalls.GetCount();
 			bool bHave = false;
 			int haveIndex = -1;
-			for (int index = 0; index < count;index++)
+			for (int index = 0; index < count; index++)
 			{
 				wchar_t indexInfo[256] = { 0 };
 				m_careCalls.GetLBText(index, indexInfo);
-				if (0 == wcscmp(callInfo,indexInfo))
+				if (0 == wcscmp(callInfo, indexInfo))
 				{
 					bHave = true;
 					haveIndex = index;

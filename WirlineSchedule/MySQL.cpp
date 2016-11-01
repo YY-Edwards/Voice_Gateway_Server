@@ -73,7 +73,7 @@ BOOL CMySQL::Open(LPCSTR pstrHost, WORD port, LPCSTR pstrUserName, LPCSTR pstrPa
 
 	if (m_pMysqlConnection)
 	{
-		Close();
+		stop();
 	}
 
 	m_pMysqlConnection = mysql_init(NULL);
@@ -182,10 +182,10 @@ BOOL CMySQL::Open(LPCSTR pstrHost, WORD port, LPCSTR pstrUserName, LPCSTR pstrPa
 	{
 		//创建表migration
 		CreateTable("CREATE TABLE IF NOT EXISTS `migration` (\
-					`id` int(11) NOT NULL AUTO_INCREMENT,\
-					`version` int(11) NOT NULL,\
-					PRIMARY KEY (`id`)\
-					) ENGINE=InnoDB  DEFAULT CHARSET=utf8");
+										`id` int(11) NOT NULL AUTO_INCREMENT,\
+															`version` int(11) NOT NULL,\
+																				PRIMARY KEY (`id`)\
+																									) ENGINE=InnoDB  DEFAULT CHARSET=utf8");
 		////所有现有数据表voice_*增加src_peer_id列
 		///*执行第一次改动*/
 		//addPeerIdCoulumn();
@@ -203,25 +203,25 @@ BOOL CMySQL::Open(LPCSTR pstrHost, WORD port, LPCSTR pstrUserName, LPCSTR pstrPa
 	//if (!CheckTableExist("tbl_account"))
 	//{
 	//	CreateTable("CREATE TABLE IF NOT EXISTS `tbl_account` (\
-	//														`id` int(11) NOT NULL AUTO_INCREMENT,\
-	//																													`account` varchar(64) NOT NULL,\
-	//																																																	`password` varchar(64) NOT NULL,\
-	//																																																																										`name` varchar(64) NOT NULL,\
-	//																																																																																																								`root` int(11) NOT NULL,\
-	//																																																																																																																																											`radio` int(11) NOT NULL,\
-	//																																																																																																																																																																																			PRIMARY KEY (`id`)\
-	//																																																																																																																																																																																																																																) ENGINE=InnoDB  DEFAULT CHARSET=utf8");
+		//														`id` int(11) NOT NULL AUTO_INCREMENT,\
+		//																													`account` varchar(64) NOT NULL,\
+		//																																																	`password` varchar(64) NOT NULL,\
+		//																																																																										`name` varchar(64) NOT NULL,\
+		//																																																																																																								`root` int(11) NOT NULL,\
+		//																																																																																																																																											`radio` int(11) NOT NULL,\
+		//																																																																																																																																																																																			PRIMARY KEY (`id`)\
+		//																																																																																																																																																																																																																																) ENGINE=InnoDB  DEFAULT CHARSET=utf8");
 	//}
 
 	//if (!CheckTableExist("tbl_log"))
 	//{
 	//	CreateTable("CREATE TABLE IF NOT EXISTS `tbl_log` (\
-	//				`id` int(11) NOT NULL AUTO_INCREMENT,\
-	//				`time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\
-	//				`content` varchar(64) NOT NULL,\
-	//				`is_ui` int(11) NOT NULL DEFAULT '0', \
-	//				PRIMARY KEY (`id`)\
-	//				) ENGINE=InnoDB  DEFAULT CHARSET=utf8");
+		//				`id` int(11) NOT NULL AUTO_INCREMENT,\
+		//				`time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\
+		//				`content` varchar(64) NOT NULL,\
+		//				`is_ui` int(11) NOT NULL DEFAULT '0', \
+		//				PRIMARY KEY (`id`)\
+		//				) ENGINE=InnoDB  DEFAULT CHARSET=utf8");
 	//}
 
 	CreateCurrentTableByYearMonth();
@@ -233,7 +233,7 @@ BOOL CMySQL::Open(LPCSTR pstrHost, WORD port, LPCSTR pstrUserName, LPCSTR pstrPa
 	return TRUE;
 }
 
-void CMySQL::Close()
+void CMySQL::stop()
 {
 	if (m_pMysqlConnection)
 	{
@@ -348,11 +348,15 @@ BOOL CMySQL::GetRows(LPCSTR pstrTableName, std::vector<std::map<std::string, std
 		std::vector<std::string> tableFields;
 		while ((field = mysql_fetch_field(result)))
 		{
+			// 			sprintf_s(m_reportMsg, "24");
+			// 			sendLogToWindow();
 			tableFields.push_back(field->name);
 		}
 
 		while ((row = mysql_fetch_row(result)))
 		{
+			// 			sprintf_s(m_reportMsg, "25");
+			// 			sendLogToWindow();
 			std::map<std::string, std::string> rowValue;
 			for (int i = 0; i < num_fields; i++)
 			{
@@ -502,6 +506,7 @@ DWORD WINAPI CMySQL::PingThread(LPVOID pMysql)
 
 	while (pThis->m_bRunning)
 	{
+		//printf_s("26\r\n");
 		int ret = WaitForSingleObject(pThis->m_hExitEvent, 500);
 		if (WAIT_OBJECT_0)
 		{
@@ -573,29 +578,29 @@ std::string CMySQL::CreateCurrentTableByYearMonth()
 		char strSql[1024] = { 0 };
 		sprintf_s(strSql,
 			"CREATE TABLE IF NOT EXISTS `%s` (\
-			`id` int(11) NOT NULL AUTO_INCREMENT,\
-			`src_radio` int(11) NOT NULL,\
-			`target_radio` int(11) NOT NULL,\
-			`time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\
-			`offset` int(11) NOT NULL,\
-			`length` int(11) NOT NULL,\
-			`call_type` int(11) NOT NULL,\
-			`file_path` varchar(800) NOT NULL,\
-			`record_type` int(11) NOT NULL, \
-			`src_peer_id` int(11) NOT NULL, \
-			`src_rssi` int(11) NOT NULL, \
-			`src_slot` int(11) NOT NULL, \
-			`call_status` int(11) NOT NULL, \
-			PRIMARY KEY(`id`)\
-			) ENGINE = InnoDB DEFAULT CHARSET = utf8 AUTO_INCREMENT = 1; ", 
-			strTableName);
+						`id` int(11) NOT NULL AUTO_INCREMENT,\
+									`src_radio` int(11) NOT NULL,\
+												`target_radio` int(11) NOT NULL,\
+															`time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\
+																		`offset` int(11) NOT NULL,\
+																					`length` int(11) NOT NULL,\
+																								`call_type` int(11) NOT NULL,\
+																											`file_path` varchar(800) NOT NULL,\
+																														`record_type` int(11) NOT NULL, \
+																																	`src_peer_id` int(11) NOT NULL, \
+																																				`src_rssi` int(11) NOT NULL, \
+																																							`src_slot` int(11) NOT NULL, \
+																																										`call_status` int(11) NOT NULL, \
+																																													PRIMARY KEY(`id`)\
+																																																) ENGINE = InnoDB DEFAULT CHARSET = utf8 AUTO_INCREMENT = 1; ",
+																																																strTableName);
 		//size_t length = strlen(strSql);
 		// create table
 		BOOL ret = CreateTable(strSql);
 		if (!ret)
 		{
 			//AfxMessageBox(_T("创建表失败"));
-			sprintf_s(m_reportMsg,"build table %s fail", m_strCurrentTableName);
+			sprintf_s(m_reportMsg, "build table %s fail", m_strCurrentTableName);
 			sendLogToWindow();
 		}
 	}

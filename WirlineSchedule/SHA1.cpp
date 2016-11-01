@@ -167,7 +167,10 @@ void CSHA1::Final()
 	Update((UINT_8 *)"\200", 1);
 
 	while ((m_count[0] & 504) != 448)
+	{
+		//printf_s("29\r\n");
 		Update((UINT_8 *)"\0", 1);
+	}
 
 	Update(finalcount, 8); // Cause a SHA1Transform()
 
