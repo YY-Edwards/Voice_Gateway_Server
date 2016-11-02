@@ -14,7 +14,7 @@ void sendGroupSmsEventAction(CRemotePeer* pRemote, const std::string& param, uin
 	try{
 		Document d;
 		d.Parse(param.c_str());
-		if (d.HasMember("id") && d.HasMember("msg"))
+		if (d.HasMember("id") && d.HasMember("msg") && d["id"].IsInt() && d["msg"].IsString())
 		{
 			if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
 			{
@@ -22,8 +22,7 @@ void sendGroupSmsEventAction(CRemotePeer* pRemote, const std::string& param, uin
 				args["message"] = "sendGroupSms";
 				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
-				string temp = d["id"].GetString();
-				int id = atoi(temp.c_str());
+				int id = d["id"].GetInt();
 				string msg = d["msg"].GetString();
 				int msgSize = (int)(msg.length() + 1);
 				wchar_t* text = new wchar_t[msgSize];

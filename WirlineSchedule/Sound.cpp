@@ -6,6 +6,10 @@
 
 CSound::CSound()
 {
+	m_lpOutDS = NULL;
+	m_lpOutputDSB1 = NULL;
+	m_pSndThread = NULL;
+	m_lpOutputDSB2 = NULL;
 	m_ThreadRunning = FALSE;
 	m_hMyParentWind = NULL;
 	m_bOutPcmStart = TRUE;
@@ -47,7 +51,7 @@ CSound::CSound()
 CSound::~CSound()
 {
 	m_report = NULL;
-	PleaseShutDown();
+	stop();
 }
 
 void CSound::BigEndianSoundOut(unsigned __int8* pSamples, DWORD dwCurrentDecodeSize)
@@ -108,7 +112,7 @@ DWORD CSound::StartSound(HWND hParentWnd, int uInDeviceID, int uOutDeviceID)
 
 	if (m_ThreadRunning)
 	{
-		PleaseShutDown();
+		stop();
 	}
 
 	m_hMyParentWind = hParentWnd;
@@ -174,7 +178,7 @@ DWORD CSound::StartSound(HWND hParentWnd, int uInDeviceID, int uOutDeviceID)
 	return 0;
 }
 
-void CSound::PleaseShutDown(void)
+void CSound::stop(void)
 {
 	sprintf_s(m_reportMsg, "↓start shut down sound↓");
 	sendLogToWindow();
@@ -202,6 +206,17 @@ void CSound::PleaseShutDown(void)
 	sendLogToWindow();
 	CloseOutput();
 
+
+	while (m_inputDataList.size() > 0)
+	{
+		SoundCardPCM *p = m_inputDataList.front();
+		if (p)
+		{
+			delete p;
+			p = NULL;
+		}
+	}
+
 	sprintf_s(m_reportMsg, "↑shutdown sound success↑");
 	sendLogToWindow();
 
@@ -222,7 +237,8 @@ void CSound::SoundThread()
 	while (m_ThreadRunning)
 	{
 		rlt = WaitForMultipleObjects(3, m_hSoundControlEvents, FALSE, dTimeOut);
-
+		//sprintf_s(m_reportMsg, "SoundThread:%lu", rlt);
+		//sendLogToWindow();
 		switch (rlt)
 		{
 		case WAIT_TIMEOUT:
@@ -391,6 +407,8 @@ void CSound::HandleSoundOutput(void)
 
 			while (getOutNextData() && (dRemainLen > m_pOutCurrentData->_length))
 			{
+				//sprintf_s(m_reportMsg, "1");
+				//sendLogToWindow();
 				m_dPreBufCusor = 0;
 				memcpy((BYTE*)pAudioBuf1 + dWritten, &m_pOutCurrentData->_head[m_dPreBufCusor], m_pOutCurrentData->_length);
 				dRemainLen -= m_pOutCurrentData->_length;
@@ -483,6 +501,8 @@ void CSound::HandleSoundOutput(void)
 
 				while (getOutNextData() && (dRemainLen > m_pOutCurrentData->_length))
 				{
+					//sprintf_s(m_reportMsg, "2");
+					//sendLogToWindow();
 					m_dPreBufCusor = 0;
 					memcpy((BYTE*)pAudioBuf1 + dWritten, &m_pOutCurrentData->_head[m_dPreBufCusor], m_pOutCurrentData->_length);
 					m_dOutOffsset += m_pOutCurrentData->_length;
@@ -527,6 +547,8 @@ void CSound::HandleSoundOutput(void)
 
 						while (getOutNextData() && (dRemainLen > m_pOutCurrentData->_length))
 						{
+							//sprintf_s(m_reportMsg, "3");
+							//sendLogToWindow();
 							m_dPreBufCusor = 0;
 							memcpy((BYTE*)pAudioBuf2 + dWritten, &m_pOutCurrentData->_head[m_dPreBufCusor], m_pOutCurrentData->_length);
 							m_dOutOffsset += m_pOutCurrentData->_length;
@@ -812,6 +834,8 @@ void CSound::HandleSoundInput(void)
 			/*向buff中填充数据*/
 			while ((dwPrepareReadLen - IN_BYTES_PER_20mS) >= 0)
 			{
+				//sprintf_s(m_reportMsg, "4");
+				//sendLogToWindow();
 				dwPrepareReadLen = dwPrepareReadLen - IN_BYTES_PER_20mS;
 				pData = new SoundCardPCM;
 				memset(pData, 0, sizeof(SoundCardPCM));
@@ -830,7 +854,6 @@ void CSound::HandleSoundInput(void)
 				dwShouldReadLen = dwPrepareReadLen;
 
 				pData = new SoundCardPCM;
-				memset(pData, 0, sizeof(SoundCardPCM));
 				memcpy(pData->CharBuf, (unsigned __int8*)m_pAudio1 + dwSrcOffset, dwShouldReadLen);
 				dwSrcOffset += dwShouldReadLen;
 			}
@@ -863,6 +886,8 @@ void CSound::HandleSoundInput(void)
 				}
 				while ((dwPrepareReadLen - IN_BYTES_PER_20mS) >= 0)
 				{
+					//sprintf_s(m_reportMsg, "5");
+					//sendLogToWindow();
 					dwPrepareReadLen = dwPrepareReadLen - IN_BYTES_PER_20mS;
 					pData = new SoundCardPCM;
 					memset(pData, 0, sizeof(SoundCardPCM));
@@ -897,6 +922,8 @@ void CSound::HandleSoundInput(void)
 			//将获取到的音频数据处理为AMBE能够处理的数据
 			while (m_inputDataList.size()>0)
 			{
+				//sprintf_s(m_reportMsg, "6");
+				//sendLogToWindow();
 				BOOL bIsEnd = FALSE;
 				m_pInputPrevData = m_pInputCurData;
 				m_pInputCurData = NULL;
@@ -935,12 +962,14 @@ void CSound::SoundOutputControl()
 	DWORD dTimeOut = INFINITE;
 	while (!m_bStopPlay)
 	{
+		//sprintf_s(m_reportMsg, "SoundOutputControl:%d", m_bStopPlay);
+		//sendLogToWindow();
 		if (m_bOutPcmStart)
 		{
 			sprintf_s(m_reportMsg, "start play");
 			sendLogToWindow();
 			CRecordFile *p = g_pNet->getCurrentPlayInfo();
-			g_pNet->Send_CARE_CALL_STATUS(p->callType, p->srcId, p->tagetId, HAVE_CALL_START_PLAY);
+			g_pNet->sendCallStatus(p->callType, p->srcId, p->tagetId, HAVE_CALL_START_PLAY);
 			for (int i = 0; i < NUM_OUT_BUFFERS; i++)
 			{
 				ResetEvent(m_pOutDSPosNotifyEvents[i]);
@@ -948,6 +977,8 @@ void CSound::SoundOutputControl()
 			HandleSoundOutput();
 		}
 		m_dwCurPlayZone = WaitForMultipleObjects(NUM_OUT_BUFFERS, m_pOutDSPosNotifyEvents, FALSE, dTimeOut);
+		//sprintf_s(m_reportMsg, "SoundOutputControl:%lu", m_dwCurPlayZone);
+		//sendLogToWindow();
 		if (m_dwCurPlayZone == WAIT_TIMEOUT)
 		{
 			sprintf_s(m_reportMsg, "unknown error of Audio Device");
@@ -962,7 +993,7 @@ void CSound::SoundOutputControl()
 	sprintf_s(m_reportMsg, "stop play");
 	sendLogToWindow();
 	CRecordFile *p = g_pNet->getCurrentPlayInfo();
-	g_pNet->Send_CARE_CALL_STATUS(p->callType, p->srcId, p->tagetId, HAVE_CALL_END_PLAY);
+	g_pNet->sendCallStatus(p->callType, p->srcId, p->tagetId, HAVE_CALL_END_PLAY);
 	//本次播放完毕,初始下次播放变量
 	m_bOutPcmStart = TRUE;
 	freeOutData(m_pOutCurrentData);
@@ -979,6 +1010,8 @@ void CSound::SoundInputControl()
 	DWORD dwWaitTimeOut = INFINITE;
 	while (m_bRecording)
 	{
+		//sprintf_s(m_reportMsg, "SoundInputControl:%d", m_bRecording);
+		//sendLogToWindow();
 		if (m_bStartRecording)
 		{
 			if (NULL == m_pInputFile)
@@ -1015,6 +1048,8 @@ void CSound::SoundInputControl()
 			HandleSoundInput();
 		}
 		m_dwCurRecordZone = WaitForMultipleObjects(NUM_IN_BUFFERS, m_pInputPosNotifyEvents, FALSE, dwWaitTimeOut);
+		//sprintf_s(m_reportMsg, "SoundInputControl:%lu", m_dwCurRecordZone);
+		//sendLogToWindow();
 		if (m_dwCurRecordZone == WAIT_TIMEOUT)
 		{
 			sprintf_s(m_reportMsg, "unknown error of Audio Device");

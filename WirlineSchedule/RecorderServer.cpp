@@ -94,6 +94,7 @@ DWORD WINAPI CRecorderServer::AcceptThread(LPVOID pVoid)
 	FD_SET(pThis->m_serverSocket, &allSockets);
 
 	while (pThis->m_bServerIsRunning){
+		//printf_s("28\r\n");
 		fdRead = allSockets;
 		fdException = allSockets;
 

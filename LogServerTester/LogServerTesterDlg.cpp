@@ -423,9 +423,36 @@ void CLogServerTesterDlg::OnBnClickedDbTest1()
 	fc1.push(FieldValue("username"));
 	fc1.push(FieldValue("x%"));
 	fCondition.push(fc1);
+	FieldValue crertia(FieldValue::TObject);
+	crertia.setKeyVal("condition", fCondition);
 
-	args["condition"] = fCondition;
-	std::string callJsonStr = CRpcJsonParser::buildCall("getUser", 123, args);
+	args["critera"] = crertia;
+	args["operation"] = "count";
+
+
+	ArgumentType argAdd;
+	argAdd["operation"] = "add";
+	FieldValue fUsers(FieldValue::TArray);
+	FieldValue fu(FieldValue::TObject);
+	fu.setKeyVal("username", FieldValue("s1"));
+	fu.setKeyVal("password", FieldValue("111"));
+	fu.setKeyVal("type", FieldValue("radio"));
+	fu.setKeyVal("authority", FieldValue("ptt,sms"));
+	fUsers.push(fu);
+	argAdd["users"] = fUsers;
+
+	ArgumentType argUpdate;
+	argUpdate["operation"] = "update";
+	FieldValue fupdUsers(FieldValue::TArray);
+	FieldValue fupd(FieldValue::TObject);
+	fupd.setKeyVal("id", FieldValue(1));
+	FieldValue fupdRecord(FieldValue::TObject);
+	fupdRecord.setKeyVal("type", FieldValue("admin"));
+	fupd.setKeyVal("user", fupdRecord);
+	fupdUsers.push(fupd);
+	argUpdate["users"] = fupdUsers;
+
+	std::string callJsonStr = CRpcJsonParser::buildCall("user", 123, argUpdate);
 	//std::string strCall = "{\"call\":\"appEvent\",\"param\":{\"name\":23, \"dest\":234, \"content\":\"group\"}}";
 	//m_rpcClient.send(callJsonStr.c_str(), callJsonStr.size());
 	m_rpcClient.sendRequest(callJsonStr.c_str(), 123, NULL, [](const char* pResponse, void* data){

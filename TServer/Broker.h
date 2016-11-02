@@ -2,8 +2,10 @@
 
 #include <memory>
 #include <mutex>
+#include <map>
 
 class CRpcClient;
+class CRpcServer;
 
 class CBroker
 {
@@ -28,9 +30,23 @@ public:
 		return m_radioClient;
 	}
 
+	CRpcClient* getLogClient()
+	{
+		return m_logClient;
+	}
+
+	CRpcServer* getRpcServer()
+	{
+		return m_rpcServer;
+	}
+
 	int getCallId(){
 		return callId++;
 	}
+
+	void startRpcServer(std::map<std::string, ACTION> serverActions);
+	void startRadioClient(std::map<std::string, ACTION> clientActions);
+	void startLogClient();
 
 protected:
 	CBroker();
@@ -44,5 +60,7 @@ private:
 
 	CRpcClient* m_radioClient;
 	CRpcClient* m_wirelanClient;
+	CRpcClient* m_logClient;
+	CRpcServer* m_rpcServer;
 };
 

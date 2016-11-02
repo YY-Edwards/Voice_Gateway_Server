@@ -14,7 +14,7 @@ void stopCallEventAction(CRemotePeer* pRemote, const std::string& param, uint64_
 	try{
 		Document d;
 		d.Parse(param.c_str());
-		if (d.HasMember("id"))
+		if (d.HasMember("id") && d["id"].IsInt())
 		{
 			if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
 			{
@@ -22,8 +22,7 @@ void stopCallEventAction(CRemotePeer* pRemote, const std::string& param, uint64_
 				args["message"] = "stopCall";
 				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
-				string temp = d["id"].GetString();
-				int id = atoi(temp.c_str());
+				int id = d["id"].GetInt();
 				//int result = m_dispatchOperate[pRemote]->stopCall(pRemote, callId);
 				//AddAllCommand(pRemote,"","",0, callId, STOP_CALL,0,0);
 				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, STOP_CALL, "", "", "", id, _T(""), 0, 0, callId);

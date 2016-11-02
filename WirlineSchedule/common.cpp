@@ -26,9 +26,9 @@ long GO_BACK_DEFAULT_GROUP_TIME = 12 * 1000;
 _SlotNumber CONFIG_DEFAULT_SLOT = SLOT1;
 
 std::list<REMOTE_TASK*> g_remoteCommandTaskQueue;
-REMOTE_TASK *g_pNewTask = NULL;
+//REMOTE_TASK *g_pNewTask = NULL;
 
 HANDLE g_taskLockerEvent = CreateEvent(NULL, FALSE, TRUE, NULL);
 unsigned long long g_sn = 0;
 std::list<TcpClient*> g_onLineClients;
-TcpClient *g_pTempClient = NULL;
+//TcpClient *pTempClient = NULL;

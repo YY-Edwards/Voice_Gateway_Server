@@ -139,7 +139,7 @@ std::string CSettings::getResponse(char* pStatus, uint64_t callId, int errCode, 
 	return std::string(str);
 }
 
-std::string CSettings::getRequest(char* pCall, char * type, uint64_t callId, std::string contents)
+std::string CSettings::getRequest(char* pCall, char * type, uint64_t callId, std::string param)
 {
 	std::string jsonStr = "";
 	char str[2048];
@@ -165,16 +165,16 @@ std::string CSettings::getRequest(char* pCall, char * type, uint64_t callId, std
 		d.AddMember("type", typeEl, d.GetAllocator());
 		d.AddMember("callId", callIdEl, d.GetAllocator());
 
-		if ("" != contents)
+		if ("" != param)
 		{
-			d.AddMember("contents", contentsEl, d.GetAllocator());
+			d.AddMember("param", contentsEl, d.GetAllocator());
 		}
 
 		rapidjson::StringBuffer buffer;
 		rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 		d.Accept(writer); // Accept() traverses the DOM and generates Handler events.
 		jsonStr = replace(buffer.GetString(), "\"\%s\"", "%s");
-		sprintf_s(str, jsonStr.c_str(), contents.c_str());
+		sprintf_s(str, jsonStr.c_str(), param.c_str());
 		d.RemoveAllMembers();
 	}
 	catch (std::exception& e)

@@ -11,10 +11,6 @@
 #include <map>
 #include <mutex>
 
-#ifndef SOCKET_ERROR
-#define SOCKET_ERROR            (-1)
-#endif
-
 #include "BaseConnector.h"
 
 #define		ServerRunning		1
@@ -30,6 +26,15 @@ public:
 public:
 	int sendResponse(const char* pData, int dataLen)
 	{
+		printf("send data£º%s\r\n", pData);
+
+		return ::send(s, pData, dataLen, 0);
+	}
+
+	int sendCommand(const char* pData, int dataLen)
+	{
+		printf("send data£º%s\r\n", pData);
+
 		return ::send(s, pData, dataLen, 0);
 	}
 };
@@ -46,6 +51,7 @@ public: // dereived from CAbstractConnector
 	virtual void stop();
 	virtual int send(const char* pData, int dataLen);
 	virtual int connect(const char* connStr);
+	virtual bool isConnected();
 
 protected:
 	static DWORD WINAPI AcceptThread(LPVOID pVoid);

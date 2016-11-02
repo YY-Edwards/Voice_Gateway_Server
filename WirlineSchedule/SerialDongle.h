@@ -47,7 +47,7 @@ public:
 	BOOL changeAMBEToPCM();
 	BOOL changePCMToAMBE();
 	DWORD OpenDongle(LPCTSTR lpszDevice, HWND hParentWnd,CManager* lpCmanager);
-	void  CloseDongle(void);
+	void  stop(void);
 	void SetLogPtr(PLogReport value);
 	tAMBEFrame* GetFreeAMBEBuffer(void);
 	void MarkAMBEBufferFilled(void);

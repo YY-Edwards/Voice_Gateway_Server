@@ -73,7 +73,7 @@ CSerialDongle::CSerialDongle()
 CSerialDongle::~CSerialDongle()
 {
 	m_report = NULL;
-	CloseDongle();
+	stop();
 }
 
 DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice, HWND hParentWnd, CManager* lpCmanager)
@@ -95,7 +95,7 @@ DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice, HWND hParentWnd, CManager* l
 	m_bPleasePurgePCM = FALSE;
 
 	//初始化donggle
-	CloseDongle(); //Shouldn't be anything running;
+	stop(); //Shouldn't be anything running;
 	m_PleaseStopSerial = FALSE;
 
 	//Set up COM stuff.
@@ -103,7 +103,7 @@ DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice, HWND hParentWnd, CManager* l
 	if (NULL == m_hReadSerialEvent)
 	{
 		result = GetLastError();
-		CloseDongle();
+		stop();
 		return result;
 	}
 	m_hRxSerialEventArray[SERIAL_RX] = m_hReadSerialEvent;
@@ -111,7 +111,7 @@ DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice, HWND hParentWnd, CManager* l
 	m_hWriteSerialEvent = CreateEvent(NULL, TRUE, FALSE, NULL); //Manual Reset,
 	if (NULL == m_hWriteSerialEvent){
 		result = GetLastError();
-		CloseDongle();
+		stop();
 		return result;
 	}
 	m_hTxSerialEventArray[SERIAL_TX] = m_hWriteSerialEvent;
@@ -129,7 +129,7 @@ DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice, HWND hParentWnd, CManager* l
 	if (m_hComm == INVALID_HANDLE_VALUE)
 	{
 		result = GetLastError();
-		CloseDongle();
+		stop();
 		return result;
 	}
 
@@ -138,7 +138,7 @@ DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice, HWND hParentWnd, CManager* l
 
 	if (0 != result){
 		//dongle配置失败
-		CloseDongle();
+		stop();
 		return result;
 	}
 
@@ -146,7 +146,7 @@ DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice, HWND hParentWnd, CManager* l
 	result = PurgeDongle(PURGE_RXABORT | PURGE_RXCLEAR | PURGE_TXCLEAR | PURGE_TXABORT, 100);
 	if (0 != result)
 	{
-		CloseDongle();
+		stop();
 		return result;
 	}
 
@@ -154,7 +154,7 @@ DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice, HWND hParentWnd, CManager* l
 	m_hTickleTxSerialEvent = CreateEvent(NULL, TRUE, FALSE, NULL); //Manual Reset
 	if (NULL == m_hTickleTxSerialEvent){
 		result = GetLastError();
-		CloseDongle();
+		stop();
 		return result;
 	}
 	m_hTxSerialEventArray[SERIAL_TICKLE] = m_hTickleTxSerialEvent;
@@ -171,7 +171,7 @@ DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice, HWND hParentWnd, CManager* l
 	if (NULL == m_pSerialTxThread)
 	{
 		//创建用户界面线程TxThread失败
-		CloseDongle();
+		stop();
 		return 600;
 	}
 
@@ -182,7 +182,7 @@ DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice, HWND hParentWnd, CManager* l
 	m_hTickleRxSerialEvent = CreateEvent(NULL, TRUE, FALSE, NULL); //Manual Reset
 	if (NULL == m_hTickleRxSerialEvent){
 		result = GetLastError();
-		CloseDongle();
+		stop();
 		return result;
 	}
 	m_hRxSerialEventArray[SERIAL_TICKLE] = m_hTickleRxSerialEvent;
@@ -197,7 +197,7 @@ DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice, HWND hParentWnd, CManager* l
 		&m_pSerialRxThreadId
 		);
 	if (NULL == m_pSerialRxThread){
-		CloseDongle();
+		stop();
 		return 601;
 	}
 
@@ -211,7 +211,7 @@ DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice, HWND hParentWnd, CManager* l
 	return 0;
 }
 
-void CSerialDongle::CloseDongle(void)
+void CSerialDongle::stop(void)
 {
 	sprintf_s(m_reportMsg, "↓start close dongle↓");
 	sendLogToWindow();
@@ -422,6 +422,8 @@ void CSerialDongle::SerialTxThread()
 	do
 	{
 		result = WaitForMultipleObjects(2, m_hTxSerialEventArray, FALSE, dwCurrentTimeout);
+		//sprintf_s(m_reportMsg, "SerialTxThread:%lu", result);
+		//sendLogToWindow();
 		switch (result)
 		{
 		case WAIT_TIMEOUT:
@@ -468,6 +470,8 @@ void CSerialDongle::SerialRxThread()
 	do
 	{
 		result = WaitForMultipleObjects(2, m_hRxSerialEventArray, FALSE, dwCurrentTimeout);
+		//sprintf_s(m_reportMsg, "SerialRxThread:%lu", result);
+		//sendLogToWindow();
 		switch (result)
 		{
 		case WAIT_TIMEOUT:
@@ -532,6 +536,7 @@ void CSerialDongle::SetLogPtr(PLogReport value)
 
 int CSerialDongle::AssembleMsg(DWORD numBytes, DWORD * dwBytesAssembled)
 {
+	long long numBytess = numBytes;
 	int Index;
 	unsigned __int8 ch;
 	int WholeMessageCount = 0;
@@ -539,8 +544,10 @@ int CSerialDongle::AssembleMsg(DWORD numBytes, DWORD * dwBytesAssembled)
 
 	*dwBytesAssembled = 0;
 	Index = 0;
-	while (0 < numBytes--)
+	while (0 < numBytess--)
 	{
+		//sprintf_s(m_reportMsg, "AssembleMsg:%lu", numBytess);
+		//sendLogToWindow();
 		bytecount++;
 		ch = m_DongleRxBuffer[Index++];
 		switch (m_ParserState)	//Simple state machine to get generic DVSI msg

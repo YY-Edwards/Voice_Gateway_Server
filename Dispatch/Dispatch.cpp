@@ -8,20 +8,26 @@
 #include <shlobj.h>  
 #include "Util.h"
 #include "../lib/rpc/include/RpcServer.h"
-#include"AllCallEventAction.h"
-#include"CallEventAction.h"
-#include"CancelgpspEventAction.h"
-#include"ConnectEventAction.h"
-#include"GetGpsEventAction.h"
-#include "GetOverTurnGpsEventAction.h"
-#include"GroupCallEventAction.h"
-#include "RadioCheckEventAction.h"
-#include "RemotePowerOffEventAction.h"
-#include "RemotePowerOnEventAction.h"
-#include "SendGroupSmsEventAction.h"
-#include "SendSmsEventAction.h"
-#include "StopCallEventAction.h"
-#include "WiretapEventAction.h"
+//#include"AllCallEventAction.h"
+//#include"CallEventAction.h"
+//#include"CancelgpspEventAction.h"
+//#include"ConnectEventAction.h"
+//#include"GetGpsEventAction.h"
+//#include "GetOverTurnGpsEventAction.h"
+//#include"GroupCallEventAction.h"
+//#include "RadioCheckEventAction.h"
+//#include "RemotePowerOffEventAction.h"
+//#include "RemotePowerOnEventAction.h"
+//#include "SendGroupSmsEventAction.h"
+//#include "SendSmsEventAction.h"
+//#include "StopCallEventAction.h"
+//#include "WiretapEventAction.h"
+
+#include "ConnectAction.h"
+#include "CallAction.h"
+#include "ControlAction.h"
+#include "GpsAction.h"
+#include "MsgAction.h"
 
 #define TCP_PORT 9001
 
@@ -547,20 +553,25 @@ int _tmain(int argc, _TCHAR* argv[])
 	wprintf(argv[1]);*/
 	
 	CRpcServer rpcServer;
-	rpcServer.addActionHandler("allCall",allCallEventAction);
-	rpcServer.addActionHandler("call",callEventAction);
-	rpcServer.addActionHandler("cancelGps",cancelgpspEventAction);
-	rpcServer.addActionHandler("connect",connectEventAction);
-	rpcServer.addActionHandler("getGps",getGpsEventAction);
-	rpcServer.addActionHandler("getOverTurnGps",getOverTurnGpsEventAction);
-	rpcServer.addActionHandler("groupCall",groupCallEventAction);
-	rpcServer.addActionHandler("radioCheck",radioCheckEventAction);
-	rpcServer.addActionHandler("remotePowerOn",remotePowerOnEventAction);
-	rpcServer.addActionHandler("remotePowerOff",remotePowerOffEventAction);
-	rpcServer.addActionHandler("sendGroupSms", sendGroupSmsEventAction);
-	rpcServer.addActionHandler("sendSms", sendSmsEventAction);
-	rpcServer.addActionHandler("stopCall",stopCallEventAction);
-	rpcServer.addActionHandler("wiretap",wiretapEventAction);
+	//rpcServer.addActionHandler("allCall",allCallEventAction);
+	//rpcServer.addActionHandler("call",callEventAction);
+	//rpcServer.addActionHandler("cancelGps",cancelgpspEventAction);
+	//rpcServer.addActionHandler("connect",connectEventAction);
+	//rpcServer.addActionHandler("getGps",getGpsEventAction);
+	//rpcServer.addActionHandler("getOverTurnGps",getOverTurnGpsEventAction);
+	//rpcServer.addActionHandler("groupCall",groupCallEventAction);
+	//rpcServer.addActionHandler("radioCheck",radioCheckEventAction);
+	//rpcServer.addActionHandler("remotePowerOn",remotePowerOnEventAction);
+	//rpcServer.addActionHandler("remotePowerOff",remotePowerOffEventAction);
+	//rpcServer.addActionHandler("sendGroupSms", sendGroupSmsEventAction);
+	//rpcServer.addActionHandler("sendSms", sendSmsEventAction);
+	//rpcServer.addActionHandler("stopCall",stopCallEventAction);
+	//rpcServer.addActionHandler("wiretap",wiretapEventAction);
+	rpcServer.addActionHandler("connect",connectAction);
+	rpcServer.addActionHandler("call", callAction);
+	rpcServer.addActionHandler("control", controlAction);
+	rpcServer.addActionHandler("queryGps", gpsAction);
+	rpcServer.addActionHandler("message", msgAction);
 
 	rpcServer.start(TCP_PORT, rpcServer.TCP);
 	

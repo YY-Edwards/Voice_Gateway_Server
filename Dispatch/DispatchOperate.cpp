@@ -1,10 +1,9 @@
 #include "stdafx.h"
-
-
+int seq;
 list <AllCommand>allCommandList;
 std::mutex m_allCommandListLocker;
-CRITICAL_SECTION cs;
-
+bool isUdpConnect = false;
+map <string, status> radioStatus;
 DispatchOperate::DispatchOperate()
 {
 	m_queryMode = -1;
@@ -17,7 +16,7 @@ DispatchOperate::DispatchOperate()
 	callID = -1;
 
 	CreateThread(NULL, 0, WorkThread, this, THREAD_PRIORITY_NORMAL, NULL);
-	::InitializeCriticalSection(&cs);
+
 }
 //DispatchOperate::DispatchOperate(CRemotePeer * pRemotePeer)
 //{
@@ -505,22 +504,21 @@ int DispatchOperate::RadioConnect()
 	//udp Connection
 	//text  Connection                                      //0:连接成功  1：udp 连接失败  2：tcp 连接失败  3： udp、tcp均失败
 	SOCKET mSokset;
-	//if (!textConnectResult)
+	if (!isUdpConnect)
 	{
 		textConnectResult = pTextMsg.InitSocket(&mSokset, dwIP, pRemotePeer);
-	}
-
-	//	ARS Connection
-	//if (!ARSConnectResult)
-	{
-		ARSConnectResult = pRadioARS.InitARSSocket(dwIP,pRemotePeer);
-	}
-
-	//	GPS Connection
-	//if (!GPSConnectResult)
-	{
+		ARSConnectResult = pRadioARS.InitARSSocket(dwIP, pRemotePeer);
 		GPSConnectResult = pRadioGPS.InitGPSSocket(dwIP, pRemotePeer);
+		if (textConnectResult && ARSConnectResult && GPSConnectResult )
+		{
+			isUdpConnect = true;
+		}
+		else
+		{
+			isUdpConnect = false;
+		}
 	}
+
 
 	if (pXnlConnection == NULL)
 	{
@@ -530,25 +528,27 @@ int DispatchOperate::RadioConnect()
 		//std::lock_guard <std::mutex> locker(m_allCommandListLocker);
 		//m_allCommandListLocker.lock();
 		//::EnterCriticalSection(&cs);
-		for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+		for (it = allCommandList.begin(); it != allCommandList.end(); it++)
 		{
 			
 				if (pXnlConnection == NULL)    //0:调度业务和数据业务都连接失败 1： 调度业务连接成功，数据业务连接失败 2：调度业务连接失败，数据业务连接成功 3. 调度业务和数据业务都连接成功
 				{
-					if (textConnectResult && ARSConnectResult && GPSConnectResult)
+					if (isUdpConnect)
 					{
 						
+						
 #if DEBUG_LOG
-						LOG(INFO) << "数据连接成功，调度业务连接失败";
+						LOG(INFO) << "数据连接成功，调度业务连接失败";              //DATA_SUCESS_DISPATCH_FAIL
 #endif
-						if (it->callId == callID)
+						if (it->callId == callID && pRemotePeer ==it->pRemote)
 						{
-							
-							std::string callJsonStr = CRpcJsonParser::buildResponse("2", it->callId, 0, "2", ArgumentType());
-							if (pRemotePeer != NULL)
+							ArgumentType args;
+							args["status"] = FieldValue(DATA_SUCESS_DISPATCH_FAILED);
+							std::string callJsonStr = CRpcJsonParser::buildCall("connectStatus", ++seq,args,"radio" );
+							if (pRemotePeer != NULL )
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								allCommandList.erase(it++);
+								it = allCommandList.erase(it);
 								break;
 							}
 							
@@ -559,16 +559,18 @@ int DispatchOperate::RadioConnect()
 					{
 						
 #if DEBUG_LOG
-						LOG(INFO) << "数据连接失败，调度业务连接失败";
+						LOG(INFO) << "数据连接失败，调度业务连接失败";     //DATA_FAIL_DISPATCH_FAIL
 #endif
-						if (it->callId == callID)
+						if (it->callId == callID && pRemotePeer == it->pRemote)
 						{
 							
-							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 0, "0", ArgumentType());
+							ArgumentType args;
+							args["status"] = FieldValue(DATA_FAILED_DISPATCH_FAILED);
+							std::string callJsonStr = CRpcJsonParser::buildCall("connectStatus", ++seq, args, "radio");
 							if (pRemotePeer != NULL)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								allCommandList.erase(it++);
+								it = allCommandList.erase(it);
 								break;
 							}
 
@@ -578,43 +580,46 @@ int DispatchOperate::RadioConnect()
 				}
 				else
 				{
-					if (textConnectResult && ARSConnectResult && GPSConnectResult)
+					if (isUdpConnect)
 					{
 						
 #if DEBUG_LOG
-						LOG(INFO) << "数据连接成功，调度业务连接成功";
+						LOG(INFO) << "数据连接成功，调度业务连接成功";      //DATA_SUCESS_DISPATCH_SUCESS
 #endif
 						
-							if (it->callId == callID)
+						if (it->callId == callID && pRemotePeer == it->pRemote)
 							{
 							
-								std::string callJsonStr = CRpcJsonParser::buildResponse("3", it->callId, 0, "3", ArgumentType());
+							ArgumentType args;
+							args["status"] = FieldValue(DATA_SUCESS_DISPATCH_SUCESS);
+							std::string callJsonStr = CRpcJsonParser::buildCall("connectStatus", ++seq, args, "radio");
 								if (pRemotePeer != NULL)
 								{
 									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-									allCommandList.erase(it++);
+									it = allCommandList.erase(it);
 									break;
 								}
 							
 							}
-							
 				
 						return 3;
 					}
 					else
 					{
-						
+					
 #if DEBUG_LOG
-						LOG(INFO) << "数据连接失败，调度业务连接成功";
+						LOG(INFO) << "数据连接失败，调度业务连接成功";                 //DATA_FAIL_DISPATCH_SUCESS
 #endif
-						if (it->callId == callID)
+						if (it->callId == callID && pRemotePeer == it->pRemote) 
 						{
 							
-							std::string callJsonStr = CRpcJsonParser::buildResponse("0", it->callId, 1, "1", ArgumentType());
+							ArgumentType args;
+							args["status"] = FieldValue(DATA_FAILED_DISPATCH_SUCESS);
+							std::string callJsonStr = CRpcJsonParser::buildCall("connectStatus", ++seq, args, "radio");
 							if (pRemotePeer != NULL)
 							{
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								allCommandList.erase(it++);
+								it = allCommandList.erase(it);
 								break;
 							}
 								
@@ -630,11 +635,12 @@ int DispatchOperate::RadioConnect()
 	return 0;
 }
 
-void DispatchOperate::AddAllCommand(CRemotePeer* pRemote, int command, string radioIP, string mnisIP, string gpsIP,int id, wchar_t* text, int cycle, int querymode, int callId)
+void DispatchOperate::AddAllCommand(CRemotePeer* pRemote,SOCKET s, int command, string radioIP, string mnisIP, string gpsIP,int id, wchar_t* text, int cycle, int querymode, int callId)
 {
 	std::lock_guard<std::mutex> locker(m_addCommandLocker);
 	AllCommand      m_allCommand;
 	m_allCommand.pRemote = pRemote;
+	m_allCommand.s = s;
 	m_allCommand.callId = callId;
 	m_allCommand.command = command;
 	m_allCommand.ackNum = 0;
@@ -649,6 +655,8 @@ void DispatchOperate::AddAllCommand(CRemotePeer* pRemote, int command, string ra
 	m_allCommand.text = text;
 	allCommandList.push_back(m_allCommand);
 	commandList.push_back(m_allCommand);
+
+	seq = callId +1;
 }
 DWORD WINAPI DispatchOperate::TimeOutThread(LPVOID lpParam)
 {
@@ -690,7 +698,7 @@ void DispatchOperate::TimeOut()
 				
 				std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "1", ArgumentType());
 				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());	
-				allCommandList.erase(it);
+				it = allCommandList.erase(it);
 			}
 		
 		}
@@ -899,7 +907,7 @@ int DispatchOperate::mnisUdpConnect(const char* ip)
 	//text  Connection                                      //0:连接成功  1：udp 连接失败  2：tcp 连接失败  3： udp、tcp均失败
 	dwIP = inet_addr(ip);
 	SOCKET mSokset;
-	//if (!textConnectResult)
+	if (!textConnectResult)
 	//{
 	//textConnectResult = pTextMsg.InitSocket(&mSokset, dwIP);
 	//}
@@ -957,61 +965,63 @@ void DispatchOperate::WorkThreadFunc()
 		switch (it->command)
 		{
 		case  RADIO_CONNECT:
-			m_dispatchOperate[it->pRemote]->Connect(it->pRemote, it->radioIP.c_str(), it->mnisIP.c_str(), it->callId);
+			m_dispatchOperate[it->s]->Connect(it->pRemote, it->radioIP.c_str(), it->mnisIP.c_str(), it->callId);
 			break;
 		case PRIVATE_CALL:
-			m_dispatchOperate[it->pRemote]->call(it->pRemote, it->radioId, it->callId);
+			m_dispatchOperate[it->s]->call(it->pRemote, it->radioId, it->callId);
 			break;
 		case GROUP_CALL:
+			m_dispatchOperate[it->s]->groupCall(it->pRemote, it->radioId, it->callId);
 			break;
 		case ALL_CALL:
-			m_dispatchOperate[it->pRemote]->allCall(it->pRemote, it->callId);
+			m_dispatchOperate[it->s]->allCall(it->pRemote, it->callId);
 			break;
 		case REMOTE_CLOSE:
-			m_dispatchOperate[it->pRemote]->remotePowerOff(it->pRemote, it->radioId, it->callId);
+			m_dispatchOperate[it->s]->remotePowerOff(it->pRemote, it->radioId, it->callId);
 			break;
 		case REMOTE_OPEN:
-			m_dispatchOperate[it->pRemote]->remotePowerOn(it->pRemote, it->radioId, it->callId);
+			m_dispatchOperate[it->s]->remotePowerOn(it->pRemote, it->radioId, it->callId);
 			break;
 		case CHECK_RADIO_ONLINE:
-			m_dispatchOperate[it->pRemote]->radioCheck(it->pRemote, it->radioId, it->callId);
+			m_dispatchOperate[it->s]->radioCheck(it->pRemote, it->radioId, it->callId);
 			break;
 		case REMOTE_MONITOR:
-			m_dispatchOperate[it->pRemote]->wiretap(it->pRemote, it->radioId, it->callId);
+			m_dispatchOperate[it->s]->wiretap(it->pRemote, it->radioId, it->callId);
 			break;
 		case SEND_PRIVATE_MSG:
-			m_dispatchOperate[it->pRemote]->sendSms(it->pRemote, it->radioId, it->text, it->callId);
+			m_dispatchOperate[it->s]->sendSms(it->pRemote, it->radioId, it->text, it->callId);
 			break;
 		case SEND_GROUP_MSG:
-			m_dispatchOperate[it->pRemote]->sendGroupSms(it->pRemote, it->radioId, it->text, it->callId);
+			m_dispatchOperate[it->s]->sendGroupSms(it->pRemote, it->radioId, it->text, it->callId);
 			break;
 		case  GPS_IMME_COMM:
-			m_dispatchOperate[it->pRemote]->getGps(it->pRemote, it->radioId, it->querymode, it->cycle, it->callId);
+			m_dispatchOperate[it->s]->getGps(it->pRemote, it->radioId, it->querymode, it->cycle, it->callId);
 			break;
 		case GPS_TRIGG_COMM:
-			m_dispatchOperate[it->pRemote]->getGps(it->pRemote, it->radioId, it->querymode, it->cycle, it->callId);
+			m_dispatchOperate[it->s]->getGps(it->pRemote, it->radioId, it->querymode, it->cycle, it->callId);
 			break;
 		case GPS_IMME_CSBK:
-			m_dispatchOperate[it->pRemote]->getGps(it->pRemote, it->radioId, it->querymode, it->cycle, it->callId);
+			m_dispatchOperate[it->s]->getGps(it->pRemote, it->radioId, it->querymode, it->cycle, it->callId);
 			break;
 		case GPS_TRIGG_CSBK:
-			m_dispatchOperate[it->pRemote]->getGps(it->pRemote, it->radioId, it->querymode, it->cycle, it->callId);
+			m_dispatchOperate[it->s]->getGps(it->pRemote, it->radioId, it->querymode, it->cycle, it->callId);
 			break;
 		case GPS_IMME_CSBK_EGPS:
-			m_dispatchOperate[it->pRemote]->getGps(it->pRemote, it->radioId, it->querymode, it->cycle, it->callId);
+			m_dispatchOperate[it->s]->getGps(it->pRemote, it->radioId, it->querymode, it->cycle, it->callId);
 			break;
 		case GPS_TRIGG_CSBK_EGPS:
-			m_dispatchOperate[it->pRemote]->getGps(it->pRemote, it->radioId, it->querymode, it->cycle, it->callId);
+			m_dispatchOperate[it->s]->getGps(it->pRemote, it->radioId, it->querymode, it->cycle, it->callId);
 			break;
 		case STOP_QUERY_GPS:
-			m_dispatchOperate[it->pRemote]->cancelPollGps(it->pRemote, it->radioId, it->callId);
+			m_dispatchOperate[it->s]->cancelPollGps(it->pRemote, it->radioId, it->callId);
 			break;
 		case STOP_CALL:
+			m_dispatchOperate[it->s]->stopCall(it->pRemote, it->callId);
 			break;
 		default:
 			break;
 		}
-		commandList.erase(it);
+		it = commandList.erase(it);
 		break;	
 	}
 }

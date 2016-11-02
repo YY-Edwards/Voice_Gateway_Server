@@ -31,6 +31,12 @@
     <Filter Include="action">
       <UniqueIdentifier>{433da747-3f74-4924-ab1c-e936aefaaca2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="serverAction">
+      <UniqueIdentifier>{0a8462f7-4c7a-435a-bc94-e5cfc681b257}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="clientAction">
+      <UniqueIdentifier>{953314cb-fdfc-4e31-8dbb-f76bd7e01bd2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -81,9 +87,6 @@
     <ClInclude Include="AllCallAction.h">
       <Filter>action</Filter>
     </ClInclude>
-    <ClInclude Include="CallAction.h">
-      <Filter>action</Filter>
-    </ClInclude>
     <ClInclude Include="CancelGpsAction.h">
       <Filter>action</Filter>
     </ClInclude>
@@ -119,6 +122,39 @@
     </ClInclude>
     <ClInclude Include="WiretapAction.h">
       <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="PrivateCallAction.h">
+      <Filter>action</Filter>
+    </ClInclude>
+    <ClInclude Include="CallAction.h">
+      <Filter>serverAction</Filter>
+    </ClInclude>
+    <ClInclude Include="ControlAction.h">
+      <Filter>serverAction</Filter>
+    </ClInclude>
+    <ClInclude Include="GpsAction.h">
+      <Filter>serverAction</Filter>
+    </ClInclude>
+    <ClInclude Include="MsgAction.h">
+      <Filter>serverAction</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvGpsAction.h">
+      <Filter>clientAction</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvArsAction.h">
+      <Filter>clientAction</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvMessageAction.h">
+      <Filter>clientAction</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvConnectResultAction.h">
+      <Filter>clientAction</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvControlResultAction.h">
+      <Filter>clientAction</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvMessageResultAction.h">
+      <Filter>clientAction</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -31,6 +31,16 @@
 //static const BYTE PRIVATE_CALL = 0x50;
 //static const BYTE ALL_CALL = 0x53;
 
+
+//#define TALK_TIME (20*1000)
+
+#define StartCall 0x01
+#define StopCall 0x02
+#define SetPlayCall 0x03
+#define SendCallStatus 0x04
+
+#define CLIENT_TRANSFER_OK "0"
+#define CLIENT_TRANSFER_FAIL "1"
 #define WL_SERVER_PORT 9002
 
 enum WLStatus
@@ -152,10 +162,10 @@ typedef struct
 }REMOTE_TASK;
 /*远程命令任务队列*/
 extern std::list<REMOTE_TASK*> g_remoteCommandTaskQueue;
-extern REMOTE_TASK *g_pNewTask;
+//extern REMOTE_TASK *g_pNewTask;
 extern unsigned long long g_sn;
 extern std::list<TcpClient*> g_onLineClients;
-extern TcpClient *g_pTempClient;
+//extern TcpClient *pTempClient;
 //////////////////////////////////////////////////////////////////////////
 
 #define ALL_CALL_ID 255
@@ -245,7 +255,6 @@ extern unsigned char g_targetCallType;//呼出类型
 #define WXJ_DLL FALSE
 
 #define SEND_360MS_TIMES (2)
-//#define PEER_KEEP_ALIVE_TIME (12*1000)
 #define REGISTRATION_PDU_ID 2
 
 #define Wireline_Protocol_Version 0x04

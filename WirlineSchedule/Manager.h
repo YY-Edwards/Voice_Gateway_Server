@@ -55,6 +55,7 @@ public:
 	int config(CONFIG_PARAM* pConfig);
 	void startHandleRemoteTask();
 	void handleRemoteTask();
+	void stop();
 private:
 	PLogReport m_report;
 	HWND m_hwnd;

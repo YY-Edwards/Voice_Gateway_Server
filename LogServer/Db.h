@@ -51,5 +51,6 @@ public:
 
 	int query(const char* table, const char* condition, std::list<recordType>& records);
 	int count(const char* table, const char* condition);
+	bool del(const char* table, const char* condition);
 };
 

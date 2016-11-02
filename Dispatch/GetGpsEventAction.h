@@ -15,7 +15,7 @@ void getGpsEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t 
 	try{
 		Document d;
 		d.Parse(param.c_str());
-		if (d.HasMember("id") && d.HasMember("cycle") && d.HasMember("querymode"))
+		if (d.HasMember("id") && d.HasMember("cycle") && d.HasMember("querymode") && d["id"].IsInt())
 		{
 			if (m_dispatchOperate.find(pRemote) != m_dispatchOperate.end())
 			{
@@ -23,8 +23,7 @@ void getGpsEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t 
 				args["message"] = "getGps";
 				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
-				string temp = d["id"].GetString();
-				int id = atoi(temp.c_str());
+				int id = d["id"].GetInt();
 				string tempCycle = d["cycle"].GetString();
 				int cycle = atoi(tempCycle.c_str());
 				string tempMode = d["queryMode"].GetString();

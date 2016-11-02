@@ -19,7 +19,7 @@
 void sendResponse(CRemotePeer* pRemote, const char* pData, int dataLen)
 {
 	pRemote->sendResponse(pData, dataLen);
-	printf("send data£º%s\r\n", pData);
+	
 }
 
 void setBaseAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)

@@ -51,7 +51,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;_AFXDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <AdditionalIncludeDirectories>../lib/gtest/include;../lib/glog/lib;../lib</AdditionalIncludeDirectories>
     </ClCompile>
@@ -100,14 +100,18 @@
     <ClInclude Include="CallAction.h" />
     <ClInclude Include="CallEventAction.h" />
     <ClInclude Include="CancelgpspEventAction.h" />
+    <ClInclude Include="ConnectAction.h" />
     <ClInclude Include="ConnectEventAction.h" />
     <ClInclude Include="DispatchOperate.h" />
     <ClInclude Include="GetGpsEventAction.h" />
     <ClInclude Include="GetOverTurnGpsEventAction.h" />
+    <ClInclude Include="GpsAction.h" />
     <ClInclude Include="GroupCallEventAction.h" />
+    <ClInclude Include="MsgAction.h" />
     <ClInclude Include="RadioARS.h" />
     <ClInclude Include="RadioCheckEventAction.h" />
     <ClInclude Include="RadioGps.h" />
+    <ClInclude Include="ControlAction.h" />
     <ClInclude Include="RemotePowerOffEventAction.h" />
     <ClInclude Include="RemotePowerOnEventAction.h" />
     <ClInclude Include="SendGroupSmsEventAction.h" />
@@ -128,7 +132,9 @@
     <ClCompile Include="..\lib\rpc\src\RpcServer.cpp" />
     <ClCompile Include="..\lib\rpc\src\TcpServer.cpp" />
     <ClCompile Include="Dispatch.cpp" />
-    <ClCompile Include="DispatchOperate.cpp" />
+    <ClCompile Include="DispatchOperate.cpp">
+      <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</SDLCheck>
+    </ClCompile>
     <ClCompile Include="RadioARS.cpp" />
     <ClCompile Include="RadioGps.cpp" />
     <ClCompile Include="stdafx.cpp">
