@@ -2,6 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
+using System.Globalization;
 
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
@@ -9,6 +18,8 @@ using System.Reflection;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+
+
 
 namespace TrboX
 {
@@ -40,22 +51,22 @@ namespace TrboX
 
             foreach (FastOperate item in FastOperateList)
             {
-                m_mainWin.lst_dispatch.Items.Add(item);
+                m_mainWin.lst_dispatch.Items.Add(new ListViewItem() { Content = item, ContextMenu = new ContextMenu() { Visibility = Visibility.Collapsed } });
             }
         }
 
         public void Add(FastOperate item)
         {
-            foreach (FastOperate it in m_mainWin.lst_dispatch.Items)
+            foreach (ListViewItem it in m_mainWin.lst_dispatch.Items)
             {
-                if (JsonConvert.SerializeObject(item).Equals(JsonConvert.SerializeObject(it)))
+                if (JsonConvert.SerializeObject(item).Equals(JsonConvert.SerializeObject(((ListViewItem)it).Content)))
                 {
-                    Remove(it);
+                    Remove(item);
                     break;
                 }
             }
 
-            m_mainWin.lst_dispatch.Items.Insert(0,item);
+            m_mainWin.lst_dispatch.Items.Insert(0, new ListViewItem() { Content = item, ContextMenu = new ContextMenu() { Visibility = Visibility.Collapsed } });
             m_mainWin.g_IsNeedSaveWorkSpace = true;
         }
 
@@ -69,12 +80,12 @@ namespace TrboX
 
             if (oldindex > newindex)
             {
-                m_mainWin.lst_dispatch.Items.Insert(newindex, item);
+                m_mainWin.lst_dispatch.Items.Insert(newindex, new ListViewItem() { Content = item, ContextMenu = new ContextMenu() { Visibility = Visibility.Collapsed } });
                 m_mainWin.lst_dispatch.Items.RemoveAt(oldindex + 1);
             }
             else
             {
-                m_mainWin.lst_dispatch.Items.Insert(newindex + 1, item);
+                m_mainWin.lst_dispatch.Items.Insert(newindex + 1, new ListViewItem() { Content = item, ContextMenu = new ContextMenu() { Visibility = Visibility.Collapsed } });
                 m_mainWin.lst_dispatch.Items.RemoveAt(oldindex);
             }
 
@@ -87,9 +98,9 @@ namespace TrboX
         {           
             if(null == item)return;
             List<FastOperate> willdel = new List<FastOperate>();
-            foreach (var it in m_mainWin.lst_dispatch.Items)
+            foreach (ListViewItem it in m_mainWin.lst_dispatch.Items)
             {
-                if (item.IsEqual(it as FastOperate))
+                if (item.IsEqual(it.Content as FastOperate))
                 {
                     m_mainWin.lst_dispatch.Items.Remove(it);
                     m_mainWin.g_IsNeedSaveWorkSpace = true;
@@ -102,9 +113,9 @@ namespace TrboX
         public List<FastOperate> Get()
         {
             List<FastOperate> FastOperateList = new List<FastOperate>();
-            foreach (FastOperate item in m_mainWin.lst_dispatch.Items)
+            foreach ( ListViewItem  item in m_mainWin.lst_dispatch.Items)
             {
-                FastOperateList.Add(item);
+                FastOperateList.Add(item.Content as FastOperate);
             }
 
             return FastOperateList;

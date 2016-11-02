@@ -45,7 +45,14 @@ namespace TrboX
         public RunMode GetRunMode()
         {
             RadioSetting radio = new Setting() { Type = SettingType.Radio }.Get() as RadioSetting;
-            WireLanSetting repeater = new Setting() { Type = SettingType.WireLan }.Get() as WireLanSetting;  
+            WireLanSetting repeater = new Setting() { Type = SettingType.WireLan }.Get() as WireLanSetting;
+
+
+            if (repeater != null && repeater.IsEnable)
+            {
+                m_Main.lab_DeviceSta.Content = "中继台：" + repeater.Master.Ip + "：" + repeater.Master.Port.ToString();
+                return RunMode.Repeater;
+            }
 
             if (radio != null && radio.IsEnable) 
             {
@@ -53,13 +60,6 @@ namespace TrboX
                 else m_Main.lab_DeviceSta.Content = "车载台：" + radio.Ride.Ip + "　MNIS：" +  radio.Mnis.Ip;
                 
                 return RunMode.Radio;
-            }
-
-
-            if (repeater != null && repeater.IsEnable)
-            {
-                m_Main.lab_DeviceSta.Content = "中继台：" + repeater.Master.Ip + "：" + repeater.Master.Port.ToString();
-                return RunMode.Repeater;
             }
 
             return RunMode.None;
@@ -73,7 +73,7 @@ namespace TrboX
         public void SetTargetSystemType(TargetSystemType type)
         {
             m_RunStatus.type = type;
-            //m_Main.Rpc.SetType(type);
+            TServer.SystemType = type;
         }
     }
 }

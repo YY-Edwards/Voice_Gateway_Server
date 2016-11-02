@@ -41,7 +41,7 @@ namespace TrboX
             this.Loaded += delegate
             {
                 m_Main = this.Owner as Main;
-                contact_OpTarget.ContactList = m_Main.ResrcMgr.Target.TargetList;
+                contact_OpTarget.ContactList = TargetMgr.TargetList;
 
                  updatecyclelist(null, new RoutedEventArgs());
                  FillContact();
@@ -73,7 +73,7 @@ namespace TrboX
         {
             lst_ContactList.View = (ViewBase)lst_ContactList.FindResource("ContactListView");
 
-            CTargetRes TargetRes = m_Main.ResrcMgr.Target.TargetList;
+            CTargetRes TargetRes = TargetMgr.TargetList;
 
             List<long> existraido = new List<long>();
 

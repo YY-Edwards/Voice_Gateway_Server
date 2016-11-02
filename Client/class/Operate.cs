@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using System.Threading;
+
+
 namespace TrboX
 {
     
@@ -57,13 +60,13 @@ namespace TrboX
 
     public enum ControlType
     {
-        Check,
-        Monitor,
+        Check = 0,
+        Monitor = 1,
 
-        ShutDown,
-        StartUp,
-        Sleep,
-        Week,
+        ShutDown = 2,
+        StartUp = 3,
+        Sleep = 4,
+        Week = 5,
     };
 
     [Serializable]
@@ -80,13 +83,6 @@ namespace TrboX
 
             return false;
         }
-    }
-
-    public enum PositionType
-    {
-        Position,
-        StartCycle,
-        StopCycle
     }
 
      [Serializable]
@@ -109,7 +105,7 @@ namespace TrboX
                 return normalcyclelist;
 
         }
-        public CPosition Type { set; get; }
+        public ExecType Type { set; get; }
         public bool IsCycle { set; get; }
         public double Cycle { set; get; }
 
@@ -267,9 +263,9 @@ namespace TrboX
             Operate = obj;           
         }
 
-        public void Exec()
+        public object Exec()
         {
-            TServer.Call(this);
+            return TServer.Call(this);           
         }
     }
 }

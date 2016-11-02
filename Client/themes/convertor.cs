@@ -269,6 +269,51 @@ namespace TrboX
         }
     }
 
+    public class NullShowConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+
+            if (value is string)
+            {
+                if ("" != (string)value)
+                {
+                    return Visibility.Collapsed;
+                }
+                else
+                {
+                    return Visibility.Visible;
+                }
+            }
+
+            if (value is bool)
+            {
+                if (false != (bool)value)
+                {
+                    return Visibility.Collapsed;
+                }
+                else
+                {
+                    return Visibility.Visible;
+                }
+            }
+
+            if (null != value)
+            {
+                return Visibility.Collapsed;
+            }
+            else
+            {
+                return Visibility.Visible;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
     public class FalselHideConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
@@ -473,6 +518,10 @@ namespace TrboX
                     return new BitmapImage(new Uri("pack://application:,,,/themes/resource/job.png"));
                 case NotifyType.Tracker:
                     return new BitmapImage(new Uri("pack://application:,,,/themes/resource/tracker.png"));
+                case NotifyType.Position:
+                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/position.png"));
+                case NotifyType.Control:
+                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/control.png"));
             }
 
             return null;

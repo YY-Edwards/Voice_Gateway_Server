@@ -56,14 +56,14 @@
 	</style>
 </head>
 <body  scroll=no oncontextmenu="return false" ondragstart='return false' onselectstart ='return false'  > 
-
 <div id="mapContainer" style="position:absolute;top:0px; left:0px;width:100%; height:100%" ></div>	
 	<script type="text/javascript" src="http://webapi.amap.com/maps?v=1.3&key=cb329fb597007fda9c34a767b620e3bc"></script>
 	<script type="text/javascript" src="trace.js"></script>	
 	<script type="text/javascript">
+	
 		var map;
-		var mgLat = 39.918124;
-		var mgLon = 116.396964;
+		var mgLat = 30.5457968650;
+		var mgLon = 104.0668529027;
 		
 		var  pi = 3.14159265358979324;
         var a = 6378245.0;
@@ -72,6 +72,11 @@
 		var polyline;
 		var windowsArr = new Array();  
 		var marker = new Array();
+		
+		function killerrors() { return true; }
+
+		window.onerror = killerrors;
+		
 		
 		(function(exports){
 			
@@ -187,39 +192,53 @@
 		}
 		
 		var inforWindow;
-		
+		var SubWinList = {};
 		function DisPosPoint(id,type,lng,lat,alt,speed,date,time,mlng,mlat,name, groupid, group){
 		    var resultStr="";
-
+			
+			if (typeof(SubWinList[id]) != "undefined")
+			{
+				if (typeof(SubWinList[id]["marker"]) != "undefined") { 
+				   SubWinList[id]["marker"].hide();
+				}
+				
+				if (typeof(SubWinList[id]["info"]) != "undefined") { 
+				   SubWinList[id]["info"].close();
+				}
+			}
 			
 			
-		    var markerOption = {
+			SubWinList[id] = {};
+			SubWinList[id]["marker"] = new AMap.Marker(
+			{
 		        map:map,						
 		        icon:"pos.png",  
 		        position:new AMap.LngLat(mlng, mlat)  
-		    }; 
+		    } );
 			
-		    var mar =new AMap.Marker(markerOption); 
-		    marker.push(new AMap.LngLat(mlng, mlat));
-		
-		    map.setCenter(mar.getPosition());  
-		    var aa = function(e){			
-				inforWindow = new AMap.InfoWindow({  
+			SubWinList[id]["marker"].show();
+			map.setCenter(SubWinList[id]["marker"].getPosition());  
+			 
+			
+
+		   			SubWinList[id]["info"] = new AMap.InfoWindow({  
 					isCustom:true,
 					content:InfoWindow(id,type,lng,lat,alt,speed,date,time,name, groupid, group) , //设置content内容为调用InfoWindow()方法的返回值
 					autoMove:true, 
-					offset:{x:25, y:-15}
-				});
-						
-				inforWindow.open(map,new AMap.LngLat(mlng, mlat));	
+					offset:{x:25, y:-15}});
+			
+		   var aa = function(e){	
+
+
+				SubWinList[id]["info"].open(map,new AMap.LngLat(mlng, mlat)); 
 			}; 
 			
-		    AMap.event.addListener(mar, "mouseover", aa);		     
+		    AMap.event.addListener(SubWinList[id]["marker"], "mouseover", aa);		     
 		}
 		
-		function closeinfowin()
+		function closeinfowin(id)
 		{
-			inforWindow.close();
+			SubWinList[id]["info"].close();
 		}
 		
 		function InfoWindow(id,type,lng,lat,alt,speed,date,time,name, groupid, group){
@@ -235,7 +254,7 @@
 				info += "<td align='right' style='width:60px;height:45px'><img src='vehicle.png' height='30' width='50'></td><td valign='bottom'><div style='height:20px'><font face='黑体' size='3.5' color='#333333'>车载台";
 			}		
 			info += "</font></div><font face='黑体' color='#333333'><div style='height:15px'>"+name+"("+id+")</div><div>组："+ group+"</div></font></td>"+
-			"<td align='left' valign='top' style='width:30px;' onclick='closeinfowin()'><img src='close.png' height='20' width='20'></td>"+
+			"<td align='left' valign='top' style='width:30px;' onclick='closeinfowin("+id+")'><img src='close.png' height='20' width='20'></td>"+
 			"</tr></table>"+
 			"<table style='width:100%;height:1px'><tr>"+
 			"<td align='center' style='width:10px;'></td>"+

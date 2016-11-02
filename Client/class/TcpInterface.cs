@@ -77,7 +77,7 @@ namespace TrboX
             {
                 try
                 {
-                    clientSocket.Send(Encoding.ASCII.GetBytes(str));
+                    clientSocket.Send(Encoding.Default.GetBytes(str));
                     Console.WriteLine("向服务器发送消息：{0}", str);
                     return;
                 }
@@ -93,35 +93,21 @@ namespace TrboX
 
         public void ReceiveString()
         {
-            try
-            {
-                byte[] result = new byte[1024];
-                int receiveLength = clientSocket.Receive(result);
-                string rxstr = Encoding.ASCII.GetString(result, 0, receiveLength);
+           try
+           {
+               byte[] result = new byte[1024];
+               int receiveLength = clientSocket.Receive(result);
+               string rxstr = Encoding.ASCII.GetString(result, 0, receiveLength);
 
-                m_OnRx(rxstr);
+               m_OnRx(rxstr);
 
-                //object res = JsonParse.Json2Rep(rxstr);
-                //if (null == res) return;
-
-                //lock (ReceiveStr)
-                //{
-                //    if (res is TcpResponse)
-                //    {
-                //        ReceiveStr.Add(((TcpResponse)res).callId, (TcpResponse)res);
-                //    }
-                //    else if (res is TcpRequset)
-                //    {
-                //        ReceiveStr.Add(((TcpRequset)res).callId, (TcpRequset)res);
-                //    }
-                //}
-                Console.WriteLine("接收消息：{0}", rxstr);
-            }
-            catch
-            {
-                Console.WriteLine(" 连接异常");
-            }
-            Thread.Sleep(10);
+               Console.WriteLine("接收消息：{0}", rxstr);
+           }
+           catch
+           {
+               Console.WriteLine(" 连接异常");
+           }
+            Thread.Sleep(1000);
         }
 
         public object ReadString(Int64 callId = -1)

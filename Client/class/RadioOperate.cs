@@ -6,12 +6,8 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-using System.Globalization;
-
 namespace TrboX
 {
-   
-
     public class RadioCallParam
     {
         public ExecType Operate;
@@ -19,122 +15,76 @@ namespace TrboX
         public long Target;
     }
 
-    public class RadioPrivateCallParam
+    public class RadioSmsParam
     {
-        public long id;
-
-        public RadioPrivateCallParam(COperate operate)
-        {
-            try{               
-                id = operate.Target.Target[0].Radio.RadioID;
-            }
-            catch{}           
-        }
-    }
-    public class RadioGroupCallParam
-    {
-        public long id;
-
-        public RadioGroupCallParam(COperate operate)
-        {
-            try
-            {
-                id = operate.Target.Target[0].Group.GroupID;
-            }
-            catch { }
-        }
+        public TargetType Type;
+        public long Target;
+        public long Source;
+        public string Contents;
     }
 
-    public class RadioPrivateSmsParam
+    public class RadioArsParam
     {
-        public long id;
-        public string msg;
-        public RadioPrivateSmsParam(COperate operate)
-        {
-            try
-            {
-                id = operate.Target.Target[0].Radio.RadioID;
-                msg = ((CShortMessage)operate.Operate).Message;
-            }
-            catch { }
-
-            //byte[] temp;
-            //temp = Encoding.Default.GetBytes(msg);
-            ////利用 Encoding 类的 Convert 方法，将 temp 的编码由 gb2312 转换为 big5 编码
-            //temp = Encoding.Convert(Encoding.Default, Encoding.UTF8, temp);
-            ////将   byte 数组 转换为 string
-            //msg = Encoding.UTF8.GetString(temp);
-
-            msg = Encoding.Default.GetString(Encoding.UTF8.GetBytes(msg)); 
-            //msg = RadioGroupSmsParam.UnicodeToString(msg);
-        }
-    } 
-
-    public class RadioGroupSmsParam
-    {
-        public long id;
-        public string msg;
-
-        public static string UnicodeToString(string srcText)
-        {
-
-            string dst = "";
-            string src = srcText;
-            int len = srcText.Length / 6;
-            for (int i = 0; i <= len - 1; i++)
-            {
-                string str = "";
-                str = src.Substring(0, 6).Substring(2);
-                src = src.Substring(6);
-                byte[] bytes = new byte[2];
-                bytes[1] = byte.Parse(int.Parse(str.Substring(0, 2), NumberStyles.HexNumber).ToString());
-                bytes[0] = byte.Parse(int.Parse(str.Substring(2, 2), NumberStyles.HexNumber).ToString());
-                dst += Encoding.Unicode.GetString(bytes);
-            }
-            return dst;
-        } 
-
-        public RadioGroupSmsParam(COperate operate)
-        {
-            try
-            {
-                id = operate.Target.Target[0].Group.GroupID;
-                msg = ((CShortMessage)operate.Operate).Message;
-            }
-            catch { }
-            msg = UnicodeToString(msg);
-        }
+        public long Target;
+        public bool ISOnline;
     }
 
-    public class RadioOperateStr
+    public enum QueryGPSType
     {
-        public string call;
-        public string type;
-        public string callId;
-        public object param;
+        Generic = 12,
+        GenericCycle = 13,
+        CSBK = 14, 
+        CSBKCycle = 15,
+        Enh = 23,
+        EnhCycyle = 24,
     }
 
-    public class RadioOperateSimpleStr
+    public class RadioGpsParam
     {
-        public string call;
-        public string type;
-        public string callId;
+        public ExecType Operate;
+        public QueryGPSType Type;
+        public long Target;
+        public double Cycle;
     }
+
+    public class GPSValue
+    {
+        public bool Valid;
+        public double Lon;
+        public double Lat;
+        public double Alt;
+        public double Speed;
+
+    }
+    public class GPSParam
+    {
+        public long Source;
+        public GPSValue Gps;
+    }
+
+    public class RadioControlsParam
+    {
+        public ControlType Type;
+        public long Target;
+    }
+    
 
     public class RadioOperate
     {
         public RequestType Call;
         private long CallId;
-        private object Param;
+        private List<object> Param;
 
-        public ParseDel Parse;
-
-        private object ToStr()
+        public ParseDel Parse(string json)
         {
+            return null;         
+        }
 
+        private object ToStr(object param)
+        {
             if (null == Param)
             {
-                return new RadioOperateSimpleStr()
+                return new TServerRequestSimpleStr()
                 {
                     call = Call.ToString(),
                     type = "radio",
@@ -143,124 +93,317 @@ namespace TrboX
             }
             else
             {
-                return new RadioOperateStr()
+                return new TServerRequestStr()
                 {
                     call = Call.ToString(),
                     type = "radio",
                     callId = CallId.ToString(),
-                    param = Param
+                    param = param
                 };
             }
 
         }
 
-        public string Json
+        public List<string> Json
         {
             get
             {
-                return JsonConvert.SerializeObject(this.ToStr()) + "\r\n";
+                List<string> json = new List<string>();
+                if (null != Param)
+                foreach (object obj in Param)
+                {
+                    json.Add (JsonConvert.SerializeObject(this.ToStr(obj)) + "\r\n");
+                    CallId++;
+                }
+
+                return json;
             }
+        }
+
+
+        private TargetType GetTargetType(CMultMember target)
+        {
+            if (SelectionType.Null == target.Type) return TargetType.None;
+            if (SelectionType.All == target.Type) return TargetType.All;
+            if (target.Target == null || 0 >= target.Target.Count) return TargetType.None;
+            if (MemberType.Group == target.Target[0].Type) return TargetType.Group;
+            else if (null != target.Target[0].Radio && target.Target[0].Radio.ID > 0) return TargetType.Private;
+            else return TargetType.None;
         }
 
         public RadioOperate(COperate operate, long PN)
         {
             Param = null;
+            Call = RequestType.None;
+            CallId = PN;
 
+            if (operate == null || operate.Operate == null || operate.Target == null) return;
             try
             {
                 if (operate.Type == OPType.Dispatch)
                 {
-                    if (SelectionType.Null == operate.Target.Type || operate.Target.Target.Count <= 0) Call = RequestType.call;
-                    Call = RequestType.call;
-
-                    if (SelectionType.Null != operate.Target.Type)
+                    TargetType targettype = GetTargetType(operate.Target);
+                    if (TargetType.None != targettype)
                     {
-                        if (MemberType.Group == operate.Target.Target[0].Type)
-                        {
-                            Call = RequestType.groupCall;
-                            Param = new RadioGroupCallParam(operate);
-                        }
-                        else if (null != operate.Target.Target[0].Radio && operate.Target.Target[0].Radio.ID > 0)
-                        {
-                            Call = RequestType.call;
-                            Param = new RadioPrivateCallParam(operate);
-                        }
+                        Call = RequestType.call;
+                        Param = BuildCallParam(operate.Operate as CDispatch, targettype, operate.Target);
                     }
                 }
                 else if (operate.Type == OPType.ShortMessage)
                 {
-                    if ((SelectionType.Single == operate.Target.Type) || (SelectionType.Multiple == operate.Target.Type))
+                    TargetType targettype = GetTargetType(operate.Target);
+                    if (TargetType.None != targettype)
                     {
-                        if (MemberType.Group == operate.Target.Target[0].Type)
-                        {
-                            Call = RequestType.sendGroupSms;
-                            Param = new RadioGroupSmsParam(operate);
-
-                        }
-                        else if (null != operate.Target.Target[0].Radio && operate.Target.Target[0].Radio.ID > 0)
-                        {
-                            Call = RequestType.sendSms;
-                            Param = new RadioPrivateSmsParam(operate);
-                        }
+                        Call = RequestType.message;
+                        Param = BuildSmsParam(operate.Operate as CShortMessage, targettype, operate.Target);
+                    }
+                }
+                else if(operate.Type == OPType.Position)
+                {
+                    TargetType targettype = GetTargetType(operate.Target);
+                    if (TargetType.None != targettype && TargetType.All != targettype)
+                    {
+                        Call = RequestType.queryGps;
+                        Param = BuildGpsParam(operate.Operate as CPosition, targettype, operate.Target);
+                    }
+                }
+                else if(operate.Type == OPType.Control)
+                {
+                    TargetType targettype = GetTargetType(operate.Target);
+                    if (TargetType.None != targettype && TargetType.All != targettype)
+                    {
+                        Call = RequestType.control;
+                        Param = BuildControlParam(operate.Operate as CControl, targettype, operate.Target);
                     }
                 }
             }
             catch
             {
-               
+
             }
 
             CallId = PN;
-
-            Parse = null;
         }
 
-        //public string Parse(COperate op, long PN)
-        //{
-        //    return "";
-        //}
-
-       
-
-       private RequestType GetRequest(COperate op)
+        private List<object> BuildCallParam(CDispatch op, TargetType type, CMultMember target)
         {
-            
+            List<object> param = new List<object>();
 
-            return RequestType.None;
+            if (op != null && op.Exec == ExecType.Stop)
+            {
+                param.Add(new RadioCallParam() { Operate = ExecType.Stop });
+            }
+            else
+            {
+
+                switch (type)
+                {
+                    case TargetType.Private:
+                        param.Add(new RadioCallParam()
+                        {
+                            Operate = ExecType.Start,
+                            Type = TargetType.Private,
+                            Target = target.Target[0].Radio.RadioID
+                        });
+                        break;
+                    case TargetType.Group:
+                        param.Add(new RadioCallParam()
+                        {
+                            Operate = ExecType.Start,
+                            Type = TargetType.Group,
+                            Target = target.Target[0].Group.GroupID
+                        });break;
+                    case TargetType.All:
+                        param.Add(new RadioCallParam()
+                        {
+                            Operate = ExecType.Start,
+                            Type = TargetType.All,
+                        });break;
+                    default:
+                        break;
+                }
+            }
+
+            return param;
         }
 
-       private RequestType GetParam(RequestType type, COperate op)
-       {
-           try
-           {
-               if (op.Type == OPType.Dispatch)
-               {
-                   if (SelectionType.All == op.Target.Type) return RequestType.allCall;
-                   if ((SelectionType.Null == op.Target.Type) || (op.Target.Target.Count <= 0)) return RequestType.None;
-                   if (MemberType.Group == op.Target.Target[0].Type) return RequestType.groupCall;
-                   else
-                   {
-                       if (null != op.Target.Target[0].Radio && op.Target.Target[0].Radio.ID > 0) return RequestType.call;
-                   }
-               }
-               else if (op.Type == OPType.ShortMessage)
-               {
-                   if ((SelectionType.All == op.Target.Type) || (SelectionType.Null == op.Target.Type) || (op.Target.Target.Count <= 0)) return RequestType.None;
-                   if (MemberType.Group == op.Target.Target[0].Type) return RequestType.sendGroupSms;
-                   else
-                   {
-                       if (null != op.Target.Target[0].Radio && op.Target.Target[0].Radio.ID > 0) return RequestType.sendSms;
-                   }
-               }
-           }
-           catch
-           {
-               return RequestType.None;
-           }
+        private List<object> BuildSmsParam(CShortMessage op, TargetType type, CMultMember target)
+        {
+            List<object> param = new List<object>();
 
-           return RequestType.None;
-       }
+            if(type == TargetType.All)
+            {
+                var group = TargetMgr.TargetList.Group.Where(p => p.Value.Group != null && p.Value.Group.ID > 0 && p.Value.Group.GroupID > 0);
 
+                foreach (var item in group)
+                {
+                    param.Add(new RadioSmsParam()
+                    {
+                        Type = TargetType.Group,
+                        Target = item.Value.Group.GroupID,
+                        Contents = op.Message
+                    });                     
+                }
 
+                var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Group.ID <= 0  && p.Value.Radio != null  && p.Value.Radio.RadioID > 0);
+
+                foreach (var item in radio)
+                {
+                    param.Add(new RadioSmsParam()
+                    {
+                        Type = TargetType.Private,
+                        Target = item.Value.Radio.RadioID,
+                        Contents = op.Message
+                    });
+                }
+            }
+            else if(type != TargetType.None)
+            {
+                foreach(CMember trgt in target.Target)
+                {
+                    if(trgt.Type == MemberType.Group)
+                    {
+                        param.Add(new RadioSmsParam()
+                        {
+                            Type = TargetType.Group,
+                            Target = trgt.Group.GroupID,
+                            Contents = op.Message
+                        });
+                    }
+                    else
+                    {
+                        param.Add(new RadioSmsParam()
+                        {
+                            Type = TargetType.Private,
+                            Target = trgt.Radio.RadioID,
+                            Contents = op.Message
+                        });
+                    }
+
+                }
+            }
+
+            return param;
+        }
+
+        private List<object> BuildGpsParam(CPosition op, TargetType type, CMultMember target)
+        {
+            List<object> param = new List<object>();
+
+            try
+            {
+                if (type == TargetType.All)
+                {
+                    var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Radio != null && p.Value.Radio.RadioID > 0);
+                    foreach (var item in radio)
+                    {
+                        param.Add(new RadioGpsParam()
+                        {
+                            Operate = ExecType.Start,
+                            Type = op.IsCycle ? (op.IsCSBK ? (op.IsEnh ? QueryGPSType.EnhCycyle : QueryGPSType.CSBKCycle) : QueryGPSType.GenericCycle) : (op.IsCSBK ? (op.IsEnh ? QueryGPSType.Enh : QueryGPSType.CSBK) : QueryGPSType.Generic),
+                            Target = item.Value.Radio.RadioID,
+                            Cycle = op.Cycle
+                        });
+
+                        if (op.IsCycle && op.Type == ExecType.Start)
+                            TargetMgr.TargetList.Radio[item.Value.Radio.ID].Radio.IsGPS = true;
+                        if (op.Type == ExecType.Start) TargetMgr.TargetList.Radio[item.Value.Radio.ID].Radio.IsGPS = false;
+                    }
+                }
+                else if (type != TargetType.None)
+                {
+                    foreach (CMember trgt in target.Target)
+                    {
+                        if (trgt.Type == MemberType.Group)
+                        {
+                            var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Group.ID == target.Target[0].Group.ID && p.Value.Radio != null && p.Value.Radio.RadioID > 0);
+                            foreach (var item in radio)
+                            {
+                                param.Add(new RadioGpsParam()
+                                {
+                                    Operate = ExecType.Start,
+                                    Type = op.IsCycle ? (op.IsCSBK ? (op.IsEnh ? QueryGPSType.EnhCycyle : QueryGPSType.CSBKCycle) : QueryGPSType.GenericCycle) : (op.IsCSBK ? (op.IsEnh ? QueryGPSType.Enh : QueryGPSType.CSBK) : QueryGPSType.Generic),
+                                    Target = item.Value.Radio.RadioID,
+                                    Cycle = op.Cycle
+                                });
+
+                                if (op.IsCycle && op.Type == ExecType.Start)
+                                    TargetMgr.TargetList.Radio[item.Value.Radio.ID].Radio.IsGPS = true;
+                                if (op.Type == ExecType.Start) TargetMgr.TargetList.Radio[item.Value.Radio.ID].Radio.IsGPS = false;
+                            }       
+                        }
+                        else
+                        {
+                            param.Add(new RadioGpsParam()
+                            {
+                                Operate = op.Type,
+                                Type = op.IsCycle ? (op.IsCSBK ? (op.IsEnh ? QueryGPSType.EnhCycyle : QueryGPSType.CSBKCycle) : QueryGPSType.GenericCycle) : (op.IsCSBK ? (op.IsEnh ? QueryGPSType.Enh : QueryGPSType.CSBK) : QueryGPSType.Generic),
+                                Target = target.Target[0].Radio.RadioID,
+                                Cycle = op.Cycle
+                            });
+
+                            if (op.IsCycle && op.Type == ExecType.Start)
+                                TargetMgr.TargetList.Radio[target.Target[0].Radio.ID].Radio.IsGPS = true;
+                            if (op.Type == ExecType.Start) TargetMgr.TargetList.Radio[target.Target[0].Radio.ID].Radio.IsGPS = false;
+                        }
+
+                    }
+                }
+            }
+            catch{}
+
+            return param;
+        }
+
+        private List<object> BuildControlParam(CControl op, TargetType type, CMultMember target)
+        {
+            List<object> param = new List<object>();
+
+            try
+            {
+                if (type == TargetType.All)
+                {
+                    var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Radio != null && p.Value.Radio.RadioID > 0);
+                    foreach (var item in radio)
+                    {
+                        param.Add(new RadioControlsParam()
+                        {
+                            Type = op.Type,
+                            Target = item.Value.Radio.ID,
+                        });
+                    }
+                }
+                else if (type != TargetType.None)
+                {
+                    foreach (CMember trgt in target.Target)
+                    {
+                        if (trgt.Type == MemberType.Group)
+                        {
+                            var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Group.ID == target.Target[0].Group.ID && p.Value.Radio != null && p.Value.Radio.RadioID > 0);
+                            foreach (var item in radio)
+                            {
+                                param.Add(new RadioControlsParam()
+                                {
+                                    Type = op.Type,
+                                    Target = item.Value.Radio.ID,
+                                });
+                            }
+                        }
+                        else
+                        {
+                            param.Add(new RadioControlsParam()
+                            {
+                                Type = op.Type,
+                                Target = target.Target[0].Radio.RadioID,
+                            });
+                        }
+
+                    }
+                }
+            }
+            catch { }
+
+            return param;
+        }
     }
 }

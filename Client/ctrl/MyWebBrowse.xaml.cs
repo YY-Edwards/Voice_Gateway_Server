@@ -22,9 +22,13 @@ namespace TrboX
     /// <summary>
     /// MyWebBrowse.xaml 的交互逻辑
     /// </summary>
+    ///  
+    public delegate void OnLoad();
     public partial class MyWebBrowse : UserControl, IRequestHandler
     {
         private WebView _view;
+
+        public OnLoad OnLoad = null;
 
         public MyWebBrowse(string url)
         {
@@ -54,8 +58,15 @@ namespace TrboX
             {
                 _view.Visibility = Visibility.Visible;
                 maskLoading.Visibility = Visibility.Collapsed;
+                if (null != OnLoad) OnLoad();
             }));
         }
+
+        public void ExecJs(string jsfunc)
+        {
+            _view.ExecuteScript(jsfunc);
+        }
+
 
         public void View(string url)
         {

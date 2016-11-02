@@ -46,8 +46,10 @@ namespace TrboX
             this.Loaded+=delegate
             {
                 main = Main.GetWindow(this) as Main;
-                contact_box.ContactList = main.ResrcMgr.Target.TargetList;
-                contact_box.CurrentContact = (null == PanelItem.Operate)?null:PanelItem.Operate.Target;             
+                contact_box.ContactList = TargetMgr.TargetList;
+                contact_box.CurrentContact = (null == PanelItem.Operate ) ? null:PanelItem.Operate.Target;
+
+                CurrentContact = PanelItem.Contact;
             };
 
             this.Closing += delegate
@@ -172,14 +174,7 @@ EventManager.RegisterRoutedEvent("Monitor", RoutingStrategy.Bubble, typeof(Route
         }
         public static readonly RoutedEvent DispatchRoutedEvent =
 EventManager.RegisterRoutedEvent(" Dispatch", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
-        private void btn_Call_Click(object sender, RoutedEventArgs e)
-        {
-            if (FastType.FastType_Contact == PanelItem.Type)
-                PanelItem.Operate = new COperate(OPType.Dispatch, CurrentContact, new CDispatch() );
-                
-            RoutedEventArgs newEventArgs = new RoutedEventArgs(DispatchRoutedEvent);
-            RaiseEvent(newEventArgs);
-        }
+
         public static readonly RoutedEvent MessageRoutedEvent =
 EventManager.RegisterRoutedEvent("Message", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
         private void btn_Message_Click(object sender, RoutedEventArgs e)
@@ -252,6 +247,110 @@ EventManager.RegisterRoutedEvent("More", RoutingStrategy.Bubble, typeof(RoutedEv
         {
             add { AddHandler(MessageRoutedEvent, value); }
             remove { RemoveHandler(MessageRoutedEvent, value); }
+        }
+
+        private void btn_Op_PTT_Checked(object sender, RoutedEventArgs e)
+        {
+            if (FastType.FastType_Operate == PanelItem.Type)
+                PanelItem.Operate = new COperate(OPType.Dispatch, contact_box.CurrentContact, new CDispatch() { Exec = ExecType.Start});
+
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(DispatchRoutedEvent);
+            RaiseEvent(newEventArgs);
+        }
+
+        private void btn_Op_PTT_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (FastType.FastType_Operate == PanelItem.Type)
+                PanelItem.Operate = new COperate(OPType.Dispatch, contact_box.CurrentContact, new CDispatch() { Exec = ExecType.Stop });
+
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(DispatchRoutedEvent);
+            RaiseEvent(newEventArgs);
+        }
+
+        private void chk_Contact_PTT_Checked(object sender, RoutedEventArgs e)
+        {
+            if (FastType.FastType_Contact == PanelItem.Type)
+                PanelItem.Operate = new COperate(OPType.Dispatch, CurrentContact, new CDispatch() { Exec = ExecType.Start });
+
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(DispatchRoutedEvent);
+            RaiseEvent(newEventArgs);
+        }
+
+        private void chk_Contact_PTT_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (FastType.FastType_Contact == PanelItem.Type)
+                PanelItem.Operate = new COperate(OPType.Dispatch, CurrentContact, new CDispatch() { Exec = ExecType.Stop });
+
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(DispatchRoutedEvent);
+            RaiseEvent(newEventArgs);
+        }
+
+        private void btn_Op_SendMsg_Click(object sender, RoutedEventArgs e)
+        {
+            if (FastType.FastType_Operate == PanelItem.Type)
+                PanelItem.Operate = new COperate(OPType.ShortMessage, contact_box.CurrentContact, new CShortMessage() { Message = txt_ShortMessage.Text });
+
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(MessageRoutedEvent);
+            RaiseEvent(newEventArgs);
+        }
+
+        private void btn_Op_Query_Click(object sender, RoutedEventArgs e)
+        {
+            if (FastType.FastType_Operate == PanelItem.Type)
+            {
+                PanelItem.Operate = new COperate(OPType.ShortMessage,(bool)chk_All.IsChecked ? new CMultMember() { Type = SelectionType.All} :contact_box.CurrentContact , new CPosition() {
+                Type = ExecType.Start,
+                IsCycle = (bool)chk_Cycle.IsChecked,                   
+                IsCSBK = (bool)chk_CSBK.IsChecked,
+                IsEnh = (bool)chk_Enh.IsChecked,
+                Cycle = (double)((ComboBoxItem)cmb_CycleLst.SelectedItem).Tag});               
+            }
+               
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(MessageRoutedEvent);
+            RaiseEvent(newEventArgs);
+        }
+
+        private void chk_Op_StartCycle_Checked(object sender, RoutedEventArgs e)
+        {
+            if (FastType.FastType_Operate == PanelItem.Type)
+            {
+                PanelItem.Operate = new COperate(OPType.ShortMessage, (bool)chk_All.IsChecked ? new CMultMember() { Type = SelectionType.All } : contact_box.CurrentContact, new CPosition()
+                {
+                    Type = ExecType.Start,
+                    IsCycle = (bool)chk_Cycle.IsChecked,
+                    IsCSBK = (bool)chk_CSBK.IsChecked,
+                    IsEnh = (bool)chk_Enh.IsChecked,
+                    Cycle = (double)((ComboBoxItem)cmb_CycleLst.SelectedItem).Tag
+                });
+            }
+
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(MessageRoutedEvent);
+            RaiseEvent(newEventArgs);
+        }
+
+        private void chk_Op_StartCycle_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (FastType.FastType_Operate == PanelItem.Type)
+            {
+                PanelItem.Operate = new COperate(OPType.ShortMessage, (bool)chk_All.IsChecked ? new CMultMember() { Type = SelectionType.All } : contact_box.CurrentContact, new CPosition()
+                {
+                    Type = ExecType.Stop,
+                    IsCycle = (bool)chk_Cycle.IsChecked,
+                    IsCSBK = (bool)chk_CSBK.IsChecked,
+                    IsEnh = (bool)chk_Enh.IsChecked,
+                    Cycle = (double)((ComboBoxItem)cmb_CycleLst.SelectedItem).Tag
+                });
+            }
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(MessageRoutedEvent);
+            RaiseEvent(newEventArgs);
+        }
+
+        private void btn_Op_Control_Click(object sender, RoutedEventArgs e)
+        {
+            if (FastType.FastType_Operate == PanelItem.Type)
+                PanelItem.Operate = new COperate(OPType.Control, CurrentContact, new CControl() { Type = (ControlType)cmb_Op_Control.SelectedIndex });
+            RoutedEventArgs newEventArgs = new RoutedEventArgs(ShutDownRoutedEvent);
+            RaiseEvent(newEventArgs);
         }
 
     }

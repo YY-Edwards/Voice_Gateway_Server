@@ -53,7 +53,12 @@ namespace TrboX
 
             this.Loaded += delegate
             {
-                if (SelectionType.Single == m_Target.Type)
+                if (SelectionType.All == m_Target.Type)
+                {
+                    Title = "全部设备";
+                    SubTitle = "";
+                }
+                else if (SelectionType.Single == m_Target.Type)
                 {
                     Title = m_Target.Target[0].Name;
                     SubTitle = m_Target.Target[0].Information;
@@ -64,11 +69,41 @@ namespace TrboX
                 }
                 else
                 {
-                    return;
+                    //return;
                 }
-                
+
+                if(m_Target.Target !=null && m_Target.Target.Count > 0)
+                {
+                    if(m_Target.Target[0].Type != MemberType.Group)
+                    {
+                        if (m_Target.Target[0].Radio != null) chk_QueryCyclePosition.IsChecked = m_Target.Target[0].Radio.IsGPS;
+                    }  
+                }
+
+
+                m_Target.DisableFunc(
+                    delegate{
+                        chk_PTT.IsEnabled = false;
+                        rad_Call.IsEnabled = false;
+                        rad_Message.IsEnabled = false;
+                        rad_Position.IsEnabled = false;
+                        rad_Jobticket.IsEnabled = false;  
+                        btn_Control.IsEnabled = false;
+                        btn_Check.IsEnabled = false;
+                        btn_Minitor.IsEnabled = false;
+                    },
+                     null, null, null, null, 
+                    delegate{
+                        rad_Position.IsEnabled = false; 
+                    },
+                    delegate{
+                        rad_Message.IsEnabled = false; 
+                    },
+                    null);
 
                 m_View = new OpView(this);
+
+                updatecyclelist(null, null);
 
                 OnChangeOperateType();
 
@@ -160,9 +195,14 @@ namespace TrboX
             switch (Operate.Type)
             {
                 case OPType.Dispatch:
+                    rad_Call.IsChecked = true;break;
                 case OPType.ShortMessage:
+                    rad_Message.IsChecked = true;break;
                 case OPType.JobTicker:
+                    rad_Jobticket.IsChecked = true;break;
                 case OPType.Position:
+                    rad_Position.IsChecked = true;break;
+
                 case OPType.Tracker:
                 default:
                     break;
@@ -237,25 +277,6 @@ namespace TrboX
             }));               
         }
 
-
-        private void btn_PTT_Click(object sender, RoutedEventArgs e)
-        {
-             new COperate()
-             {
-                 Type = OPType.Dispatch,
-                 Target = m_Target,
-                 Operate = new CDispatch()
-             }.Exec();
-
-            AddMessage(new CHistory()
-            { 
-            istx = true,
-            type = NotifyType.Call,
-            time = DateTime.Now,
-             content = "语音呼叫"
-            });
-        }
-
         private void btn_SendMsg_Click(object sender, RoutedEventArgs e)
         {
 
@@ -323,6 +344,203 @@ namespace TrboX
         private void btn_AddFastPanel_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void chk_PTT_Checked(object sender, RoutedEventArgs e)
+        {
+            new COperate()
+            {
+                Type = OPType.Dispatch,
+                Target = m_Target,
+                Operate = new CDispatch() { Exec = ExecType.Start }
+            }.Exec();
+        }
+
+        private void chk_PTT_Unchecked(object sender, RoutedEventArgs e)
+        {
+            new COperate()
+            {
+                Type = OPType.Dispatch,
+                Target = m_Target,
+                Operate = new CDispatch() { Exec = ExecType.Stop }
+            }.Exec();
+
+            AddMessage(new CHistory()
+            {
+                istx = true,
+                type = NotifyType.Call,
+                time = DateTime.Now,
+                content = "语音呼叫"
+            });
+        }
+
+        private void btn_QueryPosition_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                new COperate()
+                {
+                    Type = OPType.Position,
+                    Target = m_Target,
+                    Operate = new CPosition() { Type = ExecType.Start, IsCycle = (bool)chk_IsCycle.IsChecked, IsCSBK = (bool)chk_IsCSBK.IsChecked, IsEnh = (bool)chk_IsEnh.IsChecked }
+                }.Exec();
+            }
+            catch { }
+
+            AddMessage(new CHistory()
+            {
+                istx = true,
+                type = NotifyType.Position,
+                time = DateTime.Now,
+                content = "位置查询"
+            });
+        }
+
+
+        private void updatecyclelist(object sender, RoutedEventArgs e)
+        {
+            if (cmb_Cycle == null || chk_IsCSBK == null || chk_IsEnh == null) return;
+            
+            List<double> cyclelist = CPosition.UpdateCycleList((bool)chk_IsCSBK.IsChecked, (bool)chk_IsEnh.IsChecked);
+            cmb_Cycle.Items.Clear();
+            foreach (double cycle in cyclelist)
+                cmb_Cycle.Items.Add(new ComboBoxItem() { Content = cycle.ToString() + "s", Tag = cycle });
+            cmb_Cycle.SelectedIndex = 0;
+
+            if (false == chk_IsCSBK.IsChecked) chk_IsEnh.IsChecked = false;
+        }
+
+        private void chk_QueryCyclePosition_Checked(object sender, RoutedEventArgs e)
+        {
+            new COperate()
+            {
+                Type = OPType.Control,
+                Target = m_Target,
+                Operate = new CPosition() { Type = ExecType.Start, IsCycle = (bool)chk_IsCycle.IsChecked, IsCSBK = (bool)chk_IsCSBK.IsChecked, IsEnh = (bool)chk_IsEnh.IsChecked, Cycle = (double)((ComboBoxItem)cmb_Cycle.SelectedItem).Tag }
+            }.Exec();
+
+            AddMessage(new CHistory()
+            {
+                istx = true,
+                type = NotifyType.Position,
+                time = DateTime.Now,
+                content = "开始周期查询"
+            });
+        }
+
+        private void chk_QueryCyclePosition_Unchecked(object sender, RoutedEventArgs e)
+        {
+            new COperate()
+            {
+                Type = OPType.Control,
+                Target = m_Target,
+                Operate = new CPosition() { Type = ExecType.Stop, IsCycle = (bool)chk_IsCycle.IsChecked, IsCSBK = (bool)chk_IsCSBK.IsChecked, IsEnh = (bool)chk_IsEnh.IsChecked,}
+            }.Exec();
+
+            AddMessage(new CHistory()
+            {
+                istx = true,
+                type = NotifyType.Position,
+                time = DateTime.Now,
+                content = "停止周期查询"
+            });
+        }
+
+        private void btn_Control_Click(object sender, RoutedEventArgs e)
+        {
+            new COperate()
+            {
+                Type = OPType.Control,
+                Target = m_Target,
+                Operate = new CControl() { Type  = ControlType.ShutDown }
+            }.Exec();
+
+            AddMessage(new CHistory()
+            {
+                istx = true,
+                type = NotifyType.Control,
+                time = DateTime.Now,
+                content = "遥毙"
+            });
+        }
+
+        private void btn_Control_Selected(object sender, RoutedEventArgs e)
+        {
+            if (btn_Control.SelectedIndex == 0)
+            {
+                new COperate()
+                {
+                    Type = OPType.Control,
+                    Target = m_Target,
+                    Operate = new CControl() { Type = ControlType.ShutDown }
+                }.Exec();
+
+                AddMessage(new CHistory()
+                {
+                    istx = true,
+                    type = NotifyType.Control,
+                    time = DateTime.Now,
+                    content = "遥毙"
+                });
+            }
+            else if (btn_Control.SelectedIndex == 1)
+            {
+                new COperate()
+                {
+                    Type = OPType.Control,
+                    Target = m_Target,
+                    Operate = new CControl() { Type = ControlType.StartUp }
+                }.Exec();
+
+                AddMessage(new CHistory()
+                {
+                    istx = true,
+                    type = NotifyType.Control,
+                    time = DateTime.Now,
+                    content = "遥开"
+                });
+            } 
+
+        }
+
+        private void btn_Check_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                new COperate()
+                {
+                    Type = OPType.Control,
+                    Target = m_Target,
+                    Operate = new CControl() { Type = ControlType.Check }
+                }.Exec();
+
+                AddMessage(new CHistory()
+                {
+                    istx = true,
+                    type = NotifyType.Control,
+                    time = DateTime.Now,
+                    content = "在线检测"
+                });
+            }
+            catch { }
+        }
+
+        private void btn_Minitor_Click(object sender, RoutedEventArgs e)
+        {
+            new COperate()
+            {
+                Type = OPType.Control,
+                Target = m_Target,
+                Operate = new CControl() { Type = ControlType.Monitor }
+            }.Exec();
+
+            AddMessage(new CHistory()
+            {
+                istx = true,
+                type = NotifyType.Control,
+                time = DateTime.Now,
+                content = "远程监听"
+            });
         }
     }
 }
