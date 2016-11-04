@@ -421,7 +421,7 @@ bool CTextMsg::SendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet)
 				{
 					ArgumentType args;
 					args["Source"] = FieldValue(m_ThreadMsg->radioID);
-					args["contents"] = FieldValue(NULL);
+					args["contents"] = FieldValue("");
 					args["status"] = FieldValue(REMOTE_FAILED);
 					if (it->command == SEND_PRIVATE_MSG)
 					{
@@ -499,8 +499,9 @@ void CTextMsg::RecvMsg()
 					if (pRemotePeer != NULL&& pRemotePeer == it->pRemote &&it->radioId == m_ThreadMsg->radioID)
 					{
 						ArgumentType args;
-						args["Source"] = FieldValue(m_ThreadMsg->radioID);
-						args["contents"] = FieldValue(NULL);
+						args["Source"] = FieldValue(NULL);
+						args["Target"] = FieldValue(m_ThreadMsg->radioID);
+						args["contents"] = FieldValue("");
 						args["status"] = FieldValue(REMOTE_SUCESS);
 						if (it->command == SEND_PRIVATE_MSG)
 						{
@@ -517,7 +518,7 @@ void CTextMsg::RecvMsg()
 					}
 					
 				}
-				break;
+				
 			}
 			m_allCommandListLocker.unlock();
 	}
@@ -585,7 +586,7 @@ void CTextMsg::RecvMsg()
 					st.status = RADIO_STATUS_ONLINE;
 					radioStatus[stringId] = st;
 					arg["IsOnline"] = FieldValue("True");
-					std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+					std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
 					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 				}
 				else if (radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
@@ -593,7 +594,7 @@ void CTextMsg::RecvMsg()
 					radioStatus[stringId].status = RADIO_STATUS_ONLINE;
 
 					arg["IsOnline"] = FieldValue("True");
-					std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+					std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
 					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 				}
 			}
