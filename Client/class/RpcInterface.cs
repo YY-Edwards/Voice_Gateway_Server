@@ -17,7 +17,7 @@ namespace TrboX
     }
     public class RpcInterface
     {
-        private TcpInterface TServer = new TcpInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9001));
+       // private TcpInterface TServer = new TcpInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9001));
 
         public delegate object ParseResult(RequestType type, object res);
         private ParseResult m_Rx = null;
@@ -37,25 +37,25 @@ namespace TrboX
 
         private void OnRx()
         { 
-            while(true)
-            {
-                object obj = TServer.ReadString();
+            //while(true)
+            //{
+            //    object obj = TServer.ReadString();
                
-                    try
-                    { if(obj is TcpRequset)
-                {
-                        m_Rx((RequestType)Enum.Parse(typeof(RequestType), ((TcpRequset)obj).call), obj);
-                    }
-                         else if(obj is TcpResponse)
-                {
-                     m_Rx(m_SenedRequest[((TcpRequset)obj).callId], obj);
-                }
-                    }
-                    catch
-                    {
+            //        try
+            //        { if(obj is TcpRequset)
+            //    {
+            //            m_Rx((RequestType)Enum.Parse(typeof(RequestType), ((TcpRequset)obj).call), obj);
+            //        }
+            //             else if(obj is TcpResponse)
+            //    {
+            //         m_Rx(m_SenedRequest[((TcpRequset)obj).callId], obj);
+            //    }
+            //        }
+            //        catch
+            //        {
 
-                    }
-                }
+            //        }
+            //    }
             }
         
         public void SetReceiveFunc(ParseResult pr)
@@ -70,31 +70,31 @@ namespace TrboX
 
         private void RpcCall(RequestType type, object param)
         {
-            TServer.WriteString(JsonParse.Op2Json(type, param, m_Type));
-            m_SenedRequest.Add(JsonParse.CallID, type);
+            //TServer.WriteString(JsonParse.Op2Json(type, param, m_Type));
+            //m_SenedRequest.Add(JsonParse.CallID, type);
         }
 
         private object Convert(COperate op)
         {
-            switch (m_Type)
-            {
-                case TargetSystemType.radio:
-                    return RadioOperate.Convert(op);
-                case TargetSystemType.Reapeater:
-                    return null;
-            }
+            //switch (m_Type)
+            //{
+            //    case TargetSystemType.radio:
+            //        return RadioOperate.Convert(op);
+            //    case TargetSystemType.Reapeater:
+            //        return null;
+            //}
             return null;
         }
 
         private RequestType GetRequest(COperate op)
         {
-            switch (m_Type)
-            {
-                case TargetSystemType.radio:
-                    return RadioOperate.GetRequest(op);
-                case TargetSystemType.Reapeater:
-                    return RequestType.None;
-            }
+            //switch (m_Type)
+            //{
+            //    case TargetSystemType.radio:
+            //        return RadioOperate.GetRequest(op);
+            //    case TargetSystemType.Reapeater:
+            //        return RequestType.None;
+            //}
             return RequestType.None;
         }
 

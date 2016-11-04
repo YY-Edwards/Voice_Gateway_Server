@@ -31,7 +31,7 @@ namespace TrboX
             m_Main.tab_Mgr.SelectionChanged += delegate {UpdateView();};
             m_Main.btn_ResSearch.Click += delegate { UpdateView(); };
 
-            Thread t = new Thread(() => { NoficationThread(); });
+            Thread t = new Thread(() => { ResourceUpdateThread(); });
             t.Start();
 
 
@@ -404,13 +404,12 @@ namespace TrboX
         {
             m_Main.Dispatcher.Invoke(new Action(() =>
             {
-                m_TargetList = Target.TargetList;
+                m_TargetList = TargetMgr.TargetList;
                 Filter(m_Main.txt_ResCondition.Text);
 
 
                 if (null != m_Main.tab_Mgr) switch (m_Main.tab_Mgr.SelectedIndex)
-                    { 
-                
+                    {             
                     case 0:
                       FillDataToOrgTreeView();break;
                 case 1:
@@ -478,21 +477,60 @@ namespace TrboX
             willdel.Clear();
         }
 
-        private void NoficationThread()
+
+        private bool IsNeedUpdate = false;
+
+        public void SetRadioOnline(long id , bool online)
+        {
+            try
+            {                
+                var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Radio.RadioID == id);
+                foreach (var item in radio)
+                {
+                    item.Value.Radio.IsOnline = online;
+                    Target.Update(item.Value.Radio);
+                    IsNeedUpdate = true;
+                    return;
+                }
+
+                Target.Update(new Radio() {ID = -2, RadioID  = id, IsOnline = online});
+                IsNeedUpdate = true;
+            }
+            catch
+            {}
+        }
+
+        public void SetGpsOnline(long id, bool online)
+        {
+            try
+            {
+                var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Radio.RadioID == id);
+                foreach (var item in radio)
+                {
+                    item.Value.Radio.IsGPS = online;
+                    Target.Update(item.Value.Radio);
+                    IsNeedUpdate = true;
+                    return;
+                }
+
+                Target.Update(new Radio() { ID = -2, RadioID = id, IsGPS = online });
+                IsNeedUpdate = true;
+            }
+            catch
+            { }
+        }
+
+
+        private void ResourceUpdateThread()
         {
             while(true)
             {
-                //foreach (var rad in m_TargetList.Radio)
-                //{
-                //    if (null != rad.Value.Radio)
-                //    {
-                //        CRadio radio = new CRadio() { ID = rad.Value.Radio.ID, RadioID = rad.Value.Radio.RadioID, IsOnline = !rad.Value.Radio.IsOnline, Type = rad.Value.Radio.Type };
-                //        m_Target.Update(radio);
-                //    } 
-                //}
-
-                //UpdateView();
-                Thread.Sleep(5000);
+                if (IsNeedUpdate)
+                {
+                    UpdateView();
+                    IsNeedUpdate = false;
+                }
+                Thread.Sleep(1000);
             }
         }
 

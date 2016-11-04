@@ -84,16 +84,20 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="class\Event.cs" />
+    <Compile Include="class\EvilTransform.cs" />
     <Compile Include="class\FastOperate.cs" />
-    <Compile Include="class\JsonParse.cs" />
     <Compile Include="class\Message.cs" />
     <Compile Include="class\Operate.cs" />
     <Compile Include="class\RadioOperate.cs" />
-    <Compile Include="class\ResourceMgr.cs" />
+    <Compile Include="class\ResourceMgr.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="class\RpcInterface.cs" />
     <Compile Include="class\SettingMgr.cs" />
     <Compile Include="class\targetMgr.cs" />
     <Compile Include="class\TcpInterface.cs" />
+    <Compile Include="class\TServer.cs" />
+    <Compile Include="class\WirelanOperate.cs" />
     <Compile Include="ctrl\ComboButton.xaml.cs">
       <DependentUpon>ComboButton.xaml</DependentUpon>
     </Compile>
@@ -112,6 +116,7 @@
     <Compile Include="themes\MyWindow.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="win\MainWindow\Amap.cs" />
     <Compile Include="win\MainWindow\EventWin.cs" />
     <Compile Include="win\MainWindow\MainArea.cs" />
     <Compile Include="win\MainWindow\MainMenu.cs" />

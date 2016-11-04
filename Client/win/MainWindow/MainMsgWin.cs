@@ -518,8 +518,9 @@ namespace TrboX
 
         public void ClearTarget(CMultMember target)
         {
+            if (target != null && target.Target != null)
             foreach(CMember member in target.Target)
-                m_Notify.RemoveNotifyBySrc(member);             
+                if (member != null) m_Notify.RemoveNotifyBySrc(member);             
         }
         public void RemoveNotify(object item)
         {
@@ -544,7 +545,15 @@ namespace TrboX
             int i = 0;
             while (true)
             {
-                i++;
+                //lock (TServer.RxRequest)
+                //{
+                //    if (TServer.RxRequest.Count > 0)
+                //    {
+                //        TServerRequest req = TServer.RxRequest.Dequeue();
+
+                //    }
+                //}
+                //Thread.Sleep(200);
 
                 //AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Content = new CAlarmNotification() { Content = "test" + i.ToString() } });
                 //AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Content = new CAlarmNotification() { Content = "Alarm" + i.ToString() } });
@@ -566,5 +575,6 @@ namespace TrboX
                 Thread.Sleep(5000);
             }
         }
+
     }
 }

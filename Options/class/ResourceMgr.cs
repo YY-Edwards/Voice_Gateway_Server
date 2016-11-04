@@ -247,16 +247,16 @@ namespace TrboX
         public int Department;
         public int Radio;
 
-        public BelongStr GetBelongStr()
-        {
-            return new BelongStr()
-            {
-                id = id.ToString(),
-                staff = staff.ToString(),
-                department = department.ToString(),
-                radio = radio.ToString(),
-            };
-        }
+        //public BelongStr GetBelongStr()
+        //{
+        //    return new BelongStr()
+        //    {
+        //        id = id.ToString(),
+        //        staff = staff.ToString(),
+        //        department = department.ToString(),
+        //        radio = radio.ToString(),
+        //    };
+        //}
     }
 
     public class BelongStr
@@ -266,16 +266,16 @@ namespace TrboX
         public string department;
         public string radio;
 
-        public Belong GetBelong()
-        {
-            return new Belong()
-            {
-                id = Trbox.IsNumber(id) ? int.Parse(id) : 0,
-                staff = Trbox.IsNumber(staff) ? int.Parse(staff) : 0,
-                department = Trbox.IsNumber(department) ? int.Parse(department) : 0,
-                radio = Trbox.IsNumber(radio) ? int.Parse(radio) : 0,
-            };
-        }
+        //public Belong GetBelong()
+        //{
+        //    return new Belong()
+        //    {
+        //        id = Trbox.IsNumber(id) ? int.Parse(id) : 0,
+        //        staff = Trbox.IsNumber(staff) ? int.Parse(staff) : 0,
+        //        department = Trbox.IsNumber(department) ? int.Parse(department) : 0,
+        //        radio = Trbox.IsNumber(radio) ? int.Parse(radio) : 0,
+        //    };
+        //}
     }
 
     public class ResList
@@ -335,14 +335,14 @@ namespace TrboX
             {
                 id = id.ToString(),
             };
-            if (null != obj)
-            {
-                if (obj is User) modify.obj = ((User)obj).GetUserStr();
-                else if (obj is Staff) ((Staff)obj).GetStaffStr();
-                else if (obj is Department) ((Department)obj).GetDepartmentStr();
-                else if (obj is Radio) ((Radio)obj).GetRadioStr();
-                else if (obj is Belong) ((Belong)obj).GetBelongStr();
-            }
+            //if (null != obj)
+            //{
+            //    if (obj is User) modify.obj = ((User)obj).GetUserStr();
+            //    else if (obj is Staff) ((Staff)obj).GetStaffStr();
+            //    else if (obj is Department) ((Department)obj).GetDepartmentStr();
+            //    else if (obj is Radio) ((Radio)obj).GetRadioStr();
+            //    else if (obj is Belong) ((Belong)obj).GetBelongStr();
+            //}
 
             return modify;
         }
@@ -353,23 +353,23 @@ namespace TrboX
         public string id;
         public object obj;
 
-        public ModifyObj GetModifyObj()
-        {
-            ModifyObj modify = new ModifyObj()
-            {
-                id = Trbox.IsNumber(id) ? int.Parse(id) : 0,
-            };
-            if (null != obj)
-            {
-                if (obj is UserStr) modify.obj = ((UserStr)obj).GetUser();
-                else if (obj is StaffStr) ((StaffStr)obj).GetStaff();
-                else if (obj is DepartmentStr) ((DepartmentStr)obj).GetDepartment();
-                else if (obj is RadioStr) ((RadioStr)obj).GetRadio();
-                else if (obj is BelongStr) ((BelongStr)obj).GetBelong();
-            }
+        //public ModifyObj GetModifyObj()
+        //{
+        //    ModifyObj modify = new ModifyObj()
+        //    {
+        //        id = Trbox.IsNumber(id) ? int.Parse(id) : 0,
+        //    };
+        //    if (null != obj)
+        //    {
+        //        if (obj is UserStr) modify.obj = ((UserStr)obj).GetUser();
+        //        else if (obj is StaffStr) ((StaffStr)obj).GetStaff();
+        //        else if (obj is DepartmentStr) ((DepartmentStr)obj).GetDepartment();
+        //        else if (obj is RadioStr) ((RadioStr)obj).GetRadio();
+        //        else if (obj is BelongStr) ((BelongStr)obj).GetBelong();
+        //    }
 
-            return modify;
-        }
+        //    return modify;
+        //}
     }
 
 
@@ -550,30 +550,30 @@ namespace TrboX
         {
             ResList res = new ResList();
 
-            int count = (int)CallRpc(RequestType.getUserCount, new GetCountParamStr(), ParseStatus);
-            GetParamStr param = new GetParamStr() { offset = "0", count = count.ToString() };
-            //param.AddCondition()//add condition
-            res.User = (List<User>)CallRpc(RequestType.getUser, param, ParseStatus);
+           // int count = (int)CallRpc(RequestType.getUserCount, new GetCountParamStr(), ParseStatus);
+           // GetParamStr param = new GetParamStr() { offset = "0", count = count.ToString() };
+           // //param.AddCondition()//add condition
+           // res.User = (List<User>)CallRpc(RequestType.getUser, param, ParseStatus);
 
-            count = (int)CallRpc(RequestType.getStaffCount, new GetCountParamStr(), ParseStatus);
-            param = new GetParamStr() { offset = "0", count = count.ToString() };
-            //param.AddCondition()//add condition
-            res.Staff = (List<Staff>)CallRpc(RequestType.getStaff, param, ParseStatus);
+           // count = (int)CallRpc(RequestType.getStaffCount, new GetCountParamStr(), ParseStatus);
+           // param = new GetParamStr() { offset = "0", count = count.ToString() };
+           // //param.AddCondition()//add condition
+           // res.Staff = (List<Staff>)CallRpc(RequestType.getStaff, param, ParseStatus);
 
-            count = (int)CallRpc(RequestType.getDepartmentCount, new GetCountParamStr(), ParseStatus);
-            param = new GetParamStr() { offset = "0", count = count.ToString() };
-           // param.AddCondition()//add condition
-            res.Department = (List<Department>)CallRpc(RequestType.getDepartment, param, ParseStatus);
+           // count = (int)CallRpc(RequestType.getDepartmentCount, new GetCountParamStr(), ParseStatus);
+           // param = new GetParamStr() { offset = "0", count = count.ToString() };
+           //// param.AddCondition()//add condition
+           // res.Department = (List<Department>)CallRpc(RequestType.getDepartment, param, ParseStatus);
 
-            count = (int)CallRpc(RequestType.getRadioCount, new GetCountParamStr(), ParseStatus);
-            param = new GetParamStr() { offset = "0", count = count.ToString() };
-           // param.AddCondition()//add condition
-            res.Radio = (List<Radio>)CallRpc(RequestType.getRadio, param, ParseStatus);
+           // count = (int)CallRpc(RequestType.getRadioCount, new GetCountParamStr(), ParseStatus);
+           // param = new GetParamStr() { offset = "0", count = count.ToString() };
+           //// param.AddCondition()//add condition
+           // res.Radio = (List<Radio>)CallRpc(RequestType.getRadio, param, ParseStatus);
 
-            count = (int)CallRpc(RequestType.getRadioBelongCount, new GetCountParamStr(), ParseStatus);
-            param = new GetParamStr() { offset = "0", count = count.ToString() };
-            //param.AddCondition()//add condition
-            res.RadioBelong = (List<Belong>)CallRpc(RequestType.getRadioBelong, param, ParseStatus);
+           // count = (int)CallRpc(RequestType.getRadioBelongCount, new GetCountParamStr(), ParseStatus);
+           // param = new GetParamStr() { offset = "0", count = count.ToString() };
+           // //param.AddCondition()//add condition
+           // res.RadioBelong = (List<Belong>)CallRpc(RequestType.getRadioBelong, param, ParseStatus);
 
             FillToOpList(res);
             return res;
@@ -581,16 +581,17 @@ namespace TrboX
 
         private void FillToOpList(ResList res)
         {
-            for (int i = 0; i < 5; i++)
-            {
-                if (null == m_OperateList[i]) m_OperateList[i] = new Dictionary<ItemIndex, TabOperate>();
-            }
+        //    for (int i = 0; i < 5; i++)
+        //    {
+        //        if (null == m_OperateList[i]) m_OperateList[i] = new Dictionary<ItemIndex, TabOperate>();
+        //    }
 
-            foreach (User obj in res.User) m_OperateList[GetIndex(obj)].Add(new ItemIndex(GetType(obj), obj.id), new TabOperate(TabOpType.None, obj));
-            foreach (Staff obj in res.Staff) m_OperateList[GetIndex(obj)].Add(new ItemIndex(GetType(obj), obj.id), new TabOperate(TabOpType.None, obj));
-            foreach (Department obj in res.Department) m_OperateList[GetIndex(obj)].Add(new ItemIndex(GetType(obj), obj.id), new TabOperate(TabOpType.None, obj));
-            foreach (Radio obj in res.Radio) m_OperateList[GetIndex(obj)].Add(new ItemIndex(GetType(obj), obj.id), new TabOperate(TabOpType.None, obj));
-            foreach (Belong obj in res.Belong) m_OperateList[GetIndex(obj)].Add(new ItemIndex(GetType(obj), obj.id), new TabOperate(TabOpType.None, obj));
+        //    foreach (User obj in res.User) m_OperateList[GetIndex(obj)].Add(new ItemIndex(GetType(obj), obj.id), new TabOperate(TabOpType.None, obj));
+        //    foreach (Staff obj in res.Staff) m_OperateList[GetIndex(obj)].Add(new ItemIndex(GetType(obj), obj.id), new TabOperate(TabOpType.None, obj));
+        //    foreach (Department obj in res.Department) m_OperateList[GetIndex(obj)].Add(new ItemIndex(GetType(obj), obj.id), new TabOperate(TabOpType.None, obj));
+        //    foreach (Radio obj in res.Radio) m_OperateList[GetIndex(obj)].Add(new ItemIndex(GetType(obj), obj.id), new TabOperate(TabOpType.None, obj));
+        //    foreach (Belong obj in res.Belong) m_OperateList[GetIndex(obj)].Add(new ItemIndex(GetType(obj), obj.id), new TabOperate(TabOpType.None, obj));
+        //
         }
 
 
@@ -736,21 +737,21 @@ namespace TrboX
         private int GetId(object obj)
         {
             int id = 0;
-            if (obj is User) id = ((User)obj).id;
-            else if (obj is Staff) id = ((Staff)obj).id;
-            else if (obj is Department) id = ((Department)obj).id;
-            else if (obj is Radio) id = ((Radio)obj).id;
-            else if (obj is Belong) id = ((Belong)obj).id;
+            //if (obj is User) id = ((User)obj).id;
+            //else if (obj is Staff) id = ((Staff)obj).id;
+            //else if (obj is Department) id = ((Department)obj).id;
+            //else if (obj is Radio) id = ((Radio)obj).id;
+            //else if (obj is Belong) id = ((Belong)obj).id;
             return id;
         }
 
         private object SetId(object obj, int id)
         {
-            if (obj is User) ((User)obj).id = id;
-            else if (obj is Staff) ((Staff)obj).id = id;
-            else if (obj is Department) ((Department)obj).id = id;
-            else if (obj is Radio) ((Radio)obj).id = id;
-            else if (obj is Belong) ((Belong)obj).id = id;
+            //if (obj is User) ((User)obj).id = id;
+            //else if (obj is Staff) ((Staff)obj).id = id;
+            //else if (obj is Department) ((Department)obj).id = id;
+            //else if (obj is Radio) ((Radio)obj).id = id;
+            //else if (obj is Belong) ((Belong)obj).id = id;
             return obj;
         }
 
@@ -766,11 +767,11 @@ namespace TrboX
 
         private object GetStr(object obj)
         {
-            if (obj is User) return ((User)obj).GetUserStr();
-            else if (obj is Staff) return ((Staff)obj).GetStaffStr();
-            else if (obj is Department) return ((Department)obj).GetDepartmentStr();
-            else if (obj is Radio) return ((Radio)obj).GetRadioStr();
-            else if (obj is Belong) return ((Belong)obj).GetBelongStr();
+            //if (obj is User) return ((User)obj).GetUserStr();
+            //else if (obj is Staff) return ((Staff)obj).GetStaffStr();
+            //else if (obj is Department) return ((Department)obj).GetDepartmentStr();
+            //else if (obj is Radio) return ((Radio)obj).GetRadioStr();
+            //else if (obj is Belong) return ((Belong)obj).GetBelongStr();
             return null;
         }
 

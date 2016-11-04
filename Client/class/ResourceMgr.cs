@@ -186,8 +186,8 @@ namespace TrboX
 
     public enum RadioType
     {
-        Radio,
-        Ride
+        Radio = 0,
+        Ride = 1
     };
 
      [Serializable]
@@ -201,7 +201,9 @@ namespace TrboX
         public bool HasKeyboard;
         public string SN;
         public bool IsValid;
-        public bool IsOnline;
+        public bool IsOnline{set;get;}
+        public bool IsGPS { set; get; }
+
 
 
         public RadioStr GetRadioStr()
@@ -423,7 +425,7 @@ namespace TrboX
     public class ResourceMgr
     {
         string user = "["
-        + "{'id':'1', 'username':'张三', 'password':'123'},"
+        + "{'id':'1', 'username':'测试', 'password':'123'},"
         + "{'id':'2', 'username':'李四', 'password':'123'},"
         + "{'id':'3', 'username':'Jim', 'password':'123'},"
         + "{'id':'4', 'username':'John', 'password':'123'},"
@@ -440,7 +442,7 @@ namespace TrboX
 
 
         string staff = "["
-        + "{'id':'1', 'name':'张三', 'type':'0'},"
+        + "{'id':'1', 'name':'测试', 'type':'0'},"
         + "{'id':'2', 'name':'川A12345', 'type':'1'},"
         + "{'id':'3', 'name':'Jim', 'type':'0'},"
         + "{'id':'4', 'name':'川B12345', 'type':'1'},"
@@ -457,7 +459,7 @@ namespace TrboX
         
 
         string department = "["
-        + "{'id':'1' , 'group_id':'203', 'name':'调度组'},"
+        + "{'id':'1' , 'group_id':'6', 'name':'测试组'},"
         + "{'id':'2', 'group_id':'314', 'name':'保洁组'},"
         + "{'id':'3', 'group_id':'425', 'name':'地勤组'},"
         + "{'id':'4', 'group_id':'536', 'name':'餐厅'},"
@@ -466,7 +468,7 @@ namespace TrboX
         + "]";
 
         string radio = "["
-        + "{'id':'1', 'radio_id':'65536', 'type':'0'},"
+        + "{'id':'1', 'radio_id':'8', 'type':'0'},"
         + "{'id':'2', 'radio_id':'112'},"
         + "{'id':'3', 'radio_id':'113'},"
         + "{'id':'4', 'radio_id':'114'},"
@@ -493,7 +495,7 @@ namespace TrboX
         + "]";
 
         string radio_belong = "["
-        + "{'department': '1', 'staff': '1', 'radio': '3' },"
+        + "{'department': '1', 'staff': '1', 'radio': '1' },"
         + "{'department': '1', 'staff': '3', 'radio': '4' },"
         + "{'department': '1', 'staff': '5', 'radio': '5' },"
         + "{'department': '1', 'staff': '-1', 'radio': '6' },"
@@ -537,12 +539,12 @@ namespace TrboX
 
 
 
-        private TcpInterface TServer = new TcpInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8002));
+        //private TcpInterface TServer = new TcpInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8002));
 
         private List<Dictionary<ItemIndex, TabOperate>> m_OperateList = new List<Dictionary<ItemIndex, TabOperate>>();
         private int AddTempIndex = -1;
 
-        delegate object ParseResult(TcpResponse res);
+        delegate object ParseResult(object res);
         delegate void UpdateRes(List<object> add, List<string> del, List<ModifyObjStr> modify);
 
         private UpdateRes[] UpdateResFunc;
@@ -682,11 +684,11 @@ namespace TrboX
         }
 
 
-        private object ParseStatus(TcpResponse res)
-        {
-            if (null == res) return false;
-            return res.IsSuccess;
-        }
+        //private object ParseStatus(object obj)
+        //{
+        //    if (null == res) return false;
+        //    return res.IsSuccess;
+        //}
 
         private object CallRpc(RequestType type, ParseResult Response = null)
         {
@@ -695,8 +697,8 @@ namespace TrboX
 
         private object CallRpc(RequestType type, object param, ParseResult Response = null)
         {
-            TServer.WriteString(JsonParse.Req2Json(type, param));
-            if (null != Response) return Response(TServer.ReadString(JsonParse.CallID) as TcpResponse);
+            //TServer.WriteString(JsonParse.Req2Json(type, param));
+            //if (null != Response) return Response(TServer.ReadString(JsonParse.CallID) as TcpResponse);
             return null;
         }
 
@@ -723,34 +725,34 @@ namespace TrboX
 
         private void UpdateUser(List<object> add, List<string> del, List<ModifyObjStr> modify)
         {
-            ExecUpdate(RequestType.addUser, add, ParseStatus);
-            ExecUpdate(RequestType.deleteUser, del, ParseStatus);
-            ExecUpdate(RequestType.updateUser, modify, ParseStatus);
+            //ExecUpdate(RequestType.addUser, add, ParseStatus);
+            //ExecUpdate(RequestType.deleteUser, del, ParseStatus);
+            //ExecUpdate(RequestType.updateUser, modify, ParseStatus);
         }
 
         private void UpdateStaff(List<object> add, List<string> del, List<ModifyObjStr> modify)
         {
-            ExecUpdate(RequestType.addStaff, add, ParseStatus);
-            ExecUpdate(RequestType.deleteStaff, del, ParseStatus);
-            ExecUpdate(RequestType.updateStaff, modify, ParseStatus);
+            //ExecUpdate(RequestType.addStaff, add, ParseStatus);
+            //ExecUpdate(RequestType.deleteStaff, del, ParseStatus);
+            //ExecUpdate(RequestType.updateStaff, modify, ParseStatus);
         }
         private void UpdateDepartment(List<object> add, List<string> del, List<ModifyObjStr> modify)
         {
-            ExecUpdate(RequestType.addDepartment, add, ParseStatus);
-            ExecUpdate(RequestType.deleteDepartment, del, ParseStatus);
-            ExecUpdate(RequestType.updateDepartment, modify, ParseStatus);
+            //ExecUpdate(RequestType.addDepartment, add, ParseStatus);
+            //ExecUpdate(RequestType.deleteDepartment, del, ParseStatus);
+            //ExecUpdate(RequestType.updateDepartment, modify, ParseStatus);
         }
         private void UpdateRadio(List<object> add, List<string> del, List<ModifyObjStr> modify)
         {
-            ExecUpdate(RequestType.addRadio, add, ParseStatus);
-            ExecUpdate(RequestType.deleteRadio, del, ParseStatus);
-            ExecUpdate(RequestType.updateRadio, modify, ParseStatus);
+            //ExecUpdate(RequestType.addRadio, add, ParseStatus);
+            //ExecUpdate(RequestType.deleteRadio, del, ParseStatus);
+            //ExecUpdate(RequestType.updateRadio, modify, ParseStatus);
         }
         private void UpdateRadioBelong(List<object> add, List<string> del, List<ModifyObjStr> modify)
         {
-            ExecUpdate(RequestType.addRadioBelong, add, ParseStatus);
-            ExecUpdate(RequestType.deleteRadioBelong, del, ParseStatus);
-            ExecUpdate(RequestType.updateRadioBelong, modify, ParseStatus);
+            //ExecUpdate(RequestType.addRadioBelong, add, ParseStatus);
+            //ExecUpdate(RequestType.deleteRadioBelong, del, ParseStatus);
+            //ExecUpdate(RequestType.updateRadioBelong, modify, ParseStatus);
         }
 
 

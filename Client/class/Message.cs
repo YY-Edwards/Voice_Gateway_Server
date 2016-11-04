@@ -13,9 +13,13 @@ namespace TrboX
         Call,
         JobTicker,
         Tracker,
+        Position,
+        Control,
+
     };
-    
+
     [Serializable]
+
     public class CAlarmNotification
     {
        public  string Content { set; get; }
@@ -61,7 +65,8 @@ namespace TrboX
                     case NotifyType.Alarm:
                         return Source.Name + "：" + ((CAlarmNotification)Content).Content;
                     case NotifyType.Message:
-                        return Source.Name + "：" + ((CMsgNotification)Content).Content; 
+                        return Source.Name + "：" + ((CMsgNotification)Content).Content;
+
                 }
 
                 return Source.Name + "：";
