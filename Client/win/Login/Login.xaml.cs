@@ -11,6 +11,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using System.Net;
+
 namespace TrboX
 {
     /// <summary>
@@ -22,37 +24,17 @@ namespace TrboX
         public Login()
         {
             InitializeComponent();
+            //DataBase.open(DateTime.Now.Year.ToString() 
+            //    + DateTime.Now.Month.ToString()
+            //    + DateTime.Now.Day.ToString()
+            //    + DateTime.Now.Hour.ToString()
+            //    + DateTime.Now.Minute.ToString()
+            //    + DateTime.Now.Second.ToString()
+            //    + DateTime.Now.Millisecond.ToString() 
+            //    + ".lg");
 
-
-           // Location loc = new Location()
-           // {
-           //     Radio = new CMember() {Type = MemberType.Radio, Radio = new Radio() { RadioID = 4 }, Group = new Department() { Name = "cet", GroupID = 12} },
-           //     Long = 104.0557511303,
-           //     Lat = 30.6049425958
-           // };
-
-           //             double mLat, mLon;
-           // EvilTransform.transform(loc.Lat, loc.Long, out mLat, out mLon);
-           // string paramformat = "DisPosPoint({0},{1},{2},{3}, {4}, {5}, '{6}', '{7}',{8},{9},'{10}', {11},{12})";
-           // //string paramformat = "DisPosPoint({0},{1},{2},{3},{4},{5},'{6}','{7}')";
-
-           // string param = String.Format(paramformat,
-           //     loc.Radio.Radio.RadioID,//radioid 
-           //     (int)loc.Radio.Radio.Type,//raido type radio 0. ride 1
-           //     loc.Long,//long
-           //     loc.Lat,//lat
-           //     loc.Alt,//alt
-           //     loc.Speed,//speed
-           //     DateTime.Now.ToShortDateString(),
-           //     DateTime.Now.ToLongTimeString(),
-           //     mLon,//middle long
-           //     mLat,//middle lat
-           //     loc.Radio.Name,
-           //     loc.Radio.Group != null ? loc.Radio.Group.GroupID : -1,
-           //     loc.Radio.Group != null ? loc.Radio.Group.Name : "未分组"
-           //     );
-           //if(param == "") param = "0";
-
+            DataBase.open("DebugLog.lg");
+            DataBase.InsertLog("---Records Start----------------------------------------------------------");
         }
        private void MyWindow_Closed(object sender, EventArgs e)
         {

@@ -490,6 +490,9 @@ namespace TrboX
                     item.Value.Radio.IsOnline = online;
                     Target.Update(item.Value.Radio);
                     IsNeedUpdate = true;
+
+                    m_Main.SubWindow.UpdateOpWin(item.Value, 1, online);
+                    m_Main.WorkArea.FastPanel.UpdateOpWin(item.Value, 1, online);
                     return;
                 }
 
@@ -509,12 +512,59 @@ namespace TrboX
                 {
                     item.Value.Radio.IsGPS = online;
                     Target.Update(item.Value.Radio);
+
+                    m_Main.SubWindow.UpdateOpWin(item.Value, 2, online);
+                    m_Main.WorkArea.FastPanel.UpdateOpWin(item.Value, 2, online);
+
                     IsNeedUpdate = true;
                     return;
                 }
 
                 Target.Update(new Radio() { ID = -2, RadioID = id, IsGPS = online });
                 IsNeedUpdate = true;
+            }
+            catch
+            { }
+        }
+
+        public void SetInCalled(TargetType type, long id, bool online)
+        {
+            try
+            {
+                if (type == TargetType.Private)
+                {
+                    var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Radio.RadioID == id);
+                    foreach (var item in radio)
+                    {
+                        item.Value.Radio.IsCalled = online;
+                        Target.Update(item.Value.Radio);
+                        IsNeedUpdate = true;
+
+                        m_Main.SubWindow.UpdateOpWin(item.Value, 4, online);
+                        m_Main.WorkArea.FastPanel.UpdateOpWin(item.Value, 4, online);
+                        return;
+                    }
+
+                    Target.Update(new Radio() { ID = -2, RadioID = id, IsCalled = online });
+                    IsNeedUpdate = true;
+                }
+                else if (type == TargetType.Group)
+                {
+                    var group = TargetMgr.TargetList.Group.Where(p => p.Value.Group.GroupID == id);
+                    foreach (var item in group)
+                    {
+                        item.Value.Group.IsCalled = online;
+                        Target.Update(item.Value.Group);
+                        IsNeedUpdate = true;
+
+                        m_Main.SubWindow.UpdateOpWin(item.Value, 4, online);
+                        m_Main.WorkArea.FastPanel.UpdateOpWin(item.Value, 4, online);
+                        return;
+                    }
+
+                    Target.Update(new Department() { ID = -2,Name = "组：" +id.ToString(), GroupID = id, IsCalled = online });
+                    IsNeedUpdate = true;
+                }
             }
             catch
             { }

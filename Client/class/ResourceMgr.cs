@@ -71,20 +71,31 @@ namespace TrboX
 
             try
             {
-                List<string> tmp = JsonConvert.DeserializeObject<List<string>>(func);
-                List<FuncList> funlist = new List<FuncList>();
-                foreach (string item in tmp)
+                if (func != null)
                 {
-                    try
-                    {
-                        funlist.Add((FuncList)Enum.Parse(typeof(FuncList), item));
-                    }
-                    catch { }
+                    List<string> tmp = JsonConvert.DeserializeObject<List<string>>(func);
+                    List<FuncList> funlist = new List<FuncList>();
+                    if (tmp != null)
+                        foreach (string item in tmp)
+                        {
+                            try
+                            {
+                                funlist.Add((FuncList)Enum.Parse(typeof(FuncList), item));
+                            }
+                            catch (Exception e)
+                            {
+                                DataBase.InsertLog("GetUser:FuncList.Parse" + e.Message);
+                            }
+
+                        }
+                    user.func = funlist;
                 }
-                user.func = funlist;
 
             }
-            catch { }
+            catch (Exception e)
+            {
+                DataBase.InsertLog("GetUser:" + e.Message);
+            }
 
             return user;
         }
@@ -153,6 +164,7 @@ namespace TrboX
         public int ID;
         public string Name;
         public long GroupID;
+        public bool IsCalled;
 
         public DepartmentStr GetDepartmentStr()
         {
@@ -203,6 +215,7 @@ namespace TrboX
         public bool IsValid;
         public bool IsOnline{set;get;}
         public bool IsGPS { set; get; }
+        public bool IsCalled;
 
 
 
@@ -658,7 +671,10 @@ namespace TrboX
             {
                 m_OperateList[GetIndex(obj)].Add(new ItemIndex(GetType(obj), AddTempIndex), new TabOperate(TabOpType.Add, SetId(obj, AddTempIndex)));
             }
-            catch { }
+            catch (Exception e)
+            {
+                DataBase.InsertLog("Add Resource:" + e.Message);
+            }
 
             AddTempIndex--;
         }
@@ -670,7 +686,10 @@ namespace TrboX
                 if (GetId(obj) > 0) m_OperateList[GetIndex(obj)][new ItemIndex(GetType(obj), GetId(obj))].operate = TabOpType.Delete;
                 else if (GetId(obj) < 0) m_OperateList[GetIndex(obj)].Remove(new ItemIndex(GetType(obj), GetId(obj)));
             }
-            catch { }
+            catch (Exception e)
+            {
+                DataBase.InsertLog("Delete Resource:" + e.Message);
+            }
         }
 
         public void Modify(object obj)
@@ -680,7 +699,10 @@ namespace TrboX
                 m_OperateList[GetIndex(obj)][new ItemIndex(GetType(obj), GetId(obj))].operate = GetId(obj) > 0 ? TabOpType.Modify : TabOpType.Add;
                 m_OperateList[GetIndex(obj)][new ItemIndex(GetType(obj), GetId(obj))].obj = obj;
             }
-            catch { }
+            catch (Exception e)
+            {
+                DataBase.InsertLog("Modiyy Resource:" + e.Message);
+            }
         }
 
 

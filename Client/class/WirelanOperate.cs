@@ -22,7 +22,7 @@ namespace TrboX
     {
         public RequestType Call;
         private long CallId;
-        private List<object> Param;
+        public List<object> Param;
 
         public ParseDel Parse(string json)
         {

@@ -7,6 +7,9 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+
+using System.Windows.Automation.Peers;
+
 namespace TrboX
 {
 
@@ -29,19 +32,26 @@ namespace TrboX
                 {
                     try
                     {
-                        m_Main.lst_Event.Items.RemoveAt(m_Main.lst_Event.Items.Count - 1);
+                        m_Main.lst_Event.Items.RemoveAt(0);
                     }
                     catch
                     {
                     }
                 }
 
-                m_Main.lst_Event.Items.Insert(0, new CEvent()
+                m_Main.lst_Event.Items.Add(new CEvent()
                 {
                     Content = content,
                     Time = DateTime.Now
                 });
+
+                ListViewAutomationPeer lvap = new ListViewAutomationPeer(m_Main.lst_Event);
+                var svap = lvap.GetPattern(PatternInterface.Scroll) as ScrollViewerAutomationPeer;
+                ((ScrollViewer)svap.Owner).ScrollToEnd();
+
             }));
+
+            DataBase.InsertLog(content);
         }
 
     }

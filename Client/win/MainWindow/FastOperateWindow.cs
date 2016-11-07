@@ -45,9 +45,10 @@ namespace TrboX
             {
                 FastOperateList = (List<FastOperate>)m_BinFormat.Deserialize(FastOperateListFile);           
             }
-            catch 
+            catch (Exception e)
             {
-            };
+                DataBase.InsertLog("Read Fast Operation List Error" + e.Message);
+            }
 
             foreach (FastOperate item in FastOperateList)
             {
@@ -67,6 +68,51 @@ namespace TrboX
             }
 
             m_mainWin.lst_dispatch.Items.Insert(0, new ListViewItem() { Content = item, ContextMenu = new ContextMenu() { Visibility = Visibility.Collapsed } });
+            m_mainWin.g_IsNeedSaveWorkSpace = true;
+        }
+
+        public void Insert(int index, FastOperate item)
+        {
+            foreach (ListViewItem it in m_mainWin.lst_dispatch.Items)
+            {
+                if (JsonConvert.SerializeObject(item).Equals(JsonConvert.SerializeObject(((ListViewItem)it).Content)))
+                {
+
+                    m_mainWin.lst_dispatch.ScrollIntoView(item);
+                    //Remove(item);
+                    //break;
+                    return;
+                }
+            }
+            try
+            {
+                m_mainWin.lst_dispatch.Items.Insert(index, new ListViewItem() { Content = item, ContextMenu = new ContextMenu() { Visibility = Visibility.Collapsed } });
+                m_mainWin.lst_dispatch.ScrollIntoView(m_mainWin.lst_dispatch.Items[index]);
+            }
+            catch (Exception e ){
+                DataBase.InsertLog("Insert Fast Operation List Error" + e.Message);          
+            }
+            m_mainWin.g_IsNeedSaveWorkSpace = true;
+        }
+
+        public void Update(FastOperate src, FastOperate dest)
+        {
+            int index = -1;
+            for (int i = 0; i< m_mainWin.lst_dispatch.Items.Count; i++)
+            {
+                if (JsonConvert.SerializeObject(src).Equals(JsonConvert.SerializeObject(((ListViewItem)m_mainWin.lst_dispatch.Items[i]).Content)))
+                {
+                    index = i;
+                    break;
+                }
+            }
+
+            if (index >= 0)
+            {
+                m_mainWin.lst_dispatch.Items.RemoveAt(index);
+                Insert(index, dest);
+            }
+          
             m_mainWin.g_IsNeedSaveWorkSpace = true;
         }
 
@@ -128,6 +174,104 @@ namespace TrboX
 
             FastOperateListFile.SetLength(0);
             m_BinFormat.Serialize(FastOperateListFile, FastOperateList);
+        }
+
+
+        public void UpdateOpWin(CMember targt, int mask, bool sta)
+        {
+
+            Dictionary<int, FastOperate> uplist =new  Dictionary<int, FastOperate>();
+            m_mainWin.Dispatcher.Invoke(new Action(() =>
+            {
+            try{
+                for(int i = 0; i< m_mainWin.lst_dispatch.Items.Count; i++)
+                {
+                    FastOperate dst = (FastOperate)((ListViewItem)m_mainWin.lst_dispatch.Items[i]).Content;
+
+                    if (dst.Type == FastType.FastType_Contact)
+                    {
+                        try
+                        {
+                            if (dst != null && dst.Contact != null && dst.Contact.Target != null && dst.Contact.Target.Count > 0)
+                            {
+                                foreach (CMember it in dst.Contact.Target)
+                                {
+                                    if (it.IsLike(targt))
+                                    {
+                                        dst.Contact.Target.Remove(it);
+
+                                        if ((mask & 1) != 0)//olnline
+                                        {
+                                            if (it.Type != MemberType.Group) it.Radio.IsOnline = sta;
+                                        }
+                                        else if ((mask & 2) != 0)//ingps
+                                        {
+                                            if (it.Type != MemberType.Group) it.Radio.IsGPS = sta;
+                                        }
+                                        else if ((mask & 4) != 0)//incalled
+                                        {
+                                            if (it.Type != MemberType.Group) it.Radio.IsCalled = sta;
+                                            else it.Group.IsCalled = sta;
+                                        }
+
+                                        dst.Contact.Target.Add(it);
+                                        uplist.Add(i, dst);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        catch { }
+                    }
+                    else if (dst.Type == FastType.FastType_Operate)
+                    {
+                        try
+                        {
+                            if (dst != null && dst.Operate != null && dst.Operate.Target != null && dst.Operate.Target.Target != null && dst.Operate.Target.Target.Count > 0)
+                            {
+                                foreach (CMember it in dst.Operate.Target.Target)
+                                {
+                                    if (it.IsLike(targt))
+                                    {
+                                        dst.Operate.Target.Target.Remove(it);
+
+                                        if ((mask & 1) != 0)//olnline
+                                        {
+                                            if (it.Type != MemberType.Group) it.Radio.IsOnline = sta;
+                                        }
+                                        else if ((mask & 2) != 0)//ingps
+                                        {
+                                            if (it.Type != MemberType.Group) it.Radio.IsGPS = sta;
+                                        }
+                                        else if ((mask & 4) != 0)//incalled
+                                        {
+                                            if (it.Type != MemberType.Group) it.Radio.IsCalled = sta;
+                                            else it.Group.IsCalled = sta;
+                                        }
+                                        dst.Operate.Target.Target.Add(it);
+                                        uplist.Add(i, dst);
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        catch
+                        { }
+
+                    }
+
+                }
+
+                foreach(var it in uplist)
+                {
+                    if (it.Key >= 0 && it.Key < m_mainWin.lst_dispatch.Items.Count)
+                     {
+                         Update(((ListViewItem)m_mainWin.lst_dispatch.Items[it.Key]).Content as FastOperate, it.Value);
+                     }
+                }
+            }
+            catch{}
+            }));
         }
     }
 }

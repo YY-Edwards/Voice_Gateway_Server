@@ -93,7 +93,7 @@
             </DockPanel>
         </Border>
         <Button x:Name="btn_Close" Content="x" VerticalAlignment="Top" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,5,5,0" Height="20" Width="20" Click="btn_Close_Click"/>
-        <Border BorderBrush="Black" BorderThickness="0" Grid.RowSpan="3" Grid.Row="1" Padding="0" Background="#8021EEAD" ClipToBounds="True">
+        <Border BorderBrush="Black" BorderThickness="0" Grid.RowSpan="3" Grid.Row="1" Padding="0" Background="#B221EEAD" ClipToBounds="True">
             <Grid Margin="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="100"/>
@@ -103,7 +103,27 @@
                     <ColumnDefinition Width="100"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
-                <Border BorderBrush="Black" BorderThickness="1" Height="80" VerticalAlignment="Center" Margin="0" Width="80" HorizontalAlignment="Center">
+
+                <Grid  Width="80" Height="80"  HorizontalAlignment="Center">
+                    <Border BorderBrush="Black" BorderThickness="0">
+                        <Ellipse Fill="#FF25D8A0"  Stroke="Black" StrokeThickness="0"/>
+                    </Border>
+                    <Border Margin="11.6">
+                        <Border.Background>
+                            <ImageBrush>
+                                <ImageBrush.ImageSource>
+                                    <MultiBinding  Converter="{StaticResource TypeToIcon}" Mode="OneWay">
+                                        <Binding  Path="Type" />
+                                        <Binding  Path="Contact" />
+                                        <Binding  Path="Operate" />
+                                    </MultiBinding>
+                                </ImageBrush.ImageSource>
+                            </ImageBrush>
+                        </Border.Background>
+                        <!--<Image  Source="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconFromOrg}}" />-->
+                    </Border>
+                </Grid>
+                <!--<Border BorderBrush="Black" BorderThickness="1" Height="80" VerticalAlignment="Center" Margin="0" Width="80" HorizontalAlignment="Center">
                     <Border.Background>
                         <ImageBrush>
                             <ImageBrush.ImageSource>
@@ -115,7 +135,7 @@
                             </ImageBrush.ImageSource>
                         </ImageBrush>
                     </Border.Background>
-                </Border>
+                </Border>-->
                 <TabControl SelectedIndex="{Binding Type, Converter={StaticResource TypeToItem}}" Style="{DynamicResource TabControlStyleNormal}" Margin="0,-22,0,0" BorderThickness="0" Grid.ColumnSpan="2" Grid.RowSpan="2">
                     <TabItem Header="TabItem" Margin="-0.835,-6.167,0.835,0.167">
                         <Grid Margin="0" Height="268">
@@ -142,11 +162,11 @@
                                 <ColumnDefinition Width="50*"/>
                                 <ColumnDefinition Width="50*"/>
                             </Grid.ColumnDefinitions>
-                                    <CheckBox x:Name="chk_Contact_PTT" Content="PTT" HorizontalAlignment="Left" VerticalAlignment="Top" Checked="chk_Contact_PTT_Checked" Unchecked="chk_Contact_PTT_Unchecked"/>
+                                    <CheckBox x:Name="chk_Contact_PTT" Content="PTT" HorizontalAlignment="Left" VerticalAlignment="Top" Click="chk_Contact_PTT_Click"/>
                                     <Button x:Name="btn_Message"  Content="发送" Margin="3,0,0,0" ToolTip="短消息"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_Message_Click" Grid.Column="1"/>
                                 </Grid>
-                            	<DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Height="30">
-                            		<local:ComboButton x:Name="btn_Check"  Margin="8,0,3,0" ToolTip="在线检测" Visibility="{Binding m_Contact.target, Converter={StaticResource OpBtnHide}}" Click="btn_Check_Click" Height="20" Width="20" VerticalAlignment="Center" Icon="/TrboX;component/themes/resource/check.png"/>
+                            	<DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Height="30" Margin="-10,0,-10,5">
+                            		<local:ComboButton x:Name="btn_Check"  Margin="18,0,3,0" ToolTip="在线检测" Visibility="{Binding m_Contact.target, Converter={StaticResource OpBtnHide}}" Click="btn_Check_Click" Height="20" Width="20" VerticalAlignment="Center" Icon="/TrboX;component/themes/resource/check.png"/>
                             		<local:ComboButton x:Name="btn_Monitor"  Margin="3,0" ToolTip="远程监听"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_Monitor_Click" Height="20" Width="20" VerticalAlignment="Center" Icon="/TrboX;component/themes/resource/monitor.png"/>
                             		<local:ComboButton x:Name="btn_StartUp"  Margin="3,0" ToolTip="遥开"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_StartUp_Click" Height="20" Width="20" VerticalAlignment="Center" Icon="/TrboX;component/themes/resource/start.png"/>
 									<local:ComboButton x:Name="btn_ShoutDown"  Margin="3,0" ToolTip="遥毙"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_ShutDown_Click" Height="20" Width="20" VerticalAlignment="Center" Icon="/TrboX;component/themes/resource/shut.png"/>                           		
@@ -188,7 +208,7 @@
                                             <DockPanel LastChildFill="False" Grid.Row="1" Grid.ColumnSpan="2" Margin="8,0,8,10">
                                                 <Separator Margin="0" Height="5" DockPanel.Dock="Top" Background="#FFA0A0A0" Foreground="{x:Null}"/>
 
-                                                <CheckBox x:Name="btn_Op_PTT" Content="PTT" VerticalAlignment="Top" DockPanel.Dock="Bottom" Style="{DynamicResource CheckBoxStylePTT}" Height="30" Checked="btn_Op_PTT_Checked" Unchecked="btn_Op_PTT_Unchecked"/>
+                                                <CheckBox x:Name="btn_Op_PTT" Content="PTT" VerticalAlignment="Top" DockPanel.Dock="Bottom" Style="{DynamicResource CheckBoxStylePTT}" Height="30" Click="btn_Op_PTT_Click"/>
                                                 <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,10,0,0">
                                                 	<TextBlock TextWrapping="Wrap" Text="呼叫方式：" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,5,0"/>
                                                 	<ComboBox VerticalAlignment="Top" Width="120" DockPanel.Dock="Top" HorizontalAlignment="Left" Margin="0" SelectedIndex="0">
@@ -243,7 +263,7 @@
                                         		</DockPanel>
                                         		<DockPanel Margin="0,10" DockPanel.Dock="Top">
                                         			<TextBlock TextWrapping="Wrap" Text="内　　容：" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,2,5,0"/>
-                                        			<TextBox TextWrapping="Wrap" Text="{Binding m_Operate.message.message}" Margin="0"/>
+                                        			<TextBox x:Name="txt_Op_msg" TextWrapping="Wrap" Text="{Binding m_Operate.message.message}" Margin="0"/>
                                         		</DockPanel>
                                         	</DockPanel>
                                         </Grid>
@@ -277,7 +297,7 @@
                                                 <ColumnDefinition Width="50*"/>
                                             </Grid.ColumnDefinitions>
                                                 	<Button x:Name="btn_Op_Query" Content="查询" VerticalAlignment="Top" Height="30" Margin="0,0,3,0" Click="btn_Op_Query_Click"/>
-                                                    <CheckBox x:Name="chk_Op_StartCycle" Content="开始查询" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Checked="chk_Op_StartCycle_Checked" Unchecked="chk_Op_StartCycle_Unchecked"/>
+                                                    <CheckBox x:Name="chk_Op_StartCycle" Content="开始查询" HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Click="chk_Op_StartCycle_Click"/>
                                                 </Grid>
                                             </DockPanel>
                                         </Grid>

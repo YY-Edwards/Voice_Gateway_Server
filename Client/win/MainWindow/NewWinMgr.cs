@@ -170,5 +170,41 @@ namespace TrboX
             m_CreateFastOperateWindow.Owner = this.m_Main;
             m_CreateFastOperateWindow.ShowDialog();
         }
+
+        public void UpdateOpWin(CMember targt, int mask, bool sta)
+        {
+            foreach (var item in m_TargetWin)
+            {
+                if(item.Key !=null && item.Key.Target != null && item.Key.Target.Count > 0)
+                {
+                    foreach(CMember mem in item.Key.Target)
+                    {
+                        if (mem.IsLike(targt))
+                        {
+                            m_TargetWin[item.Key].UpdateSta(mask, sta);
+                            break;
+                        }
+                    }
+                }
+            }          
+        }
+
+        public void AddMessage(CMember targt, CHistory msg)
+        {
+            foreach (var item in m_TargetWin)
+            {               
+                if (item.Key != null && item.Key.Target != null && item.Key.Target.Count > 0)
+                {
+                    foreach (CMember mem in item.Key.Target)
+                    {
+                        if (mem.IsLike(targt))
+                        {
+                            m_TargetWin[item.Key].AddMessage(msg);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
     }
 }

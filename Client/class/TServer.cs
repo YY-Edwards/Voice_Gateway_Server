@@ -10,6 +10,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using System.Threading;
+using System.Text.RegularExpressions;
 
 namespace TrboX
 {
@@ -48,6 +49,12 @@ namespace TrboX
 
     public delegate object ParseDel(object obj);
     public delegate void RxRequestDel(string param);
+
+    public class cmd
+    {
+        public string json;
+        public ParseDel del;
+    }
     public class TServer
     {
         private static Dictionary<long, TServerResponse> RxResponse = new Dictionary<long, TServerResponse>();
@@ -59,18 +66,40 @@ namespace TrboX
         public static TargetSystemType SystemType = TargetSystemType.radio;
         public static Dictionary<RequestType, RxRequestDel> RxRequestList = new Dictionary<RequestType, RxRequestDel>();
 
+        public static bool IsInCalled = false;
+        
+        public static Queue<cmd> CmdList = new Queue<cmd>();
+
         public TServer()
         {
         }
 
+        public static long CallId
+        {
+            get
+            {
+                return PackageNumber;
+            }
+        }
         public static void InitializeTServer()
         {
-            TCP = new TcpInterface(new IPEndPoint(IPAddress.Parse("192.168.2.110"), 9000), OnReceive);
+            TCP = new TcpInterface(new IPEndPoint(IPAddress.Parse("192.168.2.113"), 9000), OnReceive);
+            TCP.OnConnect = OnConnect;
+            TCP.Open();
+           
 
             ThreadStart threadStart = new ThreadStart(delegate() { while (true)OnRx(); });
             Thread th = new Thread(threadStart);
             th.Start();
+        }
 
+        private static void OnConnect()
+        {
+             ThreadStart thread = new ThreadStart(delegate(){ Thread.Sleep(1000);
+                MyWindow.PushMessage(new CustomMessage(DestType.OnConnectTServer, ""));
+                });
+                Thread thx = new Thread(thread);
+                thx.Start();
         }
 
         public static void RegRxHanddler(RequestType type, RxRequestDel handler)
@@ -87,36 +116,41 @@ namespace TrboX
 
         public static object Call(object obj)
         {
-            object res = null;
+            
             if (obj is Setting)
             {
                 SettingMgr setmgr = new SettingMgr(obj as Setting, PackageNumber);
-                Write(setmgr.Json);
-                if (null != setmgr.Parse) res = setmgr.Parse(ReadResponse(PackageNumber));
+                return Call(setmgr.Json, setmgr.Parse);
             }
             else if (obj is COperate)
             {
+                Dictionary<string, object> res = new Dictionary<string, object>();
+
                 if (TargetSystemType.radio == SystemType)
                 {
                     RadioOperate radioop = new RadioOperate(obj as COperate, PackageNumber);
                     List<string> json = radioop.Json;
-                    foreach (string js in json)
-                    {
-                        Write(js);
-                        if (null != radioop.Parse(js)) res = radioop.Parse(js)(ReadResponse(PackageNumber));
-                    }
+                    foreach (string js in json) res.Add(js, Call(js, radioop.Parse(js)));
                 }
                 else
                 {
                     WirelanOperate wirelanopop = new WirelanOperate(obj as COperate, PackageNumber);
                     List<string> json = wirelanopop.Json;
-                    foreach (string js in json)
-                    {
-                        Write(js);
-                        if (null != wirelanopop.Parse(js)) res = wirelanopop.Parse(js)(ReadResponse(PackageNumber));
-                    }
+                    foreach (string js in json) res.Add(js, Call(js, wirelanopop.Parse(js)));
                 }
+
+                return res;
             }
+            return null ;
+        }
+
+        public static object Call(string str, ParseDel parse = null)
+        {
+            object res = null;
+            Write(str);
+            object obj = ReadResponse(PackageNumber);
+            if (null != parse) res = parse(obj);
+            PackageNumber++;
             return res;
         }
 
@@ -146,7 +180,9 @@ namespace TrboX
                                 foreach (var value in RxResponse)
                                 {
                                     if (CallId == value.Key) res = RxResponse[CallId];
-                                    if (CallId >= value.Key) del.Add(value.Key);
+                                    //if (CallId >= value.Key) del.Add(value.Key);
+                                    del.Add(CallId);
+
                                 }
                             }
                             break;
@@ -157,6 +193,11 @@ namespace TrboX
                 Thread.Sleep(100);
             }
             foreach (long key in del) RxResponse.Remove(key);
+
+            if(res == null)
+            {
+                DataBase.InsertLog("读取Reponse超时，CallID：" + CallId.ToString());
+            }
             return res;
         }
 
@@ -169,73 +210,87 @@ namespace TrboX
             if (null != TCP)
             {
                 TCP.WriteString(str);
-                PackageNumber++;
             }
         }
 
         private static void OnReceive(string str)
         {
-            try
-            {
-                JObject json = JsonConvert.DeserializeObject<JObject>(str);
 
-                if (json.Property("call") == null || json.Property("call").ToString() == "")//not type
-                {
-                    Console.WriteLine("Settingreponse");
-                    TServerResponse rxresponse = JsonConvert.DeserializeObject<TServerResponse>(str);
+             Regex regex=new Regex("}{");//以$cjlovefl$分割
+             string[] sArray = regex.Split(str);
 
-                    lock (RxResponse)
-                    {
-                        RxResponse.Add(rxresponse.callId, rxresponse);
-                    }
-                }
-                else
-                { //op request
-                    Console.WriteLine("TServerRequestStr");
+             for(int i =0; i < sArray.Length; i++)
+             {
 
-                    TServerRequest rxrequest = JsonConvert.DeserializeObject<TServerRequest>(JsonConvert.SerializeObject(json));
+                 if (sArray.Length  > 1 )
+                 {
+                 if(i == 0)
+                 {
+                     sArray[i] = sArray[i] + "}";
+                 }
+                 else if (i == sArray.Length - 1)
+                 {
+                     sArray[i] = "{" + sArray[i];
+                 }
+                 else
+                 {
+                     sArray[i] = "{" + sArray[i] + "}";
+                 }
+                 }
 
-                    if (rxrequest != null)
-                    {
-                        PackageNumber = rxrequest.callId;
+                 try
+                 {
+                     //Console.WriteLine("接收Json：{0}", sArray[i]);
 
-                        Write(JsonConvert.SerializeObject(new TServerResponse()
-                        {
-                            status = "success",
-                            callId = rxrequest.callId,
-                        }));
+                     JObject json = JsonConvert.DeserializeObject<JObject>(sArray[i]);
 
-                        //if (rxrequest.call.ToUpper() == RequestType.message.ToString().ToUpper())
-                        //{
-                        //    rxrequest.param = JsonConvert.DeserializeObject<RadioSmsParam>(JsonConvert.SerializeObject(rxrequest.param));
-                        //}
-                        //else if (rxrequest.call.ToUpper() == RequestType.sendArs.ToString().ToUpper())
-                        //{
-                        //    rxrequest.param = JsonConvert.DeserializeObject<RadioArsParam>(JsonConvert.SerializeObject(rxrequest.param));
-                        //}
-                        //else if (rxrequest.call.ToUpper() == RequestType.sendGps.ToString().ToUpper())
-                        //{
-                        //    string strdd = JsonConvert.SerializeObject(rxrequest.param);
-                        //    rxrequest.param = JsonConvert.DeserializeObject<GPSParam>(strdd);                       
-                        //}
+                     if (json.Property("call") == null || json.Property("call").ToString() == "")//not type
+                     {
+                         //Console.WriteLine("response");
+                         TServerResponse rxresponse = JsonConvert.DeserializeObject<TServerResponse>(sArray[i]);
 
-                        lock (RxRequest)
-                        {
-                            RxRequest.Enqueue(rxrequest);
-                        }
-                    }
-                }
-            }
-            catch
-            {
-                Console.WriteLine("不是Json");
+                         lock (RxResponse)
+                         {
+                             RxResponse.Add(rxresponse.callId, rxresponse);
+                         }
+                     }
+                     else
+                     { //op request
+                         //Console.WriteLine("TServerRequestStr");
 
-                Write(JsonConvert.SerializeObject(new TServerResponse()
-                {
-                    status = "faliure",
-                    callId = PackageNumber++,
-                }));
-            }
+                         TServerRequest rxrequest = JsonConvert.DeserializeObject<TServerRequest>(JsonConvert.SerializeObject(json));
+
+                         if (rxrequest != null)
+                         {
+                             PackageNumber = rxrequest.callId;
+
+                             Write(JsonConvert.SerializeObject(new TServerResponse()
+                             {
+                                 status = "success",
+                                 callId = rxrequest.callId,
+                             }));
+
+                             lock (RxRequest)
+                             {
+                                 RxRequest.Enqueue(rxrequest);
+                             }
+                         }
+                     }
+                 }
+                 catch
+                 {
+                     DataBase.InsertLog("Json解析错误：" + sArray[i]);
+                     
+                     //Console.WriteLine("不是Json:"+sArray[i]);
+
+                     Write(JsonConvert.SerializeObject(new TServerResponse()
+                     {
+                         status = "faliure",
+                         callId = PackageNumber++,
+                     }));
+                 }
+
+             }
         }
 
         private static void OnRx()
@@ -254,7 +309,8 @@ namespace TrboX
                     }
                     catch
                     {
-                        Console.Write("call 解析错误！");
+                        //Console.Write("call 解析错误！");
+                        DataBase.InsertLog("Request解析错误" + req.call);
                     }
 
                     if (RxRequestList.ContainsKey(calltemp))
@@ -263,7 +319,7 @@ namespace TrboX
                     }
                     else
                     {
-                        Console.Write("Rx " + req.call);
+                        //Console.Write("Rx " + req.call);
                     }
                 }
                 else
@@ -318,13 +374,23 @@ namespace TrboX
         deleteRadioBelong,
         updateRadioBelong,
 
+        status,
+        sendArs,
 
         call,
+        callStatus,
+
         message,
-        sendArs,
+        messageStatus,
+
         queryGps,
         sendGps,
+
         control,
+        controlStatus,
+
+        
+        
 
         wlCall,
     };

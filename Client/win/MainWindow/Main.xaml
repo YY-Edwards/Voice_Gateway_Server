@@ -49,13 +49,13 @@
         <local:TileView x:Key="IconView">
             <local:TileView.ItemTemplate>
                 <DataTemplate>
-                    <DockPanel Width="60" Height="80" >
+                    <DockPanel Width="100" Height="100" >
                         <!--<DockPanel.ContextMenu >
                             <ContextMenu Visibility="Hidden"/>
                         </DockPanel.ContextMenu>-->
-                        <DockPanel>
-                            <Border BorderThickness="1" BorderBrush="#FF888888" ToolTip="{Binding NameInfo}" DockPanel.Dock="Top" HorizontalAlignment="Center" Width="60" Height="60" Padding="5">
-                                <Image DockPanel.Dock="Top" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <DockPanel Background="#FF95C4F8">
+                            <Border BorderThickness="0" BorderBrush="#FF888888" ToolTip="{Binding NameInfo}" DockPanel.Dock="Top" HorizontalAlignment="Center" Width="60" Height="70" Background="{x:Null}">
+                                <Image DockPanel.Dock="Top" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="0,25,0,5">
                                     <Image.Source>
                                         <MultiBinding  Converter="{StaticResource TypeToIcon}" Mode="OneWay" >
                                             <Binding  Path="Type" />
@@ -65,8 +65,8 @@
                                     </Image.Source>
                                 </Image>
                             </Border>
-                            <Grid>
-                                <TextBlock Text="{Binding SimpleName}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF666666"/>
+                            <Grid DockPanel.Dock="Top">
+                                <TextBlock Text="{Binding SimpleName}" VerticalAlignment="Top" HorizontalAlignment="Center" Foreground="White"/>
                             </Grid>
                         </DockPanel>
                     </DockPanel>
@@ -739,7 +739,9 @@
                                                 <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
                                                     <Label Content="录音" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                                 </Border>
-                                                <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top"/>
+                                                <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top">
+                                                </DockPanel>
+                                                <TreeViewItem Header="TreeViewItem" Height="256" Style="{DynamicResource TreeViewItemStyleMember}" VerticalAlignment="Top"/>
                                             </DockPanel>
                                         </TabItem>
                                         <TabItem Header="报表" Style="{DynamicResource SimpleTabItem}" Width="20">

@@ -50,6 +50,7 @@
     <Reference Include="GifImageLib">
       <HintPath>..\DLLS\GifImageLib.dll</HintPath>
     </Reference>
+    <Reference Include="Microsoft.Expression.Drawing" />
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\DLLS\Newtonsoft.Json.dll</HintPath>
@@ -57,6 +58,10 @@
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite, Version=1.0.66.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\DLLS\System.Data.SQLite.dll</HintPath>
+    </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
     <Reference Include="System.Windows.Forms" />
@@ -83,6 +88,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="class\database.cs" />
     <Compile Include="class\Event.cs" />
     <Compile Include="class\EvilTransform.cs" />
     <Compile Include="class\FastOperate.cs" />
@@ -92,7 +98,6 @@
     <Compile Include="class\ResourceMgr.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="class\RpcInterface.cs" />
     <Compile Include="class\SettingMgr.cs" />
     <Compile Include="class\targetMgr.cs" />
     <Compile Include="class\TcpInterface.cs" />

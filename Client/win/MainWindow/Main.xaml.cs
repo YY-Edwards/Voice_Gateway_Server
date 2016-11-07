@@ -16,6 +16,8 @@ using System.Threading;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using System.Windows.Threading;
+
 namespace TrboX
 {   
   /// <summary>
@@ -40,8 +42,7 @@ namespace TrboX
 
         public CMultMember CurrentTraget = null;
 
-
-
+        DispatcherTimer myTimer = new DispatcherTimer();//定时周期2秒
 
         public bool g_IsNeedSaveWorkSpace
         {
@@ -62,6 +63,7 @@ namespace TrboX
             InitializeComponent();
             this.Loaded += delegate
             {
+                RegRxHandler();
                 TServer.InitializeTServer();  
      
                 WindowState = WindowState.Maximized;
@@ -85,13 +87,22 @@ namespace TrboX
 
                 OnWindowLoaded();
 
-                new Thread(new ThreadStart(delegate() {
-                    ReceiveMsghread();                            
-                })).Start();
+               
+
+                //new Thread(new ThreadStart(delegate() {
+                //    ReceiveMsghread();                            
+                //})).Start();
 
                 //ResrcMgr.SetRadioOnline(9, true);
                 //ResrcMgr.SetRadioOnline(10, true);
                 //ResrcMgr.SetRadioOnline(9, false);
+
+                //RadioOperate.GetStatus(1);
+
+                myTimer.Interval = TimeSpan.FromSeconds(60);
+                myTimer.Tick += new EventHandler(OnTimer60s);
+
+                DataBase.InsertLog("登陆软件");
             };
             this.Closed += delegate
             {
@@ -99,6 +110,18 @@ namespace TrboX
             };
         }
 
+
+        private void OnTimer60s(object sender, EventArgs e)
+        {
+            EventList.AddEvent("提示：呼叫结束，呼叫超时");
+            TServer.IsInCalled = false;
+            if(RadioOperate.LastCall !=null)
+            {
+                ResrcMgr.SetInCalled(RadioOperate.LastCall.Type, RadioOperate.LastCall.Target, false);  
+            }
+
+            myTimer.Stop();
+        }
         private void OnWindowLoaded()
         {
            // organzation tree
@@ -112,50 +135,39 @@ namespace TrboX
             //MyWebGrid.Children.Insert(0, Map);
         }
 
-
-        private void ReceiveMsghread()
-        { 
-            while(true)
-            {
-                lock (TServer.RxRequest)
-                { 
-                    if(TServer.RxRequest.Count > 0)
-                    {
-                        TServerRequest req = TServer.RxRequest.Dequeue();
-                        if (req.call.ToUpper() == RequestType.message.ToString().ToUpper())
-                        {
-                                MsgWin.AddNotify(new CNotification(){
-                                  Type=  NotifyType.Message,
-                                  Time = DateTime.Now,
-                                  Source = ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = ((RadioSmsParam)req.param).Type, ID = ((RadioSmsParam)req.param).Source }),
-                                  Content = new CMsgNotification() { Content = ((RadioSmsParam)req.param).Contents }
-                                  });            
-                        }
-                        else if (req.call.ToUpper() == RequestType.sendArs.ToString().ToUpper())                         
-                        {
-                                ResrcMgr.SetRadioOnline(((RadioArsParam)req.param).Target, ((RadioArsParam)req.param).ISOnline);
-                                if(((RadioArsParam)req.param).ISOnline)EventList.AddEvent("ARS：对讲机（ID:" + ((RadioArsParam)req.param).Target + "）上线");
-                                else EventList.AddEvent("ARS：对讲机（ID:" + ((RadioArsParam)req.param).Target + "）下线");
-                        }
-                        else if (req.call.ToUpper() == RequestType.sendGps.ToString().ToUpper())
-                        {
-                            
-                        }                       
-                    }
-                }
-                Thread.Sleep(200);
-            }
-        }
         private void RegRxHandler()
         {
+            TServer.RegRxHanddler(RequestType.status,  OnRadioStatus);
+            TServer.RegRxHanddler(RequestType.callStatus, OnRadioCallStatus);
             TServer.RegRxHanddler(RequestType.message, OnRadioMessage);
+            TServer.RegRxHanddler(RequestType.messageStatus, OnRadioMessageStatus);
+
             TServer.RegRxHanddler(RequestType.sendArs, OnRadioArs);
             TServer.RegRxHanddler(RequestType.sendGps, OnRadioGps);
 
-            TServer.RegRxHanddler(RequestType.wlCall, OnWirelanCall);
+            TServer.RegRxHanddler(RequestType.controlStatus, OnControlStatus);
+
+            TServer.RegRxHanddler(RequestType.wlCall,  OnWirelanCall);
         }
 
+        public override void OnCustomMsg(CustomMessage dest)
+        {
+            switch(dest.Type)
+            {
+                case DestType.AddEvent:
+                    EventList.AddEvent(dest.Contents);
+                    break;
+                case DestType.OnConnectTServer:
+                    StatusBar.GetRunMode();
 
+                    if(StatusBar.Get().type == TargetSystemType.radio)
+                    {
+                        RadioOperate.GetStatus(1);
+                    }
+
+                    break;
+            }
+        }
 
 
         //About
@@ -196,7 +208,46 @@ namespace TrboX
         private void dis_Operate(object sender, RoutedEventArgs e)
         {
             COperate operate = ((FastOperate)((FastPanel)sender).DataContext).Operate;
-            if (null != operate) operate.Exec();            
+            if (null != operate)
+            {
+                operate.Exec();
+                try
+                {
+                    if (operate.Type == OPType.Position)
+                    {
+                        if (((CPosition)operate.Operate).IsCycle || ((CPosition)operate.Operate).Type == ExecType.Stop) 
+                        {
+                            if (operate.Target.Type == SelectionType.All)
+                            {
+                                var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Radio != null && p.Value.Radio.RadioID > 0);
+                                foreach (var item in radio)ResrcMgr.SetGpsOnline(item.Value.Radio.RadioID, ((CPosition)operate.Operate).Type == ExecType.Start);              
+                               
+                            }
+                            else if (operate.Target.Type != SelectionType.Null)
+                            {
+                                foreach (CMember trgt in operate.Target.Target)
+                                {
+                                    if (trgt.Type == MemberType.Group)
+                                    {
+                                        if (trgt.Group == null || trgt.Group.ID <= 0) continue;
+                                        var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Group.ID == trgt.Group.ID && p.Value.Radio != null && p.Value.Radio.RadioID > 0);
+                                        foreach (var item in radio) ResrcMgr.SetGpsOnline(item.Value.Radio.RadioID, ((CPosition)operate.Operate).Type == ExecType.Start); 
+                                    }
+                                    else
+                                    {
+                                        if (trgt.Radio == null || trgt.Radio.ID <= 0) continue;
+                                        ResrcMgr.SetGpsOnline(trgt.Radio.RadioID, ((CPosition)operate.Operate).Type == ExecType.Start);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch { }
+            }
+
+
+
         }
 
         private void dis_More(object sender, RoutedEventArgs e)
@@ -242,13 +293,13 @@ namespace TrboX
         //TcpInterface tcp = new TcpInterface();
         private void btn_Tool_Check_Click(object sender, RoutedEventArgs e)
         {
-            //TcpInterface tcp = new TcpInterface();
-           
+            //TcpInterface tcp = new TcpInterface();   
+            RadioOperate.GetStatus(1);   
         }
 
         private void btn_Tool_Monitor_Click(object sender, RoutedEventArgs e)
         {
-           // tcp.TCPTST();
+
         }
 
         private void lst_dispatch_MouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -265,6 +316,102 @@ namespace TrboX
         {
             
         }
+        private void OnRadioStatus(string param)
+        {
+            RadioStatusParam sta = null;
+            try
+            {
+                sta = JsonConvert.DeserializeObject<RadioStatusParam>(param);
+            }
+            catch
+            {
+                DataBase.InsertLog("Parse  RadioStatusParam Error");
+                return;
+            }
+
+            if (sta == null) return;
+            if((sta.getType & (long)StatusType.ContectStatus) != 0)
+            {
+                try
+                {
+                    StatusBar.SetConectSta(int.Parse(sta.info.ToString()));
+                }
+                catch { }
+                 
+            }
+        }
+
+        private void OnRadioCallStatus(string param)
+        {
+            RadioCallStatusParam sta = null;
+            try
+            {
+                sta = JsonConvert.DeserializeObject<RadioCallStatusParam>(param);
+            }
+            catch
+            {
+                DataBase.InsertLog("Parse  RadioStatusParam Error");
+                return;
+            }
+
+            if (sta == null) return;
+            if (sta.Operate == ExecType.Start)
+            {
+                CMember targt = new TargetSimple() { Type = sta.Type, ID = sta.Target }.ToMember();
+                if (targt == null)
+                {
+                    TServer.IsInCalled = false;
+                    return;
+                }
+
+                if (sta.Status == 0)
+                {
+                    //TODO:success
+                    EventList.AddEvent("提示：开始呼叫" + targt.SimpleName + "(ID:" + sta.Target.ToString() + ")");
+                    TServer.IsInCalled = true;
+                }
+                else if (sta.Status == 1)
+                {
+                    //TODO:connect failure
+                    EventList.AddEvent("提示：呼叫" + targt.SimpleName + "(ID:" + sta.Target.ToString() + ")失败");
+
+                    SubWindow.AddMessage(new TargetSimple() {Type= RadioOperate.LastCall.Type, ID = RadioOperate.LastCall.Target }.ToMember(), 
+                       new CHistory()
+                    {
+                        istx = true,
+                        type = NotifyType.Call,
+                        time = DateTime.Now,
+                        content = "呼叫失败"
+                    });
+                    
+                    TServer.IsInCalled = false;
+
+                }                
+            }
+            else if(sta.Operate == ExecType.Stop)
+            {
+                TServer.IsInCalled = false;
+                EventList.AddEvent("提示：呼叫结束");
+
+                SubWindow.AddMessage(new TargetSimple() {Type= RadioOperate.LastCall.Type, ID = RadioOperate.LastCall.Target }.ToMember(), 
+                new CHistory()
+                {
+                    istx = true,
+                    type = NotifyType.Call,
+                    time = DateTime.Now,
+                    content = "呼叫结束"
+                });
+            }
+
+            if (TServer.IsInCalled) myTimer.Start();
+            else { myTimer.Stop(); }
+
+            try
+            {
+                ResrcMgr.SetInCalled(RadioOperate.LastCall.Type, RadioOperate.LastCall.Target, TServer.IsInCalled);
+            }
+            catch { }
+        }
 
 
         private void OnRadioMessage(string param)
@@ -276,7 +423,7 @@ namespace TrboX
             }
             catch
             {
-                Console.Write("Parse  RadioSmsParam Error");
+                DataBase.InsertLog("Parse  RadioSmsParam Error");
                 return;
             }
 
@@ -291,6 +438,134 @@ namespace TrboX
             });
         }
 
+        private void OnRadioMessageStatus(string param)
+        {
+            RadioSmsStatusParam sta = null;
+            try
+            {
+                sta = JsonConvert.DeserializeObject<RadioSmsStatusParam>(param);
+            }
+            catch
+            {
+                DataBase.InsertLog("Parse  RadioSmsStatusParam Error");
+                return;
+            }
+
+            if (sta == null) return;
+            CMember targt = new TargetSimple() { Type = sta.Type, ID = sta.Target }.ToMember();
+            if (targt == null)
+            {
+                return;
+            }
+            if(sta.Status == 0)
+            {
+                EventList.AddEvent("提示：发送短信成功（" + targt.SimpleName + "，ID:" + sta.Target.ToString() + ")");
+            }
+            else if (sta.Status == 1)
+            {
+                EventList.AddEvent("提示：发送短信失败（" + targt.SimpleName + "，ID:" + sta.Target.ToString() + ")");
+
+                SubWindow.AddMessage(targt,
+                new CHistory()
+                {
+                    istx = true,
+                    type = NotifyType.Message,
+                    time = DateTime.Now,
+                    content = "短信发送失败"
+                });
+            }
+        }
+
+        private void OnControlStatus(string param)
+        {
+            RadioControlsStatusParam sta = null;
+            try
+            {
+                sta = JsonConvert.DeserializeObject<RadioControlsStatusParam>(param);
+            }
+            catch
+            {
+                DataBase.InsertLog("Parse  RadioSmsStatusParam Error");
+                return;
+            }
+
+            if (sta == null) return;
+            CMember targt = new TargetSimple() { Type = TargetType.Private, ID = sta.Target }.ToMember();
+            if (targt == null)
+            {
+                return;
+            }
+
+            switch(sta.Type)
+            {
+                case ControlType.Check:
+                    EventList.AddEvent("提示：在线检测（" + targt.SimpleName + "，ID:" + sta.Target.ToString() + ")：" 
+                        +(sta.Status == 2? "失败":(sta.Status == 0 ? "在线":"离线")));
+                    if (sta.Status == 0 || sta.Status == 1)
+                    {
+                        ResrcMgr.SetRadioOnline(sta.Target, sta.Status == 0);
+                        SubWindow.AddMessage(targt, new CHistory()
+                       {
+                           istx = false,
+                           type = NotifyType.Control,
+                           time = DateTime.Now,
+                           content = "在线检测：" + (sta.Status == 0 ? "在线":"离线")
+                      });
+                    } 
+                   else
+                   {
+                       SubWindow.AddMessage(targt, new CHistory()
+                       {
+                           istx = true,
+                           type = NotifyType.Control,
+                           time = DateTime.Now,
+                           content = "在线检测失败"
+                       });
+                   }
+
+
+                    break;
+                case ControlType.Monitor:
+                    EventList.AddEvent("提示：远程监听（" + targt.SimpleName + "，ID:" + sta.Target.ToString() + ")" +(sta.Status == 0? "成功":"失败"));
+                    if (sta.Status != 0)
+                    SubWindow.AddMessage(targt, new CHistory()
+                    {
+                        istx = true,
+                        type = NotifyType.Control,
+                        time = DateTime.Now,
+                        content = "远程监听失败"
+                    });
+
+                    break;
+                case ControlType.StartUp:
+                    EventList.AddEvent("提示：遥开（" + targt.SimpleName + "，ID:" + sta.Target.ToString() + ")" +(sta.Status == 0? "成功":"失败"));
+                    if (sta.Status != 0)
+                        SubWindow.AddMessage(targt, new CHistory()
+                        {
+                            istx = true,
+                            type = NotifyType.Control,
+                            time = DateTime.Now,
+                            content = "遥开失败"
+                        });
+                    break;
+                case ControlType.ShutDown:
+                    EventList.AddEvent("提示：遥毙（" + targt.SimpleName + "，ID:" + sta.Target.ToString() + ")" +(sta.Status == 0? "成功":"失败"));
+                    if (sta.Status != 0)
+                        SubWindow.AddMessage(targt, new CHistory()
+                        {
+                            istx = true,
+                            type = NotifyType.Control,
+                            time = DateTime.Now,
+                            content = "遥毙失败"
+                        });
+                    break;
+                case ControlType.Sleep:
+                case ControlType.Week:
+                default:
+                    break;
+            }
+        }
+       
         private void OnRadioArs(string param)
         {
             RadioArsParam ars = null;
@@ -300,14 +575,24 @@ namespace TrboX
             }
             catch
             {
-                Console.Write("Parse  RadioArsParam Error");
+                DataBase.InsertLog("Parse  RadioArsParam Error");
                 return;
             }
 
             if (ars == null) return;
+            CMember targt = new TargetSimple() { Type = TargetType.Private, ID = ars.Target }.ToMember();
+            if (targt == null) return;
 
             ResrcMgr.SetRadioOnline(ars.Target, ars.ISOnline);
-            EventList.AddEvent("ARS：对讲机（ID:" + ars.Target.ToString() + "）" + (ars.ISOnline ? "上线" : "下线"));
+            EventList.AddEvent("ARS：" + targt.SimpleName + "（ID:" + ars.Target .ToString() + "）" + (ars.ISOnline ? "上线" : "下线"));
+
+            SubWindow.AddMessage(targt, new CHistory()
+            {
+                istx = true,
+                type = NotifyType.JobTicker,
+                time = DateTime.Now,
+                content = "ARS：" + (ars.ISOnline ? "上线" : "下线")
+            });
         }
 
         private void OnRadioGps(string param)
@@ -319,7 +604,7 @@ namespace TrboX
             }
             catch
             {
-                Console.Write("Parse  GPSParam Error");
+                DataBase.InsertLog("Parse  GPSParam Error");
                 return;
             }
 
@@ -339,7 +624,7 @@ namespace TrboX
             }
             catch
             {
-                Console.Write("Parse  WirelanCallParam Error");
+                DataBase.InsertLog("Parse  WirelanCallParam Error");
                 return;
             }
 

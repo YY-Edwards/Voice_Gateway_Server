@@ -131,6 +131,7 @@ namespace TrboX
                     case NotifyType.Alarm:
                         m_Main.lst_Alarm.Items.Insert(0, notify);
                         m_Main.View.MsgAlarmShow(true);
+                       
                         break;
                     case NotifyType.Call:
                         m_Main.lst_Rx.Items.Insert(0, notify);
@@ -149,7 +150,8 @@ namespace TrboX
                         m_Main.View.MsgTrackerShow(true);
                         break;
                 }
-
+                DataBase.InsertLog(notify.Type.ToString() + ":" + notify.Brief);
+                
                 m_Main.g_IsNeedSaveWorkSpace = true;
                 m_Main.SubWindow.AddNotifyToOperateWin(notify);
             }));

@@ -106,7 +106,7 @@
                                 </TabControl.SelectedIndex>
                                 <TabItem Header="呼叫" Style="{DynamicResource SimpleTabItem}">
                                     <Grid>
-                                        <CheckBox x:Name="chk_PTT" Content="PTT" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FFD8CFCF" Checked="chk_PTT_Checked" Unchecked="chk_PTT_Unchecked"/>
+                                        <CheckBox x:Name="chk_PTT" Content="PTT" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FFD8CFCF" Click="chk_PTT_Click"/>
                                     </Grid>
                                 </TabItem>
                                 <TabItem Header="短消息" Style="{DynamicResource SimpleTabItem}">
@@ -125,7 +125,7 @@
                                             </ComboBox>
                                             <DockPanel Height="30" LastChildFill="False" VerticalAlignment="Bottom" DockPanel.Dock="Bottom">
                                                 <Button x:Name="btn_QueryPosition" Content="定位" Style="{DynamicResource SimpleButton}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,2" Height="23" Width="79" Click="btn_QueryPosition_Click" Visibility="{Binding IsChecked, Converter={StaticResource NullShowConverter}, ElementName=chk_IsCycle}" DockPanel.Dock="Right" />
-                                                <CheckBox x:Name="chk_QueryCyclePosition" Content="CheckBox" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0" Visibility="{Binding IsChecked, Converter={StaticResource NullHideConverter}, ElementName=chk_IsCycle}" DockPanel.Dock="Right" Checked="chk_QueryCyclePosition_Checked" Unchecked="chk_QueryCyclePosition_Unchecked"/>
+                                                <CheckBox x:Name="chk_QueryCyclePosition" Content="CheckBox" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0" Visibility="{Binding IsChecked, Converter={StaticResource NullHideConverter}, ElementName=chk_IsCycle}" DockPanel.Dock="Right" Click="chk_QueryCyclePosition_Click"/>
                                             </DockPanel>
                                         </DockPanel>
                                     </Grid>

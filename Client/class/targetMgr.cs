@@ -703,6 +703,30 @@ namespace TrboX
             return;           
         }
 
+        public void Update(Department group)
+        {
+            if (!m_DepartmentList.ContainsKey(group.ID))
+            {
+                for (int i = m_DepartmentList.Count; i <= m_DepartmentList.Count + 100; i++)
+                {
+                    if (!m_DepartmentList.ContainsKey(i))
+                    {
+                        group.ID = i;
+                        m_DepartmentList.Add(group.ID, group);
+                        m_IsChange = true;
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                m_DepartmentList[group.ID] = group;
+                m_IsChange = true;
+                return;
+            }
+            return;
+        }
+
 
 
 
