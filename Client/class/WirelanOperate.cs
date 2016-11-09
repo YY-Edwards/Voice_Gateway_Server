@@ -17,12 +17,34 @@ namespace TrboX
         public bool isCurrent;
     }
 
+    public class WirelanCallStatusParam
+    {
+        public int status;
+        public ExecType operate;
+        public TargetType type;
+        public long source;
+        public long target;
+        public bool isCurrent;
+    }
+
+    public class WirelanPlayParam
+    {
+        public long target;
+    }
+
+    public class WirelanPlayStatusParam
+    {
+        public long target;
+        public int status;
+    }
 
     public class WirelanOperate
     {
         public RequestType Call;
         private long CallId;
         public List<object> Param;
+
+        public static WirelanCallParam LastCall;
 
         public ParseDel Parse(string json)
         {
@@ -68,10 +90,6 @@ namespace TrboX
             }
         }
 
-        public static void wlPlay(long target)
-        {
-
-        }
 
         private TargetType GetTargetType(CMultMember target)
         {
@@ -89,6 +107,8 @@ namespace TrboX
             Call = RequestType.None;
             CallId = PN;
 
+
+
             if (operate == null || operate.Operate == null || operate.Target == null) return;
             try
             {
@@ -97,7 +117,7 @@ namespace TrboX
                     TargetType targettype = GetTargetType(operate.Target);
                     if (TargetType.None != targettype)
                     {
-                        Call = RequestType.call;
+                        Call = RequestType.wlCall;
                         Param = BuildCallParam(operate.Operate as CDispatch, targettype, operate.Target);
                     }
                 }
@@ -141,39 +161,43 @@ namespace TrboX
         {
             List<object> param = new List<object>();
 
-            if (op != null && op.Exec == ExecType.Stop)
-            {
-                param.Add(new WirelanCallParam() { operate = ExecType.Stop });
-            }
-            else
-            {
 
-                switch (type)
-                {
-                    case TargetType.Private:
-                        param.Add(new WirelanCallParam()
-                        {
-                            operate = ExecType.Start,
-                            type = TargetType.Private,
-                            target = target.Target[0].Radio.RadioID
-                        });
-                        break;
-                    case TargetType.Group:
-                        param.Add(new WirelanCallParam()
-                        {
-                            operate = ExecType.Start,
-                            type = TargetType.Group,
-                            target = target.Target[0].Group.GroupID
-                        }); break;
-                    case TargetType.All:
-                        param.Add(new WirelanCallParam()
-                        {
-                            operate = ExecType.Start,
-                            type = TargetType.All,
-                        }); break;
-                    default:
-                        break;
-                }
+            if (op == null) return param;
+
+            switch (type)
+            {
+                case TargetType.Private:
+                    param.Add(new WirelanCallParam()
+                    {
+                        operate = op.Exec,
+                        type = TargetType.Private,
+                        target = target.Target[0].Radio.RadioID
+                    });
+                    break;
+                case TargetType.Group:
+                    param.Add(new WirelanCallParam()
+                    {
+                        operate = op.Exec,
+                        type = TargetType.Group,
+                        target = target.Target[0].Group.GroupID
+                    }); break;
+                case TargetType.All:
+                    param.Add(new WirelanCallParam()
+                    {
+                        operate = op.Exec,
+                        type = TargetType.All,
+                    }); break;
+                default:
+                    break;
+            }
+
+            try
+            {
+                LastCall = param[0] as WirelanCallParam;
+            }
+            catch (Exception e)
+            {
+                DataBase.InsertLog("BuildCallParam:" + e.Message);
             }
 
             return param;
@@ -378,5 +402,33 @@ namespace TrboX
         //        return false;
         //    }
         //}
+
+        public static void GetStatus(long tpye)
+        {
+            TServer.Call(JsonConvert.SerializeObject(new TServerRequest()
+            {
+                call = RequestType.wlInfo.ToString(),
+                type = "wl",
+                callId = TServer.CallId,
+                param = new RadioStatusParam()
+                {
+                    getType = tpye,
+                },
+            }));
+        }
+
+        public static void wlPlay(long target)
+        {
+            TServer.Call(JsonConvert.SerializeObject(new TServerRequest()
+            {
+                call = RequestType.wlPlay.ToString(),
+                type = "wl",
+                callId = TServer.CallId,
+                param = new WirelanPlayParam()
+                {
+                    target = target,
+                },
+            }));
+        }
     }
 }

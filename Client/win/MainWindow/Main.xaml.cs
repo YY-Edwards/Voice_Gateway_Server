@@ -117,7 +117,7 @@ namespace TrboX
             TServer.IsInCalled = false;
             if(RadioOperate.LastCall !=null)
             {
-                ResrcMgr.SetInCalled(RadioOperate.LastCall.Type, RadioOperate.LastCall.Target, false);  
+                ResrcMgr.SetTx(RadioOperate.LastCall.Type, RadioOperate.LastCall.Target, false);  
             }
 
             myTimer.Stop();
@@ -144,10 +144,16 @@ namespace TrboX
 
             TServer.RegRxHanddler(RequestType.sendArs, OnRadioArs);
             TServer.RegRxHanddler(RequestType.sendGps, OnRadioGps);
+            TServer.RegRxHanddler(RequestType.queryGpsStatus, OnRadioGpsStatus);
+            
 
             TServer.RegRxHanddler(RequestType.controlStatus, OnControlStatus);
 
+            TServer.RegRxHanddler(RequestType.wlInfo, OnRadioStatus);
             TServer.RegRxHanddler(RequestType.wlCall,  OnWirelanCall);
+            TServer.RegRxHanddler(RequestType.wlCallStatus,  OnWirelanCallStatus);
+
+            TServer.RegRxHanddler(RequestType.wlPlayStatus, OnWirelanPlayStatus);
         }
 
         public override void OnCustomMsg(CustomMessage dest)
@@ -160,9 +166,14 @@ namespace TrboX
                 case DestType.OnConnectTServer:
                     StatusBar.GetRunMode();
 
-                    if(StatusBar.Get().type == TargetSystemType.radio)
+                    if(StatusBar.Get().type == RunMode.Radio)
                     {
                         RadioOperate.GetStatus(1);
+                        RadioOperate.GetStatus(2);
+                    }
+                    else if (StatusBar.Get().type == RunMode.Repeater)
+                    {
+                        WirelanOperate .GetStatus(1);
                     }
 
                     break;
@@ -294,7 +305,15 @@ namespace TrboX
         private void btn_Tool_Check_Click(object sender, RoutedEventArgs e)
         {
             //TcpInterface tcp = new TcpInterface();   
-            RadioOperate.GetStatus(1);   
+            if (StatusBar.Get().type == RunMode.Radio)
+            {
+                RadioOperate.GetStatus(1);
+                RadioOperate.GetStatus(2);
+            }
+            else if (StatusBar.Get().type == RunMode.Repeater)
+            {
+                WirelanOperate.GetStatus(1);
+            }  
         }
 
         private void btn_Tool_Monitor_Click(object sender, RoutedEventArgs e)
@@ -336,8 +355,21 @@ namespace TrboX
                 {
                     StatusBar.SetConectSta(int.Parse(sta.info.ToString()));
                 }
-                catch { }
-                 
+                catch { }              
+            }
+            if ((sta.getType & (long)StatusType.RadioStatus) != 0)
+            {
+                try
+                {
+                    List<RadioStatus> infolist = JsonConvert.DeserializeObject<List<RadioStatus>>(JsonConvert.SerializeObject(sta.info));
+                    foreach(RadioStatus rad in infolist)
+                    {
+                        if (rad.IsOnline) ResrcMgr.SetRadioOnline(rad.radioId, true);
+                        if (rad.IsInGps) ResrcMgr.SetGpsOnline(rad.radioId, true);
+                    }
+
+                }
+                catch { DataBase.InsertLog("Parse  RadioStatusParam Error"); }
             }
         }
 
@@ -375,7 +407,9 @@ namespace TrboX
                     //TODO:connect failure
                     EventList.AddEvent("提示：呼叫" + targt.SimpleName + "(ID:" + sta.Target.ToString() + ")失败");
 
-                    SubWindow.AddMessage(new TargetSimple() {Type= RadioOperate.LastCall.Type, ID = RadioOperate.LastCall.Target }.ToMember(), 
+
+                    SubWindow.AddMessage(                     
+                       RadioOperate.LastCall.Type == TargetType.All ? null : new TargetSimple() {Type= RadioOperate.LastCall.Type, ID = RadioOperate.LastCall.Target }.ToMember(), 
                        new CHistory()
                     {
                         istx = true,
@@ -393,7 +427,8 @@ namespace TrboX
                 TServer.IsInCalled = false;
                 EventList.AddEvent("提示：呼叫结束");
 
-                SubWindow.AddMessage(new TargetSimple() {Type= RadioOperate.LastCall.Type, ID = RadioOperate.LastCall.Target }.ToMember(), 
+                SubWindow.AddMessage(
+                    RadioOperate.LastCall.Type == TargetType.All ? null : new TargetSimple() { Type = RadioOperate.LastCall.Type, ID = RadioOperate.LastCall.Target }.ToMember(), 
                 new CHistory()
                 {
                     istx = true,
@@ -408,7 +443,7 @@ namespace TrboX
 
             try
             {
-                ResrcMgr.SetInCalled(RadioOperate.LastCall.Type, RadioOperate.LastCall.Target, TServer.IsInCalled);
+                ResrcMgr.SetTx(RadioOperate.LastCall.Type, RadioOperate.LastCall.Target, TServer.IsInCalled);
             }
             catch { }
         }
@@ -433,7 +468,7 @@ namespace TrboX
             {
                 Type = NotifyType.Message,
                 Time = DateTime.Now,
-                Source = ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = msg.Type, ID = msg.Source }),
+                Source = ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = msg.Type, ID = msg.Source }).SingleToMult(),
                 Content = new CMsgNotification() { Content = msg.Contents }
             });
         }
@@ -485,7 +520,7 @@ namespace TrboX
             }
             catch
             {
-                DataBase.InsertLog("Parse  RadioSmsStatusParam Error");
+                DataBase.InsertLog("Parse  RadioControlsStatusParam Error");
                 return;
             }
 
@@ -595,6 +630,35 @@ namespace TrboX
             });
         }
 
+        private void OnRadioGpsStatus(string param)
+        {
+            RadioGpsStatusParam sta = null;
+            try
+            {
+                sta = JsonConvert.DeserializeObject<RadioGpsStatusParam>(param);
+            }
+            catch
+            {
+                DataBase.InsertLog("Parse  RadioGpsStatusParam Error");
+                return;
+            }
+
+            if (sta == null) return;
+
+            CMember targt = new TargetSimple() { Type = TargetType.Private, ID = sta.Target }.ToMember();
+            EventList.AddEvent("提示：申请查询对讲机(ID：" + targt.NameInfo+ ")位置信息" + (sta.Status == 0 ? "成功" : "失败"));
+
+            if (sta.Status != 0)
+                SubWindow.AddMessage(targt, new CHistory()
+                {
+                    istx = true,
+                    type = NotifyType.Position,
+                    time = DateTime.Now,
+                    content = "申请查询对讲机位置信息失败"
+                });
+            
+        }
+
         private void OnRadioGps(string param)
         {
             GPSParam gps = null;
@@ -630,69 +694,312 @@ namespace TrboX
 
             if (call == null) return;
 
+            
 
             foreach(WirelanCallParam p in m_WirelanCallList)
             {
-                if(p.type == call.type && p.target == call.target)
+                if (p.type == call.type && p.source == call.source)
                 {
                     if (call.operate == ExecType.Stop)
                     {
+                        if (p.isCurrent) ResrcMgr.SetRx(p.type, p.source, false);
+
                         m_WirelanCallList.Remove(p);
+                        break;
                     }                   
                 }
-                else{
-                    if(call.operate == ExecType.Start)m_WirelanCallList.Add(call);
-                }
             }
 
-            foreach (WirelanCallParam p in m_WirelanCallList)
+            var tmp = m_WirelanCallList.Where(p =>
+                    p.type == call.type
+                    && p.type == TargetType.All ? true : (p.type == TargetType.Private ? p.source == call.source : p.target == call.target));
+
+            if (call.operate == ExecType.Start)
             {
-                RadioButton rad = new RadioButton() { IsChecked = p.isCurrent, Content =new TargetSimple(){Type =p.type,ID=p.target }.ToMember().Name, GroupName = "rxgroup", Height = 20, Padding = new Thickness(2.5), Margin = new Thickness(2.5), Style = App.Current.Resources["RadioButtonStyleNav"] as Style, Tag =  p };
-                rad.Checked += delegate(object sender, RoutedEventArgs e) { onCallStatusCheck(sender, e); };
-                rad.Unchecked += delegate(object sender, RoutedEventArgs e) { onCallStatusUncheck(sender, e); };
-                Rx_RadioGroup.Children.Add(rad);
+                int count = 0;
+                foreach (var item in tmp) count++;
+                if (count <= 0)
+                {
+                    m_WirelanCallList.Add(call);
+
+                    MsgWin.AddNotify(new CNotification()
+                    {
+                        Type = NotifyType.Call,
+                        Time = DateTime.Now,
+                        Source = call.type == TargetType.All ? new CMultMember() { Type = SelectionType.All } : (call.type ==  TargetType.Private ?
+                         new TargetSimple() { Type = TargetType.Private, ID = call.source }.ToMember().SingleToMult()
+                         : new TargetSimple() { Type = TargetType.Group, ID = call.target }.ToMember().SingleToMult()
+                        ),
+                        Content = new CRxNotification()
+                    });
+                }
+
+                ResrcMgr.SetRx(call.type, call.type== TargetType.Group ? call.target : call.source , true);
             }
+            else if (call.operate == ExecType.Stop)
+            {
+                foreach (var item in tmp) m_WirelanCallList.Remove(item);
+                ResrcMgr.SetRx(call.type, call.type == TargetType.Group ? call.target : call.source, false);
+            }
+
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                Rx_RadioGroup.Children.Clear();
+                foreach (WirelanCallParam p in m_WirelanCallList)
+                {
+                    RadioButton rad = new RadioButton()
+                    {
+                        IsChecked = p.isCurrent,                        
+                        Height = 20,
+                        Padding = new Thickness(2.5),
+                        Margin = new Thickness(2.5),
+                        Style = App.Current.Resources["RadioButtonStyleNav"] as Style
+                    };
+
+                    rad.Click += delegate(object sender, RoutedEventArgs e) { onCallStatusClick(sender, e); };
+
+                    CMultMember mem = new CMultMember();
+                    if (p.type == TargetType.All)
+                    {
+                        rad.Content = "全呼";
+                        if (!p.isCurrent) rad.ToolTip = "单击选择全呼";
+
+                        mem.Type = SelectionType.All;
+                        rad.Tag = mem;
+                    }
+                    else if (p.type == TargetType.Group)
+                    {
+                        CMember src = new TargetSimple() { Type = TargetType.Group, ID = p.target }.ToMember();
+                        rad.Content = src.Name;
+                        if (!p.isCurrent) rad.ToolTip = "单击选择" + src.NameInfo;
+
+                        mem.Type = SelectionType.Single;
+                        mem.Target = new List<CMember>();
+                        mem.Target.Add(src);
+
+                        rad.Tag = mem;
+                    }
+                    else if (p.type == TargetType.Private)
+                    {
+                        CMember src = new TargetSimple() { Type = TargetType.Private, ID = p.source }.ToMember();
+                        rad.Content = src.Name;
+                        if (!p.isCurrent) rad.ToolTip = "单击选择" + src.NameInfo;
+
+                        mem.Type = SelectionType.Single;
+                        mem.Target = new List<CMember>();
+                        mem.Target.Add(src);
+
+                        rad.Tag = mem;
+                    }
+                    else
+                    {
+
+                    }
+
+                    Rx_RadioGroup.Children.Add(rad);
+                }
+            }));
         }
 
-        private void onCallStatusCheck(object sender, RoutedEventArgs e)
+        private void OnWirelanCallStatus(string param)
         {
-            WirelanCallParam call = (WirelanCallParam)((RadioButton)sender).Tag;
-            call.isCurrent = true;
-
-            foreach (WirelanCallParam p in m_WirelanCallList)
+            WirelanCallStatusParam sta = null;
+            try
             {
-                if (p.type == call.type && p.target == call.target)
+                sta = JsonConvert.DeserializeObject<WirelanCallStatusParam>(param);
+            }
+            catch
+            {
+                DataBase.InsertLog("Parse  WirelanCallStatusParam Error");
+                return;
+            }
+
+            if (sta == null) return;
+            if (sta.operate == ExecType.Start)
+            {
+                CMember targt = new TargetSimple() { Type = sta.type, ID = sta.target}.ToMember();
+                if (targt == null)
                 {
-                    if (call.operate == ExecType.Stop)
+                    TServer.IsInCalled = false;
+                    return;
+                }
+
+                if (sta.status == 0)
+                {
+                    //TODO:success
+                    try
                     {
-                        m_WirelanCallList.Remove(p);
+                        EventList.AddEvent("提示：开始呼叫" + targt.SimpleName + "(ID:" + sta.target.ToString() + ")");
+                        TServer.IsInCalled = true;
+
                     }
+                    catch (Exception e)
+                    {
+                        DataBase.InsertLog(e.Message);
+                    }
+                }
+                else if (sta.status == 1)
+                {
+                    //TODO:connect failure
+                    try
+                    {
+                        EventList.AddEvent("提示：呼叫" + targt.SimpleName + "(ID:" + sta.target.ToString() + ")失败");
+                        SubWindow.AddMessage(
+                            WirelanOperate.LastCall.type == TargetType.All ? null : new TargetSimple() { Type = WirelanOperate.LastCall.type, ID = WirelanOperate.LastCall.target }.ToMember(),
+                           new CHistory()
+                           {
+                               istx = true,
+                               type = NotifyType.Call,
+                               time = DateTime.Now,
+                               content = "呼叫失败"
+                           });
+                    }
+                    catch (Exception e)
+                    {
+                        DataBase.InsertLog(e.Message);
+                    }
+
+                    TServer.IsInCalled = false;
+
+                }
+            }
+            else if (sta.operate == ExecType.Stop)
+            {
+                TServer.IsInCalled = false;              
+                try
+                {
+                    EventList.AddEvent("提示：呼叫结束");
+                    SubWindow.AddMessage(
+                        WirelanOperate.LastCall.type == TargetType.All ? null : new TargetSimple() { Type = WirelanOperate.LastCall.type, ID = WirelanOperate.LastCall.target }.ToMember(),
+                    new CHistory()
+                    {
+                        istx = true,
+                        type = NotifyType.Call,
+                        time = DateTime.Now,
+                        content = "呼叫结束"
+                    });
+                }
+                catch (Exception e)
+                {
+                    DataBase.InsertLog(e.Message);
                 }
             }
 
-            m_WirelanCallList.Add(call);
-            if (call.type == TargetType.Group) WirelanOperate.wlPlay(call.target);
-            else if (call.type == TargetType.Private) WirelanOperate.wlPlay(-1);
-            else if (call.type == TargetType.All) WirelanOperate.wlPlay(-2);
+            if (TServer.IsInCalled) myTimer.Start();
+            else { myTimer.Stop(); }
+
+            try
+            {
+                ResrcMgr.SetTx(WirelanOperate.LastCall.type, WirelanOperate.LastCall.target, TServer.IsInCalled);
+            }
+            catch { }
+
+        }
+
+        private void OnWirelanPlayStatus(string param)
+        {
+            WirelanPlayStatusParam sta = null;
+            try
+            {
+                sta = JsonConvert.DeserializeObject<WirelanPlayStatusParam>(param);
+            }
+            catch
+            {
+                DataBase.InsertLog("Parse  WirelanPlayStatusParam Error");
+                return;
+            }
+
+            if (sta == null) return;
+
+            if (sta.status == 0)//success
+            {
+                this.Dispatcher.Invoke(new Action(() =>
+                {
+                   // foreach(RadioButton rad in Rx_RadioGroup.Children)
+                    for (int i = 0; i < Rx_RadioGroup.Children.Count; i++)
+                    {
+                        try
+                        {
+                            CMultMember mem = (CMultMember)((RadioButton)Rx_RadioGroup.Children[i]).Tag;
+
+                            if (mem.Type == SelectionType.All)
+                            {
+                                if (sta.target == -2)
+                                {
+                                    ((RadioButton)Rx_RadioGroup.Children[i]).IsChecked = true;
+                                    ResrcMgr.SetRx(TargetType.All, -2, true);
+                                }
+                                else
+                                {
+                                    ((RadioButton)Rx_RadioGroup.Children[i]).IsChecked = false;
+                                    ResrcMgr.SetRx(TargetType.All, -2, false);
+                                }
+                            }
+                            else if (mem.Type != SelectionType.Null)
+                            {
+                                CMember m = mem.MultToSingle();
+                                if (m.Type == MemberType.Group )
+                                {
+                                    if(m.Group.GroupID == sta.target)
+                                    {
+                                        ((RadioButton)Rx_RadioGroup.Children[i]).IsChecked = true;
+                                        ResrcMgr.SetRx(TargetType.Group, m.Group.GroupID, true);
+                                    }
+                                    else{
+                                        ResrcMgr.SetRx(TargetType.Group, m.Group.GroupID, false);
+                                        ((RadioButton)Rx_RadioGroup.Children[i]).IsChecked = false;
+                                    }
+                                }
+                                else if (sta.target == -1)
+                                {
+                                    ((RadioButton)Rx_RadioGroup.Children[i]).IsChecked = true;
+                                    ResrcMgr.SetRx(TargetType.Private, m.Radio.RadioID, true);
+                                }
+                                else
+                                {
+                                    ResrcMgr.SetRx(TargetType.Private, m.Radio.RadioID, false);
+                                    ((RadioButton)Rx_RadioGroup.Children[i]).IsChecked = false;
+                                }
+                            }
+                        }
+                        catch (Exception e)
+                        { DataBase.InsertLog(e.Message); }
+                    }
+                }));
+            }
+            else
+            {
+
+            }           
+        }
+
+        private void onCallStatusClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+
+                if (!(bool)((RadioButton)sender).IsChecked)
+                {
+                    ((RadioButton)sender).IsChecked = !((RadioButton)sender).IsChecked;
+                    return;
+                }
+
+                
+                CMultMember mem = (CMultMember)((RadioButton)sender).Tag;
+               
+                if (mem.Type == SelectionType.All) WirelanOperate.wlPlay(-2);
+                else if (mem.Type != SelectionType.Null)
+                {
+                    CMember m = mem.MultToSingle();
+                    if (m.Type == MemberType.Group) WirelanOperate.wlPlay(m.Group.GroupID);
+                    else WirelanOperate.wlPlay(-1);
+                }
+
+            }
+            catch (Exception res)
+            { DataBase.InsertLog(res.Message); }
            
         }
-        private void onCallStatusUncheck(object sender, RoutedEventArgs e)
-        {
-            WirelanCallParam call = (WirelanCallParam)((RadioButton)sender).Tag;
-            call.isCurrent = false;
 
-            foreach (WirelanCallParam p in m_WirelanCallList)
-            {
-                if (p.type == call.type && p.target == call.target)
-                {
-                    if (call.operate == ExecType.Stop)
-                    {
-                        m_WirelanCallList.Remove(p);
-                    }
-                }
-            }
-
-            m_WirelanCallList.Add(call);
-        }
     }
 }

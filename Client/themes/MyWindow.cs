@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
 using System.Windows.Controls;
@@ -69,6 +70,7 @@ namespace TrboX
         public double relativeClip = 14;
 
         public string SubTitle { set { SetSubTitle(value); } get { return GetSubTitle(); } }
+        public Brush WindowBackground { set { SetWindowBackground(value); } get { return GetWindowBackground(); } }
 
         public MINMAXINFO m_mmi;
         public MINMAXINFO MinMaxInfo { get{return m_mmi;} }
@@ -310,6 +312,21 @@ namespace TrboX
             this.WindowState = WindowState.Normal;
         }
 
+
+        public void SetWindowBackground(Brush brush)
+        {
+            ControlTemplate baseWindowTemplate = this.Template;
+            Border bdr_win = (Border)baseWindowTemplate.FindName("bdr_win", this);
+            bdr_win.Background = brush;
+        }
+
+        public Brush GetWindowBackground()
+        {
+            ControlTemplate baseWindowTemplate = this.Template;
+            Border bdr_win = (Border)baseWindowTemplate.FindName("bdr_win", this);
+            return bdr_win.Background as Brush;
+        }
+
         public string  SetSubTitle(string title)
         {
             ControlTemplate baseWindowTemplate = this.Template;
@@ -549,5 +566,20 @@ namespace TrboX
                 ResizeWindow(ResizeDirection.Left);
             }
         }
+
+        public static SolidColorBrush InCallBrush
+        {
+                    get{
+                        ColorAnimation colorAnm = new ColorAnimation(Color.FromArgb(255, 39, 115, 197), new Duration(TimeSpan.FromSeconds(0.1)));
+                        colorAnm.AutoReverse = true;
+                        colorAnm.From = Color.FromArgb(255, 151, 197, 247);
+                        colorAnm.RepeatBehavior = RepeatBehavior.Forever;
+
+                        SolidColorBrush myBrush = new SolidColorBrush();
+                        myBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnm);
+                        return myBrush;
+                    }                
+
+                }
     }
 }

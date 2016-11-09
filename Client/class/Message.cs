@@ -51,7 +51,7 @@ namespace TrboX
     public class CNotification
     {
         public NotifyType Type { set; get; }
-        public CMember Source { set; get; }
+        public CMultMember Source { set; get; }
         public DateTime Time { set; get; }
         public object Content{ set; get; }
 

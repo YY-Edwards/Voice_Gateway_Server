@@ -24,7 +24,16 @@
                     <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Padding="5,2">
                         <DockPanel x:Name="MsgPanel" Margin="5, 0, 100, 00">
                             <DockPanel DockPanel.Dock="Top" Height="24" LastChildFill="False">
-                                <Image x:Name="Icon"  Source="{Binding type, Converter={StaticResource IconFromNotify}}" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0"/>
+                                <Grid x:Name="Icon" Margin="5,0" Width="24" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center" >
+                                    <Border BorderBrush="Black" BorderThickness="0">
+                                        <Ellipse Fill="#FF95C4F8"  Stroke="Black" StrokeThickness="0"/>
+                                    </Border>
+                                    <Border Margin="3.48">
+                                        <Image   Source="{Binding type, Converter={StaticResource IconFromNotify}}" />
+                                    </Border>
+                                </Grid>
+
+                                <!--<Image x:Name="Icon"  Source="{Binding type, Converter={StaticResource IconFromNotify}}" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0"/>-->
                                 <TextBlock  x:Name="Time" Text="{Binding time, StringFormat=\{0:yyyy-MM-dd HH:mm:ss\}}" TextWrapping="NoWrap" Margin="0"  Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" FontSize="10" HorizontalAlignment="Left" />
                             </DockPanel>
                             <Grid DockPanel.Dock="Top">

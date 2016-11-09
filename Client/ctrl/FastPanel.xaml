@@ -20,6 +20,7 @@
         <local:ItemIconConverter x:Key="TypeToIcon" />
         <local:OperateTypeItemConverter x:Key="OpTypeToItem" />
 
+        <local:StatucToColorConverter x:Key="FastStatus" />
         <local:ButtonHideItemConverter x:Key="OpBtnHide" />
 
         <local:ContactTypeItemConverter x:Key="ContactTypeToItem" />
@@ -87,13 +88,20 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Border x:Name="bdr_PanelTitle" Background="{Binding Type, Converter={StaticResource TypeToColor}}" BorderThickness="0" PreviewMouseLeftButtonDown="bdr_PanelTitle_PreviewMouseLeftButtonDown" d:IsLocked="True">
+        <Border x:Name="bdr_PanelTitle" Background="{Binding Type, Converter={StaticResource TypeToColor}}" BorderThickness="0" PreviewMouseLeftButtonDown="bdr_PanelTitle_PreviewMouseLeftButtonDown">
             <DockPanel LastChildFill="False">
                 <Label Content="{Binding Type, Converter={StaticResource TypeToTitle}}" VerticalAlignment="Center"/>
             </DockPanel>
         </Border>
         <Button x:Name="btn_Close" Content="x" VerticalAlignment="Top" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,5,5,0" Height="20" Width="20" Click="btn_Close_Click"/>
-        <Border BorderBrush="Black" BorderThickness="0" Grid.RowSpan="3" Grid.Row="1" Padding="0" Background="#B221EEAD" ClipToBounds="True">
+        <Border x:Name="bdr_Back" BorderBrush="Black" BorderThickness="0" Grid.RowSpan="3" Grid.Row="1" Padding="0"  ClipToBounds="True" Background="#7F97C5F7">
+            <!--<Border.Background>
+                <MultiBinding  Converter="{StaticResource FastStatus}" Mode="OneWay" >
+                    <Binding  Path="Type" />
+                    <Binding  Path="Contact" />
+                    <Binding  Path="Operate" />
+                </MultiBinding>
+            </Border.Background>-->
             <Grid Margin="0">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="100"/>
@@ -106,7 +114,15 @@
 
                 <Grid  Width="80" Height="80"  HorizontalAlignment="Center">
                     <Border BorderBrush="Black" BorderThickness="0">
-                        <Ellipse Fill="#FF25D8A0"  Stroke="Black" StrokeThickness="0"/>
+                        <Ellipse Stroke="Black" StrokeThickness="0">
+                            <Ellipse.Fill>
+                                <MultiBinding  Converter="{StaticResource FastStatus}" Mode="OneWay" >
+                                    <Binding  Path="Type" />
+                                    <Binding  Path="Contact" />
+                                    <Binding  Path="Operate" />
+                                </MultiBinding>
+                            </Ellipse.Fill>
+                        </Ellipse>
                     </Border>
                     <Border Margin="11.6">
                         <Border.Background>

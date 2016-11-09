@@ -192,7 +192,11 @@ namespace TrboX
                     {
                         try
                         {
-                            if (dst != null && dst.Contact != null && dst.Contact.Target != null && dst.Contact.Target.Count > 0)
+                            if (dst.Contact.Type == SelectionType.All)
+                            {
+                                uplist.Add(i, dst);
+                            }
+                            else if (dst != null && dst.Contact != null && dst.Contact.Target != null && dst.Contact.Target.Count > 0)
                             {
                                 foreach (CMember it in dst.Contact.Target)
                                 {
@@ -208,10 +212,15 @@ namespace TrboX
                                         {
                                             if (it.Type != MemberType.Group) it.Radio.IsGPS = sta;
                                         }
-                                        else if ((mask & 4) != 0)//incalled
+                                        else if ((mask & 4) != 0)//isTx
                                         {
-                                            if (it.Type != MemberType.Group) it.Radio.IsCalled = sta;
-                                            else it.Group.IsCalled = sta;
+                                            if (it.Type != MemberType.Group) it.Radio.IsTx = sta;
+                                            else it.Group.IsTx = sta;
+                                        }
+                                        else if ((mask & 8) != 0)//isRx
+                                        {
+                                            if (it.Type != MemberType.Group) it.Radio.IsRx = sta;
+                                            else it.Group.IsRx = sta;
                                         }
 
                                         dst.Contact.Target.Add(it);
@@ -227,7 +236,11 @@ namespace TrboX
                     {
                         try
                         {
-                            if (dst != null && dst.Operate != null && dst.Operate.Target != null && dst.Operate.Target.Target != null && dst.Operate.Target.Target.Count > 0)
+                            if (dst.Contact.Type == SelectionType.All)
+                            {
+                                uplist.Add(i, dst);
+                            }
+                            else if (dst != null && dst.Operate != null && dst.Operate.Target != null && dst.Operate.Target.Target != null && dst.Operate.Target.Target.Count > 0)
                             {
                                 foreach (CMember it in dst.Operate.Target.Target)
                                 {
@@ -243,10 +256,15 @@ namespace TrboX
                                         {
                                             if (it.Type != MemberType.Group) it.Radio.IsGPS = sta;
                                         }
-                                        else if ((mask & 4) != 0)//incalled
+                                        else if ((mask & 4) != 0)//isTx
                                         {
-                                            if (it.Type != MemberType.Group) it.Radio.IsCalled = sta;
-                                            else it.Group.IsCalled = sta;
+                                            if (it.Type != MemberType.Group) it.Radio.IsTx = sta;
+                                            else it.Group.IsTx = sta;
+                                        }
+                                        else if ((mask & 8) != 0)//isRx
+                                        {
+                                            if (it.Type != MemberType.Group) it.Radio.IsRx = sta;
+                                            else it.Group.IsRx = sta;
                                         }
                                         dst.Operate.Target.Target.Add(it);
                                         uplist.Add(i, dst);

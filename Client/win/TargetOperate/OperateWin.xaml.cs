@@ -72,12 +72,57 @@ namespace TrboX
                     //return;
                 }
 
-                if(m_Target.Target !=null && m_Target.Target.Count > 0)
+                if (m_Target.Type == SelectionType.All)
                 {
-                    if(m_Target.Target[0].Type != MemberType.Group)
+                    if (TargetMgr.IsTx)
                     {
-                        if (m_Target.Target[0].Radio != null) chk_QueryCyclePosition.IsChecked = m_Target.Target[0].Radio.IsGPS;
-                    }  
+                        chk_PTT.IsChecked = true;
+                        WindowBackground = MyWindow.InCallBrush;
+                    }
+                    if (TargetMgr.IsRx)
+                    {
+                        WindowBackground = MyWindow.InCallBrush;
+                    }
+                }
+                else if(m_Target.Target !=null && m_Target.Target.Count > 0)
+                {
+                    foreach (CMember mem in m_Target.Target)
+                    {
+                        if (mem.Type == MemberType.Group)
+                        {
+                            if (mem.Group.IsTx)
+                            {
+                                chk_PTT.IsChecked = true;
+                                 WindowBackground = MyWindow.InCallBrush;
+                              
+                            }
+                            if (mem.Group.IsRx)
+                            {
+                                WindowBackground = MyWindow.InCallBrush;
+                            }
+
+                        }
+                        else
+                        {
+                            if (mem.Radio.IsTx)
+                            {
+                                chk_PTT.IsChecked = true;
+                                WindowBackground = MyWindow.InCallBrush;
+                            }
+
+                            if (mem.Radio.IsRx)
+                            {
+                                WindowBackground = MyWindow.InCallBrush;
+                            }
+
+                            if (mem.Radio.IsGPS) chk_QueryCyclePosition.IsChecked = true;
+                        }
+
+
+
+                    }
+                      
+                    
                 }
 
 
@@ -108,6 +153,10 @@ namespace TrboX
                 OnChangeOperateType();
 
                 lst_History.View = (ViewBase)FindResource("HistoryView");
+
+
+  
+
             };
             this.Activated += delegate {OnOperateWinActivated(); };    
         }
@@ -131,9 +180,17 @@ namespace TrboX
                 {
                     chk_QueryCyclePosition.IsChecked = sta;
                 }
-                else if ((mask & 4) != 0)//incalled
+                else if ((mask & 4) != 0)//isTx
                 {
                     chk_PTT.IsChecked = sta;
+
+                    if (sta) WindowBackground = MyWindow.InCallBrush;
+                    else WindowBackground = new SolidColorBrush(Color.FromArgb(255, 151, 197, 247));
+                }
+                else if ((mask & 8) != 0)//isRx
+                {
+                    if (sta) WindowBackground = MyWindow.InCallBrush;
+                    else WindowBackground = new SolidColorBrush(Color.FromArgb(255, 151, 197, 247));
                 }
             })); 
         }
@@ -146,7 +203,7 @@ namespace TrboX
 
                 foreach (CNotification item in notify)
                 {
-                    if(item.Source.SingleToMult().IsLike(m_Target))
+                    if(item.Source.IsLike(m_Target))
                     {
                         RxMessage(item);
 
@@ -538,7 +595,11 @@ namespace TrboX
                 Operate = new CPosition()
                 {
                     Type = (bool)chk_QueryCyclePosition.IsChecked ? ExecType.Stop : ExecType.Start,                
-                    IsCycle = (bool)chk_IsCycle.IsChecked, IsCSBK = (bool)chk_IsCSBK.IsChecked, IsEnh = (bool)chk_IsEnh.IsChecked, }
+                    IsCycle = (bool)chk_IsCycle.IsChecked, 
+                    IsCSBK = (bool)chk_IsCSBK.IsChecked, 
+                    IsEnh = (bool)chk_IsEnh.IsChecked,
+                    Cycle = (double)((ComboBoxItem)cmb_Cycle.SelectedItem).Tag
+                }
             };
 
             operate.Exec();

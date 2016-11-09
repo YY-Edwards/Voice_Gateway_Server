@@ -8,9 +8,18 @@ using Newtonsoft.Json.Linq;
 
 namespace TrboX
 {
+
+    public class RadioStatus
+    {
+        public long radioId;
+        public bool IsInGps;
+        public bool IsOnline;
+    }
+
     public enum StatusType
     {
         ContectStatus = 1,
+        RadioStatus = 2,
     }
     public class RadioStatusParam
     {
@@ -72,6 +81,15 @@ namespace TrboX
         public QueryGPSType Type;
         public long Target;
         public double Cycle;
+    }
+
+    public class RadioGpsStatusParam
+    {
+        public ExecType Operate;
+        public QueryGPSType Type;
+        public long Target;
+        public double Cycle;
+        public int Status;
     }
 
     public class GPSValue

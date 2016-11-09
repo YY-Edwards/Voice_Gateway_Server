@@ -31,13 +31,19 @@ namespace TrboX
             m_Main.tab_Mgr.SelectionChanged += delegate {UpdateView();};
             m_Main.btn_ResSearch.Click += delegate { UpdateView(); };
 
+
+            m_Main.tree_OrgView.PreviewMouseDoubleClick += delegate { };
+            m_Main.lst_Employee.PreviewMouseDoubleClick += delegate{ };
+            m_Main.lst_Vehicle.PreviewMouseDoubleClick += delegate { };
+            m_Main.lst_Group.PreviewMouseDoubleClick += delegate { };
+            m_Main.lst_Radio.PreviewMouseDoubleClick += delegate { };
+
             Thread t = new Thread(() => { ResourceUpdateThread(); });
             t.Start();
 
 
             ResourceMgr ResMgr = new ResourceMgr();
             ResMgr.Get();
-
         }
 
         private enum ContextMenuType
@@ -47,6 +53,8 @@ namespace TrboX
             RadioOn,
             RadioOff,
         };
+
+
 
         private ContextMenu CreateOrgMenu(ContextMenuType type)
         {
@@ -527,16 +535,22 @@ namespace TrboX
             { }
         }
 
-        public void SetInCalled(TargetType type, long id, bool online)
+        public void SetTx(TargetType type, long id, bool online)
         {
             try
             {
-                if (type == TargetType.Private)
+                if (type == TargetType.All)
+                {
+                    TargetMgr.IsTx = online;
+                    m_Main.SubWindow.UpdateOpWin(null, 4, online);
+                    m_Main.WorkArea.FastPanel.UpdateOpWin(null,4, online);
+                }
+                else if (type == TargetType.Private)
                 {
                     var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Radio.RadioID == id);
                     foreach (var item in radio)
                     {
-                        item.Value.Radio.IsCalled = online;
+                        item.Value.Radio.IsTx = online;
                         Target.Update(item.Value.Radio);
                         IsNeedUpdate = true;
 
@@ -545,7 +559,7 @@ namespace TrboX
                         return;
                     }
 
-                    Target.Update(new Radio() { ID = -2, RadioID = id, IsCalled = online });
+                    Target.Update(new Radio() { ID = -2, RadioID = id, IsTx = online });
                     IsNeedUpdate = true;
                 }
                 else if (type == TargetType.Group)
@@ -553,7 +567,7 @@ namespace TrboX
                     var group = TargetMgr.TargetList.Group.Where(p => p.Value.Group.GroupID == id);
                     foreach (var item in group)
                     {
-                        item.Value.Group.IsCalled = online;
+                        item.Value.Group.IsTx = online;
                         Target.Update(item.Value.Group);
                         IsNeedUpdate = true;
 
@@ -562,7 +576,55 @@ namespace TrboX
                         return;
                     }
 
-                    Target.Update(new Department() { ID = -2,Name = "组：" +id.ToString(), GroupID = id, IsCalled = online });
+                    Target.Update(new Department() { ID = -2, Name = "组：" + id.ToString(), GroupID = id, IsTx = online });
+                    IsNeedUpdate = true;
+                }
+            }
+            catch
+            { }
+        }
+        public void SetRx(TargetType type, long id, bool online)
+        {
+            try
+            {
+                if (type == TargetType.All)
+                {
+                    TargetMgr.IsRx = online;
+                    m_Main.SubWindow.UpdateOpWin(null, 8, online);
+                    m_Main.WorkArea.FastPanel.UpdateOpWin(null, 8, online);
+                }
+                else  if (type == TargetType.Private)
+                {
+                    var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Radio.RadioID == id);
+                    foreach (var item in radio)
+                    {
+                        item.Value.Radio.IsRx = online;
+                        Target.Update(item.Value.Radio);
+                        IsNeedUpdate = true;
+
+                        m_Main.SubWindow.UpdateOpWin(item.Value, 8, online);
+                        m_Main.WorkArea.FastPanel.UpdateOpWin(item.Value, 8, online);
+                        return;
+                    }
+
+                    Target.Update(new Radio() { ID = -2, RadioID = id, IsRx = online });
+                    IsNeedUpdate = true;
+                }
+                else if (type == TargetType.Group)
+                {
+                    var group = TargetMgr.TargetList.Group.Where(p => p.Value.Group.GroupID == id);
+                    foreach (var item in group)
+                    {
+                        item.Value.Group.IsRx = online;
+                        Target.Update(item.Value.Group);
+                        IsNeedUpdate = true;
+
+                        m_Main.SubWindow.UpdateOpWin(item.Value, 8, online);
+                        m_Main.WorkArea.FastPanel.UpdateOpWin(item.Value, 8, online);
+                        return;
+                    }
+
+                    Target.Update(new Department() { ID = -2, Name = "组：" + id.ToString(), GroupID = id, IsRx = online });
                     IsNeedUpdate = true;
                 }
             }

@@ -9,6 +9,7 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Media.Animation;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
@@ -63,20 +64,45 @@ namespace TrboX
                         cumem= PanelItem.Operate.Target;
                     }
 
+                    if (cumem.Type == SelectionType.All)
+                    {
+                        if (TargetMgr.IsTx)
+                        {
+                            chk_Contact_PTT.IsChecked = true;
+                            btn_Op_PTT.IsChecked = true;
+
+                        }
+                        if (TargetMgr.IsRx)
+                        {
+                            
+                        }
+                    }
+                    else
+                    {
+
                         foreach (CMember mem in cumem.Target)
                         {
                             if (mem.Type == MemberType.Group)
                             {
-                                if (mem.Group.IsCalled) chk_Contact_PTT.IsChecked = true;
+                                if (mem.Group.IsTx)
+                                {
+                                    chk_Contact_PTT.IsChecked = true;
+
+                                }
                             }
                             else
                             {
-                                if (mem.Radio.IsCalled) chk_Contact_PTT.IsChecked = true;
+                                if (mem.Radio.IsTx)
+                                {
+                                    chk_Contact_PTT.IsChecked = true;
+                                    btn_Op_PTT.IsChecked = true;
+                                }
 
-                                if (mem.Radio.IsCalled) btn_Op_PTT.IsChecked = true;
+
                                 if (mem.Radio.IsGPS) chk_Op_StartCycle.IsChecked = true;
                             }
                         }
+                    }
                  
                 }
                 catch(Exception e){

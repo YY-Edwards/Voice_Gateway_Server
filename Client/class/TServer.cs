@@ -63,7 +63,7 @@ namespace TrboX
         private static TcpInterface TCP = null;
         private static long PackageNumber = 0;
 
-        public static TargetSystemType SystemType = TargetSystemType.radio;
+        public static RunMode SystemType = RunMode.Radio;
         public static Dictionary<RequestType, RxRequestDel> RxRequestList = new Dictionary<RequestType, RxRequestDel>();
 
         public static bool IsInCalled = false;
@@ -83,7 +83,7 @@ namespace TrboX
         }
         public static void InitializeTServer()
         {
-            TCP = new TcpInterface(new IPEndPoint(IPAddress.Parse("192.168.2.113"), 9000), OnReceive);
+            TCP = new TcpInterface(new IPEndPoint(IPAddress.Parse("192.168.2.106"), 9000), OnReceive);
             TCP.OnConnect = OnConnect;
             TCP.Open();
            
@@ -126,13 +126,13 @@ namespace TrboX
             {
                 Dictionary<string, object> res = new Dictionary<string, object>();
 
-                if (TargetSystemType.radio == SystemType)
+                if (RunMode.Radio == SystemType)
                 {
                     RadioOperate radioop = new RadioOperate(obj as COperate, PackageNumber);
                     List<string> json = radioop.Json;
                     foreach (string js in json) res.Add(js, Call(js, radioop.Parse(js)));
                 }
-                else
+                else if (RunMode.Repeater == SystemType)
                 {
                     WirelanOperate wirelanopop = new WirelanOperate(obj as COperate, PackageNumber);
                     List<string> json = wirelanopop.Json;
@@ -384,15 +384,20 @@ namespace TrboX
         messageStatus,
 
         queryGps,
+        queryGpsStatus,
         sendGps,
 
         control,
         controlStatus,
 
         
-        
+        wlInfo,
 
         wlCall,
+        wlCallStatus,
+
+        wlPlay,
+        wlPlayStatus,
     };
 
 }

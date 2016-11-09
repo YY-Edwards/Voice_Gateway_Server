@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 
 using System.Threading;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 
 namespace TrboX
@@ -265,7 +267,7 @@ namespace TrboX
 
         public object Exec()
         {
-            DataBase.InsertLog("Execute Operate:"  + Operate.ToString() + Type.ToString() + Target.NameInfo);
+            DataBase.InsertLog("Execute Operate:>>" + Type.ToString() + JsonConvert.SerializeObject(Operate) + "<<" + Target.NameInfo);
             
             if(Type == OPType.Dispatch && ((CDispatch)Operate).Exec == ExecType.Start && TServer.IsInCalled)
             {
