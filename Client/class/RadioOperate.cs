@@ -5,6 +5,7 @@ using System.Text;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Threading;
 
 namespace TrboX
 {
@@ -497,14 +498,19 @@ namespace TrboX
 
         public static void GetStatus(long tpye)
         {
-            TServer.Call(JsonConvert.SerializeObject(new TServerRequest() { 
-                call = RequestType.status.ToString(),
-                type = "radio",
-                callId = TServer.CallId,
-                param = new RadioStatusParam(){
-                    getType = tpye,
-                },                
-            }));
+            new Thread(new ThreadStart(delegate() {
+                TServer.Call(JsonConvert.SerializeObject(new TServerRequest()
+                {
+                    call = RequestType.status.ToString(),
+                    type = "radio",
+                    callId = TServer.CallId,
+                    param = new RadioStatusParam()
+                    {
+                        getType = tpye,
+                    },
+                }));                       
+            })).Start(); 
+
         }
     }
 }

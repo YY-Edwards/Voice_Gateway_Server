@@ -734,7 +734,7 @@ namespace TrboX
                     });
                 }
 
-                ResrcMgr.SetRx(call.type, call.type== TargetType.Group ? call.target : call.source , true);
+                if (call.isCurrent) ResrcMgr.SetRx(call.type, call.type == TargetType.Group ? call.target : call.source, true);
             }
             else if (call.operate == ExecType.Stop)
             {

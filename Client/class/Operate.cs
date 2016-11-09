@@ -275,8 +275,7 @@ namespace TrboX
                 return false;
             }
 
-            TServer.Call(this);
-
+            new Thread(new ThreadStart(delegate() { TServer.Call(this); })).Start();        
             return true;
         }
     }

@@ -5,6 +5,7 @@ using System.Text;
 
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using System.Threading;
 
 namespace TrboX
 {
@@ -405,6 +406,7 @@ namespace TrboX
 
         public static void GetStatus(long tpye)
         {
+             new Thread(new ThreadStart(delegate() {
             TServer.Call(JsonConvert.SerializeObject(new TServerRequest()
             {
                 call = RequestType.wlInfo.ToString(),
@@ -415,20 +417,24 @@ namespace TrboX
                     getType = tpye,
                 },
             }));
+           })).Start();
         }
 
         public static void wlPlay(long target)
         {
-            TServer.Call(JsonConvert.SerializeObject(new TServerRequest()
+            new Thread(new ThreadStart(delegate()
             {
-                call = RequestType.wlPlay.ToString(),
-                type = "wl",
-                callId = TServer.CallId,
-                param = new WirelanPlayParam()
+                TServer.Call(JsonConvert.SerializeObject(new TServerRequest()
                 {
-                    target = target,
-                },
-            }));
+                    call = RequestType.wlPlay.ToString(),
+                    type = "wl",
+                    callId = TServer.CallId,
+                    param = new WirelanPlayParam()
+                    {
+                        target = target,
+                    },
+                }));
+            })).Start();
         }
     }
 }

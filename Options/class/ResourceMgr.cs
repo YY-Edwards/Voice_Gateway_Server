@@ -12,6 +12,32 @@ using System.Net.Sockets;
 
 namespace TrboX
 {
+
+    public class LogServerRequest
+    {
+        public string call;
+        public long  callId;
+        public object param;
+    }
+
+    public class Critera
+    {           
+        public string[][] condition;
+
+        "condition":[["=","username","dd"],["and",">","id","9"]], 
+             "sort":["id","desc"], 
+             "offset":0,
+             "count":10
+
+    }
+    public class ListRequest
+    {
+                "operation":"list",
+        "critera":{
+
+         }
+    }
+
     public enum UserType
     {
         Admin,
@@ -23,13 +49,28 @@ namespace TrboX
 
     }
 
-    public class User
+    public class UserInfo
     {
         public int id;
         public string username;
         public string password;
-        public UserType type;
-        public List<FuncList> func;
+        public string type;
+        public List<string> authority;
+    }
+    public class User
+    {        
+        private static long OrginIndex = 0;
+        private static long CurrentIndex = 0;
+       
+        private static List<UserInfo> s_Add = null;
+        private static List<long> s_Del = null;
+        private static Dictionary<long, UserInfo> s_Update = null;
+
+
+        public List<UserInfo> List()
+        {
+             private static List<UserInfo> s_List = null;
+        }
 
         public UserStr GetUserStr()
         {
@@ -49,11 +90,16 @@ namespace TrboX
             str.func = JsonConvert.SerializeObject(tmp);
             return str;
         }
+
+        public static void Add(List<User>)
+        {
+
+        }
     }
     public class UserStr
     {
         public string id;
-        public string username;
+        public string username{get; set;}
         public string password;
         public string type;
         public string func;

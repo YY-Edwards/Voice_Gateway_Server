@@ -209,7 +209,10 @@ namespace TrboX
         {
             if (null != TCP)
             {
-                TCP.WriteString(str);
+                lock (TCP)
+                {
+                    TCP.WriteString(str);
+                }
             }
         }
 
