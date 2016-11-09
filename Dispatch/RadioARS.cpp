@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "RadioARS.h"
 
-
+#define ARS_PORT  4005
 CRadioARS::CRadioARS()
 : m_RcvSocketOpened(false)
 {
@@ -41,7 +41,7 @@ bool CRadioARS::InitARSSocket(DWORD dwAddress,CRemotePeer * pRemote)
 	//   Fill   in   the   interface   information  
 
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(4005);
+	addr.sin_port = htons(ARS_PORT);
 	addr.sin_addr.s_addr = dwAddress;
 	ret = ::bind(m_ThreadARS->mySocket, (struct sockaddr *) &addr, sizeof(addr));
 	if (ret == SOCKET_ERROR)
@@ -178,6 +178,7 @@ void CRadioARS::RecvData()
 			if (radioStatus.find(stringId) == radioStatus.end())
 			{
 				status st;
+				st.id = m_ThreadARS->radioID;
 				st.status = RADIO_STATUS_ONLINE;
 				radioStatus[stringId] = st;
 				arg["IsOnline"] = FieldValue("True");
@@ -211,6 +212,7 @@ void CRadioARS::RecvData()
 			if (radioStatus.find(stringId) == radioStatus.end())
 			{
 				status st;
+				st.id = m_ThreadARS->radioID;
 				st.status = RADIO_STATUS_OFFLINE;
 				radioStatus[stringId] = st;
 				arg["IsOnline"] = FieldValue("False");

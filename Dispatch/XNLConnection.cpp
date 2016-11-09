@@ -817,7 +817,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							ArgumentType args;
 							args["Status"] = FieldValue(REMOTE_SUCESS);
 							args["Target"] = FieldValue(rmt_addr);
-							args["Type"] = FieldValue("Check");
+							args["Type"] = FieldValue(RADIOCHECK);
 							std::string callJsonStrRes = CRpcJsonParser::buildCall("controlStatus", ++seq, args, "radio");
 							if (pRemotePeer != NULL && pRemotePeer == it->pRemote && it->radioId == rmt_addr)
 							{
@@ -829,6 +829,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								if (radioStatus.find(stringId) == radioStatus.end())
 								{
 									status st;
+									st.id = rmt_addr;
 									st.status = RADIO_STATUS_ONLINE;
 									radioStatus[stringId] = st;
 									arg["IsOnline"] = FieldValue("True");
@@ -860,7 +861,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							ArgumentType args;
 							args["Status"] = FieldValue(REMOTE_FAILED);
 							args["Target"] = FieldValue(rmt_addr);
-							args["Type"] = FieldValue("Check");
+							args["Type"] = FieldValue(RADIOCHECK);
 							std::string callJsonStrRes = CRpcJsonParser::buildCall("controlStatus", ++seq, args, "radio");
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote && it->radioId == rmt_addr)
 							{
@@ -872,6 +873,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								if (radioStatus.find(stringId) == radioStatus.end())
 								{
 									status st;
+									st.id = rmt_addr;
 									st.status = RADIO_STATUS_ONLINE;
 									radioStatus[stringId] = st;
 									arg["IsOnline"] = FieldValue("False");
@@ -905,7 +907,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							ArgumentType args;
 							args["Status"] = FieldValue(REMOTE_SUCESS);
 							args["Target"] = FieldValue(rmt_addr);
-							args["Type"] = FieldValue("Off");
+							args["Type"] = FieldValue(OFF);
 							std::string callJsonStrRes = CRpcJsonParser::buildCall("controlStatus", ++seq, args, "radio");
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote && it->radioId == rmt_addr)
 							{
@@ -924,7 +926,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							ArgumentType args;
 							args["Status"] = FieldValue(REMOTE_FAILED);
 							args["Target"] = FieldValue(rmt_addr);
-							args["Type"] = FieldValue("Off");
+							args["Type"] = FieldValue(OFF);
 							std::string callJsonStrRes = CRpcJsonParser::buildCall("controlStatus", ++seq, args, "radio");
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote && it->radioId == rmt_addr)
 							{
@@ -948,7 +950,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							ArgumentType args;
 							args["Status"] = FieldValue(REMOTE_SUCESS);
 							args["Target"] = FieldValue(rmt_addr);
-							args["Type"] = FieldValue("Startup");
+							args["Type"] = FieldValue(ON);
 							std::string callJsonStrRes = CRpcJsonParser::buildCall("controlStatus", ++seq, args, "radio");
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote && it->radioId == rmt_addr)
 							{
@@ -959,6 +961,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								if (radioStatus.find(stringId) == radioStatus.end())
 								{
 									status st;
+									st.id = rmt_addr;
 									st.status = RADIO_STATUS_ONLINE;
 									radioStatus[stringId] = st;
 								}
@@ -985,7 +988,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							ArgumentType args;
 							args["Status"] = FieldValue(REMOTE_FAILED);
 							args["Target"] = FieldValue(rmt_addr);
-							args["Type"] = FieldValue("Startup");
+							args["Type"] = FieldValue(ON);
 							std::string callJsonStrRes = CRpcJsonParser::buildCall("controlStatus", ++seq, args, "radio");
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote && it->radioId == rmt_addr)
 							{
@@ -1010,7 +1013,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							ArgumentType args;
 							args["Status"] = FieldValue(REMOTE_SUCESS);
 							args["Target"] = FieldValue(rmt_addr);
-							args["Type"] = FieldValue("Wiretap");
+							args["Type"] = FieldValue(MONITOR);
 							std::string callJsonStrRes = CRpcJsonParser::buildCall("controlStatus", ++seq, args, "radio");
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote && it->radioId == rmt_addr)
 							{
@@ -1021,6 +1024,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								if (radioStatus.find(stringId) == radioStatus.end())
 								{
 									status st;
+									st.id = rmt_addr;
 									st.status = RADIO_STATUS_ONLINE;
 									radioStatus[stringId] = st;
 								}
@@ -1046,7 +1050,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							ArgumentType args;
 							args["Status"] = FieldValue(REMOTE_FAILED);
 							args["Target"] = FieldValue(rmt_addr);
-							args["Type"] = FieldValue("Wiretap");
+							args["Type"] = FieldValue(MONITOR);
 							std::string callJsonStr = CRpcJsonParser::buildCall("controlStatus", ++seq, args, "radio");
 							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote && it->radioId == rmt_addr)
 							{
@@ -1134,6 +1138,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						if (radioStatus.find(stringId) == radioStatus.end())
 						{
 							status st;
+							st.id = rmt_addr;
 							st.status = RADIO_STATUS_ONLINE;
 							radioStatus[stringId] = st;
 						}

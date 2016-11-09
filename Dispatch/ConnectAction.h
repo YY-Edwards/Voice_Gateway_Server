@@ -59,7 +59,7 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 
 				}
 			}
-			if (!isUdpConnect || !isTcpConnect)
+			if (radioIP!=m_radioIP && mnisIP !=m_mnisIP)
 			{
 				DispatchOperate  * pDispatchOperate = new DispatchOperate();
 				m_dispatchOperate[s] = pDispatchOperate;

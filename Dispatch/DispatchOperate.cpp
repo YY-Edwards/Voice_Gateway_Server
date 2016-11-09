@@ -16,6 +16,8 @@ list <AllCommand>allCommandList;
 std::mutex m_allCommandListLocker;
 bool isUdpConnect = false;
 bool isTcpConnect = false;
+string m_radioIP = "0.0.0.0";
+string m_mnisIP = "0.0.0.0";
 map <string, status> radioStatus;
 DispatchOperate::DispatchOperate()
 {
@@ -76,7 +78,8 @@ int DispatchOperate::Connect(CRemotePeer* pRemote,const char* ip, const char * p
 	{
 		pRemotePeer = pRemote;
 	}
-
+	m_radioIP = ip;
+	m_mnisIP = pIP;
 	return 0;
 
 }
@@ -416,7 +419,7 @@ int DispatchOperate::sendGroupSms(CRemotePeer* pRemote, int id, wchar_t* message
 	}
 
 }
-int DispatchOperate::getGps(CRemotePeer* pRemote, int id, int queryMode, int cycle, int callId)
+int DispatchOperate::getGps(CRemotePeer* pRemote, int id, int queryMode, double cycle, int callId)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "gps²éÑ¯";
@@ -577,7 +580,7 @@ int DispatchOperate::RadioConnect()
 	return 0;
 }
 
-void DispatchOperate::AddAllCommand(CRemotePeer* pRemote,SOCKET s, int command, string radioIP, string mnisIP, string gpsIP,int id, wchar_t* text, int cycle, int querymode, int callId)
+void DispatchOperate::AddAllCommand(CRemotePeer* pRemote,SOCKET s, int command, string radioIP, string mnisIP, string gpsIP,int id, wchar_t* text, double cycle, int querymode, int callId)
 {
 	std::lock_guard<std::mutex> locker(m_addCommandLocker);
 	AllCommand      m_allCommand;
@@ -742,7 +745,27 @@ void DispatchOperate::TimeOut()
 				case GPS_TRIGG_CSBK:
 				case GPS_IMME_CSBK_EGPS:
 				case GPS_TRIGG_CSBK_EGPS:
+					operate = START;
 				case STOP_QUERY_GPS:
+					operate = STOP;
+					try
+					{
+						ArgumentType args;
+						args["Target"] = FieldValue(it->radioId);
+						args["Type"] = FieldValue(it->querymode);
+						args["Cycle"] = FieldValue(it->cycle);
+						args["Operate"] = FieldValue(operate);
+						args["Status"] = FieldValue(REMOTE_FAILED);
+						std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGpsStatus", it->callId, args, "radio");
+						if (it->pRemote != NULL)
+						{
+							it->pRemote->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
+						}
+					}
+					catch (std::exception e)
+					{
+
+					}
 					break;
 				default:
 					break;
@@ -1116,12 +1139,30 @@ void DispatchOperate::sendRadioStatusToClient(CRemotePeer* pRemote)
 		map<string, status>::iterator it;
 		ArgumentType args;
 		args["getType"] = RADIO_STATUS;
+		FieldValue info(FieldValue::TArray);
 		for (it = radioStatus.begin(); it != radioStatus.end(); it++)
 		{
+			FieldValue element(FieldValue::TObject);
 			
+			element.setKeyVal("radioId", FieldValue(it->second.id));
+			bool isGps = false;
+			if (it->second.gpsQueryMode != 0)
+			{
+				isGps = true;
+			}
+			bool isArs = false;
+			if (it->second.status != 0)
+			{
+				isArs = true;
+			}
+			element.setKeyVal("IsInGps", FieldValue(isGps));
+			element.setKeyVal("IsOnline", FieldValue(isArs));
 
+			info.push(element);
+			//info.setKeyVal(it->first.c_str(),element);
 		}
-		args["info"] = FieldValue(DATA_FAILED_DISPATCH_FAILED);
+		
+		args["info"] = info;
 		std::string callJsonStr = CRpcJsonParser::buildCall("status", ++seq, args, "radio");
 		if (pRemotePeer != NULL)
 		{

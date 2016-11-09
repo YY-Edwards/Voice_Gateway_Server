@@ -5,7 +5,7 @@
 #include "../lib/rpc/include/RpcJsonParser.h"
 #pragma comment(lib, "wsock32.lib")
 
-
+#define MSG_PORT   4007
 CTextMsg::CTextMsg()
 : m_RcvSocketOpened(false)
 {
@@ -49,7 +49,7 @@ bool CTextMsg::InitSocket(SOCKET *s, DWORD dwAddress, CRemotePeer * pRemote)
 
 
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(4007);
+	addr.sin_port = htons(MSG_PORT);
 	addr.sin_addr.s_addr = dwAddress;
 	ret = ::bind(*s, (struct sockaddr *) &addr, sizeof(addr));
 	if ( ret== SOCKET_ERROR)
@@ -438,7 +438,6 @@ bool CTextMsg::SendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet)
 				}
 
 			}
-			break;
 		}
 		m_allCommandListLocker.unlock();
 #if DEBUG_LOG
@@ -583,6 +582,7 @@ void CTextMsg::RecvMsg()
 				if (radioStatus.find(stringId) == radioStatus.end())
 				{
 					status st;
+					st.id = m_ThreadMsg->radioID;
 					st.status = RADIO_STATUS_ONLINE;
 					radioStatus[stringId] = st;
 					arg["IsOnline"] = FieldValue("True");
