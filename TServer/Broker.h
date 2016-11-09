@@ -30,6 +30,11 @@ public:
 		return m_radioClient;
 	}
 
+	CRpcClient* getWireLanClient()
+	{
+		return m_wirelanClient;
+	}
+
 	CRpcClient* getLogClient()
 	{
 		return m_logClient;
@@ -46,6 +51,7 @@ public:
 
 	void startRpcServer(std::map<std::string, ACTION> serverActions);
 	void startRadioClient(std::map<std::string, ACTION> clientActions);
+	void startWireLanClient(std::map<std::string, ACTION> clientActions);
 	void startLogClient();
 
 protected:

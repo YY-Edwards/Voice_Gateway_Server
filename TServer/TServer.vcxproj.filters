@@ -168,6 +168,12 @@
     <ClInclude Include="RecvSendGpsStatus.h">
       <Filter>clientAction</Filter>
     </ClInclude>
+    <ClInclude Include="WireLanSendAction.h">
+      <Filter>clientAction</Filter>
+    </ClInclude>
+    <ClInclude Include="WireLanRecvAction.h">
+      <Filter>serverAction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

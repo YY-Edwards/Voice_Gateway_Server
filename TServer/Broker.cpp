@@ -100,3 +100,44 @@ void CBroker::startLogClient()
 		m_logClient->start("tcp://127.0.0.1:9003");
 	}
 }
+
+void CBroker::startWireLanClient(std::map<std::string, ACTION> clientActions)
+{
+
+	/*wire lan*/
+	if (NULL == m_wirelanClient)
+	{
+		m_wirelanClient = new CRpcClient();
+
+		for (auto action = clientActions.begin(); action != clientActions.end(); action++)
+		{
+			m_wirelanClient->addActionHandler(action->first.c_str(), action->second);
+		}
+
+		m_wirelanClient->start("tcp://127.0.0.1:9002");
+
+		// send radio hardware connect command
+		ArgumentType args;
+		args["Type"] = "CPC";
+		FieldValue Master(FieldValue::TObject);
+		Master.setKeyVal("Ip", FieldValue("192.168.2.121"));
+		Master.setKeyVal("Port", FieldValue(50000));
+		args["Master"] = Master;
+		args["DefaultGroupId"] = 9;
+		args["DefaultChannel"] = 1;
+		args["MinHungTime"] = 4;
+		args["MaxSiteAliveTime"] = 59;
+		args["MaxPeerAliveTime"] = 59;
+		args["LocalPeerId"] = 120;
+		args["LocalRadioId"] = 5;
+		FieldValue Dongle(FieldValue::TObject);
+		Dongle.setKeyVal("Com", FieldValue(7));
+		args["Dongle"] = Dongle;
+
+		uint64_t callId = m_wirelanClient->getCallId();
+		std::string connectCommand = CRpcJsonParser::buildCall("wlConnect", callId, args);
+		m_wirelanClient->sendRequest(connectCommand.c_str(), callId, NULL, [](const char* pResponse, void* data){
+			printf("recevied response:%s\r\n", pResponse);
+		}, nullptr, 60);
+	}
+}

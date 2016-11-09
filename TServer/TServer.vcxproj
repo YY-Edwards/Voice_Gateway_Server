@@ -120,6 +120,8 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StopCallAction.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="WireLanRecvAction.h" />
+    <ClInclude Include="WireLanSendAction.h" />
     <ClInclude Include="WiretapAction.h" />
   </ItemGroup>
   <ItemGroup>
