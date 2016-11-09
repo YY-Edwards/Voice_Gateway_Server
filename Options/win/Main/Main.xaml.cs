@@ -258,14 +258,14 @@ namespace TrboX
 
         private void btn_SaveUser_Click(object sender, RoutedEventArgs e)
         {
-            UserStr User = new UserStr(){
-                username=txt_UserName.Text,
-                password = psd_UserPassword.Password,
-            };
+           // UserStr User = new UserStr(){
+           //     username=txt_UserName.Text,
+           //     password = psd_UserPassword.Password,
+           // };
 
 
-           // lst_User.Items.Add(new ListViewItem() { Content = User });
-            lst_User.Items.Add(User);
+           //// lst_User.Items.Add(new ListViewItem() { Content = User });
+           // lst_User.Items.Add(User);
         }
      
     }

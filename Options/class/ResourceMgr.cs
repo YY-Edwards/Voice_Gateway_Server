@@ -2,40 +2,22 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-
-using System.IO;
-
-using Newtonsoft.Json;
-
-using System.Net;
-using System.Net.Sockets;
+using System.Threading;
 
 namespace TrboX
 {
 
-    public class LogServerRequest
-    {
-        public string call;
-        public long  callId;
-        public object param;
-    }
-
     public class Critera
     {           
         public string[][] condition;
-
-        "condition":[["=","username","dd"],["and",">","id","9"]], 
-             "sort":["id","desc"], 
-             "offset":0,
-             "count":10
-
+        public string[] sort;
+        public int offset;
+        public int count;
     }
     public class ListRequest
     {
-                "operation":"list",
-        "critera":{
-
-         }
+        public string operation;
+        public Critera critera;
     }
 
     public enum UserType
@@ -69,71 +51,74 @@ namespace TrboX
 
         public List<UserInfo> List()
         {
-             private static List<UserInfo> s_List = null;
+           // static List<UserInfo> s_List = null;
+            return null;
         }
 
-        public UserStr GetUserStr()
-        {
-            UserStr str = new UserStr()
-            {
-                id = id.ToString(),
-                username = username,
-                password = password,
-                type = ((int)type).ToString(),
-            };
-            List<string> tmp = new List<string>();
-            foreach (FuncList item in func)
-            {
-                tmp.Add(item.ToString());
-            }
+        //public UserStr GetUserStr()
+        //{
+        //    UserStr str = new UserStr()
+        //    {
+        //        id = id.ToString(),
+        //        username = username,
+        //        password = password,
+        //        type = ((int)type).ToString(),
+        //    };
+        //    List<string> tmp = new List<string>();
+        //    foreach (FuncList item in func)
+        //    {
+        //        tmp.Add(item.ToString());
+        //    }
 
-            str.func = JsonConvert.SerializeObject(tmp);
-            return str;
-        }
+        //    str.func = JsonConvert.SerializeObject(tmp);
+        //    return str;
+        //}
 
-        public static void Add(List<User>)
+        public static void Add(List<User> xx)
         {
 
         }
     }
-    public class UserStr
-    {
-        public string id;
-        public string username{get; set;}
-        public string password;
-        public string type;
-        public string func;
 
-        public User GetUser()
-        {
-            User user = new User()
-            {
-                id = Trbox.IsNumber(id) ? int.Parse(id) : 0,
-                username = username,
-                password = password,
-                type = Trbox.IsNumber(type) ? (UserType)int.Parse(type) : UserType.Guest,
-            };
 
-            try
-            {
-                List<string> tmp = JsonConvert.DeserializeObject<List<string>>(func);
-                List<FuncList> funlist = new List<FuncList>();
-                foreach (string item in tmp)
-                {
-                    try
-                    {
-                        funlist.Add((FuncList)Enum.Parse(typeof(FuncList), item));
-                    }
-                    catch { }
-                }
-                user.func = funlist;
+    //public class UserStr
+    //{
+    //    public string id;
+    //    public string username{get; set;}
+    //    public string password;
+    //    public string type;
+    //    public string func;
 
-            }
-            catch { }
+    //    public User GetUser()
+    //    {
+    //        User user = new User()
+    //        {
+    //            id = Trbox.IsNumber(id) ? int.Parse(id) : 0,
+    //            username = username,
+    //            password = password,
+    //            type = Trbox.IsNumber(type) ? (UserType)int.Parse(type) : UserType.Guest,
+    //        };
 
-            return user;
-        }
-    }
+    //        try
+    //        {
+    //            List<string> tmp = JsonConvert.DeserializeObject<List<string>>(func);
+    //            List<FuncList> funlist = new List<FuncList>();
+    //            foreach (string item in tmp)
+    //            {
+    //                try
+    //                {
+    //                    funlist.Add((FuncList)Enum.Parse(typeof(FuncList), item));
+    //                }
+    //                catch { }
+    //            }
+    //            user.func = funlist;
+
+    //        }
+    //        catch { }
+
+    //        return user;
+    //    }
+    //}
 
     public enum StaffType
     {
@@ -572,7 +557,7 @@ namespace TrboX
 
 
 
-        private TcpInterface TServer = new TcpInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8001));
+       // private TcpInterface TServer = new TcpInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8001));
 
         private List<Dictionary<ItemIndex, TabOperate>> m_OperateList = new List<Dictionary<ItemIndex, TabOperate>>();
         private int AddTempIndex = -1;
@@ -582,15 +567,15 @@ namespace TrboX
 
         private UpdateRes[] UpdateResFunc;
 
-        public ResourceMgr()
-        {
-            UpdateResFunc = new UpdateRes[5] { UpdateUser, UpdateStaff, UpdateDepartment, UpdateRadio, UpdateRadioBelong };
-        }
+        //public ResourceMgr()
+        //{
+        //    UpdateResFunc = new UpdateRes[5] { UpdateUser, UpdateStaff, UpdateDepartment, UpdateRadio, UpdateRadioBelong };
+        //}
 
-        public void Set()
-        {
-            for (int i = 0; i < 5; i++) SetRes(m_OperateList[i], UpdateUser);
-        }
+        //public void Set()
+        //{
+        //    for (int i = 0; i < 5; i++) SetRes(m_OperateList[i], UpdateUser);
+        //}
 
         public ResList Get()
         {
@@ -679,70 +664,70 @@ namespace TrboX
             return res.IsSuccess;
         }
 
-        private object CallRpc(RequestType type, ParseResult Response = null)
-        {
-            return CallRpc(type, null, Response);
-        }
+        //private object CallRpc(RequestType type, ParseResult Response = null)
+        //{
+        //    return CallRpc(type, null, Response);
+        //}
 
-        private object CallRpc(RequestType type, object param, ParseResult Response = null)
-        {
-            TServer.WriteString(JsonParse.Req2Json(type, param));
-            if (null != Response) return Response(TServer.ReadString(JsonParse.CallID) as TcpResponse);
-            return null;
-        }
+        //private object CallRpc(RequestType type, object param, ParseResult Response = null)
+        //{
+        //    TServer.WriteString(JsonParse.Req2Json(type, param));
+        //    if (null != Response) return Response(TServer.ReadString(JsonParse.CallID) as TcpResponse);
+        //    return null;
+        //}
 
-        private void ExecUpdate(RequestType type, List<object> lst, ParseResult Response)
-        {
-            int i = 0;
-            for (i = 0; i < lst.Count / 20; i++) CallRpc(type, lst.Skip(i * 20).Take(20) as List<Object>, Response);
-            CallRpc(type, lst.Skip(i * 20).Take(lst.Count % 20) as List<Object>, Response);
-        }
+        //private void ExecUpdate(RequestType type, List<object> lst, ParseResult Response)
+        //{
+        //    int i = 0;
+        //    for (i = 0; i < lst.Count / 20; i++) CallRpc(type, lst.Skip(i * 20).Take(20) as List<Object>, Response);
+        //    CallRpc(type, lst.Skip(i * 20).Take(lst.Count % 20) as List<Object>, Response);
+        //}
 
-        private void ExecUpdate(RequestType type, List<string> lst, ParseResult Response)
-        {
-            int i = 0;
-            for (i = 0; i < lst.Count / 20; i++) CallRpc(type, lst.Skip(i * 20).Take(20) as List<Object>, Response);
-            CallRpc(type, lst.Skip(i * 20).Take(lst.Count % 20) as List<Object>, Response);
-        }
-        private void ExecUpdate(RequestType type, List<ModifyObjStr> lst, ParseResult Response)
-        {
-            int i = 0;
-            for (i = 0; i < lst.Count / 20; i++) CallRpc(type, lst.Skip(i * 20).Take(20) as List<Object>, Response);
-            CallRpc(type, lst.Skip(i * 20).Take(lst.Count % 20) as List<Object>, Response);
-        }
+        //private void ExecUpdate(RequestType type, List<string> lst, ParseResult Response)
+        //{
+        //    int i = 0;
+        //    for (i = 0; i < lst.Count / 20; i++) CallRpc(type, lst.Skip(i * 20).Take(20) as List<Object>, Response);
+        //    CallRpc(type, lst.Skip(i * 20).Take(lst.Count % 20) as List<Object>, Response);
+        //}
+        //private void ExecUpdate(RequestType type, List<ModifyObjStr> lst, ParseResult Response)
+        //{
+        //    int i = 0;
+        //    for (i = 0; i < lst.Count / 20; i++) CallRpc(type, lst.Skip(i * 20).Take(20) as List<Object>, Response);
+        //    CallRpc(type, lst.Skip(i * 20).Take(lst.Count % 20) as List<Object>, Response);
+        //}
 
 
-        private void UpdateUser(List<object> add, List<string> del, List<ModifyObjStr> modify)
-        {
-            ExecUpdate(RequestType.addUser, add, ParseStatus);
-            ExecUpdate(RequestType.deleteUser, del, ParseStatus);
-            ExecUpdate(RequestType.updateUser, modify, ParseStatus);
-        }
+        //private void UpdateUser(List<object> add, List<string> del, List<ModifyObjStr> modify)
+        //{
+        //    ExecUpdate(RequestType.addUser, add, ParseStatus);
+        //    ExecUpdate(RequestType.deleteUser, del, ParseStatus);
+        //    ExecUpdate(RequestType.updateUser, modify, ParseStatus);
+        //}
 
-        private void UpdateStaff(List<object> add, List<string> del, List<ModifyObjStr> modify)
-        {
-            ExecUpdate(RequestType.addStaff, add, ParseStatus);
-            ExecUpdate(RequestType.deleteStaff, del, ParseStatus);
-            ExecUpdate(RequestType.updateStaff, modify, ParseStatus);
-        }
-        private void UpdateDepartment(List<object> add, List<string> del, List<ModifyObjStr> modify)
-        {
-            ExecUpdate(RequestType.addDepartment, add, ParseStatus);
-            ExecUpdate(RequestType.deleteDepartment, del, ParseStatus);
-            ExecUpdate(RequestType.updateDepartment, modify, ParseStatus);
-        }
-        private void UpdateRadio(List<object> add, List<string> del, List<ModifyObjStr> modify)
-        {
-            ExecUpdate(RequestType.addRadio, add, ParseStatus);
-            ExecUpdate(RequestType.deleteRadio, del, ParseStatus);
-            ExecUpdate(RequestType.updateRadio, modify, ParseStatus);
-        }
-        private void UpdateRadioBelong(List<object> add, List<string> del, List<ModifyObjStr> modify)
-        {
-            ExecUpdate(RequestType.addRadioBelong, add, ParseStatus);
-            ExecUpdate(RequestType.deleteRadioBelong, del, ParseStatus);
-            ExecUpdate(RequestType.updateRadioBelong, modify, ParseStatus);
-        }
+        //private void UpdateStaff(List<object> add, List<string> del, List<ModifyObjStr> modify)
+        //{
+        //    ExecUpdate(RequestType.addStaff, add, ParseStatus);
+        //    ExecUpdate(RequestType.deleteStaff, del, ParseStatus);
+        //    ExecUpdate(RequestType.updateStaff, modify, ParseStatus);
+        //}
+        //private void UpdateDepartment(List<object> add, List<string> del, List<ModifyObjStr> modify)
+        //{
+        //    ExecUpdate(RequestType.addDepartment, add, ParseStatus);
+        //    ExecUpdate(RequestType.deleteDepartment, del, ParseStatus);
+        //    ExecUpdate(RequestType.updateDepartment, modify, ParseStatus);
+        //}
+        //private void UpdateRadio(List<object> add, List<string> del, List<ModifyObjStr> modify)
+        //{
+        //    ExecUpdate(RequestType.addRadio, add, ParseStatus);
+        //    ExecUpdate(RequestType.deleteRadio, del, ParseStatus);
+        //    ExecUpdate(RequestType.updateRadio, modify, ParseStatus);
+        //}
+        //private void UpdateRadioBelong(List<object> add, List<string> del, List<ModifyObjStr> modify)
+        //{
+        //    ExecUpdate(RequestType.addRadioBelong, add, ParseStatus);
+        //    ExecUpdate(RequestType.deleteRadioBelong, del, ParseStatus);
+        //    ExecUpdate(RequestType.updateRadioBelong, modify, ParseStatus);
+        //}
 
 
         private void SetRes(Dictionary<ItemIndex, TabOperate> lst, UpdateRes Update)
