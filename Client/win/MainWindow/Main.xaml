@@ -17,6 +17,7 @@
         <local:MainTabIndexFromRadio x:Key="IndexFromRadio" />
         <local:FalselHideConverter x:Key="FalseHide" />
         <local:ItemIconConverter x:Key="TypeToIcon" />
+        <local:StatucToColorConverter x:Key="FastStatus" />
 
         <GridView x:Key="GridView">
             <GridView.Columns>
@@ -49,13 +50,20 @@
         <local:TileView x:Key="IconView">
             <local:TileView.ItemTemplate>
                 <DataTemplate>
-                    <DockPanel Width="60" Height="80" >
+                    <DockPanel Width="100" Height="100" >
                         <!--<DockPanel.ContextMenu >
                             <ContextMenu Visibility="Hidden"/>
                         </DockPanel.ContextMenu>-->
-                        <DockPanel>
-                            <Border BorderThickness="1" BorderBrush="#FF888888" ToolTip="{Binding NameInfo}" DockPanel.Dock="Top" HorizontalAlignment="Center" Width="60" Height="60" Padding="5">
-                                <Image DockPanel.Dock="Top" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <DockPanel >
+                            <DockPanel.Background>
+                                <MultiBinding  Converter="{StaticResource FastStatus}" Mode="OneWay" >
+                                    <Binding  Path="Type" />
+                                    <Binding  Path="Contact" />
+                                    <Binding  Path="Operate" />
+                                </MultiBinding>
+                            </DockPanel.Background>
+                            <Border BorderThickness="0" BorderBrush="#FF888888" ToolTip="{Binding NameInfo}" DockPanel.Dock="Top" HorizontalAlignment="Center" Width="60" Height="70" Background="{x:Null}">
+                                <Image DockPanel.Dock="Top" Width="Auto" Height="Auto" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Margin="0,25,0,5">
                                     <Image.Source>
                                         <MultiBinding  Converter="{StaticResource TypeToIcon}" Mode="OneWay" >
                                             <Binding  Path="Type" />
@@ -65,8 +73,8 @@
                                     </Image.Source>
                                 </Image>
                             </Border>
-                            <Grid>
-                                <TextBlock Text="{Binding SimpleName}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FF666666"/>
+                            <Grid DockPanel.Dock="Top">
+                                <TextBlock Text="{Binding SimpleName}" VerticalAlignment="Top" HorizontalAlignment="Center" Foreground="White"/>
                             </Grid>
                         </DockPanel>
                     </DockPanel>
@@ -79,7 +87,16 @@
                 <DataTemplate>
                     <Border x:Name="Msg" ToolTip="{Binding NameInfo}" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2" Background="#00000000">
                         <DockPanel >
-                            <Image x:Name="Icon" Source="/TrboX;component/themes/resource/group.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>
+                            <Grid  x:Name="Icon" Margin="0,3,0,0"  Width="20" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top">
+                                <Border BorderBrush="Black" BorderThickness="0">
+                                    <Ellipse Fill="#FF95C4F8"  Stroke="Black" StrokeThickness="0"/>
+                                </Border>
+                                <Border Margin="2.9">
+                                    <Image  Source="/TrboX;component/themes/resource/group.png" />
+                                </Border>
+                            </Grid>
+
+                            <!--<Image x:Name="Icon" Source="/TrboX;component/themes/resource/group.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"/>-->
                             <DockPanel x:Name="dck_Content" Margin="5,0" >
                                 <TextBlock Text="{Binding  Name}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" />
                             </DockPanel>
@@ -95,7 +112,15 @@
                 <DataTemplate>
                     <Border x:Name="Msg" Background="#00000000" ToolTip="{Binding NameInfo}" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2"   >
                         <DockPanel >
-                            <Image x:Name="Icon" Source="/TrboX;component/themes/resource/contact.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0" Opacity="{Binding Converter={StaticResource IconOpFromOrg}}"/>
+                            <Grid  x:Name="Icon" Margin="0,3,0,0"  Width="20" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top">
+                                <Border BorderBrush="Black" BorderThickness="0"  Opacity="{Binding Converter={StaticResource IconOpFromOrg}}">
+                                    <Ellipse Fill="#FF95C4F8"  Stroke="Black" StrokeThickness="0"/>
+                                </Border>
+                                <Border Margin="2.9">
+                                    <Image  Source="/TrboX;component/themes/resource/contact.png" />
+                                </Border>
+                            </Grid>
+                            <!--<Image x:Name="Icon" Source="/TrboX;component/themes/resource/contact.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0" Opacity="{Binding Converter={StaticResource IconOpFromOrg}}"/>-->
                             <DockPanel x:Name="dck_Content" Margin="5,0" >
                                 <TextBlock Text="{Binding  Name}" ToolTip="{Binding target.HeaderWithoutKey}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Opacity="{Binding Converter={StaticResource IconOpFromOrg}}" />
                             </DockPanel>
@@ -111,7 +136,15 @@
                 <DataTemplate>
                     <Border x:Name="Msg"  Background="#00000000" ToolTip="{Binding NameInfo}" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2">
                         <DockPanel >
-                            <Image x:Name="Icon" Source="/TrboX;component/themes/resource/vehicle.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"  Opacity="{Binding Converter={StaticResource IconOpFromOrg}}"/>
+                            <Grid  x:Name="Icon" Margin="0,3,0,0"  Width="20" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top">
+                                <Border BorderBrush="Black" BorderThickness="0"  Opacity="{Binding Converter={StaticResource IconOpFromOrg}}">
+                                    <Ellipse Fill="#FF95C4F8"  Stroke="Black" StrokeThickness="0"/>
+                                </Border>
+                                <Border Margin="2.9">
+                                    <Image  Source="/TrboX;component/themes/resource/vehicle.png" />
+                                </Border>
+                            </Grid>
+                            <!--<Image x:Name="Icon" Source="/TrboX;component/themes/resource/vehicle.png" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"  Opacity="{Binding Converter={StaticResource IconOpFromOrg}}"/>-->
                             <DockPanel x:Name="dck_Content" Margin="5,0" >
                                 <TextBlock Text="{Binding  Name}" ToolTip="{Binding target.HeaderWithoutKey}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  Opacity="{Binding Converter={StaticResource IconOpFromOrg}}" />
                             </DockPanel>
@@ -126,9 +159,18 @@
                 <DataTemplate>
                     <Border x:Name="Msg"  Background="#00000000" ToolTip="{Binding NameInfo}" Margin="0" HorizontalAlignment="Stretch" BorderThickness="1,1,1,1" BorderBrush="#FFEEEEEE" VerticalAlignment="Stretch" Padding="5,2">
                         <DockPanel >
-                            <Image x:Name="Icon" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"  Opacity="{Binding Converter={StaticResource IconOpFromOrg}}"/>
+                            <Grid  Margin="0,3,0,0"  Width="20" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top">
+                                <Border BorderBrush="Black" BorderThickness="0"  Opacity="{Binding Converter={StaticResource IconOpFromOrg}}">
+                                    <Ellipse Fill="#FF95C4F8"  Stroke="Black" StrokeThickness="0"/>
+                                </Border>
+                                <Border Margin="2.9">
+                                    <Image x:Name="Icon" Source="/TrboX;component/themes/resource/radio.png" />
+                                </Border>
+                            </Grid>
+
+                            <!--<Image x:Name="Icon" Width="20" Height="20" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,3,0,0"  Opacity="{Binding Converter={StaticResource IconOpFromOrg}}"/>-->
                             <DockPanel x:Name="dck_Content" Margin="5,0" >
-                                <TextBlock Text="{Binding  Radio.RadioID, StringFormat=ID：{0}}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  Opacity="{Binding Converter={StaticResource IconOpFromOrg}}"/>
+                                <TextBlock Text="{Binding  Radio.RadioID, StringFormat=ID：{0:D}}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  Opacity="{Binding Converter={StaticResource IconOpFromOrg}}"/>
                             </DockPanel>
                         </DockPanel>
                     </Border>
@@ -218,7 +260,7 @@
                                 <TextBlock Text="{Binding  Time,StringFormat={}{0:yyyy-MM-dd HH:mm:ss}}" TextWrapping="NoWrap" Margin="0,0,5,0"  Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" FontSize="10" />
                                 <TextBlock Text="{Binding  Source.Name, StringFormat=({0})}" TextWrapping="NoWrap" Margin="0"  Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" FontSize="10" />
                             </DockPanel>
-                            <TextBlock Text="{Binding  Content}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
+                            <TextBlock Text="{Binding  Source.Name, StringFormat=来自({0})的呼叫}" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, ElementName=lst_Alarm, Mode=OneWay, Converter={StaticResource MsgWidth}}" Foreground="Black" VerticalAlignment="Center" />
 
                         </DockPanel>
                     </Border>
@@ -519,7 +561,8 @@
                             </Border>
                         </DockPanel>
                     </Border>
-                    <DockPanel x:Name="Rx_RadioGroup" LastChildFill="False" VerticalAlignment="Bottom" DockPanel.Dock="Right" Margin="0,0,5,2"/>
+                    <DockPanel x:Name="Rx_RadioGroup" LastChildFill="False" VerticalAlignment="Bottom" DockPanel.Dock="Right" Margin="0,0,5,2">
+                    </DockPanel>
                 </DockPanel>
             </Border>
             <Border BorderBrush="Black" BorderThickness="0" Margin="0" DockPanel.Dock="Bottom" Height="30">
@@ -610,7 +653,7 @@
                                             </TabControl.SelectedIndex>
                                             <TabItem x:Name="tab_Mgr_Org" Header="组织" Style="{DynamicResource SimpleTabItem}" Width="10">
                                                 <DockPanel>
-                                                    <TreeView x:Name="tree_OrgView" Style="{DynamicResource TreeViewStyleNav}" BorderThickness="0" Margin="0" SelectedItemChanged="tree_OrgView_SelectedItemChanged" >
+                                                    <TreeView x:Name="tree_OrgView" Style="{DynamicResource TreeViewStyleNav}" BorderThickness="0" Margin="0" SelectedItemChanged="tree_OrgView_SelectedItemChanged">
                                                         <!--<TreeViewItem Header="TreeViewItem" Style="{DynamicResource TreeViewItemRoot}" Visibility="Collapsed">
                                                     		<TreeViewItem Header="TreeViewItem" Style="{DynamicResource TreeViewItemStyleGroup}"/>
                                                     		<TreeViewItem Header="TreeViewItem" Style="{DynamicResource TreeViewItemStyleGroup}"/>
@@ -637,34 +680,28 @@
                                             </TabItem>
                                             <TabItem x:Name="tab_Mgr_Employee" Header="人员" Style="{DynamicResource SimpleTabItem}" Width="10">
                                                 <DockPanel>
-                                                    <ListView BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-                                                        <ListView x:Name="lst_Employee" BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-                                                            <ListView.View>
-                                                                <local:MsgView />
-                                                            </ListView.View>
-                                                        </ListView>
+                                                    <ListView x:Name="lst_Employee" BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                                                        <ListView.View>
+                                                            <local:MsgView />
+                                                        </ListView.View>
                                                     </ListView>
                                                 </DockPanel>
                                             </TabItem>
                                             <TabItem x:Name="tab_Mgr_Vehicle" Header="车辆" Style="{DynamicResource SimpleTabItem}" Width="10">
                                                 <DockPanel>
-                                                    <ListView BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-                                                        <ListView x:Name="lst_Vehicle" BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-                                                            <ListView.View>
-                                                                <local:MsgView />
-                                                            </ListView.View>
-                                                        </ListView>
+                                                    <ListView x:Name="lst_Vehicle" BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                                                        <ListView.View>
+                                                            <local:MsgView />
+                                                        </ListView.View>
                                                     </ListView>
                                                 </DockPanel>
                                             </TabItem>
                                             <TabItem x:Name="tab_Mgr_Device" Header="设备" Style="{DynamicResource SimpleTabItem}" Margin="0,0,-2,0" Width="10">
                                                 <DockPanel>
-                                                    <ListView BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-                                                        <ListView x:Name="lst_Radio" BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
-                                                            <ListView.View>
-                                                                <local:MsgView />
-                                                            </ListView.View>
-                                                        </ListView>
+                                                    <ListView x:Name="lst_Radio" BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+                                                        <ListView.View>
+                                                            <local:MsgView />
+                                                        </ListView.View>
                                                     </ListView>
                                                 </DockPanel>
                                             </TabItem>
@@ -739,7 +776,9 @@
                                                 <Border BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" Height="30" Background="#FF97C5F7">
                                                     <Label Content="录音" VerticalAlignment="Center" HorizontalAlignment="Left"/>
                                                 </Border>
-                                                <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top"/>
+                                                <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top">
+                                                </DockPanel>
+                                                <TreeViewItem Header="TreeViewItem" Height="256" Style="{DynamicResource TreeViewItemStyleMember}" VerticalAlignment="Top"/>
                                             </DockPanel>
                                         </TabItem>
                                         <TabItem Header="报表" Style="{DynamicResource SimpleTabItem}" Width="20">

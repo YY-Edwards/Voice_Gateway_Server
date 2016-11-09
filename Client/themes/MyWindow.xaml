@@ -786,7 +786,15 @@
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" x:Name="PART_Header" ContentSource="Header"/>
                         </Border>
                         <ItemsPresenter Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" x:Name="ItemsHost"/>
-                        <Image Margin="5,0,0,0" Grid.Column="1" Width="16" Height="16" HorizontalAlignment="Left" Source="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconFromOrg}}"/>
+                        <Grid Margin="5,0,0,0" Grid.Column="1" Width="18" Height="18" HorizontalAlignment="Left">
+                            <Border BorderBrush="Black" BorderThickness="0" Opacity="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconOpFromOrg}}">
+                                <Ellipse Fill="#FF95C4F8"  Stroke="Black" StrokeThickness="0"/>
+                            </Border>
+                            <Border Margin="2.61">
+                                <Image  Source="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconFromOrg}}" />
+                            </Border>
+                        </Grid>
+                        <!-- Image Margin="5,0,0,0" Grid.Column="1" Width="16" Height="16" HorizontalAlignment="Left" Source="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconFromOrg}}"/-->
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsExpanded" Value="False">
@@ -846,8 +854,16 @@
                         <Border Grid.Column="1" x:Name="Selection_Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" VerticalAlignment="Center" Margin="25,0,0,0">
                             <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" x:Name="PART_Header" ContentSource="Header"  Opacity="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconOpFromOrg}}"/>
                         </Border>
-                        <ItemsPresenter Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" x:Name="ItemsHost"/>
-                        <Image Margin="5,0,0,0" Grid.Column="1" Width="16" Height="16" HorizontalAlignment="Left" Source="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconFromOrg}}" Opacity="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconOpFromOrg}}"/>                       
+                        <ItemsPresenter Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" x:Name="ItemsHost"/>    
+						<Grid Margin="5,0,0,0" Grid.Column="1" Width="18" Height="18" HorizontalAlignment="Left">
+                            <Border BorderBrush="Black" BorderThickness="0" Opacity="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconOpFromOrg}}">
+                                <Ellipse Fill="#FF95C4F8"  Stroke="Black" StrokeThickness="0"/>
+                                                		</Border>
+                                                		<Border Margin="2.61">
+                                <Image  Source="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconFromOrg}}" />
+                            </Border>
+                                                	</Grid>                
+                        <!--Image Margin="5,0,0,0" Grid.Column="1" Width="16" Height="16" HorizontalAlignment="Left" Source="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconFromOrg}}" Opacity="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconOpFromOrg}}"/ -->                       
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsExpanded" Value="False">

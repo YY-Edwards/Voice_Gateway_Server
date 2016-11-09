@@ -8,46 +8,6 @@ using Newtonsoft.Json.Linq;
 
 namespace TrboX
 {
-    //[Serializable]
-    //public class CEmployee
-    //{
-    //    public int ID{set; get;}
-    //    public string Name { set; get; } 
-    //}
-
-    //[Serializable]
-    //public class CVehicle
-    //{
-    //    public int ID { set; get; }
-    //    public string Number { set; get; }
-    //}
-
-    //[Serializable]
-    //public class CGroup
-    //{
-    //    public int ID { set; get; }
-    //    public int GroupID{ set; get; }
-    //    public string Name { set; get; } 
-    //}
-
-    //[Serializable]
-    //public class CRadio
-    //{
-    //    public int ID { set; get; }
-    //    public int RadioID { set; get; }
-    //    public bool IsOnline { set; get; }
-    //    public RadioType Type { set; get; }
-    //}
-
-    //public class CRelationship
-    //{
-    //    public int Group { set; get; }
-    //    public int Employee { set; get; }
-    //    public int Vehicle { set; get; }
-    //    public int Radio { set; get; }
-    //}
-
-
     [Serializable]
     public struct TargetSimple
     {
@@ -386,7 +346,7 @@ namespace TrboX
 
         public CMember MultToSingle()
         {
-            if((null != Target) ||(0 == Target.Count))return null;
+            if((null == Target) ||(0 == Target.Count))return null;
             return Target[0];
         }
 
@@ -576,6 +536,9 @@ namespace TrboX
 
         private static bool m_IsChange = false;
 
+        public static bool IsTx = false;
+        public static bool IsRx = false;
+
         public TargetMgr()
         {
 
@@ -703,8 +666,29 @@ namespace TrboX
             return;           
         }
 
-
-
+        public void Update(Department group)
+        {
+            if (!m_DepartmentList.ContainsKey(group.ID))
+            {
+                for (int i = m_DepartmentList.Count; i <= m_DepartmentList.Count + 100; i++)
+                {
+                    if (!m_DepartmentList.ContainsKey(i))
+                    {
+                        group.ID = i;
+                        m_DepartmentList.Add(group.ID, group);
+                        m_IsChange = true;
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                m_DepartmentList[group.ID] = group;
+                m_IsChange = true;
+                return;
+            }
+            return;
+        }
 
 
         public CMember SimpleToMember(TargetSimple target )

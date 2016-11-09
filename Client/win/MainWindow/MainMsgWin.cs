@@ -131,6 +131,7 @@ namespace TrboX
                     case NotifyType.Alarm:
                         m_Main.lst_Alarm.Items.Insert(0, notify);
                         m_Main.View.MsgAlarmShow(true);
+                       
                         break;
                     case NotifyType.Call:
                         m_Main.lst_Rx.Items.Insert(0, notify);
@@ -149,7 +150,8 @@ namespace TrboX
                         m_Main.View.MsgTrackerShow(true);
                         break;
                 }
-
+                DataBase.InsertLog(notify.Type.ToString() + ":" + notify.Brief);
+                
                 m_Main.g_IsNeedSaveWorkSpace = true;
                 m_Main.SubWindow.AddNotifyToOperateWin(notify);
             }));
@@ -232,8 +234,15 @@ namespace TrboX
         {
             List<CNotification> notify = Get();
             List<CNotification> willdel = new List<CNotification>();
-            foreach (CNotification item in notify)
-                if (item.Source.IsLike(src)) willdel.Add(item);
+            try
+            {
+                foreach (CNotification item in notify)
+                    if (item.Source.MultToSingle().IsLike(src)) willdel.Add(item);
+            }
+            catch(Exception e)
+            {
+                DataBase.InsertLog(e.Message);
+            }
 
             foreach (CNotification item in willdel) Remove(item);
         }
@@ -245,6 +254,8 @@ namespace TrboX
 
        private Dictionary<Border, MsgBox_t> m_bdrMsgList = new Dictionary<Border, MsgBox_t>();
        private CNotify m_Notify;
+
+       private Queue<CNotification> m_NotifyWillAdd = new Queue<CNotification>();
        public MainMsgWin(Main win)
        {
             if (null == win) return;
@@ -505,7 +516,20 @@ namespace TrboX
 
         public void AddNotify(CNotification notify)
         {
-            m_Notify.Add(notify);
+            try
+            {
+                new Thread(new ThreadStart(delegate()
+                {
+                    lock (m_NotifyWillAdd)
+                    {
+                        m_NotifyWillAdd.Enqueue(notify);
+                    }
+                })).Start();
+            }
+            catch
+            {
+                DataBase.InsertLog("Add Notify Error:");
+            }
         }
         public List<CNotification> GetNotify(bool asc)
         {
@@ -542,37 +566,25 @@ namespace TrboX
 
         private void NoficationThread()
         {
-            int i = 0;
             while (true)
             {
-                //lock (TServer.RxRequest)
-                //{
-                //    if (TServer.RxRequest.Count > 0)
-                //    {
-                //        TServerRequest req = TServer.RxRequest.Dequeue();
+                try
+                {
+                    lock (m_NotifyWillAdd)
+                    {
+                        while (m_NotifyWillAdd.Count > 0)
+                        {
+                            CNotification msg = m_NotifyWillAdd.Dequeue();
+                            m_Notify.Add(msg);
+                        }
+                    }
+                }
+                catch
+                {
+                    DataBase.InsertLog("Add Notify Error:");
+                }
 
-                //    }
-                //}
-                //Thread.Sleep(200);
-
-                //AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Content = new CAlarmNotification() { Content = "test" + i.ToString() } });
-                //AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Content = new CAlarmNotification() { Content = "Alarm" + i.ToString() } });
-
-                //AddNotify(new CNotification() { Type = NotifyType.Call, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Time = DateTime.Now });
-                //AddNotify(new CNotification() { Type = NotifyType.Message, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Time = DateTime.Now, Content = new CMsgNotification() { Content = "Message" + i.ToString() } });
-                //AddNotify(new CNotification() { Type = NotifyType.JobTicker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Time = DateTime.Now });
-                //AddNotify(new CNotification() { Type = NotifyType.Tracker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 117 }), Time = DateTime.Now });
-
-                //AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Content = new CAlarmNotification() { Content = "test" + i.ToString() } });
-                //AddNotify(new CNotification() { Type = NotifyType.Alarm, Time = DateTime.Now, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Content = new CAlarmNotification() { Content = "Alarm" + i.ToString() } });
-
-                //AddNotify(new CNotification() { Type = NotifyType.Call, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now });
-                //AddNotify(new CNotification() { Type = NotifyType.Message, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now, Content = new CMsgNotification() { Content = "Message" + i.ToString() } });
-                //AddNotify(new CNotification() { Type = NotifyType.JobTicker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now });
-                //AddNotify(new CNotification() { Type = NotifyType.Tracker, Source = m_Main.ResrcMgr.Target.SimpleToMember(new TargetSimple() { Type = TargetType.Private, ID = 118 }), Time = DateTime.Now });
-                //m_Main.EventList.AddEvent("事件" + i.ToString());
-
-                Thread.Sleep(5000);
+                Thread.Sleep(1000);
             }
         }
 

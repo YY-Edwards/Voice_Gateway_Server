@@ -574,6 +574,89 @@ namespace TrboX
         }
     }
 
+
+    public class StatucToColorConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            //return MyWindow.InCallBrush;
+
+            try
+            {
+                if ((value[0] == DependencyProperty.UnsetValue) || (value[0] == DependencyProperty.UnsetValue) || (value[0] == DependencyProperty.UnsetValue)) return null;
+
+                CMultMember target = null;
+                switch ((FastType)value[0])
+                {
+                    case FastType.FastType_Contact:
+                        target = (CMultMember)value[1];
+                        break;
+                    case FastType.FastType_Operate:
+                        //target = ((COperate)value[2]).Target;
+                        break;
+                    default:
+                        break;
+                }
+
+                if (target.Type == SelectionType.All)
+                {
+                    if (TargetMgr.IsTx)
+                    {
+                        return MyWindow.InCallBrush;
+                    }
+                    if (TargetMgr.IsRx)
+                    {
+                        return MyWindow.InCallBrush;
+                    }
+                
+                }
+                else if (target.Type != SelectionType.Null)
+                {
+
+                    foreach (CMember mem in target.Target)
+                    {
+                        if (mem.Type == MemberType.Group)
+                        {
+                            if (mem.Group.IsTx)
+                            {
+                                return MyWindow.InCallBrush;
+                            }
+                            if (mem.Group.IsRx)
+                            {
+                                return MyWindow.InCallBrush;
+                            }
+
+                        }
+                        else
+                        {
+                            if (mem.Radio.IsTx)
+                            {
+                                return MyWindow.InCallBrush;
+                            }
+
+                            if (mem.Radio.IsRx)
+                            {
+                                return MyWindow.InCallBrush;
+                            }
+                        }
+                    }
+                }
+
+                return new SolidColorBrush(Color.FromArgb(255, 151, 197, 247));
+            }
+            catch (Exception e){
+                DataBase.InsertLog("Convert Error" + e.Message);
+                return new SolidColorBrush(Color.FromArgb(255, 151, 197, 247));
+            }
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+
 }
 
 

@@ -41,7 +41,6 @@ namespace TrboX
             m_Main.lst_dispatch.PreviewMouseLeftButtonDown += delegate(object sender, MouseButtonEventArgs e) { lst_dispatch_PreviewMouseLeftButtonDown(sender, e); };
             m_Main.lst_dispatch.Drop += delegate(object sender, DragEventArgs e) { lst_dispatch_Drop(sender, e); };
             
-
             m_Main.menu_FastListAddContact.Click +=delegate{m_Main.SubWindow.OpenCreateFastWin(FastType.FastType_Contact);};
             m_Main.menu_FastListAddOperate.Click +=delegate{ m_Main.SubWindow.OpenCreateFastWin(FastType.FastType_Operate); };
 

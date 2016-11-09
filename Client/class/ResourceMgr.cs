@@ -71,20 +71,31 @@ namespace TrboX
 
             try
             {
-                List<string> tmp = JsonConvert.DeserializeObject<List<string>>(func);
-                List<FuncList> funlist = new List<FuncList>();
-                foreach (string item in tmp)
+                if (func != null)
                 {
-                    try
-                    {
-                        funlist.Add((FuncList)Enum.Parse(typeof(FuncList), item));
-                    }
-                    catch { }
+                    List<string> tmp = JsonConvert.DeserializeObject<List<string>>(func);
+                    List<FuncList> funlist = new List<FuncList>();
+                    if (tmp != null)
+                        foreach (string item in tmp)
+                        {
+                            try
+                            {
+                                funlist.Add((FuncList)Enum.Parse(typeof(FuncList), item));
+                            }
+                            catch (Exception e)
+                            {
+                                DataBase.InsertLog("GetUser:FuncList.Parse" + e.Message);
+                            }
+
+                        }
+                    user.func = funlist;
                 }
-                user.func = funlist;
 
             }
-            catch { }
+            catch (Exception e)
+            {
+                DataBase.InsertLog("GetUser:" + e.Message);
+            }
 
             return user;
         }
@@ -154,6 +165,9 @@ namespace TrboX
         public string Name;
         public long GroupID;
 
+        public bool IsTx { set; get; }
+        public bool IsRx { set; get; }
+
         public DepartmentStr GetDepartmentStr()
         {
             return new DepartmentStr()
@@ -194,8 +208,8 @@ namespace TrboX
     public class Radio
     {
         public int ID;
-        public long RadioID;
-        public RadioType Type;
+        public long RadioID{ set; get; }
+        public RadioType Type{ set; get; }
         public bool HasScreen;
         public bool HasGPS;
         public bool HasKeyboard;
@@ -204,6 +218,8 @@ namespace TrboX
         public bool IsOnline{set;get;}
         public bool IsGPS { set; get; }
 
+        public bool IsTx { set; get; }
+        public bool IsRx { set; get; }
 
 
         public RadioStr GetRadioStr()
@@ -427,7 +443,7 @@ namespace TrboX
         string user = "["
         + "{'id':'1', 'username':'测试', 'password':'123'},"
         + "{'id':'2', 'username':'李四', 'password':'123'},"
-        + "{'id':'3', 'username':'Jim', 'password':'123'},"
+        + "{'id':'3', 'username':'RadioTest', 'password':'123'},"
         + "{'id':'4', 'username':'John', 'password':'123'},"
         + "{'id':'5', 'username':'二麻子', 'password':'123'},"
         + "{'id':'6', 'username':'崔二胯子', 'password':'123'},"
@@ -443,8 +459,8 @@ namespace TrboX
 
         string staff = "["
         + "{'id':'1', 'name':'测试', 'type':'0'},"
-        + "{'id':'2', 'name':'川A12345', 'type':'1'},"
-        + "{'id':'3', 'name':'Jim', 'type':'0'},"
+        + "{'id':'2', 'name':'WirelanTest', 'type':'1'},"
+        + "{'id':'3', 'name':'RadioTest', 'type':'1'},"
         + "{'id':'4', 'name':'川B12345', 'type':'1'},"
         + "{'id':'5', 'name':'二麻子', 'type':'0'},"
         + "{'id':'6', 'name':'崔二胯子', 'type':'0'},"
@@ -460,7 +476,7 @@ namespace TrboX
 
         string department = "["
         + "{'id':'1' , 'group_id':'6', 'name':'测试组'},"
-        + "{'id':'2', 'group_id':'314', 'name':'保洁组'},"
+        + "{'id':'2', 'group_id':'9', 'name':'WirelanTest'},"
         + "{'id':'3', 'group_id':'425', 'name':'地勤组'},"
         + "{'id':'4', 'group_id':'536', 'name':'餐厅'},"
         + "{'id':'5', 'group_id':'647', 'name':'安保组'},"
@@ -469,9 +485,9 @@ namespace TrboX
 
         string radio = "["
         + "{'id':'1', 'radio_id':'8', 'type':'0'},"
-        + "{'id':'2', 'radio_id':'112'},"
-        + "{'id':'3', 'radio_id':'113'},"
-        + "{'id':'4', 'radio_id':'114'},"
+        + "{'id':'2', 'radio_id':'6', 'type':'1'},"
+        + "{'id':'3', 'radio_id':'12', 'type':'1'},"
+        + "{'id':'4', 'radio_id':'114', 'type':'1'},"
         + "{'id':'5', 'radio_id':'115'},"
         + "{'id':'6', 'radio_id':'116'},"
         + "{'id':'7', 'radio_id':'117'},"
@@ -496,8 +512,8 @@ namespace TrboX
 
         string radio_belong = "["
         + "{'department': '1', 'staff': '1', 'radio': '1' },"
-        + "{'department': '1', 'staff': '3', 'radio': '4' },"
-        + "{'department': '1', 'staff': '5', 'radio': '5' },"
+        + "{'department': '2', 'staff': '2', 'radio': '2' },"
+        + "{'department': '1', 'staff': '3', 'radio': '3' },"
         + "{'department': '1', 'staff': '-1', 'radio': '6' },"
         + "{'department': '1', 'staff': '-1', 'radio': '-1' },"
         + "{'department': '1', 'staff': '-1', 'radio': '-1' },"
@@ -658,7 +674,10 @@ namespace TrboX
             {
                 m_OperateList[GetIndex(obj)].Add(new ItemIndex(GetType(obj), AddTempIndex), new TabOperate(TabOpType.Add, SetId(obj, AddTempIndex)));
             }
-            catch { }
+            catch (Exception e)
+            {
+                DataBase.InsertLog("Add Resource:" + e.Message);
+            }
 
             AddTempIndex--;
         }
@@ -670,7 +689,10 @@ namespace TrboX
                 if (GetId(obj) > 0) m_OperateList[GetIndex(obj)][new ItemIndex(GetType(obj), GetId(obj))].operate = TabOpType.Delete;
                 else if (GetId(obj) < 0) m_OperateList[GetIndex(obj)].Remove(new ItemIndex(GetType(obj), GetId(obj)));
             }
-            catch { }
+            catch (Exception e)
+            {
+                DataBase.InsertLog("Delete Resource:" + e.Message);
+            }
         }
 
         public void Modify(object obj)
@@ -680,7 +702,10 @@ namespace TrboX
                 m_OperateList[GetIndex(obj)][new ItemIndex(GetType(obj), GetId(obj))].operate = GetId(obj) > 0 ? TabOpType.Modify : TabOpType.Add;
                 m_OperateList[GetIndex(obj)][new ItemIndex(GetType(obj), GetId(obj))].obj = obj;
             }
-            catch { }
+            catch (Exception e)
+            {
+                DataBase.InsertLog("Modiyy Resource:" + e.Message);
+            }
         }
 
 

@@ -26,6 +26,12 @@ using System.Net.Sockets;
 
 namespace TrboX
 {
+
+    public enum TargetSystemType
+    {
+        radio,
+        Reapeater
+    }
     public class NetAddress
     {
         public string Ip;
@@ -223,17 +229,17 @@ namespace TrboX
 
         private static object ParseStatus(object obj)
         {
-            SettingResponse res = null;
-            if (obj is SettingResponse) res = obj as SettingResponse;
+            TServerResponse res = null;
+            if (obj is TServerResponse) res = obj as TServerResponse;
             else return null;
 
             if (null == res) return false;
-            return res.IsSuccess;
+            return res.status == "success";
         }
         private static object ParseBase(object obj)
         {
-            SettingResponse res = null;
-            if (obj is SettingResponse) res = obj as SettingResponse;
+            TServerResponse res = null;
+            if (obj is TServerResponse) res = obj as TServerResponse;
             else return null;
 
             if ((null == res) || (null == res.contents)) return null;
@@ -243,8 +249,8 @@ namespace TrboX
 
         private static object ParseRadio(object obj)
         {
-            SettingResponse res = null;
-            if (obj is SettingResponse) res = obj as SettingResponse;
+            TServerResponse res = null;
+            if (obj is TServerResponse) res = obj as TServerResponse;
             else return null;
 
             if ((null == res) || (null == res.contents)) return null;
@@ -253,8 +259,8 @@ namespace TrboX
 
         private static object ParseWireLan(object obj)
         {
-            SettingResponse res = null;
-            if (obj is SettingResponse) res = obj as SettingResponse;
+            TServerResponse res = null;
+            if (obj is TServerResponse) res = obj as TServerResponse;
             else return null;
             if ((null == res) || (null == res.contents)) return null;
             return JsonConvert.DeserializeObject<WireLanSetting>(JsonConvert.SerializeObject(res.contents));

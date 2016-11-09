@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 using System.Windows.Threading;
 using System.Threading;
+using System.Net;
+using System.Net.Sockets;
 
 namespace TrboX
 {    
@@ -15,7 +17,7 @@ namespace TrboX
     }
     public class RunStatus
     {
-        public TargetSystemType type;
+        public RunMode type;
     };
 
     public class Status
@@ -23,14 +25,16 @@ namespace TrboX
         private Main m_Main;
 
         private RunStatus m_RunStatus = new RunStatus();
+        private BaseSetting bases;
+        private RadioSetting radio;
+        private WireLanSetting repeater;
 
         public Status(Main win)
         {
             if (null == win) return;
             m_Main = win;
 
-            GetRunMode();
-
+            //GetRunMode();
 
             Thread t = new Thread(() =>
             {
@@ -41,27 +45,27 @@ namespace TrboX
             t.Start();
         }
 
-
         public RunMode GetRunMode()
         {
-            RadioSetting radio = new Setting() { Type = SettingType.Radio }.Get() as RadioSetting;
-            WireLanSetting repeater = new Setting() { Type = SettingType.WireLan }.Get() as WireLanSetting;
+            radio = new Setting() { Type = SettingType.Radio }.Get() as RadioSetting;
+            repeater = new Setting() { Type = SettingType.WireLan }.Get() as WireLanSetting;
 
+
+            RunMode type = RunMode.None;
+
+            if (radio != null && radio.IsEnable)
+            {
+                m_Main.lab_DeviceSta.Content = "未连接调度设备　　未连接数据设备";
+                type = RunMode.Radio;
+            }
 
             if (repeater != null && repeater.IsEnable)
             {
-                m_Main.lab_DeviceSta.Content = "中继台：" + repeater.Master.Ip + "：" + repeater.Master.Port.ToString();
-                return RunMode.Repeater;
+                m_Main.lab_DeviceSta.Content = "未连中继台";
+                type = RunMode.Repeater;
             }
 
-            if (radio != null && radio.IsEnable) 
-            {
-                if (radio.IsOnlyRide) m_Main.lab_DeviceSta.Content = "车载台：" + radio.Ride.Ip;
-                else m_Main.lab_DeviceSta.Content = "车载台：" + radio.Ride.Ip + "　MNIS：" +  radio.Mnis.Ip;
-                
-                return RunMode.Radio;
-            }
-
+            SetTargetSystemType(type);
             return RunMode.None;
         }
 
@@ -70,10 +74,64 @@ namespace TrboX
             return m_RunStatus;
         }
 
-        public void SetTargetSystemType(TargetSystemType type)
+        public void SetTargetSystemType(RunMode type)
         {
             m_RunStatus.type = type;
             TServer.SystemType = type;
+        }
+        public void SetConectSta(int sta)
+        {
+            m_Main.Dispatcher.Invoke(new Action(() =>
+            {
+                m_Main.lab_DeviceSta.Content = "";
+                if (m_RunStatus.type == RunMode.Radio)
+                {
+                    if (radio == null) return;
+
+                    string ip = "";
+                    try
+                    {
+                        byte[] addr = IPAddress.Parse(radio.Ride.Ip).GetAddressBytes();
+                        addr[3] = (byte)((addr[3] > 0) ? (addr[3] - 1) : 0);
+                        ip = new IPAddress(addr).ToString();
+                    }
+                    catch { }
+
+
+
+                    if ((sta & 2) == 0)
+                    {
+                        m_Main.lab_DeviceSta.Content = "已连接" + ip + "(调度)";
+                    }
+                    else
+                    {
+                        m_Main.lab_DeviceSta.Content = "未连接调度设备";
+                    }
+
+                    if ((sta & 1) == 0)
+                    {
+                        m_Main.lab_DeviceSta.Content += "　　已连接" + radio.Ride.Ip + "(数据)";
+                    }
+                    else
+                    {
+                        m_Main.lab_DeviceSta.Content += "　　未连接数据设备";
+                    }
+
+                }
+                else if (m_RunStatus.type == RunMode.Repeater)
+                {
+                    if (repeater == null) return;
+
+                    if ((sta & 1) == 0)
+                    {
+                        m_Main.lab_DeviceSta.Content = "已连接中继台" + repeater.Master.Ip + "：" +repeater.Master.Port.ToString();
+                    }
+                    else
+                    {
+                        m_Main.lab_DeviceSta.Content = "未连中继台";
+                    }
+                }
+            }));
         }
     }
 }

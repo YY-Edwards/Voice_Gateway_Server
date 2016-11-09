@@ -4,6 +4,8 @@ using System.Linq;
 using System.Text;
 
 using System.Threading;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 
 namespace TrboX
@@ -265,7 +267,17 @@ namespace TrboX
 
         public object Exec()
         {
-            return TServer.Call(this);           
+            DataBase.InsertLog("Execute Operate:>>" + Type.ToString() + JsonConvert.SerializeObject(Operate) + "<<" + Target.NameInfo);
+            
+            if(Type == OPType.Dispatch && ((CDispatch)Operate).Exec == ExecType.Start && TServer.IsInCalled)
+            {
+                MyWindow.PushMessage(new CustomMessage(DestType.AddEvent, "提示：呼叫失败， 存在一个未完成的呼叫"));
+                return false;
+            }
+
+            TServer.Call(this);
+
+            return true;
         }
     }
 }
