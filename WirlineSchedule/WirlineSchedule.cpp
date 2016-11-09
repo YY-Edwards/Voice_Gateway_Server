@@ -194,10 +194,11 @@ int main()
 	/*开启远程任务处理线程*/
 	m_pManager->startHandleRemoteTask();
 	/*初始化服务部分*/
-	m_pRpcServer->addActionHandler("connect", connectActionHandler);
-	m_pRpcServer->addActionHandler("call", callActionHandler);
-	//rpcServer.addActionHandler("stopCall", stopCallActionHandler);
-	//rpcServer.addActionHandler("setPlayCallOfCare", setPlayCallOfCareActionHandler);
+	m_pRpcServer->addActionHandler("wlConnect", wlConnectActionHandler);
+	m_pRpcServer->addActionHandler("wlCall", wlCallActionHandler);
+	m_pRpcServer->addActionHandler("wlCallStatus", wlCallStatusActionHandler);
+	m_pRpcServer->addActionHandler("wlPlay", wlPlayActionHandler);
+	m_pRpcServer->addActionHandler("wlInfo", wlInfoActionHandler);
 	m_pRpcServer->start(WL_SERVER_PORT);
 
 	/*初始化数据库*/

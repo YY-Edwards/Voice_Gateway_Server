@@ -8,6 +8,12 @@ public:
 	~CRecordFile();
 public:
 	void WriteVoiceFrame(char* pFrame, int len = 7, bool bLocalRequest = false);
+	void setBoolPlay(bool value);
+	void setBoolReport(bool value);
+	void setBoolLogicProcess(bool value);
+	bool getBoolPlay();
+	bool getBoolReport();
+	bool getBoolLogicProcess();
 	
 public:
 	char buffer[MAX_RECORD_BUFFER_SIZE];
@@ -22,6 +28,9 @@ public:
 	unsigned long prevTimestamp;
 	int callStatus;
 	SYSTEMTIME recordTime;
-	bool bReport;
+private:
+	bool m_bPlay;
+	bool m_bReport;
+	bool m_bLogicProcess;
 };
 #endif

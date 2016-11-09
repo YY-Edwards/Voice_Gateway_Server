@@ -34,13 +34,24 @@
 
 //#define TALK_TIME (20*1000)
 
-#define StartCall 0x01
-#define StopCall 0x02
-#define SetPlayCall 0x03
-#define SendCallStatus 0x04
+#define REPEATER_CONNECT 0
+#define REPEATER_DISCONNECT 1
 
-#define CLIENT_TRANSFER_OK "0"
-#define CLIENT_TRANSFER_FAIL "1"
+enum CLIENT_CALL_TYPE
+{
+	CLIENT_CALL_TYPE_All = 1,
+	CLIENT_CALL_TYPE_Group = 2,
+	CLIENT_CALL_TYPE_Private = 3
+};
+
+#define PRIVATE_CALL_TAGET (-1)
+#define ALL_CALL_TAGET (-2)
+
+#define StartCall 0x00
+#define StopCall 0x01
+
+#define CLIENT_TRANSFER_OK "success"
+#define CLIENT_TRANSFER_FAIL "fail"
 #define WL_SERVER_PORT 9002
 
 enum WLStatus
@@ -76,7 +87,7 @@ enum WLStatus
 	BAILOUT
 };
 
-#define GROUPCALL_TYPE 0x4f//79
+#define GROUP_CALL 0x4f//79
 #define PRIVATE_CALL 0x50//80
 #define ALL_CALL 0x53//83
 
@@ -117,39 +128,101 @@ extern HANDLE g_taskLockerEvent;
 #define REMOTE_CMD_CALL 0x02
 #define REMOTE_CMD_STOP_CALL 0x03
 #define REMOTE_CMD_SET_PLAY_CALL 0x04
+#define REMOTE_CMD_GET_CONN_STATUS 0x05
+
+#define GET_TYPE_CONN 0x01
 /*JSON相关结构体*/
+
+/************************************************************************/
+/* 配置命令参数定义
+/************************************************************************/
 typedef struct
 {
 	char masterIp[MAX_IP_SIZE];
 	unsigned short masterPort;
+}MASTER;
+typedef struct
+{
+	unsigned short donglePort;
+}DONGLE;
+typedef struct
+{
+	MASTER master;
 	unsigned long defaultGroup;
 	unsigned long localRadioId;
 	unsigned long localPeerId;
 	_RECORD_TYPE_VALUE recordType;
-	unsigned short donglePort;
 	long hangTime;
 	long masterHeartTime;
 	long peerHeartTime;
 	_SlotNumber defaultSlot;
-}CONFIG_PARAM;
+	DONGLE dongle;
+}CONFIG;
+/************************************************************************/
+/* 通话命令参数定义
+/************************************************************************/
 typedef struct
 {
+	int operate;
+	unsigned long source;
 	unsigned long tartgetId;
 	unsigned char callType;
-}CALL_PARAM;
+	bool isCurrent;
+
+}CALL_OPERATE_PARAM;
+typedef struct
+{
+	CALL_OPERATE_PARAM operateInfo;
+}CALL;
+/************************************************************************/
+/* 通话命令状态参数定义
+/************************************************************************/
+typedef struct
+{
+	CALL_OPERATE_PARAM operateInfo;
+	int status;
+}CALL_PARAM_STATUS;
+/************************************************************************/
+/*播放命令参数定义
+/************************************************************************/
 typedef struct
 {
 	unsigned char callType;
-	unsigned long srcId;
-	unsigned long tgtId;
-}SET_CARE_CALL_PARAM;
+	int targetId;
+}SET_PLAY_PARAM;
+typedef struct
+{
+	SET_PLAY_PARAM playParam;
+}SET_PLAY;
+/************************************************************************/
+/* 播放命令状态参数定义
+/************************************************************************/
+typedef struct
+{
+	SET_PLAY_PARAM playParam;
+	int status;
+}SET_PLAY_PARAM_STATUS;
+/************************************************************************/
+/* 获取信息参数定义
+/************************************************************************/
+typedef struct
+{
+	int getType;
+	int info;
+}GET_INFO_PARAM;
+typedef struct
+{
+	GET_INFO_PARAM getInfo;
+}GET_INFO;
+
 typedef struct
 {
 	union
 	{
-		CONFIG_PARAM configParam;
-		CALL_PARAM callParam;
-		SET_CARE_CALL_PARAM setCareCallParam;
+		CONFIG configParam;
+		CALL callParam;
+		SET_PLAY setCareCallParam;
+		GET_INFO getInfoParam;
 	}info;
 }JSON_PARAM;
 /*远程命令*/
@@ -162,18 +235,17 @@ typedef struct
 }REMOTE_TASK;
 /*远程命令任务队列*/
 extern std::list<REMOTE_TASK*> g_remoteCommandTaskQueue;
-//extern REMOTE_TASK *g_pNewTask;
 extern unsigned long long g_sn;
 extern std::list<TcpClient*> g_onLineClients;
 //extern TcpClient *pTempClient;
 //////////////////////////////////////////////////////////////////////////
 
 #define ALL_CALL_ID 255
-extern unsigned long g_targetId;//当前通话组
-extern bool g_bIsHaveDefaultGroupCall;
-extern bool g_bIsHavePrivateCall;
-extern bool g_bIsHaveAllCall;
-extern bool g_bIsHaveCurrentGroupCall;
+extern unsigned long CONFIG_CURRENT_TAGET;//当前通话目标
+//extern bool g_bIsHaveDefaultGroupCall;
+//extern bool g_bIsHavePrivateCall;
+//extern bool g_bIsHaveAllCall;
+//extern bool g_bIsHaveCurrentGroupCall;
 extern long GO_BACK_DEFAULT_GROUP_TIME;//处于非调度组的时间
 
 #define VOICE_STATUS_START 0
@@ -279,12 +351,17 @@ extern unsigned char g_targetCallType;//呼出类型
 #define CALL_START 0x0001 //请求初始化通话
 #define CALL_ONGOING 0x0002 //正在通话
 #define CALL_HANGUP 0x0003 //通话挂起
-#define HAVE_CALL_NO_PLAY 0x04 //通话在后台未播放
-#define HAVE_CALL_START_PLAY 0x05 //通话开始播放
-#define HAVE_CALL_END_PLAY 0x06 //通话播放完毕
-#define END_CALL_NO_PLAY 0x07//在后台未播放的通话结束
-#define NEW_CALL_START 0x08//发起的通话开始
-#define NEW_CALL_END 0x09//发起的通话结束
+
+#define OPERATE_CALL_START 0x00 //开始通话
+#define OPERATE_CALL_END 0x01 //结束通话
+
+#define STATUS_CALL_START 0x01 //通话开始
+#define STATUS_CALL_END 0x02 //通话结束
+#define REMOTE_CMD_SUCCESS 0x04 //操作成功
+#define REMOTE_CMD_FAIL 0x08 //操作失败
+
+#define CMD_SUCCESS 0x00
+#define CMD_FAIL 0x01
 
 #define Call_Session_Call_Hang	0x0a
 #define Call_Session_End	0x0b
