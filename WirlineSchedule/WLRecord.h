@@ -56,6 +56,7 @@ public:
 	BOOL WriteVoiceFile();
 	void OnNewVoiceRecord(LPBYTE pData, DWORD dwSize, DWORD srcId, DWORD tgtId, DWORD callType, int recordType, DWORD srcPeerId, int srcSlot, int srcRssi, int callStatus, SYSTEMTIME *pTime);
 	void SetLogPtr(PLogReport value);
+	void stop();
 private:
 	HANDLE m_hVoiceDataListLocker;
 	std::deque<CVoiceData*> m_voiceDataList;

@@ -5,10 +5,7 @@
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
 
-#define  CHECK    0
-#define  MONITOR  1
-#define  OFF      2
-#define  ON       3
+
 
 void  controlAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
@@ -34,22 +31,47 @@ void  controlAction(CRemotePeer* pRemote, const std::string& param, uint64_t cal
 			{
 				id = d["Target"].GetInt();
 			}
-			if (opterateType == ON)
+			if (isTcpConnect)
 			{
-				m_dispatchOperate[s]->AddAllCommand(client, s,REMOTE_OPEN, "", "", "", id, _T(""), 0, 0, callId);
+				
+				if (opterateType == ON)
+				{
+					m_dispatchOperate[s]->AddAllCommand(client, s, REMOTE_OPEN, "", "", "", id, _T(""), 0, 0, callId);
+				}
+				else if (opterateType == OFF)
+				{
+					m_dispatchOperate[s]->AddAllCommand(client, s, REMOTE_CLOSE, "", "", "", id, _T(""), 0, 0, callId);
+				}
+				else if (opterateType == RADIOCHECK)
+				{
+					m_dispatchOperate[s]->AddAllCommand(client, s, CHECK_RADIO_ONLINE, "", "", "", id, _T(""), 0, 0, callId);
+				}
+				else if (opterateType == MONITOR)
+				{
+					m_dispatchOperate[s]->AddAllCommand(client, s, REMOTE_MONITOR, "", "", "", id, _T(""), 0, 0, callId);
+				}
 			}
-			else if (opterateType == OFF)
+			else
 			{
-				m_dispatchOperate[s]->AddAllCommand(client,s, REMOTE_CLOSE, "", "", "", id, _T(""), 0, 0, callId);
+				try
+				{
+					ArgumentType args;
+					args["Status"] = FieldValue(REMOTE_CONNECT_FAOLED);
+					args["Target"] = FieldValue(id);
+					args["Type"] = FieldValue(opterateType);
+					std::string callJsonStr = CRpcJsonParser::buildCall("controlStatus", ++seq, args, "radio");
+					if (client != NULL)
+					{
+						client->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+					}
+
+				}
+				catch (std::exception e)
+				{
+
+				}
 			}
-			else if (opterateType == CHECK)
-			{
-				m_dispatchOperate[s]->AddAllCommand(client,s, CHECK_RADIO_ONLINE, "", "", "", id, _T(""), 0, 0, callId);
-			}
-			else if (opterateType == MONITOR)
-			{
-				m_dispatchOperate[s]->AddAllCommand(client,s, REMOTE_MONITOR, "", "", "", id, _T(""), 0, 0, callId);
-			}
+			
 		}
 		else
 		{

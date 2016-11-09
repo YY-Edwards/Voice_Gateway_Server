@@ -26,34 +26,18 @@ using System.Net.Sockets;
 
 namespace TrboX
 {
+
+    public enum TargetSystemType
+    {
+        radio,
+        Reapeater
+    }
     public class NetAddress
     {
         public string Ip;
         public int Port;
-        public NetAddressStr GetNetAddressStr()
-        {
-            return new NetAddressStr()
-            {
-                Ip = Ip,
-                Port = Port.ToString()
-            };
-        }
     };
 
-    public class NetAddressStr
-    {
-        public string Ip;
-        public string Port;
-
-        public NetAddress GetNetAddress() {
-            return new NetAddress()
-            {
-                Ip = Ip,
-                Port = ((Port != "") && System.Text.RegularExpressions.Regex.IsMatch(Port, @"^\d+$")) ? int.Parse(Port):0
-            };
-            
-        }
-    }
 
 
     public class BaseSetting
@@ -66,50 +50,7 @@ namespace TrboX
         public bool IsSaveControlLog;
         public bool IsSaveJobLog;
         public bool IsSaveTrackerLog;
-        public BaseSettingStr GetBaseSettingStr() {
-                return new BaseSettingStr()
-                {
-                    Svr = null == Svr ? new NetAddressStr() : Svr.GetNetAddressStr(),
-                    LogSvr = null == LogSvr ? new NetAddressStr() : LogSvr.GetNetAddressStr(),
-                    IsSaveCallLog = IsSaveCallLog.ToString(),
-                    IsSaveMsgLog = IsSaveMsgLog.ToString(),
-                    IsSavePositionLog = IsSavePositionLog.ToString(),
-                    IsSaveControlLog = IsSaveControlLog.ToString(),
-                    IsSaveJobLog = IsSaveJobLog.ToString(),
-                    IsSaveTrackerLog = IsSaveTrackerLog.ToString(),
-                };           
-        }
     }
-
-    public class BaseSettingStr
-    {
-        public NetAddressStr Svr;
-        public NetAddressStr LogSvr;
-        public string IsSaveCallLog;
-        public string IsSaveMsgLog;
-        public string IsSavePositionLog;
-        public string IsSaveControlLog;
-        public string IsSaveJobLog;
-        public string IsSaveTrackerLog;
-
-        public BaseSetting GetBaseSetting()
-        {   
-                return new BaseSetting()
-                {
-                    Svr = null == Svr ? new NetAddress() :Svr.GetNetAddress(),
-                    LogSvr = null == LogSvr ? new NetAddress() : LogSvr.GetNetAddress(),
-                    IsSaveCallLog = (IsSaveCallLog.ToUpper() == "TRUE") ? true : false,
-                    IsSaveMsgLog = (IsSaveMsgLog.ToUpper() == "TRUE") ? true : false,
-                    IsSavePositionLog = (IsSavePositionLog.ToUpper() == "TRUE") ? true : false,
-                    IsSaveControlLog = (IsSaveControlLog.ToUpper() == "TRUE") ? true : false,
-                    IsSaveJobLog = (IsSaveJobLog.ToUpper() == "TRUE") ? true : false,
-                    IsSaveTrackerLog = (IsSaveTrackerLog.ToUpper() == "TRUE") ? true : false,
-                };
-           
-        }
-
-    }
-
 
     public class RadioSetting
     {
@@ -121,53 +62,10 @@ namespace TrboX
         public NetAddress Gps;
         public NetAddress Ars;
         public NetAddress Message;
-
-        public RadioSettingStr GetRadioSettingStr()
-        {
-            return new RadioSettingStr()
-            {
-                IsEnable = IsEnable.ToString(),
-                IsOnlyRide = IsOnlyRide.ToString(),
-                Svr = null == Svr ? new NetAddressStr() : Svr.GetNetAddressStr(),
-                Ride = null == Ride ? new NetAddressStr() : Ride.GetNetAddressStr(),
-                Mnis = null == Mnis ? new NetAddressStr() : Mnis.GetNetAddressStr(),
-                Gps = null == Gps ? new NetAddressStr() : Gps.GetNetAddressStr(),
-                Ars = null == Ars ? new NetAddressStr() : Ars.GetNetAddressStr(),
-                Message = null == Message ? new NetAddressStr() : Message.GetNetAddressStr()           
-            };
-        }
     }
-
-    public class RadioSettingStr
-    {
-        public string IsEnable;
-        public string IsOnlyRide;
-        public NetAddressStr Svr;
-        public NetAddressStr Ride;
-        public NetAddressStr Mnis;
-        public NetAddressStr Gps;
-        public NetAddressStr Ars;
-        public NetAddressStr Message;
-
-        public RadioSetting GetRadioSetting()
-        { 
-            return new RadioSetting(){
-                IsEnable = (IsEnable.ToUpper() == "TRUE") ? true : false,
-                IsOnlyRide = (IsEnable.ToUpper() == "TRUE") ? true : false,
-                Svr = null == Svr ? new NetAddress(): Svr.GetNetAddress(),
-                Ride = null == Ride ? new NetAddress() : Ride.GetNetAddress(),
-                Mnis = null == Mnis ? new NetAddress() : Mnis.GetNetAddress(),
-                Gps = null == Gps ? new NetAddress() : Gps.GetNetAddress(),
-                Ars = null == Ars ? new NetAddress() : Ars.GetNetAddress(),
-                Message = null == Message ? new NetAddress() : Message.GetNetAddress()  
-            };
-        }
-    }
-
-
     public enum WireLanType
     {
-        IPSC, 
+        IPSC,
         CPC,
         LCP,
     };
@@ -176,29 +74,7 @@ namespace TrboX
     public class DongleSetting
     {
         public int Com;
-
-        public DongleSettingStr GetDongleSettingStr()
-        {
-            return new DongleSettingStr()
-            {
-                Com = "COM"+Com.ToString()
-            };
-        }
     }
-
-    public class DongleSettingStr
-    {
-        public string Com;
-        public DongleSetting GetDongleSetting()
-        {
-            return new DongleSetting() {
-                Com = ((Com != "") && System.Text.RegularExpressions.Regex.IsMatch(Com.Substring(3, Com.Length - 3), @"^\d+$")) ? int.Parse(Com.Substring(3, Com.Length - 3)) : 1
-            };
-        }
-
-    }
-
-
 
     public class WireLanSetting
     {
@@ -218,165 +94,204 @@ namespace TrboX
 
         public DongleSetting Dongle;
 
-        public WireLanSettingStr GetWireLanSettingStr()
-        {
-            return new WireLanSettingStr()
-            {
-                IsEnable = IsEnable.ToString(),
-                Type = Type.ToString(),
-                Svr = null == Svr ? new NetAddressStr() :  Svr.GetNetAddressStr(),
-                Master = null == Svr ? new NetAddressStr() :  Master.GetNetAddressStr(),                
-                DefaultGroupId = DefaultGroupId.ToString(),
-                DefaultChannel = DefaultChannel.ToString(),
-                MinHungTime = MinHungTime.ToString(),
-                MaxSiteAliveTime = MaxSiteAliveTime.ToString(),
-                MaxPeerAliveTime = MaxPeerAliveTime.ToString(),
-                LocalPeerId = LocalPeerId.ToString(),
-                LocalRadioId = LocalRadioId.ToString(),
-                Dongle = null == Dongle ? new DongleSettingStr() { Com = "COM1" } : Dongle.GetDongleSettingStr()
-            };
-        }
     }
 
-    public class WireLanSettingStr
+    public enum SettingOpType
     {
-        public string IsEnable;
-        public string Type;
-        public NetAddressStr Svr;
-        public NetAddressStr Master;
-        public string DefaultGroupId;
-        public string DefaultChannel;
-        public string MinHungTime;
+        Set,
+        Get,
+    };
+    public enum SettingType
+    {
+        Base,
+        Radio,
+        WireLan,
+    };
 
-        public string MaxSiteAliveTime;
-        public string MaxPeerAliveTime;
 
-        public string LocalPeerId;
-        public string LocalRadioId;
-
-        public DongleSettingStr Dongle;
-
-        public WireLanSetting GetWireLanSetting()
-        {
-            return new WireLanSetting()
-            {
-                IsEnable = (IsEnable.ToUpper() == "TRUE") ? true : false,
-                Type = (Type.ToUpper() == "LCP") ? WireLanType.LCP : ((Type.ToUpper() == "CPC") ? WireLanType.CPC : WireLanType.IPSC),
-                Svr = null== Svr ? new NetAddress() : Svr.GetNetAddress(),
-                Master = null == Master ? new NetAddress() : Master.GetNetAddress(),
-                DefaultGroupId = ((DefaultGroupId != "") && System.Text.RegularExpressions.Regex.IsMatch(DefaultGroupId, @"^\d+$")) ? int.Parse(DefaultGroupId) : 0,
-                DefaultChannel = ((DefaultChannel != "") && System.Text.RegularExpressions.Regex.IsMatch(DefaultChannel, @"^\d+$")) ? int.Parse(DefaultChannel) : 0,
-                MinHungTime = ((MinHungTime != "") && System.Text.RegularExpressions.Regex.IsMatch(MinHungTime, @"^\d+$")) ? int.Parse(MinHungTime) : 0,
-                MaxSiteAliveTime = ((MaxSiteAliveTime != "") && System.Text.RegularExpressions.Regex.IsMatch(MaxSiteAliveTime, @"^\d+$")) ? int.Parse(MaxSiteAliveTime) : 0,
-                MaxPeerAliveTime = ((MaxPeerAliveTime != "") && System.Text.RegularExpressions.Regex.IsMatch(MaxPeerAliveTime, @"^\d+$")) ? int.Parse(MaxPeerAliveTime) : 0,
-                LocalPeerId = ((LocalPeerId != "") && System.Text.RegularExpressions.Regex.IsMatch(LocalPeerId, @"^\d+$")) ? int.Parse(LocalPeerId) : 0,
-                LocalRadioId = ((LocalRadioId != "") && System.Text.RegularExpressions.Regex.IsMatch(LocalRadioId, @"^\d+$")) ? int.Parse(LocalRadioId) : 0,
-                Dongle = null == Dongle ? new DongleSetting() { Com = 1 } : Dongle.GetDongleSetting()
-            };
-        }
-
-    }
 
     public class Setting
     {
-        public BaseSetting Base { set; get; }
-        public RadioSetting Radio{set; get;}
-        public WireLanSetting WireLan{set; get;}
-    }
-    public  class SettingStr
-    {
-        public BaseSettingStr Base;
-        public RadioSetting Radio { set; get; }
-        public WireLanSetting WireLan { set; get; }
+        public SettingOpType Op;
+        public SettingType Type;
+        public object Configure;
 
-        public Setting GetSetting()
+
+        public void Set()
         {
-            return new Setting()
+            Op = SettingOpType.Set;
+            TServer.Call(this);
+        }
+        public object Get()
+        {
+            Op = SettingOpType.Get;
+            return TServer.Call(this);
+        }
+    }
+
+    public class SettingMgrStr
+    {
+        public string call;
+        public string callId;
+        public object param;
+    }
+
+    public class SettingMgrSimpleStr
+    {
+        public string call;
+        public string callId;
+    }
+
+    public class SettingResponse
+    {
+        public string status { set; get; }
+        public string statusText { set; get; }
+        public int errCode { set; get; }
+        public Int64 callId { set; get; }
+        public object contents { set; get; }
+
+        public bool IsSuccess
+        {
+            get
             {
-                Base = Base.GetBaseSetting(),
-                Radio = Radio,
-                WireLan = WireLan
-            };
+                if ("success" == status) return true;
+                else return false;
+            }
         }
     }
 
 
     class SettingMgr
     {
-        private TcpInterface TServer = new TcpInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 8000));
+        public RequestType Call;
+        public long CallId;
+        public object Param;
 
-        public Setting GetDefalut()
+        public ParseDel Parse;
+
+        public SettingMgr(Setting setting, long PN)
         {
-            string path = App.SettingTempPath;
-            if (File.Exists(path))
+            Call = RequestType.None;
+            if (setting.Op == SettingOpType.Get)
             {
-                File.Delete(path);
+                if (setting.Type == SettingType.Base)
+                {
+                    Call = RequestType.getBaseSetting;
+                    Parse = ParseBase;
+                }
+                else if (setting.Type == SettingType.Radio)
+                {
+                    Call = RequestType.getRadioSetting;
+                    Parse = ParseRadio;
+                }
+                else if (setting.Type == SettingType.WireLan)
+                {
+                    Call = RequestType.getRepeaterSetting;
+                    Parse = ParseWireLan;
+                }
+            }
+            else if (setting.Op == SettingOpType.Set)
+            {
+                if (setting.Type == SettingType.Base) Call = RequestType.setBaseSetting;
+                else if (setting.Type == SettingType.Radio) Call = RequestType.setRadioSetting;
+                else if (setting.Type == SettingType.WireLan) Call = RequestType.setRepeaterSetting;
+
+                Parse = ParseStatus;
             }
 
-            Uri uri = new Uri("/DefaultConfiguration.txt", UriKind.Relative);
-            StreamResourceInfo info = Application.GetResourceStream(uri);
-            byte[] rx = new byte[10240];
-            info.Stream.Read(rx, 0, (int)info.Stream.Length);
-            string str = Encoding.ASCII.GetString(rx);
-            str = str.Substring(str.IndexOf("{"), str.LastIndexOf("}") - str.IndexOf("{") + 1);
-            return JsonConvert.DeserializeObject<Setting>(str);
-        }
-        public void Set(Setting setting)
-        {
-            //CallRpc(RequestType.setBase,setting.Base, new ParseResult(ParseStatus));
-
-            CallRpc(RequestType.setBaseSetting, setting.Base.GetBaseSettingStr(), new ParseResult(ParseStatus));
-            CallRpc(RequestType.setRadioSetting, setting.Radio.GetRadioSettingStr(), new ParseResult(ParseStatus));
-            CallRpc(RequestType.setRepeaterSetting, setting.WireLan.GetWireLanSettingStr(), new ParseResult(ParseStatus));
+            CallId = PN;
+            Param = setting.Configure;
         }
 
-        public Setting Get()
-        {
-            Setting setting = new Setting();
-            setting.Base = (BaseSetting)CallRpc(RequestType.getBaseSetting, new ParseResult(ParseBase));
-            setting.Radio = (RadioSetting)CallRpc(RequestType.getRadioSetting, new ParseResult(ParseRadio));
-            setting.WireLan = (WireLanSetting)CallRpc(RequestType.getRepeaterSetting, new ParseResult(ParseWireLan));
 
+        public string Json
+        {
+            get
+            {
+                return JsonConvert.SerializeObject(this.ToStr()) + "\r\n";
+            }
+        }
+
+        public object ToStr()
+        {
+            if (null == Param) return new SettingMgrSimpleStr()
+            {
+                call = Call.ToString(),
+                callId = CallId.ToString(),
+            };
+            else return new SettingMgrStr()
+            {
+                call = Call.ToString(),
+                callId = CallId.ToString(),
+                param = Param
+            };
+        }
+
+        private static object ParseStatus(object obj)
+        {
+            TServerResponse res = null;
+            if (obj is TServerResponse) res = obj as TServerResponse;
+            else return null;
+
+            if (null == res) return false;
+            return res.status == "success";
+        }
+        private static object ParseBase(object obj)
+        {
+            TServerResponse res = null;
+            if (obj is TServerResponse) res = obj as TServerResponse;
+            else return null;
+
+            if ((null == res) || (null == res.contents)) return null;
+            return JsonConvert.DeserializeObject<BaseSetting>(JsonConvert.SerializeObject(res.contents));
+        }
+
+
+        private static object ParseRadio(object obj)
+        {
+            TServerResponse res = null;
+            if (obj is TServerResponse) res = obj as TServerResponse;
+            else return null;
+
+            if ((null == res) || (null == res.contents)) return null;
+            return JsonConvert.DeserializeObject<RadioSetting>(JsonConvert.SerializeObject(res.contents));
+        }
+
+        private static object ParseWireLan(object obj)
+        {
+            TServerResponse res = null;
+            if (obj is TServerResponse) res = obj as TServerResponse;
+            else return null;
+            if ((null == res) || (null == res.contents)) return null;
+            return JsonConvert.DeserializeObject<WireLanSetting>(JsonConvert.SerializeObject(res.contents));
+        }
+
+        public static void Set(List<Setting> setting)
+        {
+            if (null == setting) return;
+            foreach (Setting set in setting)
+            {
+                set.Set();
+            }
+        }
+
+        public static List<Setting> Get(SettingType[] lst)
+        {
+            List<Setting> setting = new List<Setting>();
+
+            foreach (SettingType type in lst)
+            {
+                setting.Add(new Setting() { Type = type, Configure = new Setting() { Type = type }.Get() });
+            }
             return setting;
         }
-
-        delegate object ParseResult(TcpResponse res);
-
-        private object CallRpc(RequestType type, ParseResult Response = null)
+        public static List<Setting> Get()
         {
-            return CallRpc(type, null, Response);
+            return Get(new SettingType[] {
+                SettingType .Base,
+                SettingType .Radio,
+                SettingType .WireLan,
+            });
         }
-
-        private object CallRpc(RequestType type, object param, ParseResult Response=null)
-        {
-            TServer.WriteString(JsonParse.Req2Json(type, param));
-            if(null != Response)return Response(TServer.ReadString(JsonParse.CallID) as TcpResponse);
-            return null;
-        }
-        private object ParseStatus(TcpResponse res)
-        {
-            if (null == res) return false;
-            return res.IsSuccess;
-        }
-        private object ParseBase(TcpResponse res)
-        {
-            if ((null == res) || (null == res.contents)) return null;
-            return JsonConvert.DeserializeObject<BaseSettingStr>(JsonConvert.SerializeObject(res.contents)).GetBaseSetting();
-        }
-        
-
-        private object ParseRadio(TcpResponse res)
-        {
-            if ((null == res) || (null == res.contents)) return null;
-            return JsonConvert.DeserializeObject<RadioSettingStr>(JsonConvert.SerializeObject(res.contents)).GetRadioSetting();
-        }
-
-        private object ParseWireLan(TcpResponse res)
-        {
-            if ((null == res) || (null == res.contents)) return null;
-            return JsonConvert.DeserializeObject<WireLanSettingStr>(JsonConvert.SerializeObject(res.contents)).GetWireLanSetting();
-        }
-
-
     }
 }

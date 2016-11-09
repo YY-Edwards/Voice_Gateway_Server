@@ -47,7 +47,7 @@ public: // derived from CDbInterface
 	virtual BOOL Open(LPCSTR pstrHost = NULL, WORD port = 3306,
 		LPCSTR pstrUserName = NULL, LPCSTR pstrPassword = NULL, LPCSTR pstrDbName = NULL);
 
-	virtual void Close();
+	virtual void stop();
 
 	virtual BOOL InsertRow(LPCSTR pstrTableName, std::map<std::string, std::string>& v);
 

@@ -38,6 +38,10 @@
 #define CSBK_Location_Request_Time                                             0x52
 #define CSBK_Require_Speed_Horizontal                                          0x74
 #define CSBK_Require_Direction_Horizontal                                      0x69
+
+#define Triggered_location_Start_Answer                  0x0B
+#define Triggered_Location_Stop_Answer                   0x11
+#define Location_Operate_Sucess                          0x38
 typedef struct tagThreadGPS
 {
 	SOCKET           mySocket;
@@ -68,7 +72,7 @@ public:
 	bool InitGPSOverturnSocket(DWORD dwAddress);
 	bool CloseGPSSocket(SOCKET* s);
 	static DWORD WINAPI ReceiveDataThread(LPVOID lpParam);
-	bool SendQueryGPS(DWORD dwRadioID,int queryMode,int cycle);
+	bool SendQueryGPS(DWORD dwRadioID,int queryMode,double cycle);
 	bool StopQueryTriggeredGPS(DWORD dwRadioID,int queryMode);
 	void RecvData();
 private:

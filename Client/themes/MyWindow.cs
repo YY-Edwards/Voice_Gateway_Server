@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Media.Animation;
 using System.Windows.Interop;
 using System.Runtime.InteropServices;
 using System.Windows.Controls;
@@ -11,8 +12,32 @@ using System.Windows.Input;
 
 using Microsoft.Win32;
 
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+
 namespace TrboX
 {
+    public enum DestType
+    {
+        AddEvent,
+        OnConnectTServer,
+    }
+    public class CustomMessage
+    {
+        public DestType Type;
+        public string Contents;
+
+        public CustomMessage()
+        {
+
+        }
+        public CustomMessage(DestType type, string content)
+        {
+            Type = type;
+            Contents = content;
+        }
+    }
+
     [StructLayout(LayoutKind.Sequential)]
     public struct POINT
     {
@@ -40,10 +65,12 @@ namespace TrboX
         private const int WM_SYSCOMMAND = 0x112;
         public const int WM_LBUTTONUP = 0x0202;
         private HwndSource hs;
+        private static Dictionary<string, HwndSource> hwnd =new Dictionary<string, HwndSource>();
         IntPtr retInt = IntPtr.Zero;
         public double relativeClip = 14;
 
-        public string SubTitle { set { SetSubTitle(value); } get { return SubTitle; } }
+        public string SubTitle { set { SetSubTitle(value); } get { return GetSubTitle(); } }
+        public Brush WindowBackground { set { SetWindowBackground(value); } get { return GetWindowBackground(); } }
 
         public MINMAXINFO m_mmi;
         public MINMAXINFO MinMaxInfo { get{return m_mmi;} }
@@ -64,6 +91,11 @@ namespace TrboX
         {
             hs = PresentationSource.FromVisual((Visual)sender) as HwndSource;
             hs.AddHook(new HwndSourceHook(WndProc));
+            try
+            {
+                hwnd.Add(Title, hs);
+            }
+            catch { }
         }
 
         private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
@@ -97,6 +129,10 @@ namespace TrboX
 
                 case 0x03 ://WM_MOVE = 0x03
 
+                    break;
+
+                case 0x0F04:
+                    omcustomhandler(wParam, (int)lParam);
                     break;
                 default: break;
             }
@@ -215,6 +251,45 @@ namespace TrboX
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
+        public static void PushMessage(CustomMessage dest)
+        {
+            string str = JsonConvert.SerializeObject(dest);
+            byte[] adest = Encoding.Default.GetBytes(str);
+            IntPtr pdest = Marshal.AllocHGlobal(adest.Length);
+            Marshal.Copy(adest, 0, pdest, adest.Length);
+
+
+            try
+            {
+                if (hwnd.ContainsKey("TrboX"))
+                {
+                    if (hwnd["TrboX"] != null) SendMessage(hwnd["TrboX"].Handle, 0x0F04, pdest, (IntPtr)adest.Length);
+                }
+            }
+            catch { }
+        }
+
+        private void omcustomhandler(IntPtr wParam, int len)
+        {
+            byte[] adest = new  byte[len];
+            Marshal.Copy(wParam, adest, 0, len);
+            string str = Encoding.Default.GetString(adest);
+
+            try
+            {
+                CustomMessage obj = JsonConvert.DeserializeObject<CustomMessage>(str);
+
+                OnCustomMsg(obj);
+            }
+            catch
+            {
+            
+            }
+        }
+
+        public virtual void OnCustomMsg(CustomMessage dest)
+        {}
+
         private void ResizeWindow(ResizeDirection direction)
         {
             SendMessage(hs.Handle, WM_SYSCOMMAND, (IntPtr)(61440 + direction), IntPtr.Zero);
@@ -237,6 +312,21 @@ namespace TrboX
             this.WindowState = WindowState.Normal;
         }
 
+
+        public void SetWindowBackground(Brush brush)
+        {
+            ControlTemplate baseWindowTemplate = this.Template;
+            Border bdr_win = (Border)baseWindowTemplate.FindName("bdr_win", this);
+            bdr_win.Background = brush;
+        }
+
+        public Brush GetWindowBackground()
+        {
+            ControlTemplate baseWindowTemplate = this.Template;
+            Border bdr_win = (Border)baseWindowTemplate.FindName("bdr_win", this);
+            return bdr_win.Background as Brush;
+        }
+
         public string  SetSubTitle(string title)
         {
             ControlTemplate baseWindowTemplate = this.Template;
@@ -244,6 +334,14 @@ namespace TrboX
             if (null == lab_SubTitle) return "";
             lab_SubTitle.Content = title;
             return title;
+        }
+
+        public string GetSubTitle()
+        {
+            ControlTemplate baseWindowTemplate = this.Template;
+            Label lab_SubTitle = (Label)baseWindowTemplate.FindName("lab_SubTitle", this);
+            if (null == lab_SubTitle) return "";
+            return lab_SubTitle.Content as string;
         }
        
         private void InitializeEvent()
@@ -468,5 +566,20 @@ namespace TrboX
                 ResizeWindow(ResizeDirection.Left);
             }
         }
+
+        public static SolidColorBrush InCallBrush
+        {
+                    get{
+                        ColorAnimation colorAnm = new ColorAnimation(Color.FromArgb(255, 39, 115, 197), new Duration(TimeSpan.FromSeconds(0.1)));
+                        colorAnm.AutoReverse = true;
+                        colorAnm.From = Color.FromArgb(255, 151, 197, 247);
+                        colorAnm.RepeatBehavior = RepeatBehavior.Forever;
+
+                        SolidColorBrush myBrush = new SolidColorBrush();
+                        myBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnm);
+                        return myBrush;
+                    }                
+
+                }
     }
 }

@@ -29,7 +29,8 @@ extern std::map<SOCKET, DispatchOperate*>  m_dispatchOperate;
 #define GLOG_NO_ABBREVIATED_SEVERITIES // 没这个编译会出错,传说因为和Windows.h冲突
 #include "../lib/glog/logging.h"
 #pragma comment(lib,"../lib/glog/lib/libglog.lib")
-
+#pragma comment(lib,"setupapi.lib")
+#pragma comment(lib,"hid.lib")
 
 #define DEBUG_LOG  TRUE
 #pragma warning(disable:4996)

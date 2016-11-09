@@ -31,13 +31,19 @@ namespace TrboX
             m_Main.tab_Mgr.SelectionChanged += delegate {UpdateView();};
             m_Main.btn_ResSearch.Click += delegate { UpdateView(); };
 
-            Thread t = new Thread(() => { NoficationThread(); });
+
+            m_Main.tree_OrgView.PreviewMouseDoubleClick += delegate { };
+            m_Main.lst_Employee.PreviewMouseDoubleClick += delegate{ };
+            m_Main.lst_Vehicle.PreviewMouseDoubleClick += delegate { };
+            m_Main.lst_Group.PreviewMouseDoubleClick += delegate { };
+            m_Main.lst_Radio.PreviewMouseDoubleClick += delegate { };
+
+            Thread t = new Thread(() => { ResourceUpdateThread(); });
             t.Start();
 
 
             ResourceMgr ResMgr = new ResourceMgr();
             ResMgr.Get();
-
         }
 
         private enum ContextMenuType
@@ -47,6 +53,8 @@ namespace TrboX
             RadioOn,
             RadioOff,
         };
+
+
 
         private ContextMenu CreateOrgMenu(ContextMenuType type)
         {
@@ -404,13 +412,12 @@ namespace TrboX
         {
             m_Main.Dispatcher.Invoke(new Action(() =>
             {
-                m_TargetList = Target.TargetList;
+                m_TargetList = TargetMgr.TargetList;
                 Filter(m_Main.txt_ResCondition.Text);
 
 
                 if (null != m_Main.tab_Mgr) switch (m_Main.tab_Mgr.SelectedIndex)
-                    { 
-                
+                    {             
                     case 0:
                       FillDataToOrgTreeView();break;
                 case 1:
@@ -478,21 +485,164 @@ namespace TrboX
             willdel.Clear();
         }
 
-        private void NoficationThread()
+
+        private bool IsNeedUpdate = false;
+
+        public void SetRadioOnline(long id , bool online)
+        {
+            try
+            {                
+                var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Radio.RadioID == id);
+                foreach (var item in radio)
+                {
+                    item.Value.Radio.IsOnline = online;
+                    Target.Update(item.Value.Radio);
+                    IsNeedUpdate = true;
+
+                    m_Main.SubWindow.UpdateOpWin(item.Value, 1, online);
+                    m_Main.WorkArea.FastPanel.UpdateOpWin(item.Value, 1, online);
+                    return;
+                }
+
+                Target.Update(new Radio() {ID = -2, RadioID  = id, IsOnline = online});
+                IsNeedUpdate = true;
+            }
+            catch
+            {}
+        }
+
+        public void SetGpsOnline(long id, bool online)
+        {
+            try
+            {
+                var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Radio.RadioID == id);
+                foreach (var item in radio)
+                {
+                    item.Value.Radio.IsGPS = online;
+                    Target.Update(item.Value.Radio);
+
+                    m_Main.SubWindow.UpdateOpWin(item.Value, 2, online);
+                    m_Main.WorkArea.FastPanel.UpdateOpWin(item.Value, 2, online);
+
+                    IsNeedUpdate = true;
+                    return;
+                }
+
+                Target.Update(new Radio() { ID = -2, RadioID = id, IsGPS = online });
+                IsNeedUpdate = true;
+            }
+            catch
+            { }
+        }
+
+        public void SetTx(TargetType type, long id, bool online)
+        {
+            try
+            {
+                if (type == TargetType.All)
+                {
+                    TargetMgr.IsTx = online;
+                    m_Main.SubWindow.UpdateOpWin(null, 4, online);
+                    m_Main.WorkArea.FastPanel.UpdateOpWin(null,4, online);
+                }
+                else if (type == TargetType.Private)
+                {
+                    var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Radio.RadioID == id);
+                    foreach (var item in radio)
+                    {
+                        item.Value.Radio.IsTx = online;
+                        Target.Update(item.Value.Radio);
+                        IsNeedUpdate = true;
+
+                        m_Main.SubWindow.UpdateOpWin(item.Value, 4, online);
+                        m_Main.WorkArea.FastPanel.UpdateOpWin(item.Value, 4, online);
+                        return;
+                    }
+
+                    Target.Update(new Radio() { ID = -2, RadioID = id, IsTx = online });
+                    IsNeedUpdate = true;
+                }
+                else if (type == TargetType.Group)
+                {
+                    var group = TargetMgr.TargetList.Group.Where(p => p.Value.Group.GroupID == id);
+                    foreach (var item in group)
+                    {
+                        item.Value.Group.IsTx = online;
+                        Target.Update(item.Value.Group);
+                        IsNeedUpdate = true;
+
+                        m_Main.SubWindow.UpdateOpWin(item.Value, 4, online);
+                        m_Main.WorkArea.FastPanel.UpdateOpWin(item.Value, 4, online);
+                        return;
+                    }
+
+                    Target.Update(new Department() { ID = -2, Name = "组：" + id.ToString(), GroupID = id, IsTx = online });
+                    IsNeedUpdate = true;
+                }
+            }
+            catch
+            { }
+        }
+        public void SetRx(TargetType type, long id, bool online)
+        {
+            try
+            {
+                if (type == TargetType.All)
+                {
+                    TargetMgr.IsRx = online;
+                    m_Main.SubWindow.UpdateOpWin(null, 8, online);
+                    m_Main.WorkArea.FastPanel.UpdateOpWin(null, 8, online);
+                }
+                else  if (type == TargetType.Private)
+                {
+                    var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Radio.RadioID == id);
+                    foreach (var item in radio)
+                    {
+                        item.Value.Radio.IsRx = online;
+                        Target.Update(item.Value.Radio);
+                        IsNeedUpdate = true;
+
+                        m_Main.SubWindow.UpdateOpWin(item.Value, 8, online);
+                        m_Main.WorkArea.FastPanel.UpdateOpWin(item.Value, 8, online);
+                        return;
+                    }
+
+                    Target.Update(new Radio() { ID = -2, RadioID = id, IsRx = online });
+                    IsNeedUpdate = true;
+                }
+                else if (type == TargetType.Group)
+                {
+                    var group = TargetMgr.TargetList.Group.Where(p => p.Value.Group.GroupID == id);
+                    foreach (var item in group)
+                    {
+                        item.Value.Group.IsRx = online;
+                        Target.Update(item.Value.Group);
+                        IsNeedUpdate = true;
+
+                        m_Main.SubWindow.UpdateOpWin(item.Value, 8, online);
+                        m_Main.WorkArea.FastPanel.UpdateOpWin(item.Value, 8, online);
+                        return;
+                    }
+
+                    Target.Update(new Department() { ID = -2, Name = "组：" + id.ToString(), GroupID = id, IsRx = online });
+                    IsNeedUpdate = true;
+                }
+            }
+            catch
+            { }
+        }
+
+
+        private void ResourceUpdateThread()
         {
             while(true)
             {
-                //foreach (var rad in m_TargetList.Radio)
-                //{
-                //    if (null != rad.Value.Radio)
-                //    {
-                //        CRadio radio = new CRadio() { ID = rad.Value.Radio.ID, RadioID = rad.Value.Radio.RadioID, IsOnline = !rad.Value.Radio.IsOnline, Type = rad.Value.Radio.Type };
-                //        m_Target.Update(radio);
-                //    } 
-                //}
-
-                //UpdateView();
-                Thread.Sleep(5000);
+                if (IsNeedUpdate)
+                {
+                    UpdateView();
+                    IsNeedUpdate = false;
+                }
+                Thread.Sleep(1000);
             }
         }
 

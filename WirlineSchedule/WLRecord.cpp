@@ -6,7 +6,7 @@
 WLRecord::WLRecord(CMySQL *pDb)
 {
 	m_hVoiceDataListLocker = CreateMutex(NULL, FALSE, NULL);
-	m_hFileArrived = CreateEvent(NULL, TRUE, FALSE, NULL);
+	m_hFileArrived = CreateEvent(NULL, FALSE, FALSE, NULL);
 	ZeroMemory(m_strAudioFilePath, PATH_FILE_MAXSIZE*sizeof(wchar_t));
 	wcscpy_s(m_strAudioFilePath, L"C:\\WirelineScheduleVoiceData");
 	m_pDb = pDb;
@@ -31,21 +31,12 @@ void WLRecord::OnNewVoiceRecord(LPBYTE pData, DWORD dwSize, DWORD srcId, DWORD t
 	{
 		return;
 	}
-	//sprintf_s(m_reportMsg, "OnNewVoiceRecord start push");
-	//sendLogToWindow();
-
-	//if (g_pNet->isTargetMeCall(tgtId,callType))
-	//{
-	//	g_pNet->Send_CARE_CALL_STATUS(callType, srcId, tgtId, END_CALL_NO_PLAY);
-	//}
 
 	CVoiceData *pVoiceData = new CVoiceData(pData, dwSize, srcId, tgtId, callType, recordType, srcPeerId, srcSlot, srcRssi,callStatus,pTime);
 	WaitForSingleObject(m_hVoiceDataListLocker, INFINITE);
 	m_voiceDataList.push_back(pVoiceData);
 	ReleaseMutex(m_hVoiceDataListLocker);
 	SetEvent(m_hFileArrived);
-	//sprintf_s(m_reportMsg, "OnNewVoiceRecord end push");
-	//sendLogToWindow();
 }
 
 BOOL WLRecord::WriteVoiceFile()
@@ -98,8 +89,12 @@ BOOL WLRecord::WriteVoiceFile()
 			voiceRecord["record_type"] = str + temp;
 			sprintf_s(temp, "%d", (*i)->m_callStatus);
 			voiceRecord["call_status"] = str + temp;
-			sprintf_s(temp, "%04u-%02u-%02u %02u:%02u:%02u", (*i)->m_time.wYear, (*i)->m_time.wMonth, (*i)->m_time.wDay, (*i)->m_time.wHour, (*i)->m_time.wMinute, (*i)->m_time.wSecond);
-			voiceRecord["time"] = str + temp;
+			if (0 != (*i)->m_time.wYear)
+			{
+				sprintf_s(temp, "%04u-%02u-%02u %02u:%02u:%02u", (*i)->m_time.wYear, (*i)->m_time.wMonth, (*i)->m_time.wDay, (*i)->m_time.wHour, (*i)->m_time.wMinute, (*i)->m_time.wSecond);
+				voiceRecord["time"] = str + temp;
+			}
+
 		}
 		catch (...){
 			sprintf_s(m_reportMsg, "WriteVoiceFile error");
@@ -144,7 +139,6 @@ DWORD WLRecord::WriteVoiceFileThread()
 	while (!m_bExit)
 	{
 		DWORD ret = WaitForSingleObject(m_hFileArrived, 1000);
-		// check list
 		WriteVoiceFile();
 	}
 	return 0;
@@ -159,4 +153,15 @@ unsigned __stdcall WLRecord::WriteVoiceFileThreadProc(LPVOID pVoid)
 	}
 
 	return 0;
+}
+
+void WLRecord::stop()
+{
+	if (NULL != m_writeFileThread)
+	{
+		m_bExit = true;
+		SetEvent(m_hFileArrived);
+		WaitForSingleObject(m_writeFileThread, 1000);
+		CloseHandle(m_writeFileThread);
+	}
 }

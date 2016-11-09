@@ -12,7 +12,7 @@ void recvArsAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 
 	try{
 
-		std::string callCommand = CRpcJsonParser::mergeCommand("SendArs", callId, param.c_str(), type.c_str());
+		std::string callCommand = CRpcJsonParser::mergeCommand("sendArs", callId, param.c_str(), type.c_str());
 		int ret = CBroker::instance()->getRpcServer()->sendRequest(callCommand.c_str(),
 			callId,
 			pRemote,

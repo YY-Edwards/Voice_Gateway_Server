@@ -5,7 +5,7 @@
 #include "../lib/rpc/include/RpcJsonParser.h"
 #pragma comment(lib, "wsock32.lib")
 
-
+#define MSG_PORT   4007
 CTextMsg::CTextMsg()
 : m_RcvSocketOpened(false)
 {
@@ -49,7 +49,7 @@ bool CTextMsg::InitSocket(SOCKET *s, DWORD dwAddress, CRemotePeer * pRemote)
 
 
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(4007);
+	addr.sin_port = htons(MSG_PORT);
 	addr.sin_addr.s_addr = dwAddress;
 	ret = ::bind(*s, (struct sockaddr *) &addr, sizeof(addr));
 	if ( ret== SOCKET_ERROR)
@@ -410,6 +410,36 @@ bool CTextMsg::SendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet)
 	if (-1 == bytesSend)
 	{
 		int a = GetLastError();
+
+		list<AllCommand>::iterator it;
+		m_allCommandListLocker.lock();
+		for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+		{
+			//if (it->ackNum == SeqNum)
+			{
+				if (pRemotePeer != NULL&& pRemotePeer == it->pRemote &&it->radioId == m_ThreadMsg->radioID)
+				{
+					ArgumentType args;
+					args["Source"] = FieldValue(m_ThreadMsg->radioID);
+					args["contents"] = FieldValue("");
+					args["status"] = FieldValue(REMOTE_FAILED);
+					if (it->command == SEND_PRIVATE_MSG)
+					{
+						args["type"] = FieldValue(PRIVATE);
+					}
+					else if (it->command == SEND_GROUP_MSG)
+					{
+						args["type"] = FieldValue(GROUP);
+					}
+					std::string callJsonStr = CRpcJsonParser::buildCall("messageStatus", ++seq, args, "radio");
+					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+					it = allCommandList.erase(it);
+					break;
+				}
+
+			}
+		}
+		m_allCommandListLocker.unlock();
 #if DEBUG_LOG
 		LOG(INFO) << "发送短信失败";
 #endif
@@ -465,18 +495,29 @@ void CTextMsg::RecvMsg()
 			{
 				if (it->ackNum == SeqNum)
 				{
-					if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
+					if (pRemotePeer != NULL&& pRemotePeer == it->pRemote &&it->radioId == m_ThreadMsg->radioID)
 					{
 						ArgumentType args;
-						args["id"] = FieldValue( stringId.c_str());
-						std::string callJsonStr = CRpcJsonParser::buildResponse("1", it->callId, 0, "sucess", args);
+						args["Source"] = FieldValue(NULL);
+						args["Target"] = FieldValue(m_ThreadMsg->radioID);
+						args["contents"] = FieldValue("");
+						args["status"] = FieldValue(REMOTE_SUCESS);
+						if (it->command == SEND_PRIVATE_MSG)
+						{
+							args["type"] = FieldValue(PRIVATE);
+						}
+						else if (it->command == SEND_GROUP_MSG)
+						{
+							args["type"] = FieldValue(GROUP);
+						}						
+						std::string callJsonStr = CRpcJsonParser::buildCall("messageStatus", ++seq, args, "radio");
 						pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 						it = allCommandList.erase(it);
 						break;
 					}
 					
 				}
-				break;
+				
 			}
 			m_allCommandListLocker.unlock();
 	}
@@ -518,16 +559,12 @@ void CTextMsg::RecvMsg()
 				ArgumentType args;
 				args["Source"] = FieldValue(radioID);
 				args["contents"] = FieldValue(message.c_str());
-				args["type"] = FieldValue("Private");
+				args["type"] = FieldValue(PRIVATE);
 				std::string callJsonStrRes = CRpcJsonParser::buildCall("message", ++seq, args,"radio");
-				ArgumentType arg;
-				arg["Target"] = FieldValue(stringId.c_str());
-				arg["IsOnline"] = FieldValue("True");
-				std::string callJsonStrCall = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+		
 				if (pRemotePeer != NULL)
 				{
 					pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-					pRemotePeer->sendResponse((const char *)callJsonStrCall.c_str(), callJsonStrCall.size());
 #if DEBUG_LOG
 					LOG(INFO) << "接收到短信 ： " + callJsonStrRes;
 #endif
@@ -537,6 +574,28 @@ void CTextMsg::RecvMsg()
 #if DEBUG_LOG
 					LOG(INFO) << "接收到短信，但是此短信的目的地没建立tcp连接！";
 #endif
+				}
+
+				//查看状态，状态发生改变时，通知特Tserver
+				ArgumentType arg;
+				arg["Target"] = FieldValue(stringId.c_str());
+				if (radioStatus.find(stringId) == radioStatus.end())
+				{
+					status st;
+					st.id = m_ThreadMsg->radioID;
+					st.status = RADIO_STATUS_ONLINE;
+					radioStatus[stringId] = st;
+					arg["IsOnline"] = FieldValue("True");
+					std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
+					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+				}
+				else if (radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
+				{
+					radioStatus[stringId].status = RADIO_STATUS_ONLINE;
+
+					arg["IsOnline"] = FieldValue("True");
+					std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
+					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 				}
 			}
 			catch (std::exception e)

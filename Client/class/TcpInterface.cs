@@ -9,31 +9,67 @@ using System.Threading;
 
 namespace TrboX
 {
+    public delegate void OnConnectDel();
+    public delegate void OnTcpRx(string str);
     public class TcpInterface
     {
+        private OnTcpRx m_OnRx = null;
+     
         private Socket clientSocket;
-
         private Dictionary<Int64, object> ReceiveStr = new Dictionary<Int64, object>();
+        public bool isConnect = true;
+        private IPEndPoint m_addr;
+
+        public OnConnectDel OnConnect = null;
+        public OnConnectDel OnDisconnect = null;
+
+        private static Thread thread = null;
 
         public TcpInterface(IPEndPoint addr)
         {
-            clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            try
-            {
-                clientSocket.Connect(addr); //配置服务器IP与端口  
-                Console.WriteLine("连接服务器成功");
-            }
-            catch
-            {
-                Console.WriteLine("连接服务器失败，请按回车键退出！");
-                return;
-            }
+            m_addr = addr;
 
             ThreadStart threadStart = new ThreadStart(delegate() { while (true)ReceiveString(); });
             Thread th = new Thread(threadStart);
-            th.Start();
-
+ 
         }
+
+        public TcpInterface(IPEndPoint addr, OnTcpRx OnRx)
+        {
+            m_addr = addr;
+            m_OnRx = OnRx;
+
+            ThreadStart threadStart = new ThreadStart(delegate() { while (true)ReceiveString(); });
+            thread = new Thread(threadStart);
+        }
+
+        private void TryConnect()
+        {
+            Open();
+        }
+
+        public void Open()
+        {
+            clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            try
+            {              
+                clientSocket.Connect(m_addr); //配置服务器IP与端口  
+               // Console.WriteLine("连接服务器成功");               
+                isConnect = true;
+                DataBase.InsertLog("连接服务器" + m_addr.ToString() + "成功");
+                
+                if (OnConnect != null) OnConnect();
+            }
+            catch
+            {
+                //Console.WriteLine("连接服务器失败");
+                if (isConnect) DataBase.InsertLog("连接服务器" + m_addr.ToString() + "失败");
+                isConnect = false;
+            }
+
+            if (thread != null && !thread.IsAlive)thread.Start(); 
+        }
+
 
         public void Close()
         {
@@ -43,100 +79,69 @@ namespace TrboX
                 clientSocket.Shutdown(SocketShutdown.Both);
                 clientSocket.Close();
             }
-            catch { }
+            catch {
+                DataBase.InsertLog("关闭Shocket失败");
+            }
             clientSocket = null;
-            Console.WriteLine("断开服务器");
+           // Console.WriteLine("断开服务器");
+            isConnect = false;
+            if (OnDisconnect != null) OnDisconnect();
         }
 
         public void WriteString(string str)
         {
+            if (isConnect == false) return;
 
             for (int i = 0; i < 10; i++)
             {
                 try
                 {
-                    clientSocket.Send(Encoding.ASCII.GetBytes(str));
-                    Console.WriteLine("向服务器发送消息：{0}", str);
+                    clientSocket.Send(Encoding.Default.GetBytes(str));
+                    //Console.WriteLine("向服务器发送消息：{0}", str);
+                    DataBase.InsertLog("Write To" + m_addr.ToString() + ":" + str);
                     return;
                 }
                 catch
-                {
-                    Thread.Sleep(10);    //等待1秒钟  
+                {                   
+                    Thread.Sleep(100);    //等待1秒钟  
                     continue;
                 }
             }
 
+            if (isConnect) DataBase.InsertLog("连接服务器" + m_addr.ToString() + "失败");
+            isConnect = false;
+            
             Close();
         }
 
         public void ReceiveString()
         {
-            try
+            while(true)
             {
-                byte[] result = new byte[1024];
-                int receiveLength = clientSocket.Receive(result);
-                string rxstr = Encoding.ASCII.GetString(result, 0, receiveLength);
-
-                object res = JsonParse.Json2Rep(rxstr);
-                if (null == res) return;
-
-                lock (ReceiveStr)
+                if (!isConnect)
                 {
-                    if (res is TcpResponse)
-                    {
-                        ReceiveStr.Add(((TcpResponse)res).callId, (TcpResponse)res);
-                    }
-                    else if (res is TcpRequset)
-                    {
-                        ReceiveStr.Add(((TcpRequset)res).callId, (TcpRequset)res);
-                    }
+                    TryConnect();
+                    Thread.Sleep(3000);   
                 }
-                Console.WriteLine("接收消息：{0}", rxstr);
-            }
-            catch
-            {
-                Console.WriteLine(" 连接异常");
-            }
-            Thread.Sleep(10);
-        }
-
-        public object ReadString(Int64 callId = -1)
-        {
-            object res = null;
-            Int64 del = -1;
-            for (int i = 0; i < 50; i++)
-            {
-                lock (ReceiveStr)
+                try
                 {
-                    if (ReceiveStr.Count > 0)
-                    {
-                        try
-                        {
-                            if (callId < 0)
-                            {
-                                foreach (var value in ReceiveStr)
-                                {
-                                    res = value.Value;
-                                    del = value.Key;
-                                    break;
-                                }
-                            }
-                            else
-                            {
-                                res = ReceiveStr[callId];
-                                del = callId;
-                            }
+                    byte[] result = new byte[1024];
+                    int receiveLength = clientSocket.Receive(result);
+                    string rxstr = Encoding.ASCII.GetString(result, 0, receiveLength);
 
-                            break;
-                        }
-                        catch { }
-                    }
+                    DataBase.InsertLog("Receive From" + m_addr.ToString() + ":" + rxstr);
+                    m_OnRx(rxstr);
+
                 }
-                Thread.Sleep(100);
-            }
+                catch
+                {
+                    if (isConnect) DataBase.InsertLog("连接服务器" + m_addr.ToString() + "失败");
+                    isConnect = false;
+                    //Console.WriteLine(" 连接异常");
+                } 
 
-            ReceiveStr.Remove(del);
-            return res;
+                Thread.Sleep(100);   
+            }  
         }
     }
 }

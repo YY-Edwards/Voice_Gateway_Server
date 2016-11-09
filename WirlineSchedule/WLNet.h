@@ -288,7 +288,6 @@ public:
 	int SendFile(unsigned int length, char* pData);
 	//short Build_WL_VC_VOICE_BURST(char* pAmbeData, long& lengthAmbe, bool isfirst = false);
 	short Build_WL_VC_VOICE_BURST(CHAR* pPacket, T_WL_PROTOCOL_21* pData, bool bFillAmbe);
-	void clearSendVoices();
 	WORD GetCallStatus();
 	void SetCallStatus(WORD value);
 	int callBack();
@@ -308,9 +307,7 @@ public:
 	void releaseRecordEndEvent();
 	void waitRecordEnd();
 	void setCurrentSendVoicePeer(CIPSCPeer* value);
-	void clearPeers();
-	void clearPeer(CIPSCPeer *p);
-	int checkDefaultGroup();
+	int checkDefaultGroupAndTalkTime();
 	/************************************************************************/
 	/* 刷新停留在非调度组的时间戳
 	/************************************************************************/
@@ -318,7 +315,7 @@ public:
 	int setPlayCallOfCare(unsigned char calltype, unsigned long srcId, unsigned long targetId);
 	int thereIsCallOfCare(CRecordFile *pCallRecord);
 	/*告知界面当前存在需要关注的通话正在进行以及状态*/
-	int Send_CARE_CALL_STATUS(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status);
+	int sendCallStatus(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status);
 
 protected:
 	/*
@@ -378,7 +375,7 @@ public:
 	/*
 	* Stop wirelan gateway network
 	*/
-	void StopNet();
+	void stop();
 
 	//delete old code
 	/*
@@ -537,7 +534,10 @@ private:
 
 	void HangTimerCallCheck();
 	void getWirelineAuthentication(char* pPacket, short &size);
-
+	void clearPeers();
+	void clearPeer(CIPSCPeer *p);
+	void clearSendVoices();
+	void clearVoiceRecords();
 private:
 	int m_retryRequestCallCount;
 	bool m_bIsSending;
@@ -683,8 +683,6 @@ public:
 	//delete old code
 	//void GetLicenseFilePath(CString licenseFilePath);
 private:
-	//delete old code
-	//CString m_strLicenseFilePath;
 	CRecordFile* m_pPlayCall;
 public:
 	void RestartLE();
@@ -692,6 +690,7 @@ public:
 	bool FindLocalIP(WCHAR* strAddr);
 private:
 	bool isLicense;
+	//DWORD m_startTalkTickcount;
 public:
 	//delete old code
 	//void CloseServer();

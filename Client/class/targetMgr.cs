@@ -8,51 +8,35 @@ using Newtonsoft.Json.Linq;
 
 namespace TrboX
 {
-    //[Serializable]
-    //public class CEmployee
-    //{
-    //    public int ID{set; get;}
-    //    public string Name { set; get; } 
-    //}
-
-    //[Serializable]
-    //public class CVehicle
-    //{
-    //    public int ID { set; get; }
-    //    public string Number { set; get; }
-    //}
-
-    //[Serializable]
-    //public class CGroup
-    //{
-    //    public int ID { set; get; }
-    //    public int GroupID{ set; get; }
-    //    public string Name { set; get; } 
-    //}
-
-    //[Serializable]
-    //public class CRadio
-    //{
-    //    public int ID { set; get; }
-    //    public int RadioID { set; get; }
-    //    public bool IsOnline { set; get; }
-    //    public RadioType Type { set; get; }
-    //}
-
-    //public class CRelationship
-    //{
-    //    public int Group { set; get; }
-    //    public int Employee { set; get; }
-    //    public int Vehicle { set; get; }
-    //    public int Radio { set; get; }
-    //}
-
-
     [Serializable]
     public struct TargetSimple
     {
         public TargetType Type;
-        public int ID;
+        public long ID;
+
+        public CMember ToMember()
+        {
+            if (TargetType.Private != Type)
+            {
+                foreach (var group in TargetMgr.TargetList.Group)
+                if (group.Value.Group.GroupID == ID)
+                {
+                    return new CMember(MemberType.Group, group.Value.Group, null, null);
+                }
+                return new CMember(MemberType.Group, new Department() { ID = -1, GroupID = ID, Name = "组：" + ID.ToString() },null, null);
+            }
+
+
+            foreach (var staff in TargetMgr.TargetList.Staff)
+                if ((null != staff.Value.Radio) && (staff.Value.Radio.RadioID == ID)) return staff.Value;
+
+
+            foreach (var radio in TargetMgr.TargetList.Radio)
+                if ((null != radio.Value.Radio) && (radio.Value.Radio.RadioID == ID)) return radio.Value;
+
+            return new CMember(MemberType.Radio, new Department() { ID = -1, GroupID = -1, Name = "未分组" }, null, new Radio() { ID = -1, RadioID = ID, IsOnline = true });
+       
+        }
     }
 
     public enum MemberType
@@ -99,6 +83,7 @@ namespace TrboX
 
         public bool IsLike(CMember member)
         {
+            if (null == member) return false;
             if (MemberType.Group == member.Type)
             {
                 if (Type != member.Type) return false;
@@ -225,9 +210,10 @@ namespace TrboX
     [Serializable]
     public enum TargetType
     {
-        All, 
-        Group,
-        Private
+        None = 0,
+        All = 1,
+        Group = 2,
+        Private = 3,
     };
 
     [Serializable]
@@ -238,6 +224,8 @@ namespace TrboX
         Multiple,
         Single
     };
+
+    public delegate void DisableFuncDel();
 
     [Serializable]
     public class CMultMember
@@ -251,6 +239,83 @@ namespace TrboX
             string tmp = JsonConvert.SerializeObject(this);
             return JsonConvert.DeserializeObject<CMultMember>(tmp);
         }
+
+
+        public void DisableFunc(
+            DisableFuncDel all,
+            DisableFuncDel selectall,
+            DisableFuncDel selectmlt,
+            DisableFuncDel group,
+            DisableFuncDel pri,
+            DisableFuncDel nogps,
+            DisableFuncDel noscreen,
+            DisableFuncDel nokey
+            )
+        {
+            if(Type == SelectionType.All)
+            {
+              if(selectall != null) selectall();
+            }
+            else if (Type != SelectionType.Null) 
+            {
+                if (Type != SelectionType.Multiple)
+                {
+                    if(selectmlt != null) selectmlt();
+                }
+
+                if(Target == null || Target.Count <= 0 ) 
+                {
+                    if(all != null) all();
+                }
+                else{
+
+                     if(Target[0].Type == MemberType.Group)
+                     {
+                         if(group != null) group();
+
+                         if(Target[0].Group == null|| Target[0].Group.GroupID <= 0 )
+                         {
+                             if(all != null) all();
+                         }
+                     }
+                     else
+                     {
+                         if(pri != null) pri();
+                         
+                         if(Target[0].Radio == null|| Target[0].Radio.RadioID <= 0 )
+                         {
+                             if(all != null) all();
+                         } 
+                         else
+                         {
+                            if(!Target[0].Radio.HasGPS)
+                            {
+                                 if(nogps != null) nogps();
+                            } 
+                          
+                            if(!Target[0].Radio.HasScreen)
+                            {
+                                 if(noscreen != null) noscreen();
+                            } 
+
+                            if(!Target[0].Radio.HasKeyboard)
+                            {
+                                 if(nokey != null) nokey();
+                            }
+                         }
+                     
+
+                     }
+                }
+
+
+            }
+            else
+            {
+                if(all != null) all();
+            }                  
+        }
+             
 
         public bool IsEqual(CMultMember member)
         {
@@ -281,7 +346,7 @@ namespace TrboX
 
         public CMember MultToSingle()
         {
-            if((null != Target) ||(0 == Target.Count))return null;
+            if((null == Target) ||(0 == Target.Count))return null;
             return Target[0];
         }
 
@@ -462,14 +527,17 @@ namespace TrboX
 
     public class TargetMgr
     {
-        private Dictionary<int, Staff> m_StaffList = new Dictionary<int, Staff>();
-        private Dictionary<int, Department> m_DepartmentList = new Dictionary<int, Department>();
-        private Dictionary<int, Radio> m_RadioList = new Dictionary<int, Radio>();
-        private List<Belong> m_BelongList = new List<Belong>();
+        private static Dictionary<int, Staff> m_StaffList = new Dictionary<int, Staff>();
+        private static Dictionary<int, Department> m_DepartmentList = new Dictionary<int, Department>();
+        private static Dictionary<int, Radio> m_RadioList = new Dictionary<int, Radio>();
+        private static List<Belong> m_BelongList = new List<Belong>();
 
-        CTargetRes m_TargetList = new CTargetRes();
+        private static CTargetRes m_TargetList = new CTargetRes();
 
-        private bool m_IsChange = false;
+        private static bool m_IsChange = false;
+
+        public static bool IsTx = false;
+        public static bool IsRx = false;
 
         public TargetMgr()
         {
@@ -500,7 +568,7 @@ namespace TrboX
             m_IsChange = true;
         }
 
-        public CTargetRes TargetList
+        public static CTargetRes TargetList
         {
             get {
                 if (m_IsChange) BulidTargetList();
@@ -511,7 +579,14 @@ namespace TrboX
             }
         }
 
-        private void BulidTargetList()
+        public static void UpdateTarget(CTargetRes lst)
+        {
+            //m_IsChange = true;
+            string tmp = JsonConvert.SerializeObject(lst);
+            m_TargetList =  JsonConvert.DeserializeObject<CTargetRes>(tmp);
+        }
+
+        private static void BulidTargetList()
         {
             m_TargetList = new CTargetRes();           
             if (null == m_TargetList.Group) m_TargetList.Group = new Dictionary<int, CMember>();
@@ -571,15 +646,50 @@ namespace TrboX
         {
             if (!m_RadioList.ContainsKey(radio.ID))
             {
-                m_RadioList.Add(radio.ID, radio);
+                for(int i = m_RadioList.Count; i <= m_RadioList.Count + 100; i++)
+                {
+                    if (!m_RadioList.ContainsKey(i))
+                    {
+                        radio.ID = i;
+                        m_RadioList.Add(radio.ID, radio);
+                        m_IsChange = true;
+                        return ;
+                    }
+                }               
             }
             else
             {
                 m_RadioList[radio.ID] = radio;
+                m_IsChange = true;
+                return;
             }
-
-            m_IsChange = true;
+            return;           
         }
+
+        public void Update(Department group)
+        {
+            if (!m_DepartmentList.ContainsKey(group.ID))
+            {
+                for (int i = m_DepartmentList.Count; i <= m_DepartmentList.Count + 100; i++)
+                {
+                    if (!m_DepartmentList.ContainsKey(i))
+                    {
+                        group.ID = i;
+                        m_DepartmentList.Add(group.ID, group);
+                        m_IsChange = true;
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                m_DepartmentList[group.ID] = group;
+                m_IsChange = true;
+                return;
+            }
+            return;
+        }
+
 
         public CMember SimpleToMember(TargetSimple target )
         {

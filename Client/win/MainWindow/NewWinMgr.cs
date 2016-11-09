@@ -57,7 +57,7 @@ namespace TrboX
 
         public void OpenOrCreateTragetWin(CNotification notify)
         {
-            COperate operate = new COperate(OPType.Dispatch, notify.Source.SingleToMult(), null);
+            COperate operate = new COperate(OPType.Dispatch, notify.Source, null);
             switch(notify.Type)
             {
                 case NotifyType.Message:
@@ -157,7 +157,7 @@ namespace TrboX
 
         public void AddNotifyToOperateWin(CNotification notify)
         {
-            CMultMember target = IsExitsWindow(notify.Source.SingleToMult());
+            CMultMember target = IsExitsWindow(notify.Source);
             if(null != target)m_TargetWin[target].RxMessage(notify);            
         }
 
@@ -169,6 +169,56 @@ namespace TrboX
             m_CreateFastOperateWindow.Type = type;
             m_CreateFastOperateWindow.Owner = this.m_Main;
             m_CreateFastOperateWindow.ShowDialog();
+        }
+
+        public void UpdateOpWin(CMember targt, int mask, bool sta)
+        {
+            foreach (var item in m_TargetWin)
+            {
+                if (targt == null)
+                {
+                    if (item.Key != null && item.Key.Type == SelectionType.All)
+                    {
+                        m_TargetWin[item.Key].UpdateSta(mask, sta);
+                    }
+                }
+                else if (item.Key != null && item.Key.Target != null && item.Key.Target.Count > 0)
+                {
+                    foreach(CMember mem in item.Key.Target)
+                    {
+                        if (mem.IsLike(targt))
+                        {
+                            m_TargetWin[item.Key].UpdateSta(mask, sta);
+                            break;
+                        }
+                    }
+                }
+            }          
+        }
+
+        public void AddMessage(CMember targt, CHistory msg)
+        {
+            foreach (var item in m_TargetWin)
+            {
+                if (targt == null)
+                {
+                    if (item.Key != null && item.Key.Type == SelectionType.All)
+                    {
+                        m_TargetWin[item.Key].AddMessage(msg);
+                    }
+                }
+                else if (item.Key != null && item.Key.Target != null && item.Key.Target.Count > 0)
+                {
+                    foreach (CMember mem in item.Key.Target)
+                    {
+                        if (mem.IsLike(targt))
+                        {
+                            m_TargetWin[item.Key].AddMessage(msg);
+                            break;
+                        }
+                    }
+                }
+            }
         }
     }
 }

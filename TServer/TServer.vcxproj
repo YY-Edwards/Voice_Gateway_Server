@@ -101,8 +101,14 @@
     <ClInclude Include="GroupCallAction.h" />
     <ClInclude Include="RadioCheckAction.h" />
     <ClInclude Include="RecvArsAction.h" />
+    <ClInclude Include="RecvCallStatusAction.h" />
+    <ClInclude Include="RecvConnectResultAction.h" />
+    <ClInclude Include="RecvControlResultAction.h" />
     <ClInclude Include="RecvGpsAction.h" />
     <ClInclude Include="RecvMessageAction.h" />
+    <ClInclude Include="RecvMessageResultAction.h" />
+    <ClInclude Include="RecvSendGpsStatus.h" />
+    <ClInclude Include="RecvStatusAction.h" />
     <ClInclude Include="RemotePowerOffAction.h" />
     <ClInclude Include="RemotePowerOnAction.h" />
     <ClInclude Include="SendGroupSmsAction.h" />
@@ -110,6 +116,7 @@
     <ClInclude Include="SettingAction.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="StartAction.h" />
+    <ClInclude Include="StatusAction.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StopCallAction.h" />
     <ClInclude Include="targetver.h" />

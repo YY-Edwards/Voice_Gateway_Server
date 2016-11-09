@@ -53,7 +53,12 @@ namespace TrboX
 
             this.Loaded += delegate
             {
-                if (SelectionType.Single == m_Target.Type)
+                if (SelectionType.All == m_Target.Type)
+                {
+                    Title = "全部设备";
+                    SubTitle = "";
+                }
+                else if (SelectionType.Single == m_Target.Type)
                 {
                     Title = m_Target.Target[0].Name;
                     SubTitle = m_Target.Target[0].Information;
@@ -64,15 +69,94 @@ namespace TrboX
                 }
                 else
                 {
-                    return;
+                    //return;
                 }
-                
+
+                if (m_Target.Type == SelectionType.All)
+                {
+                    if (TargetMgr.IsTx)
+                    {
+                        chk_PTT.IsChecked = true;
+                        WindowBackground = MyWindow.InCallBrush;
+                    }
+                    if (TargetMgr.IsRx)
+                    {
+                        WindowBackground = MyWindow.InCallBrush;
+                    }
+                }
+                else if(m_Target.Target !=null && m_Target.Target.Count > 0)
+                {
+                    foreach (CMember mem in m_Target.Target)
+                    {
+                        if (mem.Type == MemberType.Group)
+                        {
+                            if (mem.Group.IsTx)
+                            {
+                                chk_PTT.IsChecked = true;
+                                 WindowBackground = MyWindow.InCallBrush;
+                              
+                            }
+                            if (mem.Group.IsRx)
+                            {
+                                WindowBackground = MyWindow.InCallBrush;
+                            }
+
+                        }
+                        else
+                        {
+                            if (mem.Radio.IsTx)
+                            {
+                                chk_PTT.IsChecked = true;
+                                WindowBackground = MyWindow.InCallBrush;
+                            }
+
+                            if (mem.Radio.IsRx)
+                            {
+                                WindowBackground = MyWindow.InCallBrush;
+                            }
+
+                            if (mem.Radio.IsGPS) chk_QueryCyclePosition.IsChecked = true;
+                        }
+
+
+
+                    }
+                      
+                    
+                }
+
+
+                m_Target.DisableFunc(
+                    delegate{
+                        chk_PTT.IsEnabled = false;
+                        rad_Call.IsEnabled = false;
+                        rad_Message.IsEnabled = false;
+                        rad_Position.IsEnabled = false;
+                        rad_Jobticket.IsEnabled = false;  
+                        btn_Control.IsEnabled = false;
+                        btn_Check.IsEnabled = false;
+                        btn_Minitor.IsEnabled = false;
+                    },
+                     null, null, null, null, 
+                    delegate{
+                        rad_Position.IsEnabled = false; 
+                    },
+                    delegate{
+                        rad_Message.IsEnabled = false; 
+                    },
+                    null);
 
                 m_View = new OpView(this);
+
+                updatecyclelist(null, null);
 
                 OnChangeOperateType();
 
                 lst_History.View = (ViewBase)FindResource("HistoryView");
+
+
+  
+
             };
             this.Activated += delegate {OnOperateWinActivated(); };    
         }
@@ -83,6 +167,34 @@ namespace TrboX
             m_Main.MsgWin.ClearTarget(m_Target);                     
         }
 
+
+        public void UpdateSta(int mask, bool sta)
+        {
+            this.Dispatcher.Invoke(new Action(() =>
+            {
+                if ((mask & 1) != 0)//olnline
+                {
+                    SubTitle = "(在线)" + SubTitle;
+                }
+                else if ((mask & 2) != 0)//ingps
+                {
+                    chk_QueryCyclePosition.IsChecked = sta;
+                }
+                else if ((mask & 4) != 0)//isTx
+                {
+                    chk_PTT.IsChecked = sta;
+
+                    if (sta) WindowBackground = MyWindow.InCallBrush;
+                    else WindowBackground = new SolidColorBrush(Color.FromArgb(255, 151, 197, 247));
+                }
+                else if ((mask & 8) != 0)//isRx
+                {
+                    if (sta) WindowBackground = MyWindow.InCallBrush;
+                    else WindowBackground = new SolidColorBrush(Color.FromArgb(255, 151, 197, 247));
+                }
+            })); 
+        }
+
         private void UpdateNotify()
         {
             m_Main.Dispatcher.Invoke(new Action(() =>
@@ -91,7 +203,7 @@ namespace TrboX
 
                 foreach (CNotification item in notify)
                 {
-                    if(item.Source.SingleToMult().IsLike(m_Target))
+                    if(item.Source.IsLike(m_Target))
                     {
                         RxMessage(item);
 
@@ -160,9 +272,14 @@ namespace TrboX
             switch (Operate.Type)
             {
                 case OPType.Dispatch:
+                    rad_Call.IsChecked = true;break;
                 case OPType.ShortMessage:
+                    rad_Message.IsChecked = true;break;
                 case OPType.JobTicker:
+                    rad_Jobticket.IsChecked = true;break;
                 case OPType.Position:
+                    rad_Position.IsChecked = true;break;
+
                 case OPType.Tracker:
                 default:
                     break;
@@ -171,6 +288,8 @@ namespace TrboX
 
         public void AddMessage(CHistory msg)
         {
+              this.Dispatcher.Invoke(new Action(() =>
+            {
             if (null == msg) return;
             
             lst_History.Items.Add(msg);
@@ -183,6 +302,7 @@ namespace TrboX
             ListViewAutomationPeer lvap = new ListViewAutomationPeer(lst_History);
             var svap = lvap.GetPattern(PatternInterface.Scroll) as ScrollViewerAutomationPeer;
             ((ScrollViewer)svap.Owner).ScrollToEnd();
+            }));    
         }
 
         private int FindItemInListView(CHistory item)
@@ -237,27 +357,15 @@ namespace TrboX
             }));               
         }
 
-
-        private void btn_PTT_Click(object sender, RoutedEventArgs e)
-        {
-            m_Main.Rpc.ExecuteOperate(new COperate()
-            {
-                Type = OPType.Dispatch,
-                Target = m_Target,
-                Operate = new CDispatch()
-            });
-
-            AddMessage(new CHistory()
-            { 
-            istx = true,
-            type = NotifyType.Call,
-            time = DateTime.Now,
-             content = "语音呼叫"
-            });
-        }
-
         private void btn_SendMsg_Click(object sender, RoutedEventArgs e)
         {
+
+            new COperate()
+            {
+                Type = OPType.ShortMessage,
+                Target = m_Target,
+                Operate = new CShortMessage() { Message = txt_Message.Text },
+            }.Exec();
 
             AddMessage(new CHistory()
             { 
@@ -315,6 +423,226 @@ namespace TrboX
 
         private void btn_AddFastPanel_Click(object sender, RoutedEventArgs e)
         {
+
+        }
+
+        private void btn_QueryPosition_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                new COperate()
+                {
+                    Type = OPType.Position,
+                    Target = m_Target,
+                    Operate = new CPosition() { Type = ExecType.Start, IsCycle = (bool)chk_IsCycle.IsChecked, IsCSBK = (bool)chk_IsCSBK.IsChecked, IsEnh = (bool)chk_IsEnh.IsChecked }
+                }.Exec();
+            }
+            catch { }
+
+            AddMessage(new CHistory()
+            {
+                istx = true,
+                type = NotifyType.Position,
+                time = DateTime.Now,
+                content = "位置查询"
+            });
+        }
+
+
+        private void updatecyclelist(object sender, RoutedEventArgs e)
+        {
+            if (cmb_Cycle == null || chk_IsCSBK == null || chk_IsEnh == null) return;
+            
+            List<double> cyclelist = CPosition.UpdateCycleList((bool)chk_IsCSBK.IsChecked, (bool)chk_IsEnh.IsChecked);
+            cmb_Cycle.Items.Clear();
+            foreach (double cycle in cyclelist)
+                cmb_Cycle.Items.Add(new ComboBoxItem() { Content = cycle.ToString() + "s", Tag = cycle });
+            cmb_Cycle.SelectedIndex = 0;
+
+            if (false == chk_IsCSBK.IsChecked) chk_IsEnh.IsChecked = false;
+        }
+
+
+        private void btn_Control_Click(object sender, RoutedEventArgs e)
+        {
+            new COperate()
+            {
+                Type = OPType.Control,
+                Target = m_Target,
+                Operate = new CControl() { Type  = ControlType.ShutDown }
+            }.Exec();
+
+            AddMessage(new CHistory()
+            {
+                istx = true,
+                type = NotifyType.Control,
+                time = DateTime.Now,
+                content = "遥毙"
+            });
+        }
+
+        private void btn_Control_Selected(object sender, RoutedEventArgs e)
+        {
+            if (btn_Control.SelectedIndex == 0)
+            {
+                new COperate()
+                {
+                    Type = OPType.Control,
+                    Target = m_Target,
+                    Operate = new CControl() { Type = ControlType.ShutDown }
+                }.Exec();
+
+                AddMessage(new CHistory()
+                {
+                    istx = true,
+                    type = NotifyType.Control,
+                    time = DateTime.Now,
+                    content = "遥毙"
+                });
+            }
+            else if (btn_Control.SelectedIndex == 1)
+            {
+                new COperate()
+                {
+                    Type = OPType.Control,
+                    Target = m_Target,
+                    Operate = new CControl() { Type = ControlType.StartUp }
+                }.Exec();
+
+                AddMessage(new CHistory()
+                {
+                    istx = true,
+                    type = NotifyType.Control,
+                    time = DateTime.Now,
+                    content = "遥开"
+                });
+            } 
+        }
+
+        private void btn_Check_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                new COperate()
+                {
+                    Type = OPType.Control,
+                    Target = m_Target,
+                    Operate = new CControl() { Type = ControlType.Check }
+                }.Exec();
+
+                AddMessage(new CHistory()
+                {
+                    istx = true,
+                    type = NotifyType.Control,
+                    time = DateTime.Now,
+                    content = "在线检测"
+                });
+            }
+            catch { }
+        }
+
+        private void btn_Minitor_Click(object sender, RoutedEventArgs e)
+        {
+            new COperate()
+            {
+                Type = OPType.Control,
+                Target = m_Target,
+                Operate = new CControl() { Type = ControlType.Monitor }
+            }.Exec();
+
+            AddMessage(new CHistory()
+            {
+                istx = true,
+                type = NotifyType.Control,
+                time = DateTime.Now,
+                content = "远程监听"
+            });
+        }
+
+        private void chk_PTT_Click(object sender, RoutedEventArgs e)
+        {
+            chk_PTT.IsChecked = !chk_PTT.IsChecked;
+
+
+            if(!(bool)new COperate()
+            {
+                Type = OPType.Dispatch,
+                Target = m_Target,
+                Operate = new CDispatch() { Exec = (bool)chk_PTT.IsChecked ?  ExecType.Stop : ExecType.Start}
+            }.Exec())
+            {              
+               return;
+            }
+
+            if((bool)chk_PTT.IsChecked)
+            AddMessage(new CHistory()
+            {
+                istx = true,
+                type = NotifyType.Call,
+                time = DateTime.Now,
+                content = "结束呼叫"
+            });
+        }
+
+        private void chk_QueryCyclePosition_Click(object sender, RoutedEventArgs e)
+        {
+            chk_QueryCyclePosition.IsChecked = !(bool)chk_QueryCyclePosition.IsChecked;
+
+            COperate operate =  new COperate()
+            {
+                Type = OPType.Position,
+                Target = m_Target,
+                Operate = new CPosition()
+                {
+                    Type = (bool)chk_QueryCyclePosition.IsChecked ? ExecType.Stop : ExecType.Start,                
+                    IsCycle = (bool)chk_IsCycle.IsChecked, 
+                    IsCSBK = (bool)chk_IsCSBK.IsChecked, 
+                    IsEnh = (bool)chk_IsEnh.IsChecked,
+                    Cycle = (double)((ComboBoxItem)cmb_Cycle.SelectedItem).Tag
+                }
+            };
+
+            operate.Exec();
+
+
+            AddMessage(new CHistory()
+            {
+                istx = true,
+                type = NotifyType.Position,
+                time = DateTime.Now,
+                content = (bool)chk_QueryCyclePosition.IsChecked ? "停止周期查询" : "开始周期查询",
+            });
+
+            try
+            {
+                if (((CPosition)operate.Operate).IsCycle || ((CPosition)operate.Operate).Type == ExecType.Stop)
+                {
+                    if (operate.Target.Type == SelectionType.All)
+                    {
+                        var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Radio != null && p.Value.Radio.RadioID > 0);
+                        foreach (var item in radio) m_Main.ResrcMgr.SetGpsOnline(item.Value.Radio.RadioID, ((CPosition)operate.Operate).Type == ExecType.Start);
+
+                    }
+                    else if (operate.Target.Type != SelectionType.Null)
+                    {
+                        foreach (CMember trgt in operate.Target.Target)
+                        {
+                            if (trgt.Type == MemberType.Group)
+                            {
+                                if (trgt.Group == null || trgt.Group.ID <= 0) continue;
+                                var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Group.ID == trgt.Group.ID && p.Value.Radio != null && p.Value.Radio.RadioID > 0);
+                                foreach (var item in radio) m_Main.ResrcMgr.SetGpsOnline(item.Value.Radio.RadioID, ((CPosition)operate.Operate).Type == ExecType.Start);
+                            }
+                            else
+                            {
+                                if (trgt.Radio == null || trgt.Radio.ID <= 0) continue;
+                                m_Main.ResrcMgr.SetGpsOnline(trgt.Radio.RadioID, ((CPosition)operate.Operate).Type == ExecType.Start);
+                            }
+                        }
+                    }
+                }              
+            }
+            catch { }
 
         }
     }

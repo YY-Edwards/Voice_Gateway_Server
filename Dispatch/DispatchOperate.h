@@ -9,7 +9,6 @@
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
 #pragma once
-extern  bool udpIsConnect;
 
 
 
@@ -44,11 +43,51 @@ extern  bool udpIsConnect;
 #define LICENSE                28
 #define CALL_START             29
 #define CALL_END               30
+
+#define RADIO_STATUS_OFFLINE   0
+#define RADIO_STATUS_ONLINE    1
+
+#define DATA_SUCESS_DISPATCH_SUCESS      0
+#define DATA_FAILED_DISPATCH_SUCESS      1
+#define DATA_SUCESS_DISPATCH_FAILED      2
+#define DATA_FAILED_DISPATCH_FAILED      3
+
+
+#define CALL_FAILED              0
+#define CALL_START               1
+#define CALL_END                 2
+
+#define REMOTE_SUCESS             0
+#define REMOTE_FAILED             1
+#define REMOTE_CONNECT_FAOLED     2
+
+#define START                   0
+#define STOP                    1
+#define NONE                    0
+#define ALL                     1
+#define GROUP                   2
+#define PRIVATE                 3
+
+
+#define CONNECT_STATUS          1
+#define RADIO_STATUS            2
+
+#define  RADIOCHECK    0
+#define  MONITOR  1
+#define  OFF      2
+#define  ON       3
+
+
 typedef  struct tagradioStatus{
-	int status;
-	int    gpsQueryMode;
+	int id;
+	int status = 0;
+	int    gpsQueryMode = 0;
 } status;
 extern map<string, status> radioStatus;
+extern  bool isUdpConnect;
+extern  bool isTcpConnect;
+extern string m_radioIP;
+extern string m_mnisIP;
 typedef struct tagAllCommand
 {
 	int callId;
@@ -57,7 +96,7 @@ typedef struct tagAllCommand
 	int timeCount;
 	int command;
 	int radioId;
-	int cycle;
+	double cycle;
 	int querymode;
 	string radioIP;
 	string mnisIP;
@@ -78,8 +117,8 @@ public:
 	static DWORD WINAPI TCPConnectionThread(LPVOID lpParam);
 	static DWORD WINAPI TimeOutThread(LPVOID lpParam);
 	static DWORD WINAPI WorkThread(LPVOID lpParam);
-
-	void AddAllCommand(CRemotePeer* pRemote,SOCKET s, int command, string radioIP, string mnisIP, string gpsIP, int id,wchar_t* text, int cycle, int querymode, int callId);
+	static DWORD WINAPI RadioUsbStatusThread(LPVOID lpParam);
+	void AddAllCommand(CRemotePeer* pRemote,SOCKET s, int command, string radioIP, string mnisIP, string gpsIP, int id,wchar_t* text, double cycle, int querymode, int callId);
 private:
 	void WorkThreadFunc();
 	void TimeOut();
@@ -92,7 +131,7 @@ private:
 	DWORD            dwip;
 	bool             textConnectResult;
 	bool             ARSConnectResult;
-	bool            GPSConnectResult;
+	bool             GPSConnectResult;
 	std::map <int, int> gpsDic;
 	CRemotePeer* pRemotePeer;
 	int callID;
@@ -110,7 +149,7 @@ private:
 	int wiretap(CRemotePeer* pRemote, int id, int callId);
 	int sendSms(CRemotePeer* pRemote, int id, wchar_t* message, int callId);
 	int sendGroupSms(CRemotePeer* pRemote, int id, wchar_t* message, int callId);
-	int getGps(CRemotePeer* pRemote, int id, int queryMode, int cycle, int callId);              //queryMode  12: 常规查询   13： 常规周期查询  14：csbk查询   15： csbk 周期查询
+	int getGps(CRemotePeer* pRemote, int id, int queryMode, double cycle, int callId);              //queryMode  12: 常规查询   13： 常规周期查询  14：csbk查询   15： csbk 周期查询
 	int cancelPollGps(CRemotePeer* pRemote, int id, int callId);
 	int RadioConnect();
 	void TcpConnect();
@@ -122,6 +161,11 @@ private:
 
 
 	std::mutex   m_addCommandLocker;
+	std::mutex   m_connectLocker;
 	list <AllCommand>  commandList;
+	void sendConnectStatusToClient(CRemotePeer* pRemote);
+	void sendRadioStatusToClient(CRemotePeer* pRemote);
+	void sendCallStatusToClient();
+	void radioUsbStatus();
 };
 

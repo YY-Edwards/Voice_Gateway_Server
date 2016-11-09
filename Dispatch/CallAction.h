@@ -6,12 +6,7 @@
 #include "../lib/rpc/include/RpcJsonParser.h"
 
 map<SOCKET, DispatchOperate*>  m_dispatchOperate;
-#define START                   0
-#define STOP                    1
-#define NONE                    0
-#define ALL                     1
-#define GROUP                   2
-#define PRIVATE                 3
+
 
 void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
@@ -43,37 +38,62 @@ void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 			{
 				id = d["Target"].GetInt();
 			}
-			if (operate == START)
+			if (isTcpConnect)
 			{
-				if (opterateType == ALL)
+				if (operate == START)
 				{
-					m_dispatchOperate[s]->AddAllCommand(client,s, ALL_CALL, "", "", "", id, _T(""), 0, 0, callId);
+					if (opterateType == ALL)
+					{
+						m_dispatchOperate[s]->AddAllCommand(client, s, ALL_CALL, "", "", "", id, _T(""), 0, 0, callId);
+					}
+					else if (opterateType == GROUP)
+					{
+						m_dispatchOperate[s]->AddAllCommand(client, s, GROUP_CALL, "", "", "", id, _T(""), 0, 0, callId);
+					}
+					else if (opterateType == PRIVATE)
+					{
+						m_dispatchOperate[s]->AddAllCommand(client, s, PRIVATE_CALL, "", "", "", id, _T(""), 0, 0, callId);
+					}
+					else
+					{
+#if DEBUG_LOG
+						LOG(INFO) << "opterateType 参数不对 ";
+#endif
+					}
 				}
-				else if (opterateType == GROUP)
+				else  if (operate == STOP)
 				{
-					m_dispatchOperate[s]->AddAllCommand(client, s,GROUP_CALL, "", "", "", id, _T(""), 0, 0, callId);
-				}
-				else if (opterateType == PRIVATE)
-				{
-					m_dispatchOperate[s]->AddAllCommand(client, s,PRIVATE_CALL, "", "", "", id, _T(""), 0, 0, callId);
+					m_dispatchOperate[s]->AddAllCommand(client, s, STOP_CALL, "", "", "", id, _T(""), 0, opterateType, callId);
 				}
 				else
 				{
 #if DEBUG_LOG
-					LOG(INFO) << "opterateType 参数不对 ";
+					LOG(INFO) << "Operate 参数不对 ";
 #endif
 				}
 			}
-			else  if (operate == STOP)
-			{
-				m_dispatchOperate[s]->AddAllCommand(client,s, STOP_CALL, "", "", "", id, _T(""), 0, 0, callId);
-			}
 			else
 			{
-#if DEBUG_LOG
-				LOG(INFO) << "Operate 参数不对 ";
-#endif
+				try
+				{
+					ArgumentType args;
+					args["Status"] = FieldValue(REMOTE_FAILED);
+					args["Target"] = FieldValue(id);
+					args["Operate"] = FieldValue(operate);
+					args["Type"] = FieldValue(opterateType);
+					std::string callJsonStr = CRpcJsonParser::buildCall("callStatus", ++seq, args, "radio");
+					if (client != NULL)
+					{
+						client->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());	
+					}
+					
+				}
+				catch (std::exception e)
+				{
+
+				}
 			}
+			
 
 			
 		}

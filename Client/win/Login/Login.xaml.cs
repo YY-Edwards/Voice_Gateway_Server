@@ -11,6 +11,8 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
+using System.Net;
+
 namespace TrboX
 {
     /// <summary>
@@ -22,6 +24,17 @@ namespace TrboX
         public Login()
         {
             InitializeComponent();
+            //DataBase.open(DateTime.Now.Year.ToString() 
+            //    + DateTime.Now.Month.ToString()
+            //    + DateTime.Now.Day.ToString()
+            //    + DateTime.Now.Hour.ToString()
+            //    + DateTime.Now.Minute.ToString()
+            //    + DateTime.Now.Second.ToString()
+            //    + DateTime.Now.Millisecond.ToString() 
+            //    + ".lg");
+
+            DataBase.open("DebugLog.lg");
+            DataBase.InsertLog("---Records Start----------------------------------------------------------");
         }
        private void MyWindow_Closed(object sender, EventArgs e)
         {
