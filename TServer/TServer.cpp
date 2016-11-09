@@ -35,12 +35,16 @@
 #include "ControlAction.h"
 #include "GpsAction.h"
 #include "MsgAction.h"
+#include "StatusAction.h"
 
 #include "RecvMessageAction.h"
+#include "RecvMessageResultAction.h"
 #include "RecvArsAction.h"
 #include "RecvGpsAction.h"
 #include "RecvConnectResultAction.h"
-
+#include "RecvStatusAction.h"
+#include "RecvCallStatusAction.h"
+#include "RecvControlResultAction.h"
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//CSettings::instance()->getResponse("sucess", 1, 200, "", rapidjson::Value(NULL));
@@ -50,29 +54,29 @@ int _tmain(int argc, _TCHAR* argv[])
 	//std::string dsd = CRpcJsonParser::buildCall("dd", 3, ArgumentType(), "raio");
 	//std::string ddddd = CRpcJsonParser::mergeCommand("c", 33, "d", "radio");
 
-//	CBroker::instance();
-//
-//	Sleep(1000);
-//	while (CBroker::instance()->getRadioClient() != nullptr){
-//
-//
-//
-//	std::string callJsonStr = CSettings::instance()->getRequest("connect", "radio", 0, CSettings::instance()->getValue("radio"));
-//
-//	std::string callCommand = CRpcJsonParser::mergeCommand("connect", 0, callJsonStr.c_str());
-//	int ret = CBroker::instance()->getRadioClient()->sendRequest(callCommand.c_str(),
-//		0,
-//		NULL,
-//		[&](const char* pResponse, void* data){
-//		//CRemotePeer* pCommandSender = (CRemotePeer*)data;
-//		//pCommandSender->sendResponse(pResponse, strlen(pResponse));
-//	}, nullptr);
-//
-//	if (-1 != ret)break;
-//	
-//	Sleep(50);
-//
-//}
+	//	CBroker::instance();
+	//
+	//	Sleep(1000);
+	//	while (CBroker::instance()->getRadioClient() != nullptr){
+	//
+	//
+	//
+	//	std::string callJsonStr = CSettings::instance()->getRequest("connect", "radio", 0, CSettings::instance()->getValue("radio"));
+	//
+	//	std::string callCommand = CRpcJsonParser::mergeCommand("connect", 0, callJsonStr.c_str());
+	//	int ret = CBroker::instance()->getRadioClient()->sendRequest(callCommand.c_str(),
+	//		0,
+	//		NULL,
+	//		[&](const char* pResponse, void* data){
+	//		//CRemotePeer* pCommandSender = (CRemotePeer*)data;
+	//		//pCommandSender->sendResponse(pResponse, strlen(pResponse));
+	//	}, nullptr);
+	//
+	//	if (-1 != ret)break;
+	//	
+	//	Sleep(50);
+	//
+	//}
 
 	std::map<std::string, ACTION> serverActions, clientActions;
 
@@ -89,11 +93,16 @@ int _tmain(int argc, _TCHAR* argv[])
 	serverActions["control"] = controlAction;
 	serverActions["queryGps"] = gpsAction;
 	serverActions["message"] = msgAction;
+	serverActions["status"] = statusAction;
 
 	clientActions["message"] = recvMsgAction;
-	clientActions["SendArs"] = recvArsAction;
-	clientActions["SendGps"] = recvGpsAction;
+	clientActions["messageStatus"] = recvMessageResultAction;
+	clientActions["sendArs"] = recvArsAction;
+	clientActions["sendGps"] = recvGpsAction;
 	clientActions["connectStatus"] = recvConnetResultAction;
+	clientActions["status"] = recvStatusAction;
+	clientActions["callStatus"] = recvCallStatusAction;
+	clientActions["controlStatus"] = recvControlResultAction;
 	//CBroker::instance()->startLogClient();
 	CBroker::instance()->startRadioClient(clientActions);
 	CBroker::instance()->startRpcServer(serverActions);

@@ -9,7 +9,6 @@
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
 #pragma once
-extern  bool udpIsConnect;
 
 
 
@@ -60,10 +59,23 @@ extern  bool udpIsConnect;
 
 #define REMOTE_SUCESS             0
 #define REMOTE_FAILED             1
+#define REMOTE_CONNECT_FAOLED     2
 
+#define START                   0
+#define STOP                    1
+#define NONE                    0
 #define ALL                     1
 #define GROUP                   2
 #define PRIVATE                 3
+
+
+#define CONNECT_STATUS          1
+#define RADIO_STATUS            2
+
+#define  RADIOCHECK    0
+#define  MONITOR  1
+#define  OFF      2
+#define  ON       3
 
 
 typedef  struct tagradioStatus{
@@ -71,6 +83,8 @@ typedef  struct tagradioStatus{
 	int    gpsQueryMode;
 } status;
 extern map<string, status> radioStatus;
+extern  bool isUdpConnect;
+extern  bool isTcpConnect;
 typedef struct tagAllCommand
 {
 	int callId;
@@ -100,7 +114,7 @@ public:
 	static DWORD WINAPI TCPConnectionThread(LPVOID lpParam);
 	static DWORD WINAPI TimeOutThread(LPVOID lpParam);
 	static DWORD WINAPI WorkThread(LPVOID lpParam);
-
+	static DWORD WINAPI RadioUsbStatusThread(LPVOID lpParam);
 	void AddAllCommand(CRemotePeer* pRemote,SOCKET s, int command, string radioIP, string mnisIP, string gpsIP, int id,wchar_t* text, int cycle, int querymode, int callId);
 private:
 	void WorkThreadFunc();
@@ -114,7 +128,7 @@ private:
 	DWORD            dwip;
 	bool             textConnectResult;
 	bool             ARSConnectResult;
-	bool            GPSConnectResult;
+	bool             GPSConnectResult;
 	std::map <int, int> gpsDic;
 	CRemotePeer* pRemotePeer;
 	int callID;
@@ -144,6 +158,11 @@ private:
 
 
 	std::mutex   m_addCommandLocker;
+	std::mutex   m_connectLocker;
 	list <AllCommand>  commandList;
+	void sendConnectStatusToClient(CRemotePeer* pRemote);
+	void sendRadioStatusToClient(CRemotePeer* pRemote);
+	void sendCallStatusToClient();
+	void radioUsbStatus();
 };
 

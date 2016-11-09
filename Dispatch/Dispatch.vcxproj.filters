@@ -153,6 +153,9 @@
     <ClInclude Include="ConnectAction.h">
       <Filter>eventAction</Filter>
     </ClInclude>
+    <ClInclude Include="StatusAction.h">
+      <Filter>eventAction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

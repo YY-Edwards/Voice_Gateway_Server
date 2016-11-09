@@ -4,7 +4,7 @@
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
 
-void recvGpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
+void recvCallStatusAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
 
@@ -12,7 +12,7 @@ void recvGpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 
 	try{
 
-		std::string callCommand = CRpcJsonParser::mergeCommand("sendGps", callId, param.c_str(), type.c_str());
+		std::string callCommand = CRpcJsonParser::mergeCommand("callStatus", callId, param.c_str(), type.c_str());
 		int ret = CBroker::instance()->getRpcServer()->sendRequest(callCommand.c_str(),
 			callId,
 			pRemote,

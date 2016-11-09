@@ -70,7 +70,7 @@ bool CRadioARS::CloseARSSocket(SOCKET* s)
 	return TRUE;
 }
 
-bool CRadioARS::SendARSAck(DWORD dwRadioID, int CaiNet)
+bool CRadioARS::sendArsAck(DWORD dwRadioID, int CaiNet)
 {
 	memset(m_ThreadARS->SendBuffer, 0, sizeof(m_ThreadARS->SendBuffer));
 	m_ThreadARS->SendBuffer[0] = 0x00;   //Immediate Location Request
@@ -106,6 +106,7 @@ DWORD WINAPI CRadioARS::ReceiveDataThread(LPVOID lpParam)
 	while (1)
 	{
 		radioARS->RecvData();
+		Sleep(10);
 	
 	}
 	return 1;
@@ -125,6 +126,7 @@ void CRadioARS::RecvData()
 	{
 		//strError.Format(_T("Error\nCall to recvfrom(s, Msg->RcvBuffer, iMessageLen, 0, (struct sockaddr *)&remote_addr, &iRemoteAddrLen); failed   with:\n%d\n"), WSAGetLastError());
 		//break;
+		memset(m_ThreadARS->RcvBuffer, 0, RECV_LENTH);
 	}
 
 	m_ThreadARS->radioID = (m_ThreadARS->remote_addr.sin_addr.S_un.S_un_b.s_b2 << 16) + (m_ThreadARS->remote_addr.sin_addr.S_un.S_un_b.s_b3 << 8) + m_ThreadARS->remote_addr.sin_addr.S_un.S_un_b.s_b4;
@@ -179,7 +181,7 @@ void CRadioARS::RecvData()
 				st.status = RADIO_STATUS_ONLINE;
 				radioStatus[stringId] = st;
 				arg["IsOnline"] = FieldValue("True");
-				std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+				std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
 				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 				seq++;
 			}
@@ -188,7 +190,7 @@ void CRadioARS::RecvData()
 				radioStatus[stringId].status = RADIO_STATUS_ONLINE;
 				
 				arg["IsOnline"] = FieldValue("True");
-				std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+				std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
 				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 				seq++;
 			}
@@ -212,7 +214,7 @@ void CRadioARS::RecvData()
 				st.status = RADIO_STATUS_OFFLINE;
 				radioStatus[stringId] = st;
 				arg["IsOnline"] = FieldValue("False");
-				std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+				std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
 				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 				seq++;
 			}
@@ -221,7 +223,7 @@ void CRadioARS::RecvData()
 				radioStatus[stringId].status = RADIO_STATUS_OFFLINE;
 				
 				arg["IsOnline"] = FieldValue("False");
-				std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+				std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
 				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 				seq++;
 			}

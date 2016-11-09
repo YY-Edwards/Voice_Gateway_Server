@@ -542,7 +542,7 @@ void CRadioGps::RecvData()
 				{
 					if (it->radioId == atoi(radioID))
 					{
-						std::string callJsonStrRes = CRpcJsonParser::buildCall("SendGps", it->callId, args, "radio");
+						std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGps", it->callId, args, "radio");
 						if (pRemotePeer != NULL)
 						{
 							pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
@@ -556,7 +556,7 @@ void CRadioGps::RecvData()
 								st.status = RADIO_STATUS_ONLINE;
 								radioStatus[radioID] = st;
 								arg["IsOnline"] = FieldValue("True");
-								std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+								std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 
 							}
@@ -564,7 +564,7 @@ void CRadioGps::RecvData()
 							{
 								radioStatus[radioID].status = RADIO_STATUS_ONLINE;
 								arg["IsOnline"] = FieldValue("True");
-								std::string callJsonStr = CRpcJsonParser::buildCall("SendArs", seq, arg, "radio");
+								std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
 								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 							}
 							break;
