@@ -45,6 +45,7 @@
 #include "RecvStatusAction.h"
 #include "RecvCallStatusAction.h"
 #include "RecvControlResultAction.h"
+#include "RecvSendGpsStatus.h"
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//CSettings::instance()->getResponse("sucess", 1, 200, "", rapidjson::Value(NULL));
@@ -103,6 +104,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	clientActions["status"] = recvStatusAction;
 	clientActions["callStatus"] = recvCallStatusAction;
 	clientActions["controlStatus"] = recvControlResultAction;
+	clientActions["sendGpsStatus"] = recvSendGpsStatusAction;
 	//CBroker::instance()->startLogClient();
 	CBroker::instance()->startRadioClient(clientActions);
 	CBroker::instance()->startRpcServer(serverActions);

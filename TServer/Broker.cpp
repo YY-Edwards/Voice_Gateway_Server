@@ -74,7 +74,7 @@ void CBroker::startRadioClient(std::map<std::string, ACTION> clientActions)
 		radioP.setKeyVal("Port", FieldValue(0));
 
 		FieldValue mnisP(FieldValue::TObject);
-		mnisP.setKeyVal("Ip", FieldValue(""));
+		mnisP.setKeyVal("Ip", FieldValue("192.168.11.2"));
 		mnisP.setKeyVal("Port", FieldValue(0));
 
 		FieldValue gpsP(FieldValue::TObject);

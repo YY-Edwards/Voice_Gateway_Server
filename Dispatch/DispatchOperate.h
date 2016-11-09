@@ -79,12 +79,15 @@
 
 
 typedef  struct tagradioStatus{
-	int status;
-	int    gpsQueryMode;
+	int id;
+	int status = 0;
+	int    gpsQueryMode = 0;
 } status;
 extern map<string, status> radioStatus;
 extern  bool isUdpConnect;
 extern  bool isTcpConnect;
+extern string m_radioIP;
+extern string m_mnisIP;
 typedef struct tagAllCommand
 {
 	int callId;
@@ -93,7 +96,7 @@ typedef struct tagAllCommand
 	int timeCount;
 	int command;
 	int radioId;
-	int cycle;
+	double cycle;
 	int querymode;
 	string radioIP;
 	string mnisIP;
@@ -115,7 +118,7 @@ public:
 	static DWORD WINAPI TimeOutThread(LPVOID lpParam);
 	static DWORD WINAPI WorkThread(LPVOID lpParam);
 	static DWORD WINAPI RadioUsbStatusThread(LPVOID lpParam);
-	void AddAllCommand(CRemotePeer* pRemote,SOCKET s, int command, string radioIP, string mnisIP, string gpsIP, int id,wchar_t* text, int cycle, int querymode, int callId);
+	void AddAllCommand(CRemotePeer* pRemote,SOCKET s, int command, string radioIP, string mnisIP, string gpsIP, int id,wchar_t* text, double cycle, int querymode, int callId);
 private:
 	void WorkThreadFunc();
 	void TimeOut();
@@ -146,7 +149,7 @@ private:
 	int wiretap(CRemotePeer* pRemote, int id, int callId);
 	int sendSms(CRemotePeer* pRemote, int id, wchar_t* message, int callId);
 	int sendGroupSms(CRemotePeer* pRemote, int id, wchar_t* message, int callId);
-	int getGps(CRemotePeer* pRemote, int id, int queryMode, int cycle, int callId);              //queryMode  12: 常规查询   13： 常规周期查询  14：csbk查询   15： csbk 周期查询
+	int getGps(CRemotePeer* pRemote, int id, int queryMode, double cycle, int callId);              //queryMode  12: 常规查询   13： 常规周期查询  14：csbk查询   15： csbk 周期查询
 	int cancelPollGps(CRemotePeer* pRemote, int id, int callId);
 	int RadioConnect();
 	void TcpConnect();

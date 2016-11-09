@@ -25,7 +25,7 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			int operate = -1;
 			int  querymode = -1;
 			int id = -1;;
-			int cycle = -1;
+			double cycle = -1;
 			if (d.HasMember("Operate") && d["Operate"].IsInt())
 			{
 				operate = d["Operate"].GetInt();
@@ -38,9 +38,9 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			{
 				id = d["Target"].GetInt();
 			}
-			if (d.HasMember("Cycle") && d["Cycle"].IsInt())
+			if (d.HasMember("Cycle") && d["Cycle"].IsDouble())
 			{
-				id = d["Cycle"].GetInt();
+				cycle = d["Cycle"].GetDouble();
 			}
 			if (operate == START)
 			{
@@ -75,11 +75,14 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 				if (radioStatus.find(buf) == radioStatus.end())
 				{
 					status st;
+					st.id = id;
+					st.status = RADIO_STATUS_OFFLINE;
 					st.gpsQueryMode = querymode;
 					radioStatus[buf] = st;
 				}
 				else
 				{
+					//radioStatus[buf].status = RADIO_STATUS_OFFLINE;
 					radioStatus[buf].gpsQueryMode = querymode;
 				}
 			}

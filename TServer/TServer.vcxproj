@@ -107,6 +107,7 @@
     <ClInclude Include="RecvGpsAction.h" />
     <ClInclude Include="RecvMessageAction.h" />
     <ClInclude Include="RecvMessageResultAction.h" />
+    <ClInclude Include="RecvSendGpsStatus.h" />
     <ClInclude Include="RecvStatusAction.h" />
     <ClInclude Include="RemotePowerOffAction.h" />
     <ClInclude Include="RemotePowerOnAction.h" />

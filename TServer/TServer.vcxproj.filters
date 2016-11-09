@@ -165,6 +165,9 @@
     <ClInclude Include="RecvCallStatusAction.h">
       <Filter>clientAction</Filter>
     </ClInclude>
+    <ClInclude Include="RecvSendGpsStatus.h">
+      <Filter>clientAction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
