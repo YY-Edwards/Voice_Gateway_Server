@@ -617,7 +617,7 @@ void DispatchOperate::TimeOut()
 {
 	list<AllCommand>::iterator it;
 	std::lock_guard <std::mutex> locker(m_allCommandListLocker);
-	for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+	for (it = allCommandList.begin(); it != allCommandList.end(); it++)
 	{
 		it->timeCount++;
 		//if (it->timeCount>= 3)                       //超时3次则返回发送失败      
@@ -638,7 +638,7 @@ void DispatchOperate::TimeOut()
 		if (it->timeCount % (it->timeOut / 100) == 0)
 		{
 			
-			if (pRemotePeer != NULL && pRemotePeer == it->pRemote)
+			if (it->pRemote != NULL)
 			{
 				int operate = -1;
 				int type = -1;
@@ -773,6 +773,7 @@ void DispatchOperate::TimeOut()
 				if (it->command != RADIO_CONNECT)
 				{
 					it = allCommandList.erase(it);
+					break;
 				}
 				
 			}
@@ -780,9 +781,9 @@ void DispatchOperate::TimeOut()
 		}
 		else if (it->command != RADIO_CONNECT)
 		{
-			commandList.push_back(*it);
+			//commandList.push_back(*it);
+			//break;
 		}
-		break;
 	}
 }
 int DispatchOperate::getLic(const char* licPath)
