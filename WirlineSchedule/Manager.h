@@ -50,12 +50,17 @@ public:
 	int SendFile(unsigned int length, char* pData);
 	//HANDLE getDecodeEvent();
 	/*设置当前语音的播放模式*/
-	int setPlayCallOfCare(unsigned char calltype, unsigned long srcId, unsigned long targetId);
+	int setPlayCallOfCare(unsigned char calltype,unsigned long targetId);
 	/*配置参数*/
-	int config(CONFIG_PARAM* pConfig);
+	int config(CONFIG* pConfig);
 	void startHandleRemoteTask();
 	void handleRemoteTask();
 	void stop();
+	REMOTE_TASK* getCurrentTask();
+	void freeCurrentTask();
+	void applayCurrentTask();
+	/*设置延时的需要返回操作结果的任务*/
+	void setCurrentTask(REMOTE_TASK* value);
 private:
 	PLogReport m_report;
 	HWND m_hwnd;
@@ -74,6 +79,8 @@ private:
 	void sendLogToWindow();
 	/*加载指定文件的语音数据*/
 	void LoadVoiceData(LPCWSTR filePath);
+
+	REMOTE_TASK *m_pCurrentTask;
 
 	static unsigned __stdcall HandleRemoteTaskProc(void * pThis);
 };

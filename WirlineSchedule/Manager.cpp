@@ -42,6 +42,8 @@ CManager::CManager(CMySQL *pDb)
 	m_remoteTaskThreadId = 0;
 	m_bRemoteTaskThreadRun = false;
 	m_bIsHaveConfig = false;
+	//memset(&m_pCurrentTask, 0, sizeof(REMOTE_TASK));
+	m_pCurrentTask = NULL;
 }
 
 CManager::~CManager()
@@ -299,7 +301,7 @@ int CManager::initialCall(unsigned long targetId, unsigned char callTyp)
 
 			//callback
 			if (callStatus == CALL_HANGUP
-				&& targetId == g_targetId)
+				&& targetId == CONFIG_CURRENT_TAGET)
 			{
 				g_bPTT = TRUE;
 				sprintf_s(m_reportMsg, "call back");
@@ -310,7 +312,7 @@ int CManager::initialCall(unsigned long targetId, unsigned char callTyp)
 			else if (callStatus == CALL_IDLE)
 			{
 				//CONFIG_DEFAULT_GROUP = tartgetId;
-				g_targetId = tartgetId;
+				CONFIG_CURRENT_TAGET = tartgetId;
 				g_targetCallType = callType;
 				g_bPTT = TRUE;
 				sprintf_s(m_reportMsg, "new call");
@@ -322,21 +324,21 @@ int CManager::initialCall(unsigned long targetId, unsigned char callTyp)
 			{
 				sprintf_s(m_reportMsg, "Other Call Is Running");
 				sendLogToWindow();
-				g_pNet->sendCallStatus(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, NEW_CALL_END);
+				g_pNet->wlCallStatus(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, STATUS_CALL_END | REMOTE_CMD_FAIL);
 				return 1;
 			}
 
 		}
 		else
 		{
-			g_pNet->sendCallStatus(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, NEW_CALL_END);
+			g_pNet->wlCallStatus(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, STATUS_CALL_END | REMOTE_CMD_FAIL);
 			return 1;
 		}
 		return 0;
 	}
 	else
 	{
-		g_pNet->sendCallStatus(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, NEW_CALL_END);
+		g_pNet->wlCallStatus(callTyp, CONFIG_LOCAL_RADIO_ID, targetId, STATUS_CALL_END | REMOTE_CMD_FAIL);
 		sprintf_s(m_reportMsg, "dongle is not open");
 		sendLogToWindow();
 		return 1;
@@ -419,24 +421,24 @@ int CManager::SendFile(unsigned int length, char* pData)
 // 	return m_hWaitDecodeEvent;
 // }
 
-int CManager::setPlayCallOfCare(unsigned char calltype, unsigned long srcId, unsigned long targetId)
+int CManager::setPlayCallOfCare(unsigned char calltype,unsigned long targetId)
 {
-	return g_pNet->setPlayCallOfCare( calltype,srcId,targetId);
+	return g_pNet->setPlayCallOfCare( calltype,targetId);
 }
 
-int CManager::config(CONFIG_PARAM* pConfig)
+int CManager::config(CONFIG* pConfig)
 {
 	int rlt = 0;
 	bool bMasterChange = false;
 	bool bDongleChange = false;
-	if (0 != strcmp(CONFIG_MASTER_IP,pConfig->masterIp))
+	if (0 != strcmp(CONFIG_MASTER_IP,pConfig->master.masterIp))
 	{
-		strcpy_s(CONFIG_MASTER_IP, pConfig->masterIp);
+		strcpy_s(CONFIG_MASTER_IP, pConfig->master.masterIp);
 		bMasterChange = true;
 	}
-	if (CONFIG_MASTER_PORT != pConfig->masterPort)
+	if (CONFIG_MASTER_PORT != pConfig->master.masterPort)
 	{
-		CONFIG_MASTER_PORT = pConfig->masterPort;
+		CONFIG_MASTER_PORT = pConfig->master.masterPort;
 		bMasterChange = true;
 	}
 	if (CONFIG_LOCAL_PEER_ID != pConfig->localPeerId)
@@ -457,9 +459,9 @@ int CManager::config(CONFIG_PARAM* pConfig)
 		}
 	}
 	CONFIG_DEFAULT_GROUP = pConfig->defaultGroup;
-	if (CONFIG_DONGLE_PORT != pConfig->donglePort)
+	if (CONFIG_DONGLE_PORT != pConfig->dongle.donglePort)
 	{
-		CONFIG_DONGLE_PORT = pConfig->donglePort;
+		CONFIG_DONGLE_PORT = pConfig->dongle.donglePort;
 		bDongleChange = true;
 	}
 	CONFIG_HUNG_TIME = pConfig->hangTime;
@@ -471,6 +473,7 @@ int CManager::config(CONFIG_PARAM* pConfig)
 		//////////////////////////////////////////////////////////////////////////
 		//程序启动后第一次获取配置
 		//////////////////////////////////////////////////////////////////////////
+		CONFIG_CURRENT_TAGET = CONFIG_DEFAULT_GROUP;
 		/*与主中继相连*/
 		if (!g_pNet->StartNet(inet_addr(CONFIG_MASTER_IP), CONFIG_MASTER_PORT, INADDR_ANY, CONFIG_LOCAL_PEER_ID, CONFIG_LOCAL_RADIO_ID, CONFIG_RECORD_TYPE))
 		{
@@ -591,27 +594,59 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_CALL:
 			{
+									//memcpy(&m_pCurrentTask, &task, sizeof(REMOTE_TASK));
+									setCurrentTask(&task);
 									if (g_pNet->getWlStatus() == ALIVE)
 									{
-										initialCall(task.param.info.callParam.tartgetId, task.param.info.callParam.callType);
+										initialCall(task.param.info.callParam.operateInfo.tartgetId, task.param.info.callParam.operateInfo.callType);
 									}
 									else
 									{
-										g_pNet->sendCallStatus(task.param.info.callParam.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.tartgetId, NEW_CALL_END);
+										g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL);
 									}
 			}
 				break;
 			case REMOTE_CMD_SET_PLAY_CALL:
 			{
-											 setPlayCallOfCare(task.param.info.setCareCallParam.callType, task.param.info.setCareCallParam.srcId, task.param.info.setCareCallParam.tgtId);
+											 //setCurrentTask(&task);
+											 if (setPlayCallOfCare(task.param.info.setCareCallParam.playParam.callType, task.param.info.setCareCallParam.playParam.targetId))
+											 {
+												 g_pNet->wlPlayStatus(CMD_FAIL, task.param.info.setCareCallParam.playParam.targetId);
+												 
+											 }
+											 else
+											 {
+												 //do nothing
+												 //g_pNet->wlPlayStatus(CMD_SUCCESS, task.param.info.setCareCallParam.playParam.targetId);
+											 }
 			}
 				break;
 			case REMOTE_CMD_STOP_CALL:
 			{
+										 //memcpy(&m_pCurrentTask, &task, sizeof(REMOTE_TASK));
+										 setCurrentTask(&task);
 										 if (CALL_ONGOING == g_pNet->GetCallStatus())
 										 {
 											 stopCall();
 										 }
+										 else
+										 {
+											 g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+										 }
+			}
+				break;
+			case REMOTE_CMD_GET_CONN_STATUS:
+			{
+											   FieldValue info(FieldValue::TInt);
+											   if (g_pNet->getWlStatus() == ALIVE)
+											   {
+												   info.setInt(REPEATER_CONNECT);
+											   }
+											   else
+											   {
+												   info.setInt(REPEATER_DISCONNECT);
+											   }
+											   g_pNet->wlInfo(GET_TYPE_CONN, info);
 			}
 				break;
 			default:
@@ -637,5 +672,32 @@ void CManager::stop()
 		WaitForSingleObject(m_hRemoteTaskThread, 1000);
 		CloseHandle(m_hRemoteTaskThread);
 	}
+	freeCurrentTask();
+}
+
+REMOTE_TASK* CManager::getCurrentTask()
+{
+	return m_pCurrentTask;
+}
+
+void CManager::freeCurrentTask()
+{
+	if (m_pCurrentTask)
+	{
+		delete m_pCurrentTask;
+		m_pCurrentTask = NULL;
+	}
+}
+
+void CManager::applayCurrentTask()
+{
+	m_pCurrentTask = new REMOTE_TASK;
+}
+
+void CManager::setCurrentTask(REMOTE_TASK* value)
+{
+	freeCurrentTask();
+	applayCurrentTask();
+	memcpy(m_pCurrentTask, value, sizeof(REMOTE_TASK));
 }
 

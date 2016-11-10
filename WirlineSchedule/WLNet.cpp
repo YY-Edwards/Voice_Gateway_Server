@@ -9,7 +9,7 @@ static const unsigned char AuthenticId[AUTHENTIC_ID_SIZE] = { 0x01, 0x02, 0x00, 
 static const unsigned char VenderKey[VENDER_KEY_SIZE] = { 0x6b, 0xe5, 0xff, 0x95, 0x6a, 0xb5, 0xe8, 0x82, 0xa8, 0x6f, 0x29, 0x5f, 0x9d, 0x9d, 0x5e, 0xcf, 0xe6, 0x57, 0x61, 0x5a };
 
 
-CWLNet::CWLNet(CMySQL *pDb,CManager *pManager)
+CWLNet::CWLNet(CMySQL *pDb, CManager *pManager)
 : m_socket(INVALID_SOCKET)
 , m_hWorkThread(INVALID_HANDLE_VALUE)
 , m_bExit(TRUE)
@@ -450,7 +450,8 @@ BOOL CWLNet::StartNet(DWORD dwMasterIp
 	//m_dwMyRadioGroup = dwSelfGroup;
 	//InitControlBuffer(dwSelfPeerId);
 	CONFIG_LOCAL_PEER_ID = dwSelfPeerId;
-	m_WLStatus = STARTING;
+	//m_WLStatus = STARTING;
+	setWlStatus(STARTING);
 	m_bExit = FALSE;
 
 	memset(&m_masterAddr, 0, sizeof(SOCKADDR_IN));
@@ -706,7 +707,8 @@ void CWLNet::Net_RegisterLE(DWORD eventIndex)
 		{
 		case 0:               //Tx completed successfully immediately.
 		case WSA_IO_PENDING:  //Completion is pending
-			m_WLStatus = WAITFOR_LE_MASTER_PEER_REGISTRATION_TX;
+			//m_WLStatus = WAITFOR_LE_MASTER_PEER_REGISTRATION_TX;
+			setWlStatus(WAITFOR_LE_MASTER_PEER_REGISTRATION_TX);
 			//strSysLog = _T("发送0x90(LE_MASTER_PEER_REGISTRATION_REQUEST)");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 			break;
@@ -742,13 +744,16 @@ void CWLNet::Net_DeRegisterLE()
 	switch (rc)
 	{
 	case 0: // Tx completely
-		m_WLStatus = BAILOUT;
+		//m_WLStatus = BAILOUT;
+		setWlStatus(BAILOUT);
 		break;
 	case WSA_IO_PENDING:
-		m_WLStatus = WAITINGFOR_LE_DEREGISTRATION_TRANSMISSION;
+		//m_WLStatus = WAITINGFOR_LE_DEREGISTRATION_TRANSMISSION;
+		setWlStatus(WAITINGFOR_LE_DEREGISTRATION_TRANSMISSION);
 		break;
 	default:
-		m_WLStatus = BAILOUT;
+		//m_WLStatus = BAILOUT;
+		setWlStatus(BAILOUT);
 		break;
 	}
 }
@@ -764,18 +769,22 @@ void CWLNet::Net_WAITINGFOR_LE_DEREGISTRATION_TRANSMISSION(DWORD eventIndex)
 
 	case TxIndex:
 		WSAResetEvent(m_eventArray[TxEvent]);
-		m_WLStatus = BAILOUT;
+		//m_WLStatus = BAILOUT;
+		setWlStatus(BAILOUT);
 		break;
 
 	case TIMEOUT:
-		m_WLStatus = BAILOUT;
+		//m_WLStatus = BAILOUT;
+		setWlStatus(BAILOUT);
 		break;
 
 	case TickIndex:
-		m_WLStatus = BAILOUT;
+		//m_WLStatus = BAILOUT;
+		setWlStatus(BAILOUT);
 		break;
 	default:
-		m_WLStatus = BAILOUT;
+		//m_WLStatus = BAILOUT;
+		setWlStatus(BAILOUT);
 		break;
 	}
 }
@@ -796,13 +805,15 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_TX(DWORD eventIndex)
 		WSAResetEvent(m_eventArray[TxEvent]);
 		if (TRUE != rc){
 			//LE_MASTER_PEER_REGISTRATION_REQUEST Transmission failed.
-			m_WLStatus = STARTING; //Go back to STARTING.
+			//m_WLStatus = STARTING; //Go back to STARTING.
+			setWlStatus(STARTING);
 			//strSysLog = _T("0x90(LE_MASTER_PEER_REGISTRATION_REQUEST)发送失败，重新发送！)");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 			break;                   //Will retry at TIMEOUT.
 		}
 
-		m_WLStatus = WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE;
+		//m_WLStatus = WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE;
+		setWlStatus(WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE);
 		//strSysLog = _T("等待0x91(LE_MASTER_PEER_REGISTRATION_RESPONSE)");
 		//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		break;
@@ -810,7 +821,8 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_TX(DWORD eventIndex)
 	case RxIndex:
 		WSAResetEvent(m_eventArray[TxEvent]); //Clear any simultaineous Tx Event. 
 		// transfer to Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE
-		m_WLStatus = WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE;
+		//m_WLStatus = WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE;
+		setWlStatus(WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE);
 
 		m_dwMasterRegisterTimer = GetTickCount();
 		break;
@@ -818,7 +830,8 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_TX(DWORD eventIndex)
 	case TIMEOUT:
 		if ((GetTickCount() - m_dwMasterRegisterTimer) > 100000UL)  // 100 seconds
 		{
-			m_WLStatus = STARTING;
+			//m_WLStatus = STARTING;
+			setWlStatus(STARTING);
 			//strSysLog = _T("注册超时，重新注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -899,7 +912,8 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE(DWORD eveintIndex)
 					/************************************************************************/
 					/*改动理由:devspec_link_establishment_0103.pdf line 919
 					/************************************************************************/
-					m_WLStatus = ALIVE; //Advance state.
+					//m_WLStatus = ALIVE; //Advance state.
+					setWlStatus(ALIVE);
 					m_dwMasterKeepAliveTime = GetTickCount() - 16000;
 					Net_MaintainKeepAlive();
 
@@ -950,7 +964,10 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE(DWORD eveintIndex)
 					{
 					case 0:
 					case WSA_IO_PENDING:
-						m_WLStatus = WAITFOR_MAP_REQUEST_TX;
+					{
+										   //m_WLStatus = WAITFOR_MAP_REQUEST_TX;
+										   setWlStatus(WAITFOR_MAP_REQUEST_TX);
+					}
 						break;
 					default:
 						break;
@@ -973,7 +990,8 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE(DWORD eveintIndex)
 	case TIMEOUT:
 		if ((GetTickCount() - m_dwMasterRegisterTimer) > 100000UL)  // 100 seconds
 		{
-			m_WLStatus = STARTING;
+			//m_WLStatus = STARTING;
+			setWlStatus(STARTING);
 			//strSysLog = _T("注册超时，重新注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -1408,13 +1426,15 @@ void CWLNet::Net_WAITFOR_MAP_REQUEST_TX(DWORD eventIndex)
 		if (TRUE != rc)
 		{
 			//LE_NOTIFICATION_MAP_REQUEST Transmission failed.
-			m_WLStatus = STARTING;
+			//m_WLStatus = STARTING;
+			setWlStatus(STARTING);
 			//Go back to STARTING.
 			//strSysLog = _T("0x92(LE_NOTIFICATION_MAP_REQUEST)发送失败，重新开始注册");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 			break;
 		}
-		m_WLStatus = WAITFOR_LE_NOTIFICATION_MAP_BROADCAST;
+		//m_WLStatus = WAITFOR_LE_NOTIFICATION_MAP_BROADCAST;
+		setWlStatus(WAITFOR_LE_NOTIFICATION_MAP_BROADCAST);
 		//strSysLog = _T("等待0x93(LE_NOTIFICATION_MAP_BROADCAST)");
 		//m_dwMasterMapBroadcastTimer = GetTickCount();
 		break;
@@ -1422,14 +1442,16 @@ void CWLNet::Net_WAITFOR_MAP_REQUEST_TX(DWORD eventIndex)
 	case RxIndex:
 		WSAResetEvent(m_eventArray[TxEvent]);
 		// transfer to Net_WAITFOR_LE_NOTIFICATION_MAP_BROADCAST
-		m_WLStatus = WAITFOR_LE_NOTIFICATION_MAP_BROADCAST;
+		//m_WLStatus = WAITFOR_LE_NOTIFICATION_MAP_BROADCAST;
+		setWlStatus(WAITFOR_LE_NOTIFICATION_MAP_BROADCAST);
 		//strSysLog = _T("等待0x93(LE_NOTIFICATION_MAP_BROADCAST)");
 		//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		break;
 	case TIMEOUT:
 		if ((GetTickCount() - m_dwMasterMapBroadcastTimer) > 120000UL)
 		{
-			m_WLStatus = STARTING;
+			//m_WLStatus = STARTING;
+			setWlStatus(STARTING);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -1482,7 +1504,8 @@ void CWLNet::Net_WAITFOR_LE_NOTIFICATION_MAP_BROADCAST(DWORD eventIndex)
 				/*授权相关*/
 
 				/*程序开始正常工作*/
-				m_WLStatus = ALIVE;
+				//m_WLStatus = ALIVE;
+				setWlStatus(ALIVE);
 				WCHAR  str[8];
 				swprintf_s(str, __TEXT("%d"), 1);
 				WritePrivateProfileString(SYS_SECTION, CONNECT_RESULT, str, m_strSettingFilePath);
@@ -1523,7 +1546,8 @@ void CWLNet::Net_WAITFOR_LE_NOTIFICATION_MAP_BROADCAST(DWORD eventIndex)
 	case  TIMEOUT:
 		if ((GetTickCount() - m_dwMasterMapBroadcastTimer) > 120000UL)
 		{
-			m_WLStatus = STARTING;
+			//m_WLStatus = STARTING;
+			setWlStatus(STARTING);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -1804,7 +1828,7 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 			{
 				//if ((*i)->getbFirstWlRegistration())
 				//{
-					(*i)->HandlePacket(WL_REGISTRATION_REQUEST_LOCAL, NULL, m_masterAddress, m_masterPort, FALSE);
+				(*i)->HandlePacket(WL_REGISTRATION_REQUEST_LOCAL, NULL, m_masterAddress, m_masterPort, FALSE);
 				//}
 			}
 		}
@@ -1922,14 +1946,14 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 				{
 					(*i)->peerInit();
 				}
-				
+
 			}
 			//cycle WL register
 			for (auto i = m_pPeers.begin(); i != m_pPeers.end(); i++)
 			{
 				//if ((*i)->getbFirstWlRegistration())
 				//{
-					(*i)->HandlePacket(WL_REGISTRATION_REQUEST_LOCAL, NULL, m_masterAddress, m_masterPort);
+				(*i)->HandlePacket(WL_REGISTRATION_REQUEST_LOCAL, NULL, m_masterAddress, m_masterPort);
 				//}
 			}
 		}
@@ -1937,7 +1961,7 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 	WCHAR str[8] = { 0 };
 	swprintf_s(str, __TEXT("%d"), m_PeerCount);
 	WritePrivateProfileString(SYS_SECTION, PEER_COUNT, str, m_strSettingFilePath);
-	
+
 	int elementCount = pPeers.size();
 	while (pPeers.size() && elementCount)
 	{
@@ -2378,16 +2402,14 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 									   CRecordFile* p = (CRecordFile*)(*i);
 									   if (diffTimestamp > CONFIG_HUNG_TIME && VOICE_STATUS_CALLBACK == (*i)->callStatus)
 									   {
-										   if (isTargetMeCall(p->tagetId, p->callType))
+										   if (p->srcId == CONFIG_LOCAL_RADIO_ID)
 										   {
-											   if (p->srcId != CONFIG_LOCAL_RADIO_ID)
-											   {
-												   sendCallStatus(p->callType, p->srcId, p->tagetId, END_CALL_NO_PLAY);
-											   }
-											   else
-											   {
-												   sendCallStatus(p->callType, p->srcId, p->tagetId, NEW_CALL_END);
-											   }
+											   wlCallStatus(p->callType, p->srcId, p->tagetId, STATUS_CALL_END|REMOTE_CMD_SUCCESS);
+										   }
+										   else if (isNeedPlay(p->tagetId, p->callType))
+										   {
+											   wlCall(p->callType, p->srcId, p->tagetId, OPERATE_CALL_END, p->getBoolPlay());
+											   g_pNet->resetPlayFlag();
 										   }
 										   m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, CONFIG_RECORD_TYPE, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi, (*i)->callStatus, &((*i)->recordTime));
 										   requireVoiceReocrdsLock();
@@ -2400,25 +2422,24 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 									   }
 									   else if (diffTimestamp > VOICE_END_TIMEOUT && VOICE_STATUS_CALLBACK != (*i)->callStatus)
 									   {
-										   if (isTargetMeCall((*i)->tagetId, (*i)->callType) && !g_dongleIsUsing)
+										   if (isNeedPlay((*i)->tagetId, (*i)->callType) && !g_dongleIsUsing)
 										   {
 											   SetCallStatus(CALL_IDLE);
 										   }
 										   (*i)->callStatus = VOICE_STATUS_END;
 										   GetLocalTime(&((*i)->recordTime));
 
-										   if (isTargetMeCall(p->tagetId, p->callType))
+										   if (p->srcId == CONFIG_LOCAL_RADIO_ID)
 										   {
-											   if (p->srcId != CONFIG_LOCAL_RADIO_ID)
-											   {
-												   sendCallStatus(p->callType, p->srcId, p->tagetId, END_CALL_NO_PLAY);
-											   }
-											   else
-											   {
-												   sendCallStatus(p->callType, p->srcId, p->tagetId, NEW_CALL_END);
-											   }
+											   wlCallStatus(p->callType, p->srcId, p->tagetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
 										   }
-										   m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, CONFIG_RECORD_TYPE, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi,(*i)->callStatus,&((*i)->recordTime));
+										   else if (isNeedPlay(p->tagetId, p->callType))
+										   {
+											   wlCall(p->callType, p->srcId, p->tagetId, OPERATE_CALL_END, p->getBoolPlay());
+											   g_pNet->resetPlayFlag();
+										   }
+
+										   m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, (*i)->callType, CONFIG_RECORD_TYPE, (*i)->originalPeerId, (*i)->srcSlot, (*i)->srcRssi, (*i)->callStatus, &((*i)->recordTime));
 										   requireVoiceReocrdsLock();
 										   delete (*i);
 										   m_voiceReocrds.erase(i);
@@ -2448,7 +2469,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 							  rFile->srcSlot = p->slotNumber;
 							  rFile->callStatus = VOICE_STATUS_START;
 
-							  if (isTargetMeCall(p->targetID, p->callType))
+							  if (isNeedPlay(p->targetID, p->callType))
 							  {
 								  SetCallStatus(CALL_START);
 							  }
@@ -2502,7 +2523,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 							  tgtId = p->targetID;
 							  bool ishaveRecord = false;
 
-							  if (isTargetMeCall(p->targetID, p->callType))
+							  if (isNeedPlay(p->targetID, p->callType))
 							  {
 								  SetCallStatus(CALL_ONGOING);
 							  }
@@ -2542,6 +2563,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 								  {
 									  ishaveRecord = true;
 									  (*i)->srcRssi = p->rawRssiValue;
+									  voicePlayLogicProcessing(*i);
 									  (*i)->WriteVoiceFrame(voiceFrame1);
 									  (*i)->WriteVoiceFrame(voiceFrame2);
 									  (*i)->WriteVoiceFrame(voiceFrame3);
@@ -2561,6 +2583,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 								  rFile->srcRssi = p->rawRssiValue;
 								  rFile->callStatus = VOICE_STATUS_START;
 
+								  voicePlayLogicProcessing(rFile);
 								  rFile->WriteVoiceFrame(voiceFrame1);
 								  rFile->WriteVoiceFrame(voiceFrame2);
 								  rFile->WriteVoiceFrame(voiceFrame3);
@@ -2586,7 +2609,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 									  {
 									  case Call_Session_End:
 									  {
-															   if (isTargetMeCall(tgtId, p->callType))
+															   if (isNeedPlay(tgtId, p->callType))
 															   {
 																   SetCallStatus(CALL_IDLE);
 															   }
@@ -2597,17 +2620,15 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 																	   (*i)->tagetId == tgtId &&
 																	   (*i)->callId == callId)
 																   {
-																	   if (isTargetMeCall(tgtId, p->callType))
+																	   if (p->sourceID == CONFIG_LOCAL_RADIO_ID)
+																	   {
+																		   wlCallStatus(p->callType, p->sourceID, p->targetID, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+																	   }
+																	   else if (isNeedPlay(tgtId, p->callType))
 																	   {
 																		   SetCallStatus(CALL_IDLE);
-																		   if (srcId != CONFIG_LOCAL_RADIO_ID)
-																		   {
-																			   sendCallStatus(p->callType, srcId, tgtId, END_CALL_NO_PLAY);
-																		   }
-																		   else
-																		   {
-																			   sendCallStatus(p->callType, p->sourceID, p->targetID, NEW_CALL_END);
-																		   }
+																		   wlCall(p->callType, srcId, tgtId, OPERATE_CALL_END,(*i)->getBoolPlay());
+																		   g_pNet->resetPlayFlag();
 																	   }
 																	   (*i)->callStatus = VOICE_STATUS_END;
 																	   //GetLocalTime(&((*i)->recordTime));
@@ -2628,17 +2649,17 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 
 																	 /*设置当前可通话peer相关属性*/
 
-																	 if (isTargetMeCall(p->targetID, p->callType))
+																	 if (isNeedPlay(p->targetID, p->callType))
 																	 {
 																		 SetCallStatus(CALL_HANGUP);
 																		 CIPSCPeer *peer = GetPeer(p->peerID);
 																		 peer->setUseSlot(p->slotNumber);
 																		 setCurrentSendVoicePeer(peer);
-																		 g_targetId = p->targetID;
+																		 CONFIG_CURRENT_TAGET = p->targetID;
 																		 g_targetCallType = p->callType;
 																		 //if (p->sourceID == CONFIG_LOCAL_RADIO_ID)
 																		 //{
-																			// Send_CARE_CALL_STATUS(p->callType, p->sourceID, p->targetID, NEW_CALL_END);
+																		 // Send_CARE_CALL_STATUS(p->callType, p->sourceID, p->targetID, NEW_CALL_END);
 																		 //}
 																	 }
 																	 for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
@@ -2672,235 +2693,235 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 	}
 }
 
-BOOL CWLNet::WriteVoiceFrame(tCallParams& call, DWORD dwCallType, BOOL isCheckTimeout)
-{
-	//尾结束包超时处理
-	if (isCheckTimeout)
-	{
-
-		//TRACE(_T("m_voiceReocrds.size:%d\r\n"), m_voiceReocrds.size());
-
-		DWORD curTime = 0;
-		DWORD preTime = 0;
-		DWORD rlt = 0;
-		for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
-		{
-			curTime = GetTickCount();
-			preTime = (*i)->prevTimestamp;
-			rlt = curTime - preTime;
-			//TRACE(_T("rlt:%d\r\n"), rlt);
-			if (rlt > VOICE_END_TIMEOUT)
-			{
-				//if (m_pEventLoger)
-				//{
-				//	int temp = 0;
-
-				//	if (m_dwRecType == IPSC)
-				//	{
-				//		if (IndividualCall == (*i)->callType)
-				//		{
-				//			temp = IndividualCall;
-				//		}
-				//		else if (GroupCall == (*i)->callType)
-				//		{
-				//			temp = GroupCall;
-				//		}
-				//	}
-				//	else if (m_dwRecType == CPC)
-				//	{
-				//		if (IndividualCall == (*i)->callType)
-				//		{
-				//			temp = CPC_PRIVATE_CALL;
-				//		}
-				//		else if (GroupCall == (*i)->callType)
-				//		{
-				//			temp = CPC_GROUP_CALL;
-				//		}
-				//	}
-
-				//	m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, temp, 0);
-
-				//}
-
-
-				requireVoiceReocrdsLock();
-				delete (*i);
-				m_voiceReocrds.erase(i);
-				releaseVoiceReocrdsLock();
-
-				sprintf_s(m_reportMsg, "Voice end");
-				sendLogToWindow();
-			}
-		}
-		return TRUE;
-	}
-
-	char voiceFrame[7];
-	BOOL bFind = FALSE;
-
-	for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
-	{
-		if ((*i)->srcId == call.fld.CallSrcID &&
-			(*i)->tagetId == call.fld.CallTgtID &&
-			(*i)->callId == call.fld.CallSequenceNumber)
-		{
-			voiceFrame[0] = (m_CurrentRecvBuffer.buf)[33];
-			voiceFrame[1] = (m_CurrentRecvBuffer.buf)[34];
-			voiceFrame[2] = (m_CurrentRecvBuffer.buf)[35];
-			voiceFrame[3] = (m_CurrentRecvBuffer.buf)[36];
-			voiceFrame[4] = (m_CurrentRecvBuffer.buf)[37];
-			voiceFrame[5] = (m_CurrentRecvBuffer.buf)[38];
-			voiceFrame[6] = ((m_CurrentRecvBuffer.buf)[39]) & 0x80;
-
-			//			AMBE2FrameToAMBE3000Frame(voiceFrame);
-
-			(*i)->WriteVoiceFrame(voiceFrame);
-
-			//TRACE("Bad voice frame? %s\r\n", (((m_CurrentRecvBuffer.buf)[39]) & 0x40) > 0 ? _T("Yes") : _T("No"));
-
-
-			voiceFrame[0] = (((m_CurrentRecvBuffer.buf)[39]) << 2) | ((((m_CurrentRecvBuffer.buf)[40]) >> 6) & 0x03);
-			voiceFrame[1] = (((m_CurrentRecvBuffer.buf)[40]) << 2) | ((((m_CurrentRecvBuffer.buf)[41]) >> 6) & 0x03);
-			voiceFrame[2] = (((m_CurrentRecvBuffer.buf)[41]) << 2) | ((((m_CurrentRecvBuffer.buf)[42]) >> 6) & 0x03);
-			voiceFrame[3] = (((m_CurrentRecvBuffer.buf)[42]) << 2) | ((((m_CurrentRecvBuffer.buf)[43]) >> 6) & 0x03);
-			voiceFrame[4] = (((m_CurrentRecvBuffer.buf)[43]) << 2) | ((((m_CurrentRecvBuffer.buf)[44]) >> 6) & 0x03);
-			voiceFrame[5] = (((m_CurrentRecvBuffer.buf)[44]) << 2) | ((((m_CurrentRecvBuffer.buf)[45]) >> 6) & 0x03);
-			voiceFrame[6] = (((m_CurrentRecvBuffer.buf)[45]) << 2) & 0x80;
-			//TRACE("Bad voice frame? %s\r\n", ((((m_CurrentRecvBuffer.buf)[45]) << 2) & 0x40) > 0 ? _T("Yes") : _T("No"));
-
-			//			AMBE2FrameToAMBE3000Frame(voiceFrame);
-			(*i)->WriteVoiceFrame(voiceFrame);
-
-			voiceFrame[0] = (((m_CurrentRecvBuffer.buf)[45]) << 4) | ((((m_CurrentRecvBuffer.buf)[46]) >> 4) & 0x0F);
-			voiceFrame[1] = (((m_CurrentRecvBuffer.buf)[46]) << 4) | ((((m_CurrentRecvBuffer.buf)[47]) >> 4) & 0x0F);
-			voiceFrame[2] = (((m_CurrentRecvBuffer.buf)[47]) << 4) | ((((m_CurrentRecvBuffer.buf)[48]) >> 4) & 0x0F);
-			voiceFrame[3] = (((m_CurrentRecvBuffer.buf)[48]) << 4) | ((((m_CurrentRecvBuffer.buf)[49]) >> 4) & 0x0F);
-			voiceFrame[4] = (((m_CurrentRecvBuffer.buf)[49]) << 4) | ((((m_CurrentRecvBuffer.buf)[50]) >> 4) & 0x0F);
-			voiceFrame[5] = (((m_CurrentRecvBuffer.buf)[50]) << 4) | ((((m_CurrentRecvBuffer.buf)[51]) >> 4) & 0x0F);
-			voiceFrame[6] = (((m_CurrentRecvBuffer.buf)[51]) << 4) & 0x80;
-			//TRACE("Bad voice frame? %s\r\n", ((((m_CurrentRecvBuffer.buf)[51]) << 4) & 0x40) > 0 ? _T("Yes") : _T("No"));
-			//			AMBE2FrameToAMBE3000Frame(voiceFrame);
-			(*i)->WriteVoiceFrame(voiceFrame);
-			//TRACE(_T("burst type:%d\r\n"), call.fld.RepeaterBurstDataType);
-			if (DATA_TYPE_VOICE_TERMINATOR == call.fld.RepeaterBurstDataType)
-			{
-				// it's last frame, write to file and erase this item
-				//FILE *f;
-				//f = fopen(("e:\\moto.bit"), ("wb+"));
-				//fwrite((*i)->buffer, 1, (*i)->lenght, f);
-				//fclose(f);
-				//if (m_pEventLoger)
-				//{
-				//	int temp = 0;
-
-				//	if (m_dwRecType == IPSC)
-				//	{
-				//		if (IndividualCall == (*i)->callType)
-				//		{
-				//			temp = IndividualCall;
-				//		}
-				//		else if (GroupCall == (*i)->callType)
-				//		{
-				//			temp = GroupCall;
-				//		}
-				//	}
-				//	else if (m_dwRecType == CPC)
-				//	{
-				//		if (IndividualCall == (*i)->callType)
-				//		{
-				//			temp = CPC_PRIVATE_CALL;
-				//		}
-				//		else if (GroupCall == (*i)->callType)
-				//		{
-				//			temp = CPC_GROUP_CALL;
-				//		}
-				//	}
-
-				//	m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, temp, 0);
-
-				//}
-
-				requireVoiceReocrdsLock();
-				delete (*i);
-				m_voiceReocrds.erase(i);
-				releaseVoiceReocrdsLock();
-
-				sprintf_s(m_reportMsg, "Voice end");
-				sendLogToWindow();
-			}
-
-			bFind = TRUE;
-			break;
-		}
-	}
-	if (!bFind)
-	{
-
-		sprintf_s(m_reportMsg, "Voice start");
-		sendLogToWindow();
-
-
-		//转换dongle模式
-		if (!g_pDongle->changeAMBEToPCM())
-		{
-			//转换失败
-		}
-		else
-		{
-			//转换成功
-		}
-
-		CRecordFile* rFile = new CRecordFile();
-		voiceFrame[0] = (m_CurrentRecvBuffer.buf)[33];
-		voiceFrame[1] = (m_CurrentRecvBuffer.buf)[34];
-		voiceFrame[2] = (m_CurrentRecvBuffer.buf)[35];
-		voiceFrame[3] = (m_CurrentRecvBuffer.buf)[36];
-		voiceFrame[4] = (m_CurrentRecvBuffer.buf)[37];
-		voiceFrame[5] = (m_CurrentRecvBuffer.buf)[38];
-		voiceFrame[6] = ((m_CurrentRecvBuffer.buf)[39]) & 0x80;
-
-		//		AMBE2FrameToAMBE3000Frame(voiceFrame);
-		rFile->WriteVoiceFrame(voiceFrame);
-
-
-		voiceFrame[0] = (((m_CurrentRecvBuffer.buf)[39]) << 2) | ((((m_CurrentRecvBuffer.buf)[40]) >> 6) & 0x03);
-		voiceFrame[1] = (((m_CurrentRecvBuffer.buf)[40]) << 2) | ((((m_CurrentRecvBuffer.buf)[41]) >> 6) & 0x03);
-		voiceFrame[2] = (((m_CurrentRecvBuffer.buf)[41]) << 2) | ((((m_CurrentRecvBuffer.buf)[42]) >> 6) & 0x03);
-		voiceFrame[3] = (((m_CurrentRecvBuffer.buf)[42]) << 2) | ((((m_CurrentRecvBuffer.buf)[43]) >> 6) & 0x03);
-		voiceFrame[4] = (((m_CurrentRecvBuffer.buf)[43]) << 2) | ((((m_CurrentRecvBuffer.buf)[44]) >> 6) & 0x03);
-		voiceFrame[5] = (((m_CurrentRecvBuffer.buf)[44]) << 2) | ((((m_CurrentRecvBuffer.buf)[45]) >> 6) & 0x03);
-		voiceFrame[6] = (((m_CurrentRecvBuffer.buf)[45]) << 2) & 0x80;
-
-		//		AMBE2FrameToAMBE3000Frame(voiceFrame);
-		rFile->WriteVoiceFrame(voiceFrame);
-
-		voiceFrame[0] = (((m_CurrentRecvBuffer.buf)[45]) << 4) | ((((m_CurrentRecvBuffer.buf)[46]) >> 4) & 0x0F);
-		voiceFrame[1] = (((m_CurrentRecvBuffer.buf)[46]) << 4) | ((((m_CurrentRecvBuffer.buf)[47]) >> 4) & 0x0F);
-		voiceFrame[2] = (((m_CurrentRecvBuffer.buf)[47]) << 4) | ((((m_CurrentRecvBuffer.buf)[48]) >> 4) & 0x0F);
-		voiceFrame[3] = (((m_CurrentRecvBuffer.buf)[48]) << 4) | ((((m_CurrentRecvBuffer.buf)[49]) >> 4) & 0x0F);
-		voiceFrame[4] = (((m_CurrentRecvBuffer.buf)[49]) << 4) | ((((m_CurrentRecvBuffer.buf)[50]) >> 4) & 0x0F);
-		voiceFrame[5] = (((m_CurrentRecvBuffer.buf)[50]) << 4) | ((((m_CurrentRecvBuffer.buf)[51]) >> 4) & 0x0F);
-		voiceFrame[6] = (((m_CurrentRecvBuffer.buf)[51]) << 4) & 0x80;
-
-		//		AMBE2FrameToAMBE3000Frame(voiceFrame);
-		rFile->WriteVoiceFrame(voiceFrame);
-
-		rFile->originalPeerId = call.fld.CallOriginatingPeerID;
-		rFile->srcId = call.fld.CallSrcID;
-		rFile->tagetId = call.fld.CallTgtID;
-		rFile->callId = call.fld.CallSequenceNumber;
-		rFile->callType = (unsigned char)dwCallType;
-
-
-		sprintf_s(m_reportMsg, "src:%d,tgt:%d", rFile->srcId, rFile->tagetId);
-		sendLogToWindow();
-
-		requireVoiceReocrdsLock();
-		m_voiceReocrds.push_back(rFile);
-		releaseVoiceReocrdsLock();
-	}
-	return TRUE;
-}
+//BOOL CWLNet::WriteVoiceFrame(tCallParams& call, DWORD dwCallType, BOOL isCheckTimeout)
+//{
+//	//尾结束包超时处理
+//	if (isCheckTimeout)
+//	{
+//
+//		//TRACE(_T("m_voiceReocrds.size:%d\r\n"), m_voiceReocrds.size());
+//
+//		DWORD curTime = 0;
+//		DWORD preTime = 0;
+//		DWORD rlt = 0;
+//		for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+//		{
+//			curTime = GetTickCount();
+//			preTime = (*i)->prevTimestamp;
+//			rlt = curTime - preTime;
+//			//TRACE(_T("rlt:%d\r\n"), rlt);
+//			if (rlt > VOICE_END_TIMEOUT)
+//			{
+//				//if (m_pEventLoger)
+//				//{
+//				//	int temp = 0;
+//
+//				//	if (m_dwRecType == IPSC)
+//				//	{
+//				//		if (IndividualCall == (*i)->callType)
+//				//		{
+//				//			temp = IndividualCall;
+//				//		}
+//				//		else if (GroupCall == (*i)->callType)
+//				//		{
+//				//			temp = GroupCall;
+//				//		}
+//				//	}
+//				//	else if (m_dwRecType == CPC)
+//				//	{
+//				//		if (IndividualCall == (*i)->callType)
+//				//		{
+//				//			temp = CPC_PRIVATE_CALL;
+//				//		}
+//				//		else if (GroupCall == (*i)->callType)
+//				//		{
+//				//			temp = CPC_GROUP_CALL;
+//				//		}
+//				//	}
+//
+//				//	m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, temp, 0);
+//
+//				//}
+//
+//
+//				requireVoiceReocrdsLock();
+//				delete (*i);
+//				m_voiceReocrds.erase(i);
+//				releaseVoiceReocrdsLock();
+//
+//				sprintf_s(m_reportMsg, "Voice end");
+//				sendLogToWindow();
+//			}
+//		}
+//		return TRUE;
+//	}
+//
+//	char voiceFrame[7];
+//	BOOL bFind = FALSE;
+//
+//	for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+//	{
+//		if ((*i)->srcId == call.fld.CallSrcID &&
+//			(*i)->tagetId == call.fld.CallTgtID &&
+//			(*i)->callId == call.fld.CallSequenceNumber)
+//		{
+//			voiceFrame[0] = (m_CurrentRecvBuffer.buf)[33];
+//			voiceFrame[1] = (m_CurrentRecvBuffer.buf)[34];
+//			voiceFrame[2] = (m_CurrentRecvBuffer.buf)[35];
+//			voiceFrame[3] = (m_CurrentRecvBuffer.buf)[36];
+//			voiceFrame[4] = (m_CurrentRecvBuffer.buf)[37];
+//			voiceFrame[5] = (m_CurrentRecvBuffer.buf)[38];
+//			voiceFrame[6] = ((m_CurrentRecvBuffer.buf)[39]) & 0x80;
+//
+//			//			AMBE2FrameToAMBE3000Frame(voiceFrame);
+//
+//			(*i)->WriteVoiceFrame(voiceFrame);
+//
+//			//TRACE("Bad voice frame? %s\r\n", (((m_CurrentRecvBuffer.buf)[39]) & 0x40) > 0 ? _T("Yes") : _T("No"));
+//
+//
+//			voiceFrame[0] = (((m_CurrentRecvBuffer.buf)[39]) << 2) | ((((m_CurrentRecvBuffer.buf)[40]) >> 6) & 0x03);
+//			voiceFrame[1] = (((m_CurrentRecvBuffer.buf)[40]) << 2) | ((((m_CurrentRecvBuffer.buf)[41]) >> 6) & 0x03);
+//			voiceFrame[2] = (((m_CurrentRecvBuffer.buf)[41]) << 2) | ((((m_CurrentRecvBuffer.buf)[42]) >> 6) & 0x03);
+//			voiceFrame[3] = (((m_CurrentRecvBuffer.buf)[42]) << 2) | ((((m_CurrentRecvBuffer.buf)[43]) >> 6) & 0x03);
+//			voiceFrame[4] = (((m_CurrentRecvBuffer.buf)[43]) << 2) | ((((m_CurrentRecvBuffer.buf)[44]) >> 6) & 0x03);
+//			voiceFrame[5] = (((m_CurrentRecvBuffer.buf)[44]) << 2) | ((((m_CurrentRecvBuffer.buf)[45]) >> 6) & 0x03);
+//			voiceFrame[6] = (((m_CurrentRecvBuffer.buf)[45]) << 2) & 0x80;
+//			//TRACE("Bad voice frame? %s\r\n", ((((m_CurrentRecvBuffer.buf)[45]) << 2) & 0x40) > 0 ? _T("Yes") : _T("No"));
+//
+//			//			AMBE2FrameToAMBE3000Frame(voiceFrame);
+//			(*i)->WriteVoiceFrame(voiceFrame);
+//
+//			voiceFrame[0] = (((m_CurrentRecvBuffer.buf)[45]) << 4) | ((((m_CurrentRecvBuffer.buf)[46]) >> 4) & 0x0F);
+//			voiceFrame[1] = (((m_CurrentRecvBuffer.buf)[46]) << 4) | ((((m_CurrentRecvBuffer.buf)[47]) >> 4) & 0x0F);
+//			voiceFrame[2] = (((m_CurrentRecvBuffer.buf)[47]) << 4) | ((((m_CurrentRecvBuffer.buf)[48]) >> 4) & 0x0F);
+//			voiceFrame[3] = (((m_CurrentRecvBuffer.buf)[48]) << 4) | ((((m_CurrentRecvBuffer.buf)[49]) >> 4) & 0x0F);
+//			voiceFrame[4] = (((m_CurrentRecvBuffer.buf)[49]) << 4) | ((((m_CurrentRecvBuffer.buf)[50]) >> 4) & 0x0F);
+//			voiceFrame[5] = (((m_CurrentRecvBuffer.buf)[50]) << 4) | ((((m_CurrentRecvBuffer.buf)[51]) >> 4) & 0x0F);
+//			voiceFrame[6] = (((m_CurrentRecvBuffer.buf)[51]) << 4) & 0x80;
+//			//TRACE("Bad voice frame? %s\r\n", ((((m_CurrentRecvBuffer.buf)[51]) << 4) & 0x40) > 0 ? _T("Yes") : _T("No"));
+//			//			AMBE2FrameToAMBE3000Frame(voiceFrame);
+//			(*i)->WriteVoiceFrame(voiceFrame);
+//			//TRACE(_T("burst type:%d\r\n"), call.fld.RepeaterBurstDataType);
+//			if (DATA_TYPE_VOICE_TERMINATOR == call.fld.RepeaterBurstDataType)
+//			{
+//				// it's last frame, write to file and erase this item
+//				//FILE *f;
+//				//f = fopen(("e:\\moto.bit"), ("wb+"));
+//				//fwrite((*i)->buffer, 1, (*i)->lenght, f);
+//				//fclose(f);
+//				//if (m_pEventLoger)
+//				//{
+//				//	int temp = 0;
+//
+//				//	if (m_dwRecType == IPSC)
+//				//	{
+//				//		if (IndividualCall == (*i)->callType)
+//				//		{
+//				//			temp = IndividualCall;
+//				//		}
+//				//		else if (GroupCall == (*i)->callType)
+//				//		{
+//				//			temp = GroupCall;
+//				//		}
+//				//	}
+//				//	else if (m_dwRecType == CPC)
+//				//	{
+//				//		if (IndividualCall == (*i)->callType)
+//				//		{
+//				//			temp = CPC_PRIVATE_CALL;
+//				//		}
+//				//		else if (GroupCall == (*i)->callType)
+//				//		{
+//				//			temp = CPC_GROUP_CALL;
+//				//		}
+//				//	}
+//
+//				//	m_pEventLoger->OnNewVoiceRecord((LPBYTE)(*i)->buffer, (*i)->lenght, (*i)->srcId, (*i)->tagetId, temp, 0);
+//
+//				//}
+//
+//				requireVoiceReocrdsLock();
+//				delete (*i);
+//				m_voiceReocrds.erase(i);
+//				releaseVoiceReocrdsLock();
+//
+//				sprintf_s(m_reportMsg, "Voice end");
+//				sendLogToWindow();
+//			}
+//
+//			bFind = TRUE;
+//			break;
+//		}
+//	}
+//	if (!bFind)
+//	{
+//
+//		sprintf_s(m_reportMsg, "Voice start");
+//		sendLogToWindow();
+//
+//
+//		//转换dongle模式
+//		if (!g_pDongle->changeAMBEToPCM())
+//		{
+//			//转换失败
+//		}
+//		else
+//		{
+//			//转换成功
+//		}
+//
+//		CRecordFile* rFile = new CRecordFile();
+//		voiceFrame[0] = (m_CurrentRecvBuffer.buf)[33];
+//		voiceFrame[1] = (m_CurrentRecvBuffer.buf)[34];
+//		voiceFrame[2] = (m_CurrentRecvBuffer.buf)[35];
+//		voiceFrame[3] = (m_CurrentRecvBuffer.buf)[36];
+//		voiceFrame[4] = (m_CurrentRecvBuffer.buf)[37];
+//		voiceFrame[5] = (m_CurrentRecvBuffer.buf)[38];
+//		voiceFrame[6] = ((m_CurrentRecvBuffer.buf)[39]) & 0x80;
+//
+//		//		AMBE2FrameToAMBE3000Frame(voiceFrame);
+//		rFile->WriteVoiceFrame(voiceFrame);
+//
+//
+//		voiceFrame[0] = (((m_CurrentRecvBuffer.buf)[39]) << 2) | ((((m_CurrentRecvBuffer.buf)[40]) >> 6) & 0x03);
+//		voiceFrame[1] = (((m_CurrentRecvBuffer.buf)[40]) << 2) | ((((m_CurrentRecvBuffer.buf)[41]) >> 6) & 0x03);
+//		voiceFrame[2] = (((m_CurrentRecvBuffer.buf)[41]) << 2) | ((((m_CurrentRecvBuffer.buf)[42]) >> 6) & 0x03);
+//		voiceFrame[3] = (((m_CurrentRecvBuffer.buf)[42]) << 2) | ((((m_CurrentRecvBuffer.buf)[43]) >> 6) & 0x03);
+//		voiceFrame[4] = (((m_CurrentRecvBuffer.buf)[43]) << 2) | ((((m_CurrentRecvBuffer.buf)[44]) >> 6) & 0x03);
+//		voiceFrame[5] = (((m_CurrentRecvBuffer.buf)[44]) << 2) | ((((m_CurrentRecvBuffer.buf)[45]) >> 6) & 0x03);
+//		voiceFrame[6] = (((m_CurrentRecvBuffer.buf)[45]) << 2) & 0x80;
+//
+//		//		AMBE2FrameToAMBE3000Frame(voiceFrame);
+//		rFile->WriteVoiceFrame(voiceFrame);
+//
+//		voiceFrame[0] = (((m_CurrentRecvBuffer.buf)[45]) << 4) | ((((m_CurrentRecvBuffer.buf)[46]) >> 4) & 0x0F);
+//		voiceFrame[1] = (((m_CurrentRecvBuffer.buf)[46]) << 4) | ((((m_CurrentRecvBuffer.buf)[47]) >> 4) & 0x0F);
+//		voiceFrame[2] = (((m_CurrentRecvBuffer.buf)[47]) << 4) | ((((m_CurrentRecvBuffer.buf)[48]) >> 4) & 0x0F);
+//		voiceFrame[3] = (((m_CurrentRecvBuffer.buf)[48]) << 4) | ((((m_CurrentRecvBuffer.buf)[49]) >> 4) & 0x0F);
+//		voiceFrame[4] = (((m_CurrentRecvBuffer.buf)[49]) << 4) | ((((m_CurrentRecvBuffer.buf)[50]) >> 4) & 0x0F);
+//		voiceFrame[5] = (((m_CurrentRecvBuffer.buf)[50]) << 4) | ((((m_CurrentRecvBuffer.buf)[51]) >> 4) & 0x0F);
+//		voiceFrame[6] = (((m_CurrentRecvBuffer.buf)[51]) << 4) & 0x80;
+//
+//		//		AMBE2FrameToAMBE3000Frame(voiceFrame);
+//		rFile->WriteVoiceFrame(voiceFrame);
+//
+//		rFile->originalPeerId = call.fld.CallOriginatingPeerID;
+//		rFile->srcId = call.fld.CallSrcID;
+//		rFile->tagetId = call.fld.CallTgtID;
+//		rFile->callId = call.fld.CallSequenceNumber;
+//		rFile->callType = (unsigned char)dwCallType;
+//
+//
+//		sprintf_s(m_reportMsg, "src:%d,tgt:%d", rFile->srcId, rFile->tagetId);
+//		sendLogToWindow();
+//
+//		requireVoiceReocrdsLock();
+//		m_voiceReocrds.push_back(rFile);
+//		releaseVoiceReocrdsLock();
+//	}
+//	return TRUE;
+//}
 
 void CWLNet::calEnciphe()
 {
@@ -2990,7 +3011,8 @@ void CWLNet::Net_XNL_CONNECT(DWORD eventIndex)
 			{
 			case 0:               //Tx completed successfully immediately.
 			case WSA_IO_PENDING:  //Completion is pending
-				m_WLStatus = WAITFOR_XNL_DEVICE_MASTER_QUERY_TX;
+				//m_WLStatus = WAITFOR_XNL_DEVICE_MASTER_QUERY_TX;
+				setWlStatus(WAITFOR_XNL_DEVICE_MASTER_QUERY_TX);
 				//strSysLog = _T("发送0x70(XNL_DEVICE_MASTER_QUERY)");
 				//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 				break;
@@ -3012,7 +3034,8 @@ void CWLNet::Net_XNL_CONNECT(DWORD eventIndex)
 	case  TIMEOUT:
 		if ((GetTickCount() - m_dwMasterMapBroadcastTimer) > 100000UL)
 		{
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3038,21 +3061,24 @@ void CWLNet::Net_XNL_DEVICE_MASTER_QUERY_TX(DWORD eventIndex)
 		WSAResetEvent(m_eventArray[TxEvent]);
 		if (TRUE != rc){ //XNL_DEVICE_MASTER_QUERY Transmission failed.
 
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("发送0x70(XNL_DEVICE_MASTER_QUERY)失败，重新注册");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 			break;
 		}
 		m_dwXnlMasterStatusBrdcstTimer = GetTickCount();
 
-		m_WLStatus = WAITFOR_XNL_MASTER_STATUS_BROADCAST;
+		//m_WLStatus = WAITFOR_XNL_MASTER_STATUS_BROADCAST;
+		setWlStatus(WAITFOR_XNL_MASTER_STATUS_BROADCAST);
 
 		break;
 
 	case RxIndex:
 		WSAResetEvent(m_eventArray[TxEvent]);
 		// transfer to XNL_DEVICE_MASTER_QUERY
-		m_WLStatus = WAITFOR_XNL_MASTER_STATUS_BROADCAST;
+		//m_WLStatus = WAITFOR_XNL_MASTER_STATUS_BROADCAST;
+		setWlStatus(WAITFOR_XNL_MASTER_STATUS_BROADCAST);
 		//strSysLog = _T("等待0x70(XNL_MASTER_STATUS_BROADCAST)");
 		//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		break;
@@ -3060,7 +3086,8 @@ void CWLNet::Net_XNL_DEVICE_MASTER_QUERY_TX(DWORD eventIndex)
 	case TIMEOUT:
 		if ((GetTickCount() - m_dwXnlMasterStatusBrdcstTimer) > 100000UL)
 		{
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3131,7 +3158,8 @@ void CWLNet::Net_WAITFOR_XNL_MASTER_STATUS_BROADCAST(DWORD eventIndex)
 				{
 				case 0:               //Tx completed successfully immediately.
 				case WSA_IO_PENDING:  //Completion is pending
-					m_WLStatus = WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX;
+					//m_WLStatus = WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX;
+					setWlStatus(WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX);
 					//strSysLog = _T("发送0x70(XNL_DEVICE_AUTH_KEY_REQUEST)");
 					//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 					break;
@@ -3158,7 +3186,8 @@ void CWLNet::Net_WAITFOR_XNL_MASTER_STATUS_BROADCAST(DWORD eventIndex)
 	case TIMEOUT:
 		if ((GetTickCount() - m_dwXnlMasterStatusBrdcstTimer) > 100000UL)  // 100 seconds
 		{
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3184,27 +3213,31 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX(DWORD eventIndex)
 
 		WSAResetEvent(m_eventArray[TxEvent]);
 		if (TRUE != rc){
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("发送0x70(XNL_DEVICE_AUTH_KEY_REQUEST)失败，重新注册");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 			break;
 		}
 		m_dwXnlDeviceAuthTimer = GetTickCount();
-		m_WLStatus = WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY;
+		//m_WLStatus = WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY;
+		setWlStatus(WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY);
 		//strSysLog = _T("等待0x70(XNL_DEVICE_AUTH_KEY_REPLY)");
 		//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		break;
 
 	case RxIndex:
 		WSAResetEvent(m_eventArray[TxEvent]);
-		m_WLStatus = WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY;
+		//m_WLStatus = WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY;
+		setWlStatus(WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY);
 		//	strSysLog = _T("等待0x70(XNL_DEVICE_AUTH_KEY_REPLY)");
 		//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		break;
 	case TIMEOUT:
 		if ((GetTickCount() - m_dwXnlDeviceAuthTimer) > 100000UL)  // 100 seconds
 		{
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3282,7 +3315,8 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY(DWORD eventIndex)
 				{
 				case 0:               //Tx completed successfully immediately.
 				case WSA_IO_PENDING:  //Completion is pending
-					m_WLStatus = WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX;
+					//m_WLStatus = WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX;
+					setWlStatus(WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX);
 					//strSysLog = _T("发送0x70(XNL_DEVICE_CONNECT_REQUEST)");
 					//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 					break;
@@ -3310,7 +3344,8 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY(DWORD eventIndex)
 	case TIMEOUT:
 		if ((GetTickCount() - m_dwXnlDeviceAuthTimer) > 100000UL)  // 100 seconds
 		{
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3336,27 +3371,30 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX(DWORD eventIndex)
 
 		WSAResetEvent(m_eventArray[TxEvent]);
 		if (TRUE != rc){
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("发送0x70(XNL_DEVICE_CONNECT_REQUEST)失败，重新注册");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 			break;
 		}
 		m_dwXnlConnectTimer = GetTickCount();
-		m_WLStatus = WAITFOR_XNL_DEVICE_CONNECT_REPLY;
+		//m_WLStatus = WAITFOR_XNL_DEVICE_CONNECT_REPLY;
+		setWlStatus(WAITFOR_XNL_DEVICE_CONNECT_REPLY);
 		//strSysLog = _T("等待0x70(XNL_DEVICE_CONNECT_REPLY)");
 		//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		break;
 
 	case RxIndex:
 		WSAResetEvent(m_eventArray[TxEvent]);
-		m_WLStatus = WAITFOR_XNL_DEVICE_CONNECT_REPLY;
-
+		//m_WLStatus = WAITFOR_XNL_DEVICE_CONNECT_REPLY;
+		setWlStatus(WAITFOR_XNL_DEVICE_CONNECT_REPLY);
 		break;
 
 	case TIMEOUT:
 		if ((GetTickCount() - m_dwXnlConnectTimer) > 100000UL)  // 100 seconds
 		{
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3404,7 +3442,8 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_CONNECT_REPLY(DWORD eventIndex)
 
 				rc = IssueReadRequest();
 				m_dwXnlDeviceSysmapBrdcstTimer = GetTickCount();
-				m_WLStatus = WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST; //Advance state.
+				//m_WLStatus = WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST; //Advance state.
+				setWlStatus(WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST);
 				//strSysLog = _T("等待0x70(XNL_DEVICE_SYSMAP_BROADCAST)");
 				//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 				memcpy(xnlAddr, m_CurrentRecvBuffer.buf + 21, 2);
@@ -3428,7 +3467,8 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_CONNECT_REPLY(DWORD eventIndex)
 	case  TIMEOUT:
 		if ((GetTickCount() - m_dwXnlConnectTimer) > 100000UL)
 		{
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3495,7 +3535,8 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST(DWORD eventIndex)
 				case 0:               //Tx completed successfully immediately.
 				case WSA_IO_PENDING:
 					//Completion is pending
-					m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1;
+					//m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1;
+					setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1);
 					//strSysLog = _T("发送0x70(XNL_DATA_MSG_DEVICE_INIT_1)");
 					//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 					break;
@@ -3524,7 +3565,8 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST(DWORD eventIndex)
 		{
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 		}
 		break;
 	default:
@@ -3584,7 +3626,8 @@ void CWLNet::Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1(DWORD eventIndex)
 				case 0:               //Tx completed successfully immediately.
 				case WSA_IO_PENDING:
 					//Completion is pending
-					m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2_TX;
+					//m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2_TX;
+					setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2_TX);
 					//strSysLog = _T("发送0x70(XNL_DATA_MSG_DEVICE_INIT_2)");
 					//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 					break;
@@ -3611,7 +3654,8 @@ void CWLNet::Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1(DWORD eventIndex)
 	case TIMEOUT:
 		if ((GetTickCount() - m_dwXnlDeviceSysmapBrdcstTimer) > 100000UL)  // 100 seconds
 		{
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3636,22 +3680,26 @@ void CWLNet::Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2_TX(DWORD eventIndex)
 			&m_dwTxFlags);
 		WSAResetEvent(m_eventArray[TxEvent]);
 		if (TRUE != rc){
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			break;
 		}
 		m_dwXnlDeviceSysmapBrdcstTimer = GetTickCount();
-		m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2;
+		//m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2;
+		setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2);
 		break;
 
 	case RxIndex:
 		WSAResetEvent(m_eventArray[TxEvent]);
-		m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2;
+		//m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2;
+		setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2);
 		break;
 
 	case TIMEOUT:
 		if ((GetTickCount() - m_dwXnlDeviceSysmapBrdcstTimer) > 100000UL)  // 100 seconds
 		{
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3733,7 +3781,8 @@ void CWLNet::Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2(DWORD eventIndex)
 				case WSA_IO_PENDING:
 					//Completion is pending
 
-					m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3_TX;
+					//m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3_TX;
+					setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3_TX);
 					//strSysLog = _T("发送0x70(XNL_DATA_MSG_DEVICE_INIT_3)");
 					//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 					break;
@@ -3757,7 +3806,8 @@ void CWLNet::Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2(DWORD eventIndex)
 	case TIMEOUT:
 		if ((GetTickCount() - m_dwXnlDeviceSysmapBrdcstTimer) > 100000UL)  // 100 seconds
 		{
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3783,20 +3833,24 @@ void CWLNet::Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3_TX(DWORD eventIndex)
 
 		WSAResetEvent(m_eventArray[TxEvent]);
 		if (TRUE != rc){
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			break;
 		}
 		m_dwXnlDeviceInitTimer = GetTickCount();
-		m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3;
+		//m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3;
+		setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3);
 		break;
 	case RxIndex:
 		WSAResetEvent(m_eventArray[TxEvent]);
-		m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3;
+		//m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3;
+		setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3);
 		break;
 	case TIMEOUT:
 		if ((GetTickCount() - m_dwXnlDeviceInitTimer) > 100000UL)  // 100 seconds
 		{
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3865,7 +3919,8 @@ void CWLNet::Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3(DWORD eventIndex)
 				case 0:               //Tx completed successfully immediately.
 				case WSA_IO_PENDING:
 					//Completion is pending
-					m_WLStatus = WAITFOR_XNL_XCMP_READ_SERIAL;
+					//m_WLStatus = WAITFOR_XNL_XCMP_READ_SERIAL;
+					setWlStatus(WAITFOR_XNL_XCMP_READ_SERIAL);
 					//strSysLog = _T("发送0x70(WAITFOR_XNL_XCMP_READ_SERIAL)");
 					//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 					break;
@@ -3890,7 +3945,8 @@ void CWLNet::Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3(DWORD eventIndex)
 	case TIMEOUT:
 		if ((GetTickCount() - m_dwXnlDeviceInitTimer) > 100000UL)  // 100 seconds
 		{
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3957,7 +4013,8 @@ void CWLNet::Net_XNL_XCMP_READ_SERIAL(DWORD eventIndex)
 			case 0:               //Tx completed successfully immediately.
 			case WSA_IO_PENDING:
 				//Completion is pending
-				m_WLStatus = WAITFOR_XNL_XCMP_READ_SERIAL_RESULT;
+				//m_WLStatus = WAITFOR_XNL_XCMP_READ_SERIAL_RESULT;
+				setWlStatus(WAITFOR_XNL_XCMP_READ_SERIAL_RESULT);
 				//strSysLog = _T("......获取master序列号......");
 				//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 				break;
@@ -3982,7 +4039,8 @@ void CWLNet::Net_XNL_XCMP_READ_SERIAL(DWORD eventIndex)
 
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
-			m_WLStatus = XNL_CONNECT;
+			//m_WLStatus = XNL_CONNECT;
+			setWlStatus(XNL_CONNECT);
 		}
 		break;
 
@@ -4084,7 +4142,8 @@ void CWLNet::Net_WAITFOR_XNL_XCMP_READ_SERIAL_RESULT(DWORD eventIndex)
 				case 0:               //Tx completed successfully immediately.
 				case WSA_IO_PENDING:
 					//Completion is pending
-					m_WLStatus = ALIVE;
+					//m_WLStatus = ALIVE;
+					setWlStatus(ALIVE);
 					break;
 				default:              //stay in this state and eventually retry.
 					break;
@@ -4112,7 +4171,8 @@ void CWLNet::Net_WAITFOR_XNL_XCMP_READ_SERIAL_RESULT(DWORD eventIndex)
 
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
-			m_WLStatus = WAITFOR_XNL_XCMP_READ_SERIAL;
+			//m_WLStatus = WAITFOR_XNL_XCMP_READ_SERIAL;
+			setWlStatus(WAITFOR_XNL_XCMP_READ_SERIAL);
 		}
 		break;
 
@@ -4141,7 +4201,8 @@ void CWLNet::WriteMapFile()
 /************************************************************************/
 void CWLNet::RestartLE()
 {
-	m_WLStatus = STARTING;
+	//m_WLStatus = STARTING;
+	setWlStatus(STARTING);
 }
 
 /************************************************************************/
@@ -4939,7 +5000,7 @@ void CWLNet::NetStuffTxVoice(unsigned char* pVoiceBytes)
 	{
 		/*存在则记录语音*/
 		if ((*i)->srcId == CONFIG_LOCAL_RADIO_ID &&
-			(*i)->tagetId == g_targetId &&
+			(*i)->tagetId == CONFIG_CURRENT_TAGET &&
 			(*i)->callId == g_callId)
 		{
 			(*i)->WriteVoiceFrame((char*)pVoiceBytes, 7, true);
@@ -5004,7 +5065,7 @@ void CWLNet::FILL_AMBE_FRAME(char* pVoiceBytes, char* pSendVoice, int txSubCount
 	{
 		/*存在则记录语音*/
 		if ((*i)->srcId == CONFIG_LOCAL_RADIO_ID &&
-			(*i)->tagetId == g_targetId &&
+			(*i)->tagetId == CONFIG_CURRENT_TAGET &&
 			(*i)->callId == g_callId)
 		{
 			(*i)->WriteVoiceFrame((char*)pVoiceBytes, 7, true);
@@ -5104,14 +5165,35 @@ void CWLNet::NetWorker_TxIfCall(void)
 	}
 }
 
-bool CWLNet::isTargetMeCall(unsigned int tagetId, unsigned char callType)
+bool CWLNet::isNeedPlay(unsigned int tagetId, unsigned char callType)
 {
-	//sprintf_s(m_reportMsg, "recive a call to %u,local raidoId is %u,local radioGroup is %u", tgtId, m_dwMyRadioID, m_dwMyRadioGroup);
-	//sendLogToWindow();
-
-	//return true;
-
-	return (callType == GROUPCALL_TYPE && tagetId == CONFIG_DEFAULT_GROUP) || (callType == PRIVATE_CALL && tagetId == CONFIG_LOCAL_RADIO_ID) || (callType == ALL_CALL) || (callType == GROUPCALL_TYPE && tagetId == g_targetId);
+	switch (callType)
+	{
+	case ALL_CALL:
+	{
+					 return true;
+	}
+		break;
+	case PRIVATE_CALL:
+	{
+						 if (CONFIG_LOCAL_RADIO_ID == tagetId)
+						 {
+							 return true;
+						 }
+	}
+		break;
+	case GROUP_CALL:
+	{
+					   if (CONFIG_DEFAULT_GROUP == tagetId || CONFIG_CURRENT_TAGET == tagetId)
+					   {
+						   return true;
+					   }
+	}
+		break;
+	default:
+		break;
+	}
+	return false;
 }
 
 void CWLNet::requireVoiceReocrdsLock()
@@ -5371,8 +5453,8 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			while (lengthAmbe > 0
 				&& pAmbeData)
 			{
-// 				sprintf_s(m_reportMsg, "10");
-// 				sendLogToWindow();
+				// 				sprintf_s(m_reportMsg, "10");
+				// 				sendLogToWindow();
 				m_pSendVoicePackage = new SendVoicePackage;
 				m_pVoice = (char*)calloc(MAX_PACKET_SIZE, sizeof(char));
 				T_WL_PROTOCOL_21 networkData = { 0 };
@@ -5410,8 +5492,8 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			/*填充超级帧*/
 			while (m_burstType != (char)BURST_T)
 			{
-// 				sprintf_s(m_reportMsg, "11");
-// 				sendLogToWindow();
+				// 				sprintf_s(m_reportMsg, "11");
+				// 				sendLogToWindow();
 				m_pSendVoicePackage = new SendVoicePackage;
 				m_pVoice = (char*)calloc(MAX_PACKET_SIZE, sizeof(char));
 				T_WL_PROTOCOL_21 networkData = { 0 };
@@ -5436,8 +5518,8 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			_SlotNumber registSlotNumber = SLOT1;
 			while (m_retryRequestCallCount)
 			{
-// 				sprintf_s(m_reportMsg, "12");
-// 				sendLogToWindow();
+				// 				sprintf_s(m_reportMsg, "12");
+				// 				sendLogToWindow();
 				/*申请通话*/
 				requestNewCallEvent();
 				m_pCurrentSendVoicePeer->HandlePacket(WL_VC_CHNL_CTRL_REQUEST_LOCAL, &registSlotNumber, 0, 0, 0);
@@ -5518,8 +5600,8 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			while (lengthAmbe > 0
 				&& pAmbeData)
 			{
-// 				sprintf_s(m_reportMsg, "13");
-// 				sendLogToWindow();
+				// 				sprintf_s(m_reportMsg, "13");
+				// 				sendLogToWindow();
 				m_pSendVoicePackage = new SendVoicePackage;
 				m_pVoice = (char*)calloc(MAX_PACKET_SIZE, sizeof(char));
 				T_WL_PROTOCOL_21 networkData = { 0 };
@@ -5557,8 +5639,8 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			/*填充超级帧*/
 			while (m_burstType != (char)BURST_T)
 			{
-// 				sprintf_s(m_reportMsg, "14");
-// 				sendLogToWindow();
+				// 				sprintf_s(m_reportMsg, "14");
+				// 				sendLogToWindow();
 				m_pSendVoicePackage = new SendVoicePackage;
 				m_pVoice = (char*)calloc(MAX_PACKET_SIZE, sizeof(char));
 				T_WL_PROTOCOL_21 networkData = { 0 };
@@ -5582,8 +5664,8 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 
 			while (m_retryRequestCallCount)
 			{
-// 				sprintf_s(m_reportMsg, "15");
-// 				sendLogToWindow();
+				// 				sprintf_s(m_reportMsg, "15");
+				// 				sendLogToWindow();
 				/*申请通话*/
 				requestNewCallEvent();
 				m_pSitePeer->HandlePacket(WL_VC_CHNL_CTRL_REQUEST_LOCAL, NULL, 0, 0, 0);
@@ -5645,7 +5727,7 @@ void CWLNet::NetWorker_SendCallByWL(void)
 	{
 		/*存在则记录语音*/
 		if ((*i)->srcId == CONFIG_LOCAL_RADIO_ID &&
-			(*i)->tagetId == g_targetId &&
+			(*i)->tagetId == CONFIG_CURRENT_TAGET &&
 			(*i)->callId == g_callId)
 		{
 			(*i)->prevTimestamp = GetTickCount();
@@ -5689,7 +5771,7 @@ void CWLNet::NetWorker_SendCallByWL(void)
 					{
 						/*存在则记录语音*/
 						if ((*i)->srcId == CONFIG_LOCAL_RADIO_ID &&
-							(*i)->tagetId == g_targetId &&
+							(*i)->tagetId == CONFIG_CURRENT_TAGET &&
 							(*i)->callId == g_callId)
 						{
 							GetLocalTime(&((*i)->recordTime));
@@ -6234,8 +6316,8 @@ void CWLNet::clearSendVoices()
 	requireReadySendVoicesLock();
 	while (m_sendVoices.size() > 0)
 	{
-// 		sprintf_s(m_reportMsg, "16");
-// 		sendLogToWindow();
+		// 		sprintf_s(m_reportMsg, "16");
+		// 		sendLogToWindow();
 		SendVoicePackage* p = m_sendVoices.front();
 		m_sendVoices.pop_front();
 		if (p)
@@ -6270,7 +6352,7 @@ void CWLNet::SetCallStatus(WORD value)
 
 int CWLNet::callBack()
 {
-	if (g_targetId != CONFIG_DEFAULT_GROUP && g_targetCallType == GROUPCALL_TYPE)
+	if (CONFIG_CURRENT_TAGET != CONFIG_DEFAULT_GROUP && g_targetCallType == GROUP_CALL)
 	{
 		updateChangeToCurrentTick();
 	}
@@ -6280,8 +6362,8 @@ int CWLNet::callBack()
 	{
 		while (m_retryRequestCallCount)
 		{
-// 			sprintf_s(m_reportMsg, "17");
-// 			sendLogToWindow();
+			// 			sprintf_s(m_reportMsg, "17");
+			// 			sendLogToWindow();
 			NetTx(true);
 			requestNewCallEvent();
 			/*初始化通话*/
@@ -6326,14 +6408,14 @@ int CWLNet::callBack()
 	}
 	else
 	{
-		sendCallStatus(g_targetCallType, CONFIG_LOCAL_RADIO_ID, g_targetId, NEW_CALL_END);
+		wlCallStatus(g_targetCallType, CONFIG_LOCAL_RADIO_ID, CONFIG_CURRENT_TAGET, STATUS_CALL_END | REMOTE_CMD_FAIL);
 		return 1;
 	}
 }
 
 int CWLNet::newCall()
 {
-	if (g_targetId != CONFIG_DEFAULT_GROUP && g_targetCallType == GROUPCALL_TYPE)
+	if (CONFIG_CURRENT_TAGET != CONFIG_DEFAULT_GROUP && g_targetCallType == GROUP_CALL)
 	{
 		updateChangeToCurrentTick();
 	}
@@ -6348,8 +6430,8 @@ int CWLNet::newCall()
 			_SlotNumber registerSlot = CONFIG_DEFAULT_SLOT;
 			while (m_retryRequestCallCount)
 			{
-// 				sprintf_s(m_reportMsg, "18");
-// 				sendLogToWindow();
+				// 				sprintf_s(m_reportMsg, "18");
+				// 				sendLogToWindow();
 				/*初始化*/
 				NetTx(true);
 				requestNewCallEvent();
@@ -6406,8 +6488,8 @@ int CWLNet::newCall()
 		{
 			while (m_retryRequestCallCount)
 			{
-// 				sprintf_s(m_reportMsg, "19");
-// 				sendLogToWindow();
+				// 				sprintf_s(m_reportMsg, "19");
+				// 				sendLogToWindow();
 				/*初始化*/
 				NetTx(true);
 				requestNewCallEvent();
@@ -6446,8 +6528,8 @@ int CWLNet::newCall()
 		{
 			while (m_retryRequestCallCount)
 			{
-// 				sprintf_s(m_reportMsg, "20");
-// 				sendLogToWindow();
+				// 				sprintf_s(m_reportMsg, "20");
+				// 				sendLogToWindow();
 				/*初始化*/
 				NetTx(true);
 				requestNewCallEvent();
@@ -6486,7 +6568,7 @@ int CWLNet::newCall()
 	}
 	else
 	{
-		sendCallStatus(g_targetCallType, CONFIG_LOCAL_RADIO_ID, g_targetId, NEW_CALL_END);
+		wlCallStatus(g_targetCallType, CONFIG_LOCAL_RADIO_ID, CONFIG_CURRENT_TAGET, STATUS_CALL_END | REMOTE_CMD_FAIL);
 		return 1;
 	}
 }
@@ -6619,7 +6701,7 @@ void CWLNet::CorrectingBuffer(DWORD callId)
 	}
 	releaseReadySendVoicesLock();
 
-	sendCallStatus(g_targetCallType, CONFIG_LOCAL_RADIO_ID, g_targetId,NEW_CALL_START);
+	wlCallStatus(g_targetCallType, CONFIG_LOCAL_RADIO_ID, CONFIG_CURRENT_TAGET, STATUS_CALL_START | REMOTE_CMD_SUCCESS);
 }
 
 void CWLNet::requestRecordEndEvent()
@@ -6642,8 +6724,8 @@ void CWLNet::waitRecordEnd()
 	/*填充超级帧*/
 	while (m_burstType != (char)BURST_T)
 	{
-// 		sprintf_s(m_reportMsg, "21");
-// 		sendLogToWindow();
+		// 		sprintf_s(m_reportMsg, "21");
+		// 		sendLogToWindow();
 		long tempLength = 0;
 		m_pSendVoicePackage = new SendVoicePackage;
 		m_pVoice = (char*)calloc(MAX_PACKET_SIZE, sizeof(char));
@@ -6741,7 +6823,7 @@ void CWLNet::Build_T_WL_PROTOCOL_19(T_WL_PROTOCOL_19& networkData)
 		networkData.slotNumber = NULL_SLOT;
 	}
 	networkData.sourceID = CONFIG_LOCAL_RADIO_ID;
-	networkData.targetID = g_targetId;
+	networkData.targetID = CONFIG_CURRENT_TAGET;
 	networkData.wirelineOpcode = WL_VC_VOICE_END_BURST;
 }
 
@@ -6767,7 +6849,7 @@ void CWLNet::Build_T_WL_PROTOCOL_21(T_WL_PROTOCOL_21& networkData, bool bStart)
 	networkData.rawRssiValue = VALUE_RSSI;
 	networkData.RTPInformationField.header = BURST_RTP_HEADER;
 	networkData.sourceID = CONFIG_LOCAL_RADIO_ID;
-	networkData.targetID = g_targetId;
+	networkData.targetID = CONFIG_CURRENT_TAGET;
 	if (m_pCurrentSendVoicePeer)
 	{
 		networkData.slotNumber = m_pCurrentSendVoicePeer->getUseSlot();
@@ -6960,8 +7042,8 @@ void CWLNet::Unpack_LE_NOTIFICATION_MAP_BROADCAST(char* pData, T_LE_PROTOCOL_93_
 		length -= 12;
 		while (length)
 		{
-// 			sprintf_s(m_reportMsg, "23");
-// 			sendLogToWindow();
+			// 			sprintf_s(m_reportMsg, "23");
+			// 			sendLogToWindow();
 			networkData.mapPayload.wideMapPeers[index].remotePeerID = ntohl(*((DWORD*)(&pData[8 + (index * 13)])));
 			networkData.mapPayload.wideMapPeers[index].remoteIPAddr = ntohl(*((DWORD*)(&pData[12 + (index * 13)])));
 			networkData.mapPayload.wideMapPeers[index].remotePort = ntohs(*((WORD*)(&pData[16 + (index * 13)])));
@@ -7280,94 +7362,220 @@ void CWLNet::clearPeer(CIPSCPeer *p)
 
 int CWLNet::checkDefaultGroupAndTalkTime()
 {
-	if (g_targetId != CONFIG_DEFAULT_GROUP && g_targetCallType == GROUPCALL_TYPE)
+	if (CONFIG_CURRENT_TAGET != CONFIG_DEFAULT_GROUP && g_targetCallType == GROUP_CALL)
 	{
 		long dif = GetTickCount() - m_dwChangeToCurrentTick;
 		if (dif > GO_BACK_DEFAULT_GROUP_TIME)
 		{
 			sprintf_s(m_reportMsg, "GO_BACK_DEFAULT_GROUP");
 			sendLogToWindow();
-			g_targetId = CONFIG_DEFAULT_GROUP;
+			CONFIG_CURRENT_TAGET = CONFIG_DEFAULT_GROUP;
 		}
 	}
 	return 0;
 }
 
-int CWLNet::setPlayCallOfCare(unsigned char calltype, unsigned long srcId, unsigned long targetId)
+int CWLNet::setPlayCallOfCare(unsigned char calltype,unsigned long targetId)
 {
-	//int type = atoi(pCallType);
-	unsigned long src = srcId;
-	unsigned long tgt = targetId;
-	switch (calltype)
+	bool isNeedFind = true;
+	for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
 	{
-	case GROUPCALL_TYPE:
+		CRecordFile *p = (*i);
+		p->setBoolPlay(false);
+		if (isNeedFind)
+		{
+			switch (calltype)
+			{
+			case GROUP_CALL:
+			{
+							   if (p->tagetId == targetId && p->callType == GROUP_CALL)
+							   {
+								   p->setBoolPlay(true);
+								   isNeedFind = false;
+							   }
+			}
+				break;
+			case PRIVATE_CALL:
+			{
+								 if (p->tagetId == CONFIG_LOCAL_RADIO_ID && p->callType == PRIVATE_CALL)
+								 {
+									 p->setBoolPlay(true);
+									 isNeedFind = false;
+								 }
+			}
+				break;
+			case ALL_CALL:
+			{
+							 if (p->callType == PRIVATE_CALL)
+							 {
+								 p->setBoolPlay(true);
+								 isNeedFind = false;
+							 }
+			}
+				break;
+			default:
+				break;
+			}
+		}
+	}
+	if (isNeedFind)
 	{
-						   if (tgt != CONFIG_DEFAULT_GROUP)
-						   {
-							   g_targetId = tgt;
-							   g_bIsHaveCurrentGroupCall = true;
-							   g_bIsHaveDefaultGroupCall = false;
-							   g_bIsHaveAllCall = false;
-							   g_bIsHavePrivateCall = false;
-						   }
-						   else
-						   {
-							   g_bIsHaveCurrentGroupCall = false;
-							   g_bIsHaveDefaultGroupCall = true;
-							   g_bIsHaveAllCall = false;
-							   g_bIsHavePrivateCall = false;
-						   }
+		return 1;
 	}
-		break;
-	case PRIVATE_CALL:
+	else
 	{
-						 g_bIsHaveCurrentGroupCall = false;
-						 g_bIsHaveDefaultGroupCall = false;
-						 g_bIsHaveAllCall = false;
-						 g_bIsHavePrivateCall = true;
+		return 0;
 	}
-		break;
-	case ALL_CALL:
-	{
-					 g_bIsHaveCurrentGroupCall = false;
-					 g_bIsHaveDefaultGroupCall = false;
-					 g_bIsHaveAllCall = true;
-					 g_bIsHavePrivateCall = false;
-	}
-		break;
-	default:
-	{
-			   return 1;
-	}
-		break;
-	}
+	////int type = atoi(pCallType);
+	//unsigned long tgt = targetId;
+	//switch (calltype)
+	//{
+	//case GROUP_CALL:
+	//{
+	//					   if (tgt != CONFIG_DEFAULT_GROUP)
+	//					   {
+	//						   CONFIG_CURRENT_TAGET = tgt;
+	//						   g_bIsHaveCurrentGroupCall = true;
+	//						   g_bIsHaveDefaultGroupCall = false;
+	//						   g_bIsHaveAllCall = false;
+	//						   g_bIsHavePrivateCall = false;
+	//						   updateChangeToCurrentTick();
+	//					   }
+	//					   else
+	//					   {
+	//						   g_bIsHaveCurrentGroupCall = false;
+	//						   g_bIsHaveDefaultGroupCall = true;
+	//						   g_bIsHaveAllCall = false;
+	//						   g_bIsHavePrivateCall = false;
+	//					   }
+	//}
+	//	break;
+	//case PRIVATE_CALL:
+	//{
+	//					 g_bIsHaveCurrentGroupCall = false;
+	//					 g_bIsHaveDefaultGroupCall = false;
+	//					 g_bIsHaveAllCall = false;
+	//					 g_bIsHavePrivateCall = true;
+	//}
+	//	break;
+	//case ALL_CALL:
+	//{
+	//				 g_bIsHaveCurrentGroupCall = false;
+	//				 g_bIsHaveDefaultGroupCall = false;
+	//				 g_bIsHaveAllCall = true;
+	//				 g_bIsHavePrivateCall = false;
+	//}
+	//	break;
+	//default:
+	//{
+	//		   return 1;
+	//}
+	//	break;
+	//}
+	//return 0;
+}
+
+int CWLNet::thereIsCallOfCare(CRecordFile *pCallRecord, bool isCurrent)
+{
+	wlCall(pCallRecord->callType, pCallRecord->srcId, pCallRecord->tagetId, OPERATE_CALL_START, isCurrent);
 	return 0;
 }
 
-int CWLNet::thereIsCallOfCare(CRecordFile *pCallRecord)
+int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status)
 {
-	sendCallStatus(pCallRecord->callType, pCallRecord->srcId, pCallRecord->tagetId, HAVE_CALL_NO_PLAY);
-	return 0;
-}
+	REMOTE_TASK* pTask = m_pManager->getCurrentTask();
 
-int CWLNet::sendCallStatus(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status)
-{
+	int clientCallType = 0;
+	int stus = 0;
+	int operate = 0;
+
+	if (status & REMOTE_CMD_SUCCESS)
+	{
+		stus = CMD_SUCCESS;
+	}
+	else
+	{
+		stus = CMD_FAIL;
+	}
+
+	if (pTask)
+	{
+		switch (pTask->cmd)
+		{
+		case REMOTE_CMD_CALL:
+		{
+								operate = OPERATE_CALL_START;
+								
+		}
+			break;
+		case REMOTE_CMD_STOP_CALL:
+		{
+									 operate = OPERATE_CALL_END;
+		}
+			break;
+		default:
+		{
+				   if (status & STATUS_CALL_START)
+				   {
+					   operate = OPERATE_CALL_START;
+				   }
+				   else if ((status & STATUS_CALL_END)
+					   && stus == CMD_FAIL)
+				   {
+					   operate = OPERATE_CALL_START;
+				   }
+				   else
+				   {
+					   operate = OPERATE_CALL_END;
+				   }
+		}
+			break;
+		}
+		m_pManager->freeCurrentTask();
+	}
+	else
+	{
+		if (status & STATUS_CALL_START)
+		{
+			operate = OPERATE_CALL_START;
+		}
+		else if ((status & STATUS_CALL_END)
+			&& stus == CMD_FAIL)
+		{
+			operate = OPERATE_CALL_START;
+		}
+		else
+		{
+			operate = OPERATE_CALL_END;
+		}
+	}
+
+	if (callType == GROUP_CALL)
+	{
+		clientCallType = CLIENT_CALL_TYPE_Group;
+	}
+	else if (callType == ALL_CALL)
+	{
+		clientCallType = CLIENT_CALL_TYPE_All;
+	}
+	else
+	{
+		clientCallType = CLIENT_CALL_TYPE_Private;
+	}
 	/*将参数打包成json格式*/
 	ArgumentType args;
-	//char temp[128] = { 0 };
-	args["Operate"] = SendCallStatus;
-	args["Type"] = callType;
-	args["Src"] = srcId;
-	args["Target"] = tgtId;
-	args["Status"] = status;
-	//args["module"] = "wl";
-	std::string strRequest = CRpcJsonParser::buildCall("call",++g_sn,args);
+	args["status"] = stus;
+	args["type"] = clientCallType;
+	args["source"] = srcId;
+	args["target"] = tgtId;
+	args["operate"] = operate;
+	std::string strRequest = CRpcJsonParser::buildCall("wlCallStatus", ++g_sn, args,"wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
 
 	TcpClient *redayDelete = NULL;
 	/*发送到Client*/
-	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end();i++)
+	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end(); i++)
 	{
 		TcpClient* p = *i;
 		try
@@ -7386,7 +7594,26 @@ int CWLNet::sendCallStatus(unsigned char callType, unsigned long srcId, unsigned
 
 void CWLNet::setWlStatus(WLStatus value)
 {
-	m_WLStatus = value;
+	FieldValue info(FieldValue::TInt);
+
+	if (m_WLStatus != value)
+	{
+		WLStatus old;
+		old = m_WLStatus;
+		m_WLStatus = value;
+		/*连接成功*/
+		if (ALIVE == m_WLStatus)
+		{
+			info.setInt(REPEATER_CONNECT);
+			wlInfo(GET_TYPE_CONN, info);
+		}
+		/*断开连接*/
+		if (old == ALIVE)
+		{
+			info.setInt(REPEATER_DISCONNECT);
+			wlInfo(GET_TYPE_CONN, info);
+		}
+	}
 }
 
 WLStatus CWLNet::getWlStatus()
@@ -7428,6 +7655,171 @@ void CWLNet::clearVoiceRecords()
 			delete p;
 			p = NULL;
 		}
+	}
+}
+
+int CWLNet::wlCall(unsigned char callType, unsigned long source, unsigned long target, int operate, bool isCurrent)
+{
+	if (!isCurrent)
+	{
+		int i = 0;
+	}
+	int clientCallType = 0;
+	if (callType == GROUP_CALL)
+	{
+		clientCallType = CLIENT_CALL_TYPE_Group;
+	}
+	else if (callType == ALL_CALL)
+	{
+		clientCallType = CLIENT_CALL_TYPE_All;
+	}
+	else
+	{
+		clientCallType = CLIENT_CALL_TYPE_Private;
+	}
+	/*将参数打包成json格式*/
+	ArgumentType args;
+	args["operate"] = operate;
+	args["type"] = clientCallType;
+	args["source"] = source;
+	args["target"] = target;
+	args["isCurrent"] = isCurrent;
+	std::string strRequest = CRpcJsonParser::buildCall("wlCall", ++g_sn, args, "wl");
+	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
+	sendLogToWindow();
+
+	TcpClient *redayDelete = NULL;
+	/*发送到Client*/
+	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end(); i++)
+	{
+		TcpClient* p = *i;
+		try
+		{
+			p->sendResponse(strRequest.c_str(), strRequest.size());
+		}
+		catch (...)
+		{
+			redayDelete = p;
+			sprintf_s(m_reportMsg, "sendCallStatus fail, socket:%lu", p->s);
+			sendLogToWindow();
+		}
+	}
+	return 0;
+}
+
+int CWLNet::wlInfo(int getType, FieldValue info)
+{
+	/*将参数打包成json格式*/
+	ArgumentType args;
+	args["getType"] = getType;
+	args["info"] = info;
+	std::string strRequest = CRpcJsonParser::buildCall("wlInfo", ++g_sn, args,"wl");
+	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
+	sendLogToWindow();
+
+	TcpClient *redayDelete = NULL;
+	/*发送到Client*/
+	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end(); i++)
+	{
+		TcpClient* p = *i;
+		try
+		{
+			p->sendResponse(strRequest.c_str(), strRequest.size());
+		}
+		catch (...)
+		{
+			redayDelete = p;
+			sprintf_s(m_reportMsg, "sendCallStatus fail, socket:%lu", p->s);
+			sendLogToWindow();
+		}
+	}
+	return 0;
+}
+
+int CWLNet::wlPlayStatus(int status, int target)
+{
+	/*将参数打包成json格式*/
+	ArgumentType args;
+	args["status"] = status;
+	args["target"] = target;
+	std::string strRequest = CRpcJsonParser::buildCall("wlPlayStatus", ++g_sn, args, "wl");
+	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
+	sendLogToWindow();
+
+	TcpClient *redayDelete = NULL;
+	/*发送到Client*/
+	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end(); i++)
+	{
+		TcpClient* p = *i;
+		try
+		{
+			p->sendResponse(strRequest.c_str(), strRequest.size());
+		}
+		catch (...)
+		{
+			redayDelete = p;
+			sprintf_s(m_reportMsg, "sendCallStatus fail, socket:%lu", p->s);
+			sendLogToWindow();
+		}
+	}
+	return 0;
+}
+
+void CWLNet::voicePlayLogicProcessing(CRecordFile* p)
+{
+	if (!p->getBoolLogicProcess())
+	{
+		sprintf_s(m_reportMsg, "voicePlayLogicProcessing");
+		sendLogToWindow();
+		if (isNeedPlay(p->tagetId, p->callType))
+		{
+			sprintf_s(m_reportMsg, "isNeedPlay");
+			sendLogToWindow();
+			if (isHaveCurrentPlay())
+			{
+				sprintf_s(m_reportMsg, "setBoolPlay false");
+				sendLogToWindow();
+				if (!p->getBoolReport())
+				{
+					thereIsCallOfCare(p, p->getBoolPlay());
+				}
+			}
+			else
+			{
+				sprintf_s(m_reportMsg, "setBoolPlay true");
+				sendLogToWindow();
+				p->setBoolPlay(true);
+				if (!p->getBoolReport())
+				{
+					thereIsCallOfCare(p, p->getBoolPlay());
+				}
+			}
+			p->setBoolReport(true);
+		}
+		p->setBoolLogicProcess(true);
+	}
+}
+
+bool CWLNet::isHaveCurrentPlay()
+{
+	for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+	{
+		CRecordFile *p = (*i);
+		if (p->getBoolPlay())
+		{
+			return true;
+		}
+	}
+	return false;
+}
+
+void CWLNet::resetPlayFlag()
+{
+	for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
+	{
+		CRecordFile *p = (*i);
+		p->setBoolPlay(false);
+		p->setBoolLogicProcess(false);
 	}
 }
 

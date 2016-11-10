@@ -312,10 +312,19 @@ public:
 	/* 刷新停留在非调度组的时间戳
 	/************************************************************************/
 	int updateChangeToCurrentTick();
-	int setPlayCallOfCare(unsigned char calltype, unsigned long srcId, unsigned long targetId);
-	int thereIsCallOfCare(CRecordFile *pCallRecord);
-	/*告知界面当前存在需要关注的通话正在进行以及状态*/
-	int sendCallStatus(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status);
+	int setPlayCallOfCare(unsigned char calltype,unsigned long targetId);
+	/*存在一个需要告知界面的通话*/
+	int thereIsCallOfCare(CRecordFile *pCallRecord,bool isCurrent);
+	/*告知界面当前请求通话的状态*/
+	int wlCallStatus(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status);
+	/*告知界面当前收到的通话的状态*/
+	int wlCall(unsigned char callType, unsigned long source, unsigned long target, int operate, bool isCurrent);
+	/*告知界面中继台的连接情况*/
+	int wlInfo(int getType, FieldValue info);
+	/*告知界面设置播放通话的操作情况*/
+	int wlPlayStatus(int status, int target);
+	/*当前播放完毕，重置所有语音的判断标识*/
+	void resetPlayFlag();
 
 protected:
 	/*
@@ -516,7 +525,10 @@ private:
 
 	void Process_WL_BURST_CALL(char wirelineOpCode,void  *pNetWork);
 
-	BOOL WriteVoiceFrame(tCallParams& call, DWORD dwCallType, BOOL isCheckTimeout = FALSE);
+	/*语音播放逻辑处理*/
+	void voicePlayLogicProcessing(CRecordFile* p);
+
+	//BOOL WriteVoiceFrame(tCallParams& call, DWORD dwCallType, BOOL isCheckTimeout = FALSE);
 
 	std::mutex m_mutextVoicRecords;//当前录音记录锁
 
@@ -699,7 +711,9 @@ public:
 	/************************************************************************/
 	/*验证此语音是否需要实时播放
 	/************************************************************************/
-	bool isTargetMeCall(unsigned int tagetId, unsigned char callType);
+	bool isNeedPlay(unsigned int tagetId, unsigned char callType);
+	/*当前是否存在语音正在播放*/
+	bool isHaveCurrentPlay();
 	CRecordFile* getCurrentPlayInfo();
 	void setCurrentPlayInfo(CRecordFile *value);
 	bool canStopRecord();

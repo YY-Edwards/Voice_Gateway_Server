@@ -46,6 +46,9 @@
 #include "RecvCallStatusAction.h"
 #include "RecvControlResultAction.h"
 #include "RecvSendGpsStatus.h"
+
+#include "WireLanRecvAction.h"
+#include "WireLanSendAction.h"
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//CSettings::instance()->getResponse("sucess", 1, 200, "", rapidjson::Value(NULL));
@@ -79,7 +82,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//
 	//}
 
-	std::map<std::string, ACTION> serverActions, clientActions;
+	std::map<std::string, ACTION> serverActions, clientActions, wlClientActions;
 
 	serverActions["start"] = startAction;
 
@@ -96,6 +99,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	serverActions["message"] = msgAction;
 	serverActions["status"] = statusAction;
 
+	/*wire lan recive*/
+	serverActions["wlCall"] = wlCallActionHandler;
+	serverActions["wlCallStatus"] = wlCallStatusActionHandler;
+	serverActions["wlInfo"] = wlInfoActionHandler;
+	serverActions["wlPlay"] = wlPlayActionHandler;
+
 	clientActions["message"] = recvMsgAction;
 	clientActions["messageStatus"] = recvMessageResultAction;
 	clientActions["sendArs"] = recvArsAction;
@@ -105,8 +114,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	clientActions["callStatus"] = recvCallStatusAction;
 	clientActions["controlStatus"] = recvControlResultAction;
 	clientActions["sendGpsStatus"] = recvSendGpsStatusAction;
+
+	/*wire lan send*/
+	wlClientActions["wlCall"] = wlCallAction;
+	wlClientActions["wlCallStatus"] = wlCallStatusAction;
+	wlClientActions["wlInfo"] = wlInfoAction;
+	wlClientActions["wlPlayStatus"] = wlPlayStatusAction;
 	//CBroker::instance()->startLogClient();
 	CBroker::instance()->startRadioClient(clientActions);
+	CBroker::instance()->startWireLanClient(wlClientActions);
 	CBroker::instance()->startRpcServer(serverActions);
 
 	//rpcServer.addActionHandler("call", callAction);
