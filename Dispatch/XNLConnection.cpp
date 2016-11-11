@@ -1181,6 +1181,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
 					{
 						pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+						it = allCommandList.erase(it);
 						break;
 					}
 				}
