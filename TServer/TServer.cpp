@@ -120,6 +120,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	wlClientActions["wlCallStatus"] = wlCallStatusAction;
 	wlClientActions["wlInfo"] = wlInfoAction;
 	wlClientActions["wlPlayStatus"] = wlPlayStatusAction;
+	wlClientActions["wlGetConfig"] = wlGetConfigAction;
 	//CBroker::instance()->startLogClient();
 	CBroker::instance()->startRadioClient(clientActions);
 	CBroker::instance()->startWireLanClient(wlClientActions);

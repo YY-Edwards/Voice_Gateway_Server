@@ -175,6 +175,9 @@ void handleLog(char *pLog)
 
 int main()
 {
+	//std::function<void(CRemotePeer*)> fun;
+	//fun = CManager::OnConnect;
+	//fun(NULL);
 	//_CrtSetBreakAlloc(358);
 	CMySQL *m_pDb = new CMySQL();;
 	CManager *m_pManager = new CManager(m_pDb);
@@ -184,6 +187,9 @@ int main()
 	HWND m_hwnd = NULL;
 	char m_temp = 0x00;
 	CRpcServer *m_pRpcServer = new CRpcServer();
+
+	m_pRpcServer->setOnConnectHandler(CManager::OnConnect);
+	m_pRpcServer->setOnDisconnectHandler(CManager::OnDisConnect);
 
 	/*设置基本参数*/
 	m_report = handleLog;

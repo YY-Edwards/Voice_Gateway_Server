@@ -77,10 +77,28 @@ inline void addCRemotePeer(TcpClient* client)
 	}
 }
 
+inline void removeCRemotePeer(TcpClient* client)
+{
+	TcpClient *pTempClient = new TcpClient();
+	pTempClient->addr = client->addr;
+	pTempClient->s = client->s;
+	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end(); i++)
+	{
+		TcpClient *p = *i;
+		if (p->s == pTempClient->s)
+		{
+			delete (*i);
+			g_onLineClients.erase(i);
+			break;
+		}
+	}
+	delete pTempClient;
+	pTempClient = NULL;
+}
+
 inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
 	g_sn = sn;
-	addCRemotePeer((TcpClient*)pRemote);
 	Document d;
 	Value tempJson;
 	int errorCode = 0;
@@ -156,7 +174,7 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
 	g_sn = sn;
-	addCRemotePeer((TcpClient*)pRemote);
+	//addCRemotePeer((TcpClient*)pRemote);
 	Document d;
 	int errorCode = 0;
 	ArgumentType args;
@@ -266,7 +284,7 @@ inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, 
 inline void wlCallStatusActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
 	g_sn = sn;
-	addCRemotePeer((TcpClient*)pRemote);
+	//addCRemotePeer((TcpClient*)pRemote);
 	Document d;
 	int errorCode = 0;
 	ArgumentType args;
@@ -294,7 +312,7 @@ inline void wlCallStatusActionHandler(CRemotePeer* pRemote, const std::string& p
 inline void wlPlayActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
 	g_sn = sn;
-	addCRemotePeer((TcpClient*)pRemote);
+	//addCRemotePeer((TcpClient*)pRemote);
 	Document d;
 	int errorCode = 0;
 	ArgumentType args;
@@ -355,7 +373,7 @@ inline void wlPlayActionHandler(CRemotePeer* pRemote, const std::string& param, 
 inline void wlInfoActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
 	g_sn = sn;
-	addCRemotePeer((TcpClient*)pRemote);
+	//addCRemotePeer((TcpClient*)pRemote);
 	Document d;
 	int errorCode = 0;
 	ArgumentType args;

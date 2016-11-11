@@ -701,3 +701,20 @@ void CManager::setCurrentTask(REMOTE_TASK* value)
 	memcpy(m_pCurrentTask, value, sizeof(REMOTE_TASK));
 }
 
+void CManager::OnConnect(CRemotePeer* pRemotePeer)
+{
+	if (pRemotePeer)
+	{
+		addCRemotePeer((TcpClient*)pRemotePeer);
+		g_pNet->wlGetConfig();
+	}
+}
+
+void CManager::OnDisConnect(CRemotePeer* pRemotePeer)
+{
+	if (pRemotePeer)
+	{
+		removeCRemotePeer((TcpClient*)pRemotePeer);
+	}
+}
+

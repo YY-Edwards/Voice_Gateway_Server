@@ -323,6 +323,8 @@ public:
 	int wlInfo(int getType, FieldValue info);
 	/*告知界面设置播放通话的操作情况*/
 	int wlPlayStatus(int status, int target);
+	/*向TServer请求配置信息*/
+	int wlGetConfig();
 	/*当前播放完毕，重置所有语音的判断标识*/
 	void resetPlayFlag();
 

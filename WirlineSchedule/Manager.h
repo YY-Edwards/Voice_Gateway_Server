@@ -61,6 +61,10 @@ public:
 	void applayCurrentTask();
 	/*设置延时的需要返回操作结果的任务*/
 	void setCurrentTask(REMOTE_TASK* value);
+	/*client接入*/
+	static void OnConnect(CRemotePeer* pRemotePeer);
+	/*client断开*/
+	static void OnDisConnect(CRemotePeer* pRemotePeer);
 private:
 	PLogReport m_report;
 	HWND m_hwnd;
