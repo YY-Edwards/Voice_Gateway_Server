@@ -122,13 +122,13 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 			}
 
 			pNewTask->param.info.configParam.peerHeartTime = d["MaxPeerAliveTime"].GetInt() * 1000;
-			std::string recordType = d["Type"].GetString();
+			int recordType = d["Type"].GetInt();
 			_RECORD_TYPE_VALUE temp = LCP;
-			if (recordType == "IPSC")
+			if (recordType == 0)
 			{
 				temp = IPSC;
 			}
-			else if (recordType == "CPC")
+			else if (recordType == 1)
 			{
 				temp = CPC;
 			}
