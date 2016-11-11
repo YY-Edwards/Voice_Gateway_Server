@@ -7,11 +7,11 @@
 
 #include "Db.h"
 
-void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
+void groupAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	Document d;
 	std::string strResp;
-	
+
 	try{
 		d.Parse(param.c_str());
 
@@ -21,7 +21,7 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 		}
 
 		std::string operation = d["operation"].GetString();
-		
+
 		if (0 == operation.compare("list") || 0 == operation.compare("count"))
 		{
 			if (!d.HasMember("critera") || rapidjson::kObjectType != d["critera"].GetType())
@@ -75,7 +75,7 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 
 			if (0 == operation.compare("list"))
 			{
-				CDb::instance()->query("user", condStr.c_str(), records);
+				CDb::instance()->query("department", condStr.c_str(), records);
 
 				FieldValue fvRecords(FieldValue::TArray);
 				for (auto i = records.begin(); i != records.end(); i++)
@@ -91,108 +91,93 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			}
 			else
 			{
-				int recordCount = CDb::instance()->count("user", condStr.c_str());
+				int recordCount = CDb::instance()->count("department", condStr.c_str());
 				args["count"] = FieldValue(recordCount);
 			}
 
 			strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", args);
-
 		}
 		else if (0 == operation.compare("add"))
 		{
-			if (!d.HasMember("users") || !d["users"].IsArray())
+			if (!d.HasMember("departments") || !d["departments"].IsArray())
 			{
 				throw std::exception("call parameter error, users key must be an array");
 			}
-			int itemCount = d["users"].Size();
+			int itemCount = d["departments"].Size();
 
 			for (size_t i = 0; i < itemCount; i++)
 			{
-				std::string name = d["users"][i]["username"].GetString();
-				std::string password = d["users"][i]["password"].GetString();
-				std::string authority = d["users"][i]["authority"].GetString();
-				std::string type = d["users"][i]["type"].GetString();
-
-				bool ret = CDb::instance()->insertUser(name.c_str(), 
-													   "", 
-													   name.c_str(), 
-													   password.c_str(), 
-													   authority.c_str(), 
-													   type.c_str());
+				std::string name = d["departments"][i]["name"].GetString();
+				bool ret = CDb::instance()->insertDepartment(name.c_str());
 				if (!ret)
 				{
-					std::string errMsg = "add user failed.";
+					std::string errMsg = "add department failed.";
 					errMsg += CDb::instance()->getLastError();
 					throw std::exception(errMsg.c_str());
 				}
-				strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
 			}
+			strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
 		}
 		else if (0 == operation.compare("update"))
 		{
-			if (!d.HasMember("users") || !d["users"].IsArray())
+			if (!d.HasMember("departments") || !d["departments"].IsArray())
 			{
 				throw std::exception("call parameter error, users key must be an array");
 			}
-			int itemCount = d["users"].Size();
+			int itemCount = d["departments"].Size();
 
 			for (size_t i = 0; i < itemCount; i++)
 			{
-				std::string id = (rapidjson::kNumberType == d["users"][i]["id"].GetType()) ? 
-											std::to_string( d["users"][i]["id"].GetInt())
-											: d["users"][i]["id"].GetString();
+				std::string id = (rapidjson::kNumberType == d["departments"][i]["id"].GetType()) ?
+					std::to_string(d["departments"][i]["id"].GetInt())
+					: d["departments"][i]["id"].GetString();
 
-				rapidjson::Value& val = d["users"][i]["user"];
+				rapidjson::Value& val = d["departments"][i]["department"];
 
-				std::string name = val.HasMember("username")?val["username"].GetString():"";
-				std::string password = val.HasMember("password") ? val["password"].GetString():"";
-				std::string authority = val.HasMember("authority") ? val["authority"].GetString():"";
-				std::string type = val.HasMember("type") ? val["type"].GetString():"";
+				std::string name = val.HasMember("name") ? val["name"].GetString() : "";
 
-				recordType updateVal;
-				if (name.size() > 0)
-				{
-					updateVal["username"] = name;
-				}
-				if (password.size() > 0)
-				{
-					updateVal["password"] = CDb::md5(password.c_str());
-				}
-				if (authority.size() > 0)
-				{
-					updateVal["authority"] = authority;
-				}
-				if (type.size() > 0)
-				{
-					updateVal["type"] = type;
-				}
-
-				std::string updCond = " where `id`=" + id;
-				bool ret = CDb::instance()->updateUser(updCond.c_str(), updateVal);
+				bool ret = CDb::instance()->updateDepartment(std::atoi(id.c_str()), name.c_str());
 				if (!ret)
 				{
-					throw std::exception("update user failed");
+					throw std::exception("update department failed");
 				}
 			}
 			strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
 		}
 		else if (0 == operation.compare("del"))
 		{
-			if (!d.HasMember("users") || !d["users"].IsArray())
+			if (!d.HasMember("departments") || !d["departments"].IsArray())
 			{
-				throw std::exception("call parameter error, users key must be an array");
+				throw std::exception("call parameter error, departments key must be an array");
 			}
 
-			for (int m = 0; m < d["users"].Size(); m++)
+			for (int m = 0; m < d["departments"].Size(); m++)
 			{
-				int id = d["users"][m].GetInt();
+				int id = d["departments"][m].GetInt();
 				std::string condition = "where id=" + std::to_string(id);
-				CDb::instance()->del("user", condition.c_str());
+				CDb::instance()->del("department", condition.c_str());
 			}
 			strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
 		}
+		else if (0 == operation.compare("assignUser"))
+		{
+
+		}
+		else if (0 == operation.compare("detachUser"))
+		{
+
+		}
+		else if (0 == operation.compare("assignRadio"))
+		{
+
+		}
+		else if (0 == operation.compare("detachRadio"))
+		{
+
+		}
 	}
-	catch (std::exception e){
+	catch (std::exception e)
+	{
 		strResp = CRpcJsonParser::buildResponse("failed", callId, 500, e.what(), ArgumentType());
 	}
 	catch (...)
