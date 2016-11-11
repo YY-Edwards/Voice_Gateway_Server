@@ -45,6 +45,9 @@ public:
 		int nTimeoutSeconds = 10,
 		bool bNeedResponse = true);
 
+	void setOnConnectHandler(std::function<void(CRemotePeer*)> fnEvent);
+	void setOnDisconnectHandler(std::function<void(CRemotePeer*)> fnEvent);
+
 protected:
 	int sendNextCommands(CRemotePeer* remote, std::list<CRequest*>& lstCommands);
 

@@ -258,3 +258,13 @@ int CRpcServer::sendRequest(const char* pRequest,
 
 	return ret;
 }
+
+void CRpcServer::setOnConnectHandler(std::function<void(CRemotePeer*)> fnEvent)
+{
+	m_pConnector->setConnectEvent(fnEvent);
+}
+
+void CRpcServer::setOnDisconnectHandler(std::function<void(CRemotePeer*)> fnEvent)
+{
+	m_pConnector->setDisconnectEvent(fnEvent);
+}
