@@ -124,12 +124,22 @@ int CRpcServer::start(unsigned short port, int type)
 			{
 				CClient* client = new CClient();
 				m_Clients[remotePeer] = client;
+
+				if (nullptr != m_fnNewClient)
+				{
+					m_fnNewClient(remotePeer);
+				}
 			}
 		});
 		m_pConnector->setDisconnectEvent([&](CRemotePeer* remotePeer){
 			auto itr = m_Clients.find(remotePeer);
 			if (m_Clients.end() != itr)
 			{
+				if (nullptr != m_fnNewClient)
+				{
+					m_fnClientDisconnect(remotePeer);
+				}
+
 				delete itr->second;
 				m_Clients.erase(itr);
 			}
@@ -261,10 +271,10 @@ int CRpcServer::sendRequest(const char* pRequest,
 
 void CRpcServer::setOnConnectHandler(std::function<void(CRemotePeer*)> fnEvent)
 {
-	m_pConnector->setConnectEvent(fnEvent);
+	m_fnNewClient = fnEvent;
 }
 
 void CRpcServer::setOnDisconnectHandler(std::function<void(CRemotePeer*)> fnEvent)
 {
-	m_pConnector->setDisconnectEvent(fnEvent);
+	m_fnClientDisconnect = fnEvent;
 }
