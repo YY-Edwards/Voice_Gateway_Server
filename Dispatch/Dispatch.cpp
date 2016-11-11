@@ -580,7 +580,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);                    //¼ì²éÄÚ´æÐ¹Â©
 
 	
-	while (1);
+	while (1){ Sleep(1); };
 
 	return 0;
 }

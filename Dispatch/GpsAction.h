@@ -42,66 +42,91 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			{
 				cycle = d["Cycle"].GetDouble();
 			}
-			if (operate == START)
+			if (isUdpConnect)
 			{
-				switch (querymode)
+				if (operate == START)
 				{
-				case GPS_IMME_COMM:
-					m_dispatchOperate[s]->AddAllCommand(client,s, GPS_IMME_COMM, "", "", "", id, _T(""), cycle, querymode, callId);
-					break;
-				case GPS_TRIGG_COMM:
-					m_dispatchOperate[s]->AddAllCommand(client,s, GPS_TRIGG_COMM, "", "", "", id, _T(""), cycle, querymode, callId);
-					break;
-				case GPS_IMME_CSBK:
-					m_dispatchOperate[s]->AddAllCommand(client, s,GPS_IMME_CSBK, "", "", "", id, _T(""), cycle, querymode, callId);
-					break;
-				case GPS_TRIGG_CSBK:
-					m_dispatchOperate[s]->AddAllCommand(client,s, GPS_TRIGG_CSBK, "", "", "", id, _T(""), cycle, querymode, callId);
-					break;
-				case GPS_IMME_CSBK_EGPS:
-					m_dispatchOperate[s]->AddAllCommand(client,s, GPS_IMME_CSBK_EGPS, "", "", "", id, _T(""), cycle, querymode, callId);
-					break;
-				case GPS_TRIGG_CSBK_EGPS:
-					m_dispatchOperate[s]->AddAllCommand(client,s, GPS_TRIGG_CSBK_EGPS, "", "", "", id, _T(""), cycle, querymode, callId);
-					break;
-				default:
+					switch (querymode)
+					{
+					case GPS_IMME_COMM:
+						m_dispatchOperate[s]->AddAllCommand(client, s, GPS_IMME_COMM, "", "", "", id, _T(""), cycle, querymode, callId);
+						break;
+					case GPS_TRIGG_COMM:
+						m_dispatchOperate[s]->AddAllCommand(client, s, GPS_TRIGG_COMM, "", "", "", id, _T(""), cycle, querymode, callId);
+						break;
+					case GPS_IMME_CSBK:
+						m_dispatchOperate[s]->AddAllCommand(client, s, GPS_IMME_CSBK, "", "", "", id, _T(""), cycle, querymode, callId);
+						break;
+					case GPS_TRIGG_CSBK:
+						m_dispatchOperate[s]->AddAllCommand(client, s, GPS_TRIGG_CSBK, "", "", "", id, _T(""), cycle, querymode, callId);
+						break;
+					case GPS_IMME_CSBK_EGPS:
+						m_dispatchOperate[s]->AddAllCommand(client, s, GPS_IMME_CSBK_EGPS, "", "", "", id, _T(""), cycle, querymode, callId);
+						break;
+					case GPS_TRIGG_CSBK_EGPS:
+						m_dispatchOperate[s]->AddAllCommand(client, s, GPS_TRIGG_CSBK_EGPS, "", "", "", id, _T(""), cycle, querymode, callId);
+						break;
+					default:
 #if DEBUG_LOG
-					LOG(INFO) << "querymode 参数不对 ";
+						LOG(INFO) << "querymode 参数不对 ";
 #endif
-					break;
+						break;
+					}
+					char *buf = new char();
+					itoa(id, buf, 10);
+					if (radioStatus.find(buf) == radioStatus.end())
+					{
+						status st;
+						st.id = id;
+						st.status = RADIO_STATUS_OFFLINE;
+						st.gpsQueryMode = querymode;
+						radioStatus[buf] = st;
+					}
+					else
+					{
+						//radioStatus[buf].status = RADIO_STATUS_OFFLINE;
+						radioStatus[buf].gpsQueryMode = querymode;
+					}
 				}
-				char *buf = new char();
-				itoa(id, buf, 10); 
-				if (radioStatus.find(buf) == radioStatus.end())
+				else  if (operate == STOP)
 				{
-					status st;
-					st.id = id;
-					st.status = RADIO_STATUS_OFFLINE;
-					st.gpsQueryMode = querymode;
-					radioStatus[buf] = st;
+					char *buf = new char();
+					itoa(id, buf, 10);
+					if (radioStatus.find(buf) != radioStatus.end())
+					{
+						querymode = radioStatus[buf].gpsQueryMode;
+					}
+
+					m_dispatchOperate[s]->AddAllCommand(client, s, STOP_QUERY_GPS, "", "", "", id, _T(""), 0, querymode, callId);
 				}
 				else
 				{
-					//radioStatus[buf].status = RADIO_STATUS_OFFLINE;
-					radioStatus[buf].gpsQueryMode = querymode;
+#if DEBUG_LOG
+					LOG(INFO) << "Operate 参数不对 ";
+#endif
 				}
-			}
-			else  if (operate == STOP)
-			{
-				char *buf = new char();
-				itoa(id, buf, 10);
-				if (radioStatus.find(buf) != radioStatus.end())
-				{
-					querymode = radioStatus[buf].gpsQueryMode;
-				}
-			
-				m_dispatchOperate[s]->AddAllCommand(client, s, STOP_QUERY_GPS, "", "", "", id, _T(""), 0, querymode, callId);
+
 			}
 			else
 			{
-#if DEBUG_LOG
-				LOG(INFO) << "Operate 参数不对 ";
-#endif
+				try
+				{
+					ArgumentType args;
+					args["Target"] = FieldValue(id);
+					args["Type"] = FieldValue(querymode);
+					args["Cycle"] = FieldValue(cycle);
+					args["Operate"] = FieldValue(operate);
+					args["Status"] = FieldValue(REMOTE_FAILED);
+					std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGpsStatus", callId, args, "radio");
+					if (client != NULL)
+					{
+						client->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
+					}
+				}
+				catch (std::exception e)
+				{
+
+				}
 			}
 		
 		}

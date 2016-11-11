@@ -530,24 +530,27 @@ int DispatchOperate::RadioConnect()
 	//udp Connection
 	//text  Connection                                      //0:连接成功  1：udp 连接失败  2：tcp 连接失败  3： udp、tcp均失败
 	SOCKET mSokset;
-	if (!isUdpConnect)
-	{
-		textConnectResult = pTextMsg.InitSocket(&mSokset, dwIP, pRemotePeer);
-		ARSConnectResult = pRadioARS.InitARSSocket(dwIP, pRemotePeer);
-		GPSConnectResult = pRadioGPS.InitGPSSocket(dwIP, pRemotePeer);
-		if (textConnectResult && ARSConnectResult && GPSConnectResult )
-		{
-			isUdpConnect = true;
-		}
-		else
-		{
-			isUdpConnect = false;
-		}
-	}
 
 
-	if (pXnlConnection == NULL || !isTcpConnect)
+
+	if (pXnlConnection == NULL || !isTcpConnect || !isUdpConnect)
 	{
+		//udp connect
+		if (!isUdpConnect)
+		{
+			textConnectResult = pTextMsg.InitSocket(&mSokset, dwIP, pRemotePeer);
+			ARSConnectResult = pRadioARS.InitARSSocket(dwIP, pRemotePeer);
+			GPSConnectResult = pRadioGPS.InitGPSSocket(dwIP, pRemotePeer);
+			if (textConnectResult && ARSConnectResult && GPSConnectResult)
+			{
+				isUdpConnect = true;
+			}
+			else
+			{
+				isUdpConnect = false;
+			}
+		}
+		//tcp connect
 		pXnlConnection = CXNLConnection::CreatConnection(dwip, 8002, "0x152C7E9D0x38BE41C70x71E96CA40x6CAC1AFC",
 			strtoul("0x9E3779B9", NULL, 16));
 		//std::lock_guard <std::mutex> locker(m_allCommandListLocker);
@@ -577,6 +580,7 @@ int DispatchOperate::RadioConnect()
 		//m_allCommandListLocker.unlock();
 	//	::LeaveCriticalSection(&cs);
 	}
+
 	return 0;
 }
 

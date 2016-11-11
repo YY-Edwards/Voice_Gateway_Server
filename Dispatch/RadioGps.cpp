@@ -434,7 +434,7 @@ void CRadioGps::RecvData()
 	unsigned long a = 0, b = 0;
 	float speed = -1;
 	int valid = 1;
-
+	int queryMode = -1;
 	ret = recvfrom(m_ThreadGps->mySocket, m_ThreadGps->RcvBuffer, iMessageLen, 0, (struct sockaddr*)&m_ThreadGps->remote_addr, &iRemoteAddrLen);
 
 	bytes = recvfrom(m_ThreadGpsOverturn->mySocket, m_ThreadGpsOverturn->RcvBuffer, iMessageLen, 0, (struct sockaddr*)&m_ThreadGpsOverturn->remote_addr, &iRemoteAddrLen);
@@ -544,6 +544,7 @@ void CRadioGps::RecvData()
 			   lon = ((double)llon) / 2147483648 * 180;
 
 			   speed = -1;
+			   queryMode = GPS_TRIGG_COMM;
 
 		   }
 		   else if ((ret == RECV_CSBK_LENTH || bytes == RECV_CSBK_LENTH) && (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report || m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report) && m_ThreadGps->RcvBuffer[1] == 0x11)
@@ -568,6 +569,7 @@ void CRadioGps::RecvData()
 			   lat = ((double)llat) / 2147483648 * 90;
 			   lon = ((double)llon) / 2147483648 * 180;
 			   speed = -1;
+			   queryMode = GPS_TRIGG_CSBK;
 		   }
 		   else if (/*(ret == RECV_CSBK_EGPS_LENTH || bytes == RECV_CSBK_EGPS_LENTH) &&*/ (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report || m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report) && (m_ThreadGps->RcvBuffer[1] == 0x1e || m_ThreadGps->RcvBuffer[1] == 0x1c))
 		   {
@@ -593,6 +595,7 @@ void CRadioGps::RecvData()
 			   a = ((unsigned long)m_ThreadGps->RcvBuffer[23]) & 0xff;
 			   b = ((unsigned long)m_ThreadGps->RcvBuffer[24]) & 0xff;
 			   speed = (((float)a) + ((float)b) / 128.0f)*3.6f;
+			   queryMode = GPS_TRIGG_CSBK_EGPS;
 		   }
 		   else if ((ret == 9 || bytes == 9 || ret == 10 || bytes == 10) && (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report || m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report))
 		   {
@@ -675,6 +678,7 @@ void CRadioGps::RecvData()
 		   status st;
 		   st.id = atoi(radioID);
 		   st.status = RADIO_STATUS_ONLINE;
+		   st.gpsQueryMode = queryMode;
 		   radioStatus[radioID] = st;
 		   arg["IsOnline"] = FieldValue("True");
 		   std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
@@ -683,6 +687,7 @@ void CRadioGps::RecvData()
 	   }
 	   else if (radioStatus[radioID].status == RADIO_STATUS_OFFLINE)
 	   {
+		   radioStatus[radioID].gpsQueryMode = queryMode;
 		   radioStatus[radioID].status = RADIO_STATUS_ONLINE;
 		   arg["IsOnline"] = FieldValue("True");
 		   std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
