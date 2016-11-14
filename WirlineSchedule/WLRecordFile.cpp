@@ -11,7 +11,9 @@ extern CWLNet *g_pNet;
 CRecordFile::CRecordFile()
 :lenght(0)
 , srcRssi(0)
-, bReport(false)
+, m_bReport(false)
+, m_bPlay(false)
+, m_bLogicProcess(false)
 {
 
 }
@@ -26,93 +28,14 @@ void CRecordFile::WriteVoiceFrame(char* pFrame, int len /*= 7*/, bool bLocalRequ
 	//如果是本地发起的呼叫，则不需要播放
 	if (bLocalRequest)
 	{
-		if (callType == GROUPCALL_TYPE && tagetId == g_targetId && tagetId != CONFIG_DEFAULT_GROUP)
+		if (callType == GROUP_CALL && tagetId == CONFIG_CURRENT_TAGET && tagetId != CONFIG_DEFAULT_GROUP)
 		{
 			g_pNet->updateChangeToCurrentTick();
 		}
 		goto RECORD_VOICE_DATA;
 	}
-	if (
-		(callType == GROUPCALL_TYPE && tagetId == CONFIG_DEFAULT_GROUP)
-		|| (callType == PRIVATE_CALL && tagetId == CONFIG_LOCAL_RADIO_ID)
-		|| (callType == ALL_CALL && tagetId == ALL_CALL_ID)
-		|| (callType == GROUPCALL_TYPE && tagetId == g_targetId)
-		)
+	if (getBoolPlay())
 	{
-		//当前组组呼
-		if (callType == GROUPCALL_TYPE && tagetId == g_targetId && g_targetId != CONFIG_DEFAULT_GROUP)
-		{
-			g_pNet->updateChangeToCurrentTick();
-			if (!g_bIsHaveAllCall && !g_bIsHaveDefaultGroupCall && !g_bIsHavePrivateCall)
-			{
-				g_bIsHaveCurrentGroupCall = true;
-			}
-			else
-			{
-				if (!bReport)
-				{
-					/*告知界面存在一个当前组呼呼入*/
-					g_pNet->thereIsCallOfCare(this);
-					bReport = true;
-				}
-				goto RECORD_VOICE_DATA;
-			}
-		}
-		//调度组组呼
-		else if (callType == GROUPCALL_TYPE && tagetId == CONFIG_DEFAULT_GROUP)
-		{
-			if (!g_bIsHaveAllCall && !g_bIsHavePrivateCall && !g_bIsHaveCurrentGroupCall)
-			{
-				g_bIsHaveDefaultGroupCall = true;
-			}
-			else
-			{
-				if (!bReport)
-				{
-					/*告知界面存在一个调度组呼呼入*/
-					g_pNet->thereIsCallOfCare(this);
-					bReport = true;
-				}
-				goto RECORD_VOICE_DATA;
-			}
-		}
-		//个呼
-		else if (callType == PRIVATE_CALL && tagetId == CONFIG_LOCAL_RADIO_ID)
-		{
-			if (!g_bIsHaveAllCall && !g_bIsHaveDefaultGroupCall && !g_bIsHaveCurrentGroupCall)
-			{
-				g_bIsHavePrivateCall = true;
-			}
-			else
-			{
-				if (!bReport)
-				{
-					/*告知界面存在一个个呼呼入*/
-					g_pNet->thereIsCallOfCare(this);
-					bReport = true;
-				}
-				goto RECORD_VOICE_DATA;
-			}
-		}
-		//全呼
-		else if (callType == ALL_CALL && tagetId == ALL_CALL_ID)
-		{
-			if (!g_bIsHaveDefaultGroupCall && !g_bIsHavePrivateCall && !g_bIsHaveCurrentGroupCall)
-			{
-				g_bIsHaveAllCall = true;
-			}
-			else
-			{
-				if (!bReport)
-				{
-					/*告知界面存在一个全呼呼入*/
-					g_pNet->thereIsCallOfCare(this);
-					bReport = true;
-				}
-				goto RECORD_VOICE_DATA;
-			}
-		}
-		//加入实时播放的buffer
 		tAMBEFrame* pAMBEFrame = NULL;
 		pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();
 		memcpy(pAMBEFrame->fld.ChannelBits, pFrame, len);
@@ -128,6 +51,54 @@ RECORD_VOICE_DATA:
 	/*交互录音线程，将AMBE数据写入到本地*/
 	memcpy(buffer + lenght, pFrame, len);
 	lenght += len;
+}
+
+void CRecordFile::setBoolPlay(bool value)
+{
+	bool oldValue = m_bPlay;
+	m_bPlay = value;
+	if (!oldValue && value)
+	{
+		int targetId = 0;
+		if (callType == GROUP_CALL)
+		{
+			targetId = tagetId;
+		}
+		else if (callType == ALL_CALL)
+		{
+			targetId = ALL_CALL_TAGET;
+		}
+		else
+		{
+			targetId = PRIVATE_CALL_TAGET;
+		}
+		g_pNet->wlPlayStatus(CMD_SUCCESS, targetId);
+	}
+}
+
+void CRecordFile::setBoolReport(bool value)
+{
+	m_bReport = value;
+}
+
+bool CRecordFile::getBoolPlay()
+{
+	return m_bPlay;
+}
+
+bool CRecordFile::getBoolReport()
+{
+	return m_bReport;
+}
+
+void CRecordFile::setBoolLogicProcess(bool value)
+{
+	m_bLogicProcess = value;
+}
+
+bool CRecordFile::getBoolLogicProcess()
+{
+	return m_bLogicProcess;
 }
 
 

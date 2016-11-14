@@ -51,7 +51,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <SDLCheck>true</SDLCheck>
+      <SDLCheck>false</SDLCheck>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -108,6 +108,8 @@
     <ClInclude Include="..\lib\utf8\utf8.h" />
     <ClInclude Include="AppEventAction.h" />
     <ClInclude Include="Db.h" />
+    <ClInclude Include="DbGroupAction.h" />
+    <ClInclude Include="DbRadioAction.h" />
     <ClInclude Include="DbUserAction.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />

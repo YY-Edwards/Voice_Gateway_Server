@@ -3,6 +3,7 @@
 #include "../lib/rpc/include/RpcServer.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
 #include "Broker.h"
+#include "Settings.h"
 
 std::auto_ptr<CBroker> CBroker::m_instance;
 
@@ -99,4 +100,53 @@ void CBroker::startLogClient()
 		m_logClient = new CRpcClient();
 		m_logClient->start("tcp://127.0.0.1:9003");
 	}
+}
+
+void CBroker::startWireLanClient(std::map<std::string, ACTION> clientActions)
+{
+
+	/*wire lan*/
+	if (NULL == m_wirelanClient)
+	{
+		m_wirelanClient = new CRpcClient();
+
+		for (auto action = clientActions.begin(); action != clientActions.end(); action++)
+		{
+			m_wirelanClient->addActionHandler(action->first.c_str(), action->second);
+		}
+		m_wirelanClient->start("tcp://127.0.0.1:9002");
+
+		// send repeater hardware connect command by fixed parameter
+		//ArgumentType args;
+		//args["Type"] = "CPC";
+		//FieldValue Master(FieldValue::TObject);
+		//Master.setKeyVal("Ip", FieldValue("192.168.2.121"));
+		//Master.setKeyVal("Port", FieldValue(50000));
+		//args["Master"] = Master;
+		//args["DefaultGroupId"] = 9;
+		//args["DefaultChannel"] = 1;
+		//args["MinHungTime"] = 4;
+		//args["MaxSiteAliveTime"] = 59;
+		//args["MaxPeerAliveTime"] = 59;
+		//args["LocalPeerId"] = 120;
+		//args["LocalRadioId"] = 5;
+		//FieldValue Dongle(FieldValue::TObject);
+		//Dongle.setKeyVal("Com", FieldValue(7));
+		//args["Dongle"] = Dongle;
+
+		//uint64_t callId = m_wirelanClient->getCallId();
+		//std::string connectCommand = CRpcJsonParser::buildCall("wlConnect", callId, args);
+		//m_wirelanClient->sendRequest(connectCommand.c_str(), callId, NULL, [](const char* pResponse, void* data){
+		//	printf("recevied response:%s\r\n", pResponse);
+		//}, nullptr, 60);
+
+		// send repeater hardware connect command by setting file*/
+		//sendWirelanConfig();
+	}
+}
+
+void CBroker::sendWirelanConfig()
+{
+	std::string strConnect = CSettings::instance()->getRequest("wlConnect", "wl", m_wirelanClient->getCallId(), CSettings::instance()->getValue("repeater"));
+	m_wirelanClient->send(strConnect.c_str(), strConnect.size());
 }

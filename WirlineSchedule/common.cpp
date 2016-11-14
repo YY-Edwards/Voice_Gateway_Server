@@ -5,11 +5,11 @@ BOOL g_net_connect = false;
 unsigned long g_callId = 0;
 unsigned char g_targetCallType = 0x4f;
 DECLINE_REASON_CODE_INFO g_callRequstDeclineReasonCodeInfo = { 0 };
-bool g_bIsHaveDefaultGroupCall = false;
-bool g_bIsHavePrivateCall = false;
-bool g_bIsHaveAllCall = false;
-bool g_bIsHaveCurrentGroupCall=false;
-unsigned long g_targetId = 9;
+//bool g_bIsHaveDefaultGroupCall = false;
+//bool g_bIsHavePrivateCall = false;
+//bool g_bIsHaveAllCall = false;
+//bool g_bIsHaveCurrentGroupCall=false;
+unsigned long CONFIG_CURRENT_TAGET = 9;
 
 /*配置参数区域*/
 char CONFIG_MASTER_IP[MAX_IP_SIZE] = "192.168.2.121";//MASTER IP地址

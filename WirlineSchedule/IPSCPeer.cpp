@@ -518,7 +518,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 										  networkData.peerID = CONFIG_LOCAL_PEER_ID;
 										  networkData.preambleDuration = PREAMBLE_DURATION;
 										  networkData.sourceID = CONFIG_LOCAL_RADIO_ID;
-										  networkData.targetID = g_targetId;
+										  networkData.targetID = CONFIG_CURRENT_TAGET;
 										  networkData.wirelineOpcode = WL_VC_CHNL_CTRL_REQUEST;
 										  if (isCallBack)
 										  {

@@ -7,6 +7,8 @@
 #include "Db.h"
 #include "AppEventAction.h"
 #include "DbUserAction.h"
+#include "DbGroupAction.h"
+#include "DbRadioAction.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {

@@ -327,3 +327,39 @@ bool CDb::del(const char* table, const char* condition)
 {
 	return (m_pMySQLDb->del(table, condition) > 0);
 }
+
+bool CDb::insertDepartment(const char* name)
+{
+	try{
+		recordType department;
+
+		department["name"] = name;
+
+		if (m_pMySQLDb->recordExist("department", department))
+		{
+			throw std::exception("department exist");
+		}
+
+		m_pMySQLDb->insert("department", department);
+	}
+	catch (std::exception e)
+	{
+		return false;
+	}
+	catch (...)
+	{
+		return false;
+	}
+
+	return true;
+}
+bool CDb::updateDepartment(int id, const char* name)
+{
+	recordType val;
+	val["name"] = name;
+	char condition[200];
+	memset(condition, 0, sizeof(condition));
+	sprintf(condition, " where id=%d", id);
+
+	return m_pMySQLDb->update("user", val, condition);
+}

@@ -48,6 +48,8 @@ public:
 	bool auth(const char* username, const char* password);
 	bool insertUser(const char* name, const char* phone, const char* username, const char* password, const char* authority, const char* type);
 	bool updateUser(const char* condition, recordType& val);
+	bool insertDepartment(const char* name);
+	bool updateDepartment(int id, const char* name);
 
 	int query(const char* table, const char* condition, std::list<recordType>& records);
 	int count(const char* table, const char* condition);

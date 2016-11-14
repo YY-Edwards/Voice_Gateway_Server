@@ -175,6 +175,9 @@ void handleLog(char *pLog)
 
 int main()
 {
+	//std::function<void(CRemotePeer*)> fun;
+	//fun = CManager::OnConnect;
+	//fun(NULL);
 	//_CrtSetBreakAlloc(358);
 	CMySQL *m_pDb = new CMySQL();;
 	CManager *m_pManager = new CManager(m_pDb);
@@ -185,6 +188,9 @@ int main()
 	char m_temp = 0x00;
 	CRpcServer *m_pRpcServer = new CRpcServer();
 
+	m_pRpcServer->setOnConnectHandler(CManager::OnConnect);
+	m_pRpcServer->setOnDisconnectHandler(CManager::OnDisConnect);
+
 	/*设置基本参数*/
 	m_report = handleLog;
 	m_hwnd = GetConsoleHwnd();
@@ -194,10 +200,11 @@ int main()
 	/*开启远程任务处理线程*/
 	m_pManager->startHandleRemoteTask();
 	/*初始化服务部分*/
-	m_pRpcServer->addActionHandler("connect", connectActionHandler);
-	m_pRpcServer->addActionHandler("call", callActionHandler);
-	//rpcServer.addActionHandler("stopCall", stopCallActionHandler);
-	//rpcServer.addActionHandler("setPlayCallOfCare", setPlayCallOfCareActionHandler);
+	m_pRpcServer->addActionHandler("wlConnect", wlConnectActionHandler);
+	m_pRpcServer->addActionHandler("wlCall", wlCallActionHandler);
+	m_pRpcServer->addActionHandler("wlCallStatus", wlCallStatusActionHandler);
+	m_pRpcServer->addActionHandler("wlPlay", wlPlayActionHandler);
+	m_pRpcServer->addActionHandler("wlInfo", wlInfoActionHandler);
 	m_pRpcServer->start(WL_SERVER_PORT);
 
 	/*初始化数据库*/
