@@ -61,8 +61,7 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 			}
 			if (radioIP!=m_radioIP && mnisIP !=m_mnisIP)
 			{
-				DispatchOperate  * pDispatchOperate = new DispatchOperate();
-				m_dispatchOperate[s] = pDispatchOperate;
+				
 				m_dispatchOperate[s]->AddAllCommand(client, s, RADIO_CONNECT, radioIP, mnisIP, "", 0, _T(""), 0, 0, callId);
 			}
 			else

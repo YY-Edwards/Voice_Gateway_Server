@@ -574,6 +574,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("queryGps", gpsAction);
 	rpcServer.addActionHandler("message", msgAction);
 	rpcServer.addActionHandler("status", statusAction);
+
+	rpcServer.setOnConnectHandler(DispatchOperate:: OnConnect);
+	rpcServer.setOnDisconnectHandler(DispatchOperate::OnDisConnect);
+
 	rpcServer.start(TCP_PORT, rpcServer.TCP);
 	
 	

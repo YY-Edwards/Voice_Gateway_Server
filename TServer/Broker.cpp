@@ -150,3 +150,8 @@ void CBroker::sendWirelanConfig()
 	std::string strConnect = CSettings::instance()->getRequest("wlConnect", "wl", m_wirelanClient->getCallId(), CSettings::instance()->getValue("repeater"));
 	m_wirelanClient->send(strConnect.c_str(), strConnect.size());
 }
+void CBroker::sendRadioConfig()
+{
+	std::string strConnect = CSettings::instance()->getRequest("connect", "radio", 0, CSettings::instance()->getValue("radio"));
+	m_radioClient->send(strConnect.c_str(), strConnect.size());
+}

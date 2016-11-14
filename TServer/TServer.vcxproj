@@ -104,6 +104,7 @@
     <ClInclude Include="RecvCallStatusAction.h" />
     <ClInclude Include="RecvConnectResultAction.h" />
     <ClInclude Include="RecvControlResultAction.h" />
+    <ClInclude Include="RecvGetConfigAction.h" />
     <ClInclude Include="RecvGpsAction.h" />
     <ClInclude Include="RecvMessageAction.h" />
     <ClInclude Include="RecvMessageResultAction.h" />
