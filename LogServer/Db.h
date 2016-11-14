@@ -50,6 +50,17 @@ public:
 	bool updateUser(const char* condition, recordType& val);
 	bool insertDepartment(const char* name);
 	bool updateDepartment(int id, const char* name);
+	int listUser(const char* condition, std::list<recordType>& records);
+	int getUserIdByStaffId(int staffId);
+	bool detachUser(int userId, int departmentId);
+	bool assignUser(int userId, int departmentId);
+	bool assignDepartmentRadio(int radioId, int departmentId);
+	bool detachDepartmentRadio(int radioId, int departmentId);
+	bool listDepartmentStaff(int departmentId, std::list<recordType>& records);
+	bool listStaffRadio(int staffId, std::list<recordType>& records);
+	bool listDepartmentRadio(int departmentId, std::list<recordType>& records);
+	bool assignStaffRadio(int staffId, int radioId);
+	bool detachStaffRadio(int staffId, int radioId);
 
 	int query(const char* table, const char* condition, std::list<recordType>& records);
 	int count(const char* table, const char* condition);

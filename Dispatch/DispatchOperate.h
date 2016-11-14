@@ -8,6 +8,7 @@
 #include "../lib/AES/Aes.h"
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
+
 #pragma once
 
 
@@ -119,6 +120,10 @@ public:
 	static DWORD WINAPI WorkThread(LPVOID lpParam);
 	static DWORD WINAPI RadioUsbStatusThread(LPVOID lpParam);
 	void AddAllCommand(CRemotePeer* pRemote,SOCKET s, int command, string radioIP, string mnisIP, string gpsIP, int id,wchar_t* text, double cycle, int querymode, int callId);
+	/*client½ÓÈë*/
+	static void OnConnect(CRemotePeer* pRemotePeer);
+	/*client¶Ï¿ª*/
+	static void OnDisConnect(CRemotePeer* pRemotePeer);
 private:
 	void WorkThreadFunc();
 	void TimeOut();
@@ -167,5 +172,6 @@ private:
 	void sendRadioStatusToClient(CRemotePeer* pRemote);
 	void sendCallStatusToClient();
 	void radioUsbStatus();
+
 };
 

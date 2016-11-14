@@ -302,6 +302,73 @@ int CMySQL::update(const char* table, recordType& val, const char* condition)
 
 	return 1;
 }
+
+int CMySQL::query(const char* sql, std::list<recordType> &records)
+{
+	records.erase(records.begin(), records.end());
+
+	try{
+		if (NULL == sql)
+		{
+			throw std::exception("sql null");
+		}
+
+		std::lock_guard<std::mutex> locker(m_tcpChannelUseLocker);
+		if (mysql_real_query(m_pMysqlConnection, sql, strlen(sql)))
+		{
+			const char* pstrError = mysql_error(m_pMysqlConnection);
+			throw std::exception(pstrError);
+		}
+
+		MYSQL_RES *result = NULL;
+
+		result = mysql_store_result(m_pMysqlConnection);
+		if (result)
+		{
+			MYSQL_ROW	row;
+			int num_fields;
+			MYSQL_FIELD *field;
+
+			num_fields = mysql_num_fields(result);
+			std::vector<std::string> tableFields;
+			while ((field = mysql_fetch_field(result)))
+			{
+				tableFields.push_back(field->name);
+			}
+
+			while ((row = mysql_fetch_row(result)))
+			{
+				std::map<std::string, std::string> rowValue;
+				for (int i = 0; i < num_fields; i++)
+				{
+					rowValue[tableFields[i]] = row[i];
+				}
+				records.push_back(rowValue);
+			}
+		}
+		else
+		{
+			/*int affectRows = mysql_affected_rows(m_pMysqlConnection);*/
+			//LOG(INFO) << "no data" << mysql_error(m_pMysqlConnection);
+			throw std::exception(mysql_error(m_pMysqlConnection));
+		}
+
+		if (result)
+		{
+			mysql_free_result(result);
+		}
+	}
+	catch (std::exception e)
+	{
+		return 0;
+	}
+	catch (...)
+	{
+		return 0;
+	}
+	return records.size();
+}
+
 int CMySQL::find(const char* table, const char* condition, std::list<recordType> &records)
 {
 	records.erase(records.begin(), records.end());

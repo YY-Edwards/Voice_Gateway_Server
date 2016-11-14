@@ -161,19 +161,131 @@ void groupAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 		}
 		else if (0 == operation.compare("assignUser"))
 		{
+			if (!d.HasMember("department") || !d["department"].IsInt() 
+				|| !d.HasMember("user") || !d["user"].IsInt())
+			{
+				throw std::exception("call parameter error");
+			}
 
+			int userId = d["user"].GetInt();
+			int departmentId = d["department"].GetInt();
+
+			if (CDb::instance()->assignUser(userId, departmentId))
+			{
+				strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
+			}
+			else
+			{
+				throw std::exception("failed assign user");
+			}
 		}
 		else if (0 == operation.compare("detachUser"))
 		{
+			if (!d.HasMember("department") || !d["department"].IsInt()
+				|| !d.HasMember("user") || !d["user"].IsInt())
+			{
+				throw std::exception("call parameter error");
+			}
 
+			int userId = d["user"].GetInt();
+			int departmentId = d["department"].GetInt();
+
+			if (CDb::instance()->detachUser(userId, departmentId))
+			{
+				strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
+			}
+			else
+			{
+				throw std::exception("failed detach user");
+			}
 		}
 		else if (0 == operation.compare("assignRadio"))
 		{
+			if (!d.HasMember("department") || !d["department"].IsInt()
+				|| !d.HasMember("radio") || !d["radio"].IsInt())
+			{
+				throw std::exception("call parameter error");
+			}
 
+			int radioId = d["radio"].GetInt();
+			int departmentId = d["department"].GetInt();
+
+			if (CDb::instance()->assignDepartmentRadio(radioId, departmentId))
+			{
+				strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
+			}
+			else
+			{
+				throw std::exception("failed assign radio");
+			}
 		}
 		else if (0 == operation.compare("detachRadio"))
 		{
+			if (!d.HasMember("department") || !d["department"].IsInt()
+				|| !d.HasMember("radio") || !d["radio"].IsInt())
+			{
+				throw std::exception("call parameter error");
+			}
 
+			int radioId = d["radio"].GetInt();
+			int departmentId = d["department"].GetInt();
+
+			if (CDb::instance()->detachDepartmentRadio(radioId, departmentId))
+			{
+				strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
+			}
+			else
+			{
+				throw std::exception("failed detach radio");
+			}
+		}
+		else if (0 == operation.compare("listUser"))
+		{
+			ArgumentType args;
+			std::list<recordType> records;
+			if (!d.HasMember("department") || !d["department"].IsInt())
+			{
+				throw std::exception("call parameter error");
+			}
+			int departmentId = d["department"].GetInt();
+			CDb::instance()->listDepartmentStaff(departmentId, records);
+
+			FieldValue fvRecords(FieldValue::TArray);
+			for (auto i = records.begin(); i != records.end(); i++)
+			{
+				FieldValue r(FieldValue::TObject);
+
+				for (auto j = (*i).begin(); j != (*i).end(); j++){
+					r.setKeyVal(j->first.c_str(), FieldValue(j->second.c_str()));
+				}
+				fvRecords.push(r);
+			}
+			args["records"] = fvRecords;
+			strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", args);
+		}
+		else if (0 == operation.compare("listRadio"))
+		{
+			ArgumentType args;
+			std::list<recordType> records;
+			if (!d.HasMember("department") || !d["department"].IsInt())
+			{
+				throw std::exception("call parameter error");
+			}
+			int departmentId = d["department"].GetInt();
+			CDb::instance()->listDepartmentRadio(departmentId, records);
+
+			FieldValue fvRecords(FieldValue::TArray);
+			for (auto i = records.begin(); i != records.end(); i++)
+			{
+				FieldValue r(FieldValue::TObject);
+
+				for (auto j = (*i).begin(); j != (*i).end(); j++){
+					r.setKeyVal(j->first.c_str(), FieldValue(j->second.c_str()));
+				}
+				fvRecords.push(r);
+			}
+			args["records"] = fvRecords;
+			strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", args);
 		}
 	}
 	catch (std::exception e)

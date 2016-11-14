@@ -75,7 +75,7 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 
 			if (0 == operation.compare("list"))
 			{
-				CDb::instance()->query("user", condStr.c_str(), records);
+				CDb::instance()->listUser(condStr.c_str(), records);
 
 				FieldValue fvRecords(FieldValue::TArray);
 				for (auto i = records.begin(); i != records.end(); i++)
@@ -138,9 +138,9 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 
 			for (size_t i = 0; i < itemCount; i++)
 			{
-				std::string id = (rapidjson::kNumberType == d["users"][i]["id"].GetType()) ? 
-											std::to_string( d["users"][i]["id"].GetInt())
-											: d["users"][i]["id"].GetString();
+				int id = (rapidjson::kNumberType == d["users"][i]["id"].GetType()) ? 
+										d["users"][i]["id"].GetInt()
+											: std::atoi(d["users"][i]["id"].GetString());
 
 				rapidjson::Value& val = d["users"][i]["user"];
 
@@ -167,7 +167,7 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 					updateVal["type"] = type;
 				}
 
-				std::string updCond = " where `id`=" + id;
+				std::string updCond = " where `id`=" + CDb::instance()->getUserIdByStaffId(id);
 				bool ret = CDb::instance()->updateUser(updCond.c_str(), updateVal);
 				if (!ret)
 				{
@@ -187,9 +187,103 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			{
 				int id = d["users"][m].GetInt();
 				std::string condition = "where id=" + std::to_string(id);
-				CDb::instance()->del("user", condition.c_str());
+				CDb::instance()->del("staff", condition.c_str());
 			}
 			strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
+		}
+
+		else if (0 == operation.compare("auth"))
+		{
+			if (!d.HasMember("user") || !d["user"].IsObject())
+			{
+				throw std::exception("call parameter error, user key must be an object");
+			}
+
+			std::string username = d["user"]["username"].GetString();
+			std::string password = d["user"]["password"].GetString();
+
+			std::list<recordType> records;
+			std::string condition = " where username=" + username;
+			condition += " and password=";
+			condition += CDb::md5(password.c_str());
+			CDb::instance()->query("user", condition.c_str(), records);
+
+			if (records.size()<=0)
+			{
+				strResp = CRpcJsonParser::buildResponse("failed", callId, 404, "username or password error", ArgumentType());
+			}
+			else
+			{
+				ArgumentType arg;
+				arg["type"] = FieldValue(records.front()["type"].c_str());
+				arg["authority"] = FieldValue(records.front()["authority"].c_str());
+				strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", arg);
+			}
+		}
+		else if (0 == operation.compare("assignRadio"))
+		{
+			if (!d.HasMember("user") || !d["user"].IsInt()
+				|| !d.HasMember("radio") || !d["radio"].IsInt())
+			{
+				throw std::exception("call parameter error");
+			}
+
+			int userId = d["user"].GetInt();
+			int radioId = d["radio"].GetInt();
+
+			if (CDb::instance()->assignStaffRadio(userId, radioId))
+			{
+				strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
+			}
+			else
+			{
+				throw std::exception("failed assign user");
+			}
+		}
+		else if (0 == operation.compare("detachRadio"))
+		{
+			if (!d.HasMember("user") || !d["user"].IsInt()
+				|| !d.HasMember("radio") || !d["radio"].IsInt())
+			{
+				throw std::exception("call parameter error");
+			}
+
+			int userId = d["user"].GetInt();
+			int radioId = d["radio"].GetInt();
+
+			if (!CDb::instance()->detachStaffRadio(userId, radioId))
+			{
+				strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
+			}
+			else
+			{
+				throw std::exception("failed assign user");
+			}
+		}
+		else if (0 == operation.compare("listRadio"))
+		{
+			if (!d.HasMember("user") || !d["user"].IsInt())
+			{
+				throw std::exception("call parameter error");
+			}
+
+			ArgumentType args;
+			std::list<recordType> records;
+			int departmentId = d["user"].GetInt();
+			CDb::instance()->listDepartmentRadio(departmentId, records);
+
+			FieldValue fvRecords(FieldValue::TArray);
+			for (auto i = records.begin(); i != records.end(); i++)
+			{
+				FieldValue r(FieldValue::TObject);
+
+				for (auto j = (*i).begin(); j != (*i).end(); j++){
+					r.setKeyVal(j->first.c_str(), FieldValue(j->second.c_str()));
+				}
+				fvRecords.push(r);
+			}
+			args["records"] = fvRecords;
+			strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", args);
 		}
 	}
 	catch (std::exception e){

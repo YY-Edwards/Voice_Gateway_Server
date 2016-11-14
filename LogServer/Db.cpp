@@ -281,6 +281,8 @@ std::string CDb::md5(const char* p)
 	return md5Str;
 }
 
+
+
 bool CDb::auth(const char* username, const char* password)
 {
 	try{
@@ -308,6 +310,18 @@ bool CDb::auth(const char* username, const char* password)
 	return true;
 }
 
+int CDb::listUser(const char* condition, std::list<recordType>& records)
+{
+	std::string sql = "select staff.*, user.username as username, user.type as type, user.authority as authority from staff left join user on staff.user=user.id";
+	if (NULL != condition && strlen(condition) > 0)
+	{
+		sql += " ";
+		sql += condition;
+	}
+
+	return m_pMySQLDb->query(sql.c_str(), records);
+}
+
 int CDb::query(const char* table, const char* condition, std::list<recordType>& records)
 {
 	return m_pMySQLDb->find(table, condition, records);
@@ -316,6 +330,21 @@ int CDb::query(const char* table, const char* condition, std::list<recordType>& 
 int CDb::count(const char* table, const char* condition)
 {
 	return m_pMySQLDb->count(table, condition);
+}
+
+int CDb::getUserIdByStaffId(int staffId)
+{
+	std::list<recordType> records;
+	std::string condition = " where id=" + std::to_string(staffId);
+	m_pMySQLDb->find("staff", condition.c_str(), records);
+
+	if (records.size() <= 0)
+	{
+		return 0;
+	}
+
+	std::string userId = records.front()["user"];
+	return std::atoi(userId.c_str());
 }
 
 bool CDb::updateUser(const char* condition, recordType& val)
@@ -361,5 +390,236 @@ bool CDb::updateDepartment(int id, const char* name)
 	memset(condition, 0, sizeof(condition));
 	sprintf(condition, " where id=%d", id);
 
-	return m_pMySQLDb->update("user", val, condition);
+	return m_pMySQLDb->update("department", val, condition);
+}
+
+bool CDb::assignUser(int userId, int departmentId)
+{
+	m_pMySQLDb->startTransaction();
+	try{
+		recordType rec;
+		rec["staff"] = std::to_string(userId);
+		rec["department"] = std::to_string(departmentId);
+		if (!m_pMySQLDb->recordExist("organize", rec))
+		{
+			m_pMySQLDb->insert("organize", rec);
+		}
+		m_pMySQLDb->commit();
+		return true;
+	}
+	catch (std::exception e)
+	{
+		m_pMySQLDb->rollback();
+	}
+	catch (...)
+	{
+		m_pMySQLDb->rollback();
+	}
+
+	return false;
+}
+bool CDb::detachUser(int userId, int departmentId)
+{
+	m_pMySQLDb->startTransaction();
+	try{
+		recordType rec;
+		rec["staff"] = std::to_string(userId);
+		rec["department"] = std::to_string(departmentId);
+		if (m_pMySQLDb->recordExist("organize", rec))
+		{
+			std::string sql = "delete from organize where staff=" + rec["staff"];
+			sql += " and department=" + rec["department"];
+			std::list<recordType> records;
+			m_pMySQLDb->query(sql.c_str(), records);
+		}
+		m_pMySQLDb->commit();
+		return true;
+	}
+	catch (std::exception e)
+	{
+		m_pMySQLDb->rollback();
+	}
+	catch (...)
+	{
+		m_pMySQLDb->rollback();
+	}
+
+	return false;
+}
+
+bool CDb::assignDepartmentRadio(int radioId, int departmentId)
+{
+	m_pMySQLDb->startTransaction();
+	try{
+		recordType rec;
+		rec["radio"] = std::to_string(radioId);
+		rec["department"] = std::to_string(departmentId);
+		if (!m_pMySQLDb->recordExist("radio_belong", rec))
+		{
+			m_pMySQLDb->insert("radio_belong", rec);
+		}
+		m_pMySQLDb->commit();
+		return true;
+	}
+	catch (std::exception e)
+	{
+		m_pMySQLDb->rollback();
+	}
+	catch (...)
+	{
+		m_pMySQLDb->rollback();
+	}
+
+	return false;
+}
+
+bool CDb::detachDepartmentRadio(int radioId, int departmentId)
+{
+	m_pMySQLDb->startTransaction();
+	try{
+		recordType rec;
+		rec["radio"] = std::to_string(radioId);
+		rec["department"] = std::to_string(departmentId);
+		if (m_pMySQLDb->recordExist("radio_belong", rec))
+		{
+			std::string sql = "delete from radio_belong where radio=" + rec["radio"];
+			sql += " and department=" + rec["department"];
+			std::list<recordType> records;
+			m_pMySQLDb->query(sql.c_str(), records);
+		}
+		m_pMySQLDb->commit();
+		return true;
+	}
+	catch (std::exception e)
+	{
+		m_pMySQLDb->rollback();
+	}
+	catch (...)
+	{
+		m_pMySQLDb->rollback();
+	}
+	return false;
+}
+
+bool CDb::listDepartmentStaff(int departmentId, std::list<recordType>& records)
+{
+	try{
+		records.erase(records.begin(), records.end());
+
+		std::string sql = "select staff.phone, user.* from organize left join staff on organize.staff=staff.id left join user on staff.user=user.id where organize.department=" + std::to_string(departmentId);
+		m_pMySQLDb->query(sql.c_str(), records);
+		if (records.size() <= 0)
+		{
+			throw std::exception("no records");
+		}
+		return true;
+	}
+	catch (std::exception e){
+
+	}
+	catch (...)
+	{
+
+	}
+	return false;
+}
+
+bool CDb::listDepartmentRadio(int departmentId, std::list<recordType>& records)
+{
+	try{
+		records.erase(records.begin(), records.end());
+
+		std::string sql = "select radios.* from radio_belong left join radios on radio_belong.radio=radios.id where radio_belong.department=" + std::to_string(departmentId);
+		m_pMySQLDb->query(sql.c_str(), records);
+		if (records.size() <= 0)
+		{
+			throw std::exception("no records");
+		}
+		return true;
+	}
+	catch (std::exception e){
+
+	}
+	catch (...)
+	{
+
+	}
+	return false;
+}
+
+bool CDb::listStaffRadio(int staffId, std::list<recordType>& records)
+{
+	try{
+		records.erase(records.begin(), records.end());
+
+		std::string sql = "select radios.* from radio_belong left join radios on radio_belong.radio=radios.id where radio_belong.staff=" + std::to_string(staffId);
+		m_pMySQLDb->query(sql.c_str(), records);
+		if (records.size() <= 0)
+		{
+			throw std::exception("no records");
+		}
+		return true;
+	}
+	catch (std::exception e){
+
+	}
+	catch (...)
+	{
+
+	}
+	return false;
+}
+
+bool CDb::assignStaffRadio(int staffId, int radioId)
+{
+	m_pMySQLDb->startTransaction();
+	try{
+		recordType rec;
+		rec["staff"] = std::to_string(staffId);
+		rec["radio"] = std::to_string(radioId);
+		if (!m_pMySQLDb->recordExist("radio_belong", rec))
+		{
+			m_pMySQLDb->insert("radio_belong", rec);
+		}
+		m_pMySQLDb->commit();
+		return true;
+	}
+	catch (std::exception e)
+	{
+		m_pMySQLDb->rollback();
+	}
+	catch (...)
+	{
+		m_pMySQLDb->rollback();
+	}
+
+	return false;
+}
+
+bool CDb::detachStaffRadio(int staffId, int radioId)
+{
+	m_pMySQLDb->startTransaction();
+	try{
+		recordType rec;
+		rec["radio"] = std::to_string(radioId);
+		rec["staff"] = std::to_string(staffId);
+		if (m_pMySQLDb->recordExist("radio_belong", rec))
+		{
+			std::string sql = "delete from radio_belong where radio=" + rec["radio"];
+			sql += " and staff=" + rec["staff"];
+			std::list<recordType> records;
+			m_pMySQLDb->query(sql.c_str(), records);
+		}
+		m_pMySQLDb->commit();
+		return true;
+	}
+	catch (std::exception e)
+	{
+		m_pMySQLDb->rollback();
+	}
+	catch (...)
+	{
+		m_pMySQLDb->rollback();
+	}
+	return false;
 }

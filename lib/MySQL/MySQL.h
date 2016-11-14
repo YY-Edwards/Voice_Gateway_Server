@@ -44,5 +44,6 @@ public:
 	void rollback();
 	bool recordExist(const char* table, recordType record);
 	int count(const char* table, const char* condition);
+	int query(const char* sql, std::list<recordType> &records);
 };
 

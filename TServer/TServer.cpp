@@ -37,6 +37,7 @@
 #include "MsgAction.h"
 #include "StatusAction.h"
 
+
 #include "RecvMessageAction.h"
 #include "RecvMessageResultAction.h"
 #include "RecvArsAction.h"
@@ -46,6 +47,7 @@
 #include "RecvCallStatusAction.h"
 #include "RecvControlResultAction.h"
 #include "RecvSendGpsStatus.h"
+#include "RecvGetConfigAction.h"
 
 #include "WireLanRecvAction.h"
 #include "WireLanSendAction.h"
@@ -114,7 +116,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	clientActions["callStatus"] = recvCallStatusAction;
 	clientActions["controlStatus"] = recvControlResultAction;
 	clientActions["sendGpsStatus"] = recvSendGpsStatusAction;
-
+	clientActions["getRadioConfig"] = recvGetConfigAction;
 	/*wire lan send*/
 	wlClientActions["wlCall"] = wlCallAction;
 	wlClientActions["wlCallStatus"] = wlCallStatusAction;
