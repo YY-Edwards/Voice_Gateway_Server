@@ -39,13 +39,43 @@ namespace TrboX
         public Main()
         {
             InitializeComponent();
+
             this.Loaded += delegate
             {
+                DataBase.open("SetttingLog.lg");
+                DataBase.InsertLog("---Records Start----------------------------------------------------------");
+
+
                 TServer.InitializeTServer();
+                LogServer.InitializeTServer();
                 SettingComponents = new SettingComponents(this);
                 ResourceComponents = new ResourceComponents(this);
 
                 SettingComponents.Set(SettingMgr.Get());
+               
+            };
+
+            lst_User.Loaded += delegate
+            { 
+                List<User> users = UserMgr.List();
+                if (users != null)
+                {
+                    lst_User.Items.Clear();
+                    cmb_AuthorityDest.Items.Clear();
+                    foreach (User user in users)
+                    {
+                        cmb_AuthorityDest.Items.Add(new ComboBoxItem() { Content = user.username + (user.type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"), Tag = user });
+                        lst_User.Items.Add(user);
+                    }
+                    lst_User.SelectedIndex = 0;
+                    cmb_AuthorityDest.SelectedIndex = 0;
+                }
+            };
+
+            list_AllFunc.Loaded += delegate
+            {
+                list_AllFunc.ItemsSource = User.AddAuth;
+
             };
         }
 
@@ -191,6 +221,8 @@ namespace TrboX
         private void btn_Apply_Click(object sender, RoutedEventArgs e)
         {
            SettingMgr.Set(SettingComponents.Get());
+
+           UserMgr.Save();
         }
 
         private void btn_SetDefault_Click(object sender, RoutedEventArgs e)
@@ -258,15 +290,68 @@ namespace TrboX
 
         private void btn_SaveUser_Click(object sender, RoutedEventArgs e)
         {
-           // UserStr User = new UserStr(){
-           //     username=txt_UserName.Text,
-           //     password = psd_UserPassword.Password,
-           // };
+            User user = new User(txt_UserName.Text, psd_UserPassword.Password, cmb_UserType.SelectedIndex == 1 ? UserType.Admin : UserType.Guest);
 
 
-           //// lst_User.Items.Add(new ListViewItem() { Content = User });
-           // lst_User.Items.Add(User);
+            user.id = user.Add();
+            lst_User.Items.Add(new ListViewItem() { Content = user });
+            cmb_AuthorityDest.Items.Add(new ComboBoxItem() { Content = user.username + (user.type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"), Tag = user });
         }
+
+        private void btn_UserDel_Click(object sender, RoutedEventArgs e)
+        {
+            if (lst_User == null || lst_User.SelectedItem == null) return;
+            User user = ((ListViewItem)lst_User.SelectedItem).Content as User;
+            user.Delete();
+            lst_User.Items.RemoveAt(lst_User.SelectedIndex);
+            cmb_AuthorityDest.Items.RemoveAt(lst_User.SelectedIndex);
+        }
+
+        private void btn_AddFunc_Click(object sender, RoutedEventArgs e)
+        {
+            if (list_AllFunc == null || lst_CurrentFunc == null || list_AllFunc.SelectedItem == null) return;
+
+            //List<CAuthority> current =  as List<CAuthority>;
+
+           // ((List<CAuthority>)lst_CurrentFunc.ItemsSource).Add(list_AllFunc.SelectedItem as CAuthority);
+
+            if (!lst_CurrentFunc.Items.Contains(list_AllFunc.SelectedItem as CAuthority)) lst_CurrentFunc.Items.Add(list_AllFunc.SelectedItem as CAuthority);
+
+            if(cmb_AuthorityDest != null && cmb_AuthorityDest.SelectedItem != null)
+            {
+                    User  user =   (User)((ComboBoxItem)cmb_AuthorityDest.SelectedItem).Tag;
+                
+                    
+                    List<CAuthority> lst = new List<CAuthority>();
+
+                    foreach (var it in lst_CurrentFunc.Items)
+                    {
+                        lst.Add(it as CAuthority);
+                    }
+                    user.Auth = lst;
+                    user.authority = user.parseAuth();
+
+                    ((ComboBoxItem)cmb_AuthorityDest.Items[cmb_AuthorityDest.SelectedIndex]).Tag = user;
+                    lst_User.Items[cmb_AuthorityDest.SelectedIndex] = user;
+
+                    user.Modify();
+            }
+
+        }
+
+        private void cmb_AuthorityDest_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            try
+            {   List<CAuthority> lst = ((User)((ComboBoxItem)cmb_AuthorityDest.SelectedItem).Tag).Auth;
+                lst_CurrentFunc.Items.Clear();
+                foreach(CAuthority it in lst)
+                {
+                    if (!lst_CurrentFunc.Items.Contains(it))lst_CurrentFunc.Items.Add(it);
+                }
+            }
+            catch { }
+        }
+
      
     }
 }

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
+using System.IO;
+
 using System.Net;
 using System.Net.Sockets;
 
@@ -15,7 +17,7 @@ using System.Text.RegularExpressions;
 namespace TrboX
 {
 
-    public class TServerRequestStr
+    public class LogServerRequestStr
     {
         public string call;
         public string type;
@@ -23,22 +25,21 @@ namespace TrboX
         public object param;
     }
 
-    public class TServerRequestSimpleStr
+    public class LogServerRequestSimpleStr
     {
         public string call;
         public string type;
         public string callId;
     }
 
-    public class TServerRequest
+    public class LogServerRequest
     {
         public string call;
-        public string type;
         public long callId;
         public object param;
     }
 
-    public class TServerResponse
+    public class LogServerResponse
     {
         public string status;
         public string statusText;
@@ -47,31 +48,24 @@ namespace TrboX
         public object contents;
     }
 
-    public delegate object ParseDel(object obj);
-    public delegate void RxRequestDel(string param);
-
-    public class cmd
+    public class LogServer
     {
-        public string json;
-        public ParseDel del;
-    }
-    public class TServer
-    {
-        private static Dictionary<long, TServerResponse> RxResponse = new Dictionary<long, TServerResponse>();
-        public static Queue<TServerRequest> RxRequest = new Queue<TServerRequest>();
+        private static Dictionary<long, LogServerResponse> RxResponse = new Dictionary<long, LogServerResponse>();
+        public static Queue<LogServerRequest> RxRequest = new Queue<LogServerRequest>();
 
         private static TcpInterface TCP = null;
         private static long PackageNumber = 0;
 
-        public static RunMode SystemType = RunMode.Radio;
+        // public static RunMode SystemType = RunMode.Radio;
         public static Dictionary<RequestType, RxRequestDel> RxRequestList = new Dictionary<RequestType, RxRequestDel>();
 
         public static bool IsInCalled = false;
-        
+
         public static Queue<cmd> CmdList = new Queue<cmd>();
+
         private static Mutex CallMutex = new Mutex();
 
-        public TServer()
+        public LogServer()
         {
         }
 
@@ -84,10 +78,10 @@ namespace TrboX
         }
         public static void InitializeTServer()
         {
-            TCP = new TcpInterface(new IPEndPoint(IPAddress.Parse("192.168.2.113"), 9000), OnReceive);
+            TCP = new TcpInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9003), OnReceive);
             TCP.OnConnect = OnConnect;
             TCP.Open();
-           
+
 
             ThreadStart threadStart = new ThreadStart(delegate() { while (true)OnRx(); });
             Thread th = new Thread(threadStart);
@@ -96,11 +90,13 @@ namespace TrboX
 
         private static void OnConnect()
         {
-             ThreadStart thread = new ThreadStart(delegate(){ Thread.Sleep(1000);
-                MyWindow.PushMessage(new CustomMessage(DestType.OnConnectTServer, ""));
-                });
-                Thread thx = new Thread(thread);
-                thx.Start();
+            ThreadStart thread = new ThreadStart(delegate()
+            {
+                Thread.Sleep(1000);
+                //MyWindow.PushMessage(new CustomMessage(DestType.OnConnectTServer, ""));
+            });
+            Thread thx = new Thread(thread);
+            thx.Start();
         }
 
         public static void RegRxHanddler(RequestType type, RxRequestDel handler)
@@ -118,35 +114,17 @@ namespace TrboX
         public static object Call(object obj)
         {
             CallMutex.WaitOne();
+            object res = null;
 
-            object reslut = null;
             if (obj is Setting)
             {
                 SettingMgr setmgr = new SettingMgr(obj as Setting, PackageNumber);
-                reslut = Call(setmgr.Json, setmgr.Parse);
-            }
-            else if (obj is COperate)
-            {
-                Dictionary<string, object> res = new Dictionary<string, object>();
-
-                if (RunMode.Radio == SystemType)
-                {
-                    RadioOperate radioop = new RadioOperate(obj as COperate, PackageNumber);
-                    List<string> json = radioop.Json;
-                    foreach (string js in json) res.Add(js, Call(js, radioop.Parse(js)));
-                }
-                else if (RunMode.Repeater == SystemType)
-                {
-                    WirelanOperate wirelanopop = new WirelanOperate(obj as COperate, PackageNumber);
-                    List<string> json = wirelanopop.Json;
-                    foreach (string js in json) res.Add(js, Call(js, wirelanopop.Parse(js)));
-                }
-
-                reslut = res;
+                res= Call(setmgr.Json, setmgr.Parse);
             }
 
             CallMutex.ReleaseMutex();
-            return reslut;
+
+            return res;
         }
 
         public static object Call(string str, ParseDel parse = null)
@@ -199,7 +177,7 @@ namespace TrboX
             }
             foreach (long key in del) RxResponse.Remove(key);
 
-            if(res == null)
+            if (res == null)
             {
                 DataBase.InsertLog("读取Reponse超时，CallID：" + CallId.ToString());
             }
@@ -224,73 +202,73 @@ namespace TrboX
         private static void OnReceive(string str)
         {
 
-             Regex regex=new Regex("}{");//以$cjlovefl$分割
-             string[] sArray = regex.Split(str);
+            Regex regex = new Regex("}{");//以$cjlovefl$分割
+            string[] sArray = regex.Split(str);
 
-             for(int i =0; i < sArray.Length; i++)
-             {
+            for (int i = 0; i < sArray.Length; i++)
+            {
 
-                 if (sArray.Length  > 1 )
-                 {
-                 if(i == 0)
-                 {
-                     sArray[i] = sArray[i] + "}";
-                 }
-                 else if (i == sArray.Length - 1)
-                 {
-                     sArray[i] = "{" + sArray[i];
-                 }
-                 else
-                 {
-                     sArray[i] = "{" + sArray[i] + "}";
-                 }
-                 }
+                if (sArray.Length > 1)
+                {
+                    if (i == 0)
+                    {
+                        sArray[i] = sArray[i] + "}";
+                    }
+                    else if (i == sArray.Length - 1)
+                    {
+                        sArray[i] = "{" + sArray[i];
+                    }
+                    else
+                    {
+                        sArray[i] = "{" + sArray[i] + "}";
+                    }
+                }
 
-                 try
-                 {
-                     //Console.WriteLine("接收Json：{0}", sArray[i]);
+                try
+                {
+                    //Console.WriteLine("接收Json：{0}", sArray[i]);
 
-                     JObject json = JsonConvert.DeserializeObject<JObject>(sArray[i]);
+                    JObject json = JsonConvert.DeserializeObject<JObject>(sArray[i]);
 
-                     if (json.Property("call") == null || json.Property("call").ToString() == "")//not type
-                     {
-                         //Console.WriteLine("response");
-                         TServerResponse rxresponse = JsonConvert.DeserializeObject<TServerResponse>(sArray[i]);
+                    if (json.Property("call") == null || json.Property("call").ToString() == "")//not type
+                    {
+                        //Console.WriteLine("response");
+                        LogServerResponse rxresponse = JsonConvert.DeserializeObject<LogServerResponse>(sArray[i]);
 
-                         lock (RxResponse)
-                         {
-                             RxResponse.Add(rxresponse.callId, rxresponse);
-                         }
-                     }
-                     else
-                     { 
-                         TServerRequest rxrequest = JsonConvert.DeserializeObject<TServerRequest>(JsonConvert.SerializeObject(json));
+                        lock (RxResponse)
+                        {
+                            RxResponse.Add(rxresponse.callId, rxresponse);
+                        }
+                    }
+                    else
+                    { //op request
+                        //Console.WriteLine("TServerRequestStr");
 
-                         if (rxrequest != null)
-                         {
-                             PackageNumber = rxrequest.callId;
+                        LogServerRequest rxrequest = JsonConvert.DeserializeObject<LogServerRequest>(JsonConvert.SerializeObject(json));
 
-                             Write(JsonConvert.SerializeObject(new TServerResponse()
-                             {
-                                 status = "success",
-                                 callId = rxrequest.callId,
-                             }));
+                        if (rxrequest != null)
+                        {
+                            PackageNumber = rxrequest.callId;
 
-                             lock (RxRequest)
-                             {
-                                 RxRequest.Enqueue(rxrequest);
-                             }
-                         }
-                     }
-                 }
-                 catch
-                 {
-                     DataBase.InsertLog("Json解析错误：" + sArray[i]);
-                     
-                     //Console.WriteLine("不是Json:"+sArray[i]);
-                 }
+                            Write(JsonConvert.SerializeObject(new TServerResponse()
+                            {
+                                status = "success",
+                                callId = rxrequest.callId,
+                            }));
 
-             }
+                            lock (RxRequest)
+                            {
+                                RxRequest.Enqueue(rxrequest);
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    DataBase.InsertLog("Json解析错误：" + sArray[i]);
+                }
+
+            }
         }
 
         private static void OnRx()
@@ -330,74 +308,5 @@ namespace TrboX
         }
     }
 
-
-
-
-    public enum RequestType
-    {
-        None,
-        //base
-        setBaseSetting,
-        getBaseSetting,
-        setRadioSetting,
-        getRadioSetting,
-        setRepeaterSetting,
-        getRepeaterSetting,
-
-        getUser,
-        getUserCount,
-        addUser,
-        deleteUser,
-        updateUser,
-
-        getStaff,
-        getStaffCount,
-        addStaff,
-        deleteStaff,
-        updateStaff,
-
-        getDepartment,
-        getDepartmentCount,
-        addDepartment,
-        deleteDepartment,
-        updateDepartment,
-
-        getRadio,
-        getRadioCount,
-        addRadio,
-        deleteRadio,
-        updateRadio,
-
-        getRadioBelong,
-        getRadioBelongCount,
-        addRadioBelong,
-        deleteRadioBelong,
-        updateRadioBelong,
-
-        status,
-        sendArs,
-
-        call,
-        callStatus,
-
-        message,
-        messageStatus,
-
-        queryGps,
-        queryGpsStatus,
-        sendGps,
-
-        control,
-        controlStatus,
-
-        
-        wlInfo,
-
-        wlCall,
-        wlCallStatus,
-
-        wlPlay,
-        wlPlayStatus,
-    };
 
 }

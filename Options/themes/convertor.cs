@@ -213,6 +213,32 @@ namespace TrboX
         }
     }
 
+
+    public class UserTypeIndex : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try{
+
+                if ((string)value == "Guest") return 0;
+                else if ((string)value == "Admin") return 1;
+                else return -1;
+            }
+            catch{
+                return -1;
+            }
+
+
+       
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+
 }
 
 

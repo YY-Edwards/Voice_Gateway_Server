@@ -28,6 +28,12 @@ using System.Threading;
 
 namespace TrboX
 {
+
+    public enum TargetSystemType
+    {
+        radio,
+        Reapeater
+    }
     public class NetAddress
     {
         public string Ip;
@@ -61,9 +67,9 @@ namespace TrboX
     }
     public enum WireLanType
     {
-        IPSC,
-        CPC,
-        LCP,
+        IPSC = 0,
+        CPC = 1,
+        LCP = 2,
     };
 
 
@@ -116,7 +122,7 @@ namespace TrboX
         public void Set()
         {
             Op = SettingOpType.Set;
-            new Thread(new ThreadStart(delegate() { TServer.Call(this); })).Start();      
+            new Thread(new ThreadStart(delegate() { TServer.Call(this); })).Start();
         }
         public object Get()
         {
@@ -225,17 +231,17 @@ namespace TrboX
 
         private static object ParseStatus(object obj)
         {
-            SettingResponse res = null;
-            if (obj is SettingResponse) res = obj as SettingResponse;
+            TServerResponse res = null;
+            if (obj is TServerResponse) res = obj as TServerResponse;
             else return null;
 
             if (null == res) return false;
-            return res.IsSuccess;
+            return res.status == "success";
         }
         private static object ParseBase(object obj)
         {
-            SettingResponse res = null;
-            if (obj is SettingResponse) res = obj as SettingResponse;
+            TServerResponse res = null;
+            if (obj is TServerResponse) res = obj as TServerResponse;
             else return null;
 
             if ((null == res) || (null == res.contents)) return null;
@@ -245,8 +251,8 @@ namespace TrboX
 
         private static object ParseRadio(object obj)
         {
-            SettingResponse res = null;
-            if (obj is SettingResponse) res = obj as SettingResponse;
+            TServerResponse res = null;
+            if (obj is TServerResponse) res = obj as TServerResponse;
             else return null;
 
             if ((null == res) || (null == res.contents)) return null;
@@ -255,8 +261,8 @@ namespace TrboX
 
         private static object ParseWireLan(object obj)
         {
-            SettingResponse res = null;
-            if (obj is SettingResponse) res = obj as SettingResponse;
+            TServerResponse res = null;
+            if (obj is TServerResponse) res = obj as TServerResponse;
             else return null;
             if ((null == res) || (null == res.contents)) return null;
             return JsonConvert.DeserializeObject<WireLanSetting>(JsonConvert.SerializeObject(res.contents));
@@ -264,21 +270,13 @@ namespace TrboX
 
         public static void Set(List<Setting> setting)
         {
-           if (null == setting) return;
-           foreach(Setting set in setting)
-           {
-               set.Set();
-           }
+            if (null == setting) return;
+            foreach (Setting set in setting)
+            {
+                set.Set();
+            }
         }
 
-        public static List<Setting> Get()
-        {
-            return Get(new SettingType[] {
-                SettingType .Base,
-                SettingType .Radio,
-                SettingType .WireLan,
-            });
-        }
         public static List<Setting> Get(SettingType[] lst)
         {
             List<Setting> setting = new List<Setting>();
@@ -289,6 +287,13 @@ namespace TrboX
             }
             return setting;
         }
-
+        public static List<Setting> Get()
+        {
+            return Get(new SettingType[] {
+                SettingType .Base,
+                SettingType .Radio,
+                SettingType .WireLan,
+            });
+        }
     }
 }

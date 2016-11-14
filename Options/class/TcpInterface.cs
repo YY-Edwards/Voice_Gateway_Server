@@ -126,7 +126,7 @@ namespace TrboX
                 }
                 try
                 {
-                    byte[] result = new byte[1024];
+                    byte[] result = new byte[65536];
                     int receiveLength = clientSocket.Receive(result);
                     string rxstr = Encoding.ASCII.GetString(result, 0, receiveLength);
 

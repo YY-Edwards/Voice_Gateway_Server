@@ -67,9 +67,9 @@ namespace TrboX
     }
     public enum WireLanType
     {
-        IPSC,
-        CPC,
-        LCP,
+        IPSC = 0,
+        CPC = 1,
+        LCP = 2,
     };
 
 
