@@ -281,6 +281,8 @@ std::string CDb::md5(const char* p)
 	return md5Str;
 }
 
+
+
 bool CDb::auth(const char* username, const char* password)
 {
 	try{
@@ -308,6 +310,18 @@ bool CDb::auth(const char* username, const char* password)
 	return true;
 }
 
+int CDb::listUser(const char* condition, std::list<recordType>& records)
+{
+	std::string sql = "select staff.*, user.username as username, user.type as type, user.authority as authority from staff left join user on staff.user=user.id";
+	if (NULL != condition && strlen(condition) > 0)
+	{
+		sql += " ";
+		sql += condition;
+	}
+
+	return m_pMySQLDb->query(sql.c_str(), records);
+}
+
 int CDb::query(const char* table, const char* condition, std::list<recordType>& records)
 {
 	return m_pMySQLDb->find(table, condition, records);
@@ -316,6 +330,21 @@ int CDb::query(const char* table, const char* condition, std::list<recordType>& 
 int CDb::count(const char* table, const char* condition)
 {
 	return m_pMySQLDb->count(table, condition);
+}
+
+int CDb::getUserIdByStaffId(int staffId)
+{
+	std::list<recordType> records;
+	std::string condition = " where id=" + std::to_string(staffId);
+	m_pMySQLDb->find("staff", condition.c_str(), records);
+
+	if (records.size() <= 0)
+	{
+		return 0;
+	}
+
+	std::string userId = records.front()["user"];
+	return std::atoi(userId.c_str());
 }
 
 bool CDb::updateUser(const char* condition, recordType& val)
@@ -361,5 +390,5 @@ bool CDb::updateDepartment(int id, const char* name)
 	memset(condition, 0, sizeof(condition));
 	sprintf(condition, " where id=%d", id);
 
-	return m_pMySQLDb->update("user", val, condition);
+	return m_pMySQLDb->update("department", val, condition);
 }
