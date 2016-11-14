@@ -12,7 +12,8 @@
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	//std::list<recordType> records;
+	std::list<recordType> records;
+
 
 	//FieldValue record1(FieldValue::TArray);
 	//FieldValue r1(FieldValue::TString);
@@ -44,6 +45,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	//std::string v = CRpcJsonParser::listToString(records);
 	//std::string str = CRpcJsonParser::test();
 	CDb::instance()->open("localhost", 3306, "root", "", "tbx");
+	CDb::instance()->listUser(NULL, records);
+	int id = CDb::instance()->getUserIdByStaffId(2);
 	//CDb::instance()->count("user", NULL);
 	//CDb::instance()->insertUser("xy", "123", "xy", "111");
 

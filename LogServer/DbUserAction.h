@@ -75,7 +75,7 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 
 			if (0 == operation.compare("list"))
 			{
-				CDb::instance()->query("user", condStr.c_str(), records);
+				CDb::instance()->listUser(condStr.c_str(), records);
 
 				FieldValue fvRecords(FieldValue::TArray);
 				for (auto i = records.begin(); i != records.end(); i++)
@@ -138,9 +138,9 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 
 			for (size_t i = 0; i < itemCount; i++)
 			{
-				std::string id = (rapidjson::kNumberType == d["users"][i]["id"].GetType()) ? 
-											std::to_string( d["users"][i]["id"].GetInt())
-											: d["users"][i]["id"].GetString();
+				int id = (rapidjson::kNumberType == d["users"][i]["id"].GetType()) ? 
+										d["users"][i]["id"].GetInt()
+											: std::atoi(d["users"][i]["id"].GetString());
 
 				rapidjson::Value& val = d["users"][i]["user"];
 
@@ -167,7 +167,7 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 					updateVal["type"] = type;
 				}
 
-				std::string updCond = " where `id`=" + id;
+				std::string updCond = " where `id`=" + CDb::instance()->getUserIdByStaffId(id);
 				bool ret = CDb::instance()->updateUser(updCond.c_str(), updateVal);
 				if (!ret)
 				{
@@ -187,9 +187,38 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			{
 				int id = d["users"][m].GetInt();
 				std::string condition = "where id=" + std::to_string(id);
-				CDb::instance()->del("user", condition.c_str());
+				CDb::instance()->del("staff", condition.c_str());
 			}
 			strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
+		}
+
+		else if (0 == operation.compare("auth"))
+		{
+			if (!d.HasMember("user") || !d["user"].IsObject())
+			{
+				throw std::exception("call parameter error, user key must be an object");
+			}
+
+			std::string username = d["user"]["username"].GetString();
+			std::string password = d["user"]["password"].GetString();
+
+			std::list<recordType> records;
+			std::string condition = " where username=" + username;
+			condition += " and password=";
+			condition += CDb::md5(password.c_str());
+			CDb::instance()->query("user", condition.c_str(), records);
+
+			if (records.size()<=0)
+			{
+				strResp = CRpcJsonParser::buildResponse("failed", callId, 404, "username or password error", ArgumentType());
+			}
+			else
+			{
+				ArgumentType arg;
+				arg["type"] = FieldValue(records.front()["type"].c_str());
+				arg["authority"] = FieldValue(records.front()["authority"].c_str());
+				strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", arg);
+			}
 		}
 	}
 	catch (std::exception e){

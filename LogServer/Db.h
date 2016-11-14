@@ -50,6 +50,8 @@ public:
 	bool updateUser(const char* condition, recordType& val);
 	bool insertDepartment(const char* name);
 	bool updateDepartment(int id, const char* name);
+	int listUser(const char* condition, std::list<recordType>& records);
+	int getUserIdByStaffId(int staffId);
 
 	int query(const char* table, const char* condition, std::list<recordType>& records);
 	int count(const char* table, const char* condition);
