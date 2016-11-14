@@ -96,6 +96,7 @@
     <Compile Include="class\targetMgr.cs" />
     <Compile Include="class\TcpInterface.cs" />
     <Compile Include="class\TServer.cs" />
+    <Compile Include="class\UserMgr.cs" />
     <Compile Include="ctrl\ComboButton.xaml.cs">
       <DependentUpon>ComboButton.xaml</DependentUpon>
     </Compile>
