@@ -7823,6 +7823,31 @@ void CWLNet::resetPlayFlag()
 	}
 }
 
+int CWLNet::wlGetConfig()
+{
+	/*将参数打包成json格式*/
+	std::string strRequest = CRpcJsonParser::buildCall("wlGetConfig", ++g_sn, ArgumentType(), "wl");
+	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
+	sendLogToWindow();
+	TcpClient *redayDelete = NULL;
+	/*发送到Client*/
+	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end(); i++)
+	{
+		TcpClient* p = *i;
+		try
+		{
+			p->sendResponse(strRequest.c_str(), strRequest.size());
+		}
+		catch (...)
+		{
+			redayDelete = p;
+			sprintf_s(m_reportMsg, "sendCallStatus fail, socket:%lu", p->s);
+			sendLogToWindow();
+		}
+	}
+	return 0;
+}
+
 //bool CWLNet::getIsFirstBurstA()
 //{
 //	return m_isFirstBurstA;

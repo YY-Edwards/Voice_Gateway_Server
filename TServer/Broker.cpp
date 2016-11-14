@@ -114,7 +114,6 @@ void CBroker::startWireLanClient(std::map<std::string, ACTION> clientActions)
 		{
 			m_wirelanClient->addActionHandler(action->first.c_str(), action->second);
 		}
-
 		m_wirelanClient->start("tcp://127.0.0.1:9002");
 
 		// send repeater hardware connect command by fixed parameter
@@ -142,7 +141,12 @@ void CBroker::startWireLanClient(std::map<std::string, ACTION> clientActions)
 		//}, nullptr, 60);
 
 		// send repeater hardware connect command by setting file*/
-		std::string strConnect = CSettings::instance()->getRequest("wlConnect", "wl", m_wirelanClient->getCallId(), CSettings::instance()->getValue("repeater"));
-		m_wirelanClient->send(strConnect.c_str(), strConnect.size());
+		//sendWirelanConfig();
 	}
+}
+
+void CBroker::sendWirelanConfig()
+{
+	std::string strConnect = CSettings::instance()->getRequest("wlConnect", "wl", m_wirelanClient->getCallId(), CSettings::instance()->getValue("repeater"));
+	m_wirelanClient->send(strConnect.c_str(), strConnect.size());
 }
