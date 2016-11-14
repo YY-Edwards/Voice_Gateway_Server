@@ -45,14 +45,16 @@ int _tmain(int argc, _TCHAR* argv[])
 	//std::string v = CRpcJsonParser::listToString(records);
 	//std::string str = CRpcJsonParser::test();
 	CDb::instance()->open("localhost", 3306, "root", "", "tbx");
-	CDb::instance()->listUser(NULL, records);
-	int id = CDb::instance()->getUserIdByStaffId(2);
+	//CDb::instance()->listDepartmentStaff(1, records);
+	//CDb::instance()->listUser(NULL, records);
+	//int id = CDb::instance()->getUserIdByStaffId(2);
 	//CDb::instance()->count("user", NULL);
 	//CDb::instance()->insertUser("xy", "123", "xy", "111");
 
 	CRpcServer rpcServer;
 	rpcServer.addActionHandler("appEvent", appEventAction);
 	rpcServer.addActionHandler("user", userAction);
+	rpcServer.addActionHandler("department", groupAction);
 	rpcServer.start(9003, CRpcServer::TCP);
 	while (1);
 	return 0;

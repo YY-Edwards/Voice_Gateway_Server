@@ -220,6 +220,71 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 				strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", arg);
 			}
 		}
+		else if (0 == operation.compare("assignRadio"))
+		{
+			if (!d.HasMember("user") || !d["user"].IsInt()
+				|| !d.HasMember("radio") || !d["radio"].IsInt())
+			{
+				throw std::exception("call parameter error");
+			}
+
+			int userId = d["user"].GetInt();
+			int radioId = d["radio"].GetInt();
+
+			if (CDb::instance()->assignStaffRadio(userId, radioId))
+			{
+				strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
+			}
+			else
+			{
+				throw std::exception("failed assign user");
+			}
+		}
+		else if (0 == operation.compare("detachRadio"))
+		{
+			if (!d.HasMember("user") || !d["user"].IsInt()
+				|| !d.HasMember("radio") || !d["radio"].IsInt())
+			{
+				throw std::exception("call parameter error");
+			}
+
+			int userId = d["user"].GetInt();
+			int radioId = d["radio"].GetInt();
+
+			if (!CDb::instance()->detachStaffRadio(userId, radioId))
+			{
+				strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
+			}
+			else
+			{
+				throw std::exception("failed assign user");
+			}
+		}
+		else if (0 == operation.compare("listRadio"))
+		{
+			if (!d.HasMember("user") || !d["user"].IsInt())
+			{
+				throw std::exception("call parameter error");
+			}
+
+			ArgumentType args;
+			std::list<recordType> records;
+			int departmentId = d["user"].GetInt();
+			CDb::instance()->listDepartmentRadio(departmentId, records);
+
+			FieldValue fvRecords(FieldValue::TArray);
+			for (auto i = records.begin(); i != records.end(); i++)
+			{
+				FieldValue r(FieldValue::TObject);
+
+				for (auto j = (*i).begin(); j != (*i).end(); j++){
+					r.setKeyVal(j->first.c_str(), FieldValue(j->second.c_str()));
+				}
+				fvRecords.push(r);
+			}
+			args["records"] = fvRecords;
+			strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", args);
+		}
 	}
 	catch (std::exception e){
 		strResp = CRpcJsonParser::buildResponse("failed", callId, 500, e.what(), ArgumentType());
