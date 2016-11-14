@@ -2,7 +2,7 @@
 
 
 
-
+#include "../lib/rpc/include/TcpServer.h"
 #include <Dbt.h>
 #include <initguid.h>
 #include <Ndisguid.h>
@@ -1341,8 +1341,64 @@ void DispatchOperate::radioUsbStatus()
 	}
 
 	MSG msg;
-	while (GetMessage(&msg, 0, 0, 0) > 0) {
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
+	BOOL bRet;
+
+
+	while (((bRet = GetMessage(&msg, 0, 0, 0) > 0)) != 0)
+	{
+		try
+		{
+			if (bRet == -1)
+			{
+				
+			}
+			else
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+			
+		}
+		catch (std::exception e)
+		{
+
+		}
 	}
 }
+void DispatchOperate::OnConnect(CRemotePeer* pRemotePeer)
+{
+	if (pRemotePeer)
+	{
+		TcpClient * client = new TcpClient();
+		SOCKET s = client->s = ((TcpClient *)pRemotePeer)->s;
+		client->addr = ((TcpClient *)pRemotePeer)->addr;
+		DispatchOperate  * pDispatchOperate = new DispatchOperate();
+		m_dispatchOperate[s] = pDispatchOperate;
+		std::string strRequest = CRpcJsonParser::buildCall("getRadioConfig", ++seq, ArgumentType(), "radio");
+		if (pRemotePeer)
+		{
+			pRemotePeer->sendResponse((const char *)strRequest.c_str(), strRequest.size());
+		}
+	}
+}
+
+void DispatchOperate::OnDisConnect(CRemotePeer* pRemotePeer)
+{
+	if (pRemotePeer)
+	{
+		TcpClient * client = new TcpClient();
+		SOCKET s = client->s = ((TcpClient *)pRemotePeer)->s;
+		client->addr = ((TcpClient *)pRemotePeer)->addr;
+		map <SOCKET, DispatchOperate*>::iterator it;
+		it = m_dispatchOperate.begin();
+		while (it != m_dispatchOperate.end())
+		{
+			if (it->first == s)
+			{
+				it = m_dispatchOperate.erase(it);
+				break;
+			}
+		}
+	}
+}
+

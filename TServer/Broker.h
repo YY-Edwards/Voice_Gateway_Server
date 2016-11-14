@@ -53,6 +53,7 @@ public:
 	void startRadioClient(std::map<std::string, ACTION> clientActions);
 	void startWireLanClient(std::map<std::string, ACTION> clientActions);
 	void sendWirelanConfig();
+	void sendRadioConfig();
 	void startLogClient();
 
 protected:
