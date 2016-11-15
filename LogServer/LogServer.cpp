@@ -9,6 +9,7 @@
 #include "DbUserAction.h"
 #include "DbGroupAction.h"
 #include "DbRadioAction.h"
+#include "DbStaffAction.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -45,7 +46,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//std::string v = CRpcJsonParser::listToString(records);
 	//std::string str = CRpcJsonParser::test();
 	CDb::instance()->open("localhost", 3306, "root", "", "tbx");
-	CDb::instance()->insertDepartment("xs", 1);
+	//CDb::instance()->insertDepartment("xs", 1);
 	//CDb::instance()->listDepartmentStaff(1, records);
 	//CDb::instance()->listUser(NULL, records);
 	//int id = CDb::instance()->getUserIdByStaffId(2);
@@ -56,6 +57,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("appEvent", appEventAction);
 	rpcServer.addActionHandler("user", userAction);
 	rpcServer.addActionHandler("radio", radioAction);
+	rpcServer.addActionHandler("staff", staffAction);
 	rpcServer.addActionHandler("department", groupAction);
 	rpcServer.start(9003, CRpcServer::TCP);
 	while (1);
