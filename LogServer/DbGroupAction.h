@@ -108,7 +108,8 @@ void groupAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 			for (size_t i = 0; i < itemCount; i++)
 			{
 				std::string name = d["departments"][i]["name"].GetString();
-				bool ret = CDb::instance()->insertDepartment(name.c_str());
+				int gid = d["departments"][i]["gid"].GetInt();
+				bool ret = CDb::instance()->insertDepartment(name.c_str(), gid);
 				if (!ret)
 				{
 					std::string errMsg = "add department failed.";
@@ -135,8 +136,9 @@ void groupAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 				rapidjson::Value& val = d["departments"][i]["department"];
 
 				std::string name = val.HasMember("name") ? val["name"].GetString() : "";
+				int gid = val.HasMember("gid") ? val["gid"].GetInt() : -1;
 
-				bool ret = CDb::instance()->updateDepartment(std::atoi(id.c_str()), name.c_str());
+				bool ret = CDb::instance()->updateDepartment(std::atoi(id.c_str()), name.c_str(), gid);
 				if (!ret)
 				{
 					throw std::exception("update department failed");
