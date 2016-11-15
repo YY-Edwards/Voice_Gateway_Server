@@ -54,6 +54,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	CRpcServer rpcServer;
 	rpcServer.addActionHandler("appEvent", appEventAction);
 	rpcServer.addActionHandler("user", userAction);
+	rpcServer.addActionHandler("radio", radioAction);
 	rpcServer.addActionHandler("department", groupAction);
 	rpcServer.start(9003, CRpcServer::TCP);
 	while (1);
