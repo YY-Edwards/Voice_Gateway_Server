@@ -66,7 +66,7 @@ namespace TrboX
                     foreach (User user in users)
                     {
                         cmb_AuthorityDest.Items.Add(new ComboBoxItem() { Content = user.username + (user.type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"), Tag = user });
-                        lst_User.Items.Add(user);
+                        lst_User.Items.Add(new ListViewItem() { Content = user});
                     }
                     lst_User.SelectedIndex = 0;
                     cmb_AuthorityDest.SelectedIndex = 0;
@@ -80,8 +80,21 @@ namespace TrboX
                 if(depts!=null)
                 {
                     lst_Group.Items.Clear();
-                    foreach (Department dept in depts) lst_Group.Items.Add(dept);
+                    foreach (Department dept in depts) lst_Group.Items.Add(new ListViewItem() { Content = dept });
                     lst_Group.SelectedIndex = 0;
+                }
+
+            };
+
+            lst_Staff.Loaded += delegate
+            {
+                if (lst_Staff.Items.Count > 0) return;
+                List<Staff> staffs = StaffMgr.List();
+                if (staffs != null)
+                {
+                    lst_Staff.Items.Clear();
+                    foreach (Staff staff in staffs) lst_Staff.Items.Add(new ListViewItem() { Content = staff });
+                    lst_Staff.SelectedIndex = 0;
                 }
 
             };
@@ -306,8 +319,15 @@ namespace TrboX
         private void btn_UserNew_Click(object sender, RoutedEventArgs e)
         {
             lst_User.SelectedIndex = -1;
+            txt_UserName.IsReadOnly = false;
+            txt_UserName.Text = "";
+            psd_UserPassword.Password = "";
         }
 
+        private void lst_User_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            txt_UserName.IsReadOnly = true;
+        }
 
         private void btn_SaveUser_Click(object sender, RoutedEventArgs e)
         {
@@ -317,16 +337,18 @@ namespace TrboX
             {
                 user.id = user.Add();
                 lst_User.Items.Add(new ListViewItem() { Content = user });
+                lst_User.SelectedIndex = lst_User.Items.Count - 1;
                 cmb_AuthorityDest.Items.Add(new ComboBoxItem() { Content = user.username + (user.type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"), Tag = user });
+                cmb_AuthorityDest.SelectedIndex = cmb_AuthorityDest.Items.Count - 1;
             }
             else
             {
-                User destuser = (User)((ListViewItem)lst_User.SelectedItem).Tag;
+                User destuser = (User)((ListViewItem)lst_User.SelectedItem).Content;
                 user.id = destuser.id;
                 user.Modify();
 
                 ((ComboBoxItem)cmb_AuthorityDest.Items[lst_User.SelectedIndex]).Tag = user;
-                lst_User.Items[lst_User.SelectedIndex] = user;
+                ((ListViewItem)lst_User.Items[lst_User.SelectedIndex]).Content = user;
             } 
         }
 
@@ -335,8 +357,9 @@ namespace TrboX
             if (lst_User == null || lst_User.SelectedItem == null) return;
             User user = ((ListViewItem)lst_User.SelectedItem).Content as User;
             user.Delete();
-            lst_User.Items.RemoveAt(lst_User.SelectedIndex);
-            cmb_AuthorityDest.Items.RemoveAt(lst_User.SelectedIndex);
+            int index = lst_User.SelectedIndex;
+            lst_User.Items.RemoveAt(index);
+            cmb_AuthorityDest.Items.RemoveAt(index);
         }
 
         private void btn_AddFunc_Click(object sender, RoutedEventArgs e)
@@ -348,8 +371,7 @@ namespace TrboX
             if(cmb_AuthorityDest != null && cmb_AuthorityDest.SelectedItem != null)
             {
                     User  user =   (User)((ComboBoxItem)cmb_AuthorityDest.SelectedItem).Tag;
-                
-                    
+                                 
                     List<CAuthority> lst = new List<CAuthority>();
 
                     foreach (var it in lst_CurrentFunc.Items)
@@ -360,11 +382,9 @@ namespace TrboX
                     user.authority = user.parseAuth();
 
                     ((ComboBoxItem)cmb_AuthorityDest.Items[cmb_AuthorityDest.SelectedIndex]).Tag = user;
-                    lst_User.Items[cmb_AuthorityDest.SelectedIndex] = user;
-
+                    ((ListViewItem)lst_User.Items[cmb_AuthorityDest.SelectedIndex]).Content = user;
                     user.Modify();
             }
-
         }
 
         private void cmb_AuthorityDest_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -396,14 +416,15 @@ namespace TrboX
             if (lst_Group.SelectedIndex == -1)
             {
                 dept.id = dept.Add();
-                lst_Group.Items.Add(new ListViewItem() { Content = dept }); 
+                lst_Group.Items.Add(new ListViewItem() { Content = dept });
+                lst_Group.SelectedIndex = lst_Group.Items.Count - 1;
             }
             else
             {
-                Department destdept = (Department)((ListViewItem)lst_User.SelectedItem).Tag;
+                Department destdept = (Department)((ListViewItem)lst_Group.SelectedItem).Content;
                 dept.id = destdept.id;
                 dept.Modify();
-                lst_Group.Items[lst_Group.SelectedIndex] = dept;
+                ((ListViewItem)lst_Group.Items[lst_Group.SelectedIndex]).Content = dept;
             }       
         }
 
@@ -415,9 +436,12 @@ namespace TrboX
         private void btn_DepartmentDel_Click(object sender, RoutedEventArgs e)
         {
             if (lst_Group == null || lst_Group.SelectedItem == null) return;
-            Department dept = ((ListViewItem)lst_User.SelectedItem).Content as Department;
-            dept.Delete();
-            lst_Group.Items.RemoveAt(lst_Group.SelectedIndex);
+            Department dept = ((ListViewItem)lst_Group.SelectedItem).Content as Department;
+            if (dept != null)
+            {
+                dept.Delete();
+                lst_Group.Items.RemoveAt(lst_Group.SelectedIndex);
+            }
         }
     }
 }

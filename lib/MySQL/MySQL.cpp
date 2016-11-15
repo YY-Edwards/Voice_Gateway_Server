@@ -340,8 +340,8 @@ int CMySQL::query(const char* sql, std::list<recordType> &records)
 			{
 				std::map<std::string, std::string> rowValue;
 				for (int i = 0; i < num_fields; i++)
-				{
-					rowValue[tableFields[i]] = row[i];
+				{				
+					rowValue[tableFields[i]] = row[i] == NULL ? "0" : row[i];
 				}
 				records.push_back(rowValue);
 			}
@@ -415,7 +415,7 @@ int CMySQL::find(const char* table, const char* condition, std::list<recordType>
 				std::map<std::string, std::string> rowValue;
 				for (int i = 0; i < num_fields; i++)
 				{
-					rowValue[tableFields[i]] = row[i];
+					rowValue[tableFields[i]] = row[i] == NULL ? "0" : row[i];
 				}
 				records.push_back(rowValue);
 			}

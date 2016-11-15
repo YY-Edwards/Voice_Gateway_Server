@@ -20,11 +20,21 @@ namespace TrboX
     public class Staff
     {
         public int id;
-        public string name;
-        public StaffType type;
-        public string phone;
+        public string name { get; set; }
+        public StaffType type { get; set; }
+        public string phone { get; set; }
         public int user;
-        public bool valid;
+
+        [JsonProperty(PropertyName = "valid")]
+        public int is_valid;
+
+        [JsonIgnore]
+        public bool valid
+        {
+            set { is_valid = value ? 1 : 0; }
+            get { return is_valid == 0 ? false : true; }
+        }
+
 
         [JsonIgnore]
         public string Name

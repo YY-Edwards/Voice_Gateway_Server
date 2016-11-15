@@ -12,7 +12,7 @@ namespace TrboX
 
     public class Department
     {
-        [JsonIgnore]
+        [DefaultValue((long)0)]
         public long id;
         public string name{ set; get; }
 
@@ -24,6 +24,10 @@ namespace TrboX
         {
             get
             { return name + "(ID:"+group_id.ToString()+")"; }
+        }
+        private static Department Copy(Department dept)
+        {
+            return JsonConvert.DeserializeObject<Department>(JsonConvert.SerializeObject(dept));
         }
 
         public Department()
@@ -37,12 +41,12 @@ namespace TrboX
 
         public long Add()
         {
-            return DepartmentMgr.Add(this);
+            return DepartmentMgr.Add(Copy(this));
         }
 
         public void Modify()
         {
-            DepartmentMgr.Modify(id, this);
+            DepartmentMgr.Modify(id, Copy(this));
         }
 
         public void Delete()
@@ -54,7 +58,7 @@ namespace TrboX
     public class UpdatesDepartment
     {
         public long id;
-        public Department dept;
+        public Department department;
     }
     class DepartmentMgr
     {
@@ -236,7 +240,7 @@ namespace TrboX
                 else
                 {
                     dept.id = 0;
-                    s_Update.Add(new UpdatesDepartment() { id = Id, dept = dept });
+                    s_Update.Add(new UpdatesDepartment() { id = Id, department = dept });
                 }
             }
             catch
