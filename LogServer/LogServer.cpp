@@ -51,7 +51,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//CDb::instance()->listUser(NULL, records);
 	//int id = CDb::instance()->getUserIdByStaffId(2);
 	//CDb::instance()->count("user", NULL);
-	//CDb::instance()->insertUser("xy", "123", "xy", "111");
+	//CDb::instance()->insertUser("xywz", "123", "xywz", "111", "sms", "radio");
 
 	CRpcServer rpcServer;
 	rpcServer.addActionHandler("appEvent", appEventAction);
