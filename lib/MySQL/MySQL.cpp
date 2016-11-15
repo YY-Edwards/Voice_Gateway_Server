@@ -20,7 +20,7 @@ CMySQL::~CMySQL(void)
 {
 	m_bStoped = true;
 	m_hExitEvent.notify_all();
-	//m_pingThread.join();
+	m_pingThread.join();
 }
 
 bool CMySQL::open(const char* host, unsigned short port, const char* user, const char* pass, const char* db)
@@ -97,7 +97,7 @@ bool CMySQL::open(const char* host, unsigned short port, const char* user, const
 
 				// wait quit event and timeout
 				std::unique_lock<std::mutex> lk(this->m_mtxQuit);
-				this->m_hExitEvent.wait_for(lk, std::chrono::seconds(1));
+				this->m_hExitEvent.wait_for(lk, std::chrono::seconds(60));
 			}
 		});
 	}
