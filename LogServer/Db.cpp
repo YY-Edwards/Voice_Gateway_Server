@@ -40,25 +40,25 @@ void migrate_v100(CMySQL* pMySQL){
 													`id` INT(11) NOT NULL AUTO_INCREMENT, \
 													`name` VARCHAR(45) NOT NULL, \
 													`phone` VARCHAR(45) NULL, \
-																																		`user` INT NOT NULL, \
-																																									`valid` INT NOT NULL DEFAULT 1 COMMENT 'staff is valid?', \
-																																																PRIMARY KEY(`id`), \
-																																																							INDEX `fk_employee_user_idx` (`user` ASC), \
-																																																														CONSTRAINT `fk_employee_user` \
-																																																																					FOREIGN KEY(`user`) \
-																																																																												REFERENCES `user` (`id`) \
-																																																																																			ON DELETE CASCADE \
-																																																																																										ON UPDATE NO ACTION) \
+													`user` INT, \
+													`valid` INT NOT NULL DEFAULT 1 COMMENT 'staff is valid?', \
+													PRIMARY KEY(`id`), \
+													INDEX `fk_employee_user_idx` (`user` ASC), \
+													CONSTRAINT `fk_employee_user` \
+													FOREIGN KEY(`user`) \
+													REFERENCES `user` (`id`) \
+													ON DELETE SET NULL \
+													ON UPDATE NO ACTION) \
 																																																																																																	ENGINE = InnoDB; \
 																																																																																																							");
 
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `organize` ( \
-													`staff` INT NOT NULL AUTO_INCREMENT, \
-																				`department` INT NOT NULL, \
-																											INDEX `fk_organize_staff_idx` (`staff` ASC), \
-																																		INDEX `fk_organize_department_idx` (`department` ASC), \
-																																									CONSTRAINT `fk_organize_staff` \
-																																																FOREIGN KEY(`staff`) \
+					`staff` INT NOT NULL AUTO_INCREMENT, \
+					`department` INT NOT NULL, \
+					INDEX `fk_organize_staff_idx` (`staff` ASC), \
+					INDEX `fk_organize_department_idx` (`department` ASC), \
+					CONSTRAINT `fk_organize_staff` \
+					FOREIGN KEY(`staff`) \
 																																																							REFERENCES `staff` (`id`) \
 																																																														ON DELETE CASCADE \
 																																																																					ON UPDATE NO ACTION, \
@@ -360,6 +360,11 @@ bool CDb::updateRadio(const char* condition, recordType& val)
 	return m_pMySQLDb->update("radios", val, condition);
 }
 
+bool CDb::updateStaff(const char* condition, recordType& val)
+{
+	return m_pMySQLDb->update("staff", val, condition);
+}
+
 bool CDb::del(const char* table, const char* condition)
 {
 	return (m_pMySQLDb->del(table, condition) > 0);
@@ -659,6 +664,34 @@ bool CDb::insertRadio(const char* radioId, int type, const char* sn, int screen,
 		}
 
 		m_pMySQLDb->insert("radios", radio);
+	}
+	catch (std::exception e)
+	{
+		return false;
+	}
+	catch (...)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool CDb::insertStaff(const char* name, const char* phone)
+{
+	try{
+		recordType staff;
+
+		staff["name"] = name;
+		staff["type"] = phone;
+		staff["valid"] = "1";
+
+		if (m_pMySQLDb->recordExist("staff", staff))
+		{
+			throw std::exception("radio exist");
+		}
+
+		m_pMySQLDb->insert("staff", staff);
 	}
 	catch (std::exception e)
 	{
