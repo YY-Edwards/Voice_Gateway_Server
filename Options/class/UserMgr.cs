@@ -66,7 +66,7 @@ namespace TrboX
         private static List<CAuthority> GuestAuth = JsonConvert.DeserializeObject<List<CAuthority>>(AdminAuthStr);
         private static List<CAuthority> AdminAuth = JsonConvert.DeserializeObject<List<CAuthority>>(GuestAuthStr);
 
-        [DefaultValue((long)0)]
+        [JsonIgnore]
         public long id;
         public string username { set; get; }
 
@@ -303,7 +303,6 @@ namespace TrboX
 
         public static long Add(User user)
         {
-            user.id = 0;
             s_Add.Add(++CurrentIndex, user);
             return CurrentIndex;
         }
@@ -334,12 +333,10 @@ namespace TrboX
             {
                 if (Id > OrginIndex)
                 {
-                    user.id = 0;
                     s_Add[Id] = user;
                 }
                 else
                 {
-                    user.id = 0;
                     user.password = "";
                     s_Update.Add(new UpdatesUser() { id = Id, user = user });
                 }

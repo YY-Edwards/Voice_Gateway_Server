@@ -303,14 +303,31 @@ namespace TrboX
             }
         }
 
+        private void btn_UserNew_Click(object sender, RoutedEventArgs e)
+        {
+            lst_User.SelectedIndex = -1;
+        }
+
+
         private void btn_SaveUser_Click(object sender, RoutedEventArgs e)
         {
             User user = new User(txt_UserName.Text, psd_UserPassword.Password, cmb_UserType.SelectedIndex == 1 ? UserType.Admin : UserType.Guest);
 
+            if (lst_User.SelectedIndex == -1)
+            {
+                user.id = user.Add();
+                lst_User.Items.Add(new ListViewItem() { Content = user });
+                cmb_AuthorityDest.Items.Add(new ComboBoxItem() { Content = user.username + (user.type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"), Tag = user });
+            }
+            else
+            {
+                User destuser = (User)((ListViewItem)lst_User.SelectedItem).Tag;
+                user.id = destuser.id;
+                user.Modify();
 
-            user.id = user.Add();
-            lst_User.Items.Add(new ListViewItem() { Content = user });
-            cmb_AuthorityDest.Items.Add(new ComboBoxItem() { Content = user.username + (user.type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"), Tag = user });
+                ((ComboBoxItem)cmb_AuthorityDest.Items[lst_User.SelectedIndex]).Tag = user;
+                lst_User.Items[lst_User.SelectedIndex] = user;
+            } 
         }
 
         private void btn_UserDel_Click(object sender, RoutedEventArgs e)
@@ -325,10 +342,6 @@ namespace TrboX
         private void btn_AddFunc_Click(object sender, RoutedEventArgs e)
         {
             if (list_AllFunc == null || lst_CurrentFunc == null || list_AllFunc.SelectedItem == null) return;
-
-            //List<CAuthority> current =  as List<CAuthority>;
-
-           // ((List<CAuthority>)lst_CurrentFunc.ItemsSource).Add(list_AllFunc.SelectedItem as CAuthority);
 
             if (!lst_CurrentFunc.Items.Contains(list_AllFunc.SelectedItem as CAuthority)) lst_CurrentFunc.Items.Add(list_AllFunc.SelectedItem as CAuthority);
 
@@ -368,7 +381,7 @@ namespace TrboX
         }
 
         private void btn_SaveDepartment_Click(object sender, RoutedEventArgs e)
-        {
+        {            
             Department dept = null;
             try
             {
@@ -380,10 +393,31 @@ namespace TrboX
             }
             if (dept == null) return;
 
-            dept.id = dept.Add();
-            lst_Group.Items.Add(new ListViewItem() { Content = dept });         
+            if (lst_Group.SelectedIndex == -1)
+            {
+                dept.id = dept.Add();
+                lst_Group.Items.Add(new ListViewItem() { Content = dept }); 
+            }
+            else
+            {
+                Department destdept = (Department)((ListViewItem)lst_User.SelectedItem).Tag;
+                dept.id = destdept.id;
+                dept.Modify();
+                lst_Group.Items[lst_Group.SelectedIndex] = dept;
+            }       
         }
 
-     
+        private void btn_DepartmentNew_Click(object sender, RoutedEventArgs e)
+        {
+            lst_Group.SelectedIndex = -1;
+        }
+
+        private void btn_DepartmentDel_Click(object sender, RoutedEventArgs e)
+        {
+            if (lst_Group == null || lst_Group.SelectedItem == null) return;
+            Department dept = ((ListViewItem)lst_User.SelectedItem).Content as Department;
+            dept.Delete();
+            lst_Group.Items.RemoveAt(lst_Group.SelectedIndex);
+        }
     }
 }

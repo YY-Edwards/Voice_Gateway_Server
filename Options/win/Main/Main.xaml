@@ -620,9 +620,8 @@
                                                     </ListView.View>
                                                 </ListView>
                                                 <DockPanel LastChildFill="False" Height="29.5" DockPanel.Dock="Top" Margin="85,0,0,0">
-                                                    <Button Content="ADD" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
-                                                    <Button Content="EDIT" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
-                                                    <Button Content="DELETE" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
+                                                    <Button x:Name="btn_DepartmentNew" Content="NEW" VerticalAlignment="Center" Width="60" Margin="2.5,0" Click="btn_DepartmentNew_Click"/>
+                                                    <Button x:Name="btn_DepartmentDel" Content="DELETE" VerticalAlignment="Center" Width="60" Margin="2.5,0" Click="btn_DepartmentDel_Click"/>
                                                 </DockPanel>
                                                 <Separator Height="5" Margin="0,0,0,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
@@ -795,8 +794,7 @@
                                                     </ListView.View>
                                                 </ListView>
                                                 <DockPanel LastChildFill="False" Height="29.5" DockPanel.Dock="Top" Margin="85,0,0,0">
-                                                    <Button Content="ADD" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
-                                                    <Button Content="EDIT" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
+                                                    <Button x:Name="btn_UserNew" Content="NEW" VerticalAlignment="Center" Width="60" Margin="2.5,0" Click="btn_UserNew_Click"/>
                                                     <Button x:Name="btn_UserDel" Content="DELETE" VerticalAlignment="Center" Width="60" Margin="2.5,0" Click="btn_UserDel_Click"/>
                                                 </DockPanel>
                                                 <Separator Height="5" Margin="0,0,0,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>

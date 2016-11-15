@@ -127,7 +127,7 @@ namespace TrboX
         public static List<Department> List()
         {
             int count = Count();
-            if (count <= 1) return null;
+            if (count <= 0) return null;
             Dictionary<string, object> param = new Dictionary<string, object>();
 
             param.Add("operation", OperateType.list.ToString());
