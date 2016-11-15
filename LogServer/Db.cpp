@@ -29,10 +29,10 @@ void migrate_v100(CMySQL* pMySQL){
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `department` ( \
 													`id` INT(11) NOT NULL AUTO_INCREMENT, \
 													`name` VARCHAR(300) NOT NULL, \
-													`gid` INT NOT NULL, \
+													`gid` INT NOT NULL COMMENT 'radio group id', \
 													PRIMARY KEY(`id`), \
-													UNIQUE INDEX `gid_UNIQUE` (`gid` ASC) \
-													UNIQUE INDEX `id_UNIQUE` (`id` ASC)) \
+													UNIQUE INDEX `id_UNIQUE` (`id` ASC),\
+													UNIQUE INDEX `gid_UNIQUE` (`gid` ASC))\
 												    ENGINE = InnoDB; \
 																																															");
 
