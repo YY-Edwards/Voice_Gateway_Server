@@ -91,9 +91,11 @@
     <Compile Include="class\DepartmentMgr.cs" />
     <Compile Include="class\JsonParse.cs" />
     <Compile Include="class\LogServer.cs" />
+    <Compile Include="class\RadioMgr.cs" />
     <Compile Include="class\ResourceMgr.cs" />
     <Compile Include="class\SettingFile.cs" />
     <Compile Include="class\SettingMgr.cs" />
+    <Compile Include="class\StaffMgr.cs" />
     <Compile Include="class\targetMgr.cs" />
     <Compile Include="class\TcpInterface.cs" />
     <Compile Include="class\TServer.cs" />

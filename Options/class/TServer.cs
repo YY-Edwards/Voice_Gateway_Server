@@ -351,7 +351,8 @@ namespace TrboX
 
         user,
         department,
-
+        radio,
+        staff,
 
         getUser,
         getUserCount,

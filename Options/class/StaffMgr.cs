@@ -7,160 +7,66 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 
+
 namespace TrboX
-{    
-  
-    public enum UserType
+{
+   
+    public enum StaffType
     {
-        Admin,
-        Guest
-    }
+        Vehicle,
+        Staff
+    };
 
-    public enum AuthorityType
+    public class Staff
     {
-        Call,
-        Message,
-        Position,
-        Control,
-
-    }
-
-    public class CAuthority
-    {
-        public string Type;
-        public string Dept { set; get; }
-        public string Icon;
-    }
-
-
-    public class User
-    {
-        private static string AllAudthStr = "["
-        + "{             'Type': 'Call',             'Dept': '呼叫',       'Icon': ''          },"
-        + "{             'Type': 'Message',          'Dept': '短信',       'Icon': ''          },"
-        + "{             'Type': 'Position',         'Dept': '定位',       'Icon': ''          },"
-        + "{             'Type': 'Tracker',          'Dept': '巡更追踪',   'Icon': ''          },"
-        + "{             'Type': 'JobTicket',        'Dept': '工单',       'Icon': ''          }"
-
-        + "]";
-
-        private static string AdminAuthStr = "["
-        + "{             'Type': 'Call',             'Dept': '呼叫',       'Icon': ''          },"
-        + "{             'Type': 'Message',          'Dept': '短信',       'Icon': ''          },"
-        + "{             'Type': 'Position',         'Dept': '定位',       'Icon': ''          },"
-        + "{             'Type': 'Tracker',          'Dept': '巡更追踪',   'Icon': ''          },"
-        + "{             'Type': 'JobTicket',        'Dept': '工单',       'Icon': ''          }"
-
-        + "]";
-
-        private static string GuestAuthStr = "["
-         + " {            'Type': 'Call',            'Dept': '呼叫',            'Icon': ''        },"
-         + " {            'Type': 'Message',         'Dept': '短信',            'Icon': ''        },"
-         + " {            'Type': 'Position',        'Dept': '定位',            'Icon': ''        },"
-         + " {            'Type': 'Tracker',         'Dept': '巡更追踪',        'Icon': ''        },"
-         + " {            'Type': 'JobTicket',       'Dept': '工单',            'Icon': ''        }"
-         + "]";
-
-
-        public static List<CAuthority> AddAuth = JsonConvert.DeserializeObject<List<CAuthority>>(AllAudthStr);
-        private static List<CAuthority> GuestAuth = JsonConvert.DeserializeObject<List<CAuthority>>(AdminAuthStr);
-        private static List<CAuthority> AdminAuth = JsonConvert.DeserializeObject<List<CAuthority>>(GuestAuthStr);
-
-        [DefaultValue((long)0)]
-        public long id;
-        public string username { set; get; }
-
-        [DefaultValue("")]
-        public string password;
-        public string type { set; get; }
-
-        public string authority { set; get; }
-
-        [JsonIgnore]
-        public List<CAuthority> Auth { set; get; }
+        public int id;
+        public string name;
+        public StaffType type;
+        public string phone;
+        public int user;
+        public bool valid;
 
         [JsonIgnore]
         public string Name
         {
             get
-            { return username + (type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"); }
+            { return name; }
         }
 
-        public string parseAuth()
-        {
-            string res = "";
-            foreach (CAuthority item in Auth)
-            {
-                res += item.Type + ",";
-            }
-            return res;
-        }
+        public Staff()
+        { }
 
-        public List<CAuthority> parseauth()
-        {
-            List<CAuthority> res = new List<CAuthority>();
-
-            string[] s = authority.Split(new char[] { ',' });
-
-            foreach (string item in s)
-            {
-                if (item == "") continue;
-                foreach (CAuthority auth in AddAuth)
-                {
-                    if (item == auth.Type)
-                    {
-                        res.Add(auth);
-                        break;
-                    }
-                }
-            }
-
-            return res;
-        }
-
-        public User()
-        {
-        }
-
-        public User(string user, string psd, UserType t)
-        {
-            username = user;
-            password = psd;
-            type = t.ToString();
-            Auth = t == UserType.Admin ? AdminAuth : GuestAuth;
-            authority = parseAuth();
-        }
         public long Add()
         {
-            return UserMgr.Add(this);
+            return StaffMgr.Add(this);
         }
 
         public void Modify()
         {
-            UserMgr.Modify(id, this);
+            StaffMgr.Modify(id, this);
         }
 
         public void Delete()
         {
-            UserMgr.Delete(id);
+           StaffMgr.Delete(id);
         }
     }
-
-    public class UpdatesUser
+    
+    public class UpdatesStaff
     {
         public long id;
-        public User user;
+        public Staff staff;
     }
 
-    public class UserMgr
+    public class StaffMgr
     {
         private static long OrginIndex = 0;
         private static long CurrentIndex = 0;
 
-        private static Dictionary<long, User> s_Add = new Dictionary<long, User>();
+        private static Dictionary<long, Staff> s_Add = new Dictionary<long, Staff>();
         private static List<long> s_Del = new List<long>();
 
-        private static List<UpdatesUser> s_Update = new List<UpdatesUser>();
+        private static List<UpdatesStaff> s_Update = new List<UpdatesStaff>();
 
 
         public static int Count()
@@ -176,7 +82,7 @@ namespace TrboX
 
             LogServerRequest req = new LogServerRequest()
             {
-                call = RequestType.user.ToString(),
+                call = RequestType.staff.ToString(),
                 callId = LogServer.CallId,
                 param = param
             };
@@ -221,12 +127,10 @@ namespace TrboX
             }
         }
 
-        public static List<User> List()
+        public static List<Staff> List()
         {
-
             int count = Count();
-            if (count <= 0) return null;
-
+            if(count <= 1)return null;
             Dictionary<string, object> param = new Dictionary<string, object>();
 
             param.Add("operation", OperateType.list.ToString());
@@ -238,7 +142,7 @@ namespace TrboX
 
             LogServerRequest req = new LogServerRequest()
             {
-                call = RequestType.user.ToString(),
+                call = RequestType.staff.ToString(),
                 callId = LogServer.CallId,
                 param = param
             };
@@ -260,7 +164,7 @@ namespace TrboX
             try
             {
 
-                List<User> s_List = LogServer.Call(str, ParseList) as List<User>;
+                List<Staff> s_List = LogServer.Call(str, ParseList) as List<Staff>;
 
                 if (s_List == null) return null;
                 OrginIndex = s_List.Select(w => w.id).Max();
@@ -284,13 +188,8 @@ namespace TrboX
             {
                 if (obj == null) return null;
                 LogServerResponse rep = obj as LogServerResponse;
-                Dictionary<string, List<User>> Dic = JsonConvert.DeserializeObject<Dictionary<string, List<User>>>(JsonConvert.SerializeObject(rep.contents));
-                List<User> res = Dic["records"];
-
-                for (int i = 0; i < res.Count; i++)
-                {
-                    res[i].Auth = res[i].parseauth();
-                }
+                Dictionary<string, List<Staff>> Dic = JsonConvert.DeserializeObject<Dictionary<string, List<Staff>>>(JsonConvert.SerializeObject(rep.contents));
+                List<Staff> res = Dic["records"];
 
                 return res;
             }
@@ -301,10 +200,10 @@ namespace TrboX
             }
         }
 
-        public static long Add(User user)
+        public static long Add(Staff staff)
         {
-            user.id = 0;
-            s_Add.Add(++CurrentIndex, user);
+            staff.id = 0;
+            s_Add.Add(++CurrentIndex, staff);
             return CurrentIndex;
         }
 
@@ -328,20 +227,19 @@ namespace TrboX
             }
         }
 
-        public static void Modify(long Id, User user)
+        public static void Modify(long Id,Staff staff)
         {
             try
             {
                 if (Id > OrginIndex)
                 {
-                    user.id = 0;
-                    s_Add[Id] = user;
+                    staff.id = 0;
+                    s_Add[Id] = staff;
                 }
                 else
                 {
-                    user.id = 0;
-                    user.password = "";
-                    s_Update.Add(new UpdatesUser() { id = Id, user = user });
+                    staff.id = 0;
+                    s_Update.Add(new UpdatesStaff() { id = Id, staff = staff });
                 }
             }
             catch
@@ -357,11 +255,11 @@ namespace TrboX
             {
                 Dictionary<string, object> delparam = new Dictionary<string, object>();
                 delparam.Add("operation", OperateType.del.ToString());
-                delparam.Add("users", s_Del);
+                delparam.Add("staffs", s_Del);
 
                 LogServerRequest delreq = new LogServerRequest()
                 {
-                    call = RequestType.user.ToString(),
+                    call = RequestType.staff.ToString(),
                     callId = LogServer.CallId,
                     param = delparam
                 };
@@ -373,11 +271,11 @@ namespace TrboX
             {
                 Dictionary<string, object> updateparam = new Dictionary<string, object>();
                 updateparam.Add("operation", OperateType.update.ToString());
-                updateparam.Add("users", s_Update);
+                updateparam.Add("staffs", s_Update);
 
                 LogServerRequest updatereq = new LogServerRequest()
                 {
-                    call = RequestType.user.ToString(),
+                    call = RequestType.staff.ToString(),
                     callId = LogServer.CallId,
                     param = updateparam
                 };
@@ -392,7 +290,7 @@ namespace TrboX
 
             if (s_Add.Count > 0)
             {
-                List<User> addlist = new List<User>();
+                List<Staff> addlist = new List<Staff>();
                 foreach (var item in s_Add)
                 {
                     addlist.Add(item.Value);
@@ -400,7 +298,7 @@ namespace TrboX
 
                 Dictionary<string, object> addparam = new Dictionary<string, object>();
                 addparam.Add("operation", OperateType.add.ToString());
-                addparam.Add("users", addlist);
+                addparam.Add("staffs", addlist);
 
                 LogServerRequest addreq = new LogServerRequest()
                 {
@@ -422,6 +320,105 @@ namespace TrboX
             s_Del.Clear();
             s_Update.Clear();
         }
-    }
 
+        private static Dictionary<long, long> AddStaffRadio = new Dictionary<long, long>();
+        private static Dictionary<long, long> DelStaffRadio = new Dictionary<long, long>();
+        public static void AssignStaff(long staff, long radio)
+        {
+            if (DelStaffRadio.ContainsKey(staff))
+            {
+                DelStaffRadio.Remove(staff);
+            }
+
+            if (AddStaffRadio.ContainsKey(staff))
+            {
+                AddStaffRadio[staff] = radio;
+            }
+            else
+            {
+                AddStaffRadio.Add(staff, radio);
+            }
+        }
+
+        public static void DetachStaff(long staff, long radio)
+        {
+            if (AddStaffRadio.ContainsKey(staff))
+            {
+                AddStaffRadio.Remove(staff);
+            }
+
+            if (DelStaffRadio.ContainsKey(staff))
+            {
+                DelStaffRadio[staff] = radio;
+            }
+            else
+            {
+                DelStaffRadio.Add(staff, radio);
+            }
+        }
+
+        public static List<Radio> ListRadio(long staff)
+        {
+            Dictionary<string, object> addparam = new Dictionary<string, object>();
+            addparam.Add("operation", OperateType.listRadio.ToString());
+            addparam.Add("user", staff);
+
+            LogServerRequest addreq = new LogServerRequest()
+            {
+                call = RequestType.user.ToString(),
+                callId = LogServer.CallId,
+                param = addparam
+            };
+
+            JsonSerializerSettings jsetting = new JsonSerializerSettings();
+            jsetting.DefaultValueHandling = DefaultValueHandling.Ignore;
+            string addstr = JsonConvert.SerializeObject(addreq, Formatting.Indented, jsetting);
+
+            return LogServer.Call(addstr, StaffMgr.ParseList) as List<Radio>;
+        }
+
+        public static void SaveStaffRadio()
+        {
+            foreach (var item in AddStaffRadio)
+            {
+                Dictionary<string, object> addparam = new Dictionary<string, object>();
+                addparam.Add("operation", OperateType.assignRadio.ToString());
+                addparam.Add("user", item.Key);
+                addparam.Add("radio", item.Value);
+
+                LogServerRequest addreq = new LogServerRequest()
+                {
+                    call = RequestType.department.ToString(),
+                    callId = LogServer.CallId,
+                    param = addparam
+                };
+
+                JsonSerializerSettings jsetting = new JsonSerializerSettings();
+                jsetting.DefaultValueHandling = DefaultValueHandling.Ignore;
+                string addstr = JsonConvert.SerializeObject(addreq, Formatting.Indented, jsetting);
+
+                LogServer.Call(addstr);
+            }
+            foreach (var item in DelStaffRadio)
+            {
+                Dictionary<string, object> addparam = new Dictionary<string, object>();
+                addparam.Add("operation", OperateType.detachRadio.ToString());
+                addparam.Add("user", item.Key);
+                addparam.Add("radio", item.Value);
+
+                LogServerRequest addreq = new LogServerRequest()
+                {
+                    call = RequestType.department.ToString(),
+                    callId = LogServer.CallId,
+                    param = addparam
+                };
+
+                JsonSerializerSettings jsetting = new JsonSerializerSettings();
+                jsetting.DefaultValueHandling = DefaultValueHandling.Ignore;
+                string addstr = JsonConvert.SerializeObject(addreq, Formatting.Indented, jsetting);
+
+                LogServer.Call(addstr);
+            }
+        }
+    }
 }

@@ -16,7 +16,7 @@ namespace TrboX
         public long id;
         public string name{ set; get; }
 
-        [JsonProperty(PropertyName = "id")]
+        [JsonProperty(PropertyName = "gid")]
         public long group_id { set; get; }
 
         [JsonIgnore]
@@ -126,14 +126,15 @@ namespace TrboX
 
         public static List<Department> List()
         {
-
+            int count = Count();
+            if (count <= 1) return null;
             Dictionary<string, object> param = new Dictionary<string, object>();
 
             param.Add("operation", OperateType.list.ToString());
             param.Add("critera", new Critera()
             {
                 offset = 0,
-                count = Count()
+                count = count
             });
 
             LogServerRequest req = new LogServerRequest()
@@ -319,6 +320,208 @@ namespace TrboX
             s_Add.Clear();
             s_Del.Clear();
             s_Update.Clear();
+        }
+
+        
+        private static Dictionary<long, long> AddDeptStaff = new Dictionary<long, long>();
+        private static Dictionary<long, long> DelDeptStaff = new Dictionary<long, long>();
+        public static void AssignStaff(long staff, long dept)
+        {
+            if (DelDeptStaff.ContainsKey(staff))
+            {
+                DelDeptStaff.Remove(staff);
+            }          
+            
+            if (AddDeptStaff.ContainsKey(staff))
+            {
+                AddDeptStaff[staff] = dept;
+            }
+            else
+            {
+                AddDeptStaff.Add(staff, dept);
+            }
+        }
+
+        public static void DetachStaff(long staff, long dept)
+        {
+            if (AddDeptStaff.ContainsKey(staff))
+            {
+                AddDeptStaff.Remove(staff);
+            }
+
+            if (DelDeptStaff.ContainsKey(staff))
+            {
+                DelDeptStaff[staff] = dept;
+            }
+            else
+            {
+                DelDeptStaff.Add(staff, dept);
+            }
+        }
+
+        public static List<Staff> ListStaff(long dept)
+        {
+            Dictionary<string, object> addparam = new Dictionary<string, object>();
+            addparam.Add("operation", OperateType.listUser.ToString());
+            addparam.Add("department", dept);
+
+            LogServerRequest addreq = new LogServerRequest()
+            {
+                call = RequestType.department.ToString(),
+                callId = LogServer.CallId,
+                param = addparam
+            };
+
+            JsonSerializerSettings jsetting = new JsonSerializerSettings();
+            jsetting.DefaultValueHandling = DefaultValueHandling.Ignore;
+            string addstr = JsonConvert.SerializeObject(addreq, Formatting.Indented, jsetting);
+
+            return LogServer.Call(addstr) as List<Staff>;
+        }
+
+        public static void SaveDeptStaff()
+        {
+              foreach(var item in AddDeptStaff)
+              {
+                  Dictionary<string, object> addparam = new Dictionary<string, object>();
+                  addparam.Add("operation", OperateType.assignUser.ToString());
+                  addparam.Add("user", item.Key);
+                  addparam.Add("department", item.Value);
+
+                  LogServerRequest addreq = new LogServerRequest()
+                  {
+                      call = RequestType.department.ToString(),
+                      callId = LogServer.CallId,
+                      param = addparam
+                  };
+
+                  JsonSerializerSettings jsetting = new JsonSerializerSettings();
+                  jsetting.DefaultValueHandling = DefaultValueHandling.Ignore;
+                  string addstr = JsonConvert.SerializeObject(addreq, Formatting.Indented, jsetting);
+
+                  LogServer.Call(addstr);
+              }
+              foreach(var item in DelDeptStaff)
+              {
+                  Dictionary<string, object> addparam = new Dictionary<string, object>();
+                  addparam.Add("operation", OperateType.detachUser.ToString());
+                  addparam.Add("user", item.Key);
+                  addparam.Add("department", item.Value);
+
+                  LogServerRequest addreq = new LogServerRequest()
+                  {
+                      call = RequestType.department.ToString(),
+                      callId = LogServer.CallId,
+                      param = addparam
+                  };
+
+                  JsonSerializerSettings jsetting = new JsonSerializerSettings();
+                  jsetting.DefaultValueHandling = DefaultValueHandling.Ignore;
+                  string addstr = JsonConvert.SerializeObject(addreq, Formatting.Indented, jsetting);
+
+                  LogServer.Call(addstr);
+              }
+        }
+
+
+        private static Dictionary<long, long> AddDeptRadio = new Dictionary<long, long>();
+        private static Dictionary<long, long> DelDeptRadio = new Dictionary<long, long>();
+        public static void AssignRadio(long radio, long dept)
+        {
+            if (DelDeptRadio.ContainsKey(radio))
+            {
+                DelDeptRadio.Remove(radio);
+            }
+
+            if (AddDeptRadio.ContainsKey(radio))
+            {
+                AddDeptRadio[radio] = dept;
+            }
+            else
+            {
+                AddDeptRadio.Add(radio, dept);
+            }
+        }
+
+        public static void DetachRadio(long radio, long dept)
+        {
+            if (AddDeptRadio.ContainsKey(radio))
+            {
+                AddDeptRadio.Remove(radio);
+            }
+
+            if (DelDeptRadio.ContainsKey(radio))
+            {
+                DelDeptRadio[radio] = dept;
+            }
+            else
+            {
+                DelDeptRadio.Add(radio, dept);
+            }
+        }
+
+        public static List<Radio> ListRadio(long dept)
+        {
+            Dictionary<string, object> addparam = new Dictionary<string, object>();
+            addparam.Add("operation", OperateType.listRadio.ToString());
+            addparam.Add("department", dept);
+
+            LogServerRequest addreq = new LogServerRequest()
+            {
+                call = RequestType.department.ToString(),
+                callId = LogServer.CallId,
+                param = addparam
+            };
+
+            JsonSerializerSettings jsetting = new JsonSerializerSettings();
+            jsetting.DefaultValueHandling = DefaultValueHandling.Ignore;
+            string addstr = JsonConvert.SerializeObject(addreq, Formatting.Indented, jsetting);
+
+            return LogServer.Call(addstr, RadioMgr.ParseList) as List<Radio>;
+        }
+
+        public static void SaveDeptRadio()
+        {
+            foreach (var item in AddDeptRadio)
+            {
+                Dictionary<string, object> addparam = new Dictionary<string, object>();
+                addparam.Add("operation", OperateType.assignUser.ToString());
+                addparam.Add("radio", item.Key);
+                addparam.Add("department", item.Value);
+
+                LogServerRequest addreq = new LogServerRequest()
+                {
+                    call = RequestType.department.ToString(),
+                    callId = LogServer.CallId,
+                    param = addparam
+                };
+
+                JsonSerializerSettings jsetting = new JsonSerializerSettings();
+                jsetting.DefaultValueHandling = DefaultValueHandling.Ignore;
+                string addstr = JsonConvert.SerializeObject(addreq, Formatting.Indented, jsetting);
+
+                LogServer.Call(addstr);
+            }
+            foreach (var item in DelDeptRadio)
+            {
+                Dictionary<string, object> addparam = new Dictionary<string, object>();
+                addparam.Add("operation", OperateType.detachUser.ToString());
+                addparam.Add("radio", item.Key);
+                addparam.Add("department", item.Value);
+
+                LogServerRequest addreq = new LogServerRequest()
+                {
+                    call = RequestType.department.ToString(),
+                    callId = LogServer.CallId,
+                    param = addparam
+                };
+
+                JsonSerializerSettings jsetting = new JsonSerializerSettings();
+                jsetting.DefaultValueHandling = DefaultValueHandling.Ignore;
+                string addstr = JsonConvert.SerializeObject(addreq, Formatting.Indented, jsetting);
+
+                LogServer.Call(addstr);
+            }
         }
     }
 }

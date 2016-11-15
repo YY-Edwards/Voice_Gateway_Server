@@ -8,159 +8,64 @@ using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 
 namespace TrboX
-{    
-  
-    public enum UserType
+{
+    public enum RadipType
     {
-        Admin,
-        Guest
-    }
+        Radio,
+        Ride
+    };
 
-    public enum AuthorityType
+    public class Radio
     {
-        Call,
-        Message,
-        Position,
-        Control,
+        public int id;
+        public long radio_id;
+        public RadipType type;
+        public bool screen;
+        public bool gps;
+        public bool keyboard;
+        public string sn;
+        public bool valid;
 
-    }
-
-    public class CAuthority
-    {
-        public string Type;
-        public string Dept { set; get; }
-        public string Icon;
-    }
-
-
-    public class User
-    {
-        private static string AllAudthStr = "["
-        + "{             'Type': 'Call',             'Dept': '呼叫',       'Icon': ''          },"
-        + "{             'Type': 'Message',          'Dept': '短信',       'Icon': ''          },"
-        + "{             'Type': 'Position',         'Dept': '定位',       'Icon': ''          },"
-        + "{             'Type': 'Tracker',          'Dept': '巡更追踪',   'Icon': ''          },"
-        + "{             'Type': 'JobTicket',        'Dept': '工单',       'Icon': ''          }"
-
-        + "]";
-
-        private static string AdminAuthStr = "["
-        + "{             'Type': 'Call',             'Dept': '呼叫',       'Icon': ''          },"
-        + "{             'Type': 'Message',          'Dept': '短信',       'Icon': ''          },"
-        + "{             'Type': 'Position',         'Dept': '定位',       'Icon': ''          },"
-        + "{             'Type': 'Tracker',          'Dept': '巡更追踪',   'Icon': ''          },"
-        + "{             'Type': 'JobTicket',        'Dept': '工单',       'Icon': ''          }"
-
-        + "]";
-
-        private static string GuestAuthStr = "["
-         + " {            'Type': 'Call',            'Dept': '呼叫',            'Icon': ''        },"
-         + " {            'Type': 'Message',         'Dept': '短信',            'Icon': ''        },"
-         + " {            'Type': 'Position',        'Dept': '定位',            'Icon': ''        },"
-         + " {            'Type': 'Tracker',         'Dept': '巡更追踪',        'Icon': ''        },"
-         + " {            'Type': 'JobTicket',       'Dept': '工单',            'Icon': ''        }"
-         + "]";
-
-
-        public static List<CAuthority> AddAuth = JsonConvert.DeserializeObject<List<CAuthority>>(AllAudthStr);
-        private static List<CAuthority> GuestAuth = JsonConvert.DeserializeObject<List<CAuthority>>(AdminAuthStr);
-        private static List<CAuthority> AdminAuth = JsonConvert.DeserializeObject<List<CAuthority>>(GuestAuthStr);
-
-        [DefaultValue((long)0)]
-        public long id;
-        public string username { set; get; }
-
-        [DefaultValue("")]
-        public string password;
-        public string type { set; get; }
-
-        public string authority { set; get; }
-
-        [JsonIgnore]
-        public List<CAuthority> Auth { set; get; }
-
-        [JsonIgnore]
+         [JsonIgnore]
         public string Name
         {
             get
-            { return username + (type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"); }
+            { return (type == RadipType.Radio ?"手持台":"车载台")+ "(ID:"+radio_id.ToString()+")"; }
         }
 
-        public string parseAuth()
-        {
-            string res = "";
-            foreach (CAuthority item in Auth)
-            {
-                res += item.Type + ",";
-            }
-            return res;
-        }
+        public Radio()
+        { }
 
-        public List<CAuthority> parseauth()
-        {
-            List<CAuthority> res = new List<CAuthority>();
-
-            string[] s = authority.Split(new char[] { ',' });
-
-            foreach (string item in s)
-            {
-                if (item == "") continue;
-                foreach (CAuthority auth in AddAuth)
-                {
-                    if (item == auth.Type)
-                    {
-                        res.Add(auth);
-                        break;
-                    }
-                }
-            }
-
-            return res;
-        }
-
-        public User()
-        {
-        }
-
-        public User(string user, string psd, UserType t)
-        {
-            username = user;
-            password = psd;
-            type = t.ToString();
-            Auth = t == UserType.Admin ? AdminAuth : GuestAuth;
-            authority = parseAuth();
-        }
         public long Add()
         {
-            return UserMgr.Add(this);
+            return RadioMgr.Add(this);
         }
 
         public void Modify()
         {
-            UserMgr.Modify(id, this);
+            RadioMgr.Modify(id, this);
         }
 
         public void Delete()
         {
-            UserMgr.Delete(id);
+            RadioMgr.Delete(id);
         }
+
     }
 
-    public class UpdatesUser
+    public class UpdatesRadio
     {
         public long id;
-        public User user;
+        public Radio radio;
     }
-
-    public class UserMgr
+    class RadioMgr
     {
         private static long OrginIndex = 0;
         private static long CurrentIndex = 0;
 
-        private static Dictionary<long, User> s_Add = new Dictionary<long, User>();
+        private static Dictionary<long, Radio> s_Add = new Dictionary<long, Radio>();
         private static List<long> s_Del = new List<long>();
-
-        private static List<UpdatesUser> s_Update = new List<UpdatesUser>();
+        private static List<UpdatesRadio> s_Update = new List<UpdatesRadio>();
 
 
         public static int Count()
@@ -176,7 +81,7 @@ namespace TrboX
 
             LogServerRequest req = new LogServerRequest()
             {
-                call = RequestType.user.ToString(),
+                call = RequestType.department.ToString(),
                 callId = LogServer.CallId,
                 param = param
             };
@@ -221,12 +126,10 @@ namespace TrboX
             }
         }
 
-        public static List<User> List()
+        public static List<Radio> List()
         {
-
             int count = Count();
-            if (count <= 0) return null;
-
+            if (count <= 1) return null;
             Dictionary<string, object> param = new Dictionary<string, object>();
 
             param.Add("operation", OperateType.list.ToString());
@@ -238,7 +141,7 @@ namespace TrboX
 
             LogServerRequest req = new LogServerRequest()
             {
-                call = RequestType.user.ToString(),
+                call = RequestType.department.ToString(),
                 callId = LogServer.CallId,
                 param = param
             };
@@ -260,7 +163,7 @@ namespace TrboX
             try
             {
 
-                List<User> s_List = LogServer.Call(str, ParseList) as List<User>;
+                List<Radio> s_List = LogServer.Call(str, ParseList) as List<Radio>;
 
                 if (s_List == null) return null;
                 OrginIndex = s_List.Select(w => w.id).Max();
@@ -284,13 +187,13 @@ namespace TrboX
             {
                 if (obj == null) return null;
                 LogServerResponse rep = obj as LogServerResponse;
-                Dictionary<string, List<User>> Dic = JsonConvert.DeserializeObject<Dictionary<string, List<User>>>(JsonConvert.SerializeObject(rep.contents));
-                List<User> res = Dic["records"];
+                Dictionary<string, List<Radio>> Dic = JsonConvert.DeserializeObject<Dictionary<string, List<Radio>>>(JsonConvert.SerializeObject(rep.contents));
+                List<Radio> res = Dic["records"];
 
-                for (int i = 0; i < res.Count; i++)
-                {
-                    res[i].Auth = res[i].parseauth();
-                }
+                //for (int i = 0; i < res.Count; i++)
+                //{
+                //    res[i].Auth = res[i].parseauth();
+                //}
 
                 return res;
             }
@@ -301,10 +204,10 @@ namespace TrboX
             }
         }
 
-        public static long Add(User user)
+        public static long Add(Radio radio)
         {
-            user.id = 0;
-            s_Add.Add(++CurrentIndex, user);
+            radio.id = 0;
+            s_Add.Add(++CurrentIndex, radio);
             return CurrentIndex;
         }
 
@@ -328,20 +231,19 @@ namespace TrboX
             }
         }
 
-        public static void Modify(long Id, User user)
+        public static void Modify(long Id, Radio radio)
         {
             try
             {
                 if (Id > OrginIndex)
                 {
-                    user.id = 0;
-                    s_Add[Id] = user;
+                    radio.id = 0;
+                    s_Add[Id] = radio;
                 }
                 else
                 {
-                    user.id = 0;
-                    user.password = "";
-                    s_Update.Add(new UpdatesUser() { id = Id, user = user });
+                    radio.id = 0;
+                    s_Update.Add(new UpdatesRadio() { id = Id, radio = radio });
                 }
             }
             catch
@@ -352,16 +254,15 @@ namespace TrboX
 
         public static void Save()
         {
-
             if (s_Del.Count > 0)
             {
                 Dictionary<string, object> delparam = new Dictionary<string, object>();
                 delparam.Add("operation", OperateType.del.ToString());
-                delparam.Add("users", s_Del);
+                delparam.Add("radios", s_Del);
 
                 LogServerRequest delreq = new LogServerRequest()
                 {
-                    call = RequestType.user.ToString(),
+                    call = RequestType.radio.ToString(),
                     callId = LogServer.CallId,
                     param = delparam
                 };
@@ -373,11 +274,11 @@ namespace TrboX
             {
                 Dictionary<string, object> updateparam = new Dictionary<string, object>();
                 updateparam.Add("operation", OperateType.update.ToString());
-                updateparam.Add("users", s_Update);
+                updateparam.Add("radios", s_Update);
 
                 LogServerRequest updatereq = new LogServerRequest()
                 {
-                    call = RequestType.user.ToString(),
+                    call = RequestType.radio.ToString(),
                     callId = LogServer.CallId,
                     param = updateparam
                 };
@@ -392,7 +293,7 @@ namespace TrboX
 
             if (s_Add.Count > 0)
             {
-                List<User> addlist = new List<User>();
+                List<Radio> addlist = new List<Radio>();
                 foreach (var item in s_Add)
                 {
                     addlist.Add(item.Value);
@@ -400,11 +301,11 @@ namespace TrboX
 
                 Dictionary<string, object> addparam = new Dictionary<string, object>();
                 addparam.Add("operation", OperateType.add.ToString());
-                addparam.Add("users", addlist);
+                addparam.Add("radios", addlist);
 
                 LogServerRequest addreq = new LogServerRequest()
                 {
-                    call = RequestType.user.ToString(),
+                    call = RequestType.radio.ToString(),
                     callId = LogServer.CallId,
                     param = addparam
                 };
@@ -423,5 +324,4 @@ namespace TrboX
             s_Update.Clear();
         }
     }
-
 }
