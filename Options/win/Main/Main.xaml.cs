@@ -70,6 +70,16 @@ namespace TrboX
                     lst_User.SelectedIndex = 0;
                     cmb_AuthorityDest.SelectedIndex = 0;
                 }
+
+
+                List<Department> depts = DepartmentMgr.List();
+                if(depts!=null)
+                {
+                    lst_Group.Items.Clear();
+                    foreach (Department dept in depts) lst_Group.Items.Add(dept);
+                    lst_Group.SelectedIndex = 0;
+                }
+
             };
 
             list_AllFunc.Loaded += delegate
@@ -223,6 +233,7 @@ namespace TrboX
            SettingMgr.Set(SettingComponents.Get());
 
            UserMgr.Save();
+           DepartmentMgr.Save();
         }
 
         private void btn_SetDefault_Click(object sender, RoutedEventArgs e)
@@ -350,6 +361,23 @@ namespace TrboX
                 }
             }
             catch { }
+        }
+
+        private void btn_SaveDepartment_Click(object sender, RoutedEventArgs e)
+        {
+            Department dept = null;
+            try
+            {
+                dept = new Department(txt_GroupName.Text, long.Parse(txt_GroupId.Text));
+            }
+            catch(Exception ex)
+            {
+                DataBase.InsertLog(ex.Message);
+            }
+            if (dept == null) return;
+
+            dept.id = dept.Add();
+            lst_Group.Items.Add(new ListViewItem() { Content = dept });         
         }
 
      

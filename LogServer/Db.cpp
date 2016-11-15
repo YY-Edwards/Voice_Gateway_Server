@@ -388,7 +388,7 @@ bool CDb::updateDepartment(int id, const char* name)
 	val["name"] = name;
 	char condition[200];
 	memset(condition, 0, sizeof(condition));
-	sprintf(condition, " where id=%d", id);
+	sprintf_s(condition, " where id=%d", id);
 
 	return m_pMySQLDb->update("department", val, condition);
 }

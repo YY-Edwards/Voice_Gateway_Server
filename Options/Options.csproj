@@ -88,6 +88,7 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="class\database.cs" />
+    <Compile Include="class\DepartmentMgr.cs" />
     <Compile Include="class\JsonParse.cs" />
     <Compile Include="class\LogServer.cs" />
     <Compile Include="class\ResourceMgr.cs" />

@@ -85,7 +85,7 @@ namespace TrboX
         }
         public static void InitializeTServer()
         {
-            TCP = new TcpInterface(new IPEndPoint(IPAddress.Parse("192.168.2.113"), 9000), OnReceive);
+            TCP = new TcpInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9000), OnReceive);
             TCP.OnConnect = OnConnect;
             TCP.Open();
 
@@ -350,6 +350,9 @@ namespace TrboX
         getRepeaterSetting,
 
         user,
+        department,
+
+
         getUser,
         getUserCount,
         addUser,

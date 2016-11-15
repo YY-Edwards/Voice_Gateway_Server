@@ -11,49 +11,32 @@ using System.ComponentModel;
 
 namespace TrboX
 {
+    public enum OperateType
+    {
+        add,
+        list,
+        count,
+        del,
+        update,
+    }
 
-  
-  
-  
+    public class Critera
+    {
+        [DefaultValue(null)]
+        public string[][] condition;
 
-    //public class UserStr
-    //{
-    //    public string id;
-    //    public string username{get; set;}
-    //    public string password;
-    //    public string type;
-    //    public string func;
+        [DefaultValue(null)]
+        public string[] sort;
 
-    //    public User GetUser()
-    //    {
-    //        User user = new User()
-    //        {
-    //            id = Trbox.IsNumber(id) ? int.Parse(id) : 0,
-    //            username = username,
-    //            password = password,
-    //            type = Trbox.IsNumber(type) ? (UserType)int.Parse(type) : UserType.Guest,
-    //        };
+        [DefaultValue(-1)]
+        public int offset;
 
-    //        try
-    //        {
-    //            List<string> tmp = JsonConvert.DeserializeObject<List<string>>(func);
-    //            List<FuncList> funlist = new List<FuncList>();
-    //            foreach (string item in tmp)
-    //            {
-    //                try
-    //                {
-    //                    funlist.Add((FuncList)Enum.Parse(typeof(FuncList), item));
-    //                }
-    //                catch { }
-    //            }
-    //            user.func = funlist;
+        [DefaultValue(-1)]
+        public int count;
+    }
 
-    //        }
-    //        catch { }
 
-    //        return user;
-    //    }
-    //}
+
 
     public enum StaffType
     {
@@ -110,41 +93,23 @@ namespace TrboX
         }
     }
 
-    public class Department
-    {
-        public int id;
-        public string name;
-        public long group_id;
 
-        public DepartmentStr GetDepartmentStr()
-        {
-            return new DepartmentStr()
-            {
-                id = id.ToString(),
-                name = name,
-                group_id = group_id.ToString(),
-            };
+    //public class DepartmentStr
+    //{
+    //    public string id;
+    //    public string name;
+    //    public string group_id;
 
-        }
-
-
-    }
-    public class DepartmentStr
-    {
-        public string id;
-        public string name;
-        public string group_id;
-
-        public Department GetDepartment()
-        {
-            return new Department()
-            {
-                id = Trbox.IsNumber(id) ? int.Parse(id) : 0,
-                name = name,
-                group_id = Trbox.IsNumber(group_id) ? long.Parse(group_id) : 0
-            };
-        }
-    }
+    //    public Department GetDepartment()
+    //    {
+    //        return new Department()
+    //        {
+    //            id = Trbox.IsNumber(id) ? int.Parse(id) : 0,
+    //            name = name,
+    //            group_id = Trbox.IsNumber(group_id) ? long.Parse(group_id) : 0
+    //        };
+    //    }
+    //}
 
     public enum RadipType
     {
