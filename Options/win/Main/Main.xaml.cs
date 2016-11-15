@@ -57,6 +57,7 @@ namespace TrboX
 
             lst_User.Loaded += delegate
             { 
+                if(lst_User.Items.Count > 0) return;
                 List<User> users = UserMgr.List();
                 if (users != null)
                 {
@@ -70,8 +71,11 @@ namespace TrboX
                     lst_User.SelectedIndex = 0;
                     cmb_AuthorityDest.SelectedIndex = 0;
                 }
+            };
 
-
+            lst_Group.Loaded += delegate
+            {
+                if (lst_Group.Items.Count > 0) return;
                 List<Department> depts = DepartmentMgr.List();
                 if(depts!=null)
                 {

@@ -185,13 +185,8 @@ namespace TrboX
             {
                 if (obj == null) return null;
                 LogServerResponse rep = obj as LogServerResponse;
-                Dictionary<string, List<User>> Dic = JsonConvert.DeserializeObject<Dictionary<string, List<User>>>(JsonConvert.SerializeObject(rep.contents));
-                List<User> res = Dic["records"];
-
-                for (int i = 0; i < res.Count; i++)
-                {
-                    res[i].Auth = res[i].parseauth();
-                }
+                Dictionary<string, List<Department>> Dic = JsonConvert.DeserializeObject<Dictionary<string, List<Department>>>(JsonConvert.SerializeObject(rep.contents));
+                List<Department> res = Dic["records"];
 
                 return res;
             }
