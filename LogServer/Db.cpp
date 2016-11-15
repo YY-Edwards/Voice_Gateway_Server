@@ -34,12 +34,12 @@ void migrate_v100(CMySQL* pMySQL){
 													UNIQUE INDEX `id_UNIQUE` (`id` ASC),\
 													UNIQUE INDEX `gid_UNIQUE` (`gid` ASC))\
 												    ENGINE = InnoDB; \
-																																															");
+													");
 
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `staff` ( \
 													`id` INT(11) NOT NULL AUTO_INCREMENT, \
-																				`name` VARCHAR(45) NOT NULL, \
-																		`phone` VARCHAR(45) NULL, \
+													`name` VARCHAR(45) NOT NULL, \
+													`phone` VARCHAR(45) NULL, \
 																																		`user` INT NOT NULL, \
 																																									`valid` INT NOT NULL DEFAULT 1 COMMENT 'staff is valid?', \
 																																																PRIMARY KEY(`id`), \
@@ -121,8 +121,8 @@ void migrate_v100(CMySQL* pMySQL){
 																																																																																																																																																																						");
 
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `gps` ( \
-													`id` INT(11) NOT NULL AUTO_INCREMENT, \
-																				`latitude` FLOAT NOT NULL, \
+						`id` INT(11) NOT NULL AUTO_INCREMENT, \
+						`latitude` FLOAT NOT NULL, \
 																											`logitude` FLOAT NOT NULL, \
 																																		`velocity` FLOAT NOT NULL, \
 																																									`radio` MEDIUMTEXT NULL, \
@@ -149,6 +149,7 @@ CDb::CDb()
 
 CDb::~CDb()
 {
+	m_pMySQLDb->close();
 	delete m_pMySQLDb;
 }
 
