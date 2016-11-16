@@ -90,6 +90,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\glog\logging.h" />
+    <ClInclude Include="..\lib\radio\ars\RadioARS.h" />
+    <ClInclude Include="..\lib\radio\common.h" />
+    <ClInclude Include="..\lib\radio\DataScheduling.h" />
+    <ClInclude Include="..\lib\radio\gps\RadioGps.h" />
+    <ClInclude Include="..\lib\radio\text\TextMsg.h" />
     <ClInclude Include="..\lib\rpc\include\AbstractAction.h" />
     <ClInclude Include="..\lib\rpc\include\BaseConnector.h" />
     <ClInclude Include="..\lib\rpc\include\RpcJsonParser.h" />
@@ -107,9 +112,7 @@
     <ClInclude Include="GpsAction.h" />
     <ClInclude Include="GroupCallEventAction.h" />
     <ClInclude Include="MsgAction.h" />
-    <ClInclude Include="RadioARS.h" />
     <ClInclude Include="RadioCheckEventAction.h" />
-    <ClInclude Include="RadioGps.h" />
     <ClInclude Include="ControlAction.h" />
     <ClInclude Include="RemotePowerOffEventAction.h" />
     <ClInclude Include="RemotePowerOnEventAction.h" />
@@ -119,7 +122,6 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="StopCallEventAction.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="TextMsg.h" />
     <ClInclude Include="UnitTest.h" />
     <ClInclude Include="Util.h" />
     <ClInclude Include="WiretapEventAction.h" />
@@ -128,6 +130,10 @@
     <ClInclude Include="xnl_messages_def.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\lib\radio\ars\RadioARS.cpp" />
+    <ClCompile Include="..\lib\radio\DataScheduling.cpp" />
+    <ClCompile Include="..\lib\radio\gps\RadioGps.cpp" />
+    <ClCompile Include="..\lib\radio\text\TextMsg.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcServer.cpp" />
     <ClCompile Include="..\lib\rpc\src\TcpServer.cpp" />
@@ -135,13 +141,10 @@
     <ClCompile Include="DispatchOperate.cpp">
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</SDLCheck>
     </ClCompile>
-    <ClCompile Include="RadioARS.cpp" />
-    <ClCompile Include="RadioGps.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TextMsg.cpp" />
     <ClCompile Include="UnitTest.cpp">
       <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\Dispatch\gtest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>

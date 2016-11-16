@@ -22,6 +22,7 @@
 using namespace std;
 #include <mutex>
 #include"DispatchOperate.h"
+extern DispatchOperate * dis;
 extern std::map<SOCKET, DispatchOperate*>  m_dispatchOperate;
 
 

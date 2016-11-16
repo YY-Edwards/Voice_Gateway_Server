@@ -1,19 +1,17 @@
 #include "XNLConnection.h"
-#include "TextMsg.h"
-#include "RadioARS.h"
-#include "RadioGps.h"
+//#include "TextMsg.h"
+//#include "RadioARS.h"
+//#include "RadioGps.h"
 #include <map>
 #include <mutex>
 #include<list>
 #include "../lib/AES/Aes.h"
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
-
+#include "../lib/radio/DataScheduling.h"
 #pragma once
 
 
-
-#define CMD_NULL               0
 #define RADIO_CONNECT          1
 #define PRIVATE_CALL           2
 #define GROUP_CALL             3
@@ -22,22 +20,9 @@
 #define REMOTE_OPEN            6
 #define CHECK_RADIO_ONLINE     7
 #define REMOTE_MONITOR         8
-#define SEND_PRIVATE_MSG       9
-#define SEND_GROUP_MSG         10
-#define RECV_MSG               11
-#define GPS_IMME_COMM          12
-#define GPS_TRIGG_COMM         13
-#define GPS_IMME_CSBK          14
-#define GPS_TRIGG_CSBK         15
-#define STOP_QUERY_GPS         16
-#define RADIO_ARS              17
-#define RADIO_GPS              18
 #define STOP_CALL              19
-#define GPS_RECV               20
 #define REMOTE_REPLY           21
 #define EMERGENCY              22
-#define GPS_IMME_CSBK_EGPS     23
-#define GPS_TRIGG_CSBK_EGPS    24
 #define TCP_CONNECT            25
 #define RADIO_UDP_CONNECT      26
 #define MNIS_UDP_CONNECT       27
@@ -45,8 +30,8 @@
 #define CALL_START             29
 #define CALL_END               30
 
-#define RADIO_STATUS_OFFLINE   0
-#define RADIO_STATUS_ONLINE    1
+//#define RADIO_STATUS_OFFLINE   0
+//#define RADIO_STATUS_ONLINE    1
 
 #define DATA_SUCESS_DISPATCH_SUCESS      0
 #define DATA_FAILED_DISPATCH_SUCESS      1
@@ -55,12 +40,12 @@
 
 
 #define CALL_FAILED              0
-#define CALL_START               1
-#define CALL_END                 2
+//#define CALL_START               1
+//#define CALL_END                 2
 
 #define REMOTE_SUCESS             0
 #define REMOTE_FAILED             1
-#define REMOTE_CONNECT_FAOLED     2
+#define REMOTE_CONNECT_FAILED     2
 
 #define START                   0
 #define STOP                    1
@@ -70,8 +55,8 @@
 #define PRIVATE                 3
 
 
-#define CONNECT_STATUS          1
-#define RADIO_STATUS            2
+//#define CONNECT_STATUS          1
+//#define RADIO_STATUS            2
 
 #define  RADIOCHECK    0
 #define  MONITOR  1
@@ -79,13 +64,12 @@
 #define  ON       3
 
 
-typedef  struct tagradioStatus{
-	int id;
-	int status = 0;
-	int    gpsQueryMode = 0;
-} status;
-extern map<string, status> radioStatus;
-extern  bool isUdpConnect;
+//typedef  struct tagradioStatus{
+//	int     id;
+//	int	   status = 0;
+//	int    gpsQueryMode = 0;
+//} status;
+
 extern  bool isTcpConnect;
 extern string m_radioIP;
 extern string m_mnisIP;
@@ -107,8 +91,9 @@ typedef struct tagAllCommand
 	SOCKET s;
 }AllCommand;
 extern list <AllCommand>allCommandList;
-extern  int  seq;
+//extern  int  seq;
 extern std::mutex m_allCommandListLocker;
+extern CDataScheduling cs;
 class DispatchOperate
 {
 public:
@@ -118,19 +103,20 @@ public:
 	static DWORD WINAPI TCPConnectionThread(LPVOID lpParam);
 	static DWORD WINAPI TimeOutThread(LPVOID lpParam);
 	static DWORD WINAPI WorkThread(LPVOID lpParam);
-	static DWORD WINAPI RadioUsbStatusThread(LPVOID lpParam);
+	/*static DWORD WINAPI RadioUsbStatusThread(LPVOID lpParam);*/
 	void AddAllCommand(CRemotePeer* pRemote,SOCKET s, int command, string radioIP, string mnisIP, string gpsIP, int id,wchar_t* text, double cycle, int querymode, int callId);
 	/*client½ÓÈë*/
 	static void OnConnect(CRemotePeer* pRemotePeer);
 	/*client¶Ï¿ª*/
 	static void OnDisConnect(CRemotePeer* pRemotePeer);
+	static void OnData(TcpClient* peer, int callId, int call, Respone data);
 private:
 	void WorkThreadFunc();
 	void TimeOut();
 	CXNLConnection  *pXnlConnection;
-	CTextMsg        pTextMsg;
+	/*CTextMsg        pTextMsg;
 	CRadioARS       pRadioARS;
-	CRadioGps       pRadioGPS;
+	CRadioGps       pRadioGPS;*/
 	int             m_queryMode;
 	DWORD            dwIP;
 	DWORD            dwip;
@@ -171,7 +157,9 @@ private:
 	void sendConnectStatusToClient(CRemotePeer* pRemote);
 	void sendRadioStatusToClient(CRemotePeer* pRemote);
 	void sendCallStatusToClient();
+	void send2Client(char* name, ArgumentType args, TcpClient * tp);
 	void radioUsbStatus();
+	std::string split( char* pStr , char* pSep);
 
 };
 

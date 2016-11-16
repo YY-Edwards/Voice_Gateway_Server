@@ -22,9 +22,9 @@ CRadioGps::~CRadioGps()
 		delete m_ThreadGpsOverturn;
 	}
 }
-bool CRadioGps::InitGPSSocket(DWORD dwAddress,  CRemotePeer * pRemote)
+bool CRadioGps::InitGPSSocket(DWORD dwAddress/*,  CRemotePeer * pRemote*/)
 {
-	pRemotePeer = pRemote;
+	//pRemotePeer = pRemote;
 	//CString			 strError;
 	SOCKADDR_IN      addr;					//   The   local   interface   address   
 	WSADATA			 wsda;					//   Structure   to   store   info
@@ -281,46 +281,47 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,double cycle)
 	if (-1 == bytesSend)
 	{
 		int a = GetLastError();
-		try
-		{
-			list<AllCommand>::iterator it;
-			for (it = allCommandList.begin(); it != allCommandList.end(); it++)
-			{
+		/*try
+		{*/
+			/*	list<AllCommand>::iterator it;
+				for (it = allCommandList.begin(); it != allCommandList.end(); it++)
+				{
 				if (it->radioId == m_ThreadGps->radioID)
 				{
-					char radioID[512];
-					sprintf_s(radioID, 512, "%d", m_ThreadGps->radioID);
-					ArgumentType args;
-					args["Target"] = FieldValue(m_ThreadGps->radioID);
-					args["Type"] = FieldValue(it->querymode);
-					args["Cycle"] = FieldValue(it->cycle);
-					args["Operate"] = FieldValue(START);
-					int status = -1;
-					if (m_ThreadGps->RcvBuffer[7] == Location_Operate_Sucess)
-					{
-						status = REMOTE_SUCESS;
-					}
-					else
-					{
-						status = REMOTE_FAILED;
-					}
-					args["Status"] = FieldValue(status);
-					std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGpsStatus", it->callId, args, "radio");
-					if (pRemotePeer != NULL)
-					{
-						pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-						it = allCommandList.erase(it);
-						break;
-					}
+				char radioID[512];
+				sprintf_s(radioID, 512, "%d", m_ThreadGps->radioID);
+				ArgumentType args;
+				args["Target"] = FieldValue(m_ThreadGps->radioID);
+				args["Type"] = FieldValue(it->querymode);
+				args["Cycle"] = FieldValue(it->cycle);
+				args["Operate"] = FieldValue(START);
+				int status = -1;
+				if (m_ThreadGps->RcvBuffer[7] == Location_Operate_Sucess)
+				{
+				status = REMOTE_SUCESS;
 				}
-			}
-		}
-		catch (std::exception e)
-		{
+				else
+				{
+				status = REMOTE_FAILED;
+				}
+				args["Status"] = FieldValue(status);
+				std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGpsStatus", it->callId, args, "radio");
+				if (pRemotePeer != NULL)
+				{
+				pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
+				it = allCommandList.erase(it);
+				break;
+				}
+				}
+				}
+				}
+				catch (std::exception e)
+				{
 
-		}
+				}*/
+		//}
+		return false;
 	}
-	
 	return true;
 }
 bool CRadioGps::StopQueryTriggeredGPS(DWORD dwRadioID, int	queryMode)
@@ -364,7 +365,7 @@ bool CRadioGps::StopQueryTriggeredGPS(DWORD dwRadioID, int	queryMode)
 	if (-1 == bytesSend)
 	{
 		int a = GetLastError();
-		try
+		/*try
 		{
 			list<AllCommand>::iterator it;
 			for (it = allCommandList.begin(); it != allCommandList.end(); it++)
@@ -401,8 +402,8 @@ bool CRadioGps::StopQueryTriggeredGPS(DWORD dwRadioID, int	queryMode)
 		catch (std::exception e)
 		{
 
-		}
-
+		}*/
+		return false;
 	}
 
 	return true;
@@ -445,22 +446,50 @@ void CRadioGps::RecvData()
 		char radioID[512], strLon[512], strLat[512], strValid[512], strSpeed[512];
 		sprintf_s(radioID, 512, "%d", m_ThreadGps->radioID);
 		if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Stop_Answer || m_ThreadGps->RcvBuffer[0] == Triggered_location_Start_Answer)
-	   {
+		{
 			try
 			{
-				list<AllCommand>::iterator it;
-				for (it = allCommandList.begin(); it != allCommandList.end(); it++)
+				std::list<Command>::iterator it;
+				m_timeOutListLocker.lock();
+				for (it = timeOutList.begin(); it != timeOutList.end(); it++)
 				{
 					if (it->radioId == m_ThreadGps->radioID)
 					{
-						char radioID[512];
-						sprintf_s(radioID, 512, "%d", m_ThreadGps->radioID);
-						ArgumentType args;
-						args["Target"] = FieldValue( m_ThreadGps->radioID);
-						args["Type"] = FieldValue(it->querymode);
-						args["Cycle"] = FieldValue(it->cycle);
+						/*	char radioID[512];
+							sprintf_s(radioID, 512, "%d", m_ThreadGps->radioID);
+							ArgumentType args;
+							args["Target"] = FieldValue( m_ThreadGps->radioID);
+							args["Type"] = FieldValue(it->querymode);
+							args["Cycle"] = FieldValue(it->cycle);
+							int operate = -1;
+							int status = -1;
+							if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Stop_Answer)
+							{
+							operate = STOP;
+							}
+							else  if (m_ThreadGps->RcvBuffer[0] == Triggered_location_Start_Answer)
+							{
+							operate = START;
+							}
+							int len = m_ThreadGps->RcvBuffer[1]+1;
+							if (m_ThreadGps->RcvBuffer[len] == Location_Operate_Sucess)
+							{
+							status = REMOTE_SUCESS;
+							}
+							else
+							{
+							status = REMOTE_FAILED;
+							}
+							args["Operate"] = FieldValue(operate);
+							args["Status"] = FieldValue(status);
+							std::string callJsonStrRes = CRpcJsonParser::buildCall("queryGpsStatus", it->callId, args, "radio");
+							if (pRemotePeer != NULL)
+							{
+							pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
+							it = allCommandList.erase(it);
+							break;
+							}*/
 						int operate = -1;
-						int status = -1;
 						if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Stop_Answer)
 						{
 							operate = STOP;
@@ -469,25 +498,236 @@ void CRadioGps::RecvData()
 						{
 							operate = START;
 						}
-						int len = m_ThreadGps->RcvBuffer[1]+1;
-						if (m_ThreadGps->RcvBuffer[len] == Location_Operate_Sucess)
+						if (myCallBackFunc != NULL)
 						{
-							status = REMOTE_SUCESS;
+							int len = m_ThreadGps->RcvBuffer[1] + 1;
+							if (m_ThreadGps->RcvBuffer[len] == Location_Operate_Sucess)
+							{
+								Respone r;
+								r.target = m_ThreadGps->radioID;
+								r.gpsStatus = SUCESS;
+								r.querymode = it->querymode;
+								r.cycle = it->cycle;
+								r.operate = operate;
+								onData(myCallBackFunc, it->tp,it->callId, it->command, r);
+							}
+							else
+							{
+								Respone r;
+								r.source = m_ThreadGps->radioID;
+								r.gpsStatus = FAILED;
+								r.querymode = it->querymode;
+								r.cycle = it->cycle;
+								r.operate = operate;
+								onData(myCallBackFunc,it->tp, it->callId, it->command, r);
+							}
+
+#if DEBUG_LOG
+							LOG(INFO) << "接收到gps ondata ";
+#endif
+
 						}
-						else
+					}
+				}
+				m_timeOutListLocker.unlock();
+			}
+			catch (std::exception e)
+			{
+
+			}
+		}
+		else
+		{
+			if ((ret == RECV_IMME_LENTH || bytes == RECV_IMME_LENTH) && m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report && m_ThreadGps->RcvBuffer[1] == 0x1a)
+			{
+				unsigned long llat = 0, llon = 0;
+				unsigned long a = 0, b = 0, c = 0, d = 0;
+				//解析纬度
+				a = ((unsigned long)m_ThreadGps->RcvBuffer[15]) & 0xff;
+				b = ((unsigned long)m_ThreadGps->RcvBuffer[16]) & 0xff;
+				c = ((unsigned long)m_ThreadGps->RcvBuffer[17]) & 0xff;
+				d = ((unsigned long)m_ThreadGps->RcvBuffer[18]) & 0xff;
+				llat = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
+				//解析经度
+				a = b = c = d = 0;
+				a = ((unsigned long)m_ThreadGps->RcvBuffer[19]) & 0xff;
+				b = ((unsigned long)m_ThreadGps->RcvBuffer[20]) & 0xff;
+				c = ((unsigned long)m_ThreadGps->RcvBuffer[21]) & 0xff;
+				d = ((unsigned long)m_ThreadGps->RcvBuffer[22]) & 0xff;
+				llon = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
+
+				lat = ((double)llat) / 2147483648 * 90;
+				lon = ((double)llon) / 2147483648 * 180;
+
+				a = ((unsigned long)m_ThreadGps->RcvBuffer[26]) & 0xff;
+				b = ((unsigned long)m_ThreadGps->RcvBuffer[27]) & 0xff;
+				speed = (((float)a) + ((float)b) / 128.0f)*3.6f;
+			}
+			else if ((ret == RECV_TRG_LENTH || bytes == RECV_TRG_LENTH) && m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report && m_ThreadGps->RcvBuffer[1] == 0x0F)
+			{
+				unsigned long llat = 0, llon = 0;
+				unsigned long a = 0, b = 0, c = 0, d = 0;
+				//解析纬度
+				a = ((unsigned long)m_ThreadGps->RcvBuffer[9]) & 0xff;
+				b = ((unsigned long)m_ThreadGps->RcvBuffer[10]) & 0xff;
+				c = ((unsigned long)m_ThreadGps->RcvBuffer[11]) & 0xff;
+				d = ((unsigned long)m_ThreadGps->RcvBuffer[12]) & 0xff;
+				llat = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
+				//解析经度
+				a = b = c = d = 0;
+				a = ((unsigned long)m_ThreadGps->RcvBuffer[13]) & 0xff;
+				b = ((unsigned long)m_ThreadGps->RcvBuffer[14]) & 0xff;
+				c = ((unsigned long)m_ThreadGps->RcvBuffer[15]) & 0xff;
+				d = ((unsigned long)m_ThreadGps->RcvBuffer[16]) & 0xff;
+				llon = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
+
+				lat = ((double)llat) / 2147483648 * 90;
+				lon = ((double)llon) / 2147483648 * 180;
+
+				speed = -1;
+				queryMode = GPS_TRIGG_COMM;
+
+			}
+			else if ((ret == RECV_CSBK_LENTH || bytes == RECV_CSBK_LENTH) && (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report || m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report) && m_ThreadGps->RcvBuffer[1] == 0x11)
+			{
+
+				unsigned long llat = 0, llon = 0;
+				unsigned long a = 0, b = 0, c = 0, d = 0;
+				//解析纬度
+				a = ((unsigned long)m_ThreadGps->RcvBuffer[8]) & 0xff;
+				b = ((unsigned long)m_ThreadGps->RcvBuffer[9]) & 0xff;
+				c = ((unsigned long)m_ThreadGps->RcvBuffer[10]) & 0xff;
+				d = ((unsigned long)m_ThreadGps->RcvBuffer[11]) & 0xff;
+				llat = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
+				//解析经度
+				a = b = c = d = 0;
+				a = ((unsigned long)m_ThreadGps->RcvBuffer[12]) & 0xff;
+				b = ((unsigned long)m_ThreadGps->RcvBuffer[13]) & 0xff;
+				c = ((unsigned long)m_ThreadGps->RcvBuffer[14]) & 0xff;
+				d = ((unsigned long)m_ThreadGps->RcvBuffer[15]) & 0xff;
+				llon = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
+
+				lat = ((double)llat) / 2147483648 * 90;
+				lon = ((double)llon) / 2147483648 * 180;
+				speed = -1;
+				queryMode = GPS_TRIGG_CSBK;
+			}
+			else if (/*(ret == RECV_CSBK_EGPS_LENTH || bytes == RECV_CSBK_EGPS_LENTH) &&*/ (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report || m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report) && (m_ThreadGps->RcvBuffer[1] == 0x1e || m_ThreadGps->RcvBuffer[1] == 0x1c))
+			{
+				unsigned long llat = 0, llon = 0;
+				unsigned long a = 0, b = 0, c = 0, d = 0;
+				//解析纬度
+				a = ((unsigned long)m_ThreadGps->RcvBuffer[14]) & 0xff;
+				b = ((unsigned long)m_ThreadGps->RcvBuffer[15]) & 0xff;
+				c = ((unsigned long)m_ThreadGps->RcvBuffer[16]) & 0xff;
+				d = ((unsigned long)m_ThreadGps->RcvBuffer[17]) & 0xff;
+				llat = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
+				//解析经度
+				a = b = c = d = 0;
+				a = ((unsigned long)m_ThreadGps->RcvBuffer[18]) & 0xff;
+				b = ((unsigned long)m_ThreadGps->RcvBuffer[19]) & 0xff;
+				c = ((unsigned long)m_ThreadGps->RcvBuffer[20]) & 0xff;
+				d = ((unsigned long)m_ThreadGps->RcvBuffer[21]) & 0xff;
+				llon = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
+
+				lat = ((double)llat) / 2147483648 * 90;
+				lon = ((double)llon) / 2147483648 * 180;
+
+				a = ((unsigned long)m_ThreadGps->RcvBuffer[23]) & 0xff;
+				b = ((unsigned long)m_ThreadGps->RcvBuffer[24]) & 0xff;
+				speed = (((float)a) + ((float)b) / 128.0f)*3.6f;
+				queryMode = GPS_TRIGG_CSBK_EGPS;
+			}
+			else if ((ret == 9 || bytes == 9 || ret == 10 || bytes == 10) && (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report || m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report))
+			{
+				valid = 0;
+				speed = -1;
+			}
+			else
+			{
+				return;
+			}
+			try
+			{
+				time_t t = time(0);
+				tm timeinfo;
+				char tmp[64];
+				localtime_s(&timeinfo, &t);
+				strftime(tmp, sizeof(tmp), "%Y/%m/%d %H:%M:%S", &timeinfo);
+				std::string strTime = tmp;
+
+				sprintf_s(strLon, 512, "%lf", lon);
+				sprintf_s(strLat, 512, "%lf", lat);
+				sprintf_s(strSpeed, 512, "%f", speed);
+				sprintf_s(strValid, 512, "%d", valid);
+				BOOL result = false;
+				if (strValid == "0")
+				{
+					result = false;                      //无效
+				}
+				else if (strValid == "1")
+				{
+					result = true;                     //有效
+				}
+				//ArgumentType args;
+				//FieldValue Gps(FieldValue::TObject);
+				//Gps.setKeyVal("Lon", FieldValue(strLon));
+				//Gps.setKeyVal("Lat", FieldValue(strLat));
+				//Gps.setKeyVal("Valid", FieldValue(result));
+				//Gps.setKeyVal("Speed", FieldValue(strSpeed));
+				////gps.setKeyVal("date", FieldValue(strTime.c_str()));
+				////FieldValue result(FieldValue::TObject);
+				////result.setKeyVal("Source", FieldValue(radioID));
+				////result.setKeyVal("Gps",Gps);
+				//args["Source"] = radioID;
+				//args["Gps"] = Gps;
+				std::list<Command>::iterator it;
+				int count = 0;
+				m_timeOutListLocker.lock();
+				for (it = timeOutList.begin(); it != timeOutList.end(); it++)
+				{
+					if (it->radioId == atoi(radioID))
+					{
+						/* std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGps", it->callId, args, "radio");
+						 if (pRemotePeer != NULL)
+						 {
+						 pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
+						 it = allCommandList.erase(it);
+						 count++;
+						 break;
+						 }*/
+						if (myCallBackFunc != NULL)
 						{
-							status = REMOTE_FAILED;
-						}
-						args["Operate"] = FieldValue(operate);
-						args["Status"] = FieldValue(status);
-						std::string callJsonStrRes = CRpcJsonParser::buildCall("queryGpsStatus", it->callId, args, "radio");
-						if (pRemotePeer != NULL)
-						{
-							pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-							it = allCommandList.erase(it);
+							Respone r;
+							r.source = m_ThreadGps->radioID;
+							r.lat = lat;
+							r.lon = lon;
+							r.speed = speed;
+							r.valid = valid;
+							onData(myCallBackFunc,peer, ++seq, RECV_GPS, r);
+							count++;
 							break;
 						}
 					}
+				}
+				m_timeOutListLocker.unlock();
+				if (count == 0)
+				{
+					if (myCallBackFunc != NULL)
+					{
+						Respone r;
+						r.source = m_ThreadGps->radioID;
+						r.lat = lat;
+						r.lon = lon;
+						r.speed = speed;
+						r.valid = valid;
+						onData(myCallBackFunc, peer, ++seq, RECV_GPS, r);
+					}
+					/* std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGps", ++seq, args, "radio");
+					 if (pRemotePeer != NULL)
+					 {
+					 pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
+					 }*/
 				}
 			}
 			catch (std::exception e)
@@ -495,209 +735,35 @@ void CRadioGps::RecvData()
 
 			}
 		}
-	   else
-	   {
-		   if ((ret == RECV_IMME_LENTH || bytes == RECV_IMME_LENTH) && m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report && m_ThreadGps->RcvBuffer[1] == 0x1a)
-		   {
-			   unsigned long llat = 0, llon = 0;
-			   unsigned long a = 0, b = 0, c = 0, d = 0;
-			   //解析纬度
-			   a = ((unsigned long)m_ThreadGps->RcvBuffer[15]) & 0xff;
-			   b = ((unsigned long)m_ThreadGps->RcvBuffer[16]) & 0xff;
-			   c = ((unsigned long)m_ThreadGps->RcvBuffer[17]) & 0xff;
-			   d = ((unsigned long)m_ThreadGps->RcvBuffer[18]) & 0xff;
-			   llat = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
-			   //解析经度
-			   a = b = c = d = 0;
-			   a = ((unsigned long)m_ThreadGps->RcvBuffer[19]) & 0xff;
-			   b = ((unsigned long)m_ThreadGps->RcvBuffer[20]) & 0xff;
-			   c = ((unsigned long)m_ThreadGps->RcvBuffer[21]) & 0xff;
-			   d = ((unsigned long)m_ThreadGps->RcvBuffer[22]) & 0xff;
-			   llon = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
+		//查看状态，状态发生改变时，通知特Tserver
+		 ArgumentType arg;
+		 arg["Target"] = FieldValue(radioID);
+		 if (radioStatus.find(radioID) == radioStatus.end())
+		 {
+		 RadioStatus st;
+		 st.id = atoi(radioID);
+		 st.status = RADIO_STATUS_ONLINE;
+		 st.gpsQueryMode = queryMode;
+		 radioStatus[radioID] = st;
+		 Respone r;
+		 r.source = m_ThreadGps->radioID;
+		 r.arsStatus = FAILED;
+		 onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
 
-			   lat = ((double)llat) / 2147483648 * 90;
-			   lon = ((double)llon) / 2147483648 * 180;
-
-			   a = ((unsigned long)m_ThreadGps->RcvBuffer[26]) & 0xff;
-			   b = ((unsigned long)m_ThreadGps->RcvBuffer[27]) & 0xff;
-			   speed = (((float)a) + ((float)b) / 128.0f)*3.6f;
-		   }
-		   else if ((ret == RECV_TRG_LENTH || bytes == RECV_TRG_LENTH) && m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report && m_ThreadGps->RcvBuffer[1] == 0x0F)
-		   {
-			   unsigned long llat = 0, llon = 0;
-			   unsigned long a = 0, b = 0, c = 0, d = 0;
-			   //解析纬度
-			   a = ((unsigned long)m_ThreadGps->RcvBuffer[9]) & 0xff;
-			   b = ((unsigned long)m_ThreadGps->RcvBuffer[10]) & 0xff;
-			   c = ((unsigned long)m_ThreadGps->RcvBuffer[11]) & 0xff;
-			   d = ((unsigned long)m_ThreadGps->RcvBuffer[12]) & 0xff;
-			   llat = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
-			   //解析经度
-			   a = b = c = d = 0;
-			   a = ((unsigned long)m_ThreadGps->RcvBuffer[13]) & 0xff;
-			   b = ((unsigned long)m_ThreadGps->RcvBuffer[14]) & 0xff;
-			   c = ((unsigned long)m_ThreadGps->RcvBuffer[15]) & 0xff;
-			   d = ((unsigned long)m_ThreadGps->RcvBuffer[16]) & 0xff;
-			   llon = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
-
-			   lat = ((double)llat) / 2147483648 * 90;
-			   lon = ((double)llon) / 2147483648 * 180;
-
-			   speed = -1;
-			   queryMode = GPS_TRIGG_COMM;
-
-		   }
-		   else if ((ret == RECV_CSBK_LENTH || bytes == RECV_CSBK_LENTH) && (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report || m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report) && m_ThreadGps->RcvBuffer[1] == 0x11)
-		   {
-
-			   unsigned long llat = 0, llon = 0;
-			   unsigned long a = 0, b = 0, c = 0, d = 0;
-			   //解析纬度
-			   a = ((unsigned long)m_ThreadGps->RcvBuffer[8]) & 0xff;
-			   b = ((unsigned long)m_ThreadGps->RcvBuffer[9]) & 0xff;
-			   c = ((unsigned long)m_ThreadGps->RcvBuffer[10]) & 0xff;
-			   d = ((unsigned long)m_ThreadGps->RcvBuffer[11]) & 0xff;
-			   llat = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
-			   //解析经度
-			   a = b = c = d = 0;
-			   a = ((unsigned long)m_ThreadGps->RcvBuffer[12]) & 0xff;
-			   b = ((unsigned long)m_ThreadGps->RcvBuffer[13]) & 0xff;
-			   c = ((unsigned long)m_ThreadGps->RcvBuffer[14]) & 0xff;
-			   d = ((unsigned long)m_ThreadGps->RcvBuffer[15]) & 0xff;
-			   llon = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
-
-			   lat = ((double)llat) / 2147483648 * 90;
-			   lon = ((double)llon) / 2147483648 * 180;
-			   speed = -1;
-			   queryMode = GPS_TRIGG_CSBK;
-		   }
-		   else if (/*(ret == RECV_CSBK_EGPS_LENTH || bytes == RECV_CSBK_EGPS_LENTH) &&*/ (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report || m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report) && (m_ThreadGps->RcvBuffer[1] == 0x1e || m_ThreadGps->RcvBuffer[1] == 0x1c))
-		   {
-			   unsigned long llat = 0, llon = 0;
-			   unsigned long a = 0, b = 0, c = 0, d = 0;
-			   //解析纬度
-			   a = ((unsigned long)m_ThreadGps->RcvBuffer[14]) & 0xff;
-			   b = ((unsigned long)m_ThreadGps->RcvBuffer[15]) & 0xff;
-			   c = ((unsigned long)m_ThreadGps->RcvBuffer[16]) & 0xff;
-			   d = ((unsigned long)m_ThreadGps->RcvBuffer[17]) & 0xff;
-			   llat = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
-			   //解析经度
-			   a = b = c = d = 0;
-			   a = ((unsigned long)m_ThreadGps->RcvBuffer[18]) & 0xff;
-			   b = ((unsigned long)m_ThreadGps->RcvBuffer[19]) & 0xff;
-			   c = ((unsigned long)m_ThreadGps->RcvBuffer[20]) & 0xff;
-			   d = ((unsigned long)m_ThreadGps->RcvBuffer[21]) & 0xff;
-			   llon = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
-
-			   lat = ((double)llat) / 2147483648 * 90;
-			   lon = ((double)llon) / 2147483648 * 180;
-
-			   a = ((unsigned long)m_ThreadGps->RcvBuffer[23]) & 0xff;
-			   b = ((unsigned long)m_ThreadGps->RcvBuffer[24]) & 0xff;
-			   speed = (((float)a) + ((float)b) / 128.0f)*3.6f;
-			   queryMode = GPS_TRIGG_CSBK_EGPS;
-		   }
-		   else if ((ret == 9 || bytes == 9 || ret == 10 || bytes == 10) && (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report || m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report))
-		   {
-			   valid = 0;
-			   speed = -1;
-		   }
-		   else
-		   {
-			   return;
-		   }
-		   try
-		   {
-			   time_t t = time(0);
-			   tm timeinfo;
-			   char tmp[64];
-			   localtime_s(&timeinfo, &t);
-			   strftime(tmp, sizeof(tmp), "%Y/%m/%d %H:%M:%S", &timeinfo);
-			   string strTime = tmp;
-			 
-			   sprintf_s(strLon, 512, "%lf", lon);
-			   sprintf_s(strLat, 512, "%lf", lat);
-			   sprintf_s(strSpeed, 512, "%f", speed);
-			   sprintf_s(strValid, 512, "%d", valid);
-			   BOOL result = false;
-			   if (strValid == "0")
-			   {
-				   result = false;                      //无效
-			   }
-			   else if (strValid == "1")
-			   {
-				   result = true;                     //有效
-			   }
-			   ArgumentType args;
-			   FieldValue Gps(FieldValue::TObject);
-			   Gps.setKeyVal("Lon", FieldValue(strLon));
-			   Gps.setKeyVal("Lat", FieldValue(strLat));
-			   Gps.setKeyVal("Valid", FieldValue(result));
-			   Gps.setKeyVal("Speed", FieldValue(strSpeed));
-			   //gps.setKeyVal("date", FieldValue(strTime.c_str()));
-			   //FieldValue result(FieldValue::TObject);
-			   //result.setKeyVal("Source", FieldValue(radioID));
-			   //result.setKeyVal("Gps",Gps);
-			   args["Source"] = radioID;
-			   args["Gps"] = Gps;
-			   list<AllCommand>::iterator it;
-			   int count = 0;
-			   for (it = allCommandList.begin(); it != allCommandList.end(); it++)
-			   {
-				   if (it->radioId == atoi(radioID))
-				   {
-					   std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGps", it->callId, args, "radio");
-					   if (pRemotePeer != NULL)
-					   {
-						   pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-						   it = allCommandList.erase(it);
-						   count++;
-						   break;
-					   }
-				   }
-			   }
-			   if (count == 0)
-			   {
-				   std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGps", ++seq, args, "radio");
-				   if (pRemotePeer != NULL)
-				   {
-					   pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-				   }
-			   }
-		   }
-		   catch (std::exception e)
-		   {
-
-		   }
-	   }
-	   //查看状态，状态发生改变时，通知特Tserver
-	   ArgumentType arg;
-	   arg["Target"] = FieldValue(radioID);
-	   if (radioStatus.find(radioID) == radioStatus.end())
-	   {
-		   status st;
-		   st.id = atoi(radioID);
-		   st.status = RADIO_STATUS_ONLINE;
-		   st.gpsQueryMode = queryMode;
-		   radioStatus[radioID] = st;
-		   arg["IsOnline"] = FieldValue("True");
-		   std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
-		   pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-
-	   }
-	   else if (radioStatus[radioID].status == RADIO_STATUS_OFFLINE)
-	   {
-		   radioStatus[radioID].gpsQueryMode = queryMode;
-		   radioStatus[radioID].status = RADIO_STATUS_ONLINE;
-		   arg["IsOnline"] = FieldValue("True");
-		   std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
-		   pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-	   }
-	}
-	else
-	{
-		return;
-	}
-	
-
+		 }
+		 else if (radioStatus[radioID].status == RADIO_STATUS_OFFLINE)
+		 {
+		 radioStatus[radioID].gpsQueryMode = queryMode;
+		 radioStatus[radioID].status = RADIO_STATUS_ONLINE;
+		 Respone r;
+		 r.source = m_ThreadGps->radioID;
+		 r.arsStatus = FAILED;
+		 onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
+		 }
+		 }
+		 else
+		 {
+		 return;
+		 }
+		 
 }

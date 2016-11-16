@@ -56,7 +56,7 @@ void  controlAction(CRemotePeer* pRemote, const std::string& param, uint64_t cal
 				try
 				{
 					ArgumentType args;
-					args["Status"] = FieldValue(REMOTE_CONNECT_FAOLED);
+					args["Status"] = FieldValue(REMOTE_CONNECT_FAILED);
 					args["Target"] = FieldValue(id);
 					args["Type"] = FieldValue(opterateType);
 					std::string callJsonStr = CRpcJsonParser::buildCall("controlStatus", ++seq, args, "radio");

@@ -5,7 +5,7 @@
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
 #include "../lib/rpc/include/TcpServer.h"
-
+CDataScheduling cs;
 void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
@@ -29,9 +29,9 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 			//Value obj = doc["param"].GetObject();
 
 			//radioIP
-			if (d.HasMember("Radio") && d["Radio"].IsObject())
+			if (d.HasMember("Ride") && d["Ride"].IsObject())
 			{
-				Value objRadio = d["Radio"].GetObject();
+				Value objRadio = d["Ride"].GetObject();
 				if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
 				{
 					radioIP = objRadio["Ip"].GetString();
@@ -61,8 +61,18 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 			}
 			if (radioIP!=m_radioIP && mnisIP !=m_mnisIP)
 			{
+				if (mnisIP != "")
+				{
+					cs.radioConnect(client, mnisIP.c_str(), callId);
+					m_mnisIP = mnisIP;
+				}
+				else if (radioIP != "")
+				{
+					m_radioIP = radioIP;
+					cs.radioConnect(client,  radioIP.c_str(), callId);
+					m_dispatchOperate[s]->AddAllCommand(client, s, RADIO_CONNECT, radioIP, mnisIP, "", 0, _T(""), 0, 0, callId);
+				}
 				
-				m_dispatchOperate[s]->AddAllCommand(client, s, RADIO_CONNECT, radioIP, mnisIP, "", 0, _T(""), 0, 0, callId);
 			}
 			else
 			{
