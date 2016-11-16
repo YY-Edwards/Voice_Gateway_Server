@@ -43,6 +43,7 @@ protected:
 
 public:
 	bool open(const char* host, u_short port, const char* user, const char* pass, const char* db);
+	void close();
 	int checkDbVersion();
 	const char* getLastError() const;
 	bool auth(const char* username, const char* password);

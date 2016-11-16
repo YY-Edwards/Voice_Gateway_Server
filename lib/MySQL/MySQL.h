@@ -22,10 +22,10 @@ public:
 
 private:
 	MYSQL						*m_pMysqlConnection;
-	std::condition_variable		m_hExitEvent;
-	std::mutex					m_mtxQuit;
-	std::atomic<bool>			m_bStoped;
-	std::atomic<bool>			m_bIsConnected;
+	//std::condition_variable		m_hExitEvent;
+	//std::mutex					m_mtxQuit;
+	bool						m_bStoped;
+	bool						m_bIsConnected;
 	std::mutex					m_tcpChannelUseLocker;
 	std::thread					m_pingThread;
 

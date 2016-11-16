@@ -46,6 +46,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//std::string v = CRpcJsonParser::listToString(records);
 	//std::string str = CRpcJsonParser::test();
 	CDb::instance()->open("localhost", 3306, "root", "", "tbx");
+	
 	//CDb::instance()->insertDepartment("xs", 1);
 	//CDb::instance()->listDepartmentStaff(1, records);
 	//CDb::instance()->listUser(NULL, records);
