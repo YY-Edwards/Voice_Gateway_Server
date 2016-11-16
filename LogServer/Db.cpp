@@ -149,8 +149,7 @@ CDb::CDb()
 
 CDb::~CDb()
 {
-	m_pMySQLDb->close();
-	delete m_pMySQLDb;
+	close();
 }
 
 void CDb::migration()
@@ -201,6 +200,16 @@ int CDb::checkDbVersion()
 		ver = 0;
 	}
 	return ver;
+}
+
+void CDb::close()
+{
+	if (m_pMySQLDb)
+	{
+		m_pMySQLDb->close();
+		delete m_pMySQLDb;
+		m_pMySQLDb = NULL;
+	}
 }
 
 bool CDb::open(const char* host, u_short port, const char* user, const char* pass, const char* db)
