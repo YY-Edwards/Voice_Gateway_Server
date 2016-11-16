@@ -95,7 +95,7 @@ namespace TrboX
                     User destuser = (User)((ListViewItem) m_Main.lst_User.SelectedItem).Content;
                     user.ID = destuser.ID;
                     user.Modify();
-
+                    ((ComboBoxItem)m_Main.cmb_AuthorityDest.Items[m_Main.lst_User.SelectedIndex]).Content = user.UserName + (user.Type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)");
                     ((ComboBoxItem) m_Main.cmb_AuthorityDest.Items[ m_Main.lst_User.SelectedIndex]).Tag = user;
                     ((ListViewItem) m_Main.lst_User.Items[ m_Main.lst_User.SelectedIndex]).Content = user;
                 } 
@@ -108,14 +108,18 @@ namespace TrboX
                 int index = m_Main.lst_User.SelectedIndex;
                 m_Main.lst_User.Items.RemoveAt(index);
                 m_Main.cmb_AuthorityDest.Items.RemoveAt(index);
+
+                m_Main.lst_User.SelectedIndex = m_Main.lst_User.Items.Count == 0? -1 : 0;
+
            };
 
             m_Main.btn_AddFunc.Click +=delegate{
-                if (m_Main.list_AllFunc == null || m_Main.lst_CurrentFunc == null || m_Main.list_AllFunc.SelectedItem == null) return;
-                if (!m_Main.lst_CurrentFunc.Items.Contains(m_Main.list_AllFunc.SelectedItem as CAuthority)) m_Main.lst_CurrentFunc.Items.Add(m_Main.list_AllFunc.SelectedItem as CAuthority);
+                if (m_Main.list_AllFunc == null || m_Main.lst_CurrentFunc == null || m_Main.list_AllFunc.SelectedItem == null) return;              
 
                 if(m_Main.cmb_AuthorityDest != null && m_Main.cmb_AuthorityDest.SelectedItem != null)
                 {
+                    if (!m_Main.lst_CurrentFunc.Items.Contains(m_Main.list_AllFunc.SelectedItem as CAuthority)) m_Main.lst_CurrentFunc.Items.Add(m_Main.list_AllFunc.SelectedItem as CAuthority);
+
                     User  user =   (User)((ComboBoxItem)m_Main.cmb_AuthorityDest.SelectedItem).Tag;
                                  
                     List<CAuthority> lst = new List<CAuthority>();
@@ -132,6 +136,31 @@ namespace TrboX
                     user.Modify();
                 }
             };
+
+            m_Main.btn_DelFunc.Click += delegate
+            {
+                if (m_Main.list_AllFunc == null || m_Main.lst_CurrentFunc == null || m_Main.lst_CurrentFunc.SelectedItem == null) return;
+                if (m_Main.cmb_AuthorityDest != null && m_Main.cmb_AuthorityDest.SelectedItem != null)
+                {
+                    m_Main.lst_CurrentFunc.Items.Remove(m_Main.lst_CurrentFunc.SelectedItem);
+
+                    User user = (User)((ComboBoxItem)m_Main.cmb_AuthorityDest.SelectedItem).Tag;
+
+                    List<CAuthority> lst = new List<CAuthority>();
+
+                    foreach (var it in m_Main.lst_CurrentFunc.Items)
+                    {
+                        lst.Add(it as CAuthority);
+                    }
+                    user.Auth = lst;
+                    user.Func = user.parseAuth();
+
+                    ((ComboBoxItem)m_Main.cmb_AuthorityDest.Items[m_Main.cmb_AuthorityDest.SelectedIndex]).Tag = user;
+                    ((ListViewItem)m_Main.lst_User.Items[m_Main.cmb_AuthorityDest.SelectedIndex]).Content = user;
+                    user.Modify();
+                }
+            };
+
 
             m_Main.cmb_AuthorityDest.SelectionChanged +=delegate{
                 try
@@ -165,6 +194,8 @@ namespace TrboX
                 {
                     dept.ID = dept.Add();
                     m_Main.lst_Group.Items.Add(new ListViewItem() { Content = dept });
+
+                    m_Main.cmb_StaffDepartment.Items.Add(new ComboBoxItem() { Content = dept.Name, Tag = dept });
                     m_Main.lst_Group.SelectedIndex = m_Main.lst_Group.Items.Count - 1;
                 }
                 else
@@ -173,6 +204,9 @@ namespace TrboX
                     dept.ID = destdept.ID;
                     dept.Modify();
                     ((ListViewItem)m_Main.lst_Group.Items[m_Main.lst_Group.SelectedIndex]).Content = dept;
+
+                    ((ComboBoxItem)m_Main.cmb_StaffDepartment.Items[m_Main.lst_Group.SelectedIndex]).Content = dept.Name;
+                    ((ComboBoxItem)m_Main.cmb_StaffDepartment.Items[m_Main.lst_Group.SelectedIndex]).Tag = dept;
                 }       
             };
 
@@ -188,6 +222,7 @@ namespace TrboX
                 {
                     dept.Delete();
                     m_Main.lst_Group.Items.RemoveAt(m_Main.lst_Group.SelectedIndex);
+                    m_Main.lst_Group.SelectedIndex = m_Main.lst_Group.Items.Count == 0 ? -1 : 0;
                 }
             };
         }
@@ -202,7 +237,7 @@ namespace TrboX
                     if (item.Value.Group == null) continue;
                     if (item.Value.Group.GroupID <= 0) continue;
 
-                    m_Main.lst_Group.Items.Add(new ListViewItem() { Content = item.Value });
+                    m_Main.lst_Group.Items.Add(new ListViewItem() { Content = item.Value.Group });
                 }
                 m_Main.lst_Group.SelectedIndex = 0;
             }         
@@ -218,7 +253,7 @@ namespace TrboX
                     if (item.Value.Group == null) continue;
                     if (item.Value.Group.GroupID <= 0) continue;
 
-                    m_Main.cmb_StaffDepartment.Items.Add(new ComboBoxItem() { Content = item.Value.NameInfo, Tag = item.Value });
+                    m_Main.cmb_StaffDepartment.Items.Add(new ComboBoxItem() { Content = item.Value.Group.Name, Tag = item.Value.Group });
                 }
             }
         }
@@ -235,6 +270,7 @@ namespace TrboX
                 {
                     staff.Delete();
                     m_Main.lst_Staff.Items.RemoveAt(m_Main.lst_Staff.SelectedIndex);
+                    m_Main.lst_Staff.SelectedIndex = m_Main.lst_Staff.Items.Count == 0 ? -1 : 0;
                 }
             };
 
@@ -266,7 +302,8 @@ namespace TrboX
 
                     try
                     {
-                        DepartmentMgr.AssignStaff(staff, ((CMember)((ComboBoxItem)m_Main.cmb_StaffDepartment.SelectedItem).Tag).Group.ID);
+                        long groupid = ((Department)((ComboBoxItem)m_Main.cmb_StaffDepartment.SelectedItem).Tag).ID;
+                        if (groupid >= 0) DepartmentMgr.AssignStaff(staff.ID, groupid);
                     }
                     catch(Exception ex) 
                     {
@@ -275,13 +312,22 @@ namespace TrboX
                 }
                 else
                 {
-                    Staff deststaff = (Staff)((ListViewItem)m_Main.lst_Staff.SelectedItem).Content;
+                    Staff deststaff = ((ListViewItem)m_Main.lst_Staff.SelectedItem).Content as Staff;
                     staff.ID = deststaff.ID;
                     staff.Modify();
 
                     try
                     {
-                        DepartmentMgr.AssignStaff(staff, ((CMember)((ComboBoxItem)m_Main.cmb_StaffDepartment.SelectedItem).Tag).Group.ID);
+                        try
+                        {
+                            DepartmentMgr.DetachStaff(staff.ID, int.Parse(m_Main.txt_StaffDeptID.Text));
+                        }
+                        catch
+                        {
+
+                        }
+                        long groupid = ((Department)((ComboBoxItem)m_Main.cmb_StaffDepartment.SelectedItem).Tag).ID;
+                        if (groupid >= 0) DepartmentMgr.AssignStaff(staff.ID, groupid);
                     }
                     catch (Exception ex)
                     {
@@ -301,7 +347,7 @@ namespace TrboX
                     if (item.Value.Staff == null) continue;
                     if (item.Value.Staff.ID <1 ) continue;
                     if (item.Value.Staff.Type == StaffType.Vehicle.ToString()) continue;
-                    m_Main.lst_Staff.Items.Add(new ListViewItem() { Content = item.Value });
+                    m_Main.lst_Staff.Items.Add(new ListViewItem() { Content = item.Value.Staff });
                 }
                 m_Main.lst_Staff.SelectedIndex = 0;
             }

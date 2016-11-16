@@ -243,7 +243,7 @@ namespace TrboX
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             try{
-                if ((StaffType)int.Parse((string)value) != StaffType.Vehicle) return "车牌号码:";
+                if ((StaffType)int.Parse((string)value) == StaffType.Vehicle) return "车牌号码:";
                 else return "姓名:";
             }
             catch{
@@ -266,7 +266,8 @@ namespace TrboX
                 int i = 0;
                 foreach (var item in (ItemCollection)value[0])
                 {
-                    if (((CMember)((ComboBoxItem)item).Tag).Group.ID == ((Department)value[1]).ID) return i;
+                    List<Staff> staff = DepartmentMgr.ListStaff(((Department)((ComboBoxItem)item).Tag).ID);
+                    if(staff != null && staff.Where(p=>p.ID == ((Staff)value[1]).ID).ToList().Count > 0)return i;
                     i++;
                 }
 
@@ -285,8 +286,28 @@ namespace TrboX
             throw new NotSupportedException();
         }
     }
-}
 
+    public class ValidToType : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if(value is bool)
+            {
+                return (bool)value ? 0 : 1;
+
+            }
+            else
+            {
+                return -1;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+}
 
 
 

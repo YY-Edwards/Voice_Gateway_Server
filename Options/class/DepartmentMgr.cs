@@ -13,7 +13,7 @@ namespace TrboX
     public class Department
     {
         [DefaultValue((long)0), JsonProperty(PropertyName = "id")]
-        public long ID;
+        public long ID{ set; get; }
 
         [JsonProperty(PropertyName = "name")]
         public string Name{ set; get; }
@@ -331,37 +331,59 @@ namespace TrboX
 
         private static Dictionary<Staff, long> AddDeptStaff = new Dictionary<Staff, long>();
         private static Dictionary<Staff, long> DelDeptStaff = new Dictionary<Staff, long>();
-        public static void AssignStaff(Staff staff, long dept)
+        public static void AssignStaff(long staff, long dept)
         {
-            if (DelDeptStaff.ContainsKey(staff))
+            Staff staffs = null;
+            if (StaffMgr.s_Add.ContainsKey(staff))
             {
-                DelDeptStaff.Remove(staff);
-            }          
-            
-            if (AddDeptStaff.ContainsKey(staff))
+                staffs = StaffMgr.s_Add[staff];
+            }
+
+            List<Staff> tmp = StaffMgr.SatffList.Where(p => p.ID == staff).ToList();
+            if (tmp.Count > 0) staffs = tmp[0];
+
+            if (staffs == null) return;
+
+            if (DelDeptStaff.ContainsKey(staffs))
             {
-                AddDeptStaff[staff] = dept;
+                if (DelDeptStaff[staffs] == dept)DelDeptStaff.Remove(staffs);
+            }
+
+            if (AddDeptStaff.ContainsKey(staffs))
+            {
+                AddDeptStaff[staffs] = dept;
             }
             else
             {
-                AddDeptStaff.Add(staff, dept);
+                AddDeptStaff.Add(staffs, dept);
             }
         }
 
-        public static void DetachStaff(Staff staff, long dept)
+        public static void DetachStaff(long staff, long dept)
         {
-            if (AddDeptStaff.ContainsKey(staff))
+            Staff staffs = null;
+            if (StaffMgr.s_Add.ContainsKey(staff))
             {
-                AddDeptStaff.Remove(staff);
+                staffs = StaffMgr.s_Add[staff];
             }
 
-            if (DelDeptStaff.ContainsKey(staff))
+            List<Staff> tmp = StaffMgr.SatffList.Where(p => p.ID == staff).ToList();
+            if (tmp.Count > 0) staffs = tmp[0];
+
+            if (staffs == null) return;
+
+            if (AddDeptStaff.ContainsKey(staffs))
             {
-                DelDeptStaff[staff] = dept;
+                if (AddDeptStaff[staffs] == dept) AddDeptStaff.Remove(staffs);               
+            }
+
+            if (DelDeptStaff.ContainsKey(staffs))
+            {
+                DelDeptStaff[staffs] = dept;
             }
             else
             {
-                DelDeptStaff.Add(staff, dept);
+                DelDeptStaff.Add(staffs, dept);
             }
         }
 
@@ -437,6 +459,9 @@ namespace TrboX
 
                   LogServer.Call(addstr);
               }
+
+              AddDeptStaff.Clear();
+              DelDeptStaff.Clear();
         }
 
 

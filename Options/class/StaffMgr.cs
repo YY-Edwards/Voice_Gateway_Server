@@ -86,7 +86,7 @@ namespace TrboX
         private static long OrginIndex = 0;
         private static long CurrentIndex = 0;
 
-        private static Dictionary<long, Staff> s_Add = new Dictionary<long, Staff>();
+        public static Dictionary<long, Staff> s_Add = new Dictionary<long, Staff>();
         private static List<long> s_Del = new List<long>();
 
         private static List<UpdatesStaff> s_Update = new List<UpdatesStaff>();
