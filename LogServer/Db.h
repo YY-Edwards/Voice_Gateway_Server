@@ -64,7 +64,7 @@ public:
 	bool assignStaffRadio(int staffId, int radioId);
 	bool detachStaffRadio(int staffId, int radioId);
 	bool insertRadio(const char* radioId, int type, const char* sn, int screen = 0, int gps = 0, int keyboard=0 );
-	bool insertStaff(const char* name, const char* phone);
+	bool insertStaff(const char* name, const char* phone, bool isStaff = true);
 
 	int query(const char* table, const char* condition, std::list<recordType>& records);
 	int count(const char* table, const char* condition);

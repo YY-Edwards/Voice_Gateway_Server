@@ -12,18 +12,26 @@ namespace TrboX
 
     public class Department
     {
-        [DefaultValue((long)0)]
-        public long id;
-        public string name{ set; get; }
+        [DefaultValue((long)0), JsonProperty(PropertyName = "id")]
+        public long ID;
+
+        [JsonProperty(PropertyName = "name")]
+        public string Name{ set; get; }
 
         [JsonProperty(PropertyName = "gid")]
-        public long group_id { set; get; }
+        public long GroupID { set; get; }
+
+         [JsonIgnore]
+        public bool IsTx { set; get; }
 
         [JsonIgnore]
-        public string Name
+        public bool IsRx { set; get; }
+
+        [JsonIgnore]
+        public string NameInfo
         {
             get
-            { return name + "(ID:"+group_id.ToString()+")"; }
+            { return Name + "(ID:" + GroupID.ToString() + ")"; }
         }
         private static Department Copy(Department dept)
         {
@@ -35,8 +43,8 @@ namespace TrboX
 
         public Department(string n, long id)
         {
-            name = n;
-            group_id = id;
+            Name = n;
+            GroupID = id;
         }
 
         public long Add()
@@ -46,12 +54,12 @@ namespace TrboX
 
         public void Modify()
         {
-            DepartmentMgr.Modify(id, Copy(this));
+            DepartmentMgr.Modify(ID, Copy(this));
         }
 
         public void Delete()
         {
-            DepartmentMgr.Delete(id);
+            DepartmentMgr.Delete(ID);
         }
     }
 
@@ -68,7 +76,6 @@ namespace TrboX
         private static Dictionary<long, Department> s_Add = new Dictionary<long, Department>();
         private static List<long> s_Del = new List<long>();
         private static List<UpdatesDepartment> s_Update = new List<UpdatesDepartment>();
-
 
         public static int Count()
         {
@@ -168,7 +175,7 @@ namespace TrboX
                 List<Department> s_List = LogServer.Call(str, ParseList) as List<Department>;
 
                 if (s_List == null) return null;
-                OrginIndex = s_List.Select(w => w.id).Max();
+                OrginIndex = s_List.Select(w => w.ID).Max();
                 CurrentIndex = OrginIndex;
 
                 s_Add.Clear();
@@ -203,7 +210,7 @@ namespace TrboX
 
         public static long Add(Department dept)
         {
-            dept.id = 0;
+            dept.ID = 0;
             s_Add.Add(++CurrentIndex, dept);
             return CurrentIndex;
         }
@@ -234,12 +241,12 @@ namespace TrboX
             {
                 if (Id > OrginIndex)
                 {
-                    dept.id = 0;
+                    dept.ID = 0;
                     s_Add[Id] = dept;
                 }
                 else
                 {
-                    dept.id = 0;
+                    dept.ID = 0;
                     s_Update.Add(new UpdatesDepartment() { id = Id, department = dept });
                 }
             }
@@ -321,10 +328,10 @@ namespace TrboX
             s_Update.Clear();
         }
 
-        
-        private static Dictionary<long, long> AddDeptStaff = new Dictionary<long, long>();
-        private static Dictionary<long, long> DelDeptStaff = new Dictionary<long, long>();
-        public static void AssignStaff(long staff, long dept)
+
+        private static Dictionary<Staff, long> AddDeptStaff = new Dictionary<Staff, long>();
+        private static Dictionary<Staff, long> DelDeptStaff = new Dictionary<Staff, long>();
+        public static void AssignStaff(Staff staff, long dept)
         {
             if (DelDeptStaff.ContainsKey(staff))
             {
@@ -341,7 +348,7 @@ namespace TrboX
             }
         }
 
-        public static void DetachStaff(long staff, long dept)
+        public static void DetachStaff(Staff staff, long dept)
         {
             if (AddDeptStaff.ContainsKey(staff))
             {
@@ -375,16 +382,22 @@ namespace TrboX
             jsetting.DefaultValueHandling = DefaultValueHandling.Ignore;
             string addstr = JsonConvert.SerializeObject(addreq, Formatting.Indented, jsetting);
 
-            return LogServer.Call(addstr) as List<Staff>;
+            return LogServer.Call(addstr, StaffMgr.ParseList) as List<Staff>;
         }
 
         public static void SaveDeptStaff()
         {
+              List<Staff> staffs = StaffMgr.List();
+
               foreach(var item in AddDeptStaff)
               {
                   Dictionary<string, object> addparam = new Dictionary<string, object>();
                   addparam.Add("operation", OperateType.assignUser.ToString());
-                  addparam.Add("user", item.Key);
+
+                  List<Staff> tmp = staffs.Where(p => p.Name == item.Key.Name && p.PhoneNumber == item.Key.PhoneNumber).ToList();
+                  if (tmp.Count < 1) continue;
+                  addparam.Add("user", tmp[0].ID);
+
                   addparam.Add("department", item.Value);
 
                   LogServerRequest addreq = new LogServerRequest()
@@ -404,7 +417,11 @@ namespace TrboX
               {
                   Dictionary<string, object> addparam = new Dictionary<string, object>();
                   addparam.Add("operation", OperateType.detachUser.ToString());
-                  addparam.Add("user", item.Key);
+
+                  List<Staff> tmp = staffs.Where(p => p.Name == item.Key.Name && p.PhoneNumber == item.Key.PhoneNumber).ToList();
+                  if (tmp.Count < 1) continue;
+                  addparam.Add("user", tmp[0].ID);
+
                   addparam.Add("department", item.Value);
 
                   LogServerRequest addreq = new LogServerRequest()

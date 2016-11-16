@@ -66,15 +66,19 @@ namespace TrboX
         private static List<CAuthority> GuestAuth = JsonConvert.DeserializeObject<List<CAuthority>>(AdminAuthStr);
         private static List<CAuthority> AdminAuth = JsonConvert.DeserializeObject<List<CAuthority>>(GuestAuthStr);
 
-        [DefaultValue((long)0)]
-        public long id;
-        public string username { set; get; }
+        [DefaultValue((int)0), JsonProperty(PropertyName = "id")]
+        public long ID;
+        [JsonProperty(PropertyName = "username")]
+        public string UserName { set; get; }
 
-        [DefaultValue("")]
-        public string password;
-        public string type { set; get; }
+        [DefaultValue(""), JsonProperty(PropertyName = "password")]
+        public string Password;
 
-        public string authority { set; get; }
+        [JsonProperty(PropertyName = "type")]
+        public string Type { set; get; }
+
+        [JsonProperty(PropertyName = "authority")]
+        public string Func { set; get; }
 
         [JsonIgnore]
         public List<CAuthority> Auth { set; get; }
@@ -88,7 +92,7 @@ namespace TrboX
         public string Name
         {
             get
-            { return username + (type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"); }
+            { return UserName + (Type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"); }
         }
 
         public string parseAuth()
@@ -105,7 +109,7 @@ namespace TrboX
         {
             List<CAuthority> res = new List<CAuthority>();
 
-            string[] s = authority.Split(new char[] { ',' });
+            string[] s = Func.Split(new char[] { ',' });
 
             foreach (string item in s)
             {
@@ -129,11 +133,11 @@ namespace TrboX
 
         public User(string user, string psd, UserType t)
         {
-            username = user;
-            password = psd;
-            type = t.ToString();
+            UserName = user;
+            Password = psd;
+            Type = t.ToString();
             Auth = t == UserType.Admin ? AdminAuth : GuestAuth;
-            authority = parseAuth();
+            Func = parseAuth();
         }
         public long Add()
         {
@@ -142,12 +146,12 @@ namespace TrboX
 
         public void Modify()
         {
-            UserMgr.Modify(id, Copy(this));
+            UserMgr.Modify(ID, Copy(this));
         }
 
         public void Delete()
         {
-            UserMgr.Delete(id);
+            UserMgr.Delete(ID);
         }
     }
 
@@ -268,7 +272,7 @@ namespace TrboX
                 List<User> s_List = LogServer.Call(str, ParseList) as List<User>;
 
                 if (s_List == null) return null;
-                OrginIndex = s_List.Select(w => w.id).Max();
+                OrginIndex = s_List.Select(w => w.ID).Max();
                 CurrentIndex = OrginIndex;
 
                 s_Add.Clear();
@@ -308,7 +312,7 @@ namespace TrboX
 
         public static long Add(User user)
         {
-            user.id = 0;
+            user.ID = 0;
             s_Add.Add(++CurrentIndex, user);
             return CurrentIndex;
         }
@@ -339,13 +343,13 @@ namespace TrboX
             {
                 if (Id > OrginIndex)
                 {
-                    user.id = 0;
+                    user.ID = 0;
                     s_Add[Id] = user;
                 }
                 else
                 {
-                    user.id = 0;
-                    user.password = "";
+                    user.ID = 0;
+                    user.Password = "";
                     s_Update.Add(new UpdatesUser() { id = Id, user = user });
                 }
             }

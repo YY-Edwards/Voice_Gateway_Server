@@ -76,51 +76,55 @@ namespace TrboX
 
             List<long> allstaff = new List<long>();
             List<long> allradio = new List<long>();
-            foreach (var it in res.Staff) allstaff.Add(it.id);
-            foreach (var it in res.Radio) allradio.Add(it.id);
+            foreach (var it in res.Staff) allstaff.Add(it.ID);
+            foreach (var it in res.Radio) allradio.Add(it.ID);
 
             foreach (var it in res.Department)
             {
-                List<Staff>  staff = DepartmentMgr.ListStaff(it.id);
-                List<Radio>  radio = DepartmentMgr.ListRadio(it.id);
-                List<long> currradio = new List<long>();
-                foreach (var id in radio) currradio.Add(it.id);
+                List<Staff> staff = DepartmentMgr.ListStaff(it.ID);
+                List<Radio> radio = DepartmentMgr.ListRadio(it.ID);
 
+                List<long> currradio = new List<long>();
+
+                if (radio != null)
+                    foreach (var id in radio) currradio.Add(it.ID);
+
+                if (staff != null)
                 foreach (var s in staff)
                 {
-                    allstaff.Remove(s.id);
-                    List<Radio> rad = StaffMgr.ListRadio(s.id);
-                    if(rad.Count > 0)
+                    allstaff.Remove(s.ID);
+                    List<Radio> rad = StaffMgr.ListRadio(s.ID);
+                    if(rad != null && rad.Count > 0)
                     {
                         foreach(var r in rad)
                         {
-                            currradio.Remove(r.id);
-                            allradio.Remove(r.id);                           
-                            res.Belong.Add(new Belong() { Department = (int)it.id, Staff = s.id, Radio= r.id });
+                            currradio.Remove(r.ID);
+                            allradio.Remove(r.ID);
+                            res.Belong.Add(new Belong() { Department = (int)it.ID, Staff = s.ID, Radio = r.ID });
                         }
                     }
                     else
                     {
-                        res.Belong.Add(new Belong() { Department = (int)it.id, Staff = s.id, Radio = -1 });
+                        res.Belong.Add(new Belong() { Department = (int)it.ID, Staff = s.ID, Radio = -1 });
                     }                   
                 }
 
                 foreach(var id in currradio)
                 {
                     allradio.Remove(id);
-                    res.Belong.Add(new Belong() { Department = (int)it.id, Staff = -1, Radio = (int)id });
+                    res.Belong.Add(new Belong() { Department = (int)it.ID, Staff = -1, Radio = (int)id });
                 }
             }
 
             foreach (var it in allstaff)
             {
                 List<Radio> rad = StaffMgr.ListRadio(it);
-                if (rad.Count > 0)
+                if (rad != null && rad.Count > 0)
                 {
                     foreach (var r in rad)
                     {
-                        allradio.Remove(r.id);
-                        res.Belong.Add(new Belong() { Department = -1, Staff = (int)it, Radio = r.id });
+                        allradio.Remove(r.ID);
+                        res.Belong.Add(new Belong() { Department = -1, Staff = (int)it, Radio = r.ID });
                     }
                 }
                 else

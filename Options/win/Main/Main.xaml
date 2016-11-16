@@ -11,6 +11,8 @@
     <src:MyWindow.Resources>
         <src:FalselHideConverter x:Key="FalselHideConverter"/>
         <src:UserTypeIndex x:Key="UserTypeIndex"/>
+        <src:StaffToTitleConverter x:Key="StaffToTitle"/>
+        <src:GetDepartmentIndex x:Key="GetDepartmentIndex"/>
     </src:MyWindow.Resources>
 
     <Grid Background="White">
@@ -497,14 +499,13 @@
                                                 <ListView x:Name="lst_Staff" Height="240" Width="160" Margin="0,0,5,0">
                                                     <ListView.View>
                                                         <GridView>
-                                                            <GridViewColumn Header="姓名" DisplayMemberBinding="{Binding name}"/>
-                                                            <GridViewColumn Header="联系电话" DisplayMemberBinding="{Binding phone}"/>
+                                                            <GridViewColumn Header="姓名" DisplayMemberBinding="{Binding Name}"/>
                                                         </GridView>
                                                     </ListView.View>
                                                 </ListView>
                                                 <DockPanel LastChildFill="False" Height="29.5" DockPanel.Dock="Top" Margin="85,0,0,0">
-                                                    <Button Content="NEW" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
-                                                    <Button Content="DELETE" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
+                                                    <Button x:Name="btn_StaffNew" Content="NEW" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
+                                                    <Button x:Name="btn_StaffDel" Content="DELETE" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
                                                 </DockPanel>
                                                 <Separator Height="5" Margin="0,0,0,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
@@ -512,8 +513,19 @@
                                                         <ColumnDefinition Width="80"/>
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
-                                                    <Label Content="姓名 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <TextBox x:Name="txt_SvrIp19" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+                                                    <Label Content="类型 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+                                                    <ComboBox x:Name="cmb_StaffType" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Grid.Column="1" Margin="5,0,0,0" SelectedIndex="0">
+                                                        <ComboBoxItem Content="人员" Tag="0"/>
+                                                        <ComboBoxItem Content="车辆" Tag="1"/>
+                                                    </ComboBox>
+                                                </Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="80"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="{Binding SelectedItem.Tag, Converter={StaticResource StaffToTitle}, ElementName=cmb_StaffType}" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+                                                    <TextBox x:Name="txt_StaffName" Text="{Binding SelectedItem.Content.Staff.Name, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
                                                 </Grid>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
@@ -521,7 +533,14 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="部门 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <ComboBox HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Grid.Column="1" Margin="5,0,0,0"/>
+                                                    <ComboBox x:Name="cmb_StaffDepartment" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Grid.Column="1" Margin="5,0,0,0">
+                                                        <ComboBox.SelectedIndex>
+                                                            <MultiBinding  Converter="{StaticResource GetDepartmentIndex}" Mode="OneWay" >
+                                                                <Binding ElementName="cmb_StaffDepartment"  Path="Items" />
+                                                                <Binding ElementName="lst_Staff"  Path="SelectedItem.Content.Group" />
+                                                            </MultiBinding>
+                                                        </ComboBox.SelectedIndex>
+                                                    </ComboBox>
                                                 </Grid>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
@@ -529,7 +548,7 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="联系电话 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <TextBox x:Name="txt_SvrIp26" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+                                                    <TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Content.Staff.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
                                                 </Grid>
                                                 <!--<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
@@ -548,7 +567,7 @@
                                                     <TextBox x:Name="txt_SvrIp25" TextWrapping="Wrap" Padding="0,2.5" Margin="5,1.5,0,0" VerticalAlignment="Center" Grid.Column="1" Height="80"/>
                                                 </Grid>-->
                                                 <DockPanel LastChildFill="False" Height="29.5" DockPanel.Dock="Top" Margin="85,0,0,0">
-                                                    <Button x:Name="btn_SaveStaff" Content="Save" VerticalAlignment="Center" Width="60" Margin="2.5,0" Click="btn_SaveDepartment_Click"/>
+                                                    <Button x:Name="btn_SaveStaff" Content="Save" VerticalAlignment="Center" Width="60" Margin="2.5,0" />
                                                 </DockPanel>
                                             </DockPanel>
 
@@ -606,7 +625,7 @@
                                                 </Grid>
                                             </DockPanel>
                                         </DockPanel>
-                                        <DockPanel x:Name="dck_ResManagerGroup"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,10,20,40" Visibility="Collapsed">
+                                        <DockPanel x:Name="dck_ResManagerGroup"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,10,20,40">
                                             <Label Content="组" Margin="0" DockPanel.Dock="Top" FontSize="16"/>
                                             <Separator Height="5" Margin="-20,0,-20,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
                                             <!--TextBlock TextWrapping="Wrap" Text="服务端地址，该地址用于客户端访问" DockPanel.Dock="Top" Margin="0,2.5"/-->
@@ -615,15 +634,14 @@
                                                     <ListView.View>
                                                         <GridView>
                                                             <GridView.Columns>
-                                                                <GridViewColumn Header="名称" DisplayMemberBinding="{Binding name}"/>
-                                                                <GridViewColumn Header="ID" DisplayMemberBinding="{Binding group_id}"/>
+                                                                <GridViewColumn Header="名称" DisplayMemberBinding="{Binding NameInfo}"/>
                                                             </GridView.Columns>
                                                         </GridView>
                                                     </ListView.View>
                                                 </ListView>
                                                 <DockPanel LastChildFill="False" Height="29.5" DockPanel.Dock="Top" Margin="85,0,0,0">
-                                                    <Button x:Name="btn_DepartmentNew" Content="NEW" VerticalAlignment="Center" Width="60" Margin="2.5,0" Click="btn_DepartmentNew_Click"/>
-                                                    <Button x:Name="btn_DepartmentDel" Content="DELETE" VerticalAlignment="Center" Width="60" Margin="2.5,0" Click="btn_DepartmentDel_Click"/>
+                                                    <Button x:Name="btn_DepartmentNew" Content="NEW" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
+                                                    <Button x:Name="btn_DepartmentDel" Content="DELETE" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
                                                 </DockPanel>
                                                 <Separator Height="5" Margin="0,0,0,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
@@ -632,7 +650,7 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="组名称 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <TextBox x:Name="txt_GroupName" Text="{Binding SelectedItem.Content.name, ElementName=lst_Group, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+                                                    <TextBox x:Name="txt_GroupName" Text="{Binding SelectedItem.Content.Group.Name, ElementName=lst_Group, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
                                                 </Grid>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
@@ -640,7 +658,7 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="组ID :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <TextBox x:Name="txt_GroupId" Text="{Binding SelectedItem.Content.group_id, ElementName=lst_Group, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+                                                    <TextBox x:Name="txt_GroupId" Text="{Binding SelectedItem.Content.Group.GroupID, ElementName=lst_Group, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
                                                 </Grid>
                                                 <!--<Grid DockPanel.Dock="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
@@ -651,7 +669,7 @@
                                                     <TextBox x:Name="txt_SvrIp35" TextWrapping="Wrap" Padding="0,2.5" Margin="5,1.5,0,0" VerticalAlignment="Center" Grid.Column="1" Height="80"/>
                                                 </Grid>-->
                                                 <DockPanel LastChildFill="False" Height="29.5" DockPanel.Dock="Top" Margin="85,0,0,0">
-                                                    <Button x:Name="btn_SaveDepartment" Content="Save" VerticalAlignment="Center" Width="60" Margin="2.5,0" Click="btn_SaveDepartment_Click"/>
+                                                    <Button x:Name="btn_SaveDepartment" Content="Save" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
                                                 </DockPanel>
                                             </DockPanel>
 
@@ -784,20 +802,20 @@
                                             <Separator Height="5" Margin="-20,0,-20,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
                                             <!--TextBlock TextWrapping="Wrap" Text="服务端地址，该地址用于客户端访问" DockPanel.Dock="Top" Margin="0,2.5"/-->
                                             <DockPanel LastChildFill="False" DockPanel.Dock="Top">
-                                                <ListView x:Name="lst_User"  Height="234" Width="160" Margin="0,0,5,0" SelectedIndex="0" SelectionChanged="lst_User_SelectionChanged">
+                                                <ListView x:Name="lst_User"  Height="234" Width="160" Margin="0,0,5,0" SelectedIndex="0">
                                                     <ListView.View>
                                                         <GridView>
                                                             <GridView.Columns>
-                                                                <GridViewColumn Header="账户" DisplayMemberBinding="{Binding username}"/>
-                                                                <GridViewColumn Header="类型" DisplayMemberBinding="{Binding type}"/>
+                                                                <GridViewColumn Header="账户" DisplayMemberBinding="{Binding UserName}"/>
+                                                                <GridViewColumn Header="类型" DisplayMemberBinding="{Binding Type}"/>
                                                                 <!--<GridViewColumn Header="功能" DisplayMemberBinding="{Binding authority}"/>-->
                                                             </GridView.Columns>
                                                         </GridView>
                                                     </ListView.View>
                                                 </ListView>
                                                 <DockPanel LastChildFill="False" Height="29.5" DockPanel.Dock="Top" Margin="85,0,0,0">
-                                                    <Button x:Name="btn_UserNew" Content="NEW" VerticalAlignment="Center" Width="60" Margin="2.5,0" Click="btn_UserNew_Click"/>
-                                                    <Button x:Name="btn_UserDel" Content="DELETE" VerticalAlignment="Center" Width="60" Margin="2.5,0" Click="btn_UserDel_Click"/>
+                                                    <Button x:Name="btn_UserNew" Content="NEW" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
+                                                    <Button x:Name="btn_UserDel" Content="DELETE" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
                                                 </DockPanel>
                                                 <Separator Height="5" Margin="0,0,0,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
@@ -806,7 +824,7 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="账号 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <TextBox x:Name="txt_UserName" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120" Text="{Binding SelectedItem.Content.username, ElementName=lst_User, Mode=OneWay}"/>
+                                                    <TextBox x:Name="txt_UserName" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120" Text="{Binding SelectedItem.Content.UserName, ElementName=lst_User, Mode=OneWay}"/>
                                                 </Grid>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
@@ -822,7 +840,7 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="类型 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <ComboBox x:Name="cmb_UserType"  SelectedIndex="{Binding SelectedItem.Content.type, Converter={StaticResource UserTypeIndex}, ElementName=lst_User, Mode=OneWay}" DockPanel.Dock="Top" HorizontalAlignment="Left" Height="22" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120">
+                                                    <ComboBox x:Name="cmb_UserType"  SelectedIndex="{Binding SelectedItem.Content.Type, Converter={StaticResource UserTypeIndex}, ElementName=lst_User, Mode=OneWay}" DockPanel.Dock="Top" HorizontalAlignment="Left" Height="22" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120">
                                                         <ComboBoxItem Content="来宾"/>
                                                         <ComboBoxItem Content="管理员"/>
                                                     </ComboBox>
@@ -834,7 +852,7 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="功能 :" VerticalAlignment="Top" Margin="0" HorizontalAlignment="Right"/>
-                                                    <TextBox x:Name="txt_UseraAuthority" Text="{Binding SelectedItem.Content.authority, ElementName=lst_User, Mode=OneWay}" TextWrapping="Wrap" Padding="0,2.5" Margin="5,2,0,0" VerticalAlignment="Center" Grid.Column="1" Height="60"/>
+                                                    <TextBox x:Name="txt_UseraAuthority" Text="{Binding SelectedItem.Content.Func, ElementName=lst_User, Mode=OneWay}" TextWrapping="Wrap" Padding="0,2.5" Margin="5,2,0,0" VerticalAlignment="Center" Grid.Column="1" Height="60"/>
                                                 </Grid>
                                                 <!--<Grid DockPanel.Dock="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
@@ -845,7 +863,7 @@
                                                     <TextBox x:Name="txt_UserMark" TextWrapping="Wrap" Padding="0,2.5" Margin="5,2,0,0" VerticalAlignment="Center" Grid.Column="1" Height="60"/>
                                                 </Grid>-->
                                                 <DockPanel LastChildFill="False" Height="29.5" DockPanel.Dock="Top" Margin="85,0,0,0">
-                                                    <Button x:Name="btn_SaveUser" Content="Save" VerticalAlignment="Center" Width="60" Margin="2.5,0" Click="btn_SaveUser_Click"/>
+                                                    <Button x:Name="btn_SaveUser" Content="Save" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
                                                 </DockPanel>
                                             </DockPanel>
 
@@ -870,11 +888,11 @@
                                                         <RowDefinition Height="50*"/>
                                                         <RowDefinition Height="50*"/>
                                                     </Grid.RowDefinitions>
-                                                    <Button x:Name="btn_AddFunc" Content="=》" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="75" Margin="0,2.5" Click="btn_AddFunc_Click"/>
+                                                    <Button x:Name="btn_AddFunc" Content="=》" HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="75" Margin="0,2.5" />
                                                     <Button x:Name="btn_DelFunc" Content="《=" HorizontalAlignment="Center" VerticalAlignment="Top" Width="75" Margin="0,2.5" Grid.Row="1"/>
                                                 </Grid>
                                                 <DockPanel Width="160" Margin="5,0,0,0" Height="200">
-                                                    <ComboBox x:Name="cmb_AuthorityDest"  Width="160" DockPanel.Dock="Top" Margin="0" Height="22" SelectedIndex="0" SelectionChanged="cmb_AuthorityDest_SelectionChanged"/>
+                                                    <ComboBox x:Name="cmb_AuthorityDest"  Width="160" DockPanel.Dock="Top" Margin="0" Height="22" SelectedIndex="0" />
                                                     <ListView x:Name="lst_CurrentFunc" Width="160" Margin="0" DockPanel.Dock="Top" IsSynchronizedWithCurrentItem="False">
                                                         <ListView.View>
                                                             <GridView>

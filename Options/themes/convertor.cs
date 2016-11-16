@@ -238,7 +238,53 @@ namespace TrboX
         }
     }
 
+    public class StaffToTitleConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try{
+                if ((StaffType)int.Parse((string)value) != StaffType.Vehicle) return "车牌号码:";
+                else return "姓名:";
+            }
+            catch{
+                return "姓名:";
+            }
+        }
 
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    public class GetDepartmentIndex : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                int i = 0;
+                foreach (var item in (ItemCollection)value[0])
+                {
+                    if (((CMember)((ComboBoxItem)item).Tag).Group.ID == ((Department)value[1]).ID) return i;
+                    i++;
+                }
+
+                List<ComboBoxItem> list = value[0] as List<ComboBoxItem>;
+            }
+            catch
+            {
+                
+            }
+
+            return -1;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
 }
 
 

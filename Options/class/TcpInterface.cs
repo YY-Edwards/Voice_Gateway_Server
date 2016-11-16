@@ -11,9 +11,11 @@ namespace TrboX
 {
     public delegate void OnConnectDel();
     public delegate void OnTcpRx(string str);
+    public delegate void OnTcpRxBytes(byte[] bytes);
     public class TcpInterface
     {
         private OnTcpRx m_OnRx = null;
+        private OnTcpRxBytes m_OnRxBytes = null;
 
         private Socket clientSocket;
         private Dictionary<Int64, object> ReceiveStr = new Dictionary<Int64, object>();
@@ -38,6 +40,15 @@ namespace TrboX
         {
             m_addr = addr;
             m_OnRx = OnRx;
+
+            ThreadStart threadStart = new ThreadStart(delegate() { while (true)ReceiveString(); });
+            thread = new Thread(threadStart);
+        }
+
+        public TcpInterface(IPEndPoint addr, OnTcpRxBytes OnRx)
+        {
+            m_addr = addr;
+            m_OnRxBytes = OnRx;
 
             ThreadStart threadStart = new ThreadStart(delegate() { while (true)ReceiveString(); });
             thread = new Thread(threadStart);
@@ -115,6 +126,32 @@ namespace TrboX
             Close();
         }
 
+        public void WriteBytes(byte[] bytes)
+        {
+            if (isConnect == false) return;
+
+            for (int i = 0; i < 10; i++)
+            {
+                try
+                {
+                    clientSocket.Send(bytes);
+                    //Console.WriteLine("向服务器发送消息：{0}", str);
+                    //DataBase.InsertLog("Write To" + m_addr.ToString() + ":" + str);
+                    return;
+                }
+                catch
+                {
+                    Thread.Sleep(100);    //等待1秒钟  
+                    continue;
+                }
+            }
+
+            if (isConnect) DataBase.InsertLog("连接服务器" + m_addr.ToString() + "失败");
+            isConnect = false;
+
+            Close();
+        }
+
         public void ReceiveString()
         {
             while (true)
@@ -128,10 +165,11 @@ namespace TrboX
                 {
                     byte[] result = new byte[65536];
                     int receiveLength = clientSocket.Receive(result);
-                    string rxstr = Encoding.ASCII.GetString(result, 0, receiveLength);
+                    if (m_OnRxBytes != null) m_OnRxBytes(result.Take(receiveLength).ToArray());
+                    string rxstr = Encoding.Default.GetString(result, 0, receiveLength);
 
                     DataBase.InsertLog("Receive From" + m_addr.ToString() + ":" + rxstr);
-                    m_OnRx(rxstr);
+                    if(m_OnRx!=null)m_OnRx(rxstr);
 
                 }
                 catch

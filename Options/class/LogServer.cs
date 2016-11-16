@@ -194,13 +194,16 @@ namespace TrboX
             {
                 lock (TCP)
                 {
-                    TCP.WriteString(str);
+                    //byte[]
+                    TCP.WriteBytes(Encoding.UTF8.GetBytes(str));
+                    //TCP.WriteString(str);
                 }
             }
         }
 
-        private static void OnReceive(string str)
+        private static void OnReceive(byte[] bytes)
         {
+            string str = Encoding.UTF8.GetString(bytes);
 
             Regex regex = new Regex("}{");//以$cjlovefl$分割
             string[] sArray = regex.Split(str);

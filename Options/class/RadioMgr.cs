@@ -9,7 +9,7 @@ using System.ComponentModel;
 
 namespace TrboX
 {
-    public enum RadipType
+    public enum RadioType
     {
         Radio,
         Ride
@@ -17,20 +17,45 @@ namespace TrboX
 
     public class Radio
     {
-        public int id;
-        public long radio_id;
-        public RadipType type;
-        public bool screen;
-        public bool gps;
-        public bool keyboard;
-        public string sn;
-        public bool valid;
+        [DefaultValue((long)0), JsonProperty(PropertyName = "id")]
+        public int ID;
+        [JsonProperty(PropertyName = "radio_id")]
+        public long RadioID { set; get; }
+        [JsonProperty(PropertyName = "type")]
+        public RadioType Type { set; get; }
+
+        [JsonProperty(PropertyName = "screen")]
+        public bool HasScreen;
+
+        [JsonProperty(PropertyName = "gps")]
+        public bool HasGPS;
+
+        [JsonProperty(PropertyName = "keyboard")]
+        public bool HasKeyboard;
+
+        [JsonProperty(PropertyName = "sn")]
+        public string SN;
+
+        [JsonProperty(PropertyName = "valid")]
+        public bool IsValid;
+
+         [JsonIgnore]
+        public bool IsOnline { set; get; }
+
+         [JsonIgnore]
+        public bool IsGPS { set; get; }
+         [JsonIgnore]
+        public bool IsTx { set; get; }
+
+         [JsonIgnore]
+        public bool IsRx { set; get; }
+
 
          [JsonIgnore]
         public string Name
         {
             get
-            { return (type == RadipType.Radio ?"手持台":"车载台")+ "(ID:"+radio_id.ToString()+")"; }
+            { return (Type == RadioType.Radio ? "手持台" : "车载台") + "(ID:" + RadioID.ToString() + ")"; }
         }
 
         public Radio()
@@ -43,12 +68,12 @@ namespace TrboX
 
         public void Modify()
         {
-            RadioMgr.Modify(id, this);
+            RadioMgr.Modify(ID, this);
         }
 
         public void Delete()
         {
-            RadioMgr.Delete(id);
+            RadioMgr.Delete(ID);
         }
 
     }
@@ -166,7 +191,7 @@ namespace TrboX
                 List<Radio> s_List = LogServer.Call(str, ParseList) as List<Radio>;
 
                 if (s_List == null) return null;
-                OrginIndex = s_List.Select(w => w.id).Max();
+                OrginIndex = s_List.Select(w => w.ID).Max();
                 CurrentIndex = OrginIndex;
 
                 s_Add.Clear();
@@ -206,7 +231,7 @@ namespace TrboX
 
         public static long Add(Radio radio)
         {
-            radio.id = 0;
+            radio.ID = 0;
             s_Add.Add(++CurrentIndex, radio);
             return CurrentIndex;
         }
@@ -237,12 +262,12 @@ namespace TrboX
             {
                 if (Id > OrginIndex)
                 {
-                    radio.id = 0;
+                    radio.ID = 0;
                     s_Add[Id] = radio;
                 }
                 else
                 {
-                    radio.id = 0;
+                    radio.ID = 0;
                     s_Update.Add(new UpdatesRadio() { id = Id, radio = radio });
                 }
             }

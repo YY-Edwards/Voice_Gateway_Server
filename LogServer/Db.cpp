@@ -527,7 +527,8 @@ bool CDb::listDepartmentStaff(int departmentId, std::list<recordType>& records)
 	try{
 		records.erase(records.begin(), records.end());
 
-		std::string sql = "select staff.phone, user.* from organize left join staff on organize.staff=staff.id left join user on staff.user=user.id where organize.department=" + std::to_string(departmentId);
+		//std::string sql = "select staff.id, staff.name, staff.phone, user.* from organize left join staff on organize.staff=staff.id left join user on staff.user=user.id where organize.department=" + std::to_string(departmentId);
+		std::string sql = "select staff.* from organize left join staff on organize.staff=staff.id  where organize.department=" + std::to_string(departmentId);
 		m_pMySQLDb->query(sql.c_str(), records);
 		if (records.size() <= 0)
 		{
@@ -677,14 +678,14 @@ bool CDb::insertRadio(const char* radioId, int type, const char* sn, int screen,
 	return true;
 }
 
-bool CDb::insertStaff(const char* name, const char* phone)
+bool CDb::insertStaff(const char* name, const char* phone, bool isStaff)
 {
 	try{
 		recordType staff;
 
 		staff["name"] = name;
-		staff["type"] = phone;
-		staff["valid"] = "1";
+		staff["phone"] = phone;
+		staff["valid"] = isStaff ? "1" : "0";
 
 		if (m_pMySQLDb->recordExist("staff", staff))
 		{

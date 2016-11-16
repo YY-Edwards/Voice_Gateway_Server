@@ -13,34 +13,47 @@ namespace TrboX
    
     public enum StaffType
     {
-        Vehicle,
-        Staff
+        Staff = 0,
+        Vehicle = 1,
     };
 
     public class Staff
     {
-        public int id;
-        public string name { get; set; }
-        public StaffType type { get; set; }
-        public string phone { get; set; }
-        public int user;
+        [DefaultValue((int)0), JsonProperty(PropertyName = "id")]
+        public int ID;
+        [JsonProperty(PropertyName = "name")]
+        public string Name{ get; set; }
+
+        [JsonProperty(PropertyName = "type")]
+        public string Type { get; set; }
+
+        [JsonProperty(PropertyName = "phone")]
+        public string PhoneNumber{ get; set; }
+
+         [JsonIgnore]
+        public int User;
 
         [JsonProperty(PropertyName = "valid")]
-        public int is_valid;
+        public int Valid;
+
 
         [JsonIgnore]
-        public bool valid
+        public bool IsValid
         {
-            set { is_valid = value ? 1 : 0; }
-            get { return is_valid == 0 ? false : true; }
+            set { Valid = value ? 1 : 0; }
+            get { return Valid == 0 ? false : true; }
         }
 
-
         [JsonIgnore]
-        public string Name
+        public string NameInfo
         {
             get
-            { return name; }
+            { return Name; }
+        }
+
+        private static Staff Copy(Staff dept)
+        {
+            return JsonConvert.DeserializeObject<Staff>(JsonConvert.SerializeObject(dept));
         }
 
         public Staff()
@@ -48,17 +61,17 @@ namespace TrboX
 
         public long Add()
         {
-            return StaffMgr.Add(this);
+            return StaffMgr.Add(Copy(this));
         }
 
         public void Modify()
         {
-            StaffMgr.Modify(id, this);
+            StaffMgr.Modify(ID, Copy(this));
         }
 
         public void Delete()
         {
-           StaffMgr.Delete(id);
+            StaffMgr.Delete(ID);
         }
     }
     
@@ -78,6 +91,8 @@ namespace TrboX
 
         private static List<UpdatesStaff> s_Update = new List<UpdatesStaff>();
 
+        public static List<Staff> SatffList = new List<Staff>();
+        private static bool IsNeedUpdate = true;
 
         public static int Count()
         {
@@ -139,8 +154,10 @@ namespace TrboX
 
         public static List<Staff> List()
         {
+            if (!IsNeedUpdate) return SatffList;
+            IsNeedUpdate = false;
             int count = Count();
-            if(count <= 1)return null;
+            if (count <= 1) { SatffList = null; return null; };
             Dictionary<string, object> param = new Dictionary<string, object>();
 
             param.Add("operation", OperateType.list.ToString());
@@ -167,6 +184,7 @@ namespace TrboX
             catch (Exception e)
             {
                 DataBase.InsertLog("Build Josn Error" + e.Message);
+                SatffList = null;
                 return null;
             }
 
@@ -174,21 +192,24 @@ namespace TrboX
             try
             {
 
-                List<Staff> s_List = LogServer.Call(str, ParseList) as List<Staff>;
+                SatffList = LogServer.Call(str, ParseList) as List<Staff>;
 
-                if (s_List == null) return null;
-                OrginIndex = s_List.Select(w => w.id).Max();
+                if (SatffList == null) {
+                    SatffList = null; return null;
+                };
+                OrginIndex = SatffList.Select(w => w.ID).Max();
                 CurrentIndex = OrginIndex;
 
                 s_Add.Clear();
                 s_Del.Clear();
                 s_Update.Clear();
 
-                return s_List;
+                return SatffList;
             }
             catch (Exception e)
             {
                 DataBase.InsertLog(e.Message);
+                SatffList = null;
                 return null;
             }
         }
@@ -212,7 +233,7 @@ namespace TrboX
 
         public static long Add(Staff staff)
         {
-            staff.id = 0;
+            staff.ID = 0;
             s_Add.Add(++CurrentIndex, staff);
             return CurrentIndex;
         }
@@ -243,12 +264,12 @@ namespace TrboX
             {
                 if (Id > OrginIndex)
                 {
-                    staff.id = 0;
+                    staff.ID = 0;
                     s_Add[Id] = staff;
                 }
                 else
                 {
-                    staff.id = 0;
+                    staff.ID = 0;
                     s_Update.Add(new UpdatesStaff() { id = Id, staff = staff });
                 }
             }
@@ -312,7 +333,7 @@ namespace TrboX
 
                 LogServerRequest addreq = new LogServerRequest()
                 {
-                    call = RequestType.user.ToString(),
+                    call = RequestType.staff.ToString(),
                     callId = LogServer.CallId,
                     param = addparam
                 };
@@ -324,7 +345,7 @@ namespace TrboX
                 LogServer.Call(addstr);
             }
 
-
+            IsNeedUpdate = true;
             OrginIndex = CurrentIndex;
             s_Add.Clear();
             s_Del.Clear();

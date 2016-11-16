@@ -80,6 +80,8 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 				FieldValue fvRecords(FieldValue::TArray);
 				for (auto i = records.begin(); i != records.end(); i++)
 				{
+					if (0 == (*i)["user"].compare("0"))continue;
+
 					FieldValue r(FieldValue::TObject);
 
 					for (auto j = (*i).begin(); j != (*i).end(); j++){

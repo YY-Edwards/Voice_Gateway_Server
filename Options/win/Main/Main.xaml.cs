@@ -52,58 +52,12 @@ namespace TrboX
                 ResourceComponents = new ResourceComponents(this);
 
                 SettingComponents.Set(SettingMgr.Get());
+
+
+                
                
             };
 
-            lst_User.Loaded += delegate
-            { 
-                if(lst_User.Items.Count > 0) return;
-                List<User> users = UserMgr.List();
-                if (users != null)
-                {
-                    lst_User.Items.Clear();
-                    cmb_AuthorityDest.Items.Clear();
-                    foreach (User user in users)
-                    {
-                        cmb_AuthorityDest.Items.Add(new ComboBoxItem() { Content = user.username + (user.type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"), Tag = user });
-                        lst_User.Items.Add(new ListViewItem() { Content = user});
-                    }
-                    lst_User.SelectedIndex = 0;
-                    cmb_AuthorityDest.SelectedIndex = 0;
-                }
-            };
-
-            lst_Group.Loaded += delegate
-            {
-                if (lst_Group.Items.Count > 0) return;
-                List<Department> depts = DepartmentMgr.List();
-                if(depts!=null)
-                {
-                    lst_Group.Items.Clear();
-                    foreach (Department dept in depts) lst_Group.Items.Add(new ListViewItem() { Content = dept });
-                    lst_Group.SelectedIndex = 0;
-                }
-
-            };
-
-            lst_Staff.Loaded += delegate
-            {
-                if (lst_Staff.Items.Count > 0) return;
-                List<Staff> staffs = StaffMgr.List();
-                if (staffs != null)
-                {
-                    lst_Staff.Items.Clear();
-                    foreach (Staff staff in staffs) lst_Staff.Items.Add(new ListViewItem() { Content = staff });
-                    lst_Staff.SelectedIndex = 0;
-                }
-
-            };
-
-            list_AllFunc.Loaded += delegate
-            {
-                list_AllFunc.ItemsSource = User.AddAuth;
-
-            };
         }
 
        
@@ -251,6 +205,9 @@ namespace TrboX
 
            UserMgr.Save();
            DepartmentMgr.Save();
+           StaffMgr.Save();
+
+           DepartmentMgr.SaveDeptStaff();
         }
 
         private void btn_SetDefault_Click(object sender, RoutedEventArgs e)
@@ -316,132 +273,5 @@ namespace TrboX
             }
         }
 
-        private void btn_UserNew_Click(object sender, RoutedEventArgs e)
-        {
-            lst_User.SelectedIndex = -1;
-            txt_UserName.IsReadOnly = false;
-            txt_UserName.Text = "";
-            psd_UserPassword.Password = "";
-        }
-
-        private void lst_User_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            txt_UserName.IsReadOnly = true;
-        }
-
-        private void btn_SaveUser_Click(object sender, RoutedEventArgs e)
-        {
-            User user = new User(txt_UserName.Text, psd_UserPassword.Password, cmb_UserType.SelectedIndex == 1 ? UserType.Admin : UserType.Guest);
-
-            if (lst_User.SelectedIndex == -1)
-            {
-                user.id = user.Add();
-                lst_User.Items.Add(new ListViewItem() { Content = user });
-                lst_User.SelectedIndex = lst_User.Items.Count - 1;
-                cmb_AuthorityDest.Items.Add(new ComboBoxItem() { Content = user.username + (user.type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"), Tag = user });
-                cmb_AuthorityDest.SelectedIndex = cmb_AuthorityDest.Items.Count - 1;
-            }
-            else
-            {
-                User destuser = (User)((ListViewItem)lst_User.SelectedItem).Content;
-                user.id = destuser.id;
-                user.Modify();
-
-                ((ComboBoxItem)cmb_AuthorityDest.Items[lst_User.SelectedIndex]).Tag = user;
-                ((ListViewItem)lst_User.Items[lst_User.SelectedIndex]).Content = user;
-            } 
-        }
-
-        private void btn_UserDel_Click(object sender, RoutedEventArgs e)
-        {
-            if (lst_User == null || lst_User.SelectedItem == null) return;
-            User user = ((ListViewItem)lst_User.SelectedItem).Content as User;
-            user.Delete();
-            int index = lst_User.SelectedIndex;
-            lst_User.Items.RemoveAt(index);
-            cmb_AuthorityDest.Items.RemoveAt(index);
-        }
-
-        private void btn_AddFunc_Click(object sender, RoutedEventArgs e)
-        {
-            if (list_AllFunc == null || lst_CurrentFunc == null || list_AllFunc.SelectedItem == null) return;
-
-            if (!lst_CurrentFunc.Items.Contains(list_AllFunc.SelectedItem as CAuthority)) lst_CurrentFunc.Items.Add(list_AllFunc.SelectedItem as CAuthority);
-
-            if(cmb_AuthorityDest != null && cmb_AuthorityDest.SelectedItem != null)
-            {
-                    User  user =   (User)((ComboBoxItem)cmb_AuthorityDest.SelectedItem).Tag;
-                                 
-                    List<CAuthority> lst = new List<CAuthority>();
-
-                    foreach (var it in lst_CurrentFunc.Items)
-                    {
-                        lst.Add(it as CAuthority);
-                    }
-                    user.Auth = lst;
-                    user.authority = user.parseAuth();
-
-                    ((ComboBoxItem)cmb_AuthorityDest.Items[cmb_AuthorityDest.SelectedIndex]).Tag = user;
-                    ((ListViewItem)lst_User.Items[cmb_AuthorityDest.SelectedIndex]).Content = user;
-                    user.Modify();
-            }
-        }
-
-        private void cmb_AuthorityDest_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            try
-            {   List<CAuthority> lst = ((User)((ComboBoxItem)cmb_AuthorityDest.SelectedItem).Tag).Auth;
-                lst_CurrentFunc.Items.Clear();
-                foreach(CAuthority it in lst)
-                {
-                    if (!lst_CurrentFunc.Items.Contains(it))lst_CurrentFunc.Items.Add(it);
-                }
-            }
-            catch { }
-        }
-
-        private void btn_SaveDepartment_Click(object sender, RoutedEventArgs e)
-        {            
-            Department dept = null;
-            try
-            {
-                dept = new Department(txt_GroupName.Text, long.Parse(txt_GroupId.Text));
-            }
-            catch(Exception ex)
-            {
-                DataBase.InsertLog(ex.Message);
-            }
-            if (dept == null) return;
-
-            if (lst_Group.SelectedIndex == -1)
-            {
-                dept.id = dept.Add();
-                lst_Group.Items.Add(new ListViewItem() { Content = dept });
-                lst_Group.SelectedIndex = lst_Group.Items.Count - 1;
-            }
-            else
-            {
-                Department destdept = (Department)((ListViewItem)lst_Group.SelectedItem).Content;
-                dept.id = destdept.id;
-                dept.Modify();
-                ((ListViewItem)lst_Group.Items[lst_Group.SelectedIndex]).Content = dept;
-            }       
-        }
-
-        private void btn_DepartmentNew_Click(object sender, RoutedEventArgs e)
-        {
-            lst_Group.SelectedIndex = -1;
-        }
-
-        private void btn_DepartmentDel_Click(object sender, RoutedEventArgs e)
-        {
-            if (lst_Group == null || lst_Group.SelectedItem == null) return;
-            Department dept = ((ListViewItem)lst_Group.SelectedItem).Content as Department;
-            if (dept != null)
-            {
-                dept.Delete();
-                lst_Group.Items.RemoveAt(lst_Group.SelectedIndex);
-            }
-        }
     }
 }
