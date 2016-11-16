@@ -39,14 +39,25 @@ namespace TrboX
         public Main()
         {
             InitializeComponent();
+
             this.Loaded += delegate
             {
+                DataBase.open("SetttingLog.lg");
+                DataBase.InsertLog("---Records Start----------------------------------------------------------");
+
+
                 TServer.InitializeTServer();
+                LogServer.InitializeTServer();
                 SettingComponents = new SettingComponents(this);
                 ResourceComponents = new ResourceComponents(this);
 
                 SettingComponents.Set(SettingMgr.Get());
+
+
+                
+               
             };
+
         }
 
        
@@ -191,6 +202,12 @@ namespace TrboX
         private void btn_Apply_Click(object sender, RoutedEventArgs e)
         {
            SettingMgr.Set(SettingComponents.Get());
+
+           UserMgr.Save();
+           DepartmentMgr.Save();
+           StaffMgr.Save();
+
+           DepartmentMgr.SaveDeptStaff();
         }
 
         private void btn_SetDefault_Click(object sender, RoutedEventArgs e)
@@ -256,17 +273,5 @@ namespace TrboX
             }
         }
 
-        private void btn_SaveUser_Click(object sender, RoutedEventArgs e)
-        {
-            UserStr User = new UserStr(){
-                username=txt_UserName.Text,
-                password = psd_UserPassword.Password,
-            };
-
-
-           // lst_User.Items.Add(new ListViewItem() { Content = User });
-            lst_User.Items.Add(User);
-        }
-     
     }
 }

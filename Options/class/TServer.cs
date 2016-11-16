@@ -63,13 +63,14 @@ namespace TrboX
         private static TcpInterface TCP = null;
         private static long PackageNumber = 0;
 
-        public static RunMode SystemType = RunMode.Radio;
+       // public static RunMode SystemType = RunMode.Radio;
         public static Dictionary<RequestType, RxRequestDel> RxRequestList = new Dictionary<RequestType, RxRequestDel>();
 
         public static bool IsInCalled = false;
-        
+
         public static Queue<cmd> CmdList = new Queue<cmd>();
-        private static Mutex CallMutex = new Mutex();
+
+        private static Mutex CallMutex= new Mutex();
 
         public TServer()
         {
@@ -87,7 +88,7 @@ namespace TrboX
             TCP = new TcpInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9000), OnReceive);
             TCP.OnConnect = OnConnect;
             TCP.Open();
-           
+
 
             ThreadStart threadStart = new ThreadStart(delegate() { while (true)OnRx(); });
             Thread th = new Thread(threadStart);
@@ -96,11 +97,13 @@ namespace TrboX
 
         private static void OnConnect()
         {
-             ThreadStart thread = new ThreadStart(delegate(){ Thread.Sleep(1000);
-                MyWindow.PushMessage(new CustomMessage(DestType.OnConnectTServer, ""));
-                });
-                Thread thx = new Thread(thread);
-                thx.Start();
+            ThreadStart thread = new ThreadStart(delegate()
+            {
+                Thread.Sleep(1000);
+                //MyWindow.PushMessage(new CustomMessage(DestType.OnConnectTServer, ""));
+            });
+            Thread thx = new Thread(thread);
+            thx.Start();
         }
 
         public static void RegRxHanddler(RequestType type, RxRequestDel handler)
@@ -118,35 +121,35 @@ namespace TrboX
         public static object Call(object obj)
         {
             CallMutex.WaitOne();
+            object res = null;
 
-            object reslut = null;
             if (obj is Setting)
             {
                 SettingMgr setmgr = new SettingMgr(obj as Setting, PackageNumber);
-                reslut = Call(setmgr.Json, setmgr.Parse);
+                res =  Call(setmgr.Json, setmgr.Parse);
             }
-            else if (obj is COperate)
-            {
-                Dictionary<string, object> res = new Dictionary<string, object>();
+            //else if (obj is COperate)
+            //{
+            //    res = new Dictionary<string, object>();
 
-                if (RunMode.Radio == SystemType)
-                {
-                    RadioOperate radioop = new RadioOperate(obj as COperate, PackageNumber);
-                    List<string> json = radioop.Json;
-                    foreach (string js in json) res.Add(js, Call(js, radioop.Parse(js)));
-                }
-                else if (RunMode.Repeater == SystemType)
-                {
-                    WirelanOperate wirelanopop = new WirelanOperate(obj as COperate, PackageNumber);
-                    List<string> json = wirelanopop.Json;
-                    foreach (string js in json) res.Add(js, Call(js, wirelanopop.Parse(js)));
-                }
+            //    if (RunMode.Radio == SystemType)
+            //    {
+            //        RadioOperate radioop = new RadioOperate(obj as COperate, PackageNumber);
+            //        List<string> json = radioop.Json;
+            //        foreach (string js in json) res.Add(js, Call(js, radioop.Parse(js)));
+            //    }
+            //    else if (RunMode.Repeater == SystemType)
+            //    {
+            //        WirelanOperate wirelanopop = new WirelanOperate(obj as COperate, PackageNumber);
+            //        List<string> json = wirelanopop.Json;
+            //        foreach (string js in json) res.Add(js, Call(js, wirelanopop.Parse(js)));
+            //    }
 
-                reslut = res;
-            }
+            //    return res;
+            //}
 
             CallMutex.ReleaseMutex();
-            return reslut;
+            return res;
         }
 
         public static object Call(string str, ParseDel parse = null)
@@ -156,6 +159,8 @@ namespace TrboX
             object obj = ReadResponse(PackageNumber);
             if (null != parse) res = parse(obj);
             PackageNumber++;
+
+            
             return res;
         }
 
@@ -199,7 +204,7 @@ namespace TrboX
             }
             foreach (long key in del) RxResponse.Remove(key);
 
-            if(res == null)
+            if (res == null)
             {
                 DataBase.InsertLog("读取Reponse超时，CallID：" + CallId.ToString());
             }
@@ -224,73 +229,73 @@ namespace TrboX
         private static void OnReceive(string str)
         {
 
-             Regex regex=new Regex("}{");//以$cjlovefl$分割
-             string[] sArray = regex.Split(str);
+            Regex regex = new Regex("}{");//以$cjlovefl$分割
+            string[] sArray = regex.Split(str);
 
-             for(int i =0; i < sArray.Length; i++)
-             {
+            for (int i = 0; i < sArray.Length; i++)
+            {
 
-                 if (sArray.Length  > 1 )
-                 {
-                 if(i == 0)
-                 {
-                     sArray[i] = sArray[i] + "}";
-                 }
-                 else if (i == sArray.Length - 1)
-                 {
-                     sArray[i] = "{" + sArray[i];
-                 }
-                 else
-                 {
-                     sArray[i] = "{" + sArray[i] + "}";
-                 }
-                 }
+                if (sArray.Length > 1)
+                {
+                    if (i == 0)
+                    {
+                        sArray[i] = sArray[i] + "}";
+                    }
+                    else if (i == sArray.Length - 1)
+                    {
+                        sArray[i] = "{" + sArray[i];
+                    }
+                    else
+                    {
+                        sArray[i] = "{" + sArray[i] + "}";
+                    }
+                }
 
-                 try
-                 {
-                     //Console.WriteLine("接收Json：{0}", sArray[i]);
+                try
+                {
+                    //Console.WriteLine("接收Json：{0}", sArray[i]);
 
-                     JObject json = JsonConvert.DeserializeObject<JObject>(sArray[i]);
+                    JObject json = JsonConvert.DeserializeObject<JObject>(sArray[i]);
 
-                     if (json.Property("call") == null || json.Property("call").ToString() == "")//not type
-                     {
-                         //Console.WriteLine("response");
-                         TServerResponse rxresponse = JsonConvert.DeserializeObject<TServerResponse>(sArray[i]);
+                    if (json.Property("call") == null || json.Property("call").ToString() == "")//not type
+                    {
+                        //Console.WriteLine("response");
+                        TServerResponse rxresponse = JsonConvert.DeserializeObject<TServerResponse>(sArray[i]);
 
-                         lock (RxResponse)
-                         {
-                             RxResponse.Add(rxresponse.callId, rxresponse);
-                         }
-                     }
-                     else
-                     { 
-                         TServerRequest rxrequest = JsonConvert.DeserializeObject<TServerRequest>(JsonConvert.SerializeObject(json));
+                        lock (RxResponse)
+                        {
+                            RxResponse.Add(rxresponse.callId, rxresponse);
+                        }
+                    }
+                    else
+                    { //op request
+                        //Console.WriteLine("TServerRequestStr");
 
-                         if (rxrequest != null)
-                         {
-                             PackageNumber = rxrequest.callId;
+                        TServerRequest rxrequest = JsonConvert.DeserializeObject<TServerRequest>(JsonConvert.SerializeObject(json));
 
-                             Write(JsonConvert.SerializeObject(new TServerResponse()
-                             {
-                                 status = "success",
-                                 callId = rxrequest.callId,
-                             }));
+                        if (rxrequest != null)
+                        {
+                            PackageNumber = rxrequest.callId;
 
-                             lock (RxRequest)
-                             {
-                                 RxRequest.Enqueue(rxrequest);
-                             }
-                         }
-                     }
-                 }
-                 catch
-                 {
-                     DataBase.InsertLog("Json解析错误：" + sArray[i]);
-                     
-                     //Console.WriteLine("不是Json:"+sArray[i]);
-                 }
+                            Write(JsonConvert.SerializeObject(new TServerResponse()
+                            {
+                                status = "success",
+                                callId = rxrequest.callId,
+                            }));
 
-             }
+                            lock (RxRequest)
+                            {
+                                RxRequest.Enqueue(rxrequest);
+                            }
+                        }
+                    }
+                }
+                catch
+                {
+                    DataBase.InsertLog("Json解析错误：" + sArray[i]);
+                }
+
+            }
         }
 
         private static void OnRx()
@@ -344,6 +349,11 @@ namespace TrboX
         setRepeaterSetting,
         getRepeaterSetting,
 
+        user,
+        department,
+        radio,
+        staff,
+
         getUser,
         getUserCount,
         addUser,
@@ -390,7 +400,7 @@ namespace TrboX
         control,
         controlStatus,
 
-        
+
         wlInfo,
 
         wlCall,

@@ -18,9 +18,7 @@ CMySQL::CMySQL(void)
 
 CMySQL::~CMySQL(void)
 {
-	m_bStoped = true;
-	m_hExitEvent.notify_all();
-	//m_pingThread.join();
+	
 }
 
 bool CMySQL::open(const char* host, unsigned short port, const char* user, const char* pass, const char* db)
@@ -72,8 +70,8 @@ bool CMySQL::open(const char* host, unsigned short port, const char* user, const
 			}
 		}
 
-		my_bool autocommit = 0;
-		mysql_autocommit(m_pMysqlConnection, autocommit);
+		//my_bool autocommit = 0;
+		//mysql_autocommit(m_pMysqlConnection, autocommit);
 
 		mysql_set_character_set(m_pMysqlConnection, "utf8");
 		mysql_select_db(m_pMysqlConnection, db);
@@ -96,8 +94,9 @@ bool CMySQL::open(const char* host, unsigned short port, const char* user, const
 				}
 
 				// wait quit event and timeout
-				std::unique_lock<std::mutex> lk(this->m_mtxQuit);
-				this->m_hExitEvent.wait_for(lk, std::chrono::seconds(1));
+				Sleep(180000);
+				//std::unique_lock<std::mutex> lk(this->m_mtxQuit);
+				//this->m_hExitEvent.wait_for(lk, std::chrono::seconds(180));
 			}
 		});
 	}
@@ -239,7 +238,7 @@ int CMySQL::del(const char* table, const char* condition)
 void CMySQL::close()
 {
 	m_bStoped = true;
-	m_hExitEvent.notify_all();
+	//m_hExitEvent.notify_one();
 	m_pingThread.join();
 
 	if (m_pMysqlConnection)
@@ -340,8 +339,8 @@ int CMySQL::query(const char* sql, std::list<recordType> &records)
 			{
 				std::map<std::string, std::string> rowValue;
 				for (int i = 0; i < num_fields; i++)
-				{
-					rowValue[tableFields[i]] = row[i];
+				{				
+					rowValue[tableFields[i]] = row[i] == NULL ? "0" : row[i];
 				}
 				records.push_back(rowValue);
 			}
@@ -415,7 +414,7 @@ int CMySQL::find(const char* table, const char* condition, std::list<recordType>
 				std::map<std::string, std::string> rowValue;
 				for (int i = 0; i < num_fields; i++)
 				{
-					rowValue[tableFields[i]] = row[i];
+					rowValue[tableFields[i]] = row[i] == NULL ? "0" : row[i];
 				}
 				records.push_back(rowValue);
 			}

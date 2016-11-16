@@ -80,6 +80,8 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 				FieldValue fvRecords(FieldValue::TArray);
 				for (auto i = records.begin(); i != records.end(); i++)
 				{
+					if (0 == (*i)["user"].compare("0"))continue;
+
 					FieldValue r(FieldValue::TObject);
 
 					for (auto j = (*i).begin(); j != (*i).end(); j++){
@@ -167,7 +169,7 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 					updateVal["type"] = type;
 				}
 
-				std::string updCond = " where `id`=" + CDb::instance()->getUserIdByStaffId(id);
+				std::string updCond = " where `id`=" + std::to_string(CDb::instance()->getUserIdByStaffId(id));
 				bool ret = CDb::instance()->updateUser(updCond.c_str(), updateVal);
 				if (!ret)
 				{

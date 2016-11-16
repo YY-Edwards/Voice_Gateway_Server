@@ -16,7 +16,7 @@ namespace TrboX
         private Main m_Main;
 
 
-        Dictionary<int, int> m_DefaultGroupCmb = new Dictionary<int, int>();
+        Dictionary<long, int> m_DefaultGroupCmb = new Dictionary<long, int>();
         
         public SettingComponents(Main main)
         {
@@ -253,7 +253,7 @@ namespace TrboX
 
                 try
                 {
-                    WireLan.DefaultGroupId = ((CGroup)((ComboBoxItem)m_Main.cmb_DefaultGroup.SelectedItem).Tag).GroupID;
+                    WireLan.DefaultGroupId = (int)((Department)((ComboBoxItem)m_Main.cmb_DefaultGroup.SelectedItem).Tag).GroupID;
                 }
                 catch { }
 
@@ -333,7 +333,7 @@ namespace TrboX
             return WireLan;
         }
 
-        public void FileGroupList(Dictionary<int, CGroup> lst)
+        public void FileGroupList(Dictionary<int, Department> lst)
         {
             m_Main.cmb_DefaultGroup.Items.Clear();
             m_DefaultGroupCmb.Clear();

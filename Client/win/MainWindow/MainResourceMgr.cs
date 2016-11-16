@@ -559,8 +559,11 @@ namespace TrboX
                         return;
                     }
 
-                    Target.Update(new Radio() { ID = -2, RadioID = id, IsTx = online });
+                    Radio rad = new Radio() { ID = -2, RadioID = id, IsTx = online };
+                    Target.Update(rad);
                     IsNeedUpdate = true;
+                    m_Main.WorkArea.FastPanel.UpdateOpWin(new CMember() { Type = MemberType.Radio, Radio = rad }, 4, online);
+
                 }
                 else if (type == TargetType.Group)
                 {
@@ -576,8 +579,11 @@ namespace TrboX
                         return;
                     }
 
-                    Target.Update(new Department() { ID = -2, Name = "组：" + id.ToString(), GroupID = id, IsTx = online });
+                    Department dep = new Department() { ID = -2, Name = "组：" + id.ToString(), GroupID = id, IsTx = online };
+
+                    Target.Update(dep);
                     IsNeedUpdate = true;
+                    m_Main.WorkArea.FastPanel.UpdateOpWin(new CMember() { Type = MemberType.Group, Group = dep }, 4, online);
                 }
             }
             catch
@@ -607,8 +613,10 @@ namespace TrboX
                         return;
                     }
 
-                    Target.Update(new Radio() { ID = -2, RadioID = id, IsRx = online });
+                    Radio rad = new Radio() { ID = -2, RadioID = id, IsRx = online };
+                    Target.Update(rad);
                     IsNeedUpdate = true;
+                    m_Main.WorkArea.FastPanel.UpdateOpWin(new CMember() {Type = MemberType.Radio , Radio = rad}, 8, online);
                 }
                 else if (type == TargetType.Group)
                 {
@@ -623,9 +631,11 @@ namespace TrboX
                         m_Main.WorkArea.FastPanel.UpdateOpWin(item.Value, 8, online);
                         return;
                     }
+                    Department dep = new Department() { ID = -2, Name = "组：" + id.ToString(), GroupID = id, IsRx = online };
 
-                    Target.Update(new Department() { ID = -2, Name = "组：" + id.ToString(), GroupID = id, IsRx = online });
+                    Target.Update(dep);
                     IsNeedUpdate = true;
+                    m_Main.WorkArea.FastPanel.UpdateOpWin(new CMember() { Type = MemberType.Group, Group = dep }, 8, online);
                 }
             }
             catch

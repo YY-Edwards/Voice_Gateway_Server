@@ -5,6 +5,7 @@ using System.Data;
 using System.Linq;
 using System.Windows;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace TrboX
 {
@@ -19,24 +20,42 @@ namespace TrboX
         public static string SettingTempFile = "tmp.setting.xml";
         public static string ResourceTempFile = "tmp.Resource.db";
 
-        public static string Directory
-        {    get
-            {                    
+        public static string TmpDirectory
+        {
+            get
+            {
+                if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + Company + "\\" + Name + "\\" + Version + "\\"))
+                {
+                    Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + Company + "\\" + Name + "\\" + Version + "\\");
+                }
                 return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + Company + "\\" + Name + "\\" + Version + "\\";
+            }
+        }
+
+        public static string runTimeDirectory
+        {
+            get
+            {
+                if (!Directory.Exists(TmpDirectory + "runtime\\"))
+                {
+                    Directory.CreateDirectory(TmpDirectory + "runtime\\");
+                }
+                return TmpDirectory + "runtime\\";
+
             }
         }
         public static string SettingTempPath
         {
             get
             {
-                return Directory + SettingTempFile;
+                return TmpDirectory + SettingTempFile;
             }
         }
         public static string ResourceTempPath
         {
             get
             {
-                return Directory + ResourceTempFile;
+                return TmpDirectory + ResourceTempFile;
             }
         }
     }

@@ -23,6 +23,8 @@ using System.Xml.Linq;
 using System.Net;
 using System.Net.Sockets;
 
+using System.Threading;
+
 
 namespace TrboX
 {
@@ -65,9 +67,9 @@ namespace TrboX
     }
     public enum WireLanType
     {
-        IPSC,
-        CPC,
-        LCP,
+        IPSC = 0,
+        CPC = 1,
+        LCP = 2,
     };
 
 
@@ -120,7 +122,7 @@ namespace TrboX
         public void Set()
         {
             Op = SettingOpType.Set;
-            TServer.Call(this);
+            new Thread(new ThreadStart(delegate() { TServer.Call(this); })).Start();  
         }
         public object Get()
         {
