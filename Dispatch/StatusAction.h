@@ -16,14 +16,14 @@ void  statusAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 		TcpClient * client = new TcpClient();
 		SOCKET s = client->s = ((TcpClient *)pRemote)->s;
 		client->addr = ((TcpClient *)pRemote)->addr;
-		if (m_dispatchOperate.find(s) != m_dispatchOperate.end())
+	//	if (m_dispatchOperate.find(s) != m_dispatchOperate.end())
 		{
 			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
 			if (d.HasMember("getType") && d["getType"].IsInt())
 			{
 				int type = d["getType"].GetInt();
-				cs.getRadioStatus(client, type, callId);
+				//cs.getRadioStatus(client, type, callId);
 				switch (type)
 				{
 				case CONNECT_STATUS:

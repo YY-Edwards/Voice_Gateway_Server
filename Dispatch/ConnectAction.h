@@ -5,11 +5,10 @@
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
 #include "../lib/rpc/include/TcpServer.h"
-CDataScheduling cs;
+DispatchOperate dis;
 void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
-
 	std::lock_guard<std::mutex> locker(lock);
 	try{
 		std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "sucess", ArgumentType());
@@ -19,69 +18,64 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 		SOCKET s = client->s = ((TcpClient *)pRemote)->s;
 		client->addr = ((TcpClient *)pRemote)->addr;
 
-		string radioIP = "";
-		string mnisIP = "";
+		std::string radioIP = "";
+		std::string mnisIP = "";
 		Document d;
 		d.Parse(param.c_str());
-	/*	if (doc.HasMember("param"))
-		if (doc["param"].IsObject())*/
+	
+		if (d.HasMember("Ride") && d["Ride"].IsObject())
 		{
-			//Value obj = doc["param"].GetObject();
-
-			//radioIP
-			if (d.HasMember("Ride") && d["Ride"].IsObject())
+			Value objRadio = d["Ride"].GetObject();
+			if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
 			{
-				Value objRadio = d["Ride"].GetObject();
-				if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
-				{
-					radioIP = objRadio["Ip"].GetString();
-
-				}
-			}
-			//mnisIP
-			if (d.HasMember("Mnis") && d["Mnis"].IsObject())
-			{
-				Value objRadio = d["Mnis"].GetObject();
-				if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
-				{
-					mnisIP = objRadio["Ip"].GetString();
-
-
-				}
-			}
-			//GPS ·­×ªIP
-			if (d.HasMember("Gps") && d["Gps"].IsObject())
-			{
-				Value objRadio = d["Gps"].GetObject();
-				if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
-				{
-					//radioIP = objRadio["Ip"].GetString();
-
-				}
-			}
-			if (radioIP!=m_radioIP && mnisIP !=m_mnisIP)
-			{
-				if (mnisIP != "")
-				{
-					cs.radioConnect(client, mnisIP.c_str(), callId);
-					m_mnisIP = mnisIP;
-				}
-				else if (radioIP != "")
-				{
-					m_radioIP = radioIP;
-					cs.radioConnect(client,  radioIP.c_str(), callId);
-					m_dispatchOperate[s]->AddAllCommand(client, s, RADIO_CONNECT, radioIP, mnisIP, "", 0, _T(""), 0, 0, callId);
-				}
-				
-			}
-			else
-			{
+				radioIP = objRadio["Ip"].GetString();
 
 			}
+		}
+		//mnisIP
+		if (d.HasMember("Mnis") && d["Mnis"].IsObject())
+		{
+			Value objRadio = d["Mnis"].GetObject();
+			if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
+			{
+				mnisIP = objRadio["Ip"].GetString();
+
+
+			}
+		}
+		//GPS ·­×ªIP
+		if (d.HasMember("Gps") && d["Gps"].IsObject())
+		{
+			Value objRadio = d["Gps"].GetObject();
+			if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
+			{
+				//radioIP = objRadio["Ip"].GetString();
+
+			}
+		}
+		if (radioIP!=m_radioIP && mnisIP !=m_mnisIP)
+		{
+			dis.connect(client,radioIP.c_str(),mnisIP.c_str(),callId);
+			//if (mnisIP != "")
+			//{
+			//	//cs.radioConnect(client, mnisIP.c_str(), callId);
+			//	m_mnisIP = mnisIP;
+			//}
+			//else if (radioIP != "")
+			//{
+			//	m_radioIP = radioIP;
+			//	//cs.radioConnect(client,  radioIP.c_str(), callId);
+			//	//m_dispatchOperate[s]->addTcpCommand(client, s, RADIO_CONNECT, radioIP, mnisIP, "", 0, _T(""), 0, 0, callId);
+			//}
 			
 		}
+		else
+		{
 
+		}
+		
 	}
+
 	catch (std::exception e){
 
 	}

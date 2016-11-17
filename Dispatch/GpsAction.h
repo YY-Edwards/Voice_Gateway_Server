@@ -17,7 +17,7 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 		TcpClient * client = new TcpClient();
 		SOCKET s = client->s = ((TcpClient *)pRemote)->s;
 		client->addr = ((TcpClient *)pRemote)->addr;
-		if (m_dispatchOperate.find(s) != m_dispatchOperate.end())
+		//if (m_dispatchOperate.find(s) != m_dispatchOperate.end())
 		{
 			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
@@ -44,14 +44,14 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			}
 			if (operate == START)
 			{
-				if (!cs.radioGetGps(client, id, querymode, cycle, callId))
+				//if (!cs.radioGetGps(client, id, querymode, cycle, callId))
 				{
 					ArgumentType args;
 					args["Target"] = FieldValue(id);
 					args["Type"] = FieldValue(querymode);
 					args["Cycle"] = FieldValue(cycle);
 					args["Operate"] = FieldValue(operate);
-					args["Status"] = FieldValue(FAILED);
+					args["Status"] = FieldValue(UNSUCESS);
 					std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGpsStatus", callId, args, "radio");
 					if (client != NULL)
 					{
@@ -82,14 +82,14 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 				{
 					querymode = radioStatus[buf].gpsQueryMode;
 				}	
-				if(!cs.radioStopGps(client, id, querymode, callId))
+				//if(!cs.radioStopGps(client, id, querymode, callId))
 				{
 					ArgumentType args;
 					args["Target"] = FieldValue(id);
 					args["Type"] = FieldValue(querymode);
 					args["Cycle"] = FieldValue(cycle);
 					args["Operate"] = FieldValue(operate);
-					args["Status"] = FieldValue(FAILED);
+					args["Status"] = FieldValue(UNSUCESS);
 					std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGpsStatus", callId, args, "radio");
 					if (client != NULL)
 					{

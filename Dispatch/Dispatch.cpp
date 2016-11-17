@@ -7,6 +7,7 @@
 #include <Shlwapi.h>
 #include <shlobj.h>  
 #include "Util.h"
+#include "DispatchOperate.h"
 #include "../lib/rpc/include/RpcServer.h"
 //#include"AllCallEventAction.h"
 //#include"CallEventAction.h"
@@ -42,7 +43,7 @@ static SERVICE_STATUS g_ServiceStatus = { 0 };
 static HANDLE g_ServiceStopEvent = INVALID_HANDLE_VALUE;
 static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 
-DispatchOperate  * dis;
+//DispatchOperate  * dis;
 
 
 //void StartService()
@@ -556,6 +557,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	CRpcServer rpcServer;
 	rpcServer.setOnConnectHandler(DispatchOperate::OnConnect);
 	rpcServer.setOnDisconnectHandler(DispatchOperate::OnDisConnect);
+
 	//rpcServer.addActionHandler("allCall",allCallEventAction);
 	//rpcServer.addActionHandler("call",callEventAction);
 	//rpcServer.addActionHandler("cancelGps",cancelgpspEventAction);
@@ -583,8 +585,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	
 	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);                    //¼ì²éÄÚ´æÐ¹Â©
-	dis = new DispatchOperate();
-	cs.setCallBackFunc(DispatchOperate::OnData);
+	//dis = new DispatchOperate();
+	//cs.setCallBackFunc(DispatchOperate::OnData);
 	while (1){ Sleep(1); };
 
 	return 0;

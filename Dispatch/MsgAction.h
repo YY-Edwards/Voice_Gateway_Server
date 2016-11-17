@@ -16,13 +16,13 @@ void  msgAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 		TcpClient * client = new TcpClient();
 		SOCKET s = client->s = ((TcpClient *)pRemote)->s;
 		client->addr = ((TcpClient *)pRemote)->addr;
-		if (m_dispatchOperate.find(s) != m_dispatchOperate.end())
+		//if (m_dispatchOperate.find(s) != m_dispatchOperate.end())
 		{
 			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
 			int opterateType = -1;
 			int id = -1;
-			string msg = "";
+			std::string msg = "";
 			if (d.HasMember("Type") && d["Type"].IsInt())
 			{
 				opterateType = d["Type"].GetInt();
@@ -38,7 +38,7 @@ void  msgAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			int msgSize = (int)(msg.length() + 1);
 			wchar_t* text = new wchar_t[msgSize];
 			MultiByteToWideChar(CP_ACP, 0, msg.c_str(), -1, text, msgSize);
-			if (!cs.radioSendMsg(client, text, id, callId, opterateType))
+			//if (!cs.radioSendMsg(client, text, id, callId, opterateType))
 			{
 				ArgumentType args;
 				args["Target"] = FieldValue(id);
