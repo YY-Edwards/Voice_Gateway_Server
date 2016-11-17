@@ -3,8 +3,8 @@
 
 #include <mutex>
 #include <list>
-#include "../lib/rpc/include/TcpServer.h"
-#include "../lib/rpc/include/BaseConnector.h"
+#include "../rpc/include/TcpServer.h"
+#include "../rpc/include/BaseConnector.h"
 #include <WinSock2.h>
 #include <Windows.h>
 
