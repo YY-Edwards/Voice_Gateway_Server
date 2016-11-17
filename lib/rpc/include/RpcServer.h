@@ -60,8 +60,8 @@ protected:
 
 	std::thread	m_maintainThread;
 	bool m_bQuit;
-	std::mutex m_mtxQuit;
-	std::condition_variable m_evQuit;
+	//std::mutex m_mtxQuit;
+	//std::condition_variable m_evQuit;
 
 	std::function<void(CRemotePeer*)> m_fnNewClient;
 	std::function<void(CRemotePeer*)> m_fnClientDisconnect;

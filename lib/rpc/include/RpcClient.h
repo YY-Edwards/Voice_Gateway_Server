@@ -49,8 +49,8 @@ protected:
 	std::mutex m_mtxRequest;
 	IncomeDataHandler m_fnIncomeHandler;
 	std::thread	m_maintainThread;
-	std::mutex m_mtxQuit;
-	std::condition_variable m_evQuit;
+	//std::mutex m_mtxQuit;
+	//std::condition_variable m_evQuit;
 	std::atomic<bool> m_bQuit;
 
 	uint64_t m_nCallId;
