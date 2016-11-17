@@ -1,6 +1,6 @@
 
 
-#include "../lib/radio/common.h"
+#include "../common.h"
 #pragma once
 #define SEND_IMM_QUERY_LENTH   10
 #define SEND_TRG_QUERY_LENTH   11

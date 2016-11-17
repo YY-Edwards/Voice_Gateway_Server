@@ -1,6 +1,7 @@
-#include "../lib/radio/text/TextMsg.h"
-#include "../lib/radio/ars/RadioARS.h"
-#include "../lib/radio/gps/RadioGps.h"
+#pragma once
+#include "../radio/text/TextMsg.h"
+#include "../radio/ars/RadioARS.h"
+#include "../radio/gps/RadioGps.h"
 #include <Dbt.h>
 #include <initguid.h>
 #include <Ndisguid.h>
@@ -8,8 +9,6 @@
 
 #define CLS_NAME _T("DUMMY_CLASS")
 #define HWND_MESSAGE     ((HWND)-3)
-#pragma once
-
 
 class CDataScheduling
 {

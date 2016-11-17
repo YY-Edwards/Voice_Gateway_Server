@@ -91,4 +91,5 @@ void onData(void(*func)(TcpClient* tp, int, int, Respone), TcpClient* tp, int ca
 extern std::list <Command> timeOutList;
 extern std::map<std::string, RadioStatus> radioStatus;
 extern std::string  lastIP ;
+
 #endif

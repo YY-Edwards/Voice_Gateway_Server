@@ -1,5 +1,5 @@
 
-#include "../lib/radio/common.h"
+#include "../common.h"
 #pragma once
 #define SEND_LENTH   4
 #define RECV_LENTH   28

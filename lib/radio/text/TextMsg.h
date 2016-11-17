@@ -1,11 +1,12 @@
+#pragma once
 #ifdef MSG_DLL_API
 #else
 #define MSG_DLL_API  __declspec(dllexport)
 #endif
 
 
-#include "../lib/radio/common.h"
-#pragma once
+#include "../common.h"
+
 #define MAX_MESSAGE_LENGTH			(512 + 1)           // 最大可以接收1024个Unicode的字符，多一个字符位置是保存字符串结尾,目前 Text Message 的最大长度是 140 unicode.
 #define MESSAGE_BUFFER              MAX_MESSAGE_LENGTH * 2
 #define UINT8    unsigned   __int8
