@@ -124,10 +124,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	wlClientActions["wlPlayStatus"] = wlPlayStatusAction;
 	wlClientActions["wlGetConfig"] = wlGetConfigAction;
 	//CBroker::instance()->startLogClient();
-	CBroker::instance()->startRadioClient(clientActions);
+	
 	CBroker::instance()->startWireLanClient(wlClientActions);
 	CBroker::instance()->startRpcServer(serverActions);
-
+	CBroker::instance()->startRadioClient(clientActions);
 	//rpcServer.addActionHandler("call", callAction);
 	//rpcServer.addActionHandler("control", controlAction);
 	//rpcServer.addActionHandler("queryGps", gpsAction);

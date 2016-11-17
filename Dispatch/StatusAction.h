@@ -23,13 +23,15 @@ void  statusAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 			if (d.HasMember("getType") && d["getType"].IsInt())
 			{
 				int type = d["getType"].GetInt();
+				cs.getRadioStatus(client, type, callId);
 				switch (type)
 				{
 				case CONNECT_STATUS:
-					m_dispatchOperate[s]->AddAllCommand(client, s, RADIO_CONNECT, "", "", "", 0, _T(""), 0, 0, callId);
+					
+					//m_dispatchOperate[s]->AddAllCommand(client, s, RADIO_CONNECT, "", "", "", 0, _T(""), 0, 0, callId);
 					break;
 				case RADIO_STATUS:
-					m_dispatchOperate[s]->AddAllCommand(client, s, RADIO_ARS, "", "", "", 0, _T(""), 0, 0, callId);
+				   //	m_dispatchOperate[s]->AddAllCommand(client, s, RADIO_ARS, "", "", "", 0, _T(""), 0, 0, callId);
 					break;
 				}
 				

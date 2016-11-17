@@ -3,9 +3,7 @@
 #define MSG_DLL_API  __declspec(dllexport)
 #endif
 
-#include <WinSock2.h>
-#include <Windows.h>
-#include "../lib/rpc/include/BaseConnector.h"
+
 #include "../lib/radio/common.h"
 #pragma once
 #define MAX_MESSAGE_LENGTH			(512 + 1)           // 最大可以接收1024个Unicode的字符，多一个字符位置是保存字符串结尾,目前 Text Message 的最大长度是 140 unicode.

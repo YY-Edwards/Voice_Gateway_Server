@@ -1415,6 +1415,19 @@ void DispatchOperate::OnData(TcpClient* peer, int callId, int call, Respone data
 		break;
 	case SEND_PRIVATE_MSG:
 		args["type"] = FieldValue(PRIVATE);
+		try
+		{
+			args["Source"] = FieldValue(NULL);
+			args["Target"] = FieldValue(data.target);
+			args["contents"] = FieldValue("");
+			args["status"] = FieldValue(data.msgStatus);
+			dis->send2Client("messageStatus", args, peer);
+		}
+		catch (exception e)
+		{
+
+		}
+		break;
 	case SEND_GROUP_MSG:
 		args["type"] = FieldValue(GROUP);
 		try
@@ -1422,7 +1435,7 @@ void DispatchOperate::OnData(TcpClient* peer, int callId, int call, Respone data
 			args["Source"] = FieldValue(NULL);
 			args["Target"] = FieldValue(data.target);
 			args["contents"] = FieldValue("");
-			args["status"] = FieldValue(SUCESS);
+			args["status"] = FieldValue(data.msgStatus);
 			dis->send2Client("messageStatus", args, peer);
 		}
 		catch (exception e)
@@ -1448,7 +1461,8 @@ void DispatchOperate::OnData(TcpClient* peer, int callId, int call, Respone data
 		args["Cycle"] = FieldValue(data.cycle);
 		args["Operate"] = FieldValue(data.operate);
 		args["Status"] = FieldValue(data.gpsStatus);
-		dis->send2Client("queryGpsStatus", args, peer);
+		args["Operate"] = FieldValue(data.gpsType);
+		dis->send2Client("sendGpsStatus", args, peer);
 		break;
 	case RECV_GPS:
 		
@@ -1475,6 +1489,31 @@ void DispatchOperate::OnData(TcpClient* peer, int callId, int call, Respone data
 			args["IsOnline"] = FieldValue("False");
 		}
 		dis->send2Client("sendArs", args, peer);
+		break;
+	case RADIO_STATUS:
+		std::map<std::string,RadioStatus>::iterator it;
+		args["getType"] = RADIO_STATUS;
+		FieldValue info(FieldValue::TArray);
+		for (it = data.rs.begin(); it != data.rs.end(); it++)
+		{
+			FieldValue element(FieldValue::TObject);
+			element.setKeyVal("radioId", FieldValue(it->second.id));
+			bool isGps = false;
+			if (it->second.gpsQueryMode != 0)
+			{
+				isGps = true;
+			}
+			bool isArs = false;
+			if (it->second.status != 0)
+			{
+				isArs = true;
+			}
+			element.setKeyVal("IsInGps", FieldValue(isGps));
+			element.setKeyVal("IsOnline", FieldValue(isArs));
+			info.push(element);
+		}
+		args["info"] = info;
+		dis->send2Client("status", args, peer);
 		break;
 	}
 }

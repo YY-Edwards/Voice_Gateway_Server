@@ -740,30 +740,30 @@ void CRadioGps::RecvData()
 		 arg["Target"] = FieldValue(radioID);
 		 if (radioStatus.find(radioID) == radioStatus.end())
 		 {
-		 RadioStatus st;
-		 st.id = atoi(radioID);
-		 st.status = RADIO_STATUS_ONLINE;
-		 st.gpsQueryMode = queryMode;
-		 radioStatus[radioID] = st;
-		 Respone r;
-		 r.source = m_ThreadGps->radioID;
-		 r.arsStatus = FAILED;
-		 onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
+			RadioStatus st;
+			st.id = atoi(radioID);
+			st.status = RADIO_STATUS_ONLINE;
+			st.gpsQueryMode = queryMode;
+			radioStatus[radioID] = st;
+			Respone r;
+			r.source = m_ThreadGps->radioID;
+			r.arsStatus = SUCESS;
+			onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
 
 		 }
 		 else if (radioStatus[radioID].status == RADIO_STATUS_OFFLINE)
 		 {
-		 radioStatus[radioID].gpsQueryMode = queryMode;
-		 radioStatus[radioID].status = RADIO_STATUS_ONLINE;
-		 Respone r;
-		 r.source = m_ThreadGps->radioID;
-		 r.arsStatus = FAILED;
-		 onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
-		 }
-		 }
-		 else
-		 {
-		 return;
-		 }
+			 radioStatus[radioID].gpsQueryMode = queryMode;
+			 radioStatus[radioID].status = RADIO_STATUS_ONLINE;
+			 Respone r;
+			 r.source = m_ThreadGps->radioID;
+			 r.arsStatus = SUCESS;
+			 onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
+		}
+	 }
+	else
+	{
+		return;
+	}
 		 
 }

@@ -1,7 +1,5 @@
 
-#include <WinSock2.h>
-#include <Windows.h>
-#include "../lib/rpc/include/BaseConnector.h"
+
 #include "../lib/radio/common.h"
 #pragma once
 #define SEND_IMM_QUERY_LENTH   10

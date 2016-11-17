@@ -3,7 +3,12 @@
 
 
 #include <mutex>
+#include <list>
 #include "../lib/rpc/include/TcpServer.h"
+#include "../lib/rpc/include/BaseConnector.h"
+#include <WinSock2.h>
+#include <Windows.h>
+
 #define               MNIS_CONNECT           0
 #define               SEND_PRIVATE_MSG       9
 #define               SEND_GROUP_MSG         10
@@ -18,6 +23,7 @@
 #define               RECV_GPS               20
 #define               GPS_IMME_CSBK_EGPS     23
 #define               GPS_TRIGG_CSBK_EGPS    24
+
 
 #define PRIVATE_MSG_FLG        12
 #define GROUP_MSG_FLG          225
@@ -53,12 +59,17 @@ typedef struct tagCommand
 	TcpClient* tp;
 	
 }Command;
+typedef  struct tagRadioStatus{
+	int    id;
+	int	   status = 0;
+	int    gpsQueryMode = 0;
+} RadioStatus;
 typedef struct tagRespone
 {
 	int connectStatus;
 	int source;
 	int target;
-	int textType;
+	int msgType;
 	int gpsType;
 	std::string msg;
 	int msgStatus;
@@ -71,17 +82,14 @@ typedef struct tagRespone
 	double cycle;
 	int querymode;
 	int operate;
+	std::map<std::string, RadioStatus> rs;
 }Respone;
-typedef  struct tagRadioStatus{
-	int    id;
-	int	   status = 0;
-	int    gpsQueryMode = 0;
-} RadioStatus;
 extern void(*myCallBackFunc)(TcpClient*, int, int, Respone);
 extern TcpClient * peer;
 extern int seq;
 extern std::mutex m_timeOutListLocker;
 void onData(void(*func)(TcpClient* tp, int, int, Respone), TcpClient* tp, int callId, int call, Respone data);
 extern std::list <Command> timeOutList;
-extern map<std::string, RadioStatus> radioStatus;
+extern std::map<std::string, RadioStatus> radioStatus;
+extern std::string  lastIP ;
 #endif
