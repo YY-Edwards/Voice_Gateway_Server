@@ -44,9 +44,10 @@ int CRpcClient::start(const char* connStr)
 		int nSecondCount = 0;
 		while (!m_bQuit)
 		{
+			Sleep(1000);
 			// wait quit event and timeout
-			std::unique_lock<std::mutex> lk(m_mtxQuit);
-			if (std::cv_status::timeout ==  m_evQuit.wait_for(lk, std::chrono::seconds(1)))
+			//std::unique_lock<std::mutex> lk(m_mtxQuit);
+			//if (std::cv_status::timeout ==  m_evQuit.wait_for(lk, std::chrono::seconds(1)))
 			{
 				if (!m_pConnector->isConnected())
 				{

@@ -149,8 +149,9 @@ int CRpcServer::start(unsigned short port, int type)
 	m_maintainThread = std::thread([&](){
 		while (!m_bQuit)
 		{
-			std::unique_lock<std::mutex> lk(m_mtxQuit);
-			if (std::cv_status::timeout == m_evQuit.wait_for(lk, std::chrono::seconds(1)))
+			Sleep(1000);
+			//std::unique_lock<std::mutex> lk(m_mtxQuit);
+			//if (std::cv_status::timeout == m_evQuit.wait_for(lk, std::chrono::seconds(1)))
 			{
 				// check all commands
 				for (auto c = m_Clients.begin(); c != m_Clients.end(); c++)
