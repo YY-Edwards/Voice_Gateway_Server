@@ -42,72 +42,71 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			{
 				cycle = d["Cycle"].GetDouble();
 			}
-			if (isUdpConnect)
+			if (operate == START)
 			{
-				if (operate == START)
+				if (!cs.radioGetGps(client, id, querymode, cycle, callId))
 				{
-					switch (querymode)
+					ArgumentType args;
+					args["Target"] = FieldValue(id);
+					args["Type"] = FieldValue(querymode);
+					args["Cycle"] = FieldValue(cycle);
+					args["Operate"] = FieldValue(operate);
+					args["Status"] = FieldValue(FAILED);
+					std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGpsStatus", callId, args, "radio");
+					if (client != NULL)
 					{
-					case GPS_IMME_COMM:
-						m_dispatchOperate[s]->AddAllCommand(client, s, GPS_IMME_COMM, "", "", "", id, _T(""), cycle, querymode, callId);
-						break;
-					case GPS_TRIGG_COMM:
-						m_dispatchOperate[s]->AddAllCommand(client, s, GPS_TRIGG_COMM, "", "", "", id, _T(""), cycle, querymode, callId);
-						break;
-					case GPS_IMME_CSBK:
-						m_dispatchOperate[s]->AddAllCommand(client, s, GPS_IMME_CSBK, "", "", "", id, _T(""), cycle, querymode, callId);
-						break;
-					case GPS_TRIGG_CSBK:
-						m_dispatchOperate[s]->AddAllCommand(client, s, GPS_TRIGG_CSBK, "", "", "", id, _T(""), cycle, querymode, callId);
-						break;
-					case GPS_IMME_CSBK_EGPS:
-						m_dispatchOperate[s]->AddAllCommand(client, s, GPS_IMME_CSBK_EGPS, "", "", "", id, _T(""), cycle, querymode, callId);
-						break;
-					case GPS_TRIGG_CSBK_EGPS:
-						m_dispatchOperate[s]->AddAllCommand(client, s, GPS_TRIGG_CSBK_EGPS, "", "", "", id, _T(""), cycle, querymode, callId);
-						break;
-					default:
-#if DEBUG_LOG
-						LOG(INFO) << "querymode 参数不对 ";
-#endif
-						break;
-					}
-					char *buf = new char();
-					itoa(id, buf, 10);
-					if (radioStatus.find(buf) == radioStatus.end())
-					{
-						status st;
-						st.id = id;
-						st.status = RADIO_STATUS_OFFLINE;
-						st.gpsQueryMode = querymode;
-						radioStatus[buf] = st;
-					}
-					else
-					{
-						//radioStatus[buf].status = RADIO_STATUS_OFFLINE;
-						radioStatus[buf].gpsQueryMode = querymode;
+						client->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
 					}
 				}
-				else  if (operate == STOP)
+				//char *buf = new char();
+				//itoa(id, buf, 10);
+				//if (radioStatus.find(buf) == radioStatus.end())
+				//{
+				//	status st;
+				//	st.id = id;
+				//	st.status = RADIO_STATUS_OFFLINE;
+				//	st.gpsQueryMode = querymode;
+				//	radioStatus[buf] = st;
+				//}
+				//else
+				//{
+				//	//radioStatus[buf].status = RADIO_STATUS_OFFLINE;
+				//	radioStatus[buf].gpsQueryMode = querymode;
+				//}
+			}
+			else  if (operate == STOP)
+			{
+				char *buf = new char();
+				itoa(id, buf, 10);
+				if (radioStatus.find(buf) != radioStatus.end())
 				{
-					char *buf = new char();
-					itoa(id, buf, 10);
-					if (radioStatus.find(buf) != radioStatus.end())
+					querymode = radioStatus[buf].gpsQueryMode;
+				}	
+				if(!cs.radioStopGps(client, id, querymode, callId))
+				{
+					ArgumentType args;
+					args["Target"] = FieldValue(id);
+					args["Type"] = FieldValue(querymode);
+					args["Cycle"] = FieldValue(cycle);
+					args["Operate"] = FieldValue(operate);
+					args["Status"] = FieldValue(FAILED);
+					std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGpsStatus", callId, args, "radio");
+					if (client != NULL)
 					{
-						querymode = radioStatus[buf].gpsQueryMode;
+						client->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
 					}
-
-					m_dispatchOperate[s]->AddAllCommand(client, s, STOP_QUERY_GPS, "", "", "", id, _T(""), 0, querymode, callId);
 				}
-				else
-				{
-#if DEBUG_LOG
-					LOG(INFO) << "Operate 参数不对 ";
-#endif
-				}
-
+				//m_dispatchOperate[s]->AddAllCommand(client, s, STOP_QUERY_GPS, "", "", "", id, _T(""), 0, querymode, callId);
 			}
 			else
+			{
+#if DEBUG_LOG
+				LOG(INFO) << "Operate 参数不对 ";
+#endif
+			}
+
+		}
+			/*else
 			{
 				try
 				{
@@ -127,16 +126,9 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 				{
 
 				}
-			}
+			}*/
 		
 		}
-		else
-		{
-#if DEBUG_LOG
-			LOG(INFO) << " 请先确保tcp连接已经建立" ;
-#endif
-		}
-	}
 	catch (std::exception e){
 
 	}

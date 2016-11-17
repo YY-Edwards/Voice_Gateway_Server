@@ -13,6 +13,7 @@
         <src:UserTypeIndex x:Key="UserTypeIndex"/>
         <src:StaffToTitleConverter x:Key="StaffToTitle"/>
         <src:GetDepartmentIndex x:Key="GetDepartmentIndex"/>
+        <src:ValidToType x:Key="ValidToType"/>
     </src:MyWindow.Resources>
 
     <Grid Background="White">
@@ -514,7 +515,7 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="类型 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <ComboBox x:Name="cmb_StaffType" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Grid.Column="1" Margin="5,0,0,0" SelectedIndex="0">
+                                                    <ComboBox x:Name="cmb_StaffType" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Grid.Column="1" Margin="5,0,0,0" SelectedIndex="{Binding SelectedItem.Content.IsValid, ElementName=lst_Staff, Converter={StaticResource ValidToType},  Mode=OneWay}">
                                                         <ComboBoxItem Content="人员" Tag="0"/>
                                                         <ComboBoxItem Content="车辆" Tag="1"/>
                                                     </ComboBox>
@@ -525,8 +526,11 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="{Binding SelectedItem.Tag, Converter={StaticResource StaffToTitle}, ElementName=cmb_StaffType}" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <TextBox x:Name="txt_StaffName" Text="{Binding SelectedItem.Content.Staff.Name, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+                                                    <TextBox x:Name="txt_StaffName" Text="{Binding SelectedItem.Content.Name, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
                                                 </Grid>
+
+                                                
+                                               
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="80"/>
@@ -537,10 +541,11 @@
                                                         <ComboBox.SelectedIndex>
                                                             <MultiBinding  Converter="{StaticResource GetDepartmentIndex}" Mode="OneWay" >
                                                                 <Binding ElementName="cmb_StaffDepartment"  Path="Items" />
-                                                                <Binding ElementName="lst_Staff"  Path="SelectedItem.Content.Group" />
+                                                                <Binding ElementName="lst_Staff"  Path="SelectedItem.Content" />
                                                             </MultiBinding>
                                                         </ComboBox.SelectedIndex>
                                                     </ComboBox>
+                                                    <TextBox x:Name="txt_StaffDeptID" Text="{Binding SelectedItem.Content.Group.ID, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120" Visibility="Collapsed"/>
                                                 </Grid>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
@@ -548,7 +553,7 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="联系电话 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Content.Staff.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+                                                    <TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
                                                 </Grid>
                                                 <!--<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
@@ -650,7 +655,7 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="组名称 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <TextBox x:Name="txt_GroupName" Text="{Binding SelectedItem.Content.Group.Name, ElementName=lst_Group, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+                                                    <TextBox x:Name="txt_GroupName" Text="{Binding SelectedItem.Content.Name, ElementName=lst_Group, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
                                                 </Grid>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
@@ -658,7 +663,7 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="组ID :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <TextBox x:Name="txt_GroupId" Text="{Binding SelectedItem.Content.Group.GroupID, ElementName=lst_Group, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
+                                                    <TextBox x:Name="txt_GroupId" Text="{Binding SelectedItem.Content.GroupID, ElementName=lst_Group, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
                                                 </Grid>
                                                 <!--<Grid DockPanel.Dock="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>

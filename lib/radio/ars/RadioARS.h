@@ -1,6 +1,7 @@
 
-//#include <WinSock2.h>
-//#include <Windows.h>
+#include <WinSock2.h>
+#include <Windows.h>
+#include "../lib/radio/common.h"
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
 #pragma once
@@ -23,7 +24,7 @@ class CRadioARS
 public:
 	CRadioARS();
 	~CRadioARS();
-	bool InitARSSocket(DWORD dwAddress,CRemotePeer * pRemote);
+	bool InitARSSocket(DWORD dwAddress/*,CRemotePeer * pRemote*/);
 	bool CloseARSSocket(SOCKET* s);
 	static DWORD WINAPI ReceiveDataThread(LPVOID lpParam);
 	bool sendArsAck(DWORD dwRadioID, int CaiNet);
@@ -31,6 +32,6 @@ public:
 private:
 	bool m_RcvSocketOpened;
 	ThreadARS *m_ThreadARS;
-	CRemotePeer* pRemotePeer;
+	//CRemotePeer* pRemotePeer;
 };
 

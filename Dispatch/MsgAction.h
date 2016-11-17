@@ -35,27 +35,37 @@ void  msgAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			{
 				msg = d["Contents"].GetString();
 			}
-			if (isUdpConnect)
+			int msgSize = (int)(msg.length() + 1);
+			wchar_t* text = new wchar_t[msgSize];
+			MultiByteToWideChar(CP_ACP, 0, msg.c_str(), -1, text, msgSize);
+			if (!cs.radioSendMsg(client, text, id, callId, opterateType))
 			{
-				int msgSize = (int)(msg.length() + 1);
-				wchar_t* text = new wchar_t[msgSize];
-				MultiByteToWideChar(CP_ACP, 0, msg.c_str(), -1, text, msgSize);
-				if (opterateType == GROUP)
-				{
-					m_dispatchOperate[s]->AddAllCommand(client, s, SEND_GROUP_MSG, "", "", "", id, text, 0, 0, callId);
-				}
-				else if (opterateType == PRIVATE)
-				{
-					m_dispatchOperate[s]->AddAllCommand(client, s, SEND_PRIVATE_MSG, "", "", "", id, text, 0, 0, callId);
-				}
-				else
-				{
-#if DEBUG_LOG
-					LOG(INFO) << "opterateType 参数不对 ";
-#endif
-				}
+				ArgumentType args;
+				args["Target"] = FieldValue(id);
+				args["contents"] = FieldValue(msg.c_str());
+				args["status"] = FieldValue(REMOTE_FAILED);
+				args["type"] = FieldValue(opterateType);
+				std::string callJsonStr = CRpcJsonParser::buildCall("messageStatus", ++seq, args, "radio");
+				client->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 			}
-			else
+//				if (opterateType == GROUP)
+//				{
+//					cs.radioSendMsg(text,id,callId);
+//					//m_dispatchOperate[s]->AddAllCommand(client, s, SEND_GROUP_MSG, "", "", "", id, text, 0, 0, callId);
+//				}
+//				else if (opterateType == PRIVATE)
+//				{
+//					cs.radioSendMsg(text, id, callId);
+//					//m_dispatchOperate[s]->AddAllCommand(client, s, SEND_PRIVATE_MSG, "", "", "", id, text, 0, 0, callId);
+//				}
+//				else
+//				{
+//#if DEBUG_LOG
+//					LOG(INFO) << "opterateType 参数不对 ";
+//#endif
+//				}
+			}
+			/*else
 			{
 				try
 				{
@@ -72,15 +82,8 @@ void  msgAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 
 				}
 			}
+*/
 
-				
-		}
-		else
-		{
-#if DEBUG_LOG
-			LOG(INFO) << " 请先确保tcp连接已经建立";
-#endif
-		}
 	}
 	catch (std::exception e){
 

@@ -21,10 +21,10 @@ CTextMsg::~CTextMsg()
 	}
 	
 }
-bool CTextMsg::InitSocket(SOCKET *s, DWORD dwAddress, CRemotePeer * pRemote)
+bool CTextMsg::InitSocket( DWORD dwAddress/*, CRemotePeer * pRemote*/)
 {
 
-	pRemotePeer = pRemote;
+	/*pRemotePeer = pRemote;*/
 	//CString			 strError;
 	SOCKADDR_IN      addr;					//   The   local   interface   address   
 	WSADATA			 wsda;					//   Structure   to   store   info
@@ -34,7 +34,7 @@ bool CTextMsg::InitSocket(SOCKET *s, DWORD dwAddress, CRemotePeer * pRemote)
 	setsockopt(m_ThreadMsg->mySocket, SOL_SOCKET, SO_DONTLINGER, (const char*)&bReuseaddr, sizeof(BOOL));
 
 	int ret = WSAStartup(MAKEWORD(1, 1), &wsda);     //   Load   version   1.1   of   Winsock
-
+	SOCKET *s = new SOCKET();
 	*s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);   //   Create   an   UDP   socket
 
 	if (*s == SOCKET_ERROR)				//   Socket create Error
@@ -95,14 +95,14 @@ DWORD WINAPI CTextMsg::ReceiveDataThread(LPVOID lpParam)
 	return 1;
 }
 
-string CTextMsg::ParseUserMsg(TextMsg* HandleMsg, int * len)
+std::string CTextMsg::ParseUserMsg(TextMsg* HandleMsg, int * len)
 {
 	UINT16			MsgSize;
 	FirstHeader		FstHeader;
 	SecondHeader    callIddHeader;
 	UINT8			AddressSize;
 	static TCHAR	szMessage[MAX_MESSAGE_LENGTH];
-	string         ParsedMsg;
+	std::string         ParsedMsg;
 	int             MsgOffset;                                // 正式的Message在TextPayload中的起始偏移量
 
 	memset((char*)szMessage, 0, sizeof(szMessage));             // 不知道这里针对 unicode 使用 sizeof 是否正确。
@@ -233,8 +233,6 @@ UINT8 CTextMsg::GetSeqNumber(TextMsg* HandleMsg)
 
 	return TxtSeqNum;
 }
-
-
 bool CTextMsg::ReplyMsgACK(ThreadMsg* Msg, UINT8 SeqNumber)
 {
 	//构造ACK
@@ -382,17 +380,15 @@ bool CTextMsg::SendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet)
 		wcscpy_s((LPTSTR)&buf[OffSet], len, message);
 		memcpy(m_ThreadMsg->SendBuffer, buf, m_ThreadMsg->MsgLength);
 	}
-
-
-	//将m_nSendSequenceNumber写入list
-	list<AllCommand>::iterator it;
-	for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
-	{
-		if (it->callId == callId)
-		{
-			it->ackNum = m_nSendSequenceNumber;
-		}
-	}
+	////将m_nSendSequenceNumber写入list
+	//list<AllCommand>::iterator it;
+	//for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+	//{
+	//	if (it->callId == callId)
+	//	{
+	//		it->ackNum = m_nSendSequenceNumber;
+	//	}
+	//}
 	m_nSendSequenceNumber++;
 	if (m_nSendSequenceNumber & 0x80)
 	{
@@ -410,36 +406,35 @@ bool CTextMsg::SendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet)
 	if (-1 == bytesSend)
 	{
 		int a = GetLastError();
-
-		list<AllCommand>::iterator it;
-		m_allCommandListLocker.lock();
-		for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
-		{
-			//if (it->ackNum == SeqNum)
-			{
-				if (pRemotePeer != NULL&& pRemotePeer == it->pRemote &&it->radioId == m_ThreadMsg->radioID)
-				{
-					ArgumentType args;
-					args["Source"] = FieldValue(m_ThreadMsg->radioID);
-					args["contents"] = FieldValue("");
-					args["status"] = FieldValue(REMOTE_FAILED);
-					if (it->command == SEND_PRIVATE_MSG)
-					{
-						args["type"] = FieldValue(PRIVATE);
-					}
-					else if (it->command == SEND_GROUP_MSG)
-					{
-						args["type"] = FieldValue(GROUP);
-					}
-					std::string callJsonStr = CRpcJsonParser::buildCall("messageStatus", ++seq, args, "radio");
-					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-					it = allCommandList.erase(it);
-					break;
-				}
-
-			}
-		}
-		m_allCommandListLocker.unlock();
+//		list<AllCommand>::iterator it;
+//		m_allCommandListLocker.lock();
+//		for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+//		{
+//			//if (it->ackNum == SeqNum)
+//			{
+//				if (pRemotePeer != NULL&& pRemotePeer == it->pRemote &&it->radioId == m_ThreadMsg->radioID)
+//				{
+//					ArgumentType args;
+//					args["Source"] = FieldValue(m_ThreadMsg->radioID);
+//					args["contents"] = FieldValue("");
+//					args["status"] = FieldValue(REMOTE_FAILED);
+//					if (it->command == SEND_PRIVATE_MSG)
+//					{
+//						args["type"] = FieldValue(PRIVATE);
+//					}
+//					else if (it->command == SEND_GROUP_MSG)
+//					{
+//						args["type"] = FieldValue(GROUP);
+//					}
+//					std::string callJsonStr = CRpcJsonParser::buildCall("messageStatus", ++seq, args, "radio");
+//					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+//					it = allCommandList.erase(it);
+//					break;
+//				}
+//
+//			}
+//		}
+//		m_allCommandListLocker.unlock();
 #if DEBUG_LOG
 		LOG(INFO) << "发送短信失败";
 #endif
@@ -472,7 +467,7 @@ void CTextMsg::RecvMsg()
 	m_ThreadMsg->RcvBuffer[MESSAGE_BUFFER] = '\0';         // 因为是Unicode，所以把最后的两个字节都置为 \0
 	char s[12];
 	sprintf_s(s, "%d", m_ThreadMsg->radioID);
-	string stringId = s;
+	std::string stringId = s;
 	if (ret == TEXTLENTH_1 || ret == TEXTLENTH_2)
 	{
 		//iBytes = 5: TMS Service Availability Acknowledgement 
@@ -489,15 +484,15 @@ void CTextMsg::RecvMsg()
 		
 			UINT8 SeqNum = GetSeqNumber(&HandleMsg);
 			memset(m_ThreadMsg->RcvBuffer, 0, MESSAGE_BUFFER);		  // 接收到的消息已经被拷贝出来，这里利用接收Buffer作为发送ACK的Buffer，因此需要在使用的时候清空
-			list<AllCommand>::iterator it;
-			m_allCommandListLocker.lock();
-			for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
+			std::list<Command>::iterator it;
+			m_timeOutListLocker.lock();
+			for (it = timeOutList.begin(); it != timeOutList.end(); ++it)
 			{
 				if (it->ackNum == SeqNum)
 				{
-					if (pRemotePeer != NULL&& pRemotePeer == it->pRemote &&it->radioId == m_ThreadMsg->radioID)
+					if (myCallBackFunc != NULL)
 					{
-						ArgumentType args;
+					/*	ArgumentType args;
 						args["Source"] = FieldValue(NULL);
 						args["Target"] = FieldValue(m_ThreadMsg->radioID);
 						args["contents"] = FieldValue("");
@@ -511,15 +506,22 @@ void CTextMsg::RecvMsg()
 							args["type"] = FieldValue(GROUP);
 						}						
 						std::string callJsonStr = CRpcJsonParser::buildCall("messageStatus", ++seq, args, "radio");
-						pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-						it = allCommandList.erase(it);
+						pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());*/
+						
+						Respone r;
+						r.target = m_ThreadMsg->radioID;
+						r.msgStatus = SUCESS;
+						r.msg = "";
+						onData(myCallBackFunc,it->tp, ++it->callId, it->command, r);
+						it = timeOutList.erase(it);
 						break;
 					}
 					
 				}
 				
 			}
-			m_allCommandListLocker.unlock();
+			m_timeOutListLocker.unlock();
+			
 	}
 	else if (ret > TEXTLENTH_2)  //User Text Message
 	{
@@ -540,73 +542,93 @@ void CTextMsg::RecvMsg()
 		}
 		if (!FstHeader.Control)
 		{
-			try
-			{
-				//CString cstrTime = CTime::GetCurrentTime().Format("%Y-%m-%d %H:%M:%S");                         //获取系统时间
-				time_t t = time(0);
-				tm timeinfo;
-				char tmp[64];
-				localtime_s(&timeinfo, &t);
-				strftime(tmp, sizeof(tmp), "%Y/%m/%d %H:%M:%S", &timeinfo);
-				string message = ParseUserMsg(&HandleMsg, 0);
-				string strTime = tmp;
-				char radioID[512];
-				sprintf_s(radioID, 512, "%d", m_ThreadMsg->radioID);
-				//cstring to string   time
-				//string strTime = WChar2Ansi(cstrTime.GetBuffer(cstrTime.GetLength()));
-				//cstring to string   message 
-				//string strMsg = WChar2Ansi(message.GetBuffer(message.GetLength()));
-				ArgumentType args;
-				args["Source"] = FieldValue(radioID);
-				args["contents"] = FieldValue(message.c_str());
-				args["type"] = FieldValue(PRIVATE);
-				std::string callJsonStrRes = CRpcJsonParser::buildCall("message", ++seq, args,"radio");
-		
-				if (pRemotePeer != NULL)
-				{
-					pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-#if DEBUG_LOG
-					LOG(INFO) << "接收到短信 ： " + callJsonStrRes;
-#endif
-				}
-				else
-				{
-#if DEBUG_LOG
-					LOG(INFO) << "接收到短信，但是此短信的目的地没建立tcp连接！";
-#endif
-				}
 
+			if (myCallBackFunc != NULL)
+			{
+				int len = 0;
+
+				
+				std::string message = ParseUserMsg(&HandleMsg, &len);
+			
+				Respone r;
+				r.source = m_ThreadMsg->radioID;
+				r.msgStatus = SUCESS;
+				r.msg = message;
+				onData(myCallBackFunc, peer, seq , RECV_MSG, r);
+			
+#if DEBUG_LOG
+				LOG(INFO) << "接收短信  ondata ";
+
+#endif
+			}
+			//try
+//			{
+//				//CString cstrTime = CTime::GetCurrentTime().Format("%Y-%m-%d %H:%M:%S");                         //获取系统时间
+//				time_t t = time(0);
+//				tm timeinfo;
+//				char tmp[64];
+//				localtime_s(&timeinfo, &t);
+//				strftime(tmp, sizeof(tmp), "%Y/%m/%d %H:%M:%S", &timeinfo);
+//				std::string message = ParseUserMsg(&HandleMsg, 0);
+//				std::string strTime = tmp;
+//				char radioID[512];
+//				sprintf_s(radioID, 512, "%d", m_ThreadMsg->radioID);
+//				//cstring to string   time
+//				//string strTime = WChar2Ansi(cstrTime.GetBuffer(cstrTime.GetLength()));
+//				//cstring to string   message 
+//				//string strMsg = WChar2Ansi(message.GetBuffer(message.GetLength()));
+//				ArgumentType args;
+//				args["Source"] = FieldValue(radioID);
+//				args["contents"] = FieldValue(message.c_str());
+//				args["type"] = FieldValue(PRIVATE);
+//				std::string callJsonStrRes = CRpcJsonParser::buildCall("message", ++seq, args,"radio");
+//		
+//				if (pRemotePeer != NULL)
+//				{
+//					pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
+//#if DEBUG_LOG
+//					LOG(INFO) << "接收到短信 ： " + callJsonStrRes;
+//#endif
+//				}
+//				else
+//				{
+//#if DEBUG_LOG
+//					LOG(INFO) << "接收到短信，但是此短信的目的地没建立tcp连接！";
+//#endif
+//				}
+//
 				//查看状态，状态发生改变时，通知特Tserver
 				ArgumentType arg;
 				arg["Target"] = FieldValue(stringId.c_str());
 				if (radioStatus.find(stringId) == radioStatus.end())
 				{
-					status st;
+					RadioStatus st;
 					st.id = m_ThreadMsg->radioID;
 					st.status = RADIO_STATUS_ONLINE;
 					radioStatus[stringId] = st;
-					arg["IsOnline"] = FieldValue("True");
-					std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
-					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+					Respone r;
+					r.source = m_ThreadMsg->radioID;
+					r.arsStatus = SUCESS;
+					onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
 				}
 				else if (radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
 				{
 					radioStatus[stringId].status = RADIO_STATUS_ONLINE;
-
-					arg["IsOnline"] = FieldValue("True");
-					std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
-					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+					Respone r;
+					r.source = m_ThreadMsg->radioID;
+					r.arsStatus = SUCESS;
+					onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
 				}
-			}
-			catch (std::exception e)
-			{
-
-			}
+//			}
+//			catch (std::exception e)
+//			{
+//
+//			}
 		} 
 	}
 }
 
-string CTextMsg::WChar2Ansi(LPCWSTR pwszSrc)
+std::string CTextMsg::WChar2Ansi(LPCWSTR pwszSrc)
 {
 	int nLen = WideCharToMultiByte(CP_ACP, 0, pwszSrc, -1, NULL, 0, NULL, NULL);
 	if (nLen <= 0) return std::string("");

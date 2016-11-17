@@ -66,7 +66,7 @@ namespace TrboX
         private static List<CAuthority> GuestAuth = JsonConvert.DeserializeObject<List<CAuthority>>(AdminAuthStr);
         private static List<CAuthority> AdminAuth = JsonConvert.DeserializeObject<List<CAuthority>>(GuestAuthStr);
 
-        [DefaultValue((int)0), JsonProperty(PropertyName = "id")]
+        [DefaultValue((long)0), JsonProperty(PropertyName = "id")]
         public long ID;
         [JsonProperty(PropertyName = "username")]
         public string UserName { set; get; }

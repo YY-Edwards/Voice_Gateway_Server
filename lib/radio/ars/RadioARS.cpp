@@ -17,10 +17,10 @@ CRadioARS::~CRadioARS()
 	}
 	
 }
-bool CRadioARS::InitARSSocket(DWORD dwAddress,CRemotePeer * pRemote)
+bool CRadioARS::InitARSSocket(DWORD dwAddress/*,CRemotePeer * pRemote*/)
 {
 
-	pRemotePeer = pRemote;
+	//pRemotePeer = pRemote;
 
 	SOCKADDR_IN      addr;					//   The   local   interface   address   
 	WSADATA			 wsda;					//   Structure   to   store   info
@@ -136,7 +136,7 @@ void CRadioARS::RecvData()
 	ars_code = ntohs(*((unsigned short *)(m_ThreadARS->RcvBuffer + 1)));
 	char s[12];
 	sprintf_s(s, "%d", m_ThreadARS->radioID);
-	string stringId = s;
+	std::string stringId = s;
 	if (xcmp_opcode == 0xf020 || xcmp_opcode == 0xf040)
 	{
 		//send ars ack  to radio
@@ -163,72 +163,74 @@ void CRadioARS::RecvData()
 		{
 			int a = GetLastError();
 		}
-		
+
 
 #if DEBUG_LOG
-		LOG(INFO) << stringId +" 号对讲机上线";
+		LOG(INFO) << "对讲机开机ars ondata ";
 #endif
-		
-	
-		if (pRemotePeer != NULL)
+		if (peer != NULL)
 		{
 			//查看状态，状态发生改变时，通知特Tserver
 			ArgumentType arg;
 			arg["Target"] = FieldValue(stringId.c_str());
 			if (radioStatus.find(stringId) == radioStatus.end())
 			{
-				status st;
+				RadioStatus st;
 				st.id = m_ThreadARS->radioID;
 				st.status = RADIO_STATUS_ONLINE;
 				radioStatus[stringId] = st;
-				arg["IsOnline"] = FieldValue("True");
-				std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
-				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-				seq++;
+				Respone r;
+				r.source = m_ThreadARS->radioID;
+				r.arsStatus = SUCESS;
+				onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
 			}
 			else if (radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
 			{
 				radioStatus[stringId].status = RADIO_STATUS_ONLINE;
-				
-				arg["IsOnline"] = FieldValue("True");
+				Respone r;
+				r.source = m_ThreadARS->radioID;
+				r.arsStatus = SUCESS;
+				onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
+				/*arg["IsOnline"] = FieldValue("True");
 				std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
-				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-				seq++;
+				peer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+				seq++;*/
 			}
+			//}
 		}
-	}
-	else if (ars_code == 0x31)
-	{
-		
-#if DEBUG_LOG
-		LOG(INFO) << stringId + " 号对讲机下线";
-#endif
-	
-		if (pRemotePeer != NULL)
+		else if (ars_code == 0x31)
 		{
-			//查看状态，状态发生改变时，通知特Tserver
-			ArgumentType arg;
-			arg["Target"] = FieldValue(stringId.c_str());
-			if (radioStatus.find(stringId) == radioStatus.end())
+
+#if DEBUG_LOG
+			LOG(INFO) << "对讲机关机ars ondata ";
+#endif
+			if (peer != NULL)
 			{
-				status st;
-				st.id = m_ThreadARS->radioID;
-				st.status = RADIO_STATUS_OFFLINE;
-				radioStatus[stringId] = st;
-				arg["IsOnline"] = FieldValue("False");
-				std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
-				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-				seq++;
-			}
-			else if (radioStatus[stringId].status == RADIO_STATUS_ONLINE)
-			{
-				radioStatus[stringId].status = RADIO_STATUS_OFFLINE;
-				
-				arg["IsOnline"] = FieldValue("False");
-				std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
-				pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-				seq++;
+				//查看状态，状态发生改变时，通知特Tserver
+				ArgumentType arg;
+				arg["Target"] = FieldValue(stringId.c_str());
+				if (radioStatus.find(stringId) == radioStatus.end())
+				{
+					RadioStatus st;
+					st.id = m_ThreadARS->radioID;
+					st.status = RADIO_STATUS_OFFLINE;
+					radioStatus[stringId] = st;
+					Respone r;
+					r.source = m_ThreadARS->radioID;
+					r.arsStatus = FAILED;
+					onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
+				}
+				else if (radioStatus[stringId].status == RADIO_STATUS_ONLINE)
+				{
+					radioStatus[stringId].status = RADIO_STATUS_OFFLINE;
+
+					Respone r;
+					r.source = m_ThreadARS->radioID;
+					r.arsStatus = FAILED;
+					onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
+				}
 			}
 		}
 	}
+
 }
