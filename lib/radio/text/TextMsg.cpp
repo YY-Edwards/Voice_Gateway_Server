@@ -2,7 +2,6 @@
 #include "TextMsg.h"
 #include  "time.h"
 
-#include "../lib/rpc/include/RpcJsonParser.h"
 #pragma comment(lib, "wsock32.lib")
 
 #define MSG_PORT   4007
@@ -598,8 +597,7 @@ void CTextMsg::RecvMsg()
 //				}
 //
 				//查看状态，状态发生改变时，通知特Tserver
-				ArgumentType arg;
-				arg["Target"] = FieldValue(stringId.c_str());
+	
 				if (radioStatus.find(stringId) == radioStatus.end())
 				{
 					RadioStatus st;
