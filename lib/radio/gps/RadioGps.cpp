@@ -515,7 +515,7 @@ void CRadioGps::RecvData()
 							{
 								Respone r;
 								r.source = m_ThreadGps->radioID;
-								r.gpsStatus = FAILED;
+								r.gpsStatus = UNSUCESS;
 								r.querymode = it->querymode;
 								r.cycle = it->cycle;
 								r.operate = operate;

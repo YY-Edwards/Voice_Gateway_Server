@@ -214,7 +214,7 @@ void CRadioARS::RecvData()
 					radioStatus[stringId] = st;
 					Respone r;
 					r.source = m_ThreadARS->radioID;
-					r.arsStatus = FAILED;
+					r.arsStatus = UNSUCESS;
 					onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
 				}
 				else if (radioStatus[stringId].status == RADIO_STATUS_ONLINE)
@@ -223,7 +223,7 @@ void CRadioARS::RecvData()
 
 					Respone r;
 					r.source = m_ThreadARS->radioID;
-					r.arsStatus = FAILED;
+					r.arsStatus = UNSUCESS;
 					onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
 				}
 			}

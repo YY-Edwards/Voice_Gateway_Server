@@ -31,7 +31,7 @@
 #define PRIVATE                3
 
 #define  SUCESS               0
-#define  FAILED              1
+#define  UNSUCESS              1
 
 #define START         0
 #define STOP          1
@@ -84,10 +84,10 @@ typedef struct tagRespone
 	std::map<std::string, RadioStatus> rs;
 }Respone;
 extern void(*myCallBackFunc)(TcpClient*, int, int, Respone);
+void onData(void(*func)(TcpClient* tp, int, int, Respone), TcpClient* tp, int callId, int call, Respone data);
 extern TcpClient * peer;
 extern int seq;
 extern std::mutex m_timeOutListLocker;
-void onData(void(*func)(TcpClient* tp, int, int, Respone), TcpClient* tp, int callId, int call, Respone data);
 extern std::list <Command> timeOutList;
 extern std::map<std::string, RadioStatus> radioStatus;
 extern std::string  lastIP ;

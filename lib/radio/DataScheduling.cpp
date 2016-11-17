@@ -2,11 +2,12 @@
 #include "DataScheduling.h"
 
 void(*myCallBackFunc)(TcpClient*, int, int, Respone);
+void onData(void(*func)(TcpClient, int, int, Respone), TcpClient* peer, int callId, int call, Respone data);
 int seq;
 std::mutex m_timeOutListLocker;
 std::list <Command> timeOutList;
 TcpClient * peer;
-void onData(void(*func)(TcpClient, int, int, Respone), TcpClient* peer, int callId, int call, Respone data);
+
 std::map<std::string, RadioStatus> radioStatus;
 std::string lastIP = "0.0.0.0";
 CDataScheduling::CDataScheduling()
@@ -318,13 +319,13 @@ void CDataScheduling::timeOut()
 					break;
 				case SEND_PRIVATE_MSG:
 					r.target = it->radioId;
-					r.msgStatus = FAILED;
+					r.msgStatus = UNSUCESS;
 					r.msg = "";
 					r.msgType = PRIVATE;
 					onData(myCallBackFunc, it->tp, ++it->callId, it->command, r);
 				case SEND_GROUP_MSG:
 					r.target = it->radioId;
-					r.msgStatus = FAILED;
+					r.msgStatus = UNSUCESS;
 					r.msg = "";
 					r.msgType = GROUP;
 					onData(myCallBackFunc, it->tp, ++it->callId, it->command, r);
@@ -336,7 +337,7 @@ void CDataScheduling::timeOut()
 				case GPS_IMME_CSBK_EGPS:
 				case GPS_TRIGG_CSBK_EGPS:
 					r.target = it->radioId;
-					r.gpsStatus = FAILED;
+					r.gpsStatus = UNSUCESS;
 					r.cycle = it->cycle;
 					r.querymode = it->querymode;
 					r.gpsType = START;
@@ -344,7 +345,7 @@ void CDataScheduling::timeOut()
 					break;
 				case STOP_QUERY_GPS:
 					r.target = it->radioId;
-					r.gpsStatus = FAILED;
+					r.gpsStatus = UNSUCESS;
 					r.cycle = it->cycle;
 					r.querymode = it->querymode;
 					r.gpsType = STOP;
@@ -400,7 +401,7 @@ void CDataScheduling::sendConnectStatusToClient()
 	else
 	{
 		result = 1;
-		r.connectStatus = FAILED;
+		r.connectStatus = UNSUCESS;
 	}
 	if (myCallBackFunc !=NULL)
 	{
