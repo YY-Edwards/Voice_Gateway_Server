@@ -12,8 +12,8 @@ std::string lastIP = "0.0.0.0";
 CDataScheduling::CDataScheduling()
 {
 	isUdpConnect = false;
-	CreateThread(NULL, 0, WorkThread, this, THREAD_PRIORITY_NORMAL, NULL);
-	CreateThread(NULL, 0, TimeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	CreateThread(NULL, 0, workThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	CreateThread(NULL, 0, timeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
 }
 CDataScheduling::~CDataScheduling()
 {
@@ -23,7 +23,7 @@ bool CDataScheduling::radioConnect(TcpClient* tp ,const char* ip, int callId)
 {
 	if (myCallBackFunc != NULL )
 	{
-		AddAllCommand(tp ,MNIS_CONNECT, ip, "", 0, _T(""), 0, 0, callId);
+		addUdpCommand(tp ,MNIS_CONNECT, ip, "", 0, _T(""), 0, 0, callId);
 	
 		return true;
 	}
@@ -38,23 +38,23 @@ bool CDataScheduling::radioGetGps(TcpClient* tp,DWORD dwRadioID, int queryMode, 
 		switch (queryMode)
 		{
 		case GPS_IMME_COMM:
-			AddAllCommand(tp,GPS_IMME_COMM,  "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
+			addUdpCommand(tp, GPS_IMME_COMM, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
 			/*sendAck("gps", callId, int(dwRadioID));*/
 			break;
 		case GPS_TRIGG_COMM:
-			AddAllCommand(tp,GPS_TRIGG_COMM, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
+			addUdpCommand(tp, GPS_TRIGG_COMM, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
 			break;
 		case GPS_IMME_CSBK:
-			AddAllCommand(tp,GPS_IMME_CSBK, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
+			addUdpCommand(tp, GPS_IMME_CSBK, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
 			break;
 		case GPS_TRIGG_CSBK:
-			AddAllCommand(tp,GPS_TRIGG_CSBK, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
+			addUdpCommand(tp, GPS_TRIGG_CSBK, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
 			break;
 		case GPS_IMME_CSBK_EGPS:
-			AddAllCommand(tp,GPS_IMME_CSBK_EGPS, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
+			addUdpCommand(tp, GPS_IMME_CSBK_EGPS, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
 			break;
 		case GPS_TRIGG_CSBK_EGPS:
-			AddAllCommand(tp,GPS_TRIGG_CSBK_EGPS, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
+			addUdpCommand(tp, GPS_TRIGG_CSBK_EGPS, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
 			break;
 		default:
 			break;
@@ -68,7 +68,7 @@ bool CDataScheduling::radioStopGps(TcpClient* tp,DWORD dwRadioID, int	queryMode,
 
 	if (myCallBackFunc != NULL)
 	{
-		AddAllCommand(tp,STOP_QUERY_GPS, "", "", int(dwRadioID), _T(""), 0, queryMode, callId);
+		addUdpCommand(tp, STOP_QUERY_GPS, "", "", int(dwRadioID), _T(""), 0, queryMode, callId);
 		//sendAck("gps", callId, int(dwRadioID));
 		return true;
 	}
@@ -91,11 +91,11 @@ bool CDataScheduling::radioSendMsg(TcpClient* tp,LPTSTR message, DWORD dwRadioID
 	{
 		if (type == GROUP)
 		{
-			AddAllCommand(tp,SEND_GROUP_MSG, "", "", int(dwRadioID), message, 0, 0, callId);
+			addUdpCommand(tp, SEND_GROUP_MSG, "", "", int(dwRadioID), message, 0, 0, callId);
 		}
 		else if (type == PRIVATE)
 		{
-			AddAllCommand(tp,SEND_PRIVATE_MSG, "", "", int(dwRadioID), message, 0, 0, callId);
+			addUdpCommand(tp, SEND_PRIVATE_MSG, "", "", int(dwRadioID), message, 0, 0, callId);
 		}
 		return true;
 	}
@@ -107,11 +107,11 @@ void CDataScheduling::getRadioStatus(TcpClient* tp, int type, int callId)
 	{
 		if (type == CONNECT_STATUS)
 		{
-			AddAllCommand(tp,CONNECT_STATUS,"","",0,_T(""),0,0,callId);
+			addUdpCommand(tp, CONNECT_STATUS, "", "", 0, _T(""), 0, 0, callId);
 		}
 		else if (type == RADIO_STATUS)
 		{
-			AddAllCommand(tp, RADIO_STATUS, "", "", 0, _T(""), 0, 0, callId);
+			addUdpCommand(tp, RADIO_STATUS, "", "", 0, _T(""), 0, 0, callId);
 		}
 	}
 }
@@ -182,7 +182,7 @@ void CDataScheduling::sendMsg(int callId, LPTSTR message, DWORD dwRadioID, int C
 {
 	pRadioMsg.SendMsg(callId, message, dwRadioID, CaiNet);
 }
-void CDataScheduling::InitGPSOverturnSocket(DWORD dwAddress)
+void CDataScheduling::initGPSOverturnSocket(DWORD dwAddress)
 {
 	
 }
@@ -203,7 +203,7 @@ void onData(void(*func)(TcpClient*, int, int, Respone), TcpClient* tp, int seq, 
 	}
 
 }
-void CDataScheduling::AddAllCommand(TcpClient*  tp ,int command, std::string radioIP, std::string gpsIP, int id, wchar_t* text, double cycle, int querymode, int callId)
+void CDataScheduling::addUdpCommand(TcpClient*  tp ,int command, std::string radioIP, std::string gpsIP, int id, wchar_t* text, double cycle, int querymode, int callId)
 {
 	
 	Command      m_command;
@@ -224,7 +224,7 @@ void CDataScheduling::AddAllCommand(TcpClient*  tp ,int command, std::string rad
 	seq = callId;
 	peer = tp;
 }
-DWORD WINAPI CDataScheduling::TimeOutThread(LPVOID lpParam)
+DWORD WINAPI CDataScheduling::timeOutThread(LPVOID lpParam)
 {
 	CDataScheduling * p = (CDataScheduling *)(lpParam);
 	while (true)
@@ -234,16 +234,16 @@ DWORD WINAPI CDataScheduling::TimeOutThread(LPVOID lpParam)
 	}
 	return 1;
 }
-DWORD WINAPI CDataScheduling::WorkThread(LPVOID lpParam)
+DWORD WINAPI CDataScheduling::workThread(LPVOID lpParam)
 {
 	CDataScheduling * p = (CDataScheduling *)(lpParam);
 	while (true)
 	{
-		p->WorkThreadFunc();
+		p->workThreadFunc();
 		Sleep(10);
 	}
 }
-void CDataScheduling::WorkThreadFunc()
+void CDataScheduling::workThreadFunc()
 {
 	std::list<Command>::iterator it;
 	for (it = workList.begin(); it != workList.end(); ++it)

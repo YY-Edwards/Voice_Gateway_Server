@@ -23,8 +23,8 @@ public:
 	void getRadioStatus(TcpClient* tp,int type,int callId);
 	//bool InitGPSOverturnSocket(DWORD dwAddress);
 	void  setCallBackFunc(void(*callBackFunc)(TcpClient*, int, int, Respone));
-	static DWORD WINAPI TimeOutThread(LPVOID lpParam);
-	static DWORD WINAPI WorkThread(LPVOID lpParam);
+	static DWORD WINAPI timeOutThread(LPVOID lpParam);
+	static DWORD WINAPI workThread(LPVOID lpParam);
 private:
 	CTextMsg        pRadioMsg;
 	CRadioARS       pRadioARS;
@@ -32,13 +32,13 @@ private:
 	bool            isUdpConnect;
 	std::list <Command> workList;
 	void timeOut();
-	void WorkThreadFunc();
-	void AddAllCommand(TcpClient*  tp, int command, std::string radioIP, std::string gpsIP, int id, wchar_t* text, double cycle, int querymode, int callId);
+	void workThreadFunc();
+	void addUdpCommand(TcpClient*  tp, int command, std::string radioIP, std::string gpsIP, int id, wchar_t* text, double cycle, int querymode, int callId);
 	void connect(const char* ip, int callId);
 	void getGps(DWORD dwRadioID, int queryMode, double cycle);
 	void stopGps(DWORD dwRadioID, int	queryMode);
 	void sendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet);
-	void InitGPSOverturnSocket(DWORD dwAddress);
+	void initGPSOverturnSocket(DWORD dwAddress);
 	void sendAck(int call,int callId, int id);
 	void sendRadioStatusToClient();
 	void sendConnectStatusToClient();

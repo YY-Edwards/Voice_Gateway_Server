@@ -1,7 +1,6 @@
 #ifndef COMMON
 #define COMMON
 
-
 #include <mutex>
 #include <list>
 #include "../lib/rpc/include/TcpServer.h"
@@ -34,7 +33,7 @@
 #define  SUCESS               0
 #define  FAILED              1
 
-#define START         O
+#define START         0
 #define STOP          1
 
 #define CONNECT_STATUS          1
