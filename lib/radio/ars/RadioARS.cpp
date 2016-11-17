@@ -171,8 +171,6 @@ void CRadioARS::RecvData()
 		if (peer != NULL)
 		{
 			//查看状态，状态发生改变时，通知特Tserver
-			ArgumentType arg;
-			arg["Target"] = FieldValue(stringId.c_str());
 			if (radioStatus.find(stringId) == radioStatus.end())
 			{
 				RadioStatus st;
@@ -207,8 +205,7 @@ void CRadioARS::RecvData()
 			if (peer != NULL)
 			{
 				//查看状态，状态发生改变时，通知特Tserver
-				ArgumentType arg;
-				arg["Target"] = FieldValue(stringId.c_str());
+
 				if (radioStatus.find(stringId) == radioStatus.end())
 				{
 					RadioStatus st;

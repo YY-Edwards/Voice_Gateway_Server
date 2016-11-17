@@ -736,8 +736,6 @@ void CRadioGps::RecvData()
 			}
 		}
 		//查看状态，状态发生改变时，通知特Tserver
-		 ArgumentType arg;
-		 arg["Target"] = FieldValue(radioID);
 		 if (radioStatus.find(radioID) == radioStatus.end())
 		 {
 			RadioStatus st;
