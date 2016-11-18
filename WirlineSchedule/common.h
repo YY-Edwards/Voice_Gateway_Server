@@ -34,6 +34,33 @@
 
 //#define TALK_TIME (20*1000)
 
+/************************************************************************/
+/* MNIS
+/************************************************************************/
+typedef struct
+{
+	int Operate;
+	int Target;
+	int Type;
+	double Cycle;
+}QUERY_GPS;
+
+typedef struct
+{
+	int valid;
+	double lon;
+	double lat;
+	double speed;
+}GPS;
+
+typedef struct 
+{
+	int Type;
+	int Target;
+	int Source;
+	wchar_t Contents[256];
+}MNIS_MSG;
+
 #define REPEATER_CONNECT 0
 #define REPEATER_DISCONNECT 1
 
@@ -109,6 +136,7 @@ enum _SlotNumber
 
 /*配置参数区域*/
 extern char CONFIG_MASTER_IP[MAX_IP_SIZE];//MASTER IP地址
+extern char CONFIG_MNIS_IP[MAX_IP_SIZE];//MNIS IP地址
 extern unsigned short CONFIG_MASTER_PORT;//MASTER端口
 extern unsigned long CONFIG_DEFAULT_GROUP;//默认通话组
 extern unsigned long CONFIG_LOCAL_RADIO_ID;//本机RADIO ID
@@ -129,6 +157,8 @@ extern HANDLE g_taskLockerEvent;
 #define REMOTE_CMD_STOP_CALL 0x03
 #define REMOTE_CMD_SET_PLAY_CALL 0x04
 #define REMOTE_CMD_GET_CONN_STATUS 0x05
+#define REMOTE_CMD_MNIS_QUERY_GPS 0x06
+#define REMOTE_CMD_MNIS_MSG 0x07
 
 #define GET_TYPE_CONN 0x01
 /*JSON相关结构体*/
@@ -138,8 +168,8 @@ extern HANDLE g_taskLockerEvent;
 /************************************************************************/
 typedef struct
 {
-	char masterIp[MAX_IP_SIZE];
-	unsigned short masterPort;
+	char ip[MAX_IP_SIZE];
+	unsigned short port;
 }MASTER;
 typedef struct
 {
@@ -147,6 +177,12 @@ typedef struct
 }DONGLE;
 typedef struct
 {
+	char ip[MAX_IP_SIZE];
+	unsigned short port;
+}MNIS;
+typedef struct
+{
+	MNIS mnis;
 	MASTER master;
 	unsigned long defaultGroup;
 	unsigned long localRadioId;
@@ -223,12 +259,14 @@ typedef struct
 		CALL callParam;
 		SET_PLAY setCareCallParam;
 		GET_INFO getInfoParam;
+		QUERY_GPS queryGpsParam;
+		MNIS_MSG msgParam;
 	}info;
 }JSON_PARAM;
 /*远程命令*/
 typedef struct
 {
-	unsigned long long sn;
+	unsigned long long callId;
 	CRemotePeer *pRemote;
 	int cmd;
 	JSON_PARAM param;
@@ -317,8 +355,10 @@ typedef struct OutData
 #define FLAG_DECODE_PREAPRE_END 0x04
 #define FLAG_DECODE_END 0x08
 
-extern bool g_dongle_open;//dongle 是否开启
-extern BOOL g_net_connect;//网络是否已经连接
+extern bool Env_NetIsOk;//网络是否已经连接
+extern bool Env_DongleIsOk;//dongle 是否开启
+extern bool Env_SoundIsOk;//sound 是否正常
+
 
 extern unsigned long g_callId;//呼出ID
 extern unsigned char g_targetCallType;//呼出类型
