@@ -55,6 +55,8 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSLE;_USRDLL;REALTIMERECORDORPLAYPCM_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>
+      </AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -82,6 +84,11 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\lib\radio\ars\RadioARS.h" />
+    <ClInclude Include="..\lib\radio\common.h" />
+    <ClInclude Include="..\lib\radio\DataScheduling.h" />
+    <ClInclude Include="..\lib\radio\gps\RadioGps.h" />
+    <ClInclude Include="..\lib\radio\text\TextMsg.h" />
     <ClInclude Include="..\lib\rpc\include\BaseConnector.h" />
     <ClInclude Include="..\lib\rpc\include\request.h" />
     <ClInclude Include="..\lib\rpc\include\RpcJsonParser.h" />
@@ -175,6 +182,10 @@
     <ClInclude Include="WLRecordFile.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\lib\radio\ars\RadioARS.cpp" />
+    <ClCompile Include="..\lib\radio\DataScheduling.cpp" />
+    <ClCompile Include="..\lib\radio\gps\RadioGps.cpp" />
+    <ClCompile Include="..\lib\radio\text\TextMsg.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcServer.cpp" />
     <ClCompile Include="..\lib\rpc\src\TcpServer.cpp" />

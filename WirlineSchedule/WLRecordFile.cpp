@@ -34,7 +34,9 @@ void CRecordFile::WriteVoiceFrame(char* pFrame, int len /*= 7*/, bool bLocalRequ
 		}
 		goto RECORD_VOICE_DATA;
 	}
-	if (getBoolPlay())
+	if (getBoolPlay() && 
+		Env_DongleIsOk &&
+		Env_SoundIsOk)
 	{
 		tAMBEFrame* pAMBEFrame = NULL;
 		pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();

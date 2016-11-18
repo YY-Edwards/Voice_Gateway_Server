@@ -12,7 +12,16 @@ void gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, 
 
 	try{
 		std::string callCommand = CRpcJsonParser::mergeCommand("queryGps", callId, param.c_str());
-		int ret = CBroker::instance()->getRadioClient()->sendRequest(callCommand.c_str(),
+		CRpcClient* pDstServer = NULL;
+		if ("wl" == type)
+		{
+			pDstServer = CBroker::instance()->getWireLanClient();
+		}
+		else
+		{
+			pDstServer = CBroker::instance()->getRadioClient();
+		}
+		int ret = pDstServer->sendRequest(callCommand.c_str(),
 			callId,
 			pRemote,
 			[&](const char* pResponse, void* data){

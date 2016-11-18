@@ -432,7 +432,7 @@ BOOL CWLNet::StartNet(DWORD dwMasterIp
 	, DWORD recType
 	)
 {
-	if (g_net_connect)
+	if (Env_NetIsOk)
 	{
 		stop();
 	}
@@ -7827,6 +7827,97 @@ int CWLNet::wlGetConfig()
 {
 	/*将参数打包成json格式*/
 	std::string strRequest = CRpcJsonParser::buildCall("wlGetConfig", ++g_sn, ArgumentType(), "wl");
+	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
+	sendLogToWindow();
+	TcpClient *redayDelete = NULL;
+	/*发送到Client*/
+	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end(); i++)
+	{
+		TcpClient* p = *i;
+		try
+		{
+			p->sendResponse(strRequest.c_str(), strRequest.size());
+		}
+		catch (...)
+		{
+			redayDelete = p;
+			sprintf_s(m_reportMsg, "sendCallStatus fail, socket:%lu", p->s);
+			sendLogToWindow();
+		}
+	}
+	return 0;
+}
+
+int CWLNet::wlMnisConnectStatus(int status)
+{
+	/*将参数打包成json格式*/
+	ArgumentType args;
+	args["status"] = status;
+	std::string strRequest = CRpcJsonParser::buildCall("connectStatus", ++g_sn, args, "wl");
+	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
+	sendLogToWindow();
+	TcpClient *redayDelete = NULL;
+	/*发送到Client*/
+	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end(); i++)
+	{
+		TcpClient* p = *i;
+		try
+		{
+			p->sendResponse(strRequest.c_str(), strRequest.size());
+		}
+		catch (...)
+		{
+			redayDelete = p;
+			sprintf_s(m_reportMsg, "sendCallStatus fail, socket:%lu", p->s);
+			sendLogToWindow();
+		}
+	}
+	return 0;
+}
+
+int CWLNet::wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle, int status)
+{
+	/*将参数打包成json格式*/
+	ArgumentType args;
+	args["Operate"] = Operate;
+	args["Target"] = Target;
+	args["Type"] = Type;
+	args["Cycle"] = Cycle;
+	args["status"] = status;
+	std::string strRequest = CRpcJsonParser::buildCall("sendGpsStatus", ++g_sn, args, "wl");
+	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
+	sendLogToWindow();
+	TcpClient *redayDelete = NULL;
+	/*发送到Client*/
+	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end(); i++)
+	{
+		TcpClient* p = *i;
+		try
+		{
+			p->sendResponse(strRequest.c_str(), strRequest.size());
+		}
+		catch (...)
+		{
+			redayDelete = p;
+			sprintf_s(m_reportMsg, "sendCallStatus fail, socket:%lu", p->s);
+			sendLogToWindow();
+		}
+	}
+	return 0;
+}
+
+int CWLNet::wlMnisSendGps(int Source, GPS gps)
+{
+	/*将参数打包成json格式*/
+	ArgumentType args;
+	FieldValue Gps(FieldValue::TObject);
+	Gps.setKeyVal("lat", FieldValue(gps.lat));
+	Gps.setKeyVal("lon", FieldValue(gps.lon));
+	Gps.setKeyVal("speed", FieldValue(gps.speed));
+	Gps.setKeyVal("valid", FieldValue(gps.valid));
+	args["Source"] = Source;
+	args["Gps"] = Gps;
+	std::string strRequest = CRpcJsonParser::buildCall("sendGps", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
 	TcpClient *redayDelete = NULL;

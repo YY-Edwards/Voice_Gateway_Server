@@ -7,6 +7,7 @@
 #include "../lib/rpc/include/RpcServer.h"
 #include "actionHandler.h"
 #include "WLNet.h"
+#include "../lib/radio/DataScheduling.h"
 
 extern CWLNet* g_pNet;
 
@@ -179,15 +180,18 @@ int main()
 	//fun = CManager::OnConnect;
 	//fun(NULL);
 	//_CrtSetBreakAlloc(358);
-	CMySQL *m_pDb = new CMySQL();;
-	CManager *m_pManager = new CManager(m_pDb);
 	/*声明变量并初始化*/
+	CMySQL *m_pDb = new CMySQL();
+	CDataScheduling *m_pMnis = new CDataScheduling();
+	CManager *m_pManager = new CManager(m_pDb, m_pMnis);
 	BOOL m_ret = FALSE;
 	PLogReport m_report = NULL;
 	HWND m_hwnd = NULL;
 	char m_temp = 0x00;
 	CRpcServer *m_pRpcServer = new CRpcServer();
 
+	/*设置回调*/
+	m_pMnis->setCallBackFunc(CManager::OnMnisCallBack);
 	m_pRpcServer->setOnConnectHandler(CManager::OnConnect);
 	m_pRpcServer->setOnDisconnectHandler(CManager::OnDisConnect);
 
@@ -205,6 +209,7 @@ int main()
 	m_pRpcServer->addActionHandler("wlCallStatus", wlCallStatusActionHandler);
 	m_pRpcServer->addActionHandler("wlPlay", wlPlayActionHandler);
 	m_pRpcServer->addActionHandler("wlInfo", wlInfoActionHandler);
+	m_pRpcServer->addActionHandler("queryGps", wlMnisQueryGpsActionHandler);
 	m_pRpcServer->start(WL_SERVER_PORT);
 
 	/*初始化数据库*/
