@@ -804,8 +804,22 @@ void CManager::OnMnisCallBack(TcpClient *m_pTcpClient, int callId, int callFuncI
 		break;
 	case RECV_MSG:
 	{
-					 printf_s("RECV_MSG:%d\r\n", response.msgStatus);
+					 printf_s("RECV_MSG:%s\r\n", response.msg.c_str());
 					 g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus);
+					 //g_pNet->wlMnisMessage(PRIVATE_MSG_FLG,10750,1118,"¶º±È");
+					 /************************************************************************/
+					 /* temp code
+					 /************************************************************************/
+					 //REMOTE_TASK *pTask = new REMOTE_TASK;
+					 //memset(pTask, 0, sizeof(REMOTE_TASK));
+					 //pTask->cmd = REMOTE_CMD_MNIS_MSG;
+					 ////task.pRemote = (CRemotePeer*)g_onLineClients.front();
+					 //swprintf_s(pTask->param.info.msgParam.Contents, L"¶º±È");
+					 //pTask->param.info.msgParam.Source = 1118;
+					 //pTask->param.info.msgParam.Target = 10750;
+					 //pTask->param.info.msgParam.Type = PRIVATE_MSG_FLG;
+					 //push_back_task(pTask);
+
 	}
 		break;
 	case GPS_IMME_COMM:
