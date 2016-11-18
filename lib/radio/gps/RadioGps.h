@@ -69,7 +69,7 @@ public:
 	~CRadioGps();
 	bool InitGPSSocket(DWORD dwAddress/*, CRemotePeer * pRemote*/);
 	bool InitGPSOverturnSocket(DWORD dwAddress);
-	bool CloseGPSSocket(SOCKET* s);
+	bool CloseGPSSocket();
 	static DWORD WINAPI ReceiveDataThread(LPVOID lpParam);
 	bool SendQueryGPS(DWORD dwRadioID,int queryMode,double cycle);
 	bool StopQueryTriggeredGPS(DWORD dwRadioID,int queryMode);

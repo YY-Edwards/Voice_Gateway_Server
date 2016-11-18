@@ -14,6 +14,7 @@ public:
 	bool radioStopGps(TcpClient* tp,DWORD dwRadioID, int	queryMode, int callId);
 	bool radioSendMsg(TcpClient* tp, LPTSTR message, DWORD dwRadioID, int callId, int type);
 	void getRadioStatus(TcpClient* tp,int type,int callId);
+	void radioDisConnect(TcpClient* tp, int callId);
 	//bool InitGPSOverturnSocket(DWORD dwAddress);
 	void  setCallBackFunc(void(*callBackFunc)(TcpClient*, int, int, Respone));
 	static DWORD WINAPI timeOutThread(LPVOID lpParam);
@@ -28,6 +29,7 @@ private:
 	void workThreadFunc();
 	void addUdpCommand(TcpClient*  tp, int command, std::string radioIP, std::string gpsIP, int id, wchar_t* text, double cycle, int querymode, int callId);
 	void connect(const char* ip, int callId);
+	void disConnect();
 	void getGps(DWORD dwRadioID, int queryMode, double cycle);
 	void stopGps(DWORD dwRadioID, int	queryMode);
 	void sendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet);

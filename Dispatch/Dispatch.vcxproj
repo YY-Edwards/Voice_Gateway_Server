@@ -107,6 +107,7 @@
     <ClInclude Include="ConnectAction.h" />
     <ClInclude Include="ConnectEventAction.h" />
     <ClInclude Include="DispatchOperate.h" />
+    <ClInclude Include="extern.h" />
     <ClInclude Include="GetGpsEventAction.h" />
     <ClInclude Include="GetOverTurnGpsEventAction.h" />
     <ClInclude Include="GpsAction.h" />
@@ -143,6 +144,7 @@
     <ClCompile Include="DispatchOperate.cpp">
       <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</SDLCheck>
     </ClCompile>
+    <ClCompile Include="extern.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

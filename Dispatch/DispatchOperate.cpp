@@ -1,26 +1,13 @@
 #include "stdafx.h"
-#include "DispatchOperate.h"
-
-#include "../lib/rpc/include/TcpServer.h"
-#include <Dbt.h>
-#include <initguid.h>
-#include <Ndisguid.h>
-
-
-#define CLS_NAME _T("DUMMY_CLASS")
-#define HWND_MESSAGE     ((HWND)-3)
-
+#include "extern.h"
 DispatchOperate::DispatchOperate()
 {
-	ts.setCallBackFunc(DispatchOperate::OnTcpData);
-	ds.setCallBackFunc(DispatchOperate::OnData);
+
 }
 
 DispatchOperate::~DispatchOperate()
 {
 }
-
-
 
 int DispatchOperate::getLic(const char* licPath)
 {
@@ -152,11 +139,11 @@ void DispatchOperate::sendConnectStatusToClient(CRemotePeer* pRemote)
 				args["getType"] = RADIO_CONNECT;
 				args["info"] = FieldValue(DATA_SUCESS_DISPATCH_SUCESS);
 				std::string callJsonStr = CRpcJsonParser::buildCall("status", ++seq, args, "radio");
-				/*if (pRemotePeer != NULL)
+				if (pRemote != NULL)
 				{
-					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+					pRemote->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 						
-				}*/
+				}
 
 			}
 
@@ -172,56 +159,12 @@ void DispatchOperate::sendConnectStatusToClient(CRemotePeer* pRemote)
 				args["getType"] = RADIO_CONNECT;
 				args["info"] = FieldValue(DATA_SUCESS_DISPATCH_FAILED);
 				std::string callJsonStr = CRpcJsonParser::buildCall("status", ++seq, args, "radio");
-				/*if (pRemotePeer != NULL)
+				if (pRemote != NULL)
 				{
-					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());	
-				}*/
-
+					pRemote->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+				}
 			}
 		}
-	
-//	else
-//	{
-//		if (isTcpConnect)
-//		{
-//#if DEBUG_LOG
-//			LOG(INFO) << "数据连接失败，调度业务连接成功";                 //DATA_FAIL_DISPATCH_SUCESS
-//#endif
-//			if (pRemote != NULL)
-//			{
-//
-//				ArgumentType args;
-//				args["getType"] = RADIO_CONNECT;
-//				args["info"] = FieldValue(DATA_FAILED_DISPATCH_SUCESS);
-//				std::string callJsonStr = CRpcJsonParser::buildCall("status", ++seq, args, "radio");
-//				if (pRemotePeer != NULL)
-//				{
-//					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-//						
-//				}
-//
-//			}
-//		}
-//		else
-//		{
-//#if DEBUG_LOG
-//			LOG(INFO) << "数据连接失败，调度业务连接失败";     //DATA_FAIL_DISPATCH_FAIL
-//#endif
-//			if (pRemote != NULL)
-//			{
-//
-//				ArgumentType args;
-//				args["getType"] = RADIO_CONNECT;
-//				args["info"] = FieldValue(DATA_FAILED_DISPATCH_FAILED);
-//				std::string callJsonStr = CRpcJsonParser::buildCall("status", ++seq, args, "radio");
-//				if (pRemotePeer != NULL)
-//				{
-//					pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-//						
-//				}
-//			}
-//		}
-//	}
 }
 //void DispatchOperate::sendRadioStatusToClient(CRemotePeer* pRemote)
 //{
@@ -267,21 +210,57 @@ void DispatchOperate::sendCallStatusToClient()
 }
 
 
-
+void DispatchOperate::addPeer(CRemotePeer* peer)
+{
+	TcpClient *client = new TcpClient();
+	client->addr = ((TcpClient *)peer)->addr;
+	client->s = ((TcpClient *)peer)->s;
+	bool isHave = false;
+	for (auto i = rmtPeerList.begin(); i != rmtPeerList.end(); i++)
+	{
+		TcpClient *p = *i;
+		if (p->s == client->s)
+		{
+			isHave = true;
+			break;
+		}
+	}
+	if (!isHave)
+	{
+		rmtPeerList.push_back(client);
+	}
+	else
+	{
+		delete client;
+		client = NULL;
+	}
+}
+void DispatchOperate::delPeer(CRemotePeer* peer)
+{
+	TcpClient *client = new TcpClient();
+	client->addr = ((TcpClient *)peer)->addr;
+	client->s = ((TcpClient *)peer)->s;
+	for (auto i = rmtPeerList.begin(); i != rmtPeerList.end(); i++)
+	{
+		TcpClient *p = *i;
+		if (p->s == client->s)
+		{
+			delete (*i);
+			rmtPeerList.erase(i);
+			break;
+		}
+	}
+	delete client;
+	client = NULL;
+}
 void DispatchOperate::OnConnect(CRemotePeer* pRemotePeer)
 {
 	if (pRemotePeer)
 	{
-		TcpClient * client = new TcpClient();
-		SOCKET s = client->s = ((TcpClient *)pRemotePeer)->s;
-		client->addr = ((TcpClient *)pRemotePeer)->addr;
-		//DispatchOperate  * pDispatchOperate = new DispatchOperate();
-		//m_dispatchOperate[s] = dis;
+		dis.addPeer(pRemotePeer);
 		std::string strRequest = CRpcJsonParser::buildCall("getRadioConfig", ++seq, ArgumentType(), "radio");
-		if (pRemotePeer)
-		{
-			pRemotePeer->sendResponse((const char *)strRequest.c_str(), strRequest.size());
-		}
+		pRemotePeer->sendResponse((const char *)strRequest.c_str(), strRequest.size());
+		
 	}
 }
 
@@ -289,19 +268,8 @@ void DispatchOperate::OnDisConnect(CRemotePeer* pRemotePeer)
 {
 	if (pRemotePeer)
 	{
-		TcpClient * client = new TcpClient();
-		SOCKET s = client->s = ((TcpClient *)pRemotePeer)->s;
-		client->addr = ((TcpClient *)pRemotePeer)->addr;
-		/*std::map <SOCKET, DispatchOperate*>::iterator it;
-		it = m_dispatchOperate.begin();
-		while (it != m_dispatchOperate.end())
-		{
-			if (it->first == s)
-			{
-				it = m_dispatchOperate.erase(it);
-				break;
-			}
-		}*/
+		dis.delPeer(pRemotePeer);
+
 	}
 }
 void DispatchOperate::OnData(TcpClient* peer, int callId, int call, Respone data)
@@ -431,6 +399,18 @@ void DispatchOperate::OnTcpData(TcpClient* peer, int callId, int call, TcpRespon
 	ArgumentType args;
 	switch (call)
 	{
+	case RADIO_CONNECT:
+		try
+		{
+			args["getType"] = MNIS_CONNECT;
+			args["info"] = FieldValue(0);
+			dis.send2Client("status", args, peer);
+		}
+		catch (std::exception e)
+		{
+
+		}
+		break;
 	case PRIVATE_CALL:
 	case GROUP_CALL:
 	case ALL_CALL:
@@ -453,7 +433,7 @@ void DispatchOperate::OnTcpData(TcpClient* peer, int callId, int call, TcpRespon
 	case REMOTE_MONITOR  :
 		args["Status"] = FieldValue(data.result);
 		args["Target"] = FieldValue(data.id);
-		args["Type"] = FieldValue(data.callType);
+		args["Type"] = FieldValue(data.controlType);
 		dis.send2Client("controlStatus", args, peer);
 		break;
 	}
@@ -492,4 +472,36 @@ void DispatchOperate::call(TcpClient * tp, int type,int op, int id, int callId)
 void DispatchOperate::control(TcpClient * tp, int type,  int id, int callId)
 {
 	ts.control(tp, type, id,  callId);
+}
+
+void DispatchOperate::setCallBack()
+{
+	ds.setCallBackFunc(DispatchOperate::OnData);
+	ts.setCallBackFunc(DispatchOperate::OnTcpData);
+}
+bool DispatchOperate::getGps(TcpClient * tp, int id, int querymode, double cycle, int callId)
+{
+	return ds.radioGetGps(tp, id, querymode, cycle, callId);
+}
+bool DispatchOperate::stopGps(TcpClient * tp, int id, int querymode, int callId)
+{
+	return ds.radioStopGps(tp, id, querymode, callId);
+}
+bool DispatchOperate::sendMsg(TcpClient * tp, wchar_t * text, int id, int callId, int opterateType)
+{
+	return ds.radioSendMsg(tp, text, id, callId, opterateType);
+}
+void DispatchOperate::getStatus(TcpClient * tp , int type ,int callId)
+{
+	switch (type)
+	{
+	case MNIS_CONNECT:
+		ds.getRadioStatus(tp,type,callId);
+		break;
+	case RADIO_CONNECT:
+		break;
+	case RADIO_STATUS:
+		ds.getRadioStatus(tp, type, callId);
+		break;
+	}
 }

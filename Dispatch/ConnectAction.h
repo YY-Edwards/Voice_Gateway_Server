@@ -5,7 +5,7 @@
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
 #include "../lib/rpc/include/TcpServer.h"
-DispatchOperate dis;
+#include "extern.h"
 void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
@@ -17,61 +17,60 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 		TcpClient * client = new TcpClient();
 		SOCKET s = client->s = ((TcpClient *)pRemote)->s;
 		client->addr = ((TcpClient *)pRemote)->addr;
-
-		std::string radioIP = "";
-		std::string mnisIP = "";
-		Document d;
-		d.Parse(param.c_str());
-	
-		if (d.HasMember("Ride") && d["Ride"].IsObject())
+		bool isHave = false;
+		for (auto i = rmtPeerList.begin(); i != rmtPeerList.end(); i++)
 		{
-			Value objRadio = d["Ride"].GetObject();
-			if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
+			TcpClient * t = *i;
+			if (t->s == client->s)
 			{
-				radioIP = objRadio["Ip"].GetString();
-
+				isHave = true;
+				break;
 			}
 		}
-		//mnisIP
-		if (d.HasMember("Mnis") && d["Mnis"].IsObject())
+		if (isHave)
 		{
-			Value objRadio = d["Mnis"].GetObject();
-			if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
+			std::string radioIP = "";
+			std::string mnisIP = "";
+			Document d;
+			d.Parse(param.c_str());
+
+			if (d.HasMember("Ride") && d["Ride"].IsObject())
 			{
-				mnisIP = objRadio["Ip"].GetString();
+				Value objRadio = d["Ride"].GetObject();
+				if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
+				{
+					radioIP = objRadio["Ip"].GetString();
 
-
+				}
 			}
-		}
-		//GPS 翻转IP
-		if (d.HasMember("Gps") && d["Gps"].IsObject())
-		{
-			Value objRadio = d["Gps"].GetObject();
-			if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
+			//mnisIP
+			if (d.HasMember("Mnis") && d["Mnis"].IsObject())
 			{
-				//radioIP = objRadio["Ip"].GetString();
+				Value objRadio = d["Mnis"].GetObject();
+				if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
+				{
+					mnisIP = objRadio["Ip"].GetString();
 
+
+				}
 			}
-		}
-		if (radioIP!=m_radioIP && mnisIP !=m_mnisIP)
-		{
-			dis.connect(client,radioIP.c_str(),mnisIP.c_str(),callId);
-			//if (mnisIP != "")
-			//{
-			//	//cs.radioConnect(client, mnisIP.c_str(), callId);
-			//	m_mnisIP = mnisIP;
-			//}
-			//else if (radioIP != "")
-			//{
-			//	m_radioIP = radioIP;
-			//	//cs.radioConnect(client,  radioIP.c_str(), callId);
-			//	//m_dispatchOperate[s]->addTcpCommand(client, s, RADIO_CONNECT, radioIP, mnisIP, "", 0, _T(""), 0, 0, callId);
-			//}
-			
+			//GPS 翻转IP
+			if (d.HasMember("Gps") && d["Gps"].IsObject())
+			{
+				Value objRadio = d["Gps"].GetObject();
+				if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
+				{
+					//radioIP = objRadio["Ip"].GetString();
+
+				}
+			}
+			dis.connect(client, radioIP.c_str(), mnisIP.c_str(), callId);
 		}
 		else
 		{
-
+#if DEBUG_LOG
+			LOG(INFO) << "tcp连接不存在！";
+#endif
 		}
 		
 	}

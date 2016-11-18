@@ -1075,7 +1075,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						//}
 
 						
-					}
+				//	}
 					else if (rmt_type_code == 0x03)
 					{
 						if (0x0310 == check_result/* & 0x00FF)*/)                                    //远程监听
@@ -1089,6 +1089,9 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.result = REMOTE_SUCESS;
 								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
+#if DEBUG_LOG
+								LOG(INFO) << "远程监听成功";
+#endif
 								break;
 							}
 						
@@ -1119,9 +1122,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 									std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", it->callId, arg, "radio");
 									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 								}*/
-#if DEBUG_LOG
-								LOG(INFO) << "远程监听成功";
-#endif
+
 								
 							}
 
@@ -1156,7 +1157,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						}
 						
 					}
-			//	}	
+				}	
 		//	}
 			m_allCommandListLocker.unlock();
 			break;

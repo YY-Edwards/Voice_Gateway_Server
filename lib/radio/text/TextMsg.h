@@ -63,7 +63,7 @@ public:
 	CTextMsg();
 	~CTextMsg();
 	bool InitSocket(DWORD dwAddress/*, CRemotePeer * pRemote*/);
-	bool CloseSocket(SOCKET* s);
+	bool CloseSocket();
 	static DWORD WINAPI ReceiveDataThread(LPVOID lpParam);
 	std::string ParseUserMsg(TextMsg* HandleMsg, int* len);
 	UINT8 GetSeqNumber(TextMsg* HandleMsg);

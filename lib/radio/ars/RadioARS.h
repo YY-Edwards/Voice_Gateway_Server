@@ -21,7 +21,7 @@ public:
 	CRadioARS();
 	~CRadioARS();
 	bool InitARSSocket(DWORD dwAddress/*,CRemotePeer * pRemote*/);
-	bool CloseARSSocket(SOCKET* s);
+	bool CloseARSSocket();
 	static DWORD WINAPI ReceiveDataThread(LPVOID lpParam);
 	bool sendArsAck(DWORD dwRadioID, int CaiNet);
 	void RecvData();

@@ -174,6 +174,9 @@
     <ClInclude Include="tcpCommon.h">
       <Filter>radioTcp</Filter>
     </ClInclude>
+    <ClInclude Include="extern.h">
+      <Filter>radioTcp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -213,6 +216,9 @@
       <Filter>radioUdp</Filter>
     </ClCompile>
     <ClCompile Include="TcpScheduling.cpp">
+      <Filter>radioTcp</Filter>
+    </ClCompile>
+    <ClCompile Include="extern.cpp">
       <Filter>radioTcp</Filter>
     </ClCompile>
   </ItemGroup>

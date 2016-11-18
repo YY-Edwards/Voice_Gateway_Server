@@ -22,11 +22,11 @@
 #define               RECV_GPS               20
 #define               GPS_IMME_CSBK_EGPS     23
 #define               GPS_TRIGG_CSBK_EGPS    24
-
+#define               MNIS_DIS_CONNECT       30
 
 #define PRIVATE_MSG_FLG        12
 #define GROUP_MSG_FLG          225
-
+#define ALL                         0
 #define GROUP                  2
 #define PRIVATE                3
 
