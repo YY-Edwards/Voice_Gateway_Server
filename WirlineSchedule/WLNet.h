@@ -333,6 +333,10 @@ public:
 	int wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle, int status);
 	/*告知界面Gps数据*/
 	int wlMnisSendGps(int Source, GPS gps);
+	/*告知界面短信发送执行状态*/
+	int wlMnisMessageStatus(int Type, int Target, int Source, std::string Contents,int status);
+	/*告知界面收到短信*/
+	int wlMnisMessage(int Type, int Target, int Source, std::string Contents);
 protected:
 	/*
 	* Socket work thread

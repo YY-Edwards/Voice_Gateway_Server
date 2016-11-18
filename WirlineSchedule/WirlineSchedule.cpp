@@ -210,6 +210,7 @@ int main()
 	m_pRpcServer->addActionHandler("wlPlay", wlPlayActionHandler);
 	m_pRpcServer->addActionHandler("wlInfo", wlInfoActionHandler);
 	m_pRpcServer->addActionHandler("queryGps", wlMnisQueryGpsActionHandler);
+	m_pRpcServer->addActionHandler("message", wlMnisMessageHandler);
 	m_pRpcServer->start(WL_SERVER_PORT);
 
 	/*初始化数据库*/

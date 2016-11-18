@@ -793,16 +793,19 @@ void CManager::OnMnisCallBack(TcpClient *m_pTcpClient, int callId, int callFuncI
 	{
 
 							 printf_s("SEND_PRIVATE_MSG:%d\r\n", response.msgStatus);
+							 g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus);
 	}
 		break;
 	case SEND_GROUP_MSG:
 	{
 						   printf_s("SEND_GROUP_MSG:%d\r\n", response.msgStatus);
+						   g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus);
 	}
 		break;
 	case RECV_MSG:
 	{
 					 printf_s("RECV_MSG:%d\r\n", response.msgStatus);
+					 g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus);
 	}
 		break;
 	case GPS_IMME_COMM:
