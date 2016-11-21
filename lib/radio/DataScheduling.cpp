@@ -258,6 +258,7 @@ DWORD WINAPI CDataScheduling::workThread(LPVOID lpParam)
 		p->workThreadFunc();
 		Sleep(10);
 	}
+	return 1;
 }
 void CDataScheduling::workThreadFunc()
 {
@@ -341,6 +342,7 @@ void CDataScheduling::timeOut()
 					r.msg = "";
 					r.msgType = PRIVATE;
 					onData(myCallBackFunc, it->tp, ++it->callId, it->command, r);
+					break;
 				case SEND_GROUP_MSG:
 					r.target = it->radioId;
 					r.msgStatus = UNSUCESS;

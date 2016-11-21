@@ -510,6 +510,14 @@ void CTextMsg::RecvMsg()
 						r.target = m_ThreadMsg->radioID;
 						r.msgStatus = SUCESS;
 						r.msg = "";
+						if (it->command == SEND_PRIVATE_MSG)
+						{
+							r.msgType = PRIVATE;
+						}
+						else if (it->command == SEND_GROUP_MSG)
+						{
+							r.msgType = GROUP;
+						}
 						onData(myCallBackFunc,it->tp, ++it->callId, it->command, r);
 						it = timeOutList.erase(it);
 						break;
@@ -552,6 +560,7 @@ void CTextMsg::RecvMsg()
 				r.source = m_ThreadMsg->radioID;
 				r.msgStatus = SUCESS;
 				r.msg = message;
+				r.msgType = PRIVATE;
 				onData(myCallBackFunc, peer, seq , RECV_MSG, r);
 			
 #if DEBUG_LOG
