@@ -4,7 +4,6 @@
 #include <ostream>
 #include <sstream>
 #include <vector>
-#include <tchar.h>
 
 #pragma comment(lib, "libmysql.lib")
 

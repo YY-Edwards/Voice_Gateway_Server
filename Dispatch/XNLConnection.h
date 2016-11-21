@@ -9,6 +9,7 @@
 #include "xcmp_msg_defs.h"
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
+#include "tcpCommon.h"
 #define WM_RX_XCMP_MESSAGE (WM_USER + 100) 
 
 typedef enum
@@ -44,14 +45,14 @@ class CXNLConnection
 private:
     // private constructor, can only create this class with CreatConnection()
 	
-    CXNLConnection(SOCKET s, string auth_key, unsigned long delta);
+    CXNLConnection(SOCKET s, std::string auth_key, unsigned long delta);
 
 public:
     ~CXNLConnection(void);
 
 public:
     // to create a instance
-    static CXNLConnection* CreatConnection(DWORD ip_addr, int port, string auth_key, unsigned long delta);
+    static CXNLConnection* CreatConnection(DWORD ip_addr, int port, std::string auth_key, unsigned long delta);
     BOOL send_xcmp_brightness_msg(unsigned char function, unsigned char intensity);
     BOOL send_xcmp_pui_brdcst(unsigned char pui_type,
                                      unsigned short pui_id,

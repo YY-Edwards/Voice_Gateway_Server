@@ -19,11 +19,8 @@
 #include <WinSock2.h>
 #include <Windows.h>
 #include<list>
-using namespace std;
 #include <mutex>
-#include"DispatchOperate.h"
-extern DispatchOperate * dis;
-extern std::map<SOCKET, DispatchOperate*>  m_dispatchOperate;
+
 
 
 #define GOOGLE_GLOG_DLL_DECL           // 使用静态glog库用这个

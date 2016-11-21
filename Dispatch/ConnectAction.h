@@ -5,11 +5,10 @@
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
 #include "../lib/rpc/include/TcpServer.h"
-CDataScheduling cs;
+#include "extern.h"
 void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
-
 	std::lock_guard<std::mutex> locker(lock);
 	try{
 		std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "sucess", ArgumentType());
@@ -18,17 +17,23 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 		TcpClient * client = new TcpClient();
 		SOCKET s = client->s = ((TcpClient *)pRemote)->s;
 		client->addr = ((TcpClient *)pRemote)->addr;
-
-		string radioIP = "";
-		string mnisIP = "";
-		Document d;
-		d.Parse(param.c_str());
-	/*	if (doc.HasMember("param"))
-		if (doc["param"].IsObject())*/
+		bool isHave = false;
+		for (auto i = rmtPeerList.begin(); i != rmtPeerList.end(); i++)
 		{
-			//Value obj = doc["param"].GetObject();
+			TcpClient * t = *i;
+			if (t->s == client->s)
+			{
+				isHave = true;
+				break;
+			}
+		}
+		if (isHave)
+		{
+			std::string radioIP = "";
+			std::string mnisIP = "";
+			Document d;
+			d.Parse(param.c_str());
 
-			//radioIP
 			if (d.HasMember("Ride") && d["Ride"].IsObject())
 			{
 				Value objRadio = d["Ride"].GetObject();
@@ -59,29 +64,17 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 
 				}
 			}
-			if (radioIP!=m_radioIP && mnisIP !=m_mnisIP)
-			{
-				if (mnisIP != "")
-				{
-					cs.radioConnect(client, mnisIP.c_str(), callId);
-					m_mnisIP = mnisIP;
-				}
-				else if (radioIP != "")
-				{
-					m_radioIP = radioIP;
-					cs.radioConnect(client,  radioIP.c_str(), callId);
-					m_dispatchOperate[s]->AddAllCommand(client, s, RADIO_CONNECT, radioIP, mnisIP, "", 0, _T(""), 0, 0, callId);
-				}
-				
-			}
-			else
-			{
-
-			}
-			
+			dis.connect(client, radioIP.c_str(), mnisIP.c_str(), callId);
 		}
-
+		else
+		{
+#if DEBUG_LOG
+			LOG(INFO) << "tcp连接不存在！";
+#endif
+		}
+		
 	}
+
 	catch (std::exception e){
 
 	}

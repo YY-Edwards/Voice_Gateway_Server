@@ -26,7 +26,7 @@ bool CRadioARS::InitARSSocket(DWORD dwAddress/*,CRemotePeer * pRemote*/)
 	WSADATA			 wsda;					//   Structure   to   store   info
 	
 	int ret = WSAStartup(MAKEWORD(1, 1), &wsda);     //   Load   version   1.1   of   Winsock
-	CloseARSSocket(&m_ThreadARS->mySocket);
+	CloseARSSocket();
 	BOOL bReuseaddr = FALSE;
 	setsockopt(m_ThreadARS->mySocket, SOL_SOCKET, SO_DONTLINGER, (const char*)&bReuseaddr, sizeof(BOOL));
 	
@@ -34,7 +34,7 @@ bool CRadioARS::InitARSSocket(DWORD dwAddress/*,CRemotePeer * pRemote*/)
 	
 	if (m_ThreadARS->mySocket == SOCKET_ERROR)				//   Socket create Error
 	{
-		CloseARSSocket(&m_ThreadARS->mySocket);
+		CloseARSSocket();
 		return FALSE;
 	}
 
@@ -57,11 +57,11 @@ bool CRadioARS::InitARSSocket(DWORD dwAddress/*,CRemotePeer * pRemote*/)
 }
 
 
-bool CRadioARS::CloseARSSocket(SOCKET* s)
+bool CRadioARS::CloseARSSocket()
 {
 	if (m_RcvSocketOpened)        // 只有在前面已经打开了，才有必要关闭，否则没有必要了
 	{
-		closesocket(*s);							        // Close socket
+		closesocket(m_ThreadARS->mySocket);							        // Close socket
 
 		WSACleanup();
 
@@ -171,8 +171,6 @@ void CRadioARS::RecvData()
 		if (peer != NULL)
 		{
 			//查看状态，状态发生改变时，通知特Tserver
-			ArgumentType arg;
-			arg["Target"] = FieldValue(stringId.c_str());
 			if (radioStatus.find(stringId) == radioStatus.end())
 			{
 				RadioStatus st;
@@ -207,8 +205,7 @@ void CRadioARS::RecvData()
 			if (peer != NULL)
 			{
 				//查看状态，状态发生改变时，通知特Tserver
-				ArgumentType arg;
-				arg["Target"] = FieldValue(stringId.c_str());
+
 				if (radioStatus.find(stringId) == radioStatus.end())
 				{
 					RadioStatus st;
@@ -217,7 +214,7 @@ void CRadioARS::RecvData()
 					radioStatus[stringId] = st;
 					Respone r;
 					r.source = m_ThreadARS->radioID;
-					r.arsStatus = FAILED;
+					r.arsStatus = UNSUCESS;
 					onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
 				}
 				else if (radioStatus[stringId].status == RADIO_STATUS_ONLINE)
@@ -226,7 +223,7 @@ void CRadioARS::RecvData()
 
 					Respone r;
 					r.source = m_ThreadARS->radioID;
-					r.arsStatus = FAILED;
+					r.arsStatus = UNSUCESS;
 					onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
 				}
 			}

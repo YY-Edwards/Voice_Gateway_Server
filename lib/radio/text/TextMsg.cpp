@@ -2,7 +2,6 @@
 #include "TextMsg.h"
 #include  "time.h"
 
-#include "../lib/rpc/include/RpcJsonParser.h"
 #pragma comment(lib, "wsock32.lib")
 
 #define MSG_PORT   4007
@@ -29,18 +28,18 @@ bool CTextMsg::InitSocket( DWORD dwAddress/*, CRemotePeer * pRemote*/)
 	SOCKADDR_IN      addr;					//   The   local   interface   address   
 	WSADATA			 wsda;					//   Structure   to   store   info
 
-	CloseSocket(&m_ThreadMsg->mySocket);
+	CloseSocket();
 	BOOL bReuseaddr = FALSE;
 	setsockopt(m_ThreadMsg->mySocket, SOL_SOCKET, SO_DONTLINGER, (const char*)&bReuseaddr, sizeof(BOOL));
 
 	int ret = WSAStartup(MAKEWORD(1, 1), &wsda);     //   Load   version   1.1   of   Winsock
-	SOCKET *s = new SOCKET();
-	*s = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);   //   Create   an   UDP   socket
 
-	if (*s == SOCKET_ERROR)				//   Socket create Error
+	m_ThreadMsg->mySocket = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);   //   Create   an   UDP   socket
+
+	if (m_ThreadMsg->mySocket == SOCKET_ERROR)				//   Socket create Error
 	{
 		//AfxMessageBox(_T("Socket初始化错误！"));
-		CloseSocket(s);
+		CloseSocket();
 
 		return FALSE;
 	}
@@ -51,15 +50,14 @@ bool CTextMsg::InitSocket( DWORD dwAddress/*, CRemotePeer * pRemote*/)
 	addr.sin_family = AF_INET;
 	addr.sin_port = htons(MSG_PORT);
 	addr.sin_addr.s_addr = dwAddress;
-	ret = ::bind(*s, (struct sockaddr *) &addr, sizeof(addr));
+	ret = ::bind(m_ThreadMsg->mySocket, (struct sockaddr *) &addr, sizeof(addr));
 	if ( ret== SOCKET_ERROR)
 	{
 		int b = WSAGetLastError();
 		//AfxMessageBox(_T("绑定端口错误！"));
-		CloseSocket(s);
+		CloseSocket();
 		return FALSE;
 	}
-	m_ThreadMsg->mySocket = *s;
 	m_RcvSocketOpened = true;
 	CreateThread(NULL, 0, ReceiveDataThread, this, THREAD_PRIORITY_NORMAL +1, NULL);
 	//AfxBeginThread(ReceiveDataThread, (LPVOID)&m_ThreadMsg, THREAD_PRIORITY_NORMAL);
@@ -68,11 +66,11 @@ bool CTextMsg::InitSocket( DWORD dwAddress/*, CRemotePeer * pRemote*/)
 }
 
 
-bool CTextMsg::CloseSocket(SOCKET* s)
+bool CTextMsg::CloseSocket()
 {
 	if (m_RcvSocketOpened)        // 只有在前面已经打开了，才有必要关闭，否则没有必要了
 	{
-		closesocket(*s);							        // Close socket
+		closesocket(m_ThreadMsg->mySocket);							        // Close socket
 
 		WSACleanup();
 
@@ -512,6 +510,14 @@ void CTextMsg::RecvMsg()
 						r.target = m_ThreadMsg->radioID;
 						r.msgStatus = SUCESS;
 						r.msg = "";
+						if (it->command == SEND_PRIVATE_MSG)
+						{
+							r.msgType = PRIVATE;
+						}
+						else if (it->command == SEND_GROUP_MSG)
+						{
+							r.msgType = GROUP;
+						}
 						onData(myCallBackFunc,it->tp, ++it->callId, it->command, r);
 						it = timeOutList.erase(it);
 						break;
@@ -554,6 +560,7 @@ void CTextMsg::RecvMsg()
 				r.source = m_ThreadMsg->radioID;
 				r.msgStatus = SUCESS;
 				r.msg = message;
+				r.msgType = PRIVATE;
 				onData(myCallBackFunc, peer, seq , RECV_MSG, r);
 			
 #if DEBUG_LOG
@@ -598,8 +605,7 @@ void CTextMsg::RecvMsg()
 //				}
 //
 				//查看状态，状态发生改变时，通知特Tserver
-				ArgumentType arg;
-				arg["Target"] = FieldValue(stringId.c_str());
+	
 				if (radioStatus.find(stringId) == radioStatus.end())
 				{
 					RadioStatus st;

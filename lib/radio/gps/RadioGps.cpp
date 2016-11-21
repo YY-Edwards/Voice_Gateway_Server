@@ -30,7 +30,7 @@ bool CRadioGps::InitGPSSocket(DWORD dwAddress/*,  CRemotePeer * pRemote*/)
 	WSADATA			 wsda;					//   Structure   to   store   info
 	int ret = WSAStartup(MAKEWORD(1, 1), &wsda);     //   Load   version   1.1   of   Winsock
 
-	CloseGPSSocket(&m_ThreadGps->mySocket);
+	CloseGPSSocket();
 	BOOL bReuseaddr = FALSE;
 	setsockopt(m_ThreadGps->mySocket, SOL_SOCKET, SO_DONTLINGER, (const char*)&bReuseaddr, sizeof(BOOL));
 
@@ -40,7 +40,7 @@ bool CRadioGps::InitGPSSocket(DWORD dwAddress/*,  CRemotePeer * pRemote*/)
 	if (m_ThreadGps->mySocket == SOCKET_ERROR)				//   Socket create Error
 	{
 		//AfxMessageBox(_T("Socket初始化错误！"));
-		CloseGPSSocket(&m_ThreadGps->mySocket);
+		CloseGPSSocket();
 
 		return FALSE;
 	}
@@ -77,7 +77,7 @@ bool CRadioGps::InitGPSOverturnSocket(DWORD dwAddress)
 	if (m_ThreadGpsOverturn->mySocket == SOCKET_ERROR)				//   Socket create Error
 	{
 		//AfxMessageBox(_T("Socket初始化错误！"));
-		CloseGPSSocket(&m_ThreadGpsOverturn->mySocket);
+		CloseGPSSocket();
 
 		return FALSE;
 	}
@@ -99,11 +99,11 @@ bool CRadioGps::InitGPSOverturnSocket(DWORD dwAddress)
 	return TRUE;
 }
 
-bool CRadioGps::CloseGPSSocket(SOCKET* s)
+bool CRadioGps::CloseGPSSocket()
 {
 	if (m_RcvSocketOpened)        // 只有在前面已经打开了，才有必要关闭，否则没有必要了
 	{
-		closesocket(*s);							        // Close socket
+		closesocket(m_ThreadGps->mySocket);							        // Close socket
 
 		WSACleanup();
 
@@ -515,7 +515,7 @@ void CRadioGps::RecvData()
 							{
 								Respone r;
 								r.source = m_ThreadGps->radioID;
-								r.gpsStatus = FAILED;
+								r.gpsStatus = UNSUCESS;
 								r.querymode = it->querymode;
 								r.cycle = it->cycle;
 								r.operate = operate;
@@ -736,34 +736,32 @@ void CRadioGps::RecvData()
 			}
 		}
 		//查看状态，状态发生改变时，通知特Tserver
-		 ArgumentType arg;
-		 arg["Target"] = FieldValue(radioID);
 		 if (radioStatus.find(radioID) == radioStatus.end())
 		 {
-		 RadioStatus st;
-		 st.id = atoi(radioID);
-		 st.status = RADIO_STATUS_ONLINE;
-		 st.gpsQueryMode = queryMode;
-		 radioStatus[radioID] = st;
-		 Respone r;
-		 r.source = m_ThreadGps->radioID;
-		 r.arsStatus = FAILED;
-		 onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
+			RadioStatus st;
+			st.id = atoi(radioID);
+			st.status = RADIO_STATUS_ONLINE;
+			st.gpsQueryMode = queryMode;
+			radioStatus[radioID] = st;
+			Respone r;
+			r.source = m_ThreadGps->radioID;
+			r.arsStatus = SUCESS;
+			onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
 
 		 }
 		 else if (radioStatus[radioID].status == RADIO_STATUS_OFFLINE)
 		 {
-		 radioStatus[radioID].gpsQueryMode = queryMode;
-		 radioStatus[radioID].status = RADIO_STATUS_ONLINE;
-		 Respone r;
-		 r.source = m_ThreadGps->radioID;
-		 r.arsStatus = FAILED;
-		 onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
-		 }
-		 }
-		 else
-		 {
-		 return;
-		 }
+			 radioStatus[radioID].gpsQueryMode = queryMode;
+			 radioStatus[radioID].status = RADIO_STATUS_ONLINE;
+			 Respone r;
+			 r.source = m_ThreadGps->radioID;
+			 r.arsStatus = SUCESS;
+			 onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
+		}
+	 }
+	else
+	{
+		return;
+	}
 		 
 }

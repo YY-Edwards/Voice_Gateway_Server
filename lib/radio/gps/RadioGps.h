@@ -1,8 +1,6 @@
 
-#include <WinSock2.h>
-#include <Windows.h>
-#include "../lib/rpc/include/BaseConnector.h"
-#include "../lib/radio/common.h"
+
+#include "../common.h"
 #pragma once
 #define SEND_IMM_QUERY_LENTH   10
 #define SEND_TRG_QUERY_LENTH   11
@@ -71,7 +69,7 @@ public:
 	~CRadioGps();
 	bool InitGPSSocket(DWORD dwAddress/*, CRemotePeer * pRemote*/);
 	bool InitGPSOverturnSocket(DWORD dwAddress);
-	bool CloseGPSSocket(SOCKET* s);
+	bool CloseGPSSocket();
 	static DWORD WINAPI ReceiveDataThread(LPVOID lpParam);
 	bool SendQueryGPS(DWORD dwRadioID,int queryMode,double cycle);
 	bool StopQueryTriggeredGPS(DWORD dwRadioID,int queryMode);

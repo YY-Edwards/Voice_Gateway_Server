@@ -17,7 +17,7 @@ BOOL g_bTX;       //Set or cleared by dongle.
 CSerialDongle* g_pDongle;
 BOOL g_dongleIsUsing;
 
-CManager::CManager(CMySQL *pDb)
+CManager::CManager(CMySQL *pDb,CDataScheduling* pMnis)
 {
 	g_pNet = new CWLNet(pDb, this);
 	g_pDongle = new CSerialDongle();
@@ -35,7 +35,7 @@ CManager::CManager(CMySQL *pDb)
 	{
 		timeBeginPeriod(m_theTimeCaps.wPeriodMin);//建立最小定时器精度
 	}
-	m_bDongleIsOpen = FALSE;
+	//m_bDongleIsOpen = FALSE;
 	g_dongleIsUsing = FALSE;
 	m_pDb = pDb;
 	m_hRemoteTaskThread = NULL;
@@ -44,6 +44,7 @@ CManager::CManager(CMySQL *pDb)
 	m_bIsHaveConfig = false;
 	//memset(&m_pCurrentTask, 0, sizeof(REMOTE_TASK));
 	m_pCurrentTask = NULL;
+	m_pMnis = pMnis;
 }
 
 CManager::~CManager()
@@ -55,32 +56,32 @@ CManager::~CManager()
 	}
 }
 
-int CManager::initSys()
-{
-	WCHAR tmpStr[128] = { 0 };
-	LPCTSTR lpctTmpStr = tmpStr;
-	DWORD rlt = 0;
-	BOOL netRlt = FALSE;
-
-	//init net
-	g_net_connect = g_pNet->StartNet(inet_addr(CONFIG_MASTER_IP), CONFIG_MASTER_PORT, INADDR_ANY, CONFIG_LOCAL_PEER_ID, CONFIG_LOCAL_RADIO_ID, CONFIG_RECORD_TYPE);
-	if (!g_net_connect)
-	{
-		//m_bDongleIsOpen = FALSE;
-		sprintf_s(m_reportMsg, "initDongle:open net fail");
-	}
-	else
-	{
-		//m_bDongleIsOpen = TRUE;
-		sprintf_s(m_reportMsg, "initDongle:open net success");
-		ReleaseDecodeEvent();
-	}
-	sendLogToWindow();
-
-	initDongle(CONFIG_DONGLE_PORT);
-
-	return 0;
-}
+// int CManager::initSys()
+// {
+// 	WCHAR tmpStr[128] = { 0 };
+// 	LPCTSTR lpctTmpStr = tmpStr;
+// 	DWORD rlt = 0;
+// 	BOOL netRlt = FALSE;
+// 
+// 	//init net
+// 	g_net_connect = g_pNet->StartNet(inet_addr(CONFIG_MASTER_IP), CONFIG_MASTER_PORT, INADDR_ANY, CONFIG_LOCAL_PEER_ID, CONFIG_LOCAL_RADIO_ID, CONFIG_RECORD_TYPE);
+// 	if (!g_net_connect)
+// 	{
+// 		//m_bDongleIsOpen = FALSE;
+// 		sprintf_s(m_reportMsg, "initDongle:open net fail");
+// 	}
+// 	else
+// 	{
+// 		//m_bDongleIsOpen = TRUE;
+// 		sprintf_s(m_reportMsg, "initDongle:open net success");
+// 		ReleaseDecodeEvent();
+// 	}
+// 	sendLogToWindow();
+// 
+// 	initDongle(CONFIG_DONGLE_PORT);
+// 
+// 	return 0;
+// }
 
 int CManager::initWnd(HWND current_hwnd)
 {
@@ -113,173 +114,173 @@ void CManager::sendLogToWindow()
 	}
 }
 
-int CManager::play()
-{
-	DWORD result = 0;
-	if (m_bDongleIsOpen)
-	{
-		result = WaitForSingleObject(m_hWaitDecodeEvent, INFINITE);
-		RequireDecodeEvent();
-		if (WAIT_TIMEOUT == result)
-		{
-			return 1;
-		}
+// int CManager::play()
+// {
+// 	DWORD result = 0;
+// 	if (m_bDongleIsOpen)
+// 	{
+// 		result = WaitForSingleObject(m_hWaitDecodeEvent, INFINITE);
+// 		RequireDecodeEvent();
+// 		if (WAIT_TIMEOUT == result)
+// 		{
+// 			return 1;
+// 		}
+// 
+// 		if (g_pDongle->changeAMBEToPCM())
+// 		{
+// 			LoadVoiceData(VOICE_DATA_PATH);
+// 		}
+// 		else
+// 		{
+// 			ReleaseDecodeEvent();
+// 			return 1;
+// 		}
+// 	}
+// 	return 0;
+// }
 
-		if (g_pDongle->changeAMBEToPCM())
-		{
-			LoadVoiceData(VOICE_DATA_PATH);
-		}
-		else
-		{
-			ReleaseDecodeEvent();
-			return 1;
-		}
-	}
-	return 0;
-}
+// int CManager::play(unsigned int length, char* pData)
+// {
+// 	DWORD result = 0;
+// 	if (m_bDongleIsOpen)
+// 	{
+// 		result = WaitForSingleObject(m_hWaitDecodeEvent, INFINITE);
+// 		RequireDecodeEvent();
+// 		if (WAIT_TIMEOUT == result)
+// 		{
+// 			return 1;
+// 		}
+// 
+// 		if (g_pDongle->changeAMBEToPCM())
+// 		{
+// 			return LoadVoiceData(length, pData);
+// 		}
+// 		else
+// 		{
+// 			ReleaseDecodeEvent();
+// 			return 1;
+// 		}
+// 	}
+// 	return 0;
+// }
 
-int CManager::play(unsigned int length, char* pData)
-{
-	DWORD result = 0;
-	if (m_bDongleIsOpen)
-	{
-		result = WaitForSingleObject(m_hWaitDecodeEvent, INFINITE);
-		RequireDecodeEvent();
-		if (WAIT_TIMEOUT == result)
-		{
-			return 1;
-		}
+// void CManager::LoadVoiceData(LPCWSTR filePath)
+// {
+// 	//	FILE * f;
+// 
+// 	DWORD result = 0;
+// 
+// 	HANDLE hOpenFile = CreateFile(filePath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
+// 	if (hOpenFile == INVALID_HANDLE_VALUE)
+// 	{
+// 		g_dongleIsUsing = FALSE;
+// 		ReleaseDecodeEvent();
+// 		sprintf_s(m_reportMsg, "open file fail");
+// 		sendLogToWindow();
+// 		return;
+// 	}
+// 	DWORD len = 0;
+// 	len = GetFileSize(hOpenFile, 0);
+// 
+// 
+// 	if (len <= 0)
+// 	{
+// 		g_dongleIsUsing = FALSE;
+// 		ReleaseDecodeEvent();
+// 		sprintf_s(m_reportMsg, "file length is zero");
+// 		sendLogToWindow();
+// 		CloseHandle(hOpenFile);
+// 		return;
+// 	}
+// 
+// 	char *pBuffer = new char[len];
+// 	ReadFile(hOpenFile, pBuffer, len, &len, NULL);
+// 	CloseHandle(hOpenFile);
+// 
+// 	int leftLen = len;
+// 
+// 	tAMBEFrame* pAMBEFrame;
+// 
+// 	pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();
+// 	int readLen = (leftLen >= 7) ? 7 : leftLen;
+// 	memcpy(pAMBEFrame->fld.ChannelBits, pBuffer, readLen);
+// 	leftLen -= readLen;
+// 	int index = readLen;
+// 
+// 	while (readLen == 7)
+// 	{
+// 		//sprintf_s(m_reportMsg, "1");
+// 		//sendLogToWindow();
+// 		g_pDongle->deObfuscate(IPSCTODONGLE, pAMBEFrame);
+// 		g_pDongle->MarkAMBEBufferFilled();
+// 		pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();
+// 		if (NULL == pAMBEFrame)
+// 		{
+// 			g_dongleIsUsing = FALSE;
+// 			delete[] pBuffer;
+// 			ReleaseDecodeEvent();
+// 			return;
+// 		}
+// 		readLen = (leftLen >= 7) ? 7 : leftLen;
+// 		if (readLen <= 0)
+// 		{
+// 			break;
+// 		}
+// 		memcpy(pAMBEFrame->fld.ChannelBits, pBuffer + index, readLen);
+// 		leftLen -= readLen;
+// 		index += readLen;
+// 	}
+// 
+// 
+// 	delete[] pBuffer;
+// 	g_pDongle->DecodeBuffers();
+// }
 
-		if (g_pDongle->changeAMBEToPCM())
-		{
-			return LoadVoiceData(length, pData);
-		}
-		else
-		{
-			ReleaseDecodeEvent();
-			return 1;
-		}
-	}
-	return 0;
-}
-
-void CManager::LoadVoiceData(LPCWSTR filePath)
-{
-	//	FILE * f;
-
-	DWORD result = 0;
-
-	HANDLE hOpenFile = CreateFile(filePath, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, NULL, NULL);
-	if (hOpenFile == INVALID_HANDLE_VALUE)
-	{
-		g_dongleIsUsing = FALSE;
-		ReleaseDecodeEvent();
-		sprintf_s(m_reportMsg, "open file fail");
-		sendLogToWindow();
-		return;
-	}
-	DWORD len = 0;
-	len = GetFileSize(hOpenFile, 0);
-
-
-	if (len <= 0)
-	{
-		g_dongleIsUsing = FALSE;
-		ReleaseDecodeEvent();
-		sprintf_s(m_reportMsg, "file length is zero");
-		sendLogToWindow();
-		CloseHandle(hOpenFile);
-		return;
-	}
-
-	char *pBuffer = new char[len];
-	ReadFile(hOpenFile, pBuffer, len, &len, NULL);
-	CloseHandle(hOpenFile);
-
-	int leftLen = len;
-
-	tAMBEFrame* pAMBEFrame;
-
-	pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();
-	int readLen = (leftLen >= 7) ? 7 : leftLen;
-	memcpy(pAMBEFrame->fld.ChannelBits, pBuffer, readLen);
-	leftLen -= readLen;
-	int index = readLen;
-
-	while (readLen == 7)
-	{
-		//sprintf_s(m_reportMsg, "1");
-		//sendLogToWindow();
-		g_pDongle->deObfuscate(IPSCTODONGLE, pAMBEFrame);
-		g_pDongle->MarkAMBEBufferFilled();
-		pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();
-		if (NULL == pAMBEFrame)
-		{
-			g_dongleIsUsing = FALSE;
-			delete[] pBuffer;
-			ReleaseDecodeEvent();
-			return;
-		}
-		readLen = (leftLen >= 7) ? 7 : leftLen;
-		if (readLen <= 0)
-		{
-			break;
-		}
-		memcpy(pAMBEFrame->fld.ChannelBits, pBuffer + index, readLen);
-		leftLen -= readLen;
-		index += readLen;
-	}
-
-
-	delete[] pBuffer;
-	g_pDongle->DecodeBuffers();
-}
-
-int CManager::LoadVoiceData(unsigned int length, char* pData)
-{
-
-	char *pBuffer = new char[length];
-	memcpy(pBuffer, pData, length);
-
-	int leftLen = length;
-
-	tAMBEFrame* pAMBEFrame;
-
-	pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();
-	int readLen = (leftLen >= 7) ? 7 : leftLen;
-	memcpy(pAMBEFrame->fld.ChannelBits, pBuffer, readLen);
-	leftLen -= readLen;
-	int index = readLen;
-
-	while (readLen == 7)
-	{
-		//sprintf_s(m_reportMsg, "2");
-		//sendLogToWindow();
-		g_pDongle->deObfuscate(IPSCTODONGLE, pAMBEFrame);
-		g_pDongle->MarkAMBEBufferFilled();
-		pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();
-		if (NULL == pAMBEFrame)
-		{
-			g_dongleIsUsing = FALSE;
-			delete[] pBuffer;
-			ReleaseDecodeEvent();
-			return 1;
-		}
-		readLen = (leftLen >= 7) ? 7 : leftLen;
-		if (readLen <= 0)
-		{
-			break;
-		}
-		memcpy(pAMBEFrame->fld.ChannelBits, pBuffer + index, readLen);
-		leftLen -= readLen;
-		index += readLen;
-	}
-
-
-	delete[] pBuffer;
-	g_pDongle->DecodeBuffers();
-	return 0;
-}
+// int CManager::LoadVoiceData(unsigned int length, char* pData)
+// {
+// 
+// 	char *pBuffer = new char[length];
+// 	memcpy(pBuffer, pData, length);
+// 
+// 	int leftLen = length;
+// 
+// 	tAMBEFrame* pAMBEFrame;
+// 
+// 	pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();
+// 	int readLen = (leftLen >= 7) ? 7 : leftLen;
+// 	memcpy(pAMBEFrame->fld.ChannelBits, pBuffer, readLen);
+// 	leftLen -= readLen;
+// 	int index = readLen;
+// 
+// 	while (readLen == 7)
+// 	{
+// 		//sprintf_s(m_reportMsg, "2");
+// 		//sendLogToWindow();
+// 		g_pDongle->deObfuscate(IPSCTODONGLE, pAMBEFrame);
+// 		g_pDongle->MarkAMBEBufferFilled();
+// 		pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();
+// 		if (NULL == pAMBEFrame)
+// 		{
+// 			g_dongleIsUsing = FALSE;
+// 			delete[] pBuffer;
+// 			ReleaseDecodeEvent();
+// 			return 1;
+// 		}
+// 		readLen = (leftLen >= 7) ? 7 : leftLen;
+// 		if (readLen <= 0)
+// 		{
+// 			break;
+// 		}
+// 		memcpy(pAMBEFrame->fld.ChannelBits, pBuffer + index, readLen);
+// 		leftLen -= readLen;
+// 		index += readLen;
+// 	}
+// 
+// 
+// 	delete[] pBuffer;
+// 	g_pDongle->DecodeBuffers();
+// 	return 0;
+// }
 
 void CManager::ReleaseDecodeEvent()
 {
@@ -292,7 +293,8 @@ int CManager::initialCall(unsigned long targetId, unsigned char callTyp)
 {
 	unsigned long tartgetId = targetId;
 	unsigned char callType = callTyp;
-	if (m_bDongleIsOpen)
+	if (Env_DongleIsOk &&
+		Env_SoundIsOk)
 	{
 
 		if (g_pDongle->changePCMToAMBE())
@@ -361,47 +363,47 @@ void CManager::RequireDecodeEvent()
 	ResetEvent(m_hWaitDecodeEvent);
 }
 
-int CManager::initDongle(unsigned int serial_port)
-{
-
-	DWORD rlt = 0;
-	WCHAR tmpStr[128] = { 0 };
-	LPCTSTR lpctTmpStr = tmpStr;
-
-	// 	sprintf_s(m_reportMsg, "initDongle:serial_port:COM%u", serial_port);
-	// 	sendLogToWindow();
-
-	m_activePort = serial_port;
-	swprintf_s(tmpStr, 128, L"\\\\.\\COM%d", m_activePort);
-
-	//init dongle
-	if (m_hwnd != NULL)
-	{
-		rlt = g_pDongle->OpenDongle(lpctTmpStr, m_hwnd, this);
-		if (rlt != 0)
-		{
-			m_bDongleIsOpen = FALSE;
-			g_dongle_open = false;
-			sprintf_s(m_reportMsg, "initDongle:open dongle fail");
-		}
-		else
-		{
-			m_bDongleIsOpen = TRUE;
-			g_dongle_open = true;
-			sprintf_s(m_reportMsg, "initDongle:open dongle success");
-			ReleaseDecodeEvent();
-		}
-		sendLogToWindow();
-	}
-	else
-	{
-		sprintf_s(m_reportMsg, "initDongle:m_hwnd is null");
-		sendLogToWindow();
-		rlt = -1;
-	}
-
-	return rlt;
-}
+// int CManager::initDongle(unsigned int serial_port)
+// {
+// 
+// 	DWORD rlt = 0;
+// 	WCHAR tmpStr[128] = { 0 };
+// 	LPCTSTR lpctTmpStr = tmpStr;
+// 
+// 	// 	sprintf_s(m_reportMsg, "initDongle:serial_port:COM%u", serial_port);
+// 	// 	sendLogToWindow();
+// 
+// 	m_activePort = serial_port;
+// 	swprintf_s(tmpStr, 128, L"\\\\.\\COM%d", m_activePort);
+// 
+// 	//init dongle
+// 	if (m_hwnd != NULL)
+// 	{
+// 		rlt = g_pDongle->OpenDongle(lpctTmpStr, m_hwnd, this);
+// 		if (rlt != 0)
+// 		{
+// 			m_bDongleIsOpen = FALSE;
+// 			g_dongle_open = false;
+// 			sprintf_s(m_reportMsg, "initDongle:open dongle fail");
+// 		}
+// 		else
+// 		{
+// 			m_bDongleIsOpen = TRUE;
+// 			g_dongle_open = true;
+// 			sprintf_s(m_reportMsg, "initDongle:open dongle success");
+// 			ReleaseDecodeEvent();
+// 		}
+// 		sendLogToWindow();
+// 	}
+// 	else
+// 	{
+// 		sprintf_s(m_reportMsg, "initDongle:m_hwnd is null");
+// 		sendLogToWindow();
+// 		rlt = -1;
+// 	}
+// 
+// 	return rlt;
+// }
 
 int CManager::disConnect()
 {
@@ -426,19 +428,26 @@ int CManager::setPlayCallOfCare(unsigned char calltype,unsigned long targetId)
 	return g_pNet->setPlayCallOfCare( calltype,targetId);
 }
 
-int CManager::config(CONFIG* pConfig)
+int CManager::config(REMOTE_TASK* pTask)
 {
+	CONFIG *pConfig = &(pTask->param.info.configParam);
 	int rlt = 0;
 	bool bMasterChange = false;
 	bool bDongleChange = false;
-	if (0 != strcmp(CONFIG_MASTER_IP,pConfig->master.masterIp))
+	bool bMnisChange = false;
+	if (0 != strcmp(CONFIG_MASTER_IP, pConfig->master.ip))
 	{
-		strcpy_s(CONFIG_MASTER_IP, pConfig->master.masterIp);
+		strcpy_s(CONFIG_MASTER_IP, pConfig->master.ip);
 		bMasterChange = true;
 	}
-	if (CONFIG_MASTER_PORT != pConfig->master.masterPort)
+	if (0 != strcmp(CONFIG_MNIS_IP, pConfig->mnis.ip))
 	{
-		CONFIG_MASTER_PORT = pConfig->master.masterPort;
+		strcpy_s(CONFIG_MNIS_IP, pConfig->mnis.ip);
+		bMnisChange = true;
+	}
+	if (CONFIG_MASTER_PORT != pConfig->master.port)
+	{
+		CONFIG_MASTER_PORT = pConfig->master.port;
 		bMasterChange = true;
 	}
 	if (CONFIG_LOCAL_PEER_ID != pConfig->localPeerId)
@@ -468,6 +477,7 @@ int CManager::config(CONFIG* pConfig)
 	CONFIG_MASTER_HEART_TIME = pConfig->masterHeartTime;
 	CONFIG_PEER_HEART_AND_REG_TIME = pConfig->peerHeartTime;
 	CONFIG_DEFAULT_SLOT = pConfig->defaultSlot;
+
 	if (!m_bIsHaveConfig)
 	{
 		//////////////////////////////////////////////////////////////////////////
@@ -477,66 +487,107 @@ int CManager::config(CONFIG* pConfig)
 		/*与主中继相连*/
 		if (!g_pNet->StartNet(inet_addr(CONFIG_MASTER_IP), CONFIG_MASTER_PORT, INADDR_ANY, CONFIG_LOCAL_PEER_ID, CONFIG_LOCAL_RADIO_ID, CONFIG_RECORD_TYPE))
 		{
+			Env_NetIsOk = false;
 			sprintf_s(m_reportMsg,"net initial fail");
-			sendLogToWindow();
-		}
-		/*配置麦克风和扬声器*/
-		if (WL_RETURN_OK != g_pSound->StartSound(m_hwnd, 0, 0))
-		{
-			sprintf_s(m_reportMsg, "sound initial fail");
 			sendLogToWindow();
 		}
 		else
 		{
-			sprintf_s(m_reportMsg, "sound initial success");
-			sendLogToWindow();
+			Env_NetIsOk = true;
 		}
 		/*配置dongle*/
 		WCHAR tmpStr[128] = { 0 };
 		swprintf_s(tmpStr, 128, L"\\\\.\\COM%d", CONFIG_DONGLE_PORT);
 		if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, m_hwnd, this))
 		{
-			m_bDongleIsOpen = FALSE;
-			g_dongle_open = false;
+			//m_bDongleIsOpen = FALSE;
+			Env_DongleIsOk = false;
 			sprintf_s(m_reportMsg, "open dongle fail");
 			sendLogToWindow();
 		}
 		else
 		{
-			m_bDongleIsOpen = TRUE;
-			g_dongle_open = true;
+			//m_bDongleIsOpen = TRUE;
+			Env_DongleIsOk = true;
 			sprintf_s(m_reportMsg, "open dongle success");
 			sendLogToWindow();
 		}
-		m_bIsHaveConfig = true;
-	}
-	else if (bMasterChange)
-	{
-		/*重新与主中继相连接*/
-		if (g_pNet->StartNet(inet_addr(CONFIG_MASTER_IP), CONFIG_MASTER_PORT, INADDR_ANY, CONFIG_LOCAL_PEER_ID, CONFIG_LOCAL_RADIO_ID, CONFIG_RECORD_TYPE))
+		/*配置麦克风和扬声器*/
+		if (WL_RETURN_OK != g_pSound->StartSound(m_hwnd, 0, 0))
 		{
-			sprintf_s(m_reportMsg, "net initial fail");
-			sendLogToWindow();
-		}
-	}
-	else if (bDongleChange)
-	{
-		/*重新配置dongle*/
-		WCHAR tmpStr[128] = { 0 };
-		swprintf_s(tmpStr, 128, L"\\\\.\\COM%d", CONFIG_DONGLE_PORT);
-		if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, m_hwnd, this))
-		{
-			m_bDongleIsOpen = FALSE;
-			g_dongle_open = false;
-			sprintf_s(m_reportMsg, "initDongle:open dongle fail");
+			Env_SoundIsOk = false;
+			sprintf_s(m_reportMsg, "sound initial fail");
 			sendLogToWindow();
 		}
 		else
 		{
-			m_bDongleIsOpen = TRUE;
-			g_dongle_open = true;
-			sprintf_s(m_reportMsg, "open dongle success");
+			Env_SoundIsOk = true;
+			sprintf_s(m_reportMsg, "sound initial success");
 			sendLogToWindow();
+		}
+		/*配置mnis*/
+		m_pMnis->radioConnect((TcpClient*)pTask->pRemote, CONFIG_MNIS_IP, pTask->callId);
+
+		m_bIsHaveConfig = true;
+	}
+	else
+	{
+		if (!Env_SoundIsOk)
+		{
+			g_pSound->stop();
+			/*配置麦克风和扬声器*/
+			if (WL_RETURN_OK != g_pSound->StartSound(m_hwnd, 0, 0))
+			{
+				Env_SoundIsOk = false;
+				sprintf_s(m_reportMsg, "sound initial fail");
+				sendLogToWindow();
+			}
+			else
+			{
+				Env_SoundIsOk = true;
+				sprintf_s(m_reportMsg, "sound initial success");
+				sendLogToWindow();
+			}
+
+		}
+		if (bMasterChange)
+		{
+			/*重新与主中继相连接*/
+			if (!g_pNet->StartNet(inet_addr(CONFIG_MASTER_IP), CONFIG_MASTER_PORT, INADDR_ANY, CONFIG_LOCAL_PEER_ID, CONFIG_LOCAL_RADIO_ID, CONFIG_RECORD_TYPE))
+			{
+				Env_NetIsOk = false;
+				sprintf_s(m_reportMsg, "net initial fail");
+				sendLogToWindow();
+			}
+			else
+			{
+				Env_NetIsOk = true;
+			}
+		}
+		if (bDongleChange)
+		{
+			/*重新配置dongle*/
+			WCHAR tmpStr[128] = { 0 };
+			swprintf_s(tmpStr, 128, L"\\\\.\\COM%d", CONFIG_DONGLE_PORT);
+			if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, m_hwnd, this))
+			{
+				//m_bDongleIsOpen = FALSE;
+				Env_DongleIsOk = false;
+				sprintf_s(m_reportMsg, "initDongle:open dongle fail");
+				sendLogToWindow();
+			}
+			else
+			{
+				//m_bDongleIsOpen = TRUE;
+				Env_DongleIsOk = true;
+				sprintf_s(m_reportMsg, "open dongle success");
+				sendLogToWindow();
+			}
+		}
+		if (bMnisChange)
+		{
+			/*配置mnis*/
+			m_pMnis->radioConnect((TcpClient*)pTask->pRemote, CONFIG_MNIS_IP, pTask->callId);
 		}
 	}
 	return rlt;
@@ -589,7 +640,7 @@ void CManager::handleRemoteTask()
 			{
 									  sprintf_s(m_reportMsg,"Handle REMOTE_CMD_CONFIG");
 									  sendLogToWindow();
-									  config(&(task.param.info.configParam));
+									  config(&task);
 			}
 				break;
 			case REMOTE_CMD_CALL:
@@ -647,6 +698,16 @@ void CManager::handleRemoteTask()
 												   info.setInt(REPEATER_DISCONNECT);
 											   }
 											   g_pNet->wlInfo(GET_TYPE_CONN, info);
+			}
+				break;
+			case REMOTE_CMD_MNIS_QUERY_GPS:
+			{
+											  m_pMnis->radioGetGps((TcpClient*)task.pRemote, task.param.info.queryGpsParam.Target, task.param.info.queryGpsParam.Type, task.param.info.queryGpsParam.Cycle, task.callId);
+			}
+				break;
+			case REMOTE_CMD_MNIS_MSG:
+			{
+										m_pMnis->radioSendMsg((TcpClient*)task.pRemote, task.param.info.msgParam.Contents, task.param.info.msgParam.Source, task.callId, task.param.info.msgParam.Type);
 			}
 				break;
 			default:
@@ -715,6 +776,118 @@ void CManager::OnDisConnect(CRemotePeer* pRemotePeer)
 	if (pRemotePeer)
 	{
 		removeCRemotePeer((TcpClient*)pRemotePeer);
+	}
+}
+
+void CManager::OnMnisCallBack(TcpClient *m_pTcpClient, int callId, int callFuncId, Respone response)
+{
+	switch (callFuncId)
+	{
+	case MNIS_CONNECT:
+	{
+						 printf_s("MNIS_CONNECT:%d\r\n", response.connectStatus);
+						 g_pNet->wlMnisConnectStatus(response.connectStatus);
+	}
+		break;
+	case SEND_PRIVATE_MSG:
+	{
+
+							 printf_s("SEND_PRIVATE_MSG:%d\r\n", response.msgStatus);
+							 g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus);
+	}
+		break;
+	case SEND_GROUP_MSG:
+	{
+						   printf_s("SEND_GROUP_MSG:%d\r\n", response.msgStatus);
+						   g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus);
+	}
+		break;
+	case RECV_MSG:
+	{
+					 printf_s("RECV_MSG:%s\r\n", response.msg.c_str());
+					 g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus);
+					 //g_pNet->wlMnisMessage(PRIVATE_MSG_FLG,10750,1118,"逗比");
+					 /************************************************************************/
+					 /* temp code
+					 /************************************************************************/
+					 //REMOTE_TASK *pTask = new REMOTE_TASK;
+					 //memset(pTask, 0, sizeof(REMOTE_TASK));
+					 //pTask->cmd = REMOTE_CMD_MNIS_MSG;
+					 ////task.pRemote = (CRemotePeer*)g_onLineClients.front();
+					 //swprintf_s(pTask->param.info.msgParam.Contents, L"逗比");
+					 //pTask->param.info.msgParam.Source = 1118;
+					 //pTask->param.info.msgParam.Target = 10750;
+					 //pTask->param.info.msgParam.Type = PRIVATE_MSG_FLG;
+					 //push_back_task(pTask);
+
+	}
+		break;
+	case GPS_IMME_COMM:
+	{
+						  printf_s("GPS_IMME_COMM:%d\r\n", response.gpsStatus);
+						  g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+	}
+		break;
+	case GPS_TRIGG_COMM:
+	{
+						   printf_s("GPS_TRIGG_COMM:%d\r\n", response.gpsStatus);
+						   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+	}
+		break;
+	case GPS_IMME_CSBK:
+	{
+						  printf_s("GPS_IMME_CSBK:%d\r\n", response.gpsStatus);
+						  g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+	}
+		break;
+	case GPS_TRIGG_CSBK:
+	{
+						   printf_s("GPS_TRIGG_CSBK:%d\r\n", response.gpsStatus);
+						   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+	}
+		break;
+	case STOP_QUERY_GPS:
+	{
+						   printf_s("STOP_QUERY_GPS:%d\r\n", response.gpsStatus);
+						   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+	}
+		break;
+	case RADIO_ARS:
+	{
+					  printf_s("RADIO_ARS:%d\r\n", response.arsStatus);
+	}
+		break;
+		// do nothing
+	case RADIO_GPS:
+	{
+					  printf_s("RADIO_GPS:%d\r\n", response.gpsStatus);
+	}
+		break;
+	case RECV_GPS:
+	{
+					 printf_s("RECV_GPS:%d\r\n", response.gpsStatus);
+					 GPS gps = { 0 };
+					 gps.lat = response.lat;
+					 gps.lon = response.lon;
+					 gps.speed = response.speed;
+					 gps.valid = response.valid;
+					 g_pNet->wlMnisSendGps(response.source, gps);
+	}
+		break;
+	case GPS_IMME_CSBK_EGPS:
+	{
+							   printf_s("GPS_IMME_CSBK_EGPS:%d\r\n", response.gpsStatus);
+							   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+	}
+		break;
+	case GPS_TRIGG_CSBK_EGPS:
+	{
+								printf_s("GPS_TRIGG_CSBK_EGPS:%d\r\n", response.gpsStatus);
+								g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+	}
+		break;
+	default:
+		break;
 	}
 }
 

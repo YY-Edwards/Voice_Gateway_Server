@@ -58,6 +58,18 @@
     <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp">
       <Filter>rpc\source</Filter>
     </ClCompile>
+    <ClCompile Include="..\lib\radio\DataScheduling.cpp">
+      <Filter>mins\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\radio\ars\RadioARS.cpp">
+      <Filter>mins\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\radio\gps\RadioGps.cpp">
+      <Filter>mins\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\radio\text\TextMsg.cpp">
+      <Filter>mins\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ambe3000.h">
@@ -333,6 +345,21 @@
     <ClInclude Include="actionHandler.h">
       <Filter>action-handler</Filter>
     </ClInclude>
+    <ClInclude Include="..\lib\radio\DataScheduling.h">
+      <Filter>mins\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\radio\ars\RadioARS.h">
+      <Filter>mins\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\radio\gps\RadioGps.h">
+      <Filter>mins\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\radio\text\TextMsg.h">
+      <Filter>mins\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\radio\common.h">
+      <Filter>mins\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -388,6 +415,15 @@
     </Filter>
     <Filter Include="action-handler">
       <UniqueIdentifier>{17d8350c-801e-472f-81ef-85ebb7e5cadd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mins">
+      <UniqueIdentifier>{a139c3cc-911c-4787-930b-0d677d1cc087}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mins\include">
+      <UniqueIdentifier>{f8e7c6fb-3b00-4c36-8ce1-86687052e4c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="mins\source">
+      <UniqueIdentifier>{c649651e-6a9b-404a-a246-941ecba8f1ea}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

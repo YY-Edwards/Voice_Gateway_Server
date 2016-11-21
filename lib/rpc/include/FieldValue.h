@@ -44,6 +44,11 @@ public:
 		m_int = v;
 	}
 
+	FieldValue(double v){
+		m_ft = TDouble;
+		m_double = v;
+	}
+
 	FieldValue(FieldType t)
 	{
 		m_ft = t;
