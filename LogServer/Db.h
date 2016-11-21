@@ -66,6 +66,8 @@ public:
 	bool detachStaffRadio(int staffId, int radioId);
 	bool insertRadio(const char* radioId, int type, const char* sn, int screen = 0, int gps = 0, int keyboard=0 );
 	bool insertStaff(const char* name, const char* phone, bool isStaff = true);
+	bool insertSmsLog(int source, int destination, const char* message, int is_ticket = 0);
+	bool insertGpsLog(int radio, float latitude, float longitude, float velocity, float altitude = 0.0f);
 
 	int query(const char* table, const char* condition, std::list<recordType>& records);
 	int count(const char* table, const char* condition);
