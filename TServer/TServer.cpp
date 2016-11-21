@@ -129,7 +129,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	wlClientActions["messageStatus"] = recvMessageResultAction;
 	wlClientActions["message"] = recvMsgAction;
 	wlClientActions["status"] = recvStatusAction;
-	//CBroker::instance()->startLogClient();
+	CBroker::instance()->startLogClient();
 	
 	CBroker::instance()->startWireLanClient(wlClientActions);
 	CBroker::instance()->startRpcServer(serverActions);
