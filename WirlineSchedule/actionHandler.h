@@ -539,7 +539,7 @@ inline void wlMnisMessageHandler(CRemotePeer* pRemote, const std::string& param,
 	}
 }
 
-inline void wlMnisArsHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
+inline void wlMnisStatusHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
 
 	g_sn = sn;
@@ -558,9 +558,9 @@ inline void wlMnisArsHandler(CRemotePeer* pRemote, const std::string& param, uin
 			pNewTask = new REMOTE_TASK;
 			d.Parse(param.c_str());
 			pNewTask->callId = sn;
-			pNewTask->cmd = REMOTE_CMD_MNIS_ARS;
+			pNewTask->cmd = REMOTE_CMD_MNIS_STATUS;
 			pNewTask->pRemote = pRemote;
-
+			pNewTask->param.info.mnisStatusParam.getType = d["getType"].GetInt();
 			if (pNewTask)
 			{
 				push_front_task(pNewTask);
