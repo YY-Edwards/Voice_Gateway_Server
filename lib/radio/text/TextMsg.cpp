@@ -379,14 +379,14 @@ bool CTextMsg::SendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet)
 		memcpy(m_ThreadMsg->SendBuffer, buf, m_ThreadMsg->MsgLength);
 	}
 	////将m_nSendSequenceNumber写入list
-	//list<AllCommand>::iterator it;
-	//for (it = allCommandList.begin(); it != allCommandList.end(); ++it)
-	//{
-	//	if (it->callId == callId)
-	//	{
-	//		it->ackNum = m_nSendSequenceNumber;
-	//	}
-	//}
+	std::list<Command>::iterator it;
+	for (it = timeOutList.begin(); it != timeOutList.end(); ++it)
+	{
+		if (it->callId == callId)
+		{
+			it->ackNum = m_nSendSequenceNumber;
+		}
+	}
 	m_nSendSequenceNumber++;
 	if (m_nSendSequenceNumber & 0x80)
 	{
@@ -460,6 +460,7 @@ void CTextMsg::RecvMsg()
 		//strError.Format(_T("Error\nCall to recvfrom(s, Msg->RcvBuffer, iMessageLen, 0, (struct sockaddr *)&remote_addr, &iRemoteAddrLen); failed   with:\n%d\n"), WSAGetLastError());
 		//break;
 	}
+	//int flag = m_ThreadMsg->remote_addr.sin_addr.S_un.S_un_b.s_b1 ;
 	m_ThreadMsg->radioID = (m_ThreadMsg->remote_addr.sin_addr.S_un.S_un_b.s_b2 << 16) + (m_ThreadMsg->remote_addr.sin_addr.S_un.S_un_b.s_b3 << 8) + m_ThreadMsg->remote_addr.sin_addr.S_un.S_un_b.s_b4;
 	m_ThreadMsg->RcvBuffer[MESSAGE_BUFFER - 1] = '\0';
 	m_ThreadMsg->RcvBuffer[MESSAGE_BUFFER] = '\0';         // 因为是Unicode，所以把最后的两个字节都置为 \0
@@ -555,7 +556,6 @@ void CTextMsg::RecvMsg()
 
 				
 				std::string message = ParseUserMsg(&HandleMsg, &len);
-			
 				Respone r;
 				r.source = m_ThreadMsg->radioID;
 				r.msgStatus = SUCESS;
