@@ -128,6 +128,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	wlClientActions["sendGps"] = recvGpsAction;
 	wlClientActions["messageStatus"] = recvMessageResultAction;
 	wlClientActions["message"] = recvMsgAction;
+	wlClientActions["status"] = recvStatusAction;
 	//CBroker::instance()->startLogClient();
 	
 	CBroker::instance()->startWireLanClient(wlClientActions);

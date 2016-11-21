@@ -337,6 +337,8 @@ public:
 	int wlMnisMessageStatus(int Type, int Target, int Source, std::string Contents,int status);
 	/*告知界面收到短信*/
 	int wlMnisMessage(int Type, int Target, int Source, std::string Contents);
+	/*告知界面ARS相关*/
+	int wlMnisArs();
 protected:
 	/*
 	* Socket work thread

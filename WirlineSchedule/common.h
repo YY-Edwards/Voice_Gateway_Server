@@ -61,6 +61,12 @@ typedef struct
 	wchar_t Contents[256];
 }MNIS_MSG;
 
+typedef struct
+{
+
+}ARS;
+
+
 #define REPEATER_CONNECT 0
 #define REPEATER_DISCONNECT 1
 
@@ -159,6 +165,7 @@ extern HANDLE g_taskLockerEvent;
 #define REMOTE_CMD_GET_CONN_STATUS 0x05
 #define REMOTE_CMD_MNIS_QUERY_GPS 0x06
 #define REMOTE_CMD_MNIS_MSG 0x07
+#define REMOTE_CMD_MNIS_ARS 0x08
 
 #define GET_TYPE_CONN 0x01
 /*JSON相关结构体*/
@@ -261,6 +268,7 @@ typedef struct
 		GET_INFO getInfoParam;
 		QUERY_GPS queryGpsParam;
 		MNIS_MSG msgParam;
+		ARS agsParam;
 	}info;
 }JSON_PARAM;
 /*远程命令*/
