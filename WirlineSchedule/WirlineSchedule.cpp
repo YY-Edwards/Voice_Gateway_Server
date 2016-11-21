@@ -231,6 +231,12 @@ int main()
 		delete m_pManager;
 		m_pManager = NULL;
 	}
+	if (NULL != m_pMnis)
+	{
+		m_pMnis->radioConnect();
+		delete m_pMnis;
+		m_pMnis = NULL;
+	}
 	if (g_pNet)
 	{
 		g_pNet->stop();
