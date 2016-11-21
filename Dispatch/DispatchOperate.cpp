@@ -342,7 +342,7 @@ void DispatchOperate::OnData(TcpClient* peer, int callId, int call, Respone data
 		args["Source"] = FieldValue(data.source);
 		args["contents"] = FieldValue(data.msg.c_str());
 		args["type"] = FieldValue(PRIVATE);
-		dis.send2Client("c", args, peer);
+		dis.send2Client("message", args, peer);
 		break;
 	case  GPS_IMME_COMM:	
 	case GPS_TRIGG_COMM:	
