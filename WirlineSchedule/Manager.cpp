@@ -710,9 +710,30 @@ void CManager::handleRemoteTask()
 										m_pMnis->radioSendMsg(g_onLineClients.front(), task.param.info.msgParam.Contents, task.param.info.msgParam.Target, task.callId, task.param.info.msgParam.Type);
 			}
 				break;
-			case REMOTE_CMD_MNIS_ARS:
+			case REMOTE_CMD_MNIS_STATUS:
 			{
-										m_pMnis->getRadioStatus(NULL, 0, 0);
+										   switch (task.param.info.mnisStatusParam.getType)
+										   {
+										   case MNIS_GET_TYPE_CONNECT:
+										   {
+																		 FieldValue info(FieldValue::TInt);
+																		 if (Env_MnisIsOk)
+																		 {
+																			 info.setInt(0);
+																		 }
+																		 else
+																		 {
+																			 info.setInt(1);
+																		 }
+																		 g_pNet->wlMnisStatus(MNIS_GET_TYPE_CONNECT, info);
+										   }
+											   break;
+										   default:
+										   {
+													  m_pMnis->getRadioStatus((TcpClient*)task.pRemote, task.param.info.mnisStatusParam.getType, task.callId);
+										   }
+											   break;
+										   }
 			}
 				break;
 			default:
@@ -791,7 +812,14 @@ void CManager::OnMnisCallBack(TcpClient *m_pTcpClient, int callId, int callFuncI
 	case MNIS_CONNECT:
 	{
 						 printf_s("MNIS_CONNECT:%d\r\n", response.connectStatus);
-						 g_pNet->wlMnisConnectStatus(response.connectStatus);
+						 Env_MnisIsOk = true;
+						 //g_pNet->wlMnisConnectStatus(response.connectStatus);
+	}
+		break;
+	case MNIS_DIS_CONNECT:
+	{
+							 printf_s("MNIS_DIS_CONNECT:%d\r\n", response.connectStatus);
+							 Env_MnisIsOk = false;
 	}
 		break;
 	case SEND_PRIVATE_MSG:
@@ -810,8 +838,7 @@ void CManager::OnMnisCallBack(TcpClient *m_pTcpClient, int callId, int callFuncI
 	case RECV_MSG:
 	{
 					 printf_s("RECV_MSG:%s\r\n", response.msg.c_str());
-					 g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus);
-					 //g_pNet->wlMnisMessage(PRIVATE_MSG_FLG,10750,1118,"¶º±È");
+					 g_pNet->wlMnisMessage(response.msgType, response.target, response.source, response.msg);
 					 /************************************************************************/
 					 /* temp code
 					 /************************************************************************/
@@ -860,7 +887,7 @@ void CManager::OnMnisCallBack(TcpClient *m_pTcpClient, int callId, int callFuncI
 	case RADIO_ARS:
 	{
 					  printf_s("RADIO_ARS:%d\r\n", response.arsStatus);
-					  g_pNet->wlMnisArs();
+					  g_pNet->wlMnisSendArs(0, "");
 	}
 		break;
 		// do nothing
@@ -890,6 +917,37 @@ void CManager::OnMnisCallBack(TcpClient *m_pTcpClient, int callId, int callFuncI
 	{
 								printf_s("GPS_TRIGG_CSBK_EGPS:%d\r\n", response.gpsStatus);
 								g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+	}
+		break;
+	case CONNECT_STATUS:
+	{
+						   printf_s("CONNECT_STATUS:%d\r\n", response.connectStatus);
+						   //FieldValue info(FieldValue::TInt);
+						   //if (Env_MnisIsOk)
+						   //{
+							  // info.setInt(0);
+						   //}
+						   //else
+						   //{
+							  // info.setInt(1);
+						   //}
+						   //g_pNet->wlMnisStatus(MNIS_GET_TYPE_CONNECT, info);
+	}
+		break;
+	case RADIO_STATUS:
+	{
+						 printf_s("RADIO_STATUS list size:%d\r\n", response.rs.size());
+						 FieldValue info(FieldValue::TArray);
+						 for (auto i = response.rs.begin(); i != response.rs.end(); i++)
+						 {
+							 RadioStatus radioStatus = i->second;
+							 FieldValue element(FieldValue::TObject);
+							 element.setKeyVal("radioId", FieldValue(radioStatus.id));
+							 element.setKeyVal("IsOnline", FieldValue((0 == radioStatus.status)));
+							 element.setKeyVal("IsInGps", FieldValue((0 == radioStatus.gpsQueryMode)));
+							 info.push(element);
+						 }
+						 g_pNet->wlMnisStatus(MNIS_GET_TYPE_RADIO, info);
 	}
 		break;
 	default:
