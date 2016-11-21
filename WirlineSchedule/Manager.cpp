@@ -707,7 +707,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_MNIS_MSG:
 			{
-										m_pMnis->radioSendMsg(g_onLineClients.front(), task.param.info.msgParam.Contents, task.param.info.msgParam.Target, task.callId, task.param.info.msgParam.Type);
+										m_pMnis->radioSendMsg((TcpClient*)task.pRemote, task.param.info.msgParam.Contents, task.param.info.msgParam.Target, task.callId, task.param.info.msgParam.Type);
 			}
 				break;
 			case REMOTE_CMD_MNIS_STATUS:
@@ -842,15 +842,15 @@ void CManager::OnMnisCallBack(TcpClient *m_pTcpClient, int callId, int callFuncI
 					 /************************************************************************/
 					 /* temp code
 					 /************************************************************************/
-					 REMOTE_TASK *pTask = new REMOTE_TASK;
-					 memset(pTask, 0, sizeof(REMOTE_TASK));
-					 pTask->cmd = REMOTE_CMD_MNIS_MSG;
-					 //pTask->pRemote = (CRemotePeer*)g_onLineClients.front();
-					 swprintf_s(pTask->param.info.msgParam.Contents, L"¶º±È");
-					 pTask->param.info.msgParam.Source = 1118;
-					 pTask->param.info.msgParam.Target = 10750;
-					 pTask->param.info.msgParam.Type = PRIVATE;
-					 push_back_task(pTask);
+					 //REMOTE_TASK *pTask = new REMOTE_TASK;
+					 //memset(pTask, 0, sizeof(REMOTE_TASK));
+					 //pTask->cmd = REMOTE_CMD_MNIS_MSG;
+					 ////pTask->pRemote = (CRemotePeer*)g_onLineClients.front();
+					 //swprintf_s(pTask->param.info.msgParam.Contents, L"¶º±È");
+					 //pTask->param.info.msgParam.Source = 1118;
+					 //pTask->param.info.msgParam.Target = 10750;
+					 //pTask->param.info.msgParam.Type = PRIVATE;
+					 //push_back_task(pTask);
 
 	}
 		break;
@@ -887,7 +887,7 @@ void CManager::OnMnisCallBack(TcpClient *m_pTcpClient, int callId, int callFuncI
 	case RADIO_ARS:
 	{
 					  printf_s("RADIO_ARS:%d\r\n", response.arsStatus);
-					  g_pNet->wlMnisSendArs(0, "");
+					  g_pNet->wlMnisSendArs(response.source, (0 == response.arsStatus) ? ("True") : ("False"));
 	}
 		break;
 		// do nothing
