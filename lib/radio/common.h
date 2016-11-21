@@ -8,21 +8,25 @@
 #include <WinSock2.h>
 #include <Windows.h>
 
-#define               MNIS_CONNECT           0
-#define               SEND_PRIVATE_MSG       9
-#define               SEND_GROUP_MSG         10
-#define               RECV_MSG               11
-#define               GPS_IMME_COMM          12
-#define               GPS_TRIGG_COMM         13
-#define               GPS_IMME_CSBK          14
-#define               GPS_TRIGG_CSBK         15
-#define               STOP_QUERY_GPS         16
-#define               RADIO_ARS              17
+#define               MNIS_CONNECT           0              
+#define				  CONNECT_STATUS         1                   //status
+#define				  RADIO_STATUS           2                   //status
+#define               SEND_PRIVATE_MSG       9                   //messageStatus
+#define               SEND_GROUP_MSG         10					 //messageStatus
+#define               RECV_MSG               11					 //message
+#define               GPS_IMME_COMM          12                  //sendGpsStatus
+#define               GPS_TRIGG_COMM         13                  //sendGpsStatus
+#define               GPS_IMME_CSBK          14                  //sendGpsStatus
+#define               GPS_TRIGG_CSBK         15                  //sendGpsStatus
+#define               STOP_QUERY_GPS         16					 //sendGpsStatus
+#define               RADIO_ARS              17					 //sendArs
 #define               RADIO_GPS              18
-#define               RECV_GPS               20
-#define               GPS_IMME_CSBK_EGPS     23
-#define               GPS_TRIGG_CSBK_EGPS    24
+#define               RECV_GPS               20					 //sendGps
+#define               GPS_IMME_CSBK_EGPS     23					 //sendGpsStatus
+#define               GPS_TRIGG_CSBK_EGPS    24					 //sendGpsStatus
 #define               MNIS_DIS_CONNECT       30
+
+
 
 #define PRIVATE_MSG_FLG        12
 #define GROUP_MSG_FLG          225
@@ -36,8 +40,7 @@
 #define START         0
 #define STOP          1
 
-#define CONNECT_STATUS          1
-#define RADIO_STATUS            2
+
 
 #define RADIO_STATUS_OFFLINE   0
 #define RADIO_STATUS_ONLINE    1

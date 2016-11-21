@@ -274,6 +274,13 @@ void CDataScheduling::workThreadFunc()
 			}
 			break;
 		case CONNECT_STATUS:
+			if (myCallBackFunc != NULL)
+			{
+				Respone r;
+				r.connectStatus = isUdpConnect;
+				onData(myCallBackFunc, it->tp, ++it->callId, CONNECT_STATUS, r);
+				break;
+			}
 			break;
 		case RADIO_STATUS:
 			sendRadioStatusToClient();
@@ -306,9 +313,7 @@ void CDataScheduling::workThreadFunc()
 			stopGps(it->radioId, it->callId);
 			break;
 		case MNIS_DIS_CONNECT:
-
 			break;
-		
 		default:
 			break;
 		}
