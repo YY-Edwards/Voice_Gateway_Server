@@ -436,6 +436,7 @@ void CRadioGps::RecvData()
 	float speed = -1;
 	int valid = 1;
 	int queryMode = -1;
+	int operate = -1;
 	ret = recvfrom(m_ThreadGps->mySocket, m_ThreadGps->RcvBuffer, iMessageLen, 0, (struct sockaddr*)&m_ThreadGps->remote_addr, &iRemoteAddrLen);
 
 	bytes = recvfrom(m_ThreadGpsOverturn->mySocket, m_ThreadGpsOverturn->RcvBuffer, iMessageLen, 0, (struct sockaddr*)&m_ThreadGpsOverturn->remote_addr, &iRemoteAddrLen);
@@ -489,10 +490,11 @@ void CRadioGps::RecvData()
 							it = allCommandList.erase(it);
 							break;
 							}*/
-						int operate = -1;
+						
 						if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Stop_Answer)
 						{
 							operate = STOP;
+
 						}
 						else  if (m_ThreadGps->RcvBuffer[0] == Triggered_location_Start_Answer)
 						{
@@ -741,7 +743,15 @@ void CRadioGps::RecvData()
 			RadioStatus st;
 			st.id = atoi(radioID);
 			st.status = RADIO_STATUS_ONLINE;
-			st.gpsQueryMode = queryMode;
+			if (STOP == operate)
+			{
+				st.gpsQueryMode = -1;
+			}
+			else
+			{
+				st.gpsQueryMode = queryMode;
+			}
+		
 			radioStatus[radioID] = st;
 			Respone r;
 			r.source = m_ThreadGps->radioID;
@@ -751,7 +761,15 @@ void CRadioGps::RecvData()
 		 }
 		 else if (radioStatus[radioID].status == RADIO_STATUS_OFFLINE)
 		 {
-			 radioStatus[radioID].gpsQueryMode = queryMode;
+			 if (STOP == operate)
+			 {
+				 radioStatus[radioID].gpsQueryMode = -1;
+			 }
+			 else
+			 {
+				 radioStatus[radioID].gpsQueryMode = queryMode;
+			 }
+			
 			 radioStatus[radioID].status = RADIO_STATUS_ONLINE;
 			 Respone r;
 			 r.source = m_ThreadGps->radioID;

@@ -30,11 +30,11 @@ bool CDataScheduling::radioConnect(TcpClient* tp ,const char* ip, int callId)
 	}
 	return false;
 }
-void CDataScheduling::radioDisConnect(TcpClient* tp, int callId)
+void CDataScheduling::radioDisConnect()
 {
 	if (myCallBackFunc != NULL)
 	{
-		addUdpCommand(tp, MNIS_DIS_CONNECT,"","",0,_T(""),0,0,callId);
+		addUdpCommand(NULL, MNIS_DIS_CONNECT,"","",0,_T(""),0,0,0);
 	}
 }
 bool CDataScheduling::radioGetGps(TcpClient* tp,DWORD dwRadioID, int queryMode, double cycle, int callId)
