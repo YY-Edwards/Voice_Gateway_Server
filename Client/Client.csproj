@@ -89,19 +89,24 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="class\database.cs" />
+    <Compile Include="class\DepartmentMgr.cs" />
     <Compile Include="class\Event.cs" />
     <Compile Include="class\EvilTransform.cs" />
     <Compile Include="class\FastOperate.cs" />
+    <Compile Include="class\LogServer.cs" />
     <Compile Include="class\Message.cs" />
     <Compile Include="class\Operate.cs" />
+    <Compile Include="class\RadioMgr.cs" />
     <Compile Include="class\RadioOperate.cs" />
     <Compile Include="class\ResourceMgr.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="class\SettingMgr.cs" />
+    <Compile Include="class\StaffMgr.cs" />
     <Compile Include="class\targetMgr.cs" />
     <Compile Include="class\TcpInterface.cs" />
     <Compile Include="class\TServer.cs" />
+    <Compile Include="class\UserMgr.cs" />
     <Compile Include="class\WirelanOperate.cs" />
     <Compile Include="ctrl\ComboButton.xaml.cs">
       <DependentUpon>ComboButton.xaml</DependentUpon>

@@ -7,37 +7,70 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+
 namespace TrboX
 {
     public enum RadioType
     {
-        Radio,
-        Ride
+        Radio = 0,
+        Ride = 1
     };
-
+    [Serializable]
     public class Radio
     {
-        [DefaultValue((long)0), JsonProperty(PropertyName = "id")]
+        [DefaultValue((int)0), JsonProperty(PropertyName = "id")]
         public int ID;
+
         [JsonProperty(PropertyName = "radio_id")]
         public long RadioID { set; get; }
         [JsonProperty(PropertyName = "type")]
         public RadioType Type { set; get; }
 
         [JsonProperty(PropertyName = "screen")]
-        public bool HasScreen;
+        public int Screen;
+
+        [JsonIgnore]
+        public bool HasScreen
+        {
+            set { Screen = value ? 1 : 0; }
+            get { return Screen == 0 ? false : true; }
+        }
 
         [JsonProperty(PropertyName = "gps")]
-        public bool HasGPS;
+         public int GPS;
+
+         [JsonIgnore]
+        public bool HasGPS
+         {
+             set { GPS = value ? 1 : 0; }
+             get { return GPS == 0 ? false : true; }
+         }
 
         [JsonProperty(PropertyName = "keyboard")]
-        public bool HasKeyboard;
+        public int Keyboard;
+
+        [JsonIgnore]
+        public bool HasKeyboard
+        {
+            set { Keyboard = value ? 1 : 0; }
+            get { return Keyboard == 0 ? false : true; }
+        }
 
         [JsonProperty(PropertyName = "sn")]
-        public string SN;
+        public string SN { set; get; }
 
         [JsonProperty(PropertyName = "valid")]
-        public bool IsValid;
+        public int Valid;
+
+        [JsonIgnore]
+        public bool IsValid
+        {
+            set { Valid = value ? 1 : 0; }
+            get { return Valid == 0 ? false : true; }
+        }
 
          [JsonIgnore]
         public bool IsOnline { set; get; }
@@ -51,6 +84,8 @@ namespace TrboX
         public bool IsRx { set; get; }
 
 
+
+
          [JsonIgnore]
         public string Name
         {
@@ -58,17 +93,26 @@ namespace TrboX
             { return (Type == RadioType.Radio ? "手持台" : "车载台") + "(ID:" + RadioID.ToString() + ")"; }
         }
 
+
         public Radio()
         { }
 
+        private static Radio Copy(Radio radio)
+        {
+            MemoryStream stream = new MemoryStream();
+            new BinaryFormatter().Serialize(stream, radio);
+            stream.Seek(0, SeekOrigin.Begin);
+            return (Radio)new BinaryFormatter().Deserialize(stream);
+        }
+
         public long Add()
         {
-            return RadioMgr.Add(this);
+            return RadioMgr.Add(Copy(this));
         }
 
         public void Modify()
         {
-            RadioMgr.Modify(ID, this);
+            RadioMgr.Modify(ID, Copy(this));
         }
 
         public void Delete()
@@ -88,10 +132,12 @@ namespace TrboX
         private static long OrginIndex = 0;
         private static long CurrentIndex = 0;
 
-        private static Dictionary<long, Radio> s_Add = new Dictionary<long, Radio>();
+        public static Dictionary<long, Radio> s_Add = new Dictionary<long, Radio>();
         private static List<long> s_Del = new List<long>();
         private static List<UpdatesRadio> s_Update = new List<UpdatesRadio>();
 
+        public static List<Radio> RadioList = new List<Radio>();
+        private static bool IsNeedUpdate = true;
 
         public static int Count()
         {
@@ -106,7 +152,7 @@ namespace TrboX
 
             LogServerRequest req = new LogServerRequest()
             {
-                call = RequestType.department.ToString(),
+                call = RequestType.radio.ToString(),
                 callId = LogServer.CallId,
                 param = param
             };
@@ -153,8 +199,12 @@ namespace TrboX
 
         public static List<Radio> List()
         {
+            if (!IsNeedUpdate) return RadioList;
+            RadioList = null;
+            IsNeedUpdate = false;
+
             int count = Count();
-            if (count <= 1) return null;
+            if (count < 1) return RadioList;
             Dictionary<string, object> param = new Dictionary<string, object>();
 
             param.Add("operation", OperateType.list.ToString());
@@ -166,7 +216,7 @@ namespace TrboX
 
             LogServerRequest req = new LogServerRequest()
             {
-                call = RequestType.department.ToString(),
+                call = RequestType.radio.ToString(),
                 callId = LogServer.CallId,
                 param = param
             };
@@ -181,29 +231,28 @@ namespace TrboX
             catch (Exception e)
             {
                 DataBase.InsertLog("Build Josn Error" + e.Message);
-                return null;
+                return RadioList;
             }
 
 
             try
             {
 
-                List<Radio> s_List = LogServer.Call(str, ParseList) as List<Radio>;
-
-                if (s_List == null) return null;
-                OrginIndex = s_List.Select(w => w.ID).Max();
+                RadioList = LogServer.Call(str, ParseList) as List<Radio>;
+                if (RadioList == null) return RadioList;
+                OrginIndex = RadioList.Select(w => w.ID).Max();
                 CurrentIndex = OrginIndex;
 
                 s_Add.Clear();
                 s_Del.Clear();
                 s_Update.Clear();
 
-                return s_List;
+                return RadioList;
             }
             catch (Exception e)
             {
                 DataBase.InsertLog(e.Message);
-                return null;
+                return RadioList;
             }
         }
         public static object ParseList(object obj)
@@ -342,7 +391,7 @@ namespace TrboX
                 LogServer.Call(addstr);
             }
 
-
+            IsNeedUpdate = true;
             OrginIndex = CurrentIndex;
             s_Add.Clear();
             s_Del.Clear();

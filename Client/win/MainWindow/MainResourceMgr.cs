@@ -450,7 +450,7 @@ namespace TrboX
         private void Filter(string condition)
         {
             List<int> willdel = new List<int> ();
-            List<int> hasgroup = new List<int>();
+            List<long> hasgroup = new List<long>();
 
             if (null != m_TargetList.Staff)
                 foreach (var it in m_TargetList.Staff)

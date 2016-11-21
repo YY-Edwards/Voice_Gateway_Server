@@ -7,6 +7,9 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
 
 namespace TrboX
 {
@@ -17,6 +20,7 @@ namespace TrboX
         Vehicle = 1,
     };
 
+    [Serializable]
     public class Staff
     {
         [DefaultValue((int)0), JsonProperty(PropertyName = "id")]
@@ -25,7 +29,15 @@ namespace TrboX
         public string Name{ get; set; }
 
         [JsonProperty(PropertyName = "type")]
-        public string Type { get; set; }
+        public StaffType Type { 
+            get
+            {
+                return IsValid ? StaffType.Staff : StaffType.Vehicle;  }
+            set
+            {
+                IsValid = value == StaffType.Vehicle ? true : false;
+            }
+        }
 
         [JsonProperty(PropertyName = "phone")]
         public string PhoneNumber{ get; set; }
@@ -48,12 +60,15 @@ namespace TrboX
         public string NameInfo
         {
             get
-            { return Name; }
+            { return Name + (Type == StaffType.Vehicle ? "(车辆)": "(人员)"); }
         }
 
         private static Staff Copy(Staff dept)
         {
-            return JsonConvert.DeserializeObject<Staff>(JsonConvert.SerializeObject(dept));
+            MemoryStream stream = new MemoryStream();
+            new BinaryFormatter().Serialize(stream, dept);
+            stream.Seek(0, SeekOrigin.Begin);
+            return (Staff)new BinaryFormatter().Deserialize(stream);
         }
 
         public Staff()
@@ -352,44 +367,102 @@ namespace TrboX
             s_Update.Clear();
         }
 
-        private static Dictionary<long, long> AddStaffRadio = new Dictionary<long, long>();
-        private static Dictionary<long, long> DelStaffRadio = new Dictionary<long, long>();
-        public static void AssignStaff(long staff, long radio)
+        private static Dictionary<Staff, Radio> AddStaffRadio = new Dictionary<Staff, Radio>();
+        private static Dictionary<Staff, Radio> DelStaffRadio = new Dictionary<Staff, Radio>();
+
+        private static Dictionary<long, List<Radio>> StaffRadio = new Dictionary<long, List<Radio>>();
+        private static bool IsNeedListRadio = true;
+        public static void AssignRadio(long radio, long staff)
         {
-            if (DelStaffRadio.ContainsKey(staff))
+            Staff staffs = null;
+            if (StaffMgr.s_Add.ContainsKey(staff))
             {
-                DelStaffRadio.Remove(staff);
+                staffs = StaffMgr.s_Add[staff];
+                staffs.ID = (int)staff;
             }
 
-            if (AddStaffRadio.ContainsKey(staff))
+            List<Staff> tmpstaff = StaffMgr.SatffList.Where(p => p.ID == staff).ToList();
+            if (tmpstaff.Count > 0) staffs = tmpstaff[0];
+
+            if (staffs == null) return;
+
+
+            Radio radios = null;
+            if (RadioMgr.s_Add.ContainsKey(radio))
             {
-                AddStaffRadio[staff] = radio;
+                radios = RadioMgr.s_Add[radio];
+                radios.ID = (int)radio;
+            }
+
+            List<Radio> tmpradio = RadioMgr.RadioList.Where(p => p.ID == radio).ToList();
+            if (tmpradio.Count > 0) radios = tmpradio[0];
+
+            if (radios == null) return;
+
+
+            if (DelStaffRadio.ContainsKey(staffs))
+            {
+                if (DelStaffRadio[staffs] == radios) DelStaffRadio.Remove(staffs);
+            }
+
+            if (AddStaffRadio.ContainsKey(staffs))
+            {
+                AddStaffRadio[staffs] = radios;
             }
             else
             {
-                AddStaffRadio.Add(staff, radio);
+                AddStaffRadio.Add(staffs, radios);
             }
         }
 
-        public static void DetachStaff(long staff, long radio)
+        public static void DetachRadio(long radio, long staff)
         {
-            if (AddStaffRadio.ContainsKey(staff))
+            Staff staffs = null;
+            if (StaffMgr.s_Add.ContainsKey(staff))
             {
-                AddStaffRadio.Remove(staff);
+                staffs = StaffMgr.s_Add[staff];
+                staffs.ID = (int)staff;
             }
 
-            if (DelStaffRadio.ContainsKey(staff))
+            List<Staff> tmpstaff = StaffMgr.SatffList.Where(p => p.ID == staff).ToList();
+            if (tmpstaff.Count > 0) staffs = tmpstaff[0];
+
+            if (staffs == null) return;
+
+
+            Radio radios = null;
+            if (RadioMgr.s_Add.ContainsKey(radio))
             {
-                DelStaffRadio[staff] = radio;
+                radios = RadioMgr.s_Add[radio];
+                radios.ID = (int)radio;
+            }
+
+            List<Radio> tmpradio = RadioMgr.RadioList.Where(p => p.ID == radio).ToList();
+            if (tmpradio.Count > 0) radios = tmpradio[0];
+
+            if (radios == null) return;
+
+
+            if (AddStaffRadio.ContainsKey(staffs))
+            {
+                if (AddStaffRadio[staffs] == radios) AddStaffRadio.Remove(staffs);
+            }
+
+            if (DelStaffRadio.ContainsKey(staffs))
+            {
+                DelStaffRadio[staffs] = radios;
             }
             else
             {
-                DelStaffRadio.Add(staff, radio);
+                DelStaffRadio.Add(staffs, radios);
             }
         }
 
         public static List<Radio> ListRadio(long staff)
         {
+
+            if (!IsNeedListRadio && StaffRadio.ContainsKey(staff)) return StaffRadio[staff];
+            IsNeedListRadio = false;
             Dictionary<string, object> addparam = new Dictionary<string, object>();
             addparam.Add("operation", OperateType.listRadio.ToString());
             addparam.Add("user", staff);
@@ -405,21 +478,42 @@ namespace TrboX
             jsetting.DefaultValueHandling = DefaultValueHandling.Ignore;
             string addstr = JsonConvert.SerializeObject(addreq, Formatting.Indented, jsetting);
 
-            return LogServer.Call(addstr, StaffMgr.ParseList) as List<Radio>;
+            List<Radio> Res = LogServer.Call(addstr, RadioMgr.ParseList) as List<Radio>;
+
+            if (StaffRadio.ContainsKey(staff))
+            {
+                StaffRadio[staff] = Res;
+            }
+            else
+            {
+                StaffRadio.Add(staff, Res);
+            }
+
+            return Res;
         }
 
         public static void SaveStaffRadio()
         {
+            List<Staff> staffs = StaffMgr.List();
+            List<Radio> radios = RadioMgr.List();
+
             foreach (var item in AddStaffRadio)
             {
                 Dictionary<string, object> addparam = new Dictionary<string, object>();
                 addparam.Add("operation", OperateType.assignRadio.ToString());
-                addparam.Add("user", item.Key);
-                addparam.Add("radio", item.Value);
+
+                List<Staff> tmpstaff = staffs.Where(p => p.Name == item.Key.Name && p.PhoneNumber == item.Key.PhoneNumber).ToList();
+                if (tmpstaff.Count < 1) continue;
+                addparam.Add("user", tmpstaff[0].ID);
+
+
+                List<Radio> tmpradio = radios.Where(p => p.RadioID == item.Value.RadioID).ToList();
+                if (tmpradio.Count < 1) continue;
+                addparam.Add("radio", tmpradio[0].ID);
 
                 LogServerRequest addreq = new LogServerRequest()
                 {
-                    call = RequestType.department.ToString(),
+                    call = RequestType.user.ToString(),
                     callId = LogServer.CallId,
                     param = addparam
                 };
@@ -434,12 +528,19 @@ namespace TrboX
             {
                 Dictionary<string, object> addparam = new Dictionary<string, object>();
                 addparam.Add("operation", OperateType.detachRadio.ToString());
-                addparam.Add("user", item.Key);
-                addparam.Add("radio", item.Value);
+
+                List<Staff> tmpstaff = staffs.Where(p => p.Name == item.Key.Name && p.PhoneNumber == item.Key.PhoneNumber).ToList();
+                if (tmpstaff.Count < 1) continue;
+                addparam.Add("user", tmpstaff[0].ID);
+
+
+                List<Radio> tmpradio = radios.Where(p => p.RadioID == item.Value.RadioID).ToList();
+                if (tmpradio.Count < 1) continue;
+                addparam.Add("radio", tmpradio[0].ID);
 
                 LogServerRequest addreq = new LogServerRequest()
                 {
-                    call = RequestType.department.ToString(),
+                    call = RequestType.user.ToString(),
                     callId = LogServer.CallId,
                     param = addparam
                 };
@@ -450,6 +551,8 @@ namespace TrboX
 
                 LogServer.Call(addstr);
             }
+
+            IsNeedListRadio = true;
         }
     }
 }

@@ -7,6 +7,10 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+
 namespace TrboX
 {    
   
@@ -85,7 +89,10 @@ namespace TrboX
 
         private static User Copy(User user)
         {
-            return JsonConvert.DeserializeObject<User>(JsonConvert.SerializeObject(user));
+            MemoryStream stream = new MemoryStream();
+            new BinaryFormatter().Serialize(stream, user);
+            stream.Seek(0, SeekOrigin.Begin);
+            return (User)new BinaryFormatter().Deserialize(stream);
         }
 
         [JsonIgnore]

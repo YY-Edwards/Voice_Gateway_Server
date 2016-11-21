@@ -6,6 +6,10 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+
 namespace TrboX
 {
     [Serializable]
@@ -571,8 +575,10 @@ namespace TrboX
                 if (m_IsChange) BulidTargetList();
                 m_IsChange = false;
 
-                string tmp = JsonConvert.SerializeObject(m_TargetList);
-                return JsonConvert.DeserializeObject<CTargetRes>(tmp);
+                MemoryStream stream = new MemoryStream();
+                new BinaryFormatter().Serialize(stream, m_TargetList);
+                stream.Seek(0, SeekOrigin.Begin);
+                return (CTargetRes)new BinaryFormatter().Deserialize(stream);
             }
         }
 

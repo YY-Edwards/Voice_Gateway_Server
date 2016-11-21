@@ -7,9 +7,13 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.ComponentModel;
 
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+
 namespace TrboX
 {
-
+    [Serializable]
     public class Department
     {
         [DefaultValue((long)0), JsonProperty(PropertyName = "id")]
@@ -35,7 +39,10 @@ namespace TrboX
         }
         private static Department Copy(Department dept)
         {
-            return JsonConvert.DeserializeObject<Department>(JsonConvert.SerializeObject(dept));
+            MemoryStream stream = new MemoryStream();
+            new BinaryFormatter().Serialize(stream, dept);
+            stream.Seek(0, SeekOrigin.Begin);
+            return (Department)new BinaryFormatter().Deserialize(stream);
         }
 
         public Department()
@@ -76,6 +83,9 @@ namespace TrboX
         private static Dictionary<long, Department> s_Add = new Dictionary<long, Department>();
         private static List<long> s_Del = new List<long>();
         private static List<UpdatesDepartment> s_Update = new List<UpdatesDepartment>();
+
+        private static List<Department> DeptList = new List<Department>();
+        private static bool IsNeedUpdate = true;
 
         public static int Count()
         {
@@ -137,8 +147,12 @@ namespace TrboX
 
         public static List<Department> List()
         {
+
+            if (!IsNeedUpdate) return DeptList;
+            DeptList = null;
+            IsNeedUpdate = false;
             int count = Count();
-            if (count <= 0) return null;
+            if (count <= 0) return DeptList;
             Dictionary<string, object> param = new Dictionary<string, object>();
 
             param.Add("operation", OperateType.list.ToString());
@@ -165,29 +179,29 @@ namespace TrboX
             catch (Exception e)
             {
                 DataBase.InsertLog("Build Josn Error" + e.Message);
-                return null;
+                return DeptList;
             }
 
 
             try
             {
 
-                List<Department> s_List = LogServer.Call(str, ParseList) as List<Department>;
+                DeptList = LogServer.Call(str, ParseList) as List<Department>;
 
-                if (s_List == null) return null;
-                OrginIndex = s_List.Select(w => w.ID).Max();
+                if (DeptList == null) return null;
+                OrginIndex = DeptList.Select(w => w.ID).Max();
                 CurrentIndex = OrginIndex;
 
                 s_Add.Clear();
                 s_Del.Clear();
                 s_Update.Clear();
 
-                return s_List;
+                return DeptList;
             }
             catch (Exception e)
             {
                 DataBase.InsertLog(e.Message);
-                return null;
+                return DeptList;
             }
         }
         public static object ParseList(object obj)
@@ -321,7 +335,7 @@ namespace TrboX
                 LogServer.Call(addstr);
             }
 
-
+            IsNeedUpdate = true;
             OrginIndex = CurrentIndex;
             s_Add.Clear();
             s_Del.Clear();
@@ -329,33 +343,51 @@ namespace TrboX
         }
 
 
-        private static Dictionary<Staff, long> AddDeptStaff = new Dictionary<Staff, long>();
-        private static Dictionary<Staff, long> DelDeptStaff = new Dictionary<Staff, long>();
+        private static Dictionary<Staff, Department> AddDeptStaff = new Dictionary<Staff, Department>();
+        private static Dictionary<Staff, Department> DelDeptStaff = new Dictionary<Staff, Department>();
+
+        private static Dictionary<long, List<Staff>> StaffDept = new Dictionary<long, List<Staff>>();
+        private static bool IsNeedListStaff = true;
         public static void AssignStaff(long staff, long dept)
         {
             Staff staffs = null;
             if (StaffMgr.s_Add.ContainsKey(staff))
             {
                 staffs = StaffMgr.s_Add[staff];
+                staffs.ID = (int)staff;
             }
 
-            List<Staff> tmp = StaffMgr.SatffList.Where(p => p.ID == staff).ToList();
-            if (tmp.Count > 0) staffs = tmp[0];
+            List<Staff> tmpstaff = StaffMgr.SatffList.Where(p => p.ID == staff).ToList();
+            if (tmpstaff.Count > 0) staffs = tmpstaff[0];
 
             if (staffs == null) return;
 
+            Department depts = null;
+            if (StaffMgr.s_Add.ContainsKey(dept))
+            {
+                depts = s_Add[dept];
+                depts.ID = (int)dept;
+            }
+
+            List<Department> tmpdept = DeptList.Where(p => p.ID == dept).ToList();
+            if (tmpdept.Count > 0) depts = tmpdept[0];
+
+            if (depts == null) return;
+
+
+
             if (DelDeptStaff.ContainsKey(staffs))
             {
-                if (DelDeptStaff[staffs] == dept)DelDeptStaff.Remove(staffs);
+                if (DelDeptStaff[staffs] == depts) DelDeptStaff.Remove(staffs);
             }
 
             if (AddDeptStaff.ContainsKey(staffs))
             {
-                AddDeptStaff[staffs] = dept;
+                AddDeptStaff[staffs] = depts;
             }
             else
             {
-                AddDeptStaff.Add(staffs, dept);
+                AddDeptStaff.Add(staffs, depts);
             }
         }
 
@@ -365,6 +397,7 @@ namespace TrboX
             if (StaffMgr.s_Add.ContainsKey(staff))
             {
                 staffs = StaffMgr.s_Add[staff];
+                staffs.ID = (int)staff;
             }
 
             List<Staff> tmp = StaffMgr.SatffList.Where(p => p.ID == staff).ToList();
@@ -372,23 +405,38 @@ namespace TrboX
 
             if (staffs == null) return;
 
+            Department depts = null;
+            if (StaffMgr.s_Add.ContainsKey(dept))
+            {
+                depts = s_Add[dept];
+                depts.ID = (int)dept;
+            }
+
+            List<Department> tmpdept = DeptList.Where(p => p.ID == dept).ToList();
+            if (tmpdept.Count > 0) depts = tmpdept[0];
+
+            if (depts == null) return;
+
             if (AddDeptStaff.ContainsKey(staffs))
             {
-                if (AddDeptStaff[staffs] == dept) AddDeptStaff.Remove(staffs);               
+                if (AddDeptStaff[staffs] == depts) AddDeptStaff.Remove(staffs);               
             }
 
             if (DelDeptStaff.ContainsKey(staffs))
             {
-                DelDeptStaff[staffs] = dept;
+                DelDeptStaff[staffs] = depts;
             }
             else
             {
-                DelDeptStaff.Add(staffs, dept);
+                DelDeptStaff.Add(staffs, depts);
             }
         }
 
         public static List<Staff> ListStaff(long dept)
         {
+            if (!IsNeedListStaff && StaffDept.ContainsKey(dept)) return StaffDept[dept];
+            IsNeedListStaff = false;
+
             Dictionary<string, object> addparam = new Dictionary<string, object>();
             addparam.Add("operation", OperateType.listUser.ToString());
             addparam.Add("department", dept);
@@ -404,12 +452,25 @@ namespace TrboX
             jsetting.DefaultValueHandling = DefaultValueHandling.Ignore;
             string addstr = JsonConvert.SerializeObject(addreq, Formatting.Indented, jsetting);
 
-            return LogServer.Call(addstr, StaffMgr.ParseList) as List<Staff>;
+
+            List<Staff> Res = LogServer.Call(addstr, StaffMgr.ParseList) as List<Staff>;
+
+            if (StaffDept.ContainsKey(dept))
+            {
+                StaffDept[dept] = Res;
+            }
+            else
+            {
+                StaffDept.Add(dept, Res);
+            }
+
+            return Res;
         }
 
         public static void SaveDeptStaff()
         {
               List<Staff> staffs = StaffMgr.List();
+              List<Department> depts = List();
 
               foreach(var item in AddDeptStaff)
               {
@@ -420,7 +481,10 @@ namespace TrboX
                   if (tmp.Count < 1) continue;
                   addparam.Add("user", tmp[0].ID);
 
-                  addparam.Add("department", item.Value);
+
+                  List<Department> tmpdept = depts.Where(p => p.GroupID == item.Value.GroupID).ToList();
+                  if (tmpdept.Count < 1) continue;
+                  addparam.Add("department", tmpdept[0].ID);
 
                   LogServerRequest addreq = new LogServerRequest()
                   {
@@ -444,7 +508,9 @@ namespace TrboX
                   if (tmp.Count < 1) continue;
                   addparam.Add("user", tmp[0].ID);
 
-                  addparam.Add("department", item.Value);
+                  List<Department> tmpdept = depts.Where(p => p.GroupID == item.Value.GroupID).ToList();
+                  if (tmpdept.Count < 1) continue;
+                  addparam.Add("department", tmpdept[0].ID);
 
                   LogServerRequest addreq = new LogServerRequest()
                   {
@@ -460,49 +526,105 @@ namespace TrboX
                   LogServer.Call(addstr);
               }
 
+              IsNeedListStaff = true;
               AddDeptStaff.Clear();
               DelDeptStaff.Clear();
         }
 
 
-        private static Dictionary<long, long> AddDeptRadio = new Dictionary<long, long>();
-        private static Dictionary<long, long> DelDeptRadio = new Dictionary<long, long>();
+        private static Dictionary<Radio, Department> AddDeptRadio = new Dictionary<Radio, Department>();
+        private static Dictionary<Radio, Department> DelDeptRadio = new Dictionary<Radio, Department>();
+
+        private static Dictionary<long, List<Radio>> RadioDept = new Dictionary<long, List<Radio>>();
+        private static bool IsNeedListRadio = true;
         public static void AssignRadio(long radio, long dept)
         {
-            if (DelDeptRadio.ContainsKey(radio))
+            Radio radios = null;
+            if (RadioMgr.s_Add.ContainsKey(radio))
             {
-                DelDeptRadio.Remove(radio);
+                radios = RadioMgr.s_Add[radio];
+                radios.ID = (int)radio;
             }
 
-            if (AddDeptRadio.ContainsKey(radio))
+            List<Radio> tmp =RadioMgr.RadioList.Where(p => p.ID == radio).ToList();
+            if (tmp.Count > 0) radios = tmp[0];
+
+            if (radios == null) return;
+
+            Department depts = null;
+            if (StaffMgr.s_Add.ContainsKey(dept))
             {
-                AddDeptRadio[radio] = dept;
+                depts = s_Add[dept];
+                depts.ID = (int)dept;
+            }
+
+            List<Department> tmpdept = DeptList.Where(p => p.ID == dept).ToList();
+            if (tmpdept.Count > 0) depts = tmpdept[0];
+
+            if (depts == null) return;
+
+            if (DelDeptRadio.ContainsKey(radios))
+            {
+                if (DelDeptRadio[radios] == depts) DelDeptRadio.Remove(radios);
+            }
+
+            if (AddDeptRadio.ContainsKey(radios))
+            {
+                AddDeptRadio[radios] = depts;
             }
             else
             {
-                AddDeptRadio.Add(radio, dept);
+                AddDeptRadio.Add(radios, depts);
             }
         }
 
         public static void DetachRadio(long radio, long dept)
         {
-            if (AddDeptRadio.ContainsKey(radio))
+            Radio radios = null;
+            if (RadioMgr.s_Add.ContainsKey(radio))
             {
-                AddDeptRadio.Remove(radio);
+                radios = RadioMgr.s_Add[radio];
+                radios.ID = (int)radio;
             }
 
-            if (DelDeptRadio.ContainsKey(radio))
+            List<Radio> tmp = RadioMgr.RadioList.Where(p => p.ID == radio).ToList();
+            if (tmp.Count > 0) radios = tmp[0];
+
+            if (radios == null) return;
+
+            Department depts = null;
+            if (StaffMgr.s_Add.ContainsKey(dept))
             {
-                DelDeptRadio[radio] = dept;
+                depts = s_Add[dept];
+                depts.ID = (int)dept;
+            }
+
+            List<Department> tmpdept = DeptList.Where(p => p.ID == dept).ToList();
+            if (tmpdept.Count > 0) depts = tmpdept[0];
+
+            if (depts == null) return;
+
+
+            if (AddDeptRadio.ContainsKey(radios))
+            {
+                if (AddDeptRadio[radios] == depts) AddDeptRadio.Remove(radios);
+            }
+
+            if (DelDeptRadio.ContainsKey(radios))
+            {
+                DelDeptRadio[radios] = depts;
             }
             else
             {
-                DelDeptRadio.Add(radio, dept);
+                DelDeptRadio.Add(radios, depts);
             }
         }
 
         public static List<Radio> ListRadio(long dept)
         {
+            if (!IsNeedListRadio && RadioDept.ContainsKey(dept)) return RadioDept[dept];
+            IsNeedListRadio = false;
+
             Dictionary<string, object> addparam = new Dictionary<string, object>();
             addparam.Add("operation", OperateType.listRadio.ToString());
             addparam.Add("department", dept);
@@ -518,17 +640,36 @@ namespace TrboX
             jsetting.DefaultValueHandling = DefaultValueHandling.Ignore;
             string addstr = JsonConvert.SerializeObject(addreq, Formatting.Indented, jsetting);
 
-            return LogServer.Call(addstr, RadioMgr.ParseList) as List<Radio>;
+            List<Radio>  Res = LogServer.Call(addstr, RadioMgr.ParseList) as List<Radio>;
+
+            if (RadioDept.ContainsKey(dept))
+            {
+                 RadioDept[dept] = Res;
+            }
+            else{
+                RadioDept.Add(dept, Res);
+            }
+
+            return Res;
         }
 
         public static void SaveDeptRadio()
         {
+            List<Radio> radios = RadioMgr.List();
+            List<Department> depts = List();
+
             foreach (var item in AddDeptRadio)
             {
                 Dictionary<string, object> addparam = new Dictionary<string, object>();
-                addparam.Add("operation", OperateType.assignUser.ToString());
-                addparam.Add("radio", item.Key);
-                addparam.Add("department", item.Value);
+                addparam.Add("operation", OperateType.assignRadio.ToString());
+
+                List<Radio> tmp = radios.Where(p => p.RadioID == item.Key.RadioID).ToList();
+                if (tmp.Count < 1) continue;
+                addparam.Add("radio", tmp[0].ID);
+
+                List<Department> tmpdept = depts.Where(p => p.GroupID == item.Value.GroupID).ToList();
+                if (tmpdept.Count < 1) continue;
+                addparam.Add("department", tmpdept[0].ID);
 
                 LogServerRequest addreq = new LogServerRequest()
                 {
@@ -546,9 +687,15 @@ namespace TrboX
             foreach (var item in DelDeptRadio)
             {
                 Dictionary<string, object> addparam = new Dictionary<string, object>();
-                addparam.Add("operation", OperateType.detachUser.ToString());
-                addparam.Add("radio", item.Key);
-                addparam.Add("department", item.Value);
+                addparam.Add("operation", OperateType.detachRadio.ToString());
+
+                List<Radio> tmp = radios.Where(p => p.RadioID == item.Key.RadioID).ToList();
+                if (tmp.Count < 1) continue;
+                addparam.Add("radio", tmp[0].ID);
+
+                List<Department> tmpdept = depts.Where(p => p.GroupID == item.Value.GroupID).ToList();
+                if (tmpdept.Count < 1) continue;
+                addparam.Add("department", tmpdept[0].ID);
 
                 LogServerRequest addreq = new LogServerRequest()
                 {
@@ -563,6 +710,10 @@ namespace TrboX
 
                 LogServer.Call(addstr);
             }
+
+            IsNeedListRadio = true;
+            AddDeptRadio.Clear();
+            DelDeptRadio.Clear();
         }
     }
 }

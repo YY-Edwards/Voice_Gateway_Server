@@ -76,7 +76,7 @@ namespace TrboX
                 return PackageNumber;
             }
         }
-        public static void InitializeTServer()
+        public static void InitializeServer()
         {
             TCP = new TcpInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9003), OnReceive);
             TCP.OnConnect = OnConnect;

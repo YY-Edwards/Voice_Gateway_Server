@@ -6,6 +6,10 @@ using System.Text;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
+using System.IO;
+
 namespace TrboX
 {
     [Serializable]
@@ -19,11 +23,11 @@ namespace TrboX
             if (TargetType.Private != Type)
             {
                 foreach (var group in TargetMgr.TargetList.Group)
-                if (group.Value.Group.GroupID == ID)
-                {
-                    return new CMember(MemberType.Group, group.Value.Group, null, null);
-                }
-                return new CMember(MemberType.Group, new Department() { ID = -1, GroupID = ID, Name = "组：" + ID.ToString() },null, null);
+                    if (group.Value.Group.GroupID == ID)
+                    {
+                        return new CMember(MemberType.Group, group.Value.Group, null, null);
+                    }
+                return new CMember(MemberType.Group, new Department() { ID = -1, GroupID = ID, Name = "组：" + ID.ToString() }, null, null);
             }
 
 
@@ -35,7 +39,7 @@ namespace TrboX
                 if ((null != radio.Value.Radio) && (radio.Value.Radio.RadioID == ID)) return radio.Value;
 
             return new CMember(MemberType.Radio, new Department() { ID = -1, GroupID = -1, Name = "未分组" }, null, new Radio() { ID = -1, RadioID = ID, IsOnline = true });
-       
+
         }
     }
 
@@ -68,16 +72,16 @@ namespace TrboX
         {
             if (Type != member.Type) return false;
 
-            if (((null == member.Group) && (null == Group)) || ((null != member.Group) && (null != Group) && (Group.ID == member.Group.ID))){}//group is equal;
+            if (((null == member.Group) && (null == Group)) || ((null != member.Group) && (null != Group) && (Group.ID == member.Group.ID))) { }//group is equal;
             else return false;
 
             if (((null == member.Staff) && (null == Staff)) || ((null != member.Staff) && (null != Staff) && (Staff.ID == member.Staff.ID))) { }//Employee is equal;
             else return false;
 
-            if (((null == member.Radio) && (null == Radio)) || ((null != member.Radio) && (null != Radio) && (Radio.ID == member.Radio.ID))){}//Radio is equal;
+            if (((null == member.Radio) && (null == Radio)) || ((null != member.Radio) && (null != Radio) && (Radio.ID == member.Radio.ID))) { }//Radio is equal;
             else return false;
 
-            return true;      
+            return true;
         }
 
 
@@ -92,14 +96,14 @@ namespace TrboX
             }
             else
                 if (((null == member.Radio) && (null == Radio)) || ((null != member.Radio) && (null != Radio) && (Radio.ID == member.Radio.ID))) return true;//Radio is equal;
-                else return false;       
+                else return false;
         }
 
-        
+
 
         public CMultMember SingleToMult()
         {
-            CMultMember member = new CMultMember() { Type = SelectionType.Single, Target = new List<CMember> ()};
+            CMultMember member = new CMultMember() { Type = SelectionType.Single, Target = new List<CMember>() };
             member.Target.Add(this);
 
             return member;
@@ -109,7 +113,7 @@ namespace TrboX
         {
             get
             {
-                if(MemberType.Group == Type)
+                if (MemberType.Group == Type)
                 {
                     return (null == Group) ? "" : Group.Name;
                 }
@@ -165,13 +169,13 @@ namespace TrboX
             {
                 if (MemberType.Staff == Type)
                 {
-                    if(null == Radio) return "";
+                    if (null == Radio) return "";
                     else return ((RadioType.Radio == Radio.Type) ? "手持台" : "车载台") + "：" + Radio.RadioID.ToString();
 
                 }
-                else if(MemberType.Radio == Type)
+                else if (MemberType.Radio == Type)
                 {
-                    if(null == Staff) return "";
+                    if (null == Staff) return "";
                     else return Staff.Name;
                 }
                 else
@@ -188,12 +192,12 @@ namespace TrboX
             {
                 if (MemberType.Group == Type)
                 {
-                    return ((null == Group) || (-1 == Group.ID)) ? "" : ("ID："+Group.GroupID.ToString());
+                    return ((null == Group) || (-1 == Group.ID)) ? "" : ("ID：" + Group.GroupID.ToString());
                 }
                 else
                 {
                     return ((null == Group) || (-1 == Group.ID)) ? InformationWithoutGroup : (Group.Name + "：" + Group.GroupID.ToString() + ((InformationWithoutGroup == "") ? "" : "，") + InformationWithoutGroup);
-                }              
+                }
             }
         }
 
@@ -201,7 +205,7 @@ namespace TrboX
         {
             get
             {
-                return Name + (("" == Information)?"":"：") + Information;
+                return Name + (("" == Information) ? "" : "：") + Information;
             }
         }
     }
@@ -252,79 +256,80 @@ namespace TrboX
             DisableFuncDel nokey
             )
         {
-            if(Type == SelectionType.All)
+            if (Type == SelectionType.All)
             {
-              if(selectall != null) selectall();
+                if (selectall != null) selectall();
             }
-            else if (Type != SelectionType.Null) 
+            else if (Type != SelectionType.Null)
             {
                 if (Type != SelectionType.Multiple)
                 {
-                    if(selectmlt != null) selectmlt();
+                    if (selectmlt != null) selectmlt();
                 }
 
-                if(Target == null || Target.Count <= 0 ) 
+                if (Target == null || Target.Count <= 0)
                 {
-                    if(all != null) all();
+                    if (all != null) all();
                 }
-                else{
+                else
+                {
 
-                     if(Target[0].Type == MemberType.Group)
-                     {
-                         if(group != null) group();
+                    if (Target[0].Type == MemberType.Group)
+                    {
+                        if (group != null) group();
 
-                         if(Target[0].Group == null|| Target[0].Group.GroupID <= 0 )
-                         {
-                             if(all != null) all();
-                         }
-                     }
-                     else
-                     {
-                         if(pri != null) pri();
-                         
-                         if(Target[0].Radio == null|| Target[0].Radio.RadioID <= 0 )
-                         {
-                             if(all != null) all();
-                         } 
-                         else
-                         {
-                            if(!Target[0].Radio.HasGPS)
-                            {
-                                 if(nogps != null) nogps();
-                            } 
-                          
-                            if(!Target[0].Radio.HasScreen)
-                            {
-                                 if(noscreen != null) noscreen();
-                            } 
+                        if (Target[0].Group == null || Target[0].Group.GroupID <= 0)
+                        {
+                            if (all != null) all();
+                        }
+                    }
+                    else
+                    {
+                        if (pri != null) pri();
 
-                            if(!Target[0].Radio.HasKeyboard)
+                        if (Target[0].Radio == null || Target[0].Radio.RadioID <= 0)
+                        {
+                            if (all != null) all();
+                        }
+                        else
+                        {
+                            if (!Target[0].Radio.HasGPS)
                             {
-                                 if(nokey != null) nokey();
+                                if (nogps != null) nogps();
                             }
-                         }
-                     
 
-                     }
+                            if (!Target[0].Radio.HasScreen)
+                            {
+                                if (noscreen != null) noscreen();
+                            }
+
+                            if (!Target[0].Radio.HasKeyboard)
+                            {
+                                if (nokey != null) nokey();
+                            }
+                        }
+
+
+                    }
                 }
 
 
             }
             else
             {
-                if(all != null) all();
-            }                  
+                if (all != null) all();
+            }
         }
-             
+
 
         public bool IsEqual(CMultMember member)
         {
-            if((null == member)  ||(Type != member.Type))return false;
+            if ((null == member) || (Type != member.Type)) return false;
 
             if ((null == Target) && (null == member.Target)) return true;
-            if((null == Target) || (null == member.Target) || (Target.Count != member.Target.Count))return false;
+            if ((null == Target) || (null == member.Target) || (Target.Count != member.Target.Count)) return false;
 
-            for(int i = 0; i < Target.Count; i++)
+            for (int i = 0; i < Target.Count; i++)
             {
                 if (!Target[i].IsEqual(member.Target[i])) return false;
             }
@@ -346,7 +351,7 @@ namespace TrboX
 
         public CMember MultToSingle()
         {
-            if((null == Target) ||(0 == Target.Count))return null;
+            if ((null == Target) || (0 == Target.Count)) return null;
             return Target[0];
         }
 
@@ -406,9 +411,10 @@ namespace TrboX
         {
             get
             {
-                if ((SelectionType.Null == Type)||(SelectionType.All == Type)) return "";
+                if ((SelectionType.Null == Type) || (SelectionType.All == Type)) return "";
                 else if ((SelectionType.Multiple == Type) && (Target.Count > 1)) return "";
-                else if(Target.Count == 1){
+                else if (Target.Count == 1)
+                {
                     //switch (Target[0].Type)
                     //{
                     //    case MemberType.Group:
@@ -433,7 +439,7 @@ namespace TrboX
             {
                 if ((SelectionType.Null == Type) || (SelectionType.All == Type)) return "";
                 else if ((SelectionType.Multiple == Type) && (Target.Count > 1)) return "";
-                else  if(Target.Count == 1)
+                else if (Target.Count == 1)
                 {
                     //switch (Target[0].Type)
                     //{
@@ -546,36 +552,33 @@ namespace TrboX
 
         public void UpdateTragetList()
         {
-            ResourceMgr res = new ResourceMgr();
+            ResList res = new ResourceMgr().Get();
 
-            List<Staff> stafftemp = res.Get(ResType.Staff) as List<Staff>;
-            foreach (Staff it in stafftemp) m_StaffList.Add(it.ID, it);
+            foreach (Staff it in res.Staff) m_StaffList.Add(it.ID, it);
             m_StaffList.Add(-1, null);
 
-            List<Department> depttemp = res.Get(ResType.Department) as List<Department>;
-            foreach (Department it in depttemp) m_DepartmentList.Add(it.ID, it);
-            m_DepartmentList.Add(-1, new Department() { ID = -1, GroupID = -1, Name = "未分组"});
+            foreach (Department it in res.Department) m_DepartmentList.Add((int)it.ID, it);
+            m_DepartmentList.Add(-1, new Department() { ID = -1, GroupID = -1, Name = "未分组" });
 
-            List<Radio> radiotemp = res.Get(ResType.Radio) as List<Radio>;
-            foreach (Radio it in radiotemp) m_RadioList.Add(it.ID, it);
+            foreach (Radio it in res.Radio) m_RadioList.Add(it.ID, it);
             m_RadioList.Add(-1, null);
 
-            List<Belong> belongtemp = res.Get(ResType.Belong) as List<Belong>;
-            foreach (Belong it in belongtemp) m_BelongList.Add(it);
-
-           
+            foreach (Belong it in res.Belong) m_BelongList.Add(it);
 
             m_IsChange = true;
         }
 
         public static CTargetRes TargetList
         {
-            get {
+            get
+            {
                 if (m_IsChange) BulidTargetList();
                 m_IsChange = false;
 
-                string tmp = JsonConvert.SerializeObject(m_TargetList);
-                return JsonConvert.DeserializeObject<CTargetRes>(tmp);
+                MemoryStream stream = new MemoryStream();
+                new BinaryFormatter().Serialize(stream, m_TargetList);
+                stream.Seek(0, SeekOrigin.Begin);
+                return (CTargetRes)new BinaryFormatter().Deserialize(stream);
             }
         }
 
@@ -583,20 +586,20 @@ namespace TrboX
         {
             //m_IsChange = true;
             string tmp = JsonConvert.SerializeObject(lst);
-            m_TargetList =  JsonConvert.DeserializeObject<CTargetRes>(tmp);
+            m_TargetList = JsonConvert.DeserializeObject<CTargetRes>(tmp);
         }
 
         private static void BulidTargetList()
         {
-            m_TargetList = new CTargetRes();           
+            m_TargetList = new CTargetRes();
             if (null == m_TargetList.Group) m_TargetList.Group = new Dictionary<int, CMember>();
             if (null == m_TargetList.Staff) m_TargetList.Staff = new Dictionary<int, CMember>();
             if (null == m_TargetList.Radio) m_TargetList.Radio = new Dictionary<int, CMember>();
 
             foreach (var team in m_DepartmentList)
             {
-                if (null == team.Value) continue;                
-                m_TargetList.Group.Add(team.Value.ID, new CMember(MemberType.Group, team.Value, null, null));
+                if (null == team.Value) continue;
+                m_TargetList.Group.Add((int)team.Value.ID, new CMember(MemberType.Group, team.Value, null, null));
             }
 
             foreach (var staff in m_StaffList)
@@ -616,7 +619,7 @@ namespace TrboX
 
                 if (false == hasinbelong)
                 {
-                    m_TargetList.Staff.Add(staff.Value.ID, new CMember(MemberType.Staff, new Department() { ID = -1, GroupID = -1, Name = "未分组" }, staff.Value, null));        
+                    m_TargetList.Staff.Add(staff.Value.ID, new CMember(MemberType.Staff, new Department() { ID = -1, GroupID = -1, Name = "未分组" }, staff.Value, null));
                 }
             }
 
@@ -630,14 +633,14 @@ namespace TrboX
                     if (radio.Value.ID == bing.Radio)
                     {
                         hasinbelong = true;
-                        m_TargetList.Radio.Add(radio.Value.ID, new CMember(MemberType.Radio, m_DepartmentList[bing.Department], m_StaffList[bing.Staff], radio.Value));                              
+                        m_TargetList.Radio.Add(radio.Value.ID, new CMember(MemberType.Radio, m_DepartmentList[bing.Department], m_StaffList[bing.Staff], radio.Value));
                         break;
                     }
                 }
 
                 if (false == hasinbelong)
                 {
-                    m_TargetList.Radio.Add(radio.Value.ID, new CMember(MemberType.Radio, new Department() { ID = -1, GroupID = -1, Name = "未分组" }, null, radio.Value));      
+                    m_TargetList.Radio.Add(radio.Value.ID, new CMember(MemberType.Radio, new Department() { ID = -1, GroupID = -1, Name = "未分组" }, null, radio.Value));
                 }
             }
         }
@@ -646,36 +649,12 @@ namespace TrboX
         {
             if (!m_RadioList.ContainsKey(radio.ID))
             {
-                for(int i = m_RadioList.Count; i <= m_RadioList.Count + 100; i++)
+                for (int i = m_RadioList.Count; i <= m_RadioList.Count + 100; i++)
                 {
                     if (!m_RadioList.ContainsKey(i))
                     {
                         radio.ID = i;
                         m_RadioList.Add(radio.ID, radio);
-                        m_IsChange = true;
-                        return ;
-                    }
-                }               
-            }
-            else
-            {
-                m_RadioList[radio.ID] = radio;
-                m_IsChange = true;
-                return;
-            }
-            return;           
-        }
-
-        public void Update(Department group)
-        {
-            if (!m_DepartmentList.ContainsKey(group.ID))
-            {
-                for (int i = m_DepartmentList.Count; i <= m_DepartmentList.Count + 100; i++)
-                {
-                    if (!m_DepartmentList.ContainsKey(i))
-                    {
-                        group.ID = i;
-                        m_DepartmentList.Add(group.ID, group);
                         m_IsChange = true;
                         return;
                     }
@@ -683,7 +662,31 @@ namespace TrboX
             }
             else
             {
-                m_DepartmentList[group.ID] = group;
+                m_RadioList[radio.ID] = radio;
+                m_IsChange = true;
+                return;
+            }
+            return;
+        }
+
+        public void Update(Department group)
+        {
+            if (!m_DepartmentList.ContainsKey((int)group.ID))
+            {
+                for (int i = m_DepartmentList.Count; i <= m_DepartmentList.Count + 100; i++)
+                {
+                    if (!m_DepartmentList.ContainsKey(i))
+                    {
+                        group.ID = i;
+                        m_DepartmentList.Add((int)group.ID, group);
+                        m_IsChange = true;
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                m_DepartmentList[(int)group.ID] = group;
                 m_IsChange = true;
                 return;
             }
@@ -691,7 +694,7 @@ namespace TrboX
         }
 
 
-        public CMember SimpleToMember(TargetSimple target )
+        public CMember SimpleToMember(TargetSimple target)
         {
             if (TargetType.Private != target.Type)
             {
@@ -700,7 +703,7 @@ namespace TrboX
                     {
                         return new CMember(MemberType.Group, group.Value.Group, null, null);
                     }
-                return new CMember(MemberType.Group, new Department() { ID = -1, GroupID = target.ID, Name = "组：" + target.ID.ToString() },null, null);
+                return new CMember(MemberType.Group, new Department() { ID = -1, GroupID = target.ID, Name = "组：" + target.ID.ToString() }, null, null);
             }
 
 

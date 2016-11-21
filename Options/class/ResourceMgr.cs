@@ -87,7 +87,7 @@ namespace TrboX
                 List<long> currradio = new List<long>();
 
                 if (radio != null)
-                    foreach (var id in radio) currradio.Add(it.ID);
+                    foreach (var id in radio) currradio.Add(id.ID);
 
                 if (staff != null)
                 foreach (var s in staff)

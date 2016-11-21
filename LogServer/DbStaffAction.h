@@ -138,11 +138,11 @@ void staffAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 		}
 		else if (0 == operation.compare("update"))
 		{
-			if (!d.HasMember("radios") || !d["radios"].IsArray())
+			if (!d.HasMember("staffs") || !d["staffs"].IsArray())
 			{
-				throw std::exception("call parameter error, radio key must be an array");
+				throw std::exception("call parameter error, staff key must be an array");
 			}
-			int itemCount = d["radios"].Size();
+			int itemCount = d["staffs"].Size();
 
 			for (size_t i = 0; i < itemCount; i++)
 			{
@@ -164,11 +164,11 @@ void staffAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 				{
 					updateVal["phone"] = phone;
 				}
-				std::string updCond = " where `id`=" + CDb::instance()->getUserIdByStaffId(id);
+				std::string updCond = " where `id`=" + std::to_string(CDb::instance()->getUserIdByStaffId(id));
 				bool ret = CDb::instance()->updateStaff(updCond.c_str(), updateVal);
 				if (!ret)
 				{
-					throw std::exception("update radio failed");
+					throw std::exception("update staff failed");
 				}
 			}
 			strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
