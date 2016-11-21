@@ -8000,6 +8000,32 @@ int CWLNet::wlMnisMessage(int Type, int Target, int Source, std::string Contents
 	return 0;
 }
 
+int CWLNet::wlMnisArs()
+{
+	/*将参数打包成json格式*/
+	ArgumentType args;
+	std::string strRequest = CRpcJsonParser::buildCall("status", ++g_sn, args, "wl");
+	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
+	sendLogToWindow();
+	TcpClient *redayDelete = NULL;
+	/*发送到Client*/
+	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end(); i++)
+	{
+		TcpClient* p = *i;
+		try
+		{
+			p->sendResponse(strRequest.c_str(), strRequest.size());
+		}
+		catch (...)
+		{
+			redayDelete = p;
+			sprintf_s(m_reportMsg, "sendCallStatus fail, socket:%lu", p->s);
+			sendLogToWindow();
+		}
+	}
+	return 0;
+}
+
 //bool CWLNet::getIsFirstBurstA()
 //{
 //	return m_isFirstBurstA;
