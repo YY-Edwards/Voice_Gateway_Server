@@ -79,7 +79,7 @@ namespace TrboX
             if(res.Staff !=null)foreach (var it in res.Staff) allstaff.Add(it.ID);
             if(res.Radio != null) foreach (var it in res.Radio) allradio.Add(it.ID);
 
-            foreach (var it in res.Department)
+            if (res.Department!=null) foreach (var it in res.Department)
             {
                 List<Staff> staff = DepartmentMgr.ListStaff(it.ID);
                 List<Radio> radio = DepartmentMgr.ListRadio(it.ID);
