@@ -64,7 +64,8 @@ namespace TrboX
             this.Loaded += delegate
             {
                 RegRxHandler();
-                TServer.InitializeTServer();  
+                TServer.InitializeServer();
+                LogServer.InitializeServer();  
      
                 WindowState = WindowState.Maximized;
 

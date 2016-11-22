@@ -271,8 +271,8 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 
 			ArgumentType args;
 			std::list<recordType> records;
-			int departmentId = d["user"].GetInt();
-			CDb::instance()->listDepartmentRadio(departmentId, records);
+			int radioId = d["user"].GetInt();
+			CDb::instance()->listStaffRadio(radioId, records);
 
 			FieldValue fvRecords(FieldValue::TArray);
 			for (auto i = records.begin(); i != records.end(); i++)

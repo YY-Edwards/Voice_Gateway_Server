@@ -108,7 +108,7 @@ void radioAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 			for (size_t i = 0; i < itemCount; i++)
 			{
-				std::string radioId = d["radios"][i]["radioId"].GetString();
+				std::string radioId = std::to_string(d["radios"][i]["radio_id"].GetInt());
 				std::string sn = d["radios"][i]["sn"].GetString();
 				int type = d["radios"][i]["type"].GetInt();
 				int screen = d["radios"][i]["screen"].GetInt();
@@ -155,7 +155,7 @@ void radioAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 				rapidjson::Value& val = d["radios"][i]["radio"];
 
-				std::string radioId = val.HasMember("radioId") ? val["radioId"].GetString() : "";
+				std::string radioId = val.HasMember("radio_id") ? std::to_string(val["radio_id"].GetInt()) : "0";
 				std::string sn = val.HasMember("sn") ? val["sn"].GetString() : "";
 				int type = val.HasMember("type") ? val["type"].GetInt(): -1;
 				int gps = val.HasMember("gps") ? val["gps"].GetInt() : -1;
@@ -188,7 +188,7 @@ void radioAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 					updateVal["keyboard"] = std::to_string(keyboard);
 				}
 
-				std::string updCond = " where `id`=" + CDb::instance()->getUserIdByStaffId(id);
+				std::string updCond = " where `id`=" + std::to_string(CDb::instance()->getUserIdByStaffId(id));
 				bool ret = CDb::instance()->updateRadio(updCond.c_str(), updateVal);
 				if (!ret)
 				{

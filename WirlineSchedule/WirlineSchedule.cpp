@@ -233,7 +233,7 @@ int main()
 	}
 	if (NULL != m_pMnis)
 	{
-		m_pMnis->radioConnect();
+		m_pMnis->radioDisConnect();
 		delete m_pMnis;
 		m_pMnis = NULL;
 	}

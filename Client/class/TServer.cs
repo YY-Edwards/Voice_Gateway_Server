@@ -82,7 +82,7 @@ namespace TrboX
                 return PackageNumber;
             }
         }
-        public static void InitializeTServer()
+        public static void InitializeServer()
         {
             TCP = new TcpInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9000), OnReceive);
             TCP.OnConnect = OnConnect;
@@ -344,35 +344,10 @@ namespace TrboX
         setRepeaterSetting,
         getRepeaterSetting,
 
-        getUser,
-        getUserCount,
-        addUser,
-        deleteUser,
-        updateUser,
-
-        getStaff,
-        getStaffCount,
-        addStaff,
-        deleteStaff,
-        updateStaff,
-
-        getDepartment,
-        getDepartmentCount,
-        addDepartment,
-        deleteDepartment,
-        updateDepartment,
-
-        getRadio,
-        getRadioCount,
-        addRadio,
-        deleteRadio,
-        updateRadio,
-
-        getRadioBelong,
-        getRadioBelongCount,
-        addRadioBelong,
-        deleteRadioBelong,
-        updateRadioBelong,
+        user,
+        department,
+        radio,
+        staff,
 
         status,
         sendArs,

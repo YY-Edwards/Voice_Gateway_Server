@@ -61,9 +61,11 @@ namespace TrboX
         public NetAddress Svr;
         public NetAddress Ride;
         public NetAddress Mnis;
-        public NetAddress Gps;
+        public NetAddress GpsC;
         public NetAddress Ars;
         public NetAddress Message;
+        public NetAddress Gps;
+        public NetAddress Xnl;
     }
     public enum WireLanType
     {
@@ -84,6 +86,8 @@ namespace TrboX
         public WireLanType Type;
         public NetAddress Svr;
         public NetAddress Master;
+        public NetAddress Mnis;
+        public int MnisId;
         public int DefaultGroupId;
         public int DefaultChannel;
         public int MinHungTime;
