@@ -521,6 +521,7 @@ void CTextMsg::RecvMsg()
 						r.msgType = GROUP;
 					}
 					onData(myCallBackFunc,  it->command, r);
+					m_pMnis->updateOnLineRadioInfo(atoi(stringId.c_str()), RADIO_STATUS_ONLINE);
 					it = timeOutList.erase(it);
 					break;
 				}
@@ -563,6 +564,7 @@ void CTextMsg::RecvMsg()
 				r.msg = message;
 				r.msgType = PRIVATE;
 				onData(myCallBackFunc, RECV_MSG, r);
+				m_pMnis->updateOnLineRadioInfo(atoi(stringId.c_str()), RADIO_STATUS_ONLINE);
 
 #if DEBUG_LOG
 				LOG(INFO) << "½ÓÊÕ¶ÌÐÅ  ondata ";
@@ -626,7 +628,7 @@ void CTextMsg::RecvMsg()
 			//	r.arsStatus = SUCESS;
 			//	onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
 			//}
-			m_pMnis->updateOnLineRadioInfo(atoi(stringId.c_str()), RADIO_STATUS_ONLINE);
+			
 			//			}
 			//			catch (std::exception e)
 			//			{

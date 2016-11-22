@@ -489,8 +489,8 @@ void CDataScheduling::sendRadioStatusToClient()
 void CDataScheduling::updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode)
 {
 	Respone response = { 0 };
-	//response.arsStatus = (RADIO_STATUS_ONLINE == status) ? (SUCESS) : (UNSUCESS);
-	response.arsStatus = RADIO_STATUS_ONLINE == status;
+	response.arsStatus = (RADIO_STATUS_ONLINE == status) ? (SUCESS) : (UNSUCESS);
+	//response.arsStatus = RADIO_STATUS_ONLINE == status;
 	response.source = radioId;
 	char strRadioId[32] = { 0 };
 	sprintf_s(strRadioId, "%d", radioId);

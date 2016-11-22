@@ -819,6 +819,8 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.result = REMOTE_SUCESS;
 								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
+							
+
 								
 #if DEBUG_LOG
 								LOG(INFO) << "ÔÚÏß";
