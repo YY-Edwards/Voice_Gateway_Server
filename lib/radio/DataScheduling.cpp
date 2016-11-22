@@ -8,11 +8,16 @@ std::mutex m_timeOutListLocker;
 std::list <Command> timeOutList;
 TcpClient * peer;
 
-std::map<std::string, RadioStatus> radioStatus;
+std::map<std::string, RadioStatus> g_radioStatus;
 std::string lastIP = "0.0.0.0";
+std::mutex g_radioStatusLocker;
 CDataScheduling::CDataScheduling()
 {
 	isUdpConnect = false;
+	m_serverFunHandler = nullptr;
+	pRadioARS = new CRadioARS(this);
+	pRadioGPS = new CRadioGps(this);
+	pRadioMsg = new CTextMsg(this);
 	CreateThread(NULL, 0, workThread, this, THREAD_PRIORITY_NORMAL, NULL);
 	CreateThread(NULL, 0, timeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
 }
@@ -132,9 +137,9 @@ void CDataScheduling::connect( const char* ip, int callId)
 	{
 		
 		DWORD dwIP = inet_addr(ip);
-		if (pRadioMsg.InitSocket(dwIP))
-		if (pRadioARS.InitARSSocket(dwIP))
-		if (pRadioGPS.InitGPSSocket(dwIP))
+		if (pRadioMsg->InitSocket(dwIP))
+		if (pRadioARS->InitARSSocket(dwIP))
+		if (pRadioGPS->InitGPSSocket(dwIP))
 		{
 			isUdpConnect = true;
 			result = 0;
@@ -179,23 +184,23 @@ void CDataScheduling::connect( const char* ip, int callId)
 }
 void CDataScheduling::disConnect()
 {
-	pRadioARS.CloseARSSocket();
-	pRadioGPS.CloseGPSSocket();
-	pRadioMsg.CloseSocket();
+	pRadioARS->CloseARSSocket();
+	pRadioGPS->CloseGPSSocket();
+	pRadioMsg->CloseSocket();
 	timeOutList.clear();
 }
 void CDataScheduling::getGps(DWORD dwRadioID, int queryMode, double cycle)
 {
-	pRadioGPS.SendQueryGPS(dwRadioID, queryMode, cycle);
+	pRadioGPS->SendQueryGPS(dwRadioID, queryMode, cycle);
 }
 void CDataScheduling::stopGps(DWORD dwRadioID, int	queryMode)
 {
-	pRadioGPS.StopQueryTriggeredGPS(dwRadioID, queryMode);
+	pRadioGPS->StopQueryTriggeredGPS(dwRadioID, queryMode);
 	
 }
 void CDataScheduling::sendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet)
 {
-	pRadioMsg.SendMsg(callId, message, dwRadioID, CaiNet);
+	pRadioMsg->SendMsg(callId, message, dwRadioID, CaiNet);
 }
 void CDataScheduling::initGPSOverturnSocket(DWORD dwAddress)
 {
@@ -204,6 +209,7 @@ void CDataScheduling::initGPSOverturnSocket(DWORD dwAddress)
 void  CDataScheduling::setCallBackFunc(void(*callBackFunc)(TcpClient*, int, int, Respone))
 {
 	myCallBackFunc = callBackFunc;
+	m_serverFunHandler = callBackFunc;
 }
 void onData(void(*func)(TcpClient*, int, int, Respone), TcpClient* tp, int seq, int call, Respone data)
 {
@@ -218,7 +224,7 @@ void onData(void(*func)(TcpClient*, int, int, Respone), TcpClient* tp, int seq, 
 	}
 
 }
-void CDataScheduling::addUdpCommand(TcpClient* tp ,int command, std::string radioIP, std::string gpsIP, int id, wchar_t* text, double cycle, int querymode, int callId)
+void CDataScheduling::addUdpCommand(TcpClient*  tp ,int command, std::string radioIP, std::string gpsIP, int id, wchar_t* text, double cycle, int querymode, int callId)
 {
 	Command      m_command;
 	m_command.callId = callId;
@@ -442,7 +448,7 @@ void CDataScheduling::sendRadioStatusToClient()
 		if (RADIO_STATUS == it->command)
 		{
 			Respone r;
-			r.rs = radioStatus;
+			r.rs = g_radioStatus;
 			onData(myCallBackFunc, it->tp, ++it->callId, it->command, r);
 			it = timeOutList.erase(it);
 			break;
@@ -484,6 +490,66 @@ void CDataScheduling::sendRadioStatusToClient()
 			pRemote->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 		}*/
 	//}
+}
+
+void CDataScheduling::updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode)
+{
+	Respone response = { 0 };
+	response.arsStatus = (RADIO_STATUS_ONLINE == status) ? (SUCESS) : (UNSUCESS);
+	response.source = radioId;
+	char strRadioId[32] = { 0 };
+	sprintf_s(strRadioId, "%d", radioId);
+	std::map<std::string, RadioStatus>::iterator itor = g_radioStatus.find(strRadioId);
+	/*上锁*/
+	g_radioStatusLocker.lock();
+	if (itor != g_radioStatus.end())
+	{
+		//刷新记录
+		if (gpsQueryMode != -1)
+		{
+			itor->second.gpsQueryMode = gpsQueryMode;
+		}
+		itor->second.status = status;
+		itor->second.id = radioId;
+		/*当前列表存在*/
+		if (status != itor->second.status)
+		{
+			/*状态变更为在线*/
+			//通知界面
+			sendToClient(RADIO_ARS, response);
+		}
+	}
+	else
+	{
+		/*当前列表不存在*/
+		if (0 == status)
+		{
+			/*状态变更为不在线*/
+			// do nothing
+		}
+		else
+		{
+			/*状态变更为在线*/
+			//追加记录
+			RadioStatus newRadio;
+			newRadio.gpsQueryMode = gpsQueryMode;
+			newRadio.status = status;
+			newRadio.id = radioId;
+			g_radioStatus[strRadioId] = newRadio;
+			//通知界面
+			sendToClient(RADIO_ARS, response);
+		}
+	}
+	/*解锁*/
+	g_radioStatusLocker.unlock();
+}
+
+void CDataScheduling::sendToClient(int callFuncId, Respone response)
+{
+	if (m_serverFunHandler)
+	{
+		m_serverFunHandler(NULL, 0, callFuncId, response);
+	}
 }
 
 

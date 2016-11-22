@@ -943,8 +943,8 @@ void CManager::OnMnisCallBack(TcpClient *m_pTcpClient, int callId, int callFuncI
 							 RadioStatus radioStatus = i->second;
 							 FieldValue element(FieldValue::TObject);
 							 element.setKeyVal("radioId", FieldValue(radioStatus.id));
-							 element.setKeyVal("IsOnline", FieldValue((0 == radioStatus.status)));
-							 element.setKeyVal("IsInGps", FieldValue((0 == radioStatus.gpsQueryMode)));
+							 element.setKeyVal("IsOnline", FieldValue((1 == radioStatus.status)));
+							 element.setKeyVal("IsInGps", FieldValue((1 == radioStatus.gpsQueryMode)));
 							 info.push(element);
 						 }
 						 g_pNet->wlMnisStatus(MNIS_GET_TYPE_RADIO, info);

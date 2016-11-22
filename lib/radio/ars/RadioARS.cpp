@@ -1,11 +1,13 @@
 #include "stdafx.h"
 #include "RadioARS.h"
+#include "../DataScheduling.h"
 
 #define ARS_PORT  4005
-CRadioARS::CRadioARS()
+CRadioARS::CRadioARS(CDataScheduling *pMnis)
 : m_RcvSocketOpened(false)
 {
 	m_ThreadARS = new ThreadARS;
+	m_pMnis = pMnis;
 }
 
 
@@ -170,31 +172,32 @@ void CRadioARS::RecvData()
 #endif
 		if (peer != NULL)
 		{
-			//查看状态，状态发生改变时，通知特Tserver
-			if (radioStatus.find(stringId) == radioStatus.end())
-			{
-				RadioStatus st;
-				st.id = m_ThreadARS->radioID;
-				st.status = RADIO_STATUS_ONLINE;
-				radioStatus[stringId] = st;
-				Respone r;
-				r.source = m_ThreadARS->radioID;
-				r.arsStatus = SUCESS;
-				onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
-			}
-			else if (radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
-			{
-				radioStatus[stringId].status = RADIO_STATUS_ONLINE;
-				Respone r;
-				r.source = m_ThreadARS->radioID;
-				r.arsStatus = SUCESS;
-				onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
-				/*arg["IsOnline"] = FieldValue("True");
-				std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
-				peer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-				seq++;*/
-			}
+			////查看状态，状态发生改变时，通知特Tserver
+			//if (g_radioStatus.find(stringId) == g_radioStatus.end())
+			//{
+			//	RadioStatus st;
+			//	st.id = m_ThreadARS->radioID;
+			//	st.status = RADIO_STATUS_ONLINE;
+			//	g_radioStatus[stringId] = st;
+			//	Respone r;
+			//	r.source = m_ThreadARS->radioID;
+			//	r.arsStatus = SUCESS;
+			//	onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
 			//}
+			//else if (g_radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
+			//{
+			//	g_radioStatus[stringId].status = RADIO_STATUS_ONLINE;
+			//	Respone r;
+			//	r.source = m_ThreadARS->radioID;
+			//	r.arsStatus = SUCESS;
+			//	onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
+			//	/*arg["IsOnline"] = FieldValue("True");
+			//	std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", seq, arg, "radio");
+			//	peer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+			//	seq++;*/
+			//}
+			//}
+			m_pMnis->updateOnLineRadioInfo(atoi(stringId.c_str()),RADIO_STATUS_ONLINE);
 		}
 		else if (ars_code == 0x31)
 		{
@@ -206,26 +209,27 @@ void CRadioARS::RecvData()
 			{
 				//查看状态，状态发生改变时，通知特Tserver
 
-				if (radioStatus.find(stringId) == radioStatus.end())
-				{
-					RadioStatus st;
-					st.id = m_ThreadARS->radioID;
-					st.status = RADIO_STATUS_OFFLINE;
-					radioStatus[stringId] = st;
-					Respone r;
-					r.source = m_ThreadARS->radioID;
-					r.arsStatus = UNSUCESS;
-					onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
-				}
-				else if (radioStatus[stringId].status == RADIO_STATUS_ONLINE)
-				{
-					radioStatus[stringId].status = RADIO_STATUS_OFFLINE;
+				//if (g_radioStatus.find(stringId) == g_radioStatus.end())
+				//{
+				//	RadioStatus st;
+				//	st.id = m_ThreadARS->radioID;
+				//	st.status = RADIO_STATUS_OFFLINE;
+				//	g_radioStatus[stringId] = st;
+				//	Respone r;
+				//	r.source = m_ThreadARS->radioID;
+				//	r.arsStatus = UNSUCESS;
+				//	onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
+				//}
+				//else if (g_radioStatus[stringId].status == RADIO_STATUS_ONLINE)
+				//{
+				//	g_radioStatus[stringId].status = RADIO_STATUS_OFFLINE;
 
-					Respone r;
-					r.source = m_ThreadARS->radioID;
-					r.arsStatus = UNSUCESS;
-					onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
-				}
+				//	Respone r;
+				//	r.source = m_ThreadARS->radioID;
+				//	r.arsStatus = UNSUCESS;
+				//	onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
+				//}
+				m_pMnis->updateOnLineRadioInfo(atoi(stringId.c_str()), RADIO_STATUS_OFFLINE);
 			}
 		}
 	}

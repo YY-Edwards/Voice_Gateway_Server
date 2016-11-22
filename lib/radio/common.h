@@ -92,7 +92,8 @@ extern TcpClient * peer;
 extern int seq;
 extern std::mutex m_timeOutListLocker;
 extern std::list <Command> timeOutList;
-extern std::map<std::string, RadioStatus> radioStatus;
+extern std::map<std::string, RadioStatus> g_radioStatus;
+extern std::mutex g_radioStatusLocker;
 extern std::string  lastIP ;
 
 #endif

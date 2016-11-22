@@ -3,26 +3,29 @@
 #include "../radio/ars/RadioARS.h"
 #include "../radio/gps/RadioGps.h"
 
-
 class CDataScheduling
 {
 public:
 	CDataScheduling();
 	~CDataScheduling();
-	bool radioConnect(TcpClient* tp  ,const char* ip, int callId);
-	bool radioGetGps(TcpClient* tp,DWORD dwRadioID, int queryMode, double cycle, int callId);
-	bool radioStopGps(TcpClient* tp,DWORD dwRadioID, int	queryMode, int callId);
+	bool radioConnect(TcpClient* tp, const char* ip, int callId);
+	bool radioGetGps(TcpClient* tp, DWORD dwRadioID, int queryMode, double cycle, int callId);
+	bool radioStopGps(TcpClient* tp, DWORD dwRadioID, int	queryMode, int callId);
 	bool radioSendMsg(TcpClient* tp, LPTSTR message, DWORD dwRadioID, int callId, int type);
-	void getRadioStatus(TcpClient* tp,int type,int callId);
+	void getRadioStatus(TcpClient* tp, int type, int callId);
 	void radioDisConnect();
 	//bool InitGPSOverturnSocket(DWORD dwAddress);
 	void  setCallBackFunc(void(*callBackFunc)(TcpClient*, int, int, Respone));
 	static DWORD WINAPI timeOutThread(LPVOID lpParam);
 	static DWORD WINAPI workThread(LPVOID lpParam);
+	/************************************************************************/
+	/* 更新在线设备列表
+	/************************************************************************/
+	void updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode = -1);
 private:
-	CTextMsg        pRadioMsg;
-	CRadioARS       pRadioARS;
-	CRadioGps       pRadioGPS;
+	CTextMsg        *pRadioMsg;
+	CRadioARS       *pRadioARS;
+	CRadioGps       *pRadioGPS;
 	bool            isUdpConnect;
 	std::list <Command> workList;
 	void timeOut();
@@ -34,8 +37,10 @@ private:
 	void stopGps(DWORD dwRadioID, int	queryMode);
 	void sendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet);
 	void initGPSOverturnSocket(DWORD dwAddress);
-	void sendAck(int call,int callId, int id);
+	void sendAck(int call, int callId, int id);
 	void sendRadioStatusToClient();
 	void sendConnectStatusToClient();
+	std::function<void(TcpClient*, int, int, Respone)> m_serverFunHandler;
+	void sendToClient(int callFuncId, Respone response);
 };
 
