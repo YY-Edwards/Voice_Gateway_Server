@@ -14,7 +14,7 @@ public:
 	bool radioStopGps(TcpClient* tp,DWORD dwRadioID, int	queryMode, int callId);
 	bool radioSendMsg(TcpClient* tp, LPTSTR message, DWORD dwRadioID, int callId, int type);
 	void getRadioStatus(TcpClient* tp,int type,int callId);
-	void radioDisConnect(TcpClient* tp, int callId);
+	void radioDisConnect();
 	//bool InitGPSOverturnSocket(DWORD dwAddress);
 	void  setCallBackFunc(void(*callBackFunc)(TcpClient*, int, int, Respone));
 	static DWORD WINAPI timeOutThread(LPVOID lpParam);

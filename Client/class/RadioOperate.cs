@@ -288,7 +288,7 @@ namespace TrboX
         private List<object> BuildSmsParam(CShortMessage op, TargetType type, CMultMember target)
         {
             List<object> param = new List<object>();
-            List<int> groupid = new List<int>();
+            List<long> groupid = new List<long>();
             if(type == TargetType.All)
             {
                 var group = TargetMgr.TargetList.Group.Where(p => p.Value.Group != null && p.Value.Group.ID > 0 && p.Value.Group.GroupID > 0);
@@ -358,7 +358,7 @@ namespace TrboX
         private List<object> BuildGpsParam(CPosition op, TargetType type, CMultMember target)
         {
             List<object> param = new List<object>();
-            List<int> groupid = new List<int>();
+            List<long> groupid = new List<long>();
             try
             {
                 if (type == TargetType.All)
@@ -433,7 +433,7 @@ namespace TrboX
         private List<object> BuildControlParam(CControl op, TargetType type, CMultMember target)
         {
             List<object> param = new List<object>();
-            List<int> groupid = new List<int>();
+            List<long> groupid = new List<long>();
             try
             {
                 if (type == TargetType.All)

@@ -46,8 +46,8 @@ namespace TrboX
                 DataBase.InsertLog("---Records Start----------------------------------------------------------");
 
 
-                TServer.InitializeTServer();
-                LogServer.InitializeTServer();
+                TServer.InitializeServer();
+                LogServer.InitializeServer();
                 SettingComponents = new SettingComponents(this);
                 ResourceComponents = new ResourceComponents(this);
 
@@ -129,12 +129,18 @@ namespace TrboX
                         case "网络":
                             scrview_Radio.ScrollToVerticalOffset(PosInScrView(scrview_Radio, dck_RadioNetwork as FrameworkElement));
                             break;
+                        case "MNIS":
+                            scrview_Radio.ScrollToVerticalOffset(PosInScrView(scrview_Radio, dck_RadioMnis as FrameworkElement));
+                            break;
+                        case "GPS翻转":
+                            scrview_Radio.ScrollToVerticalOffset(PosInScrView(scrview_Radio, dck_RadioGPS as FrameworkElement));
+                            break;
                         case "功能":
                             scrview_Radio.ScrollToVerticalOffset(PosInScrView(scrview_Radio, dck_RadioFunc as FrameworkElement));
                             break;
                     }
                     break;
-                case "WireLan":
+                case "中继台":
                     switch ((string)item.Header)
                     {
                         case "常规":
@@ -142,6 +148,9 @@ namespace TrboX
                             break;
                         case "网络":
                             scrview_WireLan.ScrollToVerticalOffset(PosInScrView(scrview_WireLan, dck_WireLanNetwork as FrameworkElement));
+                            break;
+                        case "MNIS":
+                            scrview_WireLan.ScrollToVerticalOffset(PosInScrView(scrview_WireLan, dck_WireLanMnis as FrameworkElement));
                             break;
                         case "Dongle":
                             scrview_WireLan.ScrollToVerticalOffset(PosInScrView(scrview_WireLan, dck_WireLanDongle as FrameworkElement));
@@ -206,8 +215,13 @@ namespace TrboX
            UserMgr.Save();
            DepartmentMgr.Save();
            StaffMgr.Save();
+           RadioMgr.Save();
+
 
            DepartmentMgr.SaveDeptStaff();
+           DepartmentMgr.SaveDeptRadio();
+
+           StaffMgr.SaveStaffRadio();
         }
 
         private void btn_SetDefault_Click(object sender, RoutedEventArgs e)

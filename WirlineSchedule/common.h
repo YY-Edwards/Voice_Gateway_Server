@@ -61,6 +61,13 @@ typedef struct
 	wchar_t Contents[256];
 }MNIS_MSG;
 
+typedef struct
+{
+	int getType;
+	//FieldValue info;
+}ARS;
+
+
 #define REPEATER_CONNECT 0
 #define REPEATER_DISCONNECT 1
 
@@ -159,6 +166,7 @@ extern HANDLE g_taskLockerEvent;
 #define REMOTE_CMD_GET_CONN_STATUS 0x05
 #define REMOTE_CMD_MNIS_QUERY_GPS 0x06
 #define REMOTE_CMD_MNIS_MSG 0x07
+#define REMOTE_CMD_MNIS_STATUS 0x08
 
 #define GET_TYPE_CONN 0x01
 /*JSON相关结构体*/
@@ -166,6 +174,8 @@ extern HANDLE g_taskLockerEvent;
 /************************************************************************/
 /* 配置命令参数定义
 /************************************************************************/
+#define MNIS_GET_TYPE_CONNECT 0x01//过去Mnis的连接状态
+#define MNIS_GET_TYPE_RADIO 0x02//获取当前关联设备的在线状态
 typedef struct
 {
 	char ip[MAX_IP_SIZE];
@@ -261,6 +271,7 @@ typedef struct
 		GET_INFO getInfoParam;
 		QUERY_GPS queryGpsParam;
 		MNIS_MSG msgParam;
+		ARS mnisStatusParam;
 	}info;
 }JSON_PARAM;
 /*远程命令*/
@@ -358,6 +369,7 @@ typedef struct OutData
 extern bool Env_NetIsOk;//网络是否已经连接
 extern bool Env_DongleIsOk;//dongle 是否开启
 extern bool Env_SoundIsOk;//sound 是否正常
+extern bool Env_MnisIsOk;//mnis 是否正常
 
 
 extern unsigned long g_callId;//呼出ID

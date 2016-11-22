@@ -2,7 +2,7 @@
 #include "extern.h"
 DispatchOperate::DispatchOperate()
 {
-
+	isUdpConnect = false;
 }
 
 DispatchOperate::~DispatchOperate()
@@ -281,9 +281,27 @@ void DispatchOperate::OnData(TcpClient* peer, int callId, int call, Respone data
 	case MNIS_CONNECT:
 		try
 		{
-			args["getType"] = MNIS_CONNECT;
-			args["info"] = FieldValue(data.connectStatus);
-			dis.send2Client("status", args, peer);
+			if (SUCESS == data.connectStatus)
+			{
+				dis.isUdpConnect = true;
+			}
+			else
+			{
+				dis.isUdpConnect = false;
+			}
+			
+		}
+		catch (std::exception e)
+		{
+
+		}
+		break;
+	case CONNECT_STATUS:
+		try
+		{
+			//args["getType"] = CONNECT_STATUS;
+			//args["info"] = FieldValue(data.connectStatus);
+			//dis.send2Client("status", args, peer);
 		}
 		catch (std::exception e)
 		{
@@ -402,9 +420,9 @@ void DispatchOperate::OnTcpData(TcpClient* peer, int callId, int call, TcpRespon
 	case RADIO_CONNECT:
 		try
 		{
-			args["getType"] = MNIS_CONNECT;
-			args["info"] = FieldValue(0);
-			dis.send2Client("status", args, peer);
+			//args["getType"] = MNIS_CONNECT;
+			//args["info"] = FieldValue(0);
+			//dis.send2Client("status", args, peer);
 		}
 		catch (std::exception e)
 		{
@@ -441,6 +459,7 @@ void DispatchOperate::OnTcpData(TcpClient* peer, int callId, int call, TcpRespon
 }
 void DispatchOperate::send2Client( char* name, ArgumentType args, TcpClient * tp)
 {
+	std::lock_guard<std::mutex> locker(m_locker);
 	std::string callJsonStr = CRpcJsonParser::buildCall(name, ++seq, args, "radio");
 	if (peer != NULL)
 	{
@@ -493,12 +512,35 @@ bool DispatchOperate::sendMsg(TcpClient * tp, wchar_t * text, int id, int callId
 }
 void DispatchOperate::getStatus(TcpClient * tp , int type ,int callId)
 {
+	ArgumentType args;
 	switch (type)
 	{
-	case MNIS_CONNECT:
-		ds.getRadioStatus(tp,type,callId);
-		break;
 	case RADIO_CONNECT:
+		
+		if (isUdpConnect && isTcpConnect)
+		{
+			args["getType"] = CONNECT_STATUS;
+			args["info"] = FieldValue(DATA_SUCESS_DISPATCH_SUCESS);
+			dis.send2Client("status", args, peer);
+		}
+		else if (isUdpConnect && !isTcpConnect)
+		{
+			args["getType"] = CONNECT_STATUS;
+			args["info"] = FieldValue(DATA_SUCESS_DISPATCH_FAILED);
+			dis.send2Client("status", args, peer);
+		}
+		else if (!isUdpConnect && isTcpConnect)
+		{
+			args["getType"] = CONNECT_STATUS;
+			args["info"] = FieldValue(DATA_FAILED_DISPATCH_SUCESS);
+			dis.send2Client("status", args, peer);
+		}
+		else if (!isUdpConnect && !isTcpConnect)
+		{
+			args["getType"] = CONNECT_STATUS;
+			args["info"] = FieldValue(DATA_FAILED_DISPATCH_FAILED);
+			dis.send2Client("status", args, peer);
+		}
 		break;
 	case RADIO_STATUS:
 		ds.getRadioStatus(tp, type, callId);

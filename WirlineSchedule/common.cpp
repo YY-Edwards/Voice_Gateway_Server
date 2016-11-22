@@ -3,6 +3,7 @@
 bool Env_DongleIsOk = false;
 bool Env_NetIsOk = false;
 bool Env_SoundIsOk = false;
+bool Env_MnisIsOk = false;
 unsigned long g_callId = 0;
 unsigned char g_targetCallType = 0x4f;
 DECLINE_REASON_CODE_INFO g_callRequstDeclineReasonCodeInfo = { 0 };

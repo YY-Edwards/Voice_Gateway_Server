@@ -211,6 +211,7 @@ int main()
 	m_pRpcServer->addActionHandler("wlInfo", wlInfoActionHandler);
 	m_pRpcServer->addActionHandler("queryGps", wlMnisQueryGpsActionHandler);
 	m_pRpcServer->addActionHandler("message", wlMnisMessageHandler);
+	m_pRpcServer->addActionHandler("status", wlMnisStatusHandler);
 	m_pRpcServer->start(WL_SERVER_PORT);
 
 	/*初始化数据库*/
@@ -229,6 +230,12 @@ int main()
 		m_pManager->stop();
 		delete m_pManager;
 		m_pManager = NULL;
+	}
+	if (NULL != m_pMnis)
+	{
+		m_pMnis->radioDisConnect();
+		delete m_pMnis;
+		m_pMnis = NULL;
 	}
 	if (g_pNet)
 	{

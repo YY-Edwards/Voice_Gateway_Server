@@ -15,6 +15,12 @@ using System.Windows.Resources;
 
 namespace TrboX
 {
+
+    public class ItemIn
+    {
+        public int dept { set; get; }
+        public int staff { set; get; }
+    }
     public class ResourceComponents
     {
         private Main m_Main;
@@ -34,14 +40,25 @@ namespace TrboX
 
             RegDepartment();
             RegStaff();
+            RegRadio();
 
             m_TargetMgr.UpdateTragetList();
             m_TargetList = TargetMgr.TargetList;
 
             m_Main.lst_Group.Loaded += delegate { SetDepartmentToList(m_TargetList.Group); };
-            m_Main.cmb_StaffDepartment.Loaded += delegate { SetDepartmentToStaff(m_TargetList.Group); };
 
-            m_Main.lst_Staff.Loaded += delegate { SetStaffToList(m_TargetList.Staff); };
+            m_Main.lst_Staff.Loaded += delegate {
+                SetDepartmentToStaff(m_TargetList.Group); 
+                SetStaffToList(m_TargetList.Staff);            
+            };
+            m_Main.cmb_RadioStaff.Loaded += delegate { };
+
+            m_Main.lst_Radio.Loaded += delegate {
+
+                SetDepartmentToRadio(m_TargetList.Group);
+                SetStaffToRadio(m_TargetList.Staff); 
+                SetRadioToList(m_TargetList.Radio); 
+            };
 
         }
 
@@ -196,6 +213,7 @@ namespace TrboX
                     m_Main.lst_Group.Items.Add(new ListViewItem() { Content = dept });
 
                     m_Main.cmb_StaffDepartment.Items.Add(new ComboBoxItem() { Content = dept.Name, Tag = dept });
+                    m_Main.cmb_RadioDepartment.Items.Add(new ComboBoxItem() { Content = dept.Name, Tag = dept });
                     m_Main.lst_Group.SelectedIndex = m_Main.lst_Group.Items.Count - 1;
                 }
                 else
@@ -207,7 +225,10 @@ namespace TrboX
 
                     ((ComboBoxItem)m_Main.cmb_StaffDepartment.Items[m_Main.lst_Group.SelectedIndex]).Content = dept.Name;
                     ((ComboBoxItem)m_Main.cmb_StaffDepartment.Items[m_Main.lst_Group.SelectedIndex]).Tag = dept;
+                    ((ComboBoxItem)m_Main.cmb_RadioDepartment.Items[m_Main.lst_Group.SelectedIndex]).Content = dept.Name;
+                    ((ComboBoxItem)m_Main.cmb_RadioDepartment.Items[m_Main.lst_Group.SelectedIndex]).Tag = dept;
                 }       
+
             };
 
            m_Main.btn_DepartmentNew.Click+=delegate{
@@ -225,6 +246,83 @@ namespace TrboX
                     m_Main.lst_Group.SelectedIndex = m_Main.lst_Group.Items.Count == 0 ? -1 : 0;
                 }
             };
+        }
+
+
+        private ItemIn GetIndex(Staff staff)
+        {
+            try
+            {
+                int i = 0;
+                if(m_Main.cmb_StaffDepartment !=null)
+                {
+                    foreach(var item in m_Main.cmb_StaffDepartment.Items)
+                    {
+                        List<Staff> staffs = DepartmentMgr.ListStaff(((Department)((ComboBoxItem)item).Tag).ID);
+                        if (staffs != null && staffs.Where(p => p.ID == staff.ID).ToList().Count > 0) return new ItemIn(){dept = i};
+                        i++;
+                    }
+                }
+
+            }
+            catch(Exception ex)
+            {
+                DataBase.InsertLog(ex.Message);                
+            }
+
+            return new ItemIn() { dept = -1 };
+        }
+
+        private ItemIn GetIndex(Radio radio)
+        {
+            int dept = -1, staff = -1;
+            try
+            {
+                int i = 0;
+                if (m_Main.cmb_StaffDepartment != null)
+                {
+                    foreach (var item in m_Main.cmb_RadioDepartment.Items)
+                    {
+                        List<Radio> radios = DepartmentMgr.ListRadio(((Department)((ComboBoxItem)item).Tag).ID);
+                        if (radios != null && radios.Where(p => p.ID == radio.ID).ToList().Count > 0)
+                        {
+                            dept = i;
+                            break;
+                        }
+                        i++;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                DataBase.InsertLog(ex.Message);
+            }
+
+            try
+            {
+                int i = 0;
+                if (m_Main.cmb_StaffDepartment != null)
+                {
+                    foreach (var item in m_Main.cmb_RadioStaff.Items)
+                    {
+                        List<Radio> radios = StaffMgr.ListRadio(((Staff)((ComboBoxItem)item).Tag).ID);
+                        if (radios != null && radios.Where(p => p.ID == radio.ID).ToList().Count > 0)
+                        {
+                            staff = i;
+                            break;
+                        }
+                        i++;
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                DataBase.InsertLog(ex.Message);
+            }
+
+            return new ItemIn() { dept = dept, staff = staff };
         }
 
         private void SetDepartmentToList(Dictionary<int, CMember> depts)
@@ -258,6 +356,21 @@ namespace TrboX
             }
         }
 
+        private void SetDepartmentToRadio(Dictionary<int, CMember> depts)
+        {
+            if (m_Main.cmb_RadioDepartment.Items.Count > 0) return;
+            if (depts != null)
+            {
+                foreach (var item in depts)
+                {
+                    if (item.Value.Group == null) continue;
+                    if (item.Value.Group.GroupID <= 0) continue;
+
+                    m_Main.cmb_RadioDepartment.Items.Add(new ComboBoxItem() { Content = item.Value.Group.Name, Tag = item.Value.Group });
+                }
+            }
+        }
+
 
         private void RegStaff()
         {
@@ -282,7 +395,7 @@ namespace TrboX
                     staff = new Staff()
                     {
                         Name = m_Main.txt_StaffName.Text,
-                        Type = ((StaffType)int.Parse((string)((ComboBoxItem)m_Main.cmb_StaffType.SelectedItem).Tag)).ToString(),
+                        Type = ((StaffType)int.Parse((string)((ComboBoxItem)m_Main.cmb_StaffType.SelectedItem).Tag)),
                         PhoneNumber = m_Main.txt_StaffPhone.Text,
                         IsValid = true
                     };
@@ -297,9 +410,6 @@ namespace TrboX
                 {
                     staff.ID = (int)staff.Add();
 
-                    m_Main.lst_Staff.Items.Add(new ListViewItem() { Content = staff });
-                    m_Main.lst_Staff.SelectedIndex = m_Main.lst_Staff.Items.Count - 1;
-
                     try
                     {
                         long groupid = ((Department)((ComboBoxItem)m_Main.cmb_StaffDepartment.SelectedItem).Tag).ID;
@@ -309,6 +419,11 @@ namespace TrboX
                     {
                         DataBase.InsertLog(ex.Message);
                     }
+
+                    m_Main.lst_Staff.Items.Add(new ListViewItem() { Content = staff, Tag = m_Main.cmb_StaffDepartment.SelectedIndex});
+                    m_Main.lst_Staff.SelectedIndex = m_Main.lst_Staff.Items.Count - 1;
+
+
                 }
                 else
                 {
@@ -320,7 +435,8 @@ namespace TrboX
                     {
                         try
                         {
-                            DepartmentMgr.DetachStaff(staff.ID, int.Parse(m_Main.txt_StaffDeptID.Text));
+                            Department dept = ((ComboBoxItem)m_Main.cmb_StaffDepartment.Items[GetIndex(staff).dept]).Tag as Department;
+                            DepartmentMgr.DetachStaff(staff.ID, dept.ID);
                         }
                         catch
                         {
@@ -328,6 +444,9 @@ namespace TrboX
                         }
                         long groupid = ((Department)((ComboBoxItem)m_Main.cmb_StaffDepartment.SelectedItem).Tag).ID;
                         if (groupid >= 0) DepartmentMgr.AssignStaff(staff.ID, groupid);
+
+                        ((ListViewItem)m_Main.lst_Staff.Items[m_Main.lst_Staff.SelectedIndex]).Content = staff;
+                        ((ListViewItem)m_Main.lst_Staff.Items[m_Main.lst_Staff.SelectedIndex]).Tag = m_Main.cmb_StaffDepartment.SelectedIndex;
                     }
                     catch (Exception ex)
                     {
@@ -346,10 +465,139 @@ namespace TrboX
                 {
                     if (item.Value.Staff == null) continue;
                     if (item.Value.Staff.ID <1 ) continue;
-                    if (item.Value.Staff.Type == StaffType.Vehicle.ToString()) continue;
-                    m_Main.lst_Staff.Items.Add(new ListViewItem() { Content = item.Value.Staff });
+                    m_Main.lst_Staff.Items.Add(new ListViewItem() { Content = item.Value.Staff, Tag = GetIndex(item.Value.Staff).dept });
                 }
                 m_Main.lst_Staff.SelectedIndex = 0;
+            }
+        }
+
+        private void SetStaffToRadio(Dictionary<int, CMember> staffs)
+        {
+            if (m_Main.cmb_RadioStaff.Items.Count > 0) return;
+            if (staffs != null)
+            {
+                foreach (var item in staffs)
+                {
+                    if (item.Value.Staff == null) continue;
+                    if (item.Value.Staff.ID <1 ) continue;
+                    m_Main.cmb_RadioStaff.Items.Add(new ComboBoxItem() { Content = item.Value.Staff.Name + "(" + (item.Value.Staff.Type == StaffType.Vehicle ? "车辆" :"人员") + ")", Tag = item.Value.Staff });
+                }
+                m_Main.lst_Staff.SelectedIndex = 0;
+            }
+        }
+        
+
+
+        private void RegRadio()
+        {
+            m_Main.btn_SaveRadio.Click += delegate
+            {
+                Radio radio = null;
+                try
+                {
+                    radio = new Radio()
+                    {
+                        Type = m_Main.cmb_RadioType.SelectedIndex == 1 ? RadioType.Ride : RadioType.Radio,
+                        RadioID = long.Parse(m_Main.txt_RadioID.Text),
+                        HasGPS = (bool)m_Main.chk_HasGPS.IsChecked,
+                        HasScreen = (bool)m_Main.chk_HasScreen.IsChecked,
+                        HasKeyboard = (bool)m_Main.chk_HasKeyboard.IsChecked, 
+                        SN = m_Main.txt_RadioSN.Text,
+                        IsValid = true
+                    };
+                }
+                catch (Exception ex)
+                {
+                    DataBase.InsertLog(ex.Message);
+                }
+                if (radio == null) return;
+
+                if (m_Main.lst_Radio.SelectedIndex == -1)
+                {
+                    radio.ID = (int)radio.Add();
+
+                    try
+                    {
+                        long groupid = ((Department)((ComboBoxItem)m_Main.cmb_RadioDepartment.SelectedItem).Tag).ID;
+                        if (groupid >= 0) DepartmentMgr.AssignRadio(radio.ID, groupid);
+                    }
+                    catch (Exception ex)
+                    {
+                        DataBase.InsertLog(ex.Message);
+                    }
+
+                    try
+                    {
+                        long staffid = ((Staff)((ComboBoxItem)m_Main.cmb_RadioStaff.SelectedItem).Tag).ID;
+                        if (staffid >= 0) StaffMgr.AssignRadio(radio.ID, staffid);
+                    }
+                    catch (Exception ex)
+                    {
+                        DataBase.InsertLog(ex.Message);
+                    }
+
+                    m_Main.lst_Radio.Items.Add(new ListViewItem() { Content = radio, Tag = new ItemIn(){dept = m_Main.cmb_RadioDepartment.SelectedIndex, staff =m_Main.cmb_RadioStaff.SelectedIndex} });
+                    m_Main.lst_Radio.SelectedIndex = m_Main.lst_Radio.Items.Count - 1;
+                }
+                else
+                {
+                    Radio destradio = ((ListViewItem)m_Main.lst_Radio.SelectedItem).Content as Radio;
+                    radio.ID = destradio.ID;
+                    radio.Modify();
+
+                    try
+                    {
+                        ItemIn index = GetIndex(radio);
+
+                        try
+                        {
+                            Department dept = ((ComboBoxItem)m_Main.cmb_RadioDepartment.Items[index.dept]).Tag as Department;
+                            DepartmentMgr.DetachRadio(radio.ID, dept.ID);
+                        }
+                        catch
+                        {
+
+                        }
+
+                        try
+                        {
+                            Staff staff = ((ComboBoxItem)m_Main.cmb_RadioStaff.Items[index.staff]).Tag as Staff;
+                            StaffMgr.DetachRadio(radio.ID, staff.ID);
+                        }
+                        catch
+                        {
+
+                        }
+
+                        long groupid = ((Department)((ComboBoxItem)m_Main.cmb_RadioDepartment.SelectedItem).Tag).ID;
+                        if (groupid >= 0) DepartmentMgr.AssignRadio(radio.ID, groupid);
+
+                        long staffid = ((Staff)((ComboBoxItem)m_Main.cmb_RadioStaff.SelectedItem).Tag).ID;
+                        if (staffid >= 0) StaffMgr.AssignRadio(radio.ID, staffid);
+                    }
+                    catch (Exception ex)
+                    {
+                        DataBase.InsertLog(ex.Message);
+                    }
+
+                    ((ListViewItem)m_Main.lst_Radio.SelectedItem).Content = radio;
+                    ((ListViewItem)m_Main.lst_Radio.SelectedItem).Tag = new ItemIn() { dept = m_Main.cmb_RadioDepartment.SelectedIndex, staff = m_Main.cmb_RadioStaff.SelectedIndex };          
+                }
+            };
+        }
+
+        private void SetRadioToList(Dictionary<int, CMember> radios)
+        {
+            if (m_Main.lst_Radio.Items.Count > 0) return;
+            if (radios != null)
+            {
+                foreach (var item in radios)
+                {
+                    if (item.Value.Radio == null) continue;
+                    if (item.Value.Radio.ID < 1) continue;
+                    m_Main.lst_Radio.Items.Add(new ListViewItem() { Content = item.Value.Radio, Tag = GetIndex(item.Value.Radio) });
+                }
+                m_Main.lst_Radio.SelectedIndex = 0;
             }
         }
     }

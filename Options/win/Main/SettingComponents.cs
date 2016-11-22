@@ -200,12 +200,33 @@ namespace TrboX
                 {
 
                 }
-                Radio.Gps = new NetAddress();
+
+                try
+                {
+                    Radio.Gps.Port = int.Parse(m_Main.txt_RadioGPSPort.Text);
+
+                }
+                catch
+                {
+
+                }
+
+                try
+                {
+                    Radio.Xnl.Port = int.Parse(m_Main.txt_RadioXNLPort.Text);
+
+                }
+                catch
+                {
+
+                }
+
+                Radio.GpsC = new NetAddress();
 
                 try
                 {
                     IPAddress.Parse(m_Main.txt_RadioGpsIp.Text);
-                    Radio.Gps.Ip = m_Main.txt_RadioGpsIp.Text;
+                    Radio.GpsC.Ip = m_Main.txt_RadioGpsIp.Text;
                 }
                 catch { }
             }
@@ -234,6 +255,8 @@ namespace TrboX
 
                 m_Main.txt_RadioArsPort.Text = Radio.Ars.Port.ToString();
                 m_Main.txt_RadioMsgPort.Text = Radio.Message.Port.ToString();
+                m_Main.txt_RadioGPSPort.Text = Radio.Gps.Port.ToString();
+                m_Main.txt_RadioXNLPort.Text = Radio.Xnl.Port.ToString();
 
                 m_Main.txt_RadioGpsIp.Text = Radio.Mnis.Ip;
             }
@@ -311,6 +334,21 @@ namespace TrboX
 
                 catch { }
 
+                WireLan.Mnis = new NetAddress();
+                try
+                {
+                    IPAddress.Parse(m_Main.txt_MnisIp.Text);
+                    WireLan.Mnis.Ip = m_Main.txt_MnisIp.Text;
+                }
+                catch { }
+
+                try
+                {
+                    WireLan.MnisId = int.Parse(m_Main.txt_MnisID.Text);
+                }
+
+                catch { }
+
                 try
                 {
                     WireLan.LocalPeerId = int.Parse(m_Main.txt_LocalPeerId.Text);
@@ -371,6 +409,10 @@ namespace TrboX
 
                 m_Main.txt_SiteIp.Text = WireLan.Master.Ip;
                 m_Main.txt_SitePort.Text = WireLan.Master.Port.ToString();
+
+                m_Main.txt_MnisIp.Text = WireLan.Mnis.Ip;
+                //m_Main.txt_MnisPort.Text = WireLan.Mnis.Port.ToString();
+                m_Main.txt_MnisID.Text  = WireLan.MnisId.ToString();
 
                 m_Main.txt_LocalPeerId.Text = WireLan.LocalPeerId.ToString();
                 m_Main.txt_LocalRadioId.Text = WireLan.LocalRadioId.ToString();

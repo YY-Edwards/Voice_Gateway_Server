@@ -38,5 +38,7 @@ private:
 	void delPeer(CRemotePeer * peer);
 	CTcpScheduling ts;
 	CDataScheduling ds;
+	bool isUdpConnect;
+	std::mutex m_locker;
 };
 
