@@ -105,6 +105,7 @@
     <ClInclude Include="..\lib\rpc\include\RpcJsonParser.h" />
     <ClInclude Include="..\lib\rpc\include\RpcServer.h" />
     <ClInclude Include="..\lib\rpc\include\TcpServer.h" />
+    <ClInclude Include="..\lib\service\service.h" />
     <ClInclude Include="..\lib\utf8\utf8.h" />
     <ClInclude Include="AppEventAction.h" />
     <ClInclude Include="Db.h" />
@@ -128,6 +129,7 @@
     <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcServer.cpp" />
     <ClCompile Include="..\lib\rpc\src\TcpServer.cpp" />
+    <ClCompile Include="..\lib\service\service.cpp" />
     <ClCompile Include="Db.cpp" />
     <ClCompile Include="LogServer.cpp" />
     <ClCompile Include="stdafx.cpp">
