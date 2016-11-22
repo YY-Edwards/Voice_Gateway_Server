@@ -170,8 +170,8 @@ void CRadioARS::RecvData()
 #if DEBUG_LOG
 		LOG(INFO) << "对讲机开机ars ondata ";
 #endif
-		if (peer != NULL)
-		{
+	//	if (peer != NULL)
+		//{
 			////查看状态，状态发生改变时，通知特Tserver
 			//if (g_radioStatus.find(stringId) == g_radioStatus.end())
 			//{
@@ -205,8 +205,8 @@ void CRadioARS::RecvData()
 #if DEBUG_LOG
 			LOG(INFO) << "对讲机关机ars ondata ";
 #endif
-			if (peer != NULL)
-			{
+			//if (peer != NULL)
+			//{
 				//查看状态，状态发生改变时，通知特Tserver
 
 				//if (g_radioStatus.find(stringId) == g_radioStatus.end())
@@ -230,8 +230,7 @@ void CRadioARS::RecvData()
 				//	onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
 				//}
 				m_pMnis->updateOnLineRadioInfo(atoi(stringId.c_str()), RADIO_STATUS_OFFLINE);
-			}
-		}
+		//}
 	}
-
 }
+

@@ -86,14 +86,10 @@ typedef struct tagRespone
 	int operate;
 	std::map<std::string, RadioStatus> rs;
 }Respone;
-extern void(*myCallBackFunc)(TcpClient*, int, int, Respone);
-void onData(void(*func)(TcpClient* tp, int, int, Respone), TcpClient* tp, int callId, int call, Respone data);
-extern TcpClient * peer;
-extern int seq;
+extern void(*myCallBackFunc)(  int, Respone);
+void onData(void(*func)(int, Respone),  int call, Respone data);
 extern std::mutex m_timeOutListLocker;
 extern std::list <Command> timeOutList;
 extern std::map<std::string, RadioStatus> g_radioStatus;
 extern std::mutex g_radioStatusLocker;
-extern std::string  lastIP ;
-
 #endif

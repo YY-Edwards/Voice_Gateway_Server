@@ -513,7 +513,7 @@ void CRadioGps::RecvData()
 								r.querymode = it->querymode;
 								r.cycle = it->cycle;
 								r.operate = operate;
-								onData(myCallBackFunc, it->tp, it->callId, it->command, r);
+								onData(myCallBackFunc,  it->command, r);
 							}
 							else
 							{
@@ -523,7 +523,7 @@ void CRadioGps::RecvData()
 								r.querymode = it->querymode;
 								r.cycle = it->cycle;
 								r.operate = operate;
-								onData(myCallBackFunc, it->tp, it->callId, it->command, r);
+								onData(myCallBackFunc,  it->command, r);
 							}
 
 #if DEBUG_LOG
@@ -708,7 +708,7 @@ void CRadioGps::RecvData()
 							r.lon = lon;
 							r.speed = speed;
 							r.valid = valid;
-							onData(myCallBackFunc, peer, ++seq, RECV_GPS, r);
+							onData(myCallBackFunc,  RECV_GPS, r);
 							count++;
 							break;
 						}
@@ -725,7 +725,7 @@ void CRadioGps::RecvData()
 						r.lon = lon;
 						r.speed = speed;
 						r.valid = valid;
-						onData(myCallBackFunc, peer, ++seq, RECV_GPS, r);
+						onData(myCallBackFunc,  RECV_GPS, r);
 					}
 					/* std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGps", ++seq, args, "radio");
 					 if (pRemotePeer != NULL)

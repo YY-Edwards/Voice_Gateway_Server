@@ -39,20 +39,20 @@ typedef struct {
     XNL_EVENT event;
     char *p_msg;   
 }XNL_NOTIFY_MSG;
-
+class CDataScheduling;
 class CXNLConnection
 {
 private:
     // private constructor, can only create this class with CreatConnection()
 	
-    CXNLConnection(SOCKET s, std::string auth_key, unsigned long delta);
+	CXNLConnection(SOCKET s, std::string auth_key, unsigned long delta);
 
 public:
     ~CXNLConnection(void);
 
 public:
     // to create a instance
-    static CXNLConnection* CreatConnection(DWORD ip_addr, int port, std::string auth_key, unsigned long delta);
+	static CXNLConnection* CreatConnection(DWORD ip_addr, int port, std::string auth_key, unsigned long delta);
     BOOL send_xcmp_brightness_msg(unsigned char function, unsigned char intensity);
     BOOL send_xcmp_pui_brdcst(unsigned char pui_type,
                                      unsigned short pui_id,
@@ -116,7 +116,6 @@ public:
     BOOL    m_bConnected;
     unsigned long m_XCMP_ver; /* XCMP version */
 	char readmac[11];
-	void setRemotePeer(CRemotePeer * pRemote);
 
 private:
     HWND    m_hWnd;
@@ -140,6 +139,6 @@ private:
     MSG_QUEUE_T*   m_pSendQueHdr;
     MSG_QUEUE_T*   m_pSendQueTail;
     char *m_pLastSendMsg;
-	CRemotePeer* pRemotePeer;
+	CDataScheduling* m_pMnis;
 	
 };

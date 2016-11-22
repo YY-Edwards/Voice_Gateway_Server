@@ -11,6 +11,7 @@ void  statusAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 	static std::mutex lock;
 	std::lock_guard<std::mutex> locker(lock);
 	try{
+		g_sn = callId;
 		std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
 		pRemote->sendResponse(strResp.c_str(), strResp.size());
 
@@ -34,7 +35,7 @@ void  statusAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 			if (d.HasMember("getType") && d["getType"].IsInt())
 			{
 				int type = d["getType"].GetInt();
-				dis.getStatus(client,type,callId);
+				dis.getStatus(type);
 			}
 		}
 		else

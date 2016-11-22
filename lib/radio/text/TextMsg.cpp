@@ -520,7 +520,7 @@ void CTextMsg::RecvMsg()
 					{
 						r.msgType = GROUP;
 					}
-					onData(myCallBackFunc, it->tp, ++it->callId, it->command, r);
+					onData(myCallBackFunc,  it->command, r);
 					it = timeOutList.erase(it);
 					break;
 				}
@@ -562,7 +562,7 @@ void CTextMsg::RecvMsg()
 				r.msgStatus = SUCESS;
 				r.msg = message;
 				r.msgType = PRIVATE;
-				onData(myCallBackFunc, peer, seq, RECV_MSG, r);
+				onData(myCallBackFunc, RECV_MSG, r);
 
 #if DEBUG_LOG
 				LOG(INFO) << "½ÓÊÕ¶ÌÐÅ  ondata ";

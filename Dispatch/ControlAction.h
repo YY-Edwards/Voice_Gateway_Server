@@ -10,6 +10,7 @@ void  controlAction(CRemotePeer* pRemote, const std::string& param, uint64_t cal
 	static std::mutex lock;
 	std::lock_guard<std::mutex> locker(lock);
 	try{
+		g_sn = callId;
 		std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
 		pRemote->sendResponse(strResp.c_str(), strResp.size());
 	
@@ -42,7 +43,7 @@ void  controlAction(CRemotePeer* pRemote, const std::string& param, uint64_t cal
 			}
 			if (isTcpConnect)
 			{
-				dis.control(client, opterateType, id, callId);
+				dis.control( opterateType, id);
 			}
 			else
 			{
@@ -52,7 +53,7 @@ void  controlAction(CRemotePeer* pRemote, const std::string& param, uint64_t cal
 					args["Status"] = FieldValue(REMOTE_CONNECT_FAILED);
 					args["Target"] = FieldValue(id);
 					args["Type"] = FieldValue(opterateType);
-					std::string callJsonStr = CRpcJsonParser::buildCall("controlStatus", ++seq, args, "radio");
+					std::string callJsonStr = CRpcJsonParser::buildCall("controlStatus", ++g_sn, args, "radio");
 					if (client != NULL)
 					{
 						client->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());

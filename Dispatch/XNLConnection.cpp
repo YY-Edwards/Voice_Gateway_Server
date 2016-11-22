@@ -27,46 +27,46 @@
 
 CXNLConnection::CXNLConnection(SOCKET s, std::string auth_key, unsigned long delta)
 {
-    m_socket = s;
-  
-    m_delta = delta;
-    m_bConnected = FALSE;
-    m_hThread = 0;
-    m_XnlState = XNL_WAIT_MASTER_BRDCST;
-    /* Remove the space from the string */
-   // auth_key.Remove(' ');
-	
-    /* get the 16 bytes key from the string, now the auth_key format is similar as
-     * 0x112233440x556677880x99aabbcc0xddeeff00. Start from the 1st byte, each 10 
-     * bytes can be converted to a unsigned long integer.
-     */
-   
+	m_socket = s;
+
+	m_delta = delta;
+	m_bConnected = FALSE;
+	m_hThread = 0;
+	m_XnlState = XNL_WAIT_MASTER_BRDCST;
+	/* Remove the space from the string */
+	// auth_key.Remove(' ');
+
+	/* get the 16 bytes key from the string, now the auth_key format is similar as
+	 * 0x112233440x556677880x99aabbcc0xddeeff00. Start from the 1st byte, each 10
+	 * bytes can be converted to a unsigned long integer.
+	 */
+
 	m_auth_key[0] = 0x152C7E9D;
 	m_auth_key[1] = 0x38BE41C7;
 
 	m_auth_key[2] = 0x71E96CA4;
 	m_auth_key[3] = 0x6CAC1AFC;
-   
-    encrypted_seed[0] = 0;
-    encrypted_seed[1] = 0;
-    m_trans_id_base = 0;
-    m_bWaitForAck = FALSE;
-    m_bCloseSocket = FALSE;
-    m_hEvent = NULL;
-    conn_retry = 0;
-    encrypted_seed[0] = 0; 
-    encrypted_seed[1] = 0;
-    m_trans_id_base = 0;     
-    m_TxXCMPCount = 0;
-    m_tx_xnl_flag = 0;
-    m_rx_xnl_flag = 8; /* Set it to an invalid value */
-    m_xnl_src_addr = 0;
-    m_xnl_dst_addr = 0;
-    m_pSendQueHdr = NULL;
-    m_pSendQueTail = NULL;
-    m_pLastSendMsg = NULL;
-    m_XCMP_ver = 0;
-    m_hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+
+	encrypted_seed[0] = 0;
+	encrypted_seed[1] = 0;
+	m_trans_id_base = 0;
+	m_bWaitForAck = FALSE;
+	m_bCloseSocket = FALSE;
+	m_hEvent = NULL;
+	conn_retry = 0;
+	encrypted_seed[0] = 0;
+	encrypted_seed[1] = 0;
+	m_trans_id_base = 0;
+	m_TxXCMPCount = 0;
+	m_tx_xnl_flag = 0;
+	m_rx_xnl_flag = 8; /* Set it to an invalid value */
+	m_xnl_src_addr = 0;
+	m_xnl_dst_addr = 0;
+	m_pSendQueHdr = NULL;
+	m_pSendQueTail = NULL;
+	m_pLastSendMsg = NULL;
+	m_XCMP_ver = 0;
+	m_hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 	memset(readmac, 0, 11);
 }
 
@@ -129,7 +129,7 @@ CXNLConnection* CXNLConnection::CreatConnection(DWORD ip_addr = 0, int port = 80
     else
     {
         //Create a thread to receive the message from the socket
-        CXNLConnection * p = new CXNLConnection(s, auth_key, delta);
+		CXNLConnection * p = new CXNLConnection(s, auth_key, delta);
          
 
         p->m_hThread = (HANDLE)_beginthreadex(NULL, 0, &_workThread, (void*)p, 0, NULL);
@@ -817,8 +817,9 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.id = rmt_addr;
 								tr.controlType = RADIOCHECK;
 								tr.result = REMOTE_SUCESS;
-								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
+								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
+								
 #if DEBUG_LOG
 								LOG(INFO) << "在线";
 #endif
@@ -873,7 +874,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.id = rmt_addr;
 								tr.controlType = RADIOCHECK;
 								tr.result = REMOTE_FAILED;
-								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
+								onTcpData(myTcpCallBackFunc, CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "离线";
@@ -929,7 +930,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.id = rmt_addr;
 								tr.controlType = OFF;
 								tr.result = REMOTE_SUCESS;
-								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
+								onTcpData(myTcpCallBackFunc, CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "遥闭成功";
@@ -963,7 +964,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.id = rmt_addr;
 								tr.controlType = OFF;
 								tr.result = REMOTE_SUCESS;
-								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
+								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "遥闭失败";
@@ -1001,7 +1002,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.id = rmt_addr;
 								tr.controlType = ON;
 								tr.result = REMOTE_SUCESS;
-								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
+								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "遥开成功";
@@ -1051,7 +1052,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.id = rmt_addr;
 								tr.controlType = OFF;
 								tr.result = REMOTE_FAILED;
-								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
+								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "遥开失败";
@@ -1087,7 +1088,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.id = rmt_addr;
 								tr.controlType = MONITOR;
 								tr.result = REMOTE_SUCESS;
-								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
+								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "远程监听成功";
@@ -1136,7 +1137,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.id = rmt_addr;
 								tr.controlType = MONITOR;
 								tr.result = REMOTE_FAILED;
-								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
+								onTcpData(myTcpCallBackFunc, CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "远程监听失败";
@@ -1225,7 +1226,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 
 						}
 						tr.result = REMOTE_SUCESS;
-						onTcpData(myTcpCallBackFunc, it->peer, it->callId, it->command, tr);
+						onTcpData(myTcpCallBackFunc, it->command, tr);
 						it = tcpCommandTimeOutList.erase(it);
 						break;
 					}
@@ -1279,7 +1280,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						tr.id = rmt_addr;
 						tr.callType = STOP;
 						tr.result = REMOTE_SUCESS;
-						onTcpData(myTcpCallBackFunc, it->peer, it->callId, it->command, tr);
+						onTcpData(myTcpCallBackFunc,  it->command, tr);
 						it = tcpCommandTimeOutList.erase(it);
 						break;
 					}
@@ -1938,8 +1939,4 @@ void CXNLConnection::decode_xcmp_radio_status_reply(char *p_msg)
 	
 
 	}
-}
-void CXNLConnection::setRemotePeer(CRemotePeer * pRemote)
-{
-	pRemotePeer = pRemote;
 }

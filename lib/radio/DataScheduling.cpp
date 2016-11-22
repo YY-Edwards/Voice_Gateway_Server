@@ -1,15 +1,14 @@
 #include "stdafx.h"
 #include "DataScheduling.h"
 
-void(*myCallBackFunc)(TcpClient*, int, int, Respone);
-void onData(void(*func)(TcpClient, int, int, Respone), TcpClient* peer, int callId, int call, Respone data);
-int seq;
+void(*myCallBackFunc)( int,  Respone);
+void onData(void(*func)(int,Respone),int call, Respone data);
 std::mutex m_timeOutListLocker;
 std::list <Command> timeOutList;
 TcpClient * peer;
 
 std::map<std::string, RadioStatus> g_radioStatus;
-std::string lastIP = "0.0.0.0";
+
 std::mutex g_radioStatusLocker;
 CDataScheduling::CDataScheduling()
 {
@@ -25,11 +24,11 @@ CDataScheduling::~CDataScheduling()
 {
 }
 
-bool CDataScheduling::radioConnect(TcpClient* tp ,const char* ip, int callId)
+bool CDataScheduling::radioConnect(const char* ip)
 {
 	if (myCallBackFunc != NULL )
 	{
-		addUdpCommand(tp ,MNIS_CONNECT, ip, "", 0, _T(""), 0, 0, callId);
+		addUdpCommand(MNIS_CONNECT, ip, "", 0, _T(""), 0, 0);
 	
 		return true;
 	}
@@ -39,10 +38,10 @@ void CDataScheduling::radioDisConnect()
 {
 	if (myCallBackFunc != NULL)
 	{
-		addUdpCommand(NULL, MNIS_DIS_CONNECT,"","",0,_T(""),0,0,0);
+		addUdpCommand(MNIS_DIS_CONNECT,"","",0,_T(""),0,0);
 	}
 }
-bool CDataScheduling::radioGetGps(TcpClient* tp,DWORD dwRadioID, int queryMode, double cycle, int callId)
+bool CDataScheduling::radioGetGps(DWORD dwRadioID, int queryMode, double cycle)
 {
 
 	if (myCallBackFunc != NULL)
@@ -51,23 +50,23 @@ bool CDataScheduling::radioGetGps(TcpClient* tp,DWORD dwRadioID, int queryMode, 
 		switch (queryMode)
 		{
 		case GPS_IMME_COMM:
-			addUdpCommand(tp, GPS_IMME_COMM, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
+			addUdpCommand( GPS_IMME_COMM, "", "", int(dwRadioID), _T(""), cycle, queryMode );
 			/*sendAck("gps", callId, int(dwRadioID));*/
 			break;
 		case GPS_TRIGG_COMM:
-			addUdpCommand(tp, GPS_TRIGG_COMM, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
+			addUdpCommand( GPS_TRIGG_COMM, "", "", int(dwRadioID), _T(""), cycle, queryMode);
 			break;
 		case GPS_IMME_CSBK:
-			addUdpCommand(tp, GPS_IMME_CSBK, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
+			addUdpCommand( GPS_IMME_CSBK, "", "", int(dwRadioID), _T(""), cycle, queryMode);
 			break;
 		case GPS_TRIGG_CSBK:
-			addUdpCommand(tp, GPS_TRIGG_CSBK, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
+			addUdpCommand( GPS_TRIGG_CSBK, "", "", int(dwRadioID), _T(""), cycle, queryMode);
 			break;
 		case GPS_IMME_CSBK_EGPS:
-			addUdpCommand(tp, GPS_IMME_CSBK_EGPS, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
+			addUdpCommand( GPS_IMME_CSBK_EGPS, "", "", int(dwRadioID), _T(""), cycle, queryMode);
 			break;
 		case GPS_TRIGG_CSBK_EGPS:
-			addUdpCommand(tp, GPS_TRIGG_CSBK_EGPS, "", "", int(dwRadioID), _T(""), cycle, queryMode, callId);
+			addUdpCommand( GPS_TRIGG_CSBK_EGPS, "", "", int(dwRadioID), _T(""), cycle, queryMode);
 			break;
 		default:
 			break;
@@ -76,12 +75,12 @@ bool CDataScheduling::radioGetGps(TcpClient* tp,DWORD dwRadioID, int queryMode, 
 	}
 	return false;
 }
-bool CDataScheduling::radioStopGps(TcpClient* tp,DWORD dwRadioID, int	queryMode, int callId)
+bool CDataScheduling::radioStopGps(DWORD dwRadioID, int	queryMode)
 {
 
 	if (myCallBackFunc != NULL)
 	{
-		addUdpCommand(tp, STOP_QUERY_GPS, "", "", int(dwRadioID), _T(""), 0, queryMode, callId);
+		addUdpCommand( STOP_QUERY_GPS, "", "", int(dwRadioID), _T(""), 0, queryMode);
 		//sendAck("gps", callId, int(dwRadioID));
 		return true;
 	}
@@ -97,38 +96,38 @@ void CDataScheduling::sendAck(int call ,int callId, int id)
 	}
 	
 }
-bool CDataScheduling::radioSendMsg(TcpClient* tp,LPTSTR message, DWORD dwRadioID, int callId, int type)
+bool CDataScheduling::radioSendMsg(LPTSTR message, DWORD dwRadioID,  int type)
 {
 
 	if (myCallBackFunc != NULL)
 	{
 		if (type == GROUP)
 		{
-			addUdpCommand(tp, SEND_GROUP_MSG, "", "", int(dwRadioID), message, 0, 0, callId);
+			addUdpCommand( SEND_GROUP_MSG, "", "", int(dwRadioID), message, 0, 0);
 		}
 		else if (type == PRIVATE)
 		{
-			addUdpCommand(tp, SEND_PRIVATE_MSG, "", "", int(dwRadioID), message, 0, 0, callId);
+			addUdpCommand( SEND_PRIVATE_MSG, "", "", int(dwRadioID), message, 0, 0);
 		}
 		return true;
 	}
 	return false;
 }
-void CDataScheduling::getRadioStatus(TcpClient* tp, int type, int callId)
+void CDataScheduling::getRadioStatus( int type)
 {
 	if (myCallBackFunc != NULL)
 	{
 		if (type == CONNECT_STATUS)
 		{
-			addUdpCommand(tp, CONNECT_STATUS, "", "", 0, _T(""), 0, 0, callId);
+			addUdpCommand( CONNECT_STATUS, "", "", 0, _T(""), 0, 0);
 		}
 		else if (type == RADIO_STATUS)
 		{
-			addUdpCommand(tp, RADIO_STATUS, "", "", 0, _T(""), 0, 0, callId);
+			addUdpCommand( RADIO_STATUS, "", "", 0, _T(""), 0, 0);
 		}
 	}
 }
-void CDataScheduling::connect( const char* ip, int callId)
+void CDataScheduling::connect( const char* ip)
 {
 	int result = 1;
 	if (INADDR_NONE != inet_addr(ip)) 
@@ -175,7 +174,7 @@ void CDataScheduling::connect( const char* ip, int callId)
 		{
 			Respone r;
 			r.connectStatus = result;
-			onData(myCallBackFunc,it->tp, ++it->callId, MNIS_CONNECT,r);
+			onData(myCallBackFunc, MNIS_CONNECT,r);
 			it = timeOutList.erase(it);
 			break;
 		}
@@ -206,17 +205,17 @@ void CDataScheduling::initGPSOverturnSocket(DWORD dwAddress)
 {
 	
 }
-void  CDataScheduling::setCallBackFunc(void(*callBackFunc)(TcpClient*, int, int, Respone))
+void  CDataScheduling::setCallBackFunc(void(*callBackFunc)( int, Respone))
 {
 	myCallBackFunc = callBackFunc;
 	m_serverFunHandler = callBackFunc;
 }
-void onData(void(*func)(TcpClient*, int, int, Respone), TcpClient* tp, int seq, int call, Respone data)
+void onData(void(*func)( int, Respone),  int call, Respone data)
 {
 
 	try
 	{
-		func(tp,seq, call, data);
+		func(call, data);
 	}
 	catch (double)
 	{
@@ -224,10 +223,9 @@ void onData(void(*func)(TcpClient*, int, int, Respone), TcpClient* tp, int seq, 
 	}
 
 }
-void CDataScheduling::addUdpCommand(TcpClient*  tp ,int command, std::string radioIP, std::string gpsIP, int id, wchar_t* text, double cycle, int querymode, int callId)
+void CDataScheduling::addUdpCommand(int command, std::string radioIP, std::string gpsIP, int id, wchar_t* text, double cycle, int querymode)
 {
 	Command      m_command;
-	m_command.callId = callId;
 	m_command.command = command;
 	m_command.ackNum = 0;
 	m_command.timeOut = 30000;     //ms
@@ -238,13 +236,9 @@ void CDataScheduling::addUdpCommand(TcpClient*  tp ,int command, std::string rad
 	m_command.cycle = cycle;
 	m_command.gpsIP = gpsIP;
 	m_command.text = text;
-	m_command.tp = tp;
 	timeOutList.push_back(m_command);
 	workList.push_back(m_command);
-	seq = callId;
-	peer = new TcpClient();
-	peer->s = tp->s;
-	peer->addr = tp->addr;
+
 }
 DWORD WINAPI CDataScheduling::timeOutThread(LPVOID lpParam)
 {
@@ -276,7 +270,7 @@ void CDataScheduling::workThreadFunc()
 		case  MNIS_CONNECT:
 			if (it->radioIP != "")
 			{
-				connect(it->radioIP.c_str(), it->callId);
+				connect(it->radioIP.c_str());
 			}
 			break;
 		case CONNECT_STATUS:
@@ -284,7 +278,7 @@ void CDataScheduling::workThreadFunc()
 			{
 				Respone r;
 				r.connectStatus = isUdpConnect;
-				onData(myCallBackFunc, it->tp, ++it->callId, CONNECT_STATUS, r);
+				onData(myCallBackFunc, CONNECT_STATUS, r);
 				break;
 			}
 			break;
@@ -352,14 +346,14 @@ void CDataScheduling::timeOut()
 					r.msgStatus = UNSUCESS;
 					r.msg = "";
 					r.msgType = PRIVATE;
-					onData(myCallBackFunc, it->tp, ++it->callId, it->command, r);
+					onData(myCallBackFunc, it->command, r);
 					break;
 				case SEND_GROUP_MSG:
 					r.target = it->radioId;
 					r.msgStatus = UNSUCESS;
 					r.msg = "";
 					r.msgType = GROUP;
-					onData(myCallBackFunc, it->tp, ++it->callId, it->command, r);
+					onData(myCallBackFunc,  it->command, r);
 					break;
 				case  GPS_IMME_COMM:
 				case GPS_TRIGG_COMM:
@@ -372,7 +366,7 @@ void CDataScheduling::timeOut()
 					r.cycle = it->cycle;
 					r.querymode = it->querymode;
 					r.gpsType = START;
-					onData(myCallBackFunc, it->tp, ++it->callId, it->command, r);
+					onData(myCallBackFunc, it->command, r);
 					break;
 				case STOP_QUERY_GPS:
 					r.target = it->radioId;
@@ -380,7 +374,7 @@ void CDataScheduling::timeOut()
 					r.cycle = it->cycle;
 					r.querymode = it->querymode;
 					r.gpsType = STOP;
-					onData(myCallBackFunc, it->tp, ++it->callId, it->command, r);
+					onData(myCallBackFunc, it->command, r);
 					//operate = STOP;
 					/*try
 					{
@@ -436,7 +430,7 @@ void CDataScheduling::sendConnectStatusToClient()
 	}
 	if (myCallBackFunc !=NULL)
 	{
-		onData(myCallBackFunc,peer , seq, CONNECT_STATUS, r);
+		onData(myCallBackFunc,CONNECT_STATUS, r);
 	}
 }
 void CDataScheduling::sendRadioStatusToClient()
@@ -449,7 +443,7 @@ void CDataScheduling::sendRadioStatusToClient()
 		{
 			Respone r;
 			r.rs = g_radioStatus;
-			onData(myCallBackFunc, it->tp, ++it->callId, it->command, r);
+			onData(myCallBackFunc, it->command, r);
 			it = timeOutList.erase(it);
 			break;
 		}
@@ -495,7 +489,8 @@ void CDataScheduling::sendRadioStatusToClient()
 void CDataScheduling::updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode)
 {
 	Respone response = { 0 };
-	response.arsStatus = (RADIO_STATUS_ONLINE == status) ? (SUCESS) : (UNSUCESS);
+	//response.arsStatus = (RADIO_STATUS_ONLINE == status) ? (SUCESS) : (UNSUCESS);
+	response.arsStatus = RADIO_STATUS_ONLINE == status;
 	response.source = radioId;
 	char strRadioId[32] = { 0 };
 	sprintf_s(strRadioId, "%d", radioId);
@@ -548,7 +543,7 @@ void CDataScheduling::sendToClient(int callFuncId, Respone response)
 {
 	if (m_serverFunHandler)
 	{
-		m_serverFunHandler(NULL, 0, callFuncId, response);
+		m_serverFunHandler(callFuncId, response);
 	}
 }
 
