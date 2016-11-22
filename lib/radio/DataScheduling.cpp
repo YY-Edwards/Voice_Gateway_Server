@@ -218,7 +218,7 @@ void onData(void(*func)(TcpClient*, int, int, Respone), TcpClient* tp, int seq, 
 	}
 
 }
-void CDataScheduling::addUdpCommand(TcpClient*  tp ,int command, std::string radioIP, std::string gpsIP, int id, wchar_t* text, double cycle, int querymode, int callId)
+void CDataScheduling::addUdpCommand(TcpClient* tp ,int command, std::string radioIP, std::string gpsIP, int id, wchar_t* text, double cycle, int querymode, int callId)
 {
 	Command      m_command;
 	m_command.callId = callId;
