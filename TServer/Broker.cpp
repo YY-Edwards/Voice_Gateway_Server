@@ -69,7 +69,7 @@ void CBroker::startRadioClient(std::map<std::string, ACTION> clientActions)
 		m_radioClient->start("tcp://127.0.0.1:9001");
 
 		// send radio hardware connect command
-		ArgumentType args;
+	/*	ArgumentType args;
 		FieldValue radioP(FieldValue::TObject);
 		radioP.setKeyVal("Ip", FieldValue("192.168.10.2"));
 		radioP.setKeyVal("Port", FieldValue(0));
@@ -90,7 +90,7 @@ void CBroker::startRadioClient(std::map<std::string, ACTION> clientActions)
 		std::string connectCommand = CRpcJsonParser::buildCall("connect", callId, args);
 		m_radioClient->sendRequest(connectCommand.c_str(), callId, NULL, [](const char* pResponse, void* data){
 			printf("recevied response:%s\r\n",pResponse);
-		}, nullptr, 60);
+		}, nullptr, 60);*/
 	}
 }
 void CBroker::startLogClient()
@@ -152,6 +152,6 @@ void CBroker::sendWirelanConfig()
 }
 void CBroker::sendRadioConfig()
 {
-	std::string strConnect = CSettings::instance()->getRequest("connect", "radio", 0, CSettings::instance()->getValue("radio"));
+	std::string strConnect = CSettings::instance()->getRequest("connect", "radio", m_radioClient->getCallId(), CSettings::instance()->getValue("radio"));
 	m_radioClient->send(strConnect.c_str(), strConnect.size());
 }

@@ -13,18 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="gps">
-      <UniqueIdentifier>{6b3862fc-4e3d-4c21-9347-8b39a507f59a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="ars">
-      <UniqueIdentifier>{fdd5ead7-712f-4e0e-96a3-367376b89b5c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="text">
-      <UniqueIdentifier>{852e7e84-fa62-4b3d-9f62-0d9eeea58701}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="xcmp">
-      <UniqueIdentifier>{454dd649-d9c5-4f17-a18c-bcc324b5c658}</UniqueIdentifier>
-    </Filter>
     <Filter Include="rpc">
       <UniqueIdentifier>{8f9fbd40-1d12-459d-a412-b430cd0e2624}</UniqueIdentifier>
     </Filter>
@@ -39,6 +27,24 @@
     </Filter>
     <Filter Include="eventAction">
       <UniqueIdentifier>{652a4a6d-4504-4a70-a50a-b28ea229082e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="radioUdp">
+      <UniqueIdentifier>{e7be0562-ce6a-452f-b257-705541265f3c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="radioUdp\text">
+      <UniqueIdentifier>{852e7e84-fa62-4b3d-9f62-0d9eeea58701}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="radioUdp\gps">
+      <UniqueIdentifier>{6b3862fc-4e3d-4c21-9347-8b39a507f59a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="radioUdp\ars">
+      <UniqueIdentifier>{fdd5ead7-712f-4e0e-96a3-367376b89b5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="radioTcp">
+      <UniqueIdentifier>{7170b1eb-071c-4514-82b9-7eb6eb0c637b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="radioTcp\xcmp">
+      <UniqueIdentifier>{454dd649-d9c5-4f17-a18c-bcc324b5c658}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -57,23 +63,14 @@
     <ClInclude Include="..\glog\logging.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="RadioARS.h">
-      <Filter>ars</Filter>
-    </ClInclude>
-    <ClInclude Include="RadioGps.h">
-      <Filter>gps</Filter>
-    </ClInclude>
-    <ClInclude Include="TextMsg.h">
-      <Filter>text</Filter>
-    </ClInclude>
     <ClInclude Include="xcmp_msg_defs.h">
-      <Filter>xcmp</Filter>
+      <Filter>radioTcp\xcmp</Filter>
     </ClInclude>
     <ClInclude Include="xnl_messages_def.h">
-      <Filter>xcmp</Filter>
+      <Filter>radioTcp\xcmp</Filter>
     </ClInclude>
     <ClInclude Include="XNLConnection.h">
-      <Filter>xcmp</Filter>
+      <Filter>radioTcp\xcmp</Filter>
     </ClInclude>
     <ClInclude Include="DispatchOperate.h">
       <Filter>头文件</Filter>
@@ -156,6 +153,30 @@
     <ClInclude Include="StatusAction.h">
       <Filter>eventAction</Filter>
     </ClInclude>
+    <ClInclude Include="..\lib\radio\ars\RadioARS.h">
+      <Filter>radioUdp\ars</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\radio\gps\RadioGps.h">
+      <Filter>radioUdp\gps</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\radio\text\TextMsg.h">
+      <Filter>radioUdp\text</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\radio\DataScheduling.h">
+      <Filter>radioUdp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\radio\common.h">
+      <Filter>radioUdp</Filter>
+    </ClInclude>
+    <ClInclude Include="TcpScheduling.h">
+      <Filter>radioTcp</Filter>
+    </ClInclude>
+    <ClInclude Include="tcpCommon.h">
+      <Filter>radioTcp</Filter>
+    </ClInclude>
+    <ClInclude Include="extern.h">
+      <Filter>radioTcp</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -164,20 +185,11 @@
     <ClCompile Include="Dispatch.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="TextMsg.cpp">
-      <Filter>text</Filter>
-    </ClCompile>
     <ClCompile Include="XNLConnection.cpp">
-      <Filter>xcmp</Filter>
+      <Filter>radioTcp\xcmp</Filter>
     </ClCompile>
     <ClCompile Include="DispatchOperate.cpp">
       <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="RadioGps.cpp">
-      <Filter>gps</Filter>
-    </ClCompile>
-    <ClCompile Include="RadioARS.cpp">
-      <Filter>ars</Filter>
     </ClCompile>
     <ClCompile Include="UnitTest.cpp">
       <Filter>源文件</Filter>
@@ -190,6 +202,24 @@
     </ClCompile>
     <ClCompile Include="..\lib\rpc\src\TcpServer.cpp">
       <Filter>rpc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\radio\ars\RadioARS.cpp">
+      <Filter>radioUdp\ars</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\radio\gps\RadioGps.cpp">
+      <Filter>radioUdp\gps</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\radio\text\TextMsg.cpp">
+      <Filter>radioUdp\text</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\radio\DataScheduling.cpp">
+      <Filter>radioUdp</Filter>
+    </ClCompile>
+    <ClCompile Include="TcpScheduling.cpp">
+      <Filter>radioTcp</Filter>
+    </ClCompile>
+    <ClCompile Include="extern.cpp">
+      <Filter>radioTcp</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

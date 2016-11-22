@@ -327,7 +327,20 @@ public:
 	int wlGetConfig();
 	/*当前播放完毕，重置所有语音的判断标识*/
 	void resetPlayFlag();
-
+	/*告知界面mnis设备连接状态*/
+	int wlMnisConnectStatus(int status);
+	/*告知界面Gps查询执行状态*/
+	int wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle, int status);
+	/*告知界面Gps数据*/
+	int wlMnisSendGps(int Source, GPS gps);
+	/*告知界面短信发送执行状态*/
+	int wlMnisMessageStatus(int Type, int Target, int Source, std::string Contents,int status);
+	/*告知界面收到短信*/
+	int wlMnisMessage(int Type, int Target, int Source, std::string Contents);
+	/*告知界面ARS相关*/
+	int wlMnisSendArs(int Target, std::string IsOnline);
+	/*告知界面相关信息*/
+	int wlMnisStatus(int getType, FieldValue info);
 protected:
 	/*
 	* Socket work thread

@@ -3,7 +3,7 @@
 
 #include "Db.h"
 
-#define			CURRENT_DB_VER			100
+#define			CURRENT_DB_VER			101
 
 void migrate_v100(CMySQL* pMySQL){
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `migration` (\
@@ -134,8 +134,37 @@ void migrate_v100(CMySQL* pMySQL){
 																																																																																		");
 }
 
+void migrate_v101(CMySQL* pMySQL)
+{
+	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `sms` (\
+		`id` INT(11) NOT NULL,\
+		`source` MEDIUMTEXT NOT NULL,\
+		`destination` MEDIUMTEXT NOT NULL,\
+		`message` VARCHAR(210) NOT NULL,\
+		`is_ticket` INT NOT NULL DEFAULT 0 COMMENT '0: it is normal sms; 1: is ticket',\
+		`createdf_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\
+		PRIMARY KEY(`id`))\
+		ENGINE = InnoDB; ");
+
+
+	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `gps` (\
+		`id` INT(11) NOT NULL AUTO_INCREMENT,\
+		`latitude` FLOAT NOT NULL,\
+		`logitude` FLOAT NOT NULL,\
+		`velocity` FLOAT NOT NULL,\
+		`radio` MEDIUMTEXT NULL,\
+		`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,\
+		`altitude` FLOAT NULL,\
+		PRIMARY KEY(`id`),\
+		UNIQUE INDEX `id_UNIQUE` (`id` ASC))\
+		ENGINE = InnoDB; ");
+
+
+}
+
 DbMigrate migrateTable[] = {
 	{ 100, migrate_v100 },
+	{ 101, migrate_v101 },
 };
 
 
@@ -674,6 +703,55 @@ bool CDb::insertRadio(const char* radioId, int type, const char* sn, int screen,
 		}
 
 		m_pMySQLDb->insert("radios", radio);
+	}
+	catch (std::exception e)
+	{
+		return false;
+	}
+	catch (...)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool CDb::insertGpsLog(int radio, float latitude, float longitude, float velocity, float altitude)
+{
+	try{
+		recordType gpsLog;
+
+		gpsLog["latitude"] = std::to_string(latitude);
+		gpsLog["lognitude"] = std::to_string(longitude);;
+		gpsLog["radio"] = std::to_string(radio);
+		gpsLog["altitude"] = std::to_string(altitude);
+		gpsLog["velocity"] = std::to_string(velocity);
+
+		m_pMySQLDb->insert("gps", gpsLog);
+	}
+	catch (std::exception e)
+	{
+		return false;
+	}
+	catch (...)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool CDb::insertSmsLog(int source, int destination, const char* message, int is_ticket)
+{
+	try{
+		recordType smsLog;
+
+		smsLog["source"] = std::to_string(source);
+		smsLog["destination"] = std::to_string(destination);;
+		smsLog["message"] = message;
+		smsLog["is_ticket"] = std::to_string(is_ticket);
+
+		m_pMySQLDb->insert("sms", smsLog);
 	}
 	catch (std::exception e)
 	{

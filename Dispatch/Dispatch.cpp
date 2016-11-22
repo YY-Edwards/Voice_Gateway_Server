@@ -8,6 +8,7 @@
 #include <shlobj.h>  
 #include "Util.h"
 #include "../lib/rpc/include/RpcServer.h"
+#include "DispatchOperate.h"
 //#include"AllCallEventAction.h"
 //#include"CallEventAction.h"
 //#include"CancelgpspEventAction.h"
@@ -41,10 +42,6 @@ static SERVICE_STATUS_HANDLE g_StatusHandle;
 static SERVICE_STATUS g_ServiceStatus = { 0 };
 static HANDLE g_ServiceStopEvent = INVALID_HANDLE_VALUE;
 static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
-
-
-
-
 //void StartService()
 //{
 //	SC_HANDLE hSCM;
@@ -554,6 +551,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	wprintf(argv[1]);*/
 	
 	CRpcServer rpcServer;
+	rpcServer.setOnConnectHandler(DispatchOperate::OnConnect);
+	rpcServer.setOnDisconnectHandler(DispatchOperate::OnDisConnect);
+
 	//rpcServer.addActionHandler("allCall",allCallEventAction);
 	//rpcServer.addActionHandler("call",callEventAction);
 	//rpcServer.addActionHandler("cancelGps",cancelgpspEventAction);
@@ -575,15 +575,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("message", msgAction);
 	rpcServer.addActionHandler("status", statusAction);
 
-	rpcServer.setOnConnectHandler(DispatchOperate:: OnConnect);
-	rpcServer.setOnDisconnectHandler(DispatchOperate::OnDisConnect);
+	
 
 	rpcServer.start(TCP_PORT, rpcServer.TCP);
 	
+	dis.setCallBack();
 	
 	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);                    //¼ì²éÄÚ´æÐ¹Â©
-
-	
+	//dis = new DispatchOperate();
+	//cs.setCallBackFunc(DispatchOperate::OnData);
 	while (1){ Sleep(1); };
 
 	return 0;

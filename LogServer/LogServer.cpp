@@ -10,6 +10,8 @@
 #include "DbGroupAction.h"
 #include "DbRadioAction.h"
 #include "DbStaffAction.h"
+#include "DbSmsLogAction.h"
+#include "DbGpsAction.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -60,6 +62,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("radio", radioAction);
 	rpcServer.addActionHandler("staff", staffAction);
 	rpcServer.addActionHandler("department", groupAction);
+	rpcServer.addActionHandler("smslog", smsLogAction);
+	rpcServer.addActionHandler("gpslog", gpsLogAction);
+
 	rpcServer.start(9003, CRpcServer::TCP);
 	while (1);
 	return 0;

@@ -115,7 +115,7 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 		{
 			d.Parse(param.c_str());
 			/*获取参数*/
-			pNewTask->sn = sn;
+			pNewTask->callId = sn;
 			pNewTask->pRemote = pRemote;
 			pNewTask->cmd = REMOTE_CMD_CONFIG;
 			pNewTask->param.info.configParam.defaultGroup = (unsigned long)d["DefaultGroupId"].GetInt();
@@ -135,8 +135,15 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 			if (d["Master"].IsObject())
 			{
 				tempJson = d["Master"].GetObject();
-				strcpy_s(pNewTask->param.info.configParam.master.masterIp, tempJson["Ip"].GetString());
-				pNewTask->param.info.configParam.master.masterPort = tempJson["Port"].GetInt();
+				strcpy_s(pNewTask->param.info.configParam.master.ip, tempJson["Ip"].GetString());
+				pNewTask->param.info.configParam.master.port = tempJson["Port"].GetInt();
+			}
+
+			if (d["Mnis"].IsObject())
+			{
+				tempJson = d["Mnis"].GetObject();
+				strcpy_s(pNewTask->param.info.configParam.mnis.ip, tempJson["Ip"].GetString());
+				pNewTask->param.info.configParam.mnis.port = tempJson["Port"].GetInt();
 			}
 
 			pNewTask->param.info.configParam.peerHeartTime = d["MaxPeerAliveTime"].GetInt() * 1000;
@@ -197,7 +204,7 @@ inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, 
 							  pNewTask = new REMOTE_TASK;
 							  pNewTask->cmd = REMOTE_CMD_CALL;
 							  pNewTask->pRemote = pRemote;
-							  pNewTask->sn = sn;
+							  pNewTask->callId = sn;
 							  pNewTask->param.info.callParam.operateInfo.operate = StartCall;
 
 							  int callType = d["type"].GetInt();
@@ -227,7 +234,7 @@ inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, 
 							 pNewTask = new REMOTE_TASK;
 							 pNewTask->cmd = REMOTE_CMD_STOP_CALL;
 							 pNewTask->pRemote = pRemote;
-							 pNewTask->sn = sn;
+							 pNewTask->callId = sn;
 							 pNewTask->param.info.callParam.operateInfo.operate = StopCall;
 
 							 int callType = d["type"].GetInt();
@@ -330,7 +337,7 @@ inline void wlPlayActionHandler(CRemotePeer* pRemote, const std::string& param, 
 			pNewTask = new REMOTE_TASK;
 			pNewTask->cmd = REMOTE_CMD_SET_PLAY_CALL;
 			pNewTask->pRemote = pRemote;
-			pNewTask->sn = sn;
+			pNewTask->callId = sn;
 			pNewTask->param.info.setCareCallParam.playParam.targetId = target;
 			if (PRIVATE_CALL_TAGET == target)
 			{
@@ -395,7 +402,7 @@ inline void wlInfoActionHandler(CRemotePeer* pRemote, const std::string& param, 
 								  pNewTask = new REMOTE_TASK;
 								  pNewTask->cmd = REMOTE_CMD_GET_CONN_STATUS;
 								  pNewTask->pRemote = pRemote;
-								  pNewTask->sn = sn;
+								  pNewTask->callId = sn;
 			}
 				break;
 			default:
@@ -427,69 +434,157 @@ inline void wlInfoActionHandler(CRemotePeer* pRemote, const std::string& param, 
 		printf_s("call response send error");
 	}
 }
-//inline void stopCallActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
-//{
-//	g_sn = sn;
-//	addCRemotePeer((TcpClient*)pRemote);
-//	Document d;
-//	int errorCode = 0;
-//	ArgumentType args;
-//	std::string strResp = "";
-//	char status[64] = "0";
-//	std::string statusText = "";
-//	args["status"] = CLIENT_TRANSFER_OK;//调用成功
-//	//args["module"] = "wl";//wirelan模块
-//	REMOTE_TASK *pNewTask = new REMOTE_TASK;
-//	try
-//	{
-//		d.Parse(param.c_str());
-//		/*处理参数*/
-//		pNewTask->cmd = REMOTE_CMD_STOP_CALL;
-//		pNewTask->pRemote = pRemote;
-//		pNewTask->sn = sn;
-//		push_front_task(pNewTask);
-//		strResp = CRpcJsonParser::buildResponse(status, sn, errorCode, statusText.c_str(), args);
-//		pRemote->sendResponse(strResp.c_str(), strResp.size());
-//	}
-//	catch (std::exception* e)
-//	{
-//	}
-//	catch (...)
-//	{
-//	}
-//}
-//inline void setPlayCallOfCareActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn,const std::string& type)
-//{
-//	g_sn = sn;
-//	addCRemotePeer((TcpClient*)pRemote);
-//	Document d;
-//	int errorCode = 0;
-//	ArgumentType args;
-//	std::string strResp = "";
-//	char status[64] = "0";
-//	std::string statusText = "";
-//	args["status"] = CLIENT_TRANSFER_OK;//调用成功
-//	//args["module"] = "wl";//wirelan模块
-//	REMOTE_TASK *pNewTask = new REMOTE_TASK;
-//	try
-//	{
-//		d.Parse(param.c_str());
-//		/*处理参数*/
-//		pNewTask->cmd = REMOTE_CMD_SET_PLAY_CALL;
-//		pNewTask->pRemote = pRemote;
-//		pNewTask->sn = sn;
-//		pNewTask->param.info.setCareCallParam.callType = d["callType"].GetInt();
-//		pNewTask->param.info.setCareCallParam.srcId = (unsigned long)d["srcId"].GetInt();
-//		pNewTask->param.info.setCareCallParam.tgtId = (unsigned long)d["tgtId"].GetInt();
-//		push_front_task(pNewTask);
-//		strResp = CRpcJsonParser::buildResponse(status, sn, errorCode, statusText.c_str(), args);
-//		pRemote->sendResponse(strResp.c_str(), strResp.size());
-//	}
-//	catch (std::exception* e)
-//	{
-//	}
-//	catch (...)
-//	{
-//	}
-//}
+
+inline void wlMnisQueryGpsActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
+{
+	g_sn = sn;
+	Document d;
+	int errorCode = 0;
+	ArgumentType args;
+	std::string strResp = "";
+	char status[64] = { 0 };
+	strcpy_s(status, CLIENT_TRANSFER_OK);
+	std::string statusText = "";
+	REMOTE_TASK *pNewTask = NULL;
+	try
+	{
+		try
+		{
+			pNewTask = new REMOTE_TASK;
+			d.Parse(param.c_str());
+			pNewTask->callId = sn;
+			pNewTask->cmd = REMOTE_CMD_MNIS_QUERY_GPS;
+			pNewTask->pRemote = pRemote;
+			pNewTask->param.info.queryGpsParam.Cycle = d["Cycle"].GetDouble();
+			pNewTask->param.info.queryGpsParam.Operate = d["Operate"].GetInt();
+			pNewTask->param.info.queryGpsParam.Target = d["Cycle"].GetInt();
+			pNewTask->param.info.queryGpsParam.Type = d["Type"].GetInt();
+			if (pNewTask)
+			{
+
+				push_front_task(pNewTask);
+			}
+			else
+			{
+				strcpy_s(status, CLIENT_TRANSFER_FAIL);
+			}
+		}
+		catch (...)
+		{
+			strcpy_s(status, CLIENT_TRANSFER_FAIL);
+		}
+		//do nothing
+		strResp = CRpcJsonParser::buildResponse(status, sn, errorCode, statusText.c_str(), args);
+		pRemote->sendResponse(strResp.c_str(), strResp.size());
+	}
+	catch (std::exception* e)
+	{
+		printf_s("call response send error");
+	}
+	catch (...)
+	{
+		printf_s("call response send error");
+	}
+}
+
+inline void wlMnisMessageHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
+{
+	g_sn = sn;
+	Document d;
+	int errorCode = 0;
+	ArgumentType args;
+	std::string strResp = "";
+	char status[64] = { 0 };
+	strcpy_s(status, CLIENT_TRANSFER_OK);
+	std::string statusText = "";
+	REMOTE_TASK *pNewTask = NULL;
+	try
+	{
+		try
+		{
+			pNewTask = new REMOTE_TASK;
+			d.Parse(param.c_str());
+			pNewTask->callId = sn;
+			pNewTask->cmd = REMOTE_CMD_MNIS_MSG;
+			pNewTask->pRemote = pRemote;
+			swprintf_s(pNewTask->param.info.msgParam.Contents, L"%s", d["Contents"].GetString());
+			pNewTask->param.info.msgParam.Source = d["Source"].GetInt();
+			pNewTask->param.info.msgParam.Target = d["Target"].GetInt();
+			pNewTask->param.info.msgParam.Type = d["Type"].GetInt();
+			if (pNewTask)
+			{
+
+				push_front_task(pNewTask);
+			}
+			else
+			{
+				strcpy_s(status, CLIENT_TRANSFER_FAIL);
+			}
+		}
+		catch (...)
+		{
+			strcpy_s(status, CLIENT_TRANSFER_FAIL);
+		}
+		//do nothing
+		strResp = CRpcJsonParser::buildResponse(status, sn, errorCode, statusText.c_str(), args);
+		pRemote->sendResponse(strResp.c_str(), strResp.size());
+	}
+	catch (std::exception* e)
+	{
+		printf_s("call response send error");
+	}
+	catch (...)
+	{
+		printf_s("call response send error");
+	}
+}
+
+inline void wlMnisStatusHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
+{
+
+	g_sn = sn;
+	Document d;
+	int errorCode = 0;
+	ArgumentType args;
+	std::string strResp = "";
+	char status[64] = { 0 };
+	strcpy_s(status, CLIENT_TRANSFER_OK);
+	std::string statusText = "";
+	REMOTE_TASK *pNewTask = NULL;
+	try
+	{
+		try
+		{
+			pNewTask = new REMOTE_TASK;
+			d.Parse(param.c_str());
+			pNewTask->callId = sn;
+			pNewTask->cmd = REMOTE_CMD_MNIS_STATUS;
+			pNewTask->pRemote = pRemote;
+			pNewTask->param.info.mnisStatusParam.getType = d["getType"].GetInt();
+			if (pNewTask)
+			{
+				push_front_task(pNewTask);
+			}
+			else
+			{
+				strcpy_s(status, CLIENT_TRANSFER_FAIL);
+			}
+		}
+		catch (...)
+		{
+			strcpy_s(status, CLIENT_TRANSFER_FAIL);
+		}
+		//do nothing
+		strResp = CRpcJsonParser::buildResponse(status, sn, errorCode, statusText.c_str(), args);
+		pRemote->sendResponse(strResp.c_str(), strResp.size());
+	}
+	catch (std::exception* e)
+	{
+		printf_s("call response send error");
+	}
+	catch (...)
+	{
+		printf_s("call response send error");
+	}
+}
 #endif

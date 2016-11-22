@@ -1,12 +1,12 @@
+#pragma once
 #ifdef MSG_DLL_API
 #else
 #define MSG_DLL_API  __declspec(dllexport)
 #endif
 
-//#include <WinSock2.h>
-//#include <Windows.h>
-#include "../lib/rpc/include/BaseConnector.h"
-#pragma once
+
+#include "../common.h"
+
 #define MAX_MESSAGE_LENGTH			(512 + 1)           // 最大可以接收1024个Unicode的字符，多一个字符位置是保存字符串结尾,目前 Text Message 的最大长度是 140 unicode.
 #define MESSAGE_BUFFER              MAX_MESSAGE_LENGTH * 2
 #define UINT8    unsigned   __int8
@@ -62,17 +62,17 @@ class MSG_DLL_API CTextMsg
 public:
 	CTextMsg();
 	~CTextMsg();
-	bool InitSocket(SOCKET *s, DWORD dwAddress, CRemotePeer * pRemote);
-	bool CloseSocket(SOCKET* s);
+	bool InitSocket(DWORD dwAddress/*, CRemotePeer * pRemote*/);
+	bool CloseSocket();
 	static DWORD WINAPI ReceiveDataThread(LPVOID lpParam);
-	string ParseUserMsg(TextMsg* HandleMsg, int* len);
+	std::string ParseUserMsg(TextMsg* HandleMsg, int* len);
 	UINT8 GetSeqNumber(TextMsg* HandleMsg);
 	bool ReplyMsgACK(ThreadMsg* Msg, UINT8 SeqNumber);
 	bool SendMsg( int callId, LPTSTR message, DWORD dwRadioID, int CaiNet);
 	void setRemotePeer(CRemotePeer * pRemote);
 	void RecvMsg();
-	string WChar2Ansi(LPCWSTR pwszSrc);
-	string TCHAR2STRING(TCHAR * STR);
+	std::string WChar2Ansi(LPCWSTR pwszSrc);
+	std::string TCHAR2STRING(TCHAR * STR);
 private:
 	int m_nSendSequenceNumber;
 	bool m_RcvSocketOpened;

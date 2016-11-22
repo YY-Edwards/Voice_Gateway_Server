@@ -151,6 +151,7 @@ void wlPlayStatusAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 	}
 
 }
+
 void wlGetConfigAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
