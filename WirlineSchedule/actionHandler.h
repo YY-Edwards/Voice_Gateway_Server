@@ -128,7 +128,7 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 			if (d["Svr"].IsObject())
 			{
 				tempJson = d["Svr"].GetObject();
-				strcpy_s(pNewTask->param.info.configParam.Svr.Ip, d["Ip"].GetString());
+				strcpy_s(pNewTask->param.info.configParam.Svr.Ip, tempJson["Ip"].GetString());
 				pNewTask->param.info.configParam.Svr.Port = tempJson["Port"].GetInt();
 			}
 			pNewTask->param.info.configParam.defaultGroup = (unsigned long)d["DefaultGroupId"].GetInt();
