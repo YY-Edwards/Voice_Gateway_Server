@@ -84,6 +84,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\lib\radio\allCommon.h" />
     <ClInclude Include="..\lib\radio\ars\RadioARS.h" />
     <ClInclude Include="..\lib\radio\common.h" />
     <ClInclude Include="..\lib\radio\DataScheduling.h" />
@@ -182,6 +183,7 @@
     <ClInclude Include="WLRecordFile.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\lib\radio\allCommonl.cpp" />
     <ClCompile Include="..\lib\radio\ars\RadioARS.cpp" />
     <ClCompile Include="..\lib\radio\DataScheduling.cpp" />
     <ClCompile Include="..\lib\radio\gps\RadioGps.cpp" />

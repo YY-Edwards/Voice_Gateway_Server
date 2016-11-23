@@ -435,6 +435,8 @@ int CManager::config(REMOTE_TASK* pTask)
 	bool bMasterChange = false;
 	bool bDongleChange = false;
 	bool bMnisChange = false;
+	CONFIG_SCHDULE_ISENABLE = pConfig->IsEnable;
+	CONFIG_MNIS_ID = pConfig->MnisId;
 	if (0 != strcmp(CONFIG_MASTER_IP, pConfig->master.ip))
 	{
 		strcpy_s(CONFIG_MASTER_IP, pConfig->master.ip);

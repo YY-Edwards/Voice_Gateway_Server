@@ -142,8 +142,10 @@ enum _SlotNumber
 };
 
 /*配置参数区域*/
+extern bool CONFIG_SCHDULE_ISENABLE;//是否与客户交互工作
 extern char CONFIG_MASTER_IP[MAX_IP_SIZE];//MASTER IP地址
 extern char CONFIG_MNIS_IP[MAX_IP_SIZE];//MNIS IP地址
+extern int CONFIG_MNIS_ID;//MNIS ID
 extern unsigned short CONFIG_MASTER_PORT;//MASTER端口
 extern unsigned long CONFIG_DEFAULT_GROUP;//默认通话组
 extern unsigned long CONFIG_LOCAL_RADIO_ID;//本机RADIO ID
@@ -192,7 +194,16 @@ typedef struct
 }MNIS;
 typedef struct
 {
+	char Ip[MAX_IP_SIZE];
+	unsigned short Port;
+}SVR;
+typedef struct
+{
+	bool IsEnable;
+	int Type;
+	SVR Svr;
 	MNIS mnis;
+	int MnisId;
 	MASTER master;
 	unsigned long defaultGroup;
 	unsigned long localRadioId;

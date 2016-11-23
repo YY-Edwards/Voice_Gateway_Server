@@ -1,5 +1,5 @@
-#ifndef ALL
-#define ALL
+#ifndef ALLCOMMON_H
+#define ALLCOMMON_H
 #include <map>
 #include<mutex>
 typedef  struct tagRadioStatus{

@@ -96,6 +96,11 @@ inline void removeCRemotePeer(TcpClient* client)
 	pTempClient = NULL;
 }
 
+inline bool wlScheduleIsEnable()
+{
+	return CONFIG_SCHDULE_ISENABLE;
+}
+
 inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
 	g_sn = sn;
@@ -118,6 +123,14 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 			pNewTask->callId = sn;
 			pNewTask->pRemote = pRemote;
 			pNewTask->cmd = REMOTE_CMD_CONFIG;
+			pNewTask->param.info.configParam.IsEnable = d["IsEnable"].GetBool();
+			pNewTask->param.info.configParam.Type = d["Type"].GetInt();
+			if (d["Svr"].IsObject())
+			{
+				tempJson = d["Svr"].GetObject();
+				strcpy_s(pNewTask->param.info.configParam.Svr.Ip, d["Ip"].GetString());
+				pNewTask->param.info.configParam.Svr.Port = tempJson["Port"].GetInt();
+			}
 			pNewTask->param.info.configParam.defaultGroup = (unsigned long)d["DefaultGroupId"].GetInt();
 			pNewTask->param.info.configParam.defaultSlot = (_SlotNumber)d["DefaultChannel"].GetInt();
 
@@ -145,6 +158,7 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 				strcpy_s(pNewTask->param.info.configParam.mnis.ip, tempJson["Ip"].GetString());
 				pNewTask->param.info.configParam.mnis.port = tempJson["Port"].GetInt();
 			}
+			pNewTask->param.info.configParam.MnisId = d["MnisId"].GetInt();
 
 			pNewTask->param.info.configParam.peerHeartTime = d["MaxPeerAliveTime"].GetInt() * 1000;
 			int recordType = d["Type"].GetInt();
@@ -180,6 +194,10 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 
 inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
+	if (!wlScheduleIsEnable())
+	{
+		return;
+	}
 	g_sn = sn;
 	//addCRemotePeer((TcpClient*)pRemote);
 	Document d;
@@ -290,6 +308,10 @@ inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, 
 }
 inline void wlCallStatusActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
+	if (!wlScheduleIsEnable())
+	{
+		return;
+	}
 	g_sn = sn;
 	//addCRemotePeer((TcpClient*)pRemote);
 	Document d;
@@ -318,6 +340,10 @@ inline void wlCallStatusActionHandler(CRemotePeer* pRemote, const std::string& p
 
 inline void wlPlayActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
+	if (!wlScheduleIsEnable())
+	{
+		return;
+	}
 	g_sn = sn;
 	//addCRemotePeer((TcpClient*)pRemote);
 	Document d;
@@ -379,6 +405,10 @@ inline void wlPlayActionHandler(CRemotePeer* pRemote, const std::string& param, 
 }
 inline void wlInfoActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
+	if (!wlScheduleIsEnable())
+	{
+		return;
+	}
 	g_sn = sn;
 	//addCRemotePeer((TcpClient*)pRemote);
 	Document d;
@@ -437,6 +467,10 @@ inline void wlInfoActionHandler(CRemotePeer* pRemote, const std::string& param, 
 
 inline void wlMnisQueryGpsActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
+	if (!wlScheduleIsEnable())
+	{
+		return;
+	}
 	g_sn = sn;
 	Document d;
 	int errorCode = 0;
@@ -489,6 +523,10 @@ inline void wlMnisQueryGpsActionHandler(CRemotePeer* pRemote, const std::string&
 
 inline void wlMnisMessageHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
+	if (!wlScheduleIsEnable())
+	{
+		return;
+	}
 	g_sn = sn;
 	Document d;
 	int errorCode = 0;
@@ -542,7 +580,10 @@ inline void wlMnisMessageHandler(CRemotePeer* pRemote, const std::string& param,
 
 inline void wlMnisStatusHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
-
+	if (!wlScheduleIsEnable())
+	{
+		return;
+	}
 	g_sn = sn;
 	Document d;
 	int errorCode = 0;
