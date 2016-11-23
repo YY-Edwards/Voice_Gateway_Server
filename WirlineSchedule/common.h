@@ -58,7 +58,7 @@ typedef struct
 	int Type;
 	int Target;
 	int Source;
-	wchar_t Contents[256];
+	char Contents[256];
 }MNIS_MSG;
 
 typedef struct
@@ -288,8 +288,8 @@ typedef struct
 /*‘∂≥Ã√¸¡Ó*/
 typedef struct
 {
-	unsigned long long callId;
-	CRemotePeer *pRemote;
+	//unsigned long long callId;
+	//CRemotePeer *pRemote;
 	int cmd;
 	JSON_PARAM param;
 }REMOTE_TASK;

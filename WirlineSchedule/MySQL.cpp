@@ -36,6 +36,7 @@ CMySQL::~CMySQL(void)
 
 	ReleaseMutex(m_mutxDbLocker);
 	CloseHandle(m_mutxDbLocker);
+	stop();
 }
 
 BOOL CMySQL::CreateTable(LPCSTR pstrSQL)

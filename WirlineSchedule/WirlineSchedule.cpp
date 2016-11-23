@@ -115,19 +115,19 @@ int main()
 	/*ÊÍ·Å×ÊÔ´*/
 	if (m_pManager)
 	{
-		m_pManager->stop();
+		//m_pManager->stop();
 		delete m_pManager;
 		m_pManager = NULL;
 	}
 	if (NULL != m_pMnis)
 	{
 		m_pMnis->radioDisConnect();
-		delete m_pMnis;
+		//delete m_pMnis;
 		m_pMnis = NULL;
 	}
 	if (g_pNet)
 	{
-		g_pNet->stop();
+		//g_pNet->stop();
 		delete g_pNet;
 		g_pNet = NULL;
 	}
@@ -144,27 +144,27 @@ int main()
 	if (m_pRpcServer)
 	{
 		m_pRpcServer->stop();
-		delete m_pRpcServer;
+		//delete m_pRpcServer;
 		m_pRpcServer = NULL;
 	}
 
 	if (g_pSound)
 	{
-		g_pSound->stop();
+		//g_pSound->stop();
 		delete g_pSound;
 		g_pSound = NULL;
 	}
 
 	if (g_pDongle)
 	{
-		g_pDongle->stop();
+		//g_pDongle->stop();
 		delete g_pDongle;
 		g_pDongle = NULL;
 	}
 
 	if (m_pDb)
 	{
-		m_pDb->stop();
+		//m_pDb->stop();
 		delete m_pDb;
 		m_pDb = NULL;
 	}

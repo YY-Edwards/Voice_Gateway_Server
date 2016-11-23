@@ -120,8 +120,8 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 		{
 			d.Parse(param.c_str());
 			/*获取参数*/
-			pNewTask->callId = sn;
-			pNewTask->pRemote = pRemote;
+			//pNewTask->callId = sn;
+			//pNewTask->pRemote = pRemote;
 			pNewTask->cmd = REMOTE_CMD_CONFIG;
 			pNewTask->param.info.configParam.IsEnable = d["IsEnable"].GetBool();
 			pNewTask->param.info.configParam.Type = d["Type"].GetInt();
@@ -221,8 +221,8 @@ inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, 
 			{
 							  pNewTask = new REMOTE_TASK;
 							  pNewTask->cmd = REMOTE_CMD_CALL;
-							  pNewTask->pRemote = pRemote;
-							  pNewTask->callId = sn;
+							  //pNewTask->pRemote = pRemote;
+							  //pNewTask->callId = sn;
 							  pNewTask->param.info.callParam.operateInfo.operate = StartCall;
 
 							  int callType = d["type"].GetInt();
@@ -251,8 +251,8 @@ inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, 
 			{
 							 pNewTask = new REMOTE_TASK;
 							 pNewTask->cmd = REMOTE_CMD_STOP_CALL;
-							 pNewTask->pRemote = pRemote;
-							 pNewTask->callId = sn;
+// 							 pNewTask->pRemote = pRemote;
+// 							 pNewTask->callId = sn;
 							 pNewTask->param.info.callParam.operateInfo.operate = StopCall;
 
 							 int callType = d["type"].GetInt();
@@ -362,8 +362,8 @@ inline void wlPlayActionHandler(CRemotePeer* pRemote, const std::string& param, 
 			/*处理参数*/
 			pNewTask = new REMOTE_TASK;
 			pNewTask->cmd = REMOTE_CMD_SET_PLAY_CALL;
-			pNewTask->pRemote = pRemote;
-			pNewTask->callId = sn;
+// 			pNewTask->pRemote = pRemote;
+// 			pNewTask->callId = sn;
 			pNewTask->param.info.setCareCallParam.playParam.targetId = target;
 			if (PRIVATE_CALL_TAGET == target)
 			{
@@ -431,8 +431,8 @@ inline void wlInfoActionHandler(CRemotePeer* pRemote, const std::string& param, 
 			{
 								  pNewTask = new REMOTE_TASK;
 								  pNewTask->cmd = REMOTE_CMD_GET_CONN_STATUS;
-								  pNewTask->pRemote = pRemote;
-								  pNewTask->callId = sn;
+								  //pNewTask->pRemote = pRemote;
+								  //pNewTask->callId = sn;
 			}
 				break;
 			default:
@@ -486,9 +486,9 @@ inline void wlMnisQueryGpsActionHandler(CRemotePeer* pRemote, const std::string&
 		{
 			pNewTask = new REMOTE_TASK;
 			d.Parse(param.c_str());
-			pNewTask->callId = sn;
+			//pNewTask->callId = sn;
 			pNewTask->cmd = REMOTE_CMD_MNIS_QUERY_GPS;
-			pNewTask->pRemote = pRemote;
+			//pNewTask->pRemote = pRemote;
 			pNewTask->param.info.queryGpsParam.Cycle = d["Cycle"].GetDouble();
 			pNewTask->param.info.queryGpsParam.Operate = d["Operate"].GetInt();
 			pNewTask->param.info.queryGpsParam.Target = d["Target"].GetInt();
@@ -542,11 +542,12 @@ inline void wlMnisMessageHandler(CRemotePeer* pRemote, const std::string& param,
 		{
 			pNewTask = new REMOTE_TASK;
 			d.Parse(param.c_str());
-			pNewTask->callId = sn;
+			//pNewTask->callId = sn;
 			pNewTask->cmd = REMOTE_CMD_MNIS_MSG;
-			pNewTask->pRemote = pRemote;
+			//pNewTask->pRemote = pRemote;
 			//swprintf_s(pNewTask->param.info.msgParam.Contents, L"%s", d["Contents"].GetString());
-			MultiByteToWideChar(CP_ACP, 0, d["Contents"].GetString(), -1, pNewTask->param.info.msgParam.Contents, 256);
+			//MultiByteToWideChar(CP_ACP, 0, d["Contents"].GetString(), -1, pNewTask->param.info.msgParam.Contents, 256);
+			strcpy_s(pNewTask->param.info.msgParam.Contents, d["Contents"].GetString());
 			pNewTask->param.info.msgParam.Source = d["Source"].GetInt();
 			pNewTask->param.info.msgParam.Target = d["Target"].GetInt();
 			pNewTask->param.info.msgParam.Type = d["Type"].GetInt();
@@ -599,9 +600,9 @@ inline void wlMnisStatusHandler(CRemotePeer* pRemote, const std::string& param, 
 		{
 			pNewTask = new REMOTE_TASK;
 			d.Parse(param.c_str());
-			pNewTask->callId = sn;
+			//pNewTask->callId = sn;
 			pNewTask->cmd = REMOTE_CMD_MNIS_STATUS;
-			pNewTask->pRemote = pRemote;
+			//pNewTask->pRemote = pRemote;
 			pNewTask->param.info.mnisStatusParam.getType = d["getType"].GetInt();
 			if (pNewTask)
 			{

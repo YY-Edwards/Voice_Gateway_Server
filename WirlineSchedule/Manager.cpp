@@ -54,6 +54,7 @@ CManager::~CManager()
 	{
 		timeEndPeriod(m_theTimeCaps.wPeriodMin);//清除最小定时器精度
 	}
+	stop();
 }
 
 // int CManager::initSys()

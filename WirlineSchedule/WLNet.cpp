@@ -73,6 +73,7 @@ CWLNet::~CWLNet()
 	clearPeers();
 	clearSendVoices();
 	//StopNet();
+	stop();
 }
 
 DWORD WINAPI CWLNet::NetThreadProc(LPVOID pVoid)
