@@ -81,6 +81,7 @@ void CRecordFile::setBoolPlay(bool value)
 void CRecordFile::setBoolReport(bool value)
 {
 	m_bReport = value;
+	g_pNet->updateOnLineRadioInfo(srcId, RADIO_STATUS_ONLINE);
 }
 
 bool CRecordFile::getBoolPlay()

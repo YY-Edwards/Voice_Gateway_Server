@@ -457,7 +457,7 @@ inline void wlMnisQueryGpsActionHandler(CRemotePeer* pRemote, const std::string&
 			pNewTask->pRemote = pRemote;
 			pNewTask->param.info.queryGpsParam.Cycle = d["Cycle"].GetDouble();
 			pNewTask->param.info.queryGpsParam.Operate = d["Operate"].GetInt();
-			pNewTask->param.info.queryGpsParam.Target = d["Cycle"].GetInt();
+			pNewTask->param.info.queryGpsParam.Target = d["Target"].GetInt();
 			pNewTask->param.info.queryGpsParam.Type = d["Type"].GetInt();
 			if (pNewTask)
 			{
@@ -507,7 +507,8 @@ inline void wlMnisMessageHandler(CRemotePeer* pRemote, const std::string& param,
 			pNewTask->callId = sn;
 			pNewTask->cmd = REMOTE_CMD_MNIS_MSG;
 			pNewTask->pRemote = pRemote;
-			swprintf_s(pNewTask->param.info.msgParam.Contents, L"%s", d["Contents"].GetString());
+			//swprintf_s(pNewTask->param.info.msgParam.Contents, L"%s", d["Contents"].GetString());
+			MultiByteToWideChar(CP_ACP, 0, d["Contents"].GetString(), -1, pNewTask->param.info.msgParam.Contents, 256);
 			pNewTask->param.info.msgParam.Source = d["Source"].GetInt();
 			pNewTask->param.info.msgParam.Target = d["Target"].GetInt();
 			pNewTask->param.info.msgParam.Type = d["Type"].GetInt();

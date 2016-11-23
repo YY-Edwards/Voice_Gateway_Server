@@ -341,6 +341,8 @@ public:
 	int wlMnisSendArs(int Target, std::string IsOnline);
 	/*告知界面相关信息*/
 	int wlMnisStatus(int getType, FieldValue info);
+	/*更新设备在线信息*/
+	int updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode = -1);
 protected:
 	/*
 	* Socket work thread

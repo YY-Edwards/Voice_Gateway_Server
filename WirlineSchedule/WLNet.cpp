@@ -8056,6 +8056,12 @@ int CWLNet::wlMnisStatus(int getType, FieldValue info)
 	return 0;
 }
 
+int CWLNet::updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode)
+{
+	m_pManager->updateOnLineRadioInfo(radioId, status, gpsQueryMode);
+	return 0;
+}
+
 //bool CWLNet::getIsFirstBurstA()
 //{
 //	return m_isFirstBurstA;
