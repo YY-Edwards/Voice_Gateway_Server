@@ -122,7 +122,7 @@ int main()
 	if (NULL != m_pMnis)
 	{
 		m_pMnis->radioDisConnect();
-		//delete m_pMnis;
+		delete m_pMnis;
 		m_pMnis = NULL;
 	}
 	if (g_pNet)
@@ -144,7 +144,7 @@ int main()
 	if (m_pRpcServer)
 	{
 		m_pRpcServer->stop();
-		//delete m_pRpcServer;
+		delete m_pRpcServer;
 		m_pRpcServer = NULL;
 	}
 
