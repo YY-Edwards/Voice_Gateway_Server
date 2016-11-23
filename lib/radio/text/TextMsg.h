@@ -1,9 +1,4 @@
 #pragma once
-#ifdef MSG_DLL_API
-#else
-#define MSG_DLL_API  __declspec(dllexport)
-#endif
-
 
 #include "../common.h"
 
@@ -57,10 +52,12 @@ typedef struct tagTextMsg
 	char            TextPayload[MESSAGE_BUFFER];   // 接收缓冲区按字节计算，实际接收的内容则是Unicode
 }TextMsg;
 
-class MSG_DLL_API CTextMsg
+class CDataScheduling;
+
+class CTextMsg
 {
 public:
-	CTextMsg();
+	CTextMsg(CDataScheduling *pMnis);
 	~CTextMsg();
 	bool InitSocket(DWORD dwAddress/*, CRemotePeer * pRemote*/);
 	bool CloseSocket();
@@ -78,6 +75,7 @@ private:
 	bool m_RcvSocketOpened;
 	ThreadMsg * m_ThreadMsg;
 	CRemotePeer* pRemotePeer;
+	CDataScheduling *m_pMnis;
 	
 	
 };

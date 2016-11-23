@@ -172,7 +172,7 @@ namespace TrboX
             if (!IsNeedUpdate) return SatffList;
             IsNeedUpdate = false;
             int count = Count();
-            if (count <= 1) { SatffList = null; return null; };
+            if (count < 1) { SatffList = null; return null; };
             Dictionary<string, object> param = new Dictionary<string, object>();
 
             param.Add("operation", OperateType.list.ToString());

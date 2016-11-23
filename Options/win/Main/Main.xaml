@@ -170,15 +170,17 @@
                                             <Separator Height="5" Margin="-20,0,-20,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
                                             <TextBlock TextWrapping="Wrap" Text="使能/禁用Radio调度功能" Margin="0,2.5" Width="551.087" DockPanel.Dock="Top"/>
                                             <CheckBox x:Name="chk_EnableRadio" Content="Radio调度" Margin="0,2.5" HorizontalAlignment="Left" VerticalAlignment="Top" DockPanel.Dock="Top" IsChecked="True"/>
-                                            <TextBlock TextWrapping="Wrap" Text="车载台服务端地址" DockPanel.Dock="Top" Margin="0,7.5,0,2.5"/>
-                                            <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="80"/>
-                                                    <ColumnDefinition Width="*"/>
-                                                </Grid.ColumnDefinitions>
-                                                <Label Content="IP Address :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Left"/>
-                                                <TextBox x:Name="txt_RadioSvrIp" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120" Text="127.0.0.1" IsEnabled="False"/>
-                                            </Grid>
+                                            <DockPanel Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}" DockPanel.Dock="Top">
+                                                <TextBlock TextWrapping="Wrap" Text="车载台服务端地址" DockPanel.Dock="Top" Margin="0,7.5,0,2.5"/>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="80"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="IP Address :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Left"/>
+                                                    <TextBox x:Name="txt_RadioSvrIp" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120" Text="127.0.0.1" IsEnabled="False"/>
+                                                </Grid>
+                                          
                                             <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="80"/>
@@ -188,8 +190,8 @@
                                                 <Label Content="Port :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
                                                 <TextBox x:Name="txt_RadioSvrPort" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,1,0,1" VerticalAlignment="Center" Grid.Column="1" Width="120" Text="9001" IsEnabled="False" Grid.ColumnSpan="2"/>
                                             </Grid>
-                                            <TextBlock TextWrapping="Wrap" Text="选择车载台工作模式" Margin="0,10,0,2.5" Width="551.087" DockPanel.Dock="Top" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}"/>
-                                            <Grid VerticalAlignment="Top" Margin="0,2.5" DockPanel.Dock="Top" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}">
+                                            <TextBlock TextWrapping="Wrap" Text="选择车载台工作模式" Margin="0,10,0,2.5" Width="551.087" DockPanel.Dock="Top" />
+                                            <Grid VerticalAlignment="Top" Margin="0,2.5" DockPanel.Dock="Top" >
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="83*"/>
                                                     <ColumnDefinition Width="468*"/>
@@ -197,6 +199,7 @@
                                                 <RadioButton x:Name="rad_RadioType" Content="车载台" HorizontalAlignment="Left" VerticalAlignment="Top" Height="14.24" Width="55" GroupName="RadioType" IsChecked="True"/>
                                                 <RadioButton x:Name="rad_RadioMnisType" Content="车载台+MNIS"  HorizontalAlignment="Left" VerticalAlignment="Top" Grid.Column="1" Height="14.24" Width="95.833" GroupName="RadioType" IsChecked="True"/>
                                             </Grid>
+                                            </DockPanel>
                                         </DockPanel>
                                         <DockPanel x:Name="dck_RadioNetwork" LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,10,20,40" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}">
                                             <Label Content="网络" Margin="0" DockPanel.Dock="Top" FontSize="16"/>
@@ -326,7 +329,7 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="默认组 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <ComboBox x:Name="cmb_DefaultGroup" HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Grid.Column="1" Margin="5,0,0,0" SelectedIndex="0"/>
+                                                    <TextBox x:Name="txt_DefaultGroup" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
                                                 </Grid>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Width="571.087">
                                                     <Grid.ColumnDefinitions>
@@ -647,7 +650,7 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="部门 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
-                                                    <ComboBox x:Name="cmb_StaffDepartment"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Grid.Column="1" Margin="5,0,0,0" SelectedIndex="{Binding SelectedItem.Tag.dept, ElementName=lst_Staff, Mode=OneWay}">
+                                                    <ComboBox x:Name="cmb_StaffDepartment"  HorizontalAlignment="Left" VerticalAlignment="Top" Width="120" Grid.Column="1" Margin="5,0,0,0" SelectedIndex="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}">
                                                         <!---->
                                                     </ComboBox>
                                                 </Grid>
@@ -657,6 +660,7 @@
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="联系电话 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right"/>
+                                                     <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
                                                     <TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>
                                                 </Grid>
                                                 <!--<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
@@ -747,7 +751,7 @@
                                                     </ListView.View>
                                                 </ListView>
                                                 <DockPanel LastChildFill="False" Height="29.5" DockPanel.Dock="Top" Margin="85,0,0,0">
-                                                    <Button x:Name="btn_AddRadio" Content="ADD" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
+                                                    <Button x:Name="btn_AddRadio" Content="NEW" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
                                                     <!--<Button Content="EDIT" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>-->
                                                     <Button x:Name="btn_DelRadio" Content="DELETE" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
                                                 </DockPanel>

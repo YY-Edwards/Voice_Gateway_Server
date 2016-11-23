@@ -243,6 +243,10 @@ namespace TrboX
                 {
                     dept.Delete();
                     m_Main.lst_Group.Items.RemoveAt(m_Main.lst_Group.SelectedIndex);
+                    
+                    m_Main.cmb_StaffDepartment.Items.RemoveAt(m_Main.lst_Group.SelectedIndex);
+                    m_Main.cmb_RadioDepartment.Items.RemoveAt(m_Main.lst_Group.SelectedIndex);
+
                     m_Main.lst_Group.SelectedIndex = m_Main.lst_Group.Items.Count == 0 ? -1 : 0;
                 }
             };
@@ -383,6 +387,11 @@ namespace TrboX
                 {
                     staff.Delete();
                     m_Main.lst_Staff.Items.RemoveAt(m_Main.lst_Staff.SelectedIndex);
+                    try
+                    {
+                        m_Main.cmb_RadioStaff.Items.RemoveAt(m_Main.lst_Staff.SelectedIndex);
+                    }
+                    catch { }
                     m_Main.lst_Staff.SelectedIndex = m_Main.lst_Staff.Items.Count == 0 ? -1 : 0;
                 }
             };
@@ -423,7 +432,7 @@ namespace TrboX
                     m_Main.lst_Staff.Items.Add(new ListViewItem() { Content = staff, Tag = m_Main.cmb_StaffDepartment.SelectedIndex});
                     m_Main.lst_Staff.SelectedIndex = m_Main.lst_Staff.Items.Count - 1;
 
-
+                    m_Main.cmb_RadioStaff.Items.Add(new ComboBoxItem() {Content= staff.Name + "(" + (staff.Type == StaffType.Vehicle ? "车辆" : "人员") + ")",Tag = staff });
                 }
                 else
                 {
@@ -447,6 +456,9 @@ namespace TrboX
 
                         ((ListViewItem)m_Main.lst_Staff.Items[m_Main.lst_Staff.SelectedIndex]).Content = staff;
                         ((ListViewItem)m_Main.lst_Staff.Items[m_Main.lst_Staff.SelectedIndex]).Tag = m_Main.cmb_StaffDepartment.SelectedIndex;
+
+                        ((ComboBoxItem)m_Main.cmb_RadioStaff.Items[m_Main.lst_Staff.SelectedIndex]).Content = staff.Name + "(" + (staff.Type == StaffType.Vehicle ? "车辆" : "人员") + ")";
+                        ((ComboBoxItem)m_Main.cmb_RadioStaff.Items[m_Main.lst_Staff.SelectedIndex]).Tag = staff;
                     }
                     catch (Exception ex)
                     {
@@ -490,6 +502,23 @@ namespace TrboX
 
         private void RegRadio()
         {
+
+            m_Main.btn_AddRadio.Click +=delegate
+            {
+                m_Main.lst_Radio.SelectedIndex = -1;
+            };
+            m_Main.btn_DelRadio.Click += delegate
+            {
+                if (m_Main.lst_Radio == null || m_Main.lst_Radio.SelectedItem == null) return;
+                Radio radio = ((ListViewItem)m_Main.lst_Radio.SelectedItem).Content as Radio;
+                if (radio != null)
+                {
+                    radio.Delete();
+                    m_Main.lst_Radio.Items.RemoveAt(m_Main.lst_Radio.SelectedIndex);
+                    m_Main.lst_Radio.SelectedIndex = m_Main.lst_Radio.Items.Count == 0 ? -1 : 0;
+                }
+            };
+
             m_Main.btn_SaveRadio.Click += delegate
             {
                 Radio radio = null;

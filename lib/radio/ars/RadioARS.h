@@ -1,6 +1,5 @@
-
-#include "../common.h"
 #pragma once
+#include "../common.h"
 #define SEND_LENTH   4
 #define RECV_LENTH   28
 #define RECV_THARGET_LENTH 19
@@ -15,10 +14,13 @@ typedef struct tagThreadARS
 	char             SendBuffer[SEND_LENTH];
 	unsigned long    radioID;
 }ThreadARS;
+
+class CDataScheduling;
+
 class CRadioARS
 {
 public:
-	CRadioARS();
+	CRadioARS(CDataScheduling *pMnis);
 	~CRadioARS();
 	bool InitARSSocket(DWORD dwAddress/*,CRemotePeer * pRemote*/);
 	bool CloseARSSocket();
@@ -28,6 +30,7 @@ public:
 private:
 	bool m_RcvSocketOpened;
 	ThreadARS *m_ThreadARS;
+	CDataScheduling* m_pMnis;
 	//CRemotePeer* pRemotePeer;
 };
 

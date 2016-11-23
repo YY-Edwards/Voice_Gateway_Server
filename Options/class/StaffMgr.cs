@@ -172,7 +172,7 @@ namespace TrboX
             if (!IsNeedUpdate) return SatffList;
             IsNeedUpdate = false;
             int count = Count();
-            if (count <= 1) { SatffList = null; return null; };
+            if (count < 1) { SatffList = null; return null; };
             Dictionary<string, object> param = new Dictionary<string, object>();
 
             param.Add("operation", OperateType.list.ToString());
@@ -381,8 +381,11 @@ namespace TrboX
                 staffs.ID = (int)staff;
             }
 
-            List<Staff> tmpstaff = StaffMgr.SatffList.Where(p => p.ID == staff).ToList();
-            if (tmpstaff.Count > 0) staffs = tmpstaff[0];
+            if (StaffMgr.SatffList != null)
+            {
+                List<Staff> tmpstaff = StaffMgr.SatffList.Where(p => p.ID == staff).ToList();
+                if (tmpstaff.Count > 0) staffs = tmpstaff[0];
+            }
 
             if (staffs == null) return;
 
@@ -394,8 +397,11 @@ namespace TrboX
                 radios.ID = (int)radio;
             }
 
-            List<Radio> tmpradio = RadioMgr.RadioList.Where(p => p.ID == radio).ToList();
-            if (tmpradio.Count > 0) radios = tmpradio[0];
+            if (RadioMgr.RadioList != null)
+            {
+                List<Radio> tmpradio = RadioMgr.RadioList.Where(p => p.ID == radio).ToList();
+                if (tmpradio.Count > 0) radios = tmpradio[0];
+            }
 
             if (radios == null) return;
 
@@ -424,8 +430,11 @@ namespace TrboX
                 staffs.ID = (int)staff;
             }
 
-            List<Staff> tmpstaff = StaffMgr.SatffList.Where(p => p.ID == staff).ToList();
-            if (tmpstaff.Count > 0) staffs = tmpstaff[0];
+            if (StaffMgr.SatffList != null)
+            {
+                List<Staff> tmpstaff = StaffMgr.SatffList.Where(p => p.ID == staff).ToList();
+                if (tmpstaff.Count > 0) staffs = tmpstaff[0];
+            }
 
             if (staffs == null) return;
 
@@ -437,8 +446,11 @@ namespace TrboX
                 radios.ID = (int)radio;
             }
 
-            List<Radio> tmpradio = RadioMgr.RadioList.Where(p => p.ID == radio).ToList();
-            if (tmpradio.Count > 0) radios = tmpradio[0];
+            if (RadioMgr.RadioList != null)
+            {
+                List<Radio> tmpradio = RadioMgr.RadioList.Where(p => p.ID == radio).ToList();
+                if (tmpradio.Count > 0) radios = tmpradio[0];
+            }
 
             if (radios == null) return;
 

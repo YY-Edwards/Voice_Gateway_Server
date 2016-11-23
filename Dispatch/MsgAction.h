@@ -11,7 +11,7 @@ void  msgAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 	static std::mutex lock;
 	std::lock_guard<std::mutex> locker(lock);
 	try{
-
+		g_sn = callId;
 		std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
 		pRemote->sendResponse(strResp.c_str(), strResp.size());
 
@@ -50,14 +50,14 @@ void  msgAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			//int msgSize = (int)(msg.length() + 1);
 			wchar_t* text = new wchar_t[MSG_SIZE];
 			MultiByteToWideChar(CP_ACP, 0, msg.c_str(), -1, text, MSG_SIZE);
-			if (!dis.sendMsg(client, text, id, callId, opterateType))
+			if (!dis.sendMsg( text, id,  opterateType))
 			{
 				ArgumentType args;
 				args["Target"] = FieldValue(id);
 				args["contents"] = FieldValue(msg.c_str());
 				args["status"] = FieldValue(REMOTE_FAILED);
 				args["type"] = FieldValue(opterateType);
-				std::string callJsonStr = CRpcJsonParser::buildCall("messageStatus", ++seq, args, "radio");
+				std::string callJsonStr = CRpcJsonParser::buildCall("messageStatus", ++g_sn, args, "radio");
 				client->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 			}
 		}

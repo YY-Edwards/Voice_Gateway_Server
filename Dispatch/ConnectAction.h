@@ -11,6 +11,7 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 	static std::mutex lock;
 	std::lock_guard<std::mutex> locker(lock);
 	try{
+		g_sn = callId;
 		std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "sucess", ArgumentType());
 		pRemote->sendResponse(strResp.c_str(), strResp.size());
 
@@ -64,7 +65,7 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 
 				}
 			}
-			dis.connect(client, radioIP.c_str(), mnisIP.c_str(), callId);
+			dis.connect( radioIP.c_str(), mnisIP.c_str());
 		}
 		else
 		{

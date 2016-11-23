@@ -6,12 +6,13 @@
 #include "../lib/rpc/include/RpcJsonParser.h"
 #include "TcpScheduling.h"
 #include "extern.h"
+long long g_sn;
 void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
 	std::lock_guard<std::mutex> locker(lock);
 	try{
-
+		g_sn = callId;
 		std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
 		pRemote->sendResponse(strResp.c_str(), strResp.size());
 
@@ -49,7 +50,7 @@ void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 			}
 			if (isTcpConnect)
 			{
-				dis.call(client, opterateType, id, operate, callId);
+				dis.call( opterateType, id, operate);
 			}
 			else
 			{
