@@ -508,7 +508,7 @@ void CTextMsg::RecvMsg()
 						std::string callJsonStr = CRpcJsonParser::buildCall("messageStatus", ++seq, args, "radio");
 						pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());*/
 
-					Respone r;
+					Respone r = {0};
 					r.target = m_ThreadMsg->radioID;
 					r.msgStatus = SUCESS;
 					r.msg = "";

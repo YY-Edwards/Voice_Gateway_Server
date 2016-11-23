@@ -341,8 +341,9 @@ void DispatchOperate::OnData(  int call, Respone data)
 		}
 		break;
 	case RECV_MSG:
+		args["Target"] = FieldValue(data.target);
 		args["Source"] = FieldValue(data.source);
-		args["contents"] = FieldValue(data.msg.c_str());
+		args["Contents"] = FieldValue(data.msg.c_str());
 		args["type"] = FieldValue(PRIVATE);
 		dis.send2Client("message", args);
 		break;
@@ -371,7 +372,9 @@ void DispatchOperate::OnData(  int call, Respone data)
 		//FieldValue result(FieldValue::TObject);
 		//result.setKeyVal("Source", FieldValue(radioID));
 		//result.setKeyVal("Gps",Gps);
+		args["Target"] = FieldValue(data.target);
 		args["Source"] = FieldValue(data.source);
+		args["Altutude"] = FieldValue(data.altitude);
 		args["Gps"] = Gps;
 		dis.send2Client("sendGps", args);
 		break;
@@ -464,15 +467,24 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 void DispatchOperate::send2Client( char* name, ArgumentType args)
 {
 	std::lock_guard<std::mutex> locker(m_locker);
-	std::string callJsonStr = CRpcJsonParser::buildCall(name, ++g_sn, args, "radio");
-	for (auto i = rmtPeerList.begin(); i != rmtPeerList.end(); i++)
+	try
 	{
-		TcpClient *peer = *i;
-		if (peer != NULL)
+		std::string callJsonStr = CRpcJsonParser::buildCall(name, ++g_sn, args, "radio");
+		for (auto i = rmtPeerList.begin(); i != rmtPeerList.end(); i++)
 		{
-			peer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+			TcpClient *peer = *i;
+			if (peer != NULL)
+			{
+
+				peer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
+			}
 		}
 	}
+	catch (std::exception e)
+	{
+
+	}
+	
 	
 }
 

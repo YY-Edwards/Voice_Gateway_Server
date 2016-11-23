@@ -9,6 +9,7 @@
 #include <Windows.h>
 #include "allCommon.h"
 
+
 #define               MNIS_CONNECT           0              
 #define				  CONNECT_STATUS         1                   //status
 #define				  RADIO_STATUS           2                   //status
@@ -31,7 +32,6 @@
 
 #define PRIVATE_MSG_FLG        12
 #define GROUP_MSG_FLG          225
-#define ALL                    0
 #define GROUP                  2
 #define PRIVATE                3
 
@@ -72,15 +72,16 @@ typedef struct tagRespone
 	int gpsType;
 	std::string msg;
 	int msgStatus;
-	double lat;
-	double lon;
-	double speed;
+	float lat;
+	float lon;
+	float speed;
 	int arsStatus;
 	int gpsStatus;
 	int valid;
 	double cycle;
 	int querymode;
 	int operate;
+	float altitude;
 	std::map<std::string, RadioStatus> rs;
 }Respone;
 extern void(*myCallBackFunc)(  int, Respone);

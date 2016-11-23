@@ -43,5 +43,7 @@ private:
 	void sendConnectStatusToClient();
 	std::function<void( int, Respone)> m_serverFunHandler;
 	void sendToClient(int callFuncId, Respone response);
+	bool m_workThread;
+	bool m_timeoutThread;
 };
 

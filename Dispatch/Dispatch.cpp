@@ -24,6 +24,8 @@
 //#include "StopCallEventAction.h"
 //#include "WiretapEventAction.h"
 
+
+
 #include "ConnectAction.h"
 #include "CallAction.h"
 #include "ControlAction.h"
@@ -581,7 +583,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 	dis.setCallBack();
 	
-	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);                    //¼ì²éÄÚ´æÐ¹Â©
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);                    //¼ì²éÄÚ´æÐ¹Â©
 	//dis = new DispatchOperate();
 	//cs.setCallBackFunc(DispatchOperate::OnData);
 	while (1){ Sleep(1); };

@@ -31,12 +31,37 @@ void recvMsgAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 		}
 		//Ð´Èëlog
 
-		std::string logCommand = CRpcJsonParser::mergeCommand("smslog", callId, param.c_str());
-		int result = CBroker::instance()->getLogClient()->sendRequest(logCommand.c_str(), callId,
+		Document d;
+		d.Parse(param.c_str());
+		int source = -1;
+		int destination = -1;
+		std::string message = "";
+		if (d.HasMember("Target") && d["Target"].IsInt())
+		{
+			destination = d["Target"].GetInt();
+		}
+		if (d.HasMember("Source") && d["Source"].IsInt())
+		{
+			source = d["Source"].GetInt();
+		}
+		if (d.HasMember("Contents") && d["Contents"].IsString())
+		{
+			message = d["Contents"].GetString();
+		}
+		ArgumentType args;
+		FieldValue f(FieldValue::TArray);
+		FieldValue element(FieldValue::TObject);
+		element.setKeyVal("source", FieldValue(source));
+		element.setKeyVal("destination", FieldValue(destination));
+		element.setKeyVal("message", FieldValue(message.c_str()));
+		f.push(element);
+		args["operation"] = FieldValue("add");
+		args["sms"] = FieldValue(f);
+
+		std::string callJsonStr = CRpcJsonParser::buildCall("smslog", callId, args, "radio");
+		int result = CBroker::instance()->getLogClient()->sendRequest(callJsonStr.c_str(), callId,
 			pRemote,
 			[&](const char* pResponse, void* data){
-			CRemotePeer* pCommandSender = (CRemotePeer*)data;
-			pCommandSender->sendResponse(pResponse, strlen(pResponse));
 		}, nullptr);
 		if (-1 == result)
 		{

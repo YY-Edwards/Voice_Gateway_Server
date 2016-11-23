@@ -13,6 +13,8 @@ CDataScheduling::CDataScheduling()
 	pRadioARS = new CRadioARS(this);
 	pRadioGPS = new CRadioGps(this);
 	pRadioMsg = new CTextMsg(this);
+	m_workThread = true;
+	m_timeoutThread = true;
 	CreateThread(NULL, 0, workThread, this, THREAD_PRIORITY_NORMAL, NULL);
 	CreateThread(NULL, 0, timeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
 }
@@ -32,10 +34,11 @@ bool CDataScheduling::radioConnect(const char* ip)
 }
 void CDataScheduling::radioDisConnect()
 {
-	if (myCallBackFunc != NULL)
+	disConnect();
+	/*if (myCallBackFunc != NULL)
 	{
 		addUdpCommand(MNIS_DIS_CONNECT,"","",0,_T(""),0,0);
-	}
+	}*/
 }
 bool CDataScheduling::radioGetGps(DWORD dwRadioID, int queryMode, double cycle)
 {
@@ -179,10 +182,14 @@ void CDataScheduling::connect( const char* ip)
 }
 void CDataScheduling::disConnect()
 {
+	m_workThread = false;
+	m_timeoutThread = false;
+	timeOutList.clear();
+	workList.clear();
 	pRadioARS->CloseARSSocket();
 	pRadioGPS->CloseGPSSocket();
 	pRadioMsg->CloseSocket();
-	timeOutList.clear();
+
 }
 void CDataScheduling::getGps(DWORD dwRadioID, int queryMode, double cycle)
 {
@@ -239,141 +246,146 @@ void CDataScheduling::addUdpCommand(int command, std::string radioIP, std::strin
 DWORD WINAPI CDataScheduling::timeOutThread(LPVOID lpParam)
 {
 	CDataScheduling * p = (CDataScheduling *)(lpParam);
-	while (true)
+	if (p!=NULL)
 	{
 		p->timeOut();
-		Sleep(100);
+	
 	}
 	return 1;
 }
 DWORD WINAPI CDataScheduling::workThread(LPVOID lpParam)
 {
 	CDataScheduling * p = (CDataScheduling *)(lpParam);
-	while (true)
+	if (p != NULL)
 	{
 		p->workThreadFunc();
-		Sleep(10);
 	}
 	return 1;
 }
 void CDataScheduling::workThreadFunc()
 {
-	std::list<Command>::iterator it;
-	for (it = workList.begin(); it != workList.end(); ++it)
+	while (m_workThread)
 	{
-		switch (it->command)
+		std::list<Command>::iterator it;
+		for (it = workList.begin(); it != workList.end(); ++it)
 		{
-		case  MNIS_CONNECT:
-			if (it->radioIP != "")
+			switch (it->command)
 			{
-				connect(it->radioIP.c_str());
-			}
-			break;
-		case CONNECT_STATUS:
-			if (myCallBackFunc != NULL)
-			{
-				Respone r = { 0 };
-				r.connectStatus = isUdpConnect;
-				onData(myCallBackFunc, CONNECT_STATUS, r);
+			case  MNIS_CONNECT:
+				if (it->radioIP != "")
+				{
+					connect(it->radioIP.c_str());
+				}
+				break;
+			case CONNECT_STATUS:
+				if (myCallBackFunc != NULL)
+				{
+					Respone r = { 0 };
+					r.connectStatus = isUdpConnect;
+					onData(myCallBackFunc, CONNECT_STATUS, r);
+					break;
+				}
+				break;
+			case RADIO_STATUS:
+				sendRadioStatusToClient();
+				break;
+			case SEND_PRIVATE_MSG:
+				sendMsg(it->callId, it->text, it->radioId, PRIVATE_MSG_FLG);
+				break;
+			case SEND_GROUP_MSG:
+				sendMsg(it->callId, it->text, it->radioId, GROUP_MSG_FLG);
+				break;
+			case  GPS_IMME_COMM:
+				getGps(it->radioId, it->querymode, it->cycle);
+				break;
+			case GPS_TRIGG_COMM:
+				getGps(it->radioId, it->querymode, it->cycle);
+				break;
+			case GPS_IMME_CSBK:
+				getGps(it->radioId, it->querymode, it->cycle);
+				break;
+			case GPS_TRIGG_CSBK:
+				getGps(it->radioId, it->querymode, it->cycle);
+				break;
+			case GPS_IMME_CSBK_EGPS:
+				getGps(it->radioId, it->querymode, it->cycle);
+				break;
+			case GPS_TRIGG_CSBK_EGPS:
+				getGps(it->radioId, it->querymode, it->cycle);
+				break;
+			case STOP_QUERY_GPS:
+				stopGps(it->radioId, it->callId);
+				break;
+			case MNIS_DIS_CONNECT:
+				break;
+			default:
 				break;
 			}
-			break;
-		case RADIO_STATUS:
-			sendRadioStatusToClient();
-			break;
-		case SEND_PRIVATE_MSG:
-			sendMsg(it->callId, it->text, it->radioId, PRIVATE_MSG_FLG);
-			break;
-		case SEND_GROUP_MSG:
-			sendMsg(it->callId, it->text, it->radioId, GROUP_MSG_FLG);
-			break;
-		case  GPS_IMME_COMM:
-			getGps(it->radioId, it->querymode, it->cycle);
-			break;
-		case GPS_TRIGG_COMM:
-			getGps(it->radioId, it->querymode, it->cycle);
-			break;
-		case GPS_IMME_CSBK:
-			getGps(it->radioId, it->querymode, it->cycle);
-			break;
-		case GPS_TRIGG_CSBK:
-			getGps(it->radioId, it->querymode, it->cycle);
-			break;
-		case GPS_IMME_CSBK_EGPS:
-			getGps(it->radioId, it->querymode, it->cycle);
-			break;
-		case GPS_TRIGG_CSBK_EGPS:
-			getGps(it->radioId, it->querymode, it->cycle);
-			break;
-		case STOP_QUERY_GPS:
-			stopGps(it->radioId, it->callId);
-			break;
-		case MNIS_DIS_CONNECT:
-			break;
-		default:
+			it = workList.erase(it);
 			break;
 		}
-		it = workList.erase(it);
-		break;
+		Sleep(10);
 	}
 }
 
 void CDataScheduling::timeOut()
 {
-	std::list<Command>::iterator it;
-	std::lock_guard <std::mutex> locker(m_timeOutListLocker);
-	Respone r = { 0 };
-	for (it = timeOutList.begin(); it != timeOutList.end(); it++)
+	while (m_timeoutThread)
 	{
-		it->timeCount++;
-		if (it->timeCount % (it->timeOut / 100) == 0)
+		std::list<Command>::iterator it;
+		std::lock_guard <std::mutex> locker(m_timeOutListLocker);
+		Respone r = { 0 };
+		for (it = timeOutList.begin(); it != timeOutList.end(); it++)
 		{
-
-			//if (it->pRemote != NULL)
+			it->timeCount++;
+			if (it->timeCount % (it->timeOut / 100) == 0)
 			{
-				int operate = -1;
-				int type = -1;
-				switch (it->command)
+
+				//if (it->pRemote != NULL)
 				{
-				case  MNIS_CONNECT:
-					break;
-				case SEND_PRIVATE_MSG:
-					r.target = it->radioId;
-					r.msgStatus = UNSUCESS;
-					r.msg = "";
-					r.msgType = PRIVATE;
-					onData(myCallBackFunc, it->command, r);
-					break;
-				case SEND_GROUP_MSG:
-					r.target = it->radioId;
-					r.msgStatus = UNSUCESS;
-					r.msg = "";
-					r.msgType = GROUP;
-					onData(myCallBackFunc,  it->command, r);
-					break;
-				case  GPS_IMME_COMM:
-				case GPS_TRIGG_COMM:
-				case GPS_IMME_CSBK:
-				case GPS_TRIGG_CSBK:
-				case GPS_IMME_CSBK_EGPS:
-				case GPS_TRIGG_CSBK_EGPS:
-					r.target = it->radioId;
-					r.gpsStatus = UNSUCESS;
-					r.cycle = it->cycle;
-					r.querymode = it->querymode;
-					r.gpsType = START;
-					onData(myCallBackFunc, it->command, r);
-					break;
-				case STOP_QUERY_GPS:
-					r.target = it->radioId;
-					r.gpsStatus = UNSUCESS;
-					r.cycle = it->cycle;
-					r.querymode = it->querymode;
-					r.gpsType = STOP;
-					onData(myCallBackFunc, it->command, r);
-					//operate = STOP;
-					/*try
+					int operate = -1;
+					int type = -1;
+					switch (it->command)
 					{
+					case  MNIS_CONNECT:
+						break;
+					case SEND_PRIVATE_MSG:
+						r.target = it->radioId;
+						r.msgStatus = UNSUCESS;
+						r.msg = "";
+						r.msgType = PRIVATE;
+						onData(myCallBackFunc, it->command, r);
+						break;
+					case SEND_GROUP_MSG:
+						r.target = it->radioId;
+						r.msgStatus = UNSUCESS;
+						r.msg = "";
+						r.msgType = GROUP;
+						onData(myCallBackFunc, it->command, r);
+						break;
+					case  GPS_IMME_COMM:
+					case GPS_TRIGG_COMM:
+					case GPS_IMME_CSBK:
+					case GPS_TRIGG_CSBK:
+					case GPS_IMME_CSBK_EGPS:
+					case GPS_TRIGG_CSBK_EGPS:
+						r.target = it->radioId;
+						r.gpsStatus = UNSUCESS;
+						r.cycle = it->cycle;
+						r.querymode = it->querymode;
+						r.gpsType = START;
+						onData(myCallBackFunc, it->command, r);
+						break;
+					case STOP_QUERY_GPS:
+						r.target = it->radioId;
+						r.gpsStatus = UNSUCESS;
+						r.cycle = it->cycle;
+						r.querymode = it->querymode;
+						r.gpsType = STOP;
+						onData(myCallBackFunc, it->command, r);
+						//operate = STOP;
+						/*try
+						{
 						ArgumentType args;
 						args["Target"] = FieldValue(it->radioId);
 						args["Type"] = FieldValue(it->querymode);
@@ -383,31 +395,33 @@ void CDataScheduling::timeOut()
 						std::string callJsonStrRes = CRpcJsonParser::buildCall("c", it->callId, args, "radio");
 						if (it->pRemote != NULL)
 						{
-							it->pRemote->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
+						it->pRemote->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
 						}
-					}
-					catch (std::exception e)
-					{
+						}
+						catch (std::exception e)
+						{
 
-					}*/
-					break;
-				default:
-					break;
-				}
-				if (it->command != MNIS_CONNECT)
-				{
-					it = timeOutList.erase(it);
-					break;
+						}*/
+						break;
+					default:
+						break;
+					}
+					if (it->command != MNIS_CONNECT)
+					{
+						it = timeOutList.erase(it);
+						break;
+					}
+
 				}
 
 			}
-
+			else if (it->command != MNIS_CONNECT)
+			{
+				//commandList.push_back(*it);
+				//break;
+			}
 		}
-		else if (it->command != MNIS_CONNECT)
-		{
-			//commandList.push_back(*it);
-			//break;
-		}
+		Sleep(100);
 	}
 }
 void CDataScheduling::sendConnectStatusToClient()
