@@ -15,11 +15,11 @@ CRadioGps::CRadioGps(CDataScheduling *pMnis)
 
 CRadioGps::~CRadioGps()
 {
-	if (!m_ThreadGps)
+	if (m_ThreadGps)
 	{
 		delete m_ThreadGps;
 	}
-	if (!m_ThreadGpsOverturn)
+	if (m_ThreadGpsOverturn)
 	{
 		delete m_ThreadGpsOverturn;
 	}

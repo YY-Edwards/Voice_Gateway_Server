@@ -20,6 +20,18 @@ CDataScheduling::CDataScheduling()
 }
 CDataScheduling::~CDataScheduling()
 {
+	if (pRadioARS)
+	{
+		delete pRadioARS;
+	}
+	if (pRadioGPS)
+	{
+		delete pRadioGPS;
+	}
+	if (pRadioMsg)
+	{
+		delete pRadioMsg;
+	}
 }
 
 bool CDataScheduling::radioConnect(const char* ip)
