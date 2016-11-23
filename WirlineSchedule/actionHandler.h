@@ -13,6 +13,7 @@ inline void push_front_task(REMOTE_TASK* task)
 	WaitForSingleObject(g_taskLockerEvent, INFINITE);
 	g_remoteCommandTaskQueue.push_front(task);
 	SetEvent(g_taskLockerEvent);
+	SetEvent(g_waitHandleRemoteTask);
 }
 
 inline void push_back_task(REMOTE_TASK* task)
@@ -20,6 +21,7 @@ inline void push_back_task(REMOTE_TASK* task)
 	WaitForSingleObject(g_taskLockerEvent, INFINITE);
 	g_remoteCommandTaskQueue.push_back(task);
 	SetEvent(g_taskLockerEvent);
+	SetEvent(g_waitHandleRemoteTask);
 }
 
 inline void erase_front_task()
@@ -283,7 +285,7 @@ inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, 
 			if (pNewTask)
 			{
 
-				push_front_task(pNewTask);
+				push_back_task(pNewTask);
 			}
 			else
 			{
@@ -380,7 +382,7 @@ inline void wlPlayActionHandler(CRemotePeer* pRemote, const std::string& param, 
 			if (pNewTask)
 			{
 
-				push_front_task(pNewTask);
+				push_back_task(pNewTask);
 			}
 			else
 			{
@@ -441,7 +443,7 @@ inline void wlInfoActionHandler(CRemotePeer* pRemote, const std::string& param, 
 			if (pNewTask)
 			{
 
-				push_front_task(pNewTask);
+				push_back_task(pNewTask);
 			}
 			else
 			{
@@ -496,7 +498,7 @@ inline void wlMnisQueryGpsActionHandler(CRemotePeer* pRemote, const std::string&
 			if (pNewTask)
 			{
 
-				push_front_task(pNewTask);
+				push_back_task(pNewTask);
 			}
 			else
 			{
@@ -554,7 +556,7 @@ inline void wlMnisMessageHandler(CRemotePeer* pRemote, const std::string& param,
 			if (pNewTask)
 			{
 
-				push_front_task(pNewTask);
+				push_back_task(pNewTask);
 			}
 			else
 			{
@@ -606,7 +608,7 @@ inline void wlMnisStatusHandler(CRemotePeer* pRemote, const std::string& param, 
 			pNewTask->param.info.mnisStatusParam.getType = d["getType"].GetInt();
 			if (pNewTask)
 			{
-				push_front_task(pNewTask);
+				push_back_task(pNewTask);
 			}
 			else
 			{
