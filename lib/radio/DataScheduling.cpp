@@ -5,7 +5,7 @@ void(*myCallBackFunc)( int,  Respone);
 void onData(void(*func)(int,Respone),int call, Respone data);
 std::mutex m_timeOutListLocker;
 std::list <Command> timeOutList;
-
+std::mutex m_workListLocker;
 CDataScheduling::CDataScheduling()
 {
 	isUdpConnect = false;
@@ -266,8 +266,9 @@ void CDataScheduling::workThreadFunc()
 {
 	while (m_workThread)
 	{
+		std::lock_guard <std::mutex> locker(m_workListLocker);
 		std::list<Command>::iterator it;
-		for (it = workList.begin(); it != workList.end(); ++it)
+		for (it = workList.begin(); it != workList.end();)
 		{
 			switch (it->command)
 			{
@@ -322,6 +323,7 @@ void CDataScheduling::workThreadFunc()
 				break;
 			}
 			it = workList.erase(it);
+			++it;
 			break;
 		}
 		Sleep(10);
