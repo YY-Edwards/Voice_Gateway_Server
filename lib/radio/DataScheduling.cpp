@@ -5,11 +5,7 @@ void(*myCallBackFunc)( int,  Respone);
 void onData(void(*func)(int,Respone),int call, Respone data);
 std::mutex m_timeOutListLocker;
 std::list <Command> timeOutList;
-TcpClient * peer;
 
-std::map<std::string, RadioStatus> g_radioStatus;
-
-std::mutex g_radioStatusLocker;
 CDataScheduling::CDataScheduling()
 {
 	isUdpConnect = false;

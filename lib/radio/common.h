@@ -7,6 +7,7 @@
 #include "../rpc/include/BaseConnector.h"
 #include <WinSock2.h>
 #include <Windows.h>
+#include "allCommon.h"
 
 #define               MNIS_CONNECT           0              
 #define				  CONNECT_STATUS         1                   //status
@@ -30,7 +31,7 @@
 
 #define PRIVATE_MSG_FLG        12
 #define GROUP_MSG_FLG          225
-#define ALL                         0
+#define ALL                    0
 #define GROUP                  2
 #define PRIVATE                3
 

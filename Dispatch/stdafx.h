@@ -20,13 +20,7 @@
 #include <Windows.h>
 #include<list>
 #include <mutex>
-typedef  struct tagRadioStatus{
-	int    id;
-	int	   status = 0;
-	int    gpsQueryMode = 0;
-} RadioStatus;
-extern std::map<std::string, RadioStatus> g_radioStatus;
-extern std::mutex g_radioStatusLocker;
+
 extern long long g_sn;
 #define GOOGLE_GLOG_DLL_DECL           // 使用静态glog库用这个
 #define GLOG_NO_ABBREVIATED_SEVERITIES // 没这个编译会出错,传说因为和Windows.h冲突
