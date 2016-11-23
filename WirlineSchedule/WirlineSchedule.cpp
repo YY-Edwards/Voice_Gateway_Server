@@ -144,7 +144,7 @@ int main()
 	if (m_pRpcServer)
 	{
 		m_pRpcServer->stop();
-		//delete m_pRpcServer;
+		delete m_pRpcServer;
 		m_pRpcServer = NULL;
 	}
 
