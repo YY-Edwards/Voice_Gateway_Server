@@ -290,7 +290,7 @@ void CDataScheduling::workThreadFunc()
 	{
 		std::lock_guard <std::mutex> locker(m_workListLocker);
 		std::list<Command>::iterator it;
-		for (it = workList.begin(); it != workList.end();)
+		for (it = workList.begin(); it != workList.end(); ++it)
 		{
 			switch (it->command)
 			{
@@ -345,10 +345,10 @@ void CDataScheduling::workThreadFunc()
 				break;
 			}
 			it = workList.erase(it);
-			++it;
+		
 			break;
 		}
-		Sleep(10);
+		Sleep(100);
 	}
 }
 
