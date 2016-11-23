@@ -75,7 +75,8 @@ private:
 	ThreadMsg * m_ThreadMsg;
 	CRemotePeer* pRemotePeer;
 	CDataScheduling *m_pMnis;
-	
+	bool m_msgThread;
+	HANDLE m_mWth;
 	
 };
 
