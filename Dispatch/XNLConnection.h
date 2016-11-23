@@ -39,7 +39,6 @@ typedef struct {
     XNL_EVENT event;
     char *p_msg;   
 }XNL_NOTIFY_MSG;
-class CDataScheduling;
 class CXNLConnection
 {
 private:
@@ -139,6 +138,5 @@ private:
     MSG_QUEUE_T*   m_pSendQueHdr;
     MSG_QUEUE_T*   m_pSendQueTail;
     char *m_pLastSendMsg;
-	CDataScheduling* m_pMnis;
 	
 };

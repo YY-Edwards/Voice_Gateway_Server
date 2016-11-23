@@ -507,7 +507,7 @@ void CRadioGps::RecvData()
 							int len = m_ThreadGps->RcvBuffer[1] + 1;
 							if (m_ThreadGps->RcvBuffer[len] == Location_Operate_Sucess)
 							{
-								Respone r;
+								Respone r = { 0 };
 								r.target = m_ThreadGps->radioID;
 								r.gpsStatus = SUCESS;
 								r.querymode = it->querymode;
@@ -517,7 +517,7 @@ void CRadioGps::RecvData()
 							}
 							else
 							{
-								Respone r;
+								Respone  r = { 0 };;
 								r.source = m_ThreadGps->radioID;
 								r.gpsStatus = UNSUCESS;
 								r.querymode = it->querymode;
@@ -702,7 +702,7 @@ void CRadioGps::RecvData()
 						 }*/
 						if (myCallBackFunc != NULL)
 						{
-							Respone r;
+							Respone r = { 0 };
 							r.source = m_ThreadGps->radioID;
 							r.lat = lat;
 							r.lon = lon;
@@ -719,7 +719,7 @@ void CRadioGps::RecvData()
 				{
 					if (myCallBackFunc != NULL)
 					{
-						Respone r;
+						Respone r = { 0 };
 						r.source = m_ThreadGps->radioID;
 						r.lat = lat;
 						r.lon = lon;

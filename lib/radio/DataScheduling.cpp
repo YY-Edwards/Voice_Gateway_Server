@@ -172,7 +172,7 @@ void CDataScheduling::connect( const char* ip)
 		if (it->command == MNIS_CONNECT)
 		if (myCallBackFunc != NULL)
 		{
-			Respone r;
+			Respone r = { 0 };
 			r.connectStatus = result;
 			onData(myCallBackFunc, MNIS_CONNECT,r);
 			it = timeOutList.erase(it);
@@ -276,7 +276,7 @@ void CDataScheduling::workThreadFunc()
 		case CONNECT_STATUS:
 			if (myCallBackFunc != NULL)
 			{
-				Respone r;
+				Respone r = { 0 };
 				r.connectStatus = isUdpConnect;
 				onData(myCallBackFunc, CONNECT_STATUS, r);
 				break;
@@ -326,7 +326,7 @@ void CDataScheduling::timeOut()
 {
 	std::list<Command>::iterator it;
 	std::lock_guard <std::mutex> locker(m_timeOutListLocker);
-	Respone r;
+	Respone r = { 0 };
 	for (it = timeOutList.begin(); it != timeOutList.end(); it++)
 	{
 		it->timeCount++;
@@ -416,7 +416,7 @@ void CDataScheduling::timeOut()
 }
 void CDataScheduling::sendConnectStatusToClient()
 {
-	Respone r;
+	Respone r = { 0 };
 	int result = -1;
 	if (isUdpConnect)
 	{
@@ -441,7 +441,7 @@ void CDataScheduling::sendRadioStatusToClient()
 	{
 		if (RADIO_STATUS == it->command)
 		{
-			Respone r;
+			Respone r = { 0 };
 			r.rs = g_radioStatus;
 			onData(myCallBackFunc, it->command, r);
 			it = timeOutList.erase(it);

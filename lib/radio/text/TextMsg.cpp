@@ -558,7 +558,7 @@ void CTextMsg::RecvMsg()
 
 
 				std::string message = ParseUserMsg(&HandleMsg, &len);
-				Respone r;
+				Respone r = { 0 };
 				r.source = m_ThreadMsg->radioID;
 				r.msgStatus = SUCESS;
 				r.msg = message;

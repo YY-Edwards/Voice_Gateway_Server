@@ -61,11 +61,7 @@ typedef struct tagCommand
 	TcpClient* tp;
 	
 }Command;
-typedef  struct tagRadioStatus{
-	int    id;
-	int	   status = 0;
-	int    gpsQueryMode = 0;
-} RadioStatus;
+
 typedef struct tagRespone
 {
 	int connectStatus;
@@ -90,6 +86,5 @@ extern void(*myCallBackFunc)(  int, Respone);
 void onData(void(*func)(int, Respone),  int call, Respone data);
 extern std::mutex m_timeOutListLocker;
 extern std::list <Command> timeOutList;
-extern std::map<std::string, RadioStatus> g_radioStatus;
-extern std::mutex g_radioStatusLocker;
+
 #endif
