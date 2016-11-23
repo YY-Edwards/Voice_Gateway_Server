@@ -15,8 +15,8 @@ CDataScheduling::CDataScheduling()
 	pRadioMsg = new CTextMsg(this);
 	m_workThread = true;
 	m_timeoutThread = true;
-	CreateThread(NULL, 0, workThread, this, THREAD_PRIORITY_NORMAL, NULL);
-	CreateThread(NULL, 0, timeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	m_hWthd = CreateThread(NULL, 0, workThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	m_hTthd = CreateThread(NULL, 0, timeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
 }
 CDataScheduling::~CDataScheduling()
 {
@@ -182,8 +182,18 @@ void CDataScheduling::connect( const char* ip)
 }
 void CDataScheduling::disConnect()
 {
-	m_workThread = false;
-	m_timeoutThread = false;
+	if (m_hWthd)
+	{
+		m_workThread = false;
+		WaitForSingleObject(m_hWthd,1000);
+		CloseHandle(m_hWthd);
+	}
+	if (m_hTthd)
+	{
+		m_timeoutThread = false;
+		WaitForSingleObject(m_hTthd, 1000);
+		CloseHandle(m_hTthd);
+	}
 	timeOutList.clear();
 	workList.clear();
 	pRadioARS->CloseARSSocket();

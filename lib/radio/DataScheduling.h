@@ -45,5 +45,7 @@ private:
 	void sendToClient(int callFuncId, Respone response);
 	bool m_workThread;
 	bool m_timeoutThread;
+	HANDLE m_hWthd;
+	HANDLE m_hTthd;
 };
 
