@@ -62,17 +62,18 @@ bool CRadioARS::InitARSSocket(DWORD dwAddress/*,CRemotePeer * pRemote*/)
 
 bool CRadioARS::CloseARSSocket()
 {
-	if (m_rWth)
-	{
-		m_arsThread = false;
-		WaitForSingleObject(m_rWth, 1000);
-		CloseHandle(m_rWth);
-	}
+	
 	if (m_RcvSocketOpened)        // 只有在前面已经打开了，才有必要关闭，否则没有必要了
 	{
 		closesocket(m_ThreadARS->mySocket);							        // Close socket
 		WSACleanup();
 		m_RcvSocketOpened = FALSE;
+		if (m_rWth)
+		{
+			m_arsThread = false;
+			WaitForSingleObject(m_rWth, 1000);
+			CloseHandle(m_rWth);
+		}
 	}
 	return TRUE;
 }
