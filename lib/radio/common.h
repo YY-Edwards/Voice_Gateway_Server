@@ -58,9 +58,7 @@ typedef struct tagCommand
 	int querymode;
 	std::string radioIP;
 	std::string gpsIP;
-	wchar_t * text;
-	TcpClient* tp;
-	
+	std::string text;
 }Command;
 
 typedef struct tagRespone

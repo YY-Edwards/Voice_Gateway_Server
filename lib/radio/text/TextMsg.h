@@ -65,8 +65,7 @@ public:
 	std::string ParseUserMsg(TextMsg* HandleMsg, int* len);
 	UINT8 GetSeqNumber(TextMsg* HandleMsg);
 	bool ReplyMsgACK(ThreadMsg* Msg, UINT8 SeqNumber);
-	bool SendMsg( int callId, LPTSTR message, DWORD dwRadioID, int CaiNet);
-	void setRemotePeer(CRemotePeer * pRemote);
+	bool SendMsg( int callId, std::string text, DWORD dwRadioID, int CaiNet);
 	void RecvMsg();
 	std::string WChar2Ansi(LPCWSTR pwszSrc);
 	std::string TCHAR2STRING(TCHAR * STR);

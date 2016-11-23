@@ -11,7 +11,7 @@ public:
 	bool radioConnect( const char* ip);
 	bool radioGetGps( DWORD dwRadioID, int queryMode, double cycle);
 	bool radioStopGps( DWORD dwRadioID, int	queryMode );
-	bool radioSendMsg( LPTSTR message, DWORD dwRadioID,  int type);
+	bool radioSendMsg( std::string message, DWORD dwRadioID,  int type);
 	void getRadioStatus( int type);
 	void radioDisConnect();
 	//bool InitGPSOverturnSocket(DWORD dwAddress);
@@ -31,12 +31,12 @@ private:
 	std::list <Command> workList;
 	void timeOut();
 	void workThreadFunc();
-	void addUdpCommand( int command, std::string radioIP, std::string gpsIP, int id, wchar_t* text, double cycle, int querymode);
+	void addUdpCommand( int command, std::string radioIP, std::string gpsIP, int id, std::string text, double cycle, int querymode);
 	void connect(const char* ip);
 	void disConnect();
 	void getGps(DWORD dwRadioID, int queryMode, double cycle);
 	void stopGps(DWORD dwRadioID, int	queryMode);
-	void sendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet);
+	void sendMsg(int callId, std::string message, DWORD dwRadioID, int CaiNet);
 	void initGPSOverturnSocket(DWORD dwAddress);
 	void sendAck(int call, int callId, int id);
 	void sendRadioStatusToClient();

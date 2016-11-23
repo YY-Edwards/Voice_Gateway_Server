@@ -314,8 +314,12 @@ bool CTextMsg::ReplyMsgACK(ThreadMsg* Msg, UINT8 SeqNumber)
 }
 
 
-bool CTextMsg::SendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet)
+bool CTextMsg::SendMsg(int callId, std::string text, DWORD dwRadioID, int CaiNet)
 {
+	int maxlen = 256;
+	wchar_t* message = new wchar_t[maxlen];
+	MultiByteToWideChar(CP_ACP, 0, text.c_str(), -1, message, maxlen);
+
 	//ππ‘ÏACK
 	UINT16			MsgSize;
 	FirstHeader		FstHeader;
@@ -649,7 +653,4 @@ std::string CTextMsg::WChar2Ansi(LPCWSTR pwszSrc)
 	std::string strTemp(pszDst);
 	return strTemp;
 }
-void CTextMsg::setRemotePeer(CRemotePeer * pRemote)
-{
-	pRemotePeer = pRemote;
-}
+

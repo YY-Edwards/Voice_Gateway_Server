@@ -48,9 +48,8 @@ void  msgAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 				msg = d["Contents"].GetString();
 			}
 			//int msgSize = (int)(msg.length() + 1);
-			wchar_t* text = new wchar_t[MSG_SIZE];
-			MultiByteToWideChar(CP_ACP, 0, msg.c_str(), -1, text, MSG_SIZE);
-			if (!dis.sendMsg( text, id,  opterateType))
+			
+			if (!dis.sendMsg( msg, id,  opterateType))
 			{
 				ArgumentType args;
 				args["Target"] = FieldValue(id);

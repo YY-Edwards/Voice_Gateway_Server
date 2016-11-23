@@ -527,7 +527,7 @@ bool DispatchOperate::stopGps( int id, int querymode)
 {
 	return pDs->radioStopGps(id, querymode);
 }
-bool DispatchOperate::sendMsg(wchar_t * text, int id,  int opterateType)
+bool DispatchOperate::sendMsg(std::string text, int id,  int opterateType)
 {
 	return pDs->radioSendMsg(text, id, opterateType);
 }

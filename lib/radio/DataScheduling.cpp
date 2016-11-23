@@ -38,7 +38,7 @@ bool CDataScheduling::radioConnect(const char* ip)
 {
 	if (myCallBackFunc != NULL )
 	{
-		addUdpCommand(MNIS_CONNECT, ip, "", 0, _T(""), 0, 0);
+		addUdpCommand(MNIS_CONNECT, ip, "", 0, "", 0, 0);
 	
 		return true;
 	}
@@ -61,23 +61,23 @@ bool CDataScheduling::radioGetGps(DWORD dwRadioID, int queryMode, double cycle)
 		switch (queryMode)
 		{
 		case GPS_IMME_COMM:
-			addUdpCommand( GPS_IMME_COMM, "", "", int(dwRadioID), _T(""), cycle, queryMode );
+			addUdpCommand( GPS_IMME_COMM, "", "", int(dwRadioID), "", cycle, queryMode );
 			/*sendAck("gps", callId, int(dwRadioID));*/
 			break;
 		case GPS_TRIGG_COMM:
-			addUdpCommand( GPS_TRIGG_COMM, "", "", int(dwRadioID), _T(""), cycle, queryMode);
+			addUdpCommand( GPS_TRIGG_COMM, "", "", int(dwRadioID), "", cycle, queryMode);
 			break;
 		case GPS_IMME_CSBK:
-			addUdpCommand( GPS_IMME_CSBK, "", "", int(dwRadioID), _T(""), cycle, queryMode);
+			addUdpCommand( GPS_IMME_CSBK, "", "", int(dwRadioID), "", cycle, queryMode);
 			break;
 		case GPS_TRIGG_CSBK:
-			addUdpCommand( GPS_TRIGG_CSBK, "", "", int(dwRadioID), _T(""), cycle, queryMode);
+			addUdpCommand( GPS_TRIGG_CSBK, "", "", int(dwRadioID), "", cycle, queryMode);
 			break;
 		case GPS_IMME_CSBK_EGPS:
-			addUdpCommand( GPS_IMME_CSBK_EGPS, "", "", int(dwRadioID), _T(""), cycle, queryMode);
+			addUdpCommand( GPS_IMME_CSBK_EGPS, "", "", int(dwRadioID), "", cycle, queryMode);
 			break;
 		case GPS_TRIGG_CSBK_EGPS:
-			addUdpCommand( GPS_TRIGG_CSBK_EGPS, "", "", int(dwRadioID), _T(""), cycle, queryMode);
+			addUdpCommand( GPS_TRIGG_CSBK_EGPS, "", "", int(dwRadioID), "", cycle, queryMode);
 			break;
 		default:
 			break;
@@ -91,7 +91,7 @@ bool CDataScheduling::radioStopGps(DWORD dwRadioID, int	queryMode)
 
 	if (myCallBackFunc != NULL)
 	{
-		addUdpCommand( STOP_QUERY_GPS, "", "", int(dwRadioID), _T(""), 0, queryMode);
+		addUdpCommand( STOP_QUERY_GPS, "", "", int(dwRadioID), "", 0, queryMode);
 		//sendAck("gps", callId, int(dwRadioID));
 		return true;
 	}
@@ -107,7 +107,7 @@ void CDataScheduling::sendAck(int call ,int callId, int id)
 	}
 	
 }
-bool CDataScheduling::radioSendMsg(LPTSTR message, DWORD dwRadioID,  int type)
+bool CDataScheduling::radioSendMsg(std::string message, DWORD dwRadioID,  int type)
 {
 
 	if (myCallBackFunc != NULL)
@@ -130,11 +130,11 @@ void CDataScheduling::getRadioStatus( int type)
 	{
 		if (type == CONNECT_STATUS)
 		{
-			addUdpCommand( CONNECT_STATUS, "", "", 0, _T(""), 0, 0);
+			addUdpCommand( CONNECT_STATUS, "", "", 0, "", 0, 0);
 		}
 		else if (type == RADIO_STATUS)
 		{
-			addUdpCommand( RADIO_STATUS, "", "", 0, _T(""), 0, 0);
+			addUdpCommand( RADIO_STATUS, "", "", 0, "", 0, 0);
 		}
 	}
 }
@@ -222,7 +222,7 @@ void CDataScheduling::stopGps(DWORD dwRadioID, int	queryMode)
 	pRadioGPS->StopQueryTriggeredGPS(dwRadioID, queryMode);
 	
 }
-void CDataScheduling::sendMsg(int callId, LPTSTR message, DWORD dwRadioID, int CaiNet)
+void CDataScheduling::sendMsg(int callId, std::string message, DWORD dwRadioID, int CaiNet)
 {
 	pRadioMsg->SendMsg(callId, message, dwRadioID, CaiNet);
 }
@@ -248,7 +248,7 @@ void onData(void(*func)( int, Respone),  int call, Respone data)
 	}
 
 }
-void CDataScheduling::addUdpCommand(int command, std::string radioIP, std::string gpsIP, int id, wchar_t* text, double cycle, int querymode)
+void CDataScheduling::addUdpCommand(int command, std::string radioIP, std::string gpsIP, int id, std::string text, double cycle, int querymode)
 {
 	Command      m_command;
 	m_command.command = command;
@@ -313,10 +313,10 @@ void CDataScheduling::workThreadFunc()
 				sendRadioStatusToClient();
 				break;
 			case SEND_PRIVATE_MSG:
-				sendMsg(it->callId, it->text, it->radioId, PRIVATE_MSG_FLG);
+				//sendMsg(it->callId, it->text, it->radioId, PRIVATE_MSG_FLG);
 				break;
 			case SEND_GROUP_MSG:
-				sendMsg(it->callId, it->text, it->radioId, GROUP_MSG_FLG);
+				//sendMsg(it->callId, it->text, it->radioId, GROUP_MSG_FLG);
 				break;
 			case  GPS_IMME_COMM:
 				getGps(it->radioId, it->querymode, it->cycle);

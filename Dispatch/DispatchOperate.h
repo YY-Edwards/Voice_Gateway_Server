@@ -24,7 +24,7 @@ public:
 	void control( int type, int id);
 	bool getGps(int id, int querymode, double cycle);
 	bool stopGps( int id, int querymode);
-	bool sendMsg( wchar_t * text, int id,  int opterateType);
+	bool sendMsg( std::string text, int id,  int opterateType);
 	void getStatus( int type);
 	void setCallBack();
 private:
