@@ -81,6 +81,7 @@ private:
 	ThreadGPSOverturn *m_ThreadGpsOverturn;
 	CRemotePeer* pRemotePeer;
 	CDataScheduling *m_pMnis;
-	
+	bool m_gpsThread;
+	HANDLE m_gWth;
 };
 

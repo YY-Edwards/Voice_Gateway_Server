@@ -31,6 +31,7 @@ private:
 	bool m_RcvSocketOpened;
 	ThreadARS *m_ThreadARS;
 	CDataScheduling* m_pMnis;
-	//CRemotePeer* pRemotePeer;
+	bool m_arsThread;
+	HANDLE m_rWth;
 };
 

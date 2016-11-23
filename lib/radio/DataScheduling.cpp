@@ -345,7 +345,6 @@ void CDataScheduling::workThreadFunc()
 				break;
 			}
 			it = workList.erase(it);
-		
 			break;
 		}
 		Sleep(100);
