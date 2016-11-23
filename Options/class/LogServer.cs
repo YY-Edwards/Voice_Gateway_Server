@@ -276,11 +276,11 @@ namespace TrboX
 
         private static void OnRx()
         {
-            lock (TServer.RxRequest)
+            lock (RxRequest)
             {
-                if (TServer.RxRequest.Count > 0)
+                if (RxRequest.Count > 0)
                 {
-                    TServerRequest req = TServer.RxRequest.Dequeue();
+                    LogServerRequest req = RxRequest.Dequeue();
 
                     RequestType calltemp = RequestType.None;
                     try

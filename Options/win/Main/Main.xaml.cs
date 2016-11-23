@@ -48,14 +48,14 @@ namespace TrboX
 
                 TServer.InitializeServer();
                 LogServer.InitializeServer();
+
                 SettingComponents = new SettingComponents(this);
                 ResourceComponents = new ResourceComponents(this);
 
-                SettingComponents.Set(SettingMgr.Get());
-
-
-                
                
+
+                SettingComponents.Set(SettingMgr.Get());
+               // SettingComponents.FileGroupList(TargetMgr.TargetList.Group);
             };
 
         }

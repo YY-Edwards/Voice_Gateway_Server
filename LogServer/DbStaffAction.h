@@ -110,8 +110,8 @@ void staffAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 			{
 				std::string name = d["staffs"][i]["name"].GetString();
 				std::string phone = d["staffs"][i]["phone"].GetString();
-				std::string type = d["staffs"][i]["type"].GetString();
-				bool ret = CDb::instance()->insertStaff(name.c_str(), phone.c_str(), 0 == type.compare("Vehicle") ? false : true);
+				int type = d["staffs"][i]["type"].GetInt();
+				bool ret = CDb::instance()->insertStaff(name.c_str(), phone.c_str(), type == 1? false : true);
 				if (!ret)
 				{
 					std::string errMsg = "add staff failed.";

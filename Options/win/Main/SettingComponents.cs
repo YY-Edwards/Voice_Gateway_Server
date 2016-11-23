@@ -276,7 +276,7 @@ namespace TrboX
 
                 try
                 {
-                    WireLan.DefaultGroupId = (int)((Department)((ComboBoxItem)m_Main.cmb_DefaultGroup.SelectedItem).Tag).GroupID;
+                    WireLan.DefaultGroupId = int.Parse(m_Main.txt_DefaultGroup.Text);
                 }
                 catch { }
 
@@ -371,22 +371,22 @@ namespace TrboX
             return WireLan;
         }
 
-        public void FileGroupList(Dictionary<int, Department> lst)
-        {
-            m_Main.cmb_DefaultGroup.Items.Clear();
-            m_DefaultGroupCmb.Clear();
+        //public void FileGroupList(Dictionary<int, CMember> lst)
+        //{
+        //    m_Main.cmb_DefaultGroup.Items.Clear();
+        //    m_DefaultGroupCmb.Clear();
 
-            foreach(var group in lst)
-            {
-                if(group.Value.GroupID < 0)continue;
-                int index = m_Main.cmb_DefaultGroup.Items.Add(new ComboBoxItem()
-                {
-                    Content = group.Value.Name + "(ID：" + group.Value.GroupID.ToString() + ")",
-                    Tag = group.Value
-                });
-                m_DefaultGroupCmb.Add(group.Value.GroupID,index);
-            }
-        }
+        //    foreach(var group in lst)
+        //    {
+        //        if(group.Value.Group.GroupID < 0)continue;
+        //        int index = m_Main.cmb_DefaultGroup.Items.Add(new ComboBoxItem()
+        //        {
+        //            Content = group.Value.Name + "(ID：" + group.Value.Group.GroupID.ToString() + ")",
+        //            Tag = group.Value.Group
+        //        });
+        //        m_DefaultGroupCmb.Add(group.Value.Group.GroupID, index);
+        //    }
+        //}
 
         private void SetWireLanSetting(WireLanSetting WireLan)
         {
@@ -397,7 +397,8 @@ namespace TrboX
                 m_Main.rad_CPCType.IsChecked = (WireLanType.CPC == WireLan.Type) ? true : false;
                 m_Main.rad_LCPType.IsChecked = (WireLanType.LCP == WireLan.Type)? true : false;
 
-                m_Main.cmb_DefaultGroup.SelectedIndex = m_DefaultGroupCmb.ContainsKey(WireLan.DefaultGroupId) ? m_DefaultGroupCmb[WireLan.DefaultGroupId] : -1;
+               // m_Main.cmb_DefaultGroup.SelectedIndex = m_DefaultGroupCmb.ContainsKey(WireLan.DefaultGroupId) ? m_DefaultGroupCmb[WireLan.DefaultGroupId] : -1;
+                m_Main.txt_DefaultGroup.Text = WireLan.DefaultGroupId.ToString();
                 m_Main.cmb_DefaultChannel.SelectedIndex = WireLan.DefaultChannel - 1;
 
                 m_Main.txt_MinHungTime.Text = WireLan.MinHungTime.ToString();

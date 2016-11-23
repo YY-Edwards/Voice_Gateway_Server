@@ -84,7 +84,7 @@ namespace TrboX
         }
         public static void InitializeServer()
         {
-            TCP = new TcpInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9000), OnReceive);
+            TCP = new TcpInterface(new IPEndPoint(IPAddress.Parse("192.168.2.106"), 9000), OnReceive);
             TCP.OnConnect = OnConnect;
             TCP.Open();
            
@@ -295,11 +295,11 @@ namespace TrboX
 
         private static void OnRx()
         {
-            lock (TServer.RxRequest)
+            lock (RxRequest)
             {
-                if (TServer.RxRequest.Count > 0)
+                if (RxRequest.Count > 0)
                 {
-                    TServerRequest req = TServer.RxRequest.Dequeue();
+                    TServerRequest req = RxRequest.Dequeue();
 
                     RequestType calltemp = RequestType.None;
                     try
@@ -315,16 +315,18 @@ namespace TrboX
 
                     if (RxRequestList.ContainsKey(calltemp))
                     {
-                        if (RxRequestList[calltemp] != null) RxRequestList[calltemp](JsonConvert.SerializeObject(req.param));
+                        string param = JsonConvert.SerializeObject(req.param);
+                        DataBase.InsertLog(param);
+                        if (RxRequestList[calltemp] != null) RxRequestList[calltemp](param);
                     }
                     else
                     {
-                        //Console.Write("Rx " + req.call);
+                        DataBase.InsertLog("No Prase");
                     }
                 }
                 else
                 {
-                    Thread.Sleep(200);
+                    Thread.Sleep(20);
                 }
             }
         }
@@ -367,12 +369,20 @@ namespace TrboX
 
         
         wlInfo,
+        wlsendArs,
 
         wlCall,
         wlCallStatus,
 
         wlPlay,
         wlPlayStatus,
+
+        wlmessage,
+        wlmessageStatus,
+
+        wlqueryGps,
+        wlqueryGpsStatus,
+        wlsendGps,
     };
 
 }

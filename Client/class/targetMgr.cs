@@ -554,16 +554,16 @@ namespace TrboX
         {
             ResList res = new ResourceMgr().Get();
 
-            foreach (Staff it in res.Staff) m_StaffList.Add(it.ID, it);
+            if (res.Staff !=null) foreach (Staff it in res.Staff) m_StaffList.Add(it.ID, it);
             m_StaffList.Add(-1, null);
 
-            foreach (Department it in res.Department) m_DepartmentList.Add((int)it.ID, it);
+            if (res.Department != null) foreach (Department it in res.Department) m_DepartmentList.Add((int)it.ID, it);
             m_DepartmentList.Add(-1, new Department() { ID = -1, GroupID = -1, Name = "未分组" });
 
-            foreach (Radio it in res.Radio) m_RadioList.Add(it.ID, it);
+            if (res.Radio != null) foreach (Radio it in res.Radio) m_RadioList.Add(it.ID, it);
             m_RadioList.Add(-1, null);
 
-            foreach (Belong it in res.Belong) m_BelongList.Add(it);
+            if (res.Belong != null) foreach (Belong it in res.Belong) m_BelongList.Add(it);
 
             m_IsChange = true;
         }

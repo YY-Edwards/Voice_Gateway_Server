@@ -97,7 +97,7 @@ namespace TrboX
             {
                 DataBase.InsertLog("Add Event Error:");
             }
-
+            //DataBase.InsertLog("Add Event:");
         }
 
     }

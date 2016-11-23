@@ -356,9 +356,11 @@ namespace TrboX
                 staffs = StaffMgr.s_Add[staff];
                 staffs.ID = (int)staff;
             }
-
-            List<Staff> tmpstaff = StaffMgr.SatffList.Where(p => p.ID == staff).ToList();
-            if (tmpstaff.Count > 0) staffs = tmpstaff[0];
+            if (StaffMgr.SatffList != null)
+            {
+                List<Staff> tmpstaff = StaffMgr.SatffList.Where(p => p.ID == staff).ToList();
+                if (tmpstaff.Count > 0) staffs = tmpstaff[0];
+            }
 
             if (staffs == null) return;
 
@@ -369,8 +371,11 @@ namespace TrboX
                 depts.ID = (int)dept;
             }
 
-            List<Department> tmpdept = DeptList.Where(p => p.ID == dept).ToList();
-            if (tmpdept.Count > 0) depts = tmpdept[0];
+            if (DeptList != null)
+            {
+                List<Department> tmpdept = DeptList.Where(p => p.ID == dept).ToList();
+                if (tmpdept.Count > 0) depts = tmpdept[0];
+            }
 
             if (depts == null) return;
 
@@ -400,8 +405,11 @@ namespace TrboX
                 staffs.ID = (int)staff;
             }
 
-            List<Staff> tmp = StaffMgr.SatffList.Where(p => p.ID == staff).ToList();
-            if (tmp.Count > 0) staffs = tmp[0];
+            if (StaffMgr.SatffList != null)
+            {
+                List<Staff> tmp = StaffMgr.SatffList.Where(p => p.ID == staff).ToList();
+                if (tmp.Count > 0) staffs = tmp[0];
+            }
 
             if (staffs == null) return;
 
@@ -412,8 +420,11 @@ namespace TrboX
                 depts.ID = (int)dept;
             }
 
-            List<Department> tmpdept = DeptList.Where(p => p.ID == dept).ToList();
-            if (tmpdept.Count > 0) depts = tmpdept[0];
+            if (DeptList != null)
+            {
+                List<Department> tmpdept = DeptList.Where(p => p.ID == dept).ToList();
+                if (tmpdept.Count > 0) depts = tmpdept[0];
+            }
 
             if (depts == null) return;
 
@@ -546,8 +557,11 @@ namespace TrboX
                 radios.ID = (int)radio;
             }
 
-            List<Radio> tmp =RadioMgr.RadioList.Where(p => p.ID == radio).ToList();
-            if (tmp.Count > 0) radios = tmp[0];
+            if (RadioMgr.RadioList != null)
+            {
+                List<Radio> tmp = RadioMgr.RadioList.Where(p => p.ID == radio).ToList();
+                if (tmp.Count > 0) radios = tmp[0];
+            }
 
             if (radios == null) return;
 
@@ -558,8 +572,11 @@ namespace TrboX
                 depts.ID = (int)dept;
             }
 
-            List<Department> tmpdept = DeptList.Where(p => p.ID == dept).ToList();
-            if (tmpdept.Count > 0) depts = tmpdept[0];
+            if (DeptList != null)
+            {
+                List<Department> tmpdept = DeptList.Where(p => p.ID == dept).ToList();
+                if (tmpdept.Count > 0) depts = tmpdept[0];
+            }
 
             if (depts == null) return;
 
@@ -587,8 +604,11 @@ namespace TrboX
                 radios.ID = (int)radio;
             }
 
-            List<Radio> tmp = RadioMgr.RadioList.Where(p => p.ID == radio).ToList();
-            if (tmp.Count > 0) radios = tmp[0];
+            if (RadioMgr.RadioList != null)
+            {
+                List<Radio> tmp = RadioMgr.RadioList.Where(p => p.ID == radio).ToList();
+                if (tmp.Count > 0) radios = tmp[0];
+            }
 
             if (radios == null) return;
 
@@ -599,8 +619,11 @@ namespace TrboX
                 depts.ID = (int)dept;
             }
 
-            List<Department> tmpdept = DeptList.Where(p => p.ID == dept).ToList();
-            if (tmpdept.Count > 0) depts = tmpdept[0];
+            if (DeptList != null)
+            {
+                List<Department> tmpdept = DeptList.Where(p => p.ID == dept).ToList();
+                if (tmpdept.Count > 0) depts = tmpdept[0];
+            }
 
             if (depts == null) return;
 

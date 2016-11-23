@@ -154,7 +154,11 @@ namespace TrboX
             TServer.RegRxHanddler(RequestType.wlCall,  OnWirelanCall);
             TServer.RegRxHanddler(RequestType.wlCallStatus,  OnWirelanCallStatus);
 
-            TServer.RegRxHanddler(RequestType.wlPlayStatus, OnWirelanPlayStatus);
+            //TServer.RegRxHanddler(RequestType.wlsendArs, OnRadioArs);
+            //TServer.RegRxHanddler(RequestType.wlsendGps, OnRadioGps);
+            //TServer.RegRxHanddler(RequestType.wlqueryGpsStatus, OnRadioGpsStatus);
+
+            //TServer.RegRxHanddler(RequestType.wlPlayStatus, OnWirelanPlayStatus);
         }
 
         public override void OnCustomMsg(CustomMessage dest)
@@ -699,15 +703,22 @@ namespace TrboX
 
             foreach(WirelanCallParam p in m_WirelanCallList)
             {
-                if (p.type == call.type && p.source == call.source)
+                if (p.type == call.type)
                 {
                     if (call.operate == ExecType.Stop)
                     {
-                        if (p.isCurrent) ResrcMgr.SetRx(p.type, p.source, false);
+                        if (p.type == TargetType.Group && p.target == call.target)
+                        {
+                            if (p.isCurrent) ResrcMgr.SetRx(p.type, p.target, false);
+                        }
+                        else if (p.source == call.source)
+                        { 
+                            if (p.isCurrent) ResrcMgr.SetRx(p.type, p.source, false);
+                        }
 
                         m_WirelanCallList.Remove(p);
-                        break;
-                    }                   
+                        break;                       
+                    }
                 }
             }
 

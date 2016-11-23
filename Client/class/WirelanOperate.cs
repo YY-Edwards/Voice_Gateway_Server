@@ -122,24 +122,25 @@ namespace TrboX
                         Param = BuildCallParam(operate.Operate as CDispatch, targettype, operate.Target);
                     }
                 }
-                //else if (operate.Type == OPType.ShortMessage)
-                //{
-                //    TargetType targettype = GetTargetType(operate.Target);
-                //    if (TargetType.None != targettype)
-                //    {
-                //        Call = RequestType.message;
-                //        Param = BuildSmsParam(operate.Operate as CShortMessage, targettype, operate.Target);
-                //    }
-                //}
-                //else if (operate.Type == OPType.Position)
-                //{
-                //    TargetType targettype = GetTargetType(operate.Target);
-                //    if (TargetType.None != targettype && TargetType.All != targettype)
-                //    {
-                //        Call = RequestType.queryGps;
-                //        Param = BuildGpsParam(operate.Operate as CPosition, targettype, operate.Target);
-                //    }
-                //}
+                else if (operate.Type == OPType.ShortMessage)
+                {
+                    TargetType targettype = GetTargetType(operate.Target);
+                    if (TargetType.None != targettype)
+                    {
+                        Call = RequestType.message;
+                        Param = BuildSmsParam(operate.Operate as CShortMessage, targettype, operate.Target);
+                    }
+                }
+                else if(operate.Type == OPType.Position)
+                {
+                    TargetType targettype = GetTargetType(operate.Target);
+                    if (TargetType.None != targettype)
+                    {
+                        Call = RequestType.queryGps;
+                        Param = BuildGpsParam(operate.Operate as CPosition, targettype, operate.Target);
+                    }
+                   
+                }
                 //else if (operate.Type == OPType.Control)
                 //{
                 //    TargetType targettype = GetTargetType(operate.Target);
@@ -150,9 +151,9 @@ namespace TrboX
                 //    }
                 //}
             }
-            catch
+            catch(Exception ex)
             {
-
+                DataBase.InsertLog(ex.Message);
             }
 
             CallId = PN;
@@ -204,126 +205,150 @@ namespace TrboX
             return param;
         }
 
-        //private List<object> BuildSmsParam(CShortMessage op, TargetType type, CMultMember target)
-        //{
-        //    List<object> param = new List<object>();
+        private List<object> BuildSmsParam(CShortMessage op, TargetType type, CMultMember target)
+        {
+            List<object> param = new List<object>();
+            List<long> groupid = new List<long>();
+            if (type == TargetType.All)
+            {
+                var group = TargetMgr.TargetList.Group.Where(p => p.Value.Group != null && p.Value.Group.ID > 0 && p.Value.Group.GroupID > 0);
 
-        //    switch (type)
-        //    {
+                foreach (var item in group)
+                {
+                    param.Add(new RadioSmsParam()
+                    {
+                        Type = TargetType.Group,
+                        Target = item.Value.Group.GroupID,
+                        Contents = op.Message
+                    });
+                }
 
-        //        case TargetType.Private:
-        //            param.Add(new RadioSmsParam()
-        //            {
-        //                Type = TargetType.Private,
-        //                Target = target.Target[0].Radio.RadioID,
-        //                Contents = op.Message
-        //            });
-        //            break;
-        //        case TargetType.Group:
-        //            param.Add(new RadioSmsParam()
-        //            {
-        //                Type = TargetType.Group,
-        //                Target = target.Target[0].Group.GroupID,
-        //                Contents = op.Message
-        //            });
-        //            break;
-        //        case TargetType.All:
+                var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Group.ID <= 0 && p.Value.Radio != null && p.Value.Radio.RadioID > 0);
 
-        //            var group = TargetMgr.TargetList.Group.Where(p => p.Value.Group != null && p.Value.Group.ID > 0 && p.Value.Group.GroupID > 0);
+                foreach (var item in radio)
+                {
+                    param.Add(new RadioSmsParam()
+                    {
+                        Type = TargetType.Private,
+                        Target = item.Value.Radio.RadioID,
+                        Contents = op.Message
+                    });
+                }
+            }
+            else if (type != TargetType.None)
+            {
+                foreach (CMember trgt in target.Target)
+                {
+                    if (trgt.Type == MemberType.Group)
+                    {
+                        if (trgt.Group == null || trgt.Group.ID <= 0) continue;
+                        groupid.Add(trgt.Group.ID);
 
-        //            foreach (var item in group)
-        //            {
-        //                param.Add(new RadioSmsParam()
-        //                {
-        //                    Type = TargetType.Group,
-        //                    Target = item.Value.Group.GroupID,
-        //                    Contents = op.Message
-        //                });
-        //            }
+                        param.Add(new RadioSmsParam()
+                        {
+                            Type = TargetType.Group,
+                            Target = trgt.Group.GroupID,
+                            Contents = op.Message
+                        });
+                    }
+                }
 
-        //            var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Group.ID <= 0 && p.Value.Radio != null && p.Value.Radio.RadioID > 0);
+                foreach (CMember trgt in target.Target)
+                {
+                    if (trgt.Type != MemberType.Group)
+                    {
+                        if (trgt.Radio == null || trgt.Radio.ID <= 0) continue;
+                        if (trgt.Group != null || trgt.Group.ID > 0)
+                        {
+                            if (groupid.Contains(trgt.Group.ID)) continue;
+                        }
 
-        //            foreach (var item in radio)
-        //            {
-        //                param.Add(new RadioSmsParam()
-        //                {
-        //                    Type = TargetType.Private,
-        //                    Target = item.Value.Radio.RadioID,
-        //                    Contents = op.Message
-        //                });
-        //            }
-        //            break;
-        //        default:
-        //            break;
-        //    }
+                        param.Add(new RadioSmsParam()
+                        {
+                            Type = TargetType.Private,
+                            Target = trgt.Radio.RadioID,
+                            Contents = op.Message
+                        });
+                    }
+                }
+            }
+            return param;
+        }
 
-        //    return param;
-        //}
+        private List<object> BuildGpsParam(CPosition op, TargetType type, CMultMember target)
+        {
+            List<object> param = new List<object>();
+            List<long> groupid = new List<long>();
+            try
+            {
+                if (type == TargetType.All)
+                {
+                    var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Radio != null && p.Value.Radio.RadioID > 0);
+                    foreach (var item in radio)
+                    {
+                        param.Add(new RadioGpsParam()
+                        {
+                            Operate = ExecType.Start,
+                            Type = op.IsCycle ? (op.IsCSBK ? (op.IsEnh ? QueryGPSType.EnhCycyle : QueryGPSType.CSBKCycle) : QueryGPSType.GenericCycle) : (op.IsCSBK ? (op.IsEnh ? QueryGPSType.Enh : QueryGPSType.CSBK) : QueryGPSType.Generic),
+                            Target = item.Value.Radio.RadioID,
+                            Cycle = op.Cycle
+                        });
+                    }
+                }
+                else if (type != TargetType.None)
+                {
+                    foreach (CMember trgt in target.Target)
+                    {
+                        if (trgt.Type == MemberType.Group)
+                        {
+                            if (trgt.Group == null || trgt.Group.ID <= 0) continue;
+                            groupid.Add(trgt.Group.ID);
 
-        //private List<object> BuildGpsParam(CPosition op, TargetType type, CMultMember target)
-        //{
-        //    List<object> param = new List<object>();
+                            var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Group.ID == trgt.Group.ID && p.Value.Radio != null && p.Value.Radio.RadioID > 0);
+                            foreach (var item in radio)
+                            {
+                                param.Add(new RadioGpsParam()
+                                {
+                                    Operate = op.Type,
+                                    Type = op.IsCycle ? (op.IsCSBK ? (op.IsEnh ? QueryGPSType.EnhCycyle : QueryGPSType.CSBKCycle) : QueryGPSType.GenericCycle) : (op.IsCSBK ? (op.IsEnh ? QueryGPSType.Enh : QueryGPSType.CSBK) : QueryGPSType.Generic),
+                                    Target = item.Value.Radio.RadioID,
+                                    Cycle = op.Cycle
+                                });
 
-        //    try
-        //    {
-        //        switch (type)
-        //        {
-        //            case TargetType.Private:
-        //                param.Add(new RadioGpsParam()
-        //                {
-        //                    Operate = op.Type,
-        //                    Type = op.IsCycle ? (op.IsCSBK ? (op.IsEnh ? QueryGPSType.EnhCycyle : QueryGPSType.CSBKCycle) : QueryGPSType.GenericCycle) : (op.IsCSBK ? (op.IsEnh ? QueryGPSType.Enh : QueryGPSType.CSBK) : QueryGPSType.Generic),
-        //                    Target = target.Target[0].Radio.RadioID,
-        //                    Cycle = op.Cycle
-        //                });
+                            }
+                        }
 
-        //                if (op.IsCycle && op.Type == ExecType.Start)
-        //                    TargetMgr.TargetList.Radio[target.Target[0].Radio.ID].Radio.IsGPS = true;
-        //                if (op.Type == ExecType.Start) TargetMgr.TargetList.Radio[target.Target[0].Radio.ID].Radio.IsGPS = false;
-        //                break;
-        //            case TargetType.Group:
-        //                var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Group.ID == target.Target[0].Group.ID && p.Value.Radio != null && p.Value.Radio.RadioID > 0);
-        //                foreach (var item in radio)
-        //                {
-        //                    param.Add(new RadioGpsParam()
-        //                    {
-        //                        Operate = ExecType.Start,
-        //                        Type = op.IsCycle ? (op.IsCSBK ? (op.IsEnh ? QueryGPSType.EnhCycyle : QueryGPSType.CSBKCycle) : QueryGPSType.GenericCycle) : (op.IsCSBK ? (op.IsEnh ? QueryGPSType.Enh : QueryGPSType.CSBK) : QueryGPSType.Generic),
-        //                        Target = item.Value.Radio.RadioID,
-        //                        Cycle = op.Cycle
-        //                    });
+                    }
 
-        //                    if (op.IsCycle && op.Type == ExecType.Start)
-        //                        TargetMgr.TargetList.Radio[item.Value.Radio.ID].Radio.IsGPS = true;
-        //                    if (op.Type == ExecType.Start) TargetMgr.TargetList.Radio[item.Value.Radio.ID].Radio.IsGPS = false;
-        //                }
-        //                break;
-        //            case TargetType.All:
+                    foreach (CMember trgt in target.Target)
+                    {
+                        if (trgt.Type != MemberType.Group)
+                        {
+                            if (trgt.Radio == null || trgt.Radio.ID <= 0) continue;
+                            if (trgt.Group != null || trgt.Group.ID > 0)
+                            {
+                                if (groupid.Contains(trgt.Group.ID)) continue;
+                            }
 
-        //                var group = TargetMgr.TargetList.Radio.Where(p => p.Value.Radio != null && p.Value.Radio.RadioID > 0);
-        //                foreach (var item in group)
-        //                {
-        //                    param.Add(new RadioGpsParam()
-        //                    {
-        //                        Operate = ExecType.Start,
-        //                        Type = op.IsCycle ? (op.IsCSBK ? (op.IsEnh ? QueryGPSType.EnhCycyle : QueryGPSType.CSBKCycle) : QueryGPSType.GenericCycle) : (op.IsCSBK ? (op.IsEnh ? QueryGPSType.Enh : QueryGPSType.CSBK) : QueryGPSType.Generic),
-        //                        Target = item.Value.Radio.RadioID,
-        //                        Cycle = op.Cycle
-        //                    });
+                            param.Add(new RadioGpsParam()
+                            {
+                                Operate = op.Type,
+                                Type = op.IsCycle ? (op.IsCSBK ? (op.IsEnh ? QueryGPSType.EnhCycyle : QueryGPSType.CSBKCycle) : QueryGPSType.GenericCycle) : (op.IsCSBK ? (op.IsEnh ? QueryGPSType.Enh : QueryGPSType.CSBK) : QueryGPSType.Generic),
+                                Target = trgt.Radio.RadioID,
+                                Cycle = op.Cycle
+                            });
+                        }
 
-        //                    if (op.IsCycle && op.Type == ExecType.Start)
-        //                        TargetMgr.TargetList.Radio[item.Value.Radio.ID].Radio.IsGPS = true;
-        //                    if (op.Type == ExecType.Start) TargetMgr.TargetList.Radio[item.Value.Radio.ID].Radio.IsGPS = false;
-        //                }
-        //                break;
-        //            default:
-        //                break;
-        //        }
-        //    }
-        //    catch { }
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                DataBase.InsertLog("BuildGpsParam:" + e.Message);
+            }
 
-        //    return param;
-        //}
+            return param;
+        }
 
         //private List<object> BuildControlParam(CControl op, TargetType type, CMultMember target)
         //{
