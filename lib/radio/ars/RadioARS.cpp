@@ -13,7 +13,7 @@ CRadioARS::CRadioARS(CDataScheduling *pMnis)
 
 CRadioARS::~CRadioARS()
 {
-	if (!m_ThreadARS)
+	if (m_ThreadARS)
 	{
 		delete m_ThreadARS;
 	}

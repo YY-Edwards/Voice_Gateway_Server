@@ -15,7 +15,7 @@ CTextMsg::CTextMsg(CDataScheduling *pMnis)
 }
 CTextMsg::~CTextMsg()
 {
-	if (!m_ThreadMsg)
+	if (m_ThreadMsg)
 	{
 		delete m_ThreadMsg;
 	}
