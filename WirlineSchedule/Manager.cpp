@@ -435,6 +435,8 @@ int CManager::config(REMOTE_TASK* pTask)
 	bool bMasterChange = false;
 	bool bDongleChange = false;
 	bool bMnisChange = false;
+	CONFIG_SCHDULE_ISENABLE = pConfig->IsEnable;
+	CONFIG_MNIS_ID = pConfig->MnisId;
 	if (0 != strcmp(CONFIG_MASTER_IP, pConfig->master.ip))
 	{
 		strcpy_s(CONFIG_MASTER_IP, pConfig->master.ip);
@@ -526,7 +528,7 @@ int CManager::config(REMOTE_TASK* pTask)
 			sendLogToWindow();
 		}
 		/*ÅäÖÃmnis*/
-		m_pMnis->radioConnect((TcpClient*)pTask->pRemote, CONFIG_MNIS_IP, pTask->callId);
+		m_pMnis->radioConnect(CONFIG_MNIS_IP);
 
 		m_bIsHaveConfig = true;
 	}
@@ -587,7 +589,7 @@ int CManager::config(REMOTE_TASK* pTask)
 		if (bMnisChange)
 		{
 			/*ÅäÖÃmnis*/
-			m_pMnis->radioConnect((TcpClient*)pTask->pRemote, CONFIG_MNIS_IP, pTask->callId);
+			m_pMnis->radioConnect(CONFIG_MNIS_IP);
 		}
 	}
 	return rlt;
@@ -702,12 +704,12 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_MNIS_QUERY_GPS:
 			{
-											  m_pMnis->radioGetGps((TcpClient*)task.pRemote, task.param.info.queryGpsParam.Target, task.param.info.queryGpsParam.Type, task.param.info.queryGpsParam.Cycle, task.callId);
+											  m_pMnis->radioGetGps(task.param.info.queryGpsParam.Target, task.param.info.queryGpsParam.Type, task.param.info.queryGpsParam.Cycle);
 			}
 				break;
 			case REMOTE_CMD_MNIS_MSG:
 			{
-										m_pMnis->radioSendMsg((TcpClient*)task.pRemote, task.param.info.msgParam.Contents, task.param.info.msgParam.Target, task.callId, task.param.info.msgParam.Type);
+										m_pMnis->radioSendMsg(task.param.info.msgParam.Contents, task.param.info.msgParam.Target, task.param.info.msgParam.Type);
 			}
 				break;
 			case REMOTE_CMD_MNIS_STATUS:
@@ -730,7 +732,7 @@ void CManager::handleRemoteTask()
 											   break;
 										   default:
 										   {
-													  m_pMnis->getRadioStatus((TcpClient*)task.pRemote, task.param.info.mnisStatusParam.getType, task.callId);
+													  m_pMnis->getRadioStatus(task.param.info.mnisStatusParam.getType);
 										   }
 											   break;
 										   }
@@ -805,7 +807,7 @@ void CManager::OnDisConnect(CRemotePeer* pRemotePeer)
 	}
 }
 
-void CManager::OnMnisCallBack(TcpClient *m_pTcpClient, int callId, int callFuncId, Respone response)
+void CManager::OnMnisCallBack(int callFuncId, Respone response)
 {
 	switch (callFuncId)
 	{
@@ -943,8 +945,8 @@ void CManager::OnMnisCallBack(TcpClient *m_pTcpClient, int callId, int callFuncI
 							 RadioStatus radioStatus = i->second;
 							 FieldValue element(FieldValue::TObject);
 							 element.setKeyVal("radioId", FieldValue(radioStatus.id));
-							 element.setKeyVal("IsOnline", FieldValue((0 == radioStatus.status)));
-							 element.setKeyVal("IsInGps", FieldValue((0 == radioStatus.gpsQueryMode)));
+							 element.setKeyVal("IsOnline", FieldValue((1 == radioStatus.status)));
+							 element.setKeyVal("IsInGps", FieldValue((1 == radioStatus.gpsQueryMode)));
 							 info.push(element);
 						 }
 						 g_pNet->wlMnisStatus(MNIS_GET_TYPE_RADIO, info);
@@ -953,5 +955,11 @@ void CManager::OnMnisCallBack(TcpClient *m_pTcpClient, int callId, int callFuncI
 	default:
 		break;
 	}
+}
+
+int CManager::updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode)
+{
+	m_pMnis->updateOnLineRadioInfo(radioId, status, gpsQueryMode);
+	return 0;
 }
 

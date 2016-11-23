@@ -68,7 +68,9 @@ public:
 	/*client断开*/
 	static void OnDisConnect(CRemotePeer* pRemotePeer);
 	/*MNIS回调方法*/
-	static void OnMnisCallBack(TcpClient *m_pTcpClient, int callId, int callFuncId, Respone response);
+	static void OnMnisCallBack(int callFuncId, Respone response);
+	/*更新在线设备信息*/
+	int updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode = -1);
 private:
 	PLogReport m_report;
 	HWND m_hwnd;

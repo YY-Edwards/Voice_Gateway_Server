@@ -1,7 +1,6 @@
 
-
-#include "../common.h"
 #pragma once
+#include "../common.h"
 #define SEND_IMM_QUERY_LENTH   10
 #define SEND_TRG_QUERY_LENTH   11
 #define SEND_IMM_CSBK_QUERY_LENTH   10
@@ -62,10 +61,12 @@ typedef struct tagThreadGPSOverturn
 	unsigned long    radioID;
 }ThreadGPSOverturn;
 
+class CDataScheduling;
+
 class CRadioGps
 {
 public:
-	CRadioGps();
+	CRadioGps(CDataScheduling *pMnis);
 	~CRadioGps();
 	bool InitGPSSocket(DWORD dwAddress/*, CRemotePeer * pRemote*/);
 	bool InitGPSOverturnSocket(DWORD dwAddress);
@@ -79,6 +80,7 @@ private:
 	ThreadGPS * m_ThreadGps;
 	ThreadGPSOverturn *m_ThreadGpsOverturn;
 	CRemotePeer* pRemotePeer;
+	CDataScheduling *m_pMnis;
 	
 };
 

@@ -7,6 +7,7 @@
 #include "../rpc/include/BaseConnector.h"
 #include <WinSock2.h>
 #include <Windows.h>
+#include "allCommon.h"
 
 #define               MNIS_CONNECT           0              
 #define				  CONNECT_STATUS         1                   //status
@@ -30,7 +31,7 @@
 
 #define PRIVATE_MSG_FLG        12
 #define GROUP_MSG_FLG          225
-#define ALL                         0
+#define ALL                    0
 #define GROUP                  2
 #define PRIVATE                3
 
@@ -61,11 +62,7 @@ typedef struct tagCommand
 	TcpClient* tp;
 	
 }Command;
-typedef  struct tagRadioStatus{
-	int    id;
-	int	   status = 0;
-	int    gpsQueryMode = 0;
-} RadioStatus;
+
 typedef struct tagRespone
 {
 	int connectStatus;
@@ -86,13 +83,9 @@ typedef struct tagRespone
 	int operate;
 	std::map<std::string, RadioStatus> rs;
 }Respone;
-extern void(*myCallBackFunc)(TcpClient*, int, int, Respone);
-void onData(void(*func)(TcpClient* tp, int, int, Respone), TcpClient* tp, int callId, int call, Respone data);
-extern TcpClient * peer;
-extern int seq;
+extern void(*myCallBackFunc)(  int, Respone);
+void onData(void(*func)(int, Respone),  int call, Respone data);
 extern std::mutex m_timeOutListLocker;
 extern std::list <Command> timeOutList;
-extern std::map<std::string, RadioStatus> radioStatus;
-extern std::string  lastIP ;
 
 #endif

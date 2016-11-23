@@ -7660,6 +7660,10 @@ void CWLNet::clearVoiceRecords()
 
 int CWLNet::wlCall(unsigned char callType, unsigned long source, unsigned long target, int operate, bool isCurrent)
 {
+	if (!wlScheduleIsEnable())
+	{
+		return 0;
+	}
 	if (!isCurrent)
 	{
 		int i = 0;
@@ -7709,6 +7713,10 @@ int CWLNet::wlCall(unsigned char callType, unsigned long source, unsigned long t
 
 int CWLNet::wlInfo(int getType, FieldValue info)
 {
+	if (!wlScheduleIsEnable())
+	{
+		return 0;
+	}
 	/*将参数打包成json格式*/
 	ArgumentType args;
 	args["getType"] = getType;
@@ -7738,6 +7746,10 @@ int CWLNet::wlInfo(int getType, FieldValue info)
 
 int CWLNet::wlPlayStatus(int status, int target)
 {
+	if (!wlScheduleIsEnable())
+	{
+		return 0;
+	}
 	/*将参数打包成json格式*/
 	ArgumentType args;
 	args["status"] = status;
@@ -7850,6 +7862,10 @@ int CWLNet::wlGetConfig()
 
 int CWLNet::wlMnisConnectStatus(int status)
 {
+	if (!wlScheduleIsEnable())
+	{
+		return 0;
+	}
 	/*将参数打包成json格式*/
 	ArgumentType args;
 	args["status"] = status;
@@ -7877,6 +7893,10 @@ int CWLNet::wlMnisConnectStatus(int status)
 
 int CWLNet::wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle, int status)
 {
+	if (!wlScheduleIsEnable())
+	{
+		return 0;
+	}
 	/*将参数打包成json格式*/
 	ArgumentType args;
 	args["Operate"] = Operate;
@@ -7908,6 +7928,10 @@ int CWLNet::wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle,
 
 int CWLNet::wlMnisSendGps(int Source, GPS gps)
 {
+	if (!wlScheduleIsEnable())
+	{
+		return 0;
+	}
 	/*将参数打包成json格式*/
 	ArgumentType args;
 	FieldValue Gps(FieldValue::TObject);
@@ -7941,6 +7965,10 @@ int CWLNet::wlMnisSendGps(int Source, GPS gps)
 
 int CWLNet::wlMnisMessageStatus(int Type, int Target, int Source, std::string Contents, int status)
 {
+	if (!wlScheduleIsEnable())
+	{
+		return 0;
+	}
 	/*将参数打包成json格式*/
 	ArgumentType args;
 	args["Type"] = Type;
@@ -7972,6 +8000,10 @@ int CWLNet::wlMnisMessageStatus(int Type, int Target, int Source, std::string Co
 
 int CWLNet::wlMnisMessage(int Type, int Target, int Source, std::string Contents)
 {
+	if (!wlScheduleIsEnable())
+	{
+		return 0;
+	}
 	/*将参数打包成json格式*/
 	ArgumentType args;
 	args["Type"] = Type;
@@ -8002,6 +8034,10 @@ int CWLNet::wlMnisMessage(int Type, int Target, int Source, std::string Contents
 
 int CWLNet::wlMnisSendArs(int Target, std::string IsOnline)
 {
+	if (!wlScheduleIsEnable())
+	{
+		return 0;
+	}
 	/*将参数打包成json格式*/
 	ArgumentType args;
 	args["Target"] = Target;
@@ -8030,6 +8066,10 @@ int CWLNet::wlMnisSendArs(int Target, std::string IsOnline)
 
 int CWLNet::wlMnisStatus(int getType, FieldValue info)
 {
+	if (!wlScheduleIsEnable())
+	{
+		return 0;
+	}
 	/*将参数打包成json格式*/
 	ArgumentType args;
 	args["getType"] = getType;
@@ -8053,6 +8093,12 @@ int CWLNet::wlMnisStatus(int getType, FieldValue info)
 			sendLogToWindow();
 		}
 	}
+	return 0;
+}
+
+int CWLNet::updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode)
+{
+	m_pManager->updateOnLineRadioInfo(radioId, status, gpsQueryMode);
 	return 0;
 }
 

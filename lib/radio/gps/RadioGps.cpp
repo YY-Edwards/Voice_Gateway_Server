@@ -1,13 +1,15 @@
 #include "stdafx.h"
 #include "RadioGps.h"
+#include "../DataScheduling.h"
 
 #pragma comment(lib, "wsock32.lib")
 #define GPS_PORT  4001
-CRadioGps::CRadioGps()
+CRadioGps::CRadioGps(CDataScheduling *pMnis)
 {
 	m_RcvSocketOpened = false;
 	m_ThreadGps = new ThreadGPS;
 	m_ThreadGpsOverturn = new ThreadGPSOverturn;
+	m_pMnis = pMnis;
 }
 
 
@@ -424,7 +426,7 @@ DWORD WINAPI CRadioGps::ReceiveDataThread(LPVOID lpParam)
 void CRadioGps::RecvData()
 {
 	int   iRemoteAddrLen;            //   Contains   the   length   of   remte_addr,   passed   to   recvfrom   
-	int   ret = 0 , bytes=0;
+	int   ret = 0, bytes = 0;
 	int    iMessageLen;
 	double lat = 0, lon = 0;
 	iRemoteAddrLen = sizeof(m_ThreadGps->remote_addr);
@@ -490,7 +492,7 @@ void CRadioGps::RecvData()
 							it = allCommandList.erase(it);
 							break;
 							}*/
-						
+
 						if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Stop_Answer)
 						{
 							operate = STOP;
@@ -505,23 +507,23 @@ void CRadioGps::RecvData()
 							int len = m_ThreadGps->RcvBuffer[1] + 1;
 							if (m_ThreadGps->RcvBuffer[len] == Location_Operate_Sucess)
 							{
-								Respone r;
+								Respone r = { 0 };
 								r.target = m_ThreadGps->radioID;
 								r.gpsStatus = SUCESS;
 								r.querymode = it->querymode;
 								r.cycle = it->cycle;
 								r.operate = operate;
-								onData(myCallBackFunc, it->tp,it->callId, it->command, r);
+								onData(myCallBackFunc,  it->command, r);
 							}
 							else
 							{
-								Respone r;
+								Respone  r = { 0 };;
 								r.source = m_ThreadGps->radioID;
 								r.gpsStatus = UNSUCESS;
 								r.querymode = it->querymode;
 								r.cycle = it->cycle;
 								r.operate = operate;
-								onData(myCallBackFunc,it->tp, it->callId, it->command, r);
+								onData(myCallBackFunc,  it->command, r);
 							}
 
 #if DEBUG_LOG
@@ -700,13 +702,13 @@ void CRadioGps::RecvData()
 						 }*/
 						if (myCallBackFunc != NULL)
 						{
-							Respone r;
+							Respone r = { 0 };
 							r.source = m_ThreadGps->radioID;
 							r.lat = lat;
 							r.lon = lon;
 							r.speed = speed;
 							r.valid = valid;
-							onData(myCallBackFunc,peer, ++seq, RECV_GPS, r);
+							onData(myCallBackFunc,  RECV_GPS, r);
 							count++;
 							break;
 						}
@@ -717,13 +719,13 @@ void CRadioGps::RecvData()
 				{
 					if (myCallBackFunc != NULL)
 					{
-						Respone r;
+						Respone r = { 0 };
 						r.source = m_ThreadGps->radioID;
 						r.lat = lat;
 						r.lon = lon;
 						r.speed = speed;
 						r.valid = valid;
-						onData(myCallBackFunc, peer, ++seq, RECV_GPS, r);
+						onData(myCallBackFunc,  RECV_GPS, r);
 					}
 					/* std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGps", ++seq, args, "radio");
 					 if (pRemotePeer != NULL)
@@ -738,48 +740,48 @@ void CRadioGps::RecvData()
 			}
 		}
 		//查看状态，状态发生改变时，通知特Tserver
-		 if (radioStatus.find(radioID) == radioStatus.end())
-		 {
-			RadioStatus st;
-			st.id = atoi(radioID);
-			st.status = RADIO_STATUS_ONLINE;
-			if (STOP == operate)
-			{
-				st.gpsQueryMode = -1;
-			}
-			else
-			{
-				st.gpsQueryMode = queryMode;
-			}
-		
-			radioStatus[radioID] = st;
-			Respone r;
-			r.source = m_ThreadGps->radioID;
-			r.arsStatus = SUCESS;
-			onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
+		//if (g_radioStatus.find(radioID) == g_radioStatus.end())
+		//{
+		//RadioStatus st;
+		//st.id = atoi(radioID);
+		//st.status = RADIO_STATUS_ONLINE;
+		//if (STOP == operate)
+		//{
+		// st.gpsQueryMode = -1;
+		//}
+		//else
+		//{
+		// st.gpsQueryMode = queryMode;
+		//}
 
-		 }
-		 else if (radioStatus[radioID].status == RADIO_STATUS_OFFLINE)
-		 {
-			 if (STOP == operate)
-			 {
-				 radioStatus[radioID].gpsQueryMode = -1;
-			 }
-			 else
-			 {
-				 radioStatus[radioID].gpsQueryMode = queryMode;
-			 }
-			
-			 radioStatus[radioID].status = RADIO_STATUS_ONLINE;
-			 Respone r;
-			 r.source = m_ThreadGps->radioID;
-			 r.arsStatus = SUCESS;
-			 onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
-		}
-	 }
+		//g_radioStatus[radioID] = st;
+		//Respone r;
+		//r.source = m_ThreadGps->radioID;
+		//r.arsStatus = SUCESS;
+		//onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
+		//}
+		//else if (g_radioStatus[radioID].status == RADIO_STATUS_OFFLINE)
+		//{
+		//if (STOP == operate)
+		//{
+		// g_radioStatus[radioID].gpsQueryMode = -1;
+		//}
+		//else
+		//{
+		// g_radioStatus[radioID].gpsQueryMode = queryMode;
+		//}
+
+		//g_radioStatus[radioID].status = RADIO_STATUS_ONLINE;
+		//Respone r;
+		//r.source = m_ThreadGps->radioID;
+		//r.arsStatus = SUCESS;
+		//onData(myCallBackFunc, peer, ++seq, RADIO_ARS, r);
+		//}
+		m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP == operate) ? (-1) : (queryMode));
+	}
 	else
 	{
 		return;
 	}
-		 
+
 }

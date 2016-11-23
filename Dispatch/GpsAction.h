@@ -12,6 +12,7 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 	static std::mutex lock;
 	std::lock_guard<std::mutex> locker(lock);
 	try{
+		g_sn = callId;
 		std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
 		pRemote->sendResponse(strResp.c_str(), strResp.size());
 
@@ -54,7 +55,7 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			}
 			if (operate == START)
 			{
-				if (!dis.getGps(client, id, querymode, cycle, callId))
+				if (!dis.getGps(id, querymode, cycle))
 				{
 					ArgumentType args;
 					args["Target"] = FieldValue(id);
@@ -73,11 +74,11 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			{
 				char *buf = new char();
 				itoa(id, buf, 10);
-				if (radioStatus.find(buf) != radioStatus.end())
+				if (g_radioStatus.find(buf) != g_radioStatus.end())
 				{
-					querymode = radioStatus[buf].gpsQueryMode;
+					querymode = g_radioStatus[buf].gpsQueryMode;
 				}
-				if(!dis.stopGps(client, id, querymode, callId))
+				if(!dis.stopGps( id, querymode))
 				{
 					ArgumentType args;
 					args["Target"] = FieldValue(id);

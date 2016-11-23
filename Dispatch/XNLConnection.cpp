@@ -27,46 +27,46 @@
 
 CXNLConnection::CXNLConnection(SOCKET s, std::string auth_key, unsigned long delta)
 {
-    m_socket = s;
-  
-    m_delta = delta;
-    m_bConnected = FALSE;
-    m_hThread = 0;
-    m_XnlState = XNL_WAIT_MASTER_BRDCST;
-    /* Remove the space from the string */
-   // auth_key.Remove(' ');
-	
-    /* get the 16 bytes key from the string, now the auth_key format is similar as
-     * 0x112233440x556677880x99aabbcc0xddeeff00. Start from the 1st byte, each 10 
-     * bytes can be converted to a unsigned long integer.
-     */
-   
+	m_socket = s;
+
+	m_delta = delta;
+	m_bConnected = FALSE;
+	m_hThread = 0;
+	m_XnlState = XNL_WAIT_MASTER_BRDCST;
+	/* Remove the space from the string */
+	// auth_key.Remove(' ');
+
+	/* get the 16 bytes key from the string, now the auth_key format is similar as
+	 * 0x112233440x556677880x99aabbcc0xddeeff00. Start from the 1st byte, each 10
+	 * bytes can be converted to a unsigned long integer.
+	 */
+
 	m_auth_key[0] = 0x152C7E9D;
 	m_auth_key[1] = 0x38BE41C7;
 
 	m_auth_key[2] = 0x71E96CA4;
 	m_auth_key[3] = 0x6CAC1AFC;
-   
-    encrypted_seed[0] = 0;
-    encrypted_seed[1] = 0;
-    m_trans_id_base = 0;
-    m_bWaitForAck = FALSE;
-    m_bCloseSocket = FALSE;
-    m_hEvent = NULL;
-    conn_retry = 0;
-    encrypted_seed[0] = 0; 
-    encrypted_seed[1] = 0;
-    m_trans_id_base = 0;     
-    m_TxXCMPCount = 0;
-    m_tx_xnl_flag = 0;
-    m_rx_xnl_flag = 8; /* Set it to an invalid value */
-    m_xnl_src_addr = 0;
-    m_xnl_dst_addr = 0;
-    m_pSendQueHdr = NULL;
-    m_pSendQueTail = NULL;
-    m_pLastSendMsg = NULL;
-    m_XCMP_ver = 0;
-    m_hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+
+	encrypted_seed[0] = 0;
+	encrypted_seed[1] = 0;
+	m_trans_id_base = 0;
+	m_bWaitForAck = FALSE;
+	m_bCloseSocket = FALSE;
+	m_hEvent = NULL;
+	conn_retry = 0;
+	encrypted_seed[0] = 0;
+	encrypted_seed[1] = 0;
+	m_trans_id_base = 0;
+	m_TxXCMPCount = 0;
+	m_tx_xnl_flag = 0;
+	m_rx_xnl_flag = 8; /* Set it to an invalid value */
+	m_xnl_src_addr = 0;
+	m_xnl_dst_addr = 0;
+	m_pSendQueHdr = NULL;
+	m_pSendQueTail = NULL;
+	m_pLastSendMsg = NULL;
+	m_XCMP_ver = 0;
+	m_hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 	memset(readmac, 0, 11);
 }
 
@@ -129,7 +129,7 @@ CXNLConnection* CXNLConnection::CreatConnection(DWORD ip_addr = 0, int port = 80
     else
     {
         //Create a thread to receive the message from the socket
-        CXNLConnection * p = new CXNLConnection(s, auth_key, delta);
+		CXNLConnection * p = new CXNLConnection(s, auth_key, delta);
          
 
         p->m_hThread = (HANDLE)_beginthreadex(NULL, 0, &_workThread, (void*)p, 0, NULL);
@@ -813,109 +813,75 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						{
 							if (myTcpCallBackFunc != NULL)
 							{
-								TcpRespone tr;
+								TcpRespone tr = {0};
 								tr.id = rmt_addr;
 								tr.controlType = RADIOCHECK;
 								tr.result = REMOTE_SUCESS;
-								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
+								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
+								
+								////查看状态，状态发生改变时，通知特Tserver
+								if (g_radioStatus.find(stringId) == g_radioStatus.end())
+								{
+									RadioStatus st;
+									st.id = rmt_addr;
+									st.status = RADIO_STATUS_ONLINE;
+									g_radioStatus[stringId] = st;
+									tr.arsStatus = SUCESS;
+									onTcpData(myTcpCallBackFunc,  RADIO_ARS, tr);
+								}
+								else if (g_radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
+								{
+									g_radioStatus[stringId].status = RADIO_STATUS_ONLINE;
+									tr.arsStatus = SUCESS;
+									onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
+								}
+			
+								
 #if DEBUG_LOG
 								LOG(INFO) << "在线";
 #endif
 								break;
 							}
-
-							// 1:在线
-//							ArgumentType args;
-//							args["Status"] = FieldValue(REMOTE_SUCESS);
-//							args["Target"] = FieldValue(rmt_addr);
-//							args["Type"] = FieldValue(RADIOCHECK);
-//							std::string callJsonStrRes = CRpcJsonParser::buildCall("controlStatus", it->callId, args, "radio");
-//							if (pRemotePeer != NULL && pRemotePeer == it->pRemote && it->radioId == rmt_addr)
-//							{
-//								pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-//								it = tcpCommandTimeOutList.erase(it);
-//								////查看状态，状态发生改变时，通知特Tserver
-//								//ArgumentType arg;
-//								//arg["Target"] = FieldValue(stringId.c_str());
-//								//if (radioStatus.find(stringId) == radioStatus.end())
-//								//{
-//								//	status st;
-//								//	st.id = rmt_addr;
-//								//	st.status = RADIO_STATUS_ONLINE;
-//								//	radioStatus[stringId] = st;
-//								//	arg["IsOnline"] = FieldValue("True");
-//								//	std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", it->callId, arg, "radio");
-//								//	pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-//								//}
-//								//else if (radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
-//								//{
-//								//	radioStatus[stringId].status = RADIO_STATUS_ONLINE;
-//								//	
-//								//	arg["IsOnline"] = FieldValue("True");
-//								//	std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", it->callId, arg, "radio");
-//								//	pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-//								//}
-//
-
-							}
-
 						}
-						else if (0x0011 == check_result)
+
+					}
+					else if (0x0011 == check_result)
+					{
+
+
+						rmtflag = false;
+						//0:不在线
+						if (myTcpCallBackFunc != NULL)
 						{
-
-
-							rmtflag = false;
-							//0:不在线
-							if (myTcpCallBackFunc != NULL)
+							TcpRespone tr = {0};
+							tr.id = rmt_addr;
+							tr.controlType = RADIOCHECK;
+							tr.result = REMOTE_FAILED;
+							onTcpData(myTcpCallBackFunc, CHECK_RADIO_ONLINE, tr);
+							it = tcpCommandTimeOutList.erase(it);
+							////查看状态，状态发生改变时，通知特Tserver
+							if (g_radioStatus.find(stringId) == g_radioStatus.end())
 							{
-								TcpRespone tr;
-								tr.id = rmt_addr;
-								tr.controlType = RADIOCHECK;
-								tr.result = REMOTE_FAILED;
-								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
-								it = tcpCommandTimeOutList.erase(it);
-#if DEBUG_LOG
-								LOG(INFO) << "离线";
-#endif
-								break;
+								RadioStatus st;
+								st.id = rmt_addr;
+								st.status = RADIO_STATUS_ONLINE;
+								g_radioStatus[stringId] = st;
+								tr.arsStatus = SUCESS;
+								onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
 							}
-
-						/*	ArgumentType args;
-							args["Status"] = FieldValue(REMOTE_FAILED);
-							args["Target"] = FieldValue(rmt_addr);
-							args["Type"] = FieldValue(RADIOCHECK);
-							std::string callJsonStrRes = CRpcJsonParser::buildCall("controlStatus", it->callId, args, "radio");
-							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote && it->radioId == rmt_addr)
+							else if (g_radioStatus[stringId].status == RADIO_STATUS_ONLINE)
 							{
-								pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-								it = tcpCommandTimeOutList.erase(it);*/
-								////查看状态，状态发生改变时，通知特Tserver
-								//ArgumentType arg;
-								//arg["Target"] = FieldValue(stringId.c_str());
-								//if (radioStatus.find(stringId) == radioStatus.end())
-								//{
-								//	status st;
-								//	st.id = rmt_addr;
-								//	st.status = RADIO_STATUS_ONLINE;
-								//	radioStatus[stringId] = st;
-								//	arg["IsOnline"] = FieldValue("False");
-								//	std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", it->callId, arg, "radio");
-								//	pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								//}
-								//else if (radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
-								//{
-								//	radioStatus[stringId].status = RADIO_STATUS_ONLINE;
-								//	
-								//	arg["IsOnline"] = FieldValue("False");
-								//	std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", it->callId, arg, "radio");
-								//	pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								//}
-
-						//	}
-
-					//	}
-						//break;
+								g_radioStatus[stringId].status = RADIO_STATUS_OFFLINE;
+								tr.arsStatus = SUCESS;
+								onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
+							}
+#if DEBUG_LOG
+							LOG(INFO) << "离线";
+#endif
+							break;
+						}
+					
 					}
 					else if (rmt_type_code == 0x01)
 					{
@@ -925,34 +891,33 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							if (myTcpCallBackFunc != NULL)
 							{
 								rmtflag = true;
-								TcpRespone tr;
+								TcpRespone tr = {0};
 								tr.id = rmt_addr;
 								tr.controlType = OFF;
 								tr.result = REMOTE_SUCESS;
-								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
+								onTcpData(myTcpCallBackFunc, CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
+								////查看状态，状态发生改变时，通知特Tserver
+								if (g_radioStatus.find(stringId) == g_radioStatus.end())
+								{
+									RadioStatus st;
+									st.id = rmt_addr;
+									st.status = RADIO_STATUS_ONLINE;
+									g_radioStatus[stringId] = st;
+									tr.arsStatus = SUCESS;
+									onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
+								}
+								else if (g_radioStatus[stringId].status == RADIO_STATUS_ONLINE)
+								{
+									g_radioStatus[stringId].status = RADIO_STATUS_OFFLINE;
+									tr.arsStatus = SUCESS;
+									onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
+								}
 #if DEBUG_LOG
 								LOG(INFO) << "遥闭成功";
 #endif
 								break;
 							}
-
-							//成功    
-							/*ArgumentType args;
-							args["Status"] = FieldValue(REMOTE_SUCESS);
-							args["Target"] = FieldValue(rmt_addr);
-							args["Type"] = FieldValue(OFF);
-							std::string callJsonStrRes = CRpcJsonParser::buildCall("controlStatus", it->callId, args, "radio");
-							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote && it->radioId == rmt_addr)
-							{
-								pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-								it = tcpCommandTimeOutList.erase(it);
-#if DEBUG_LOG
-								LOG(INFO) << "遥闭成功";
-#endif
-								break;
-							}*/
-
 						}
 						else if (0x0111 == check_result)
 						{
@@ -963,7 +928,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.id = rmt_addr;
 								tr.controlType = OFF;
 								tr.result = REMOTE_SUCESS;
-								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
+								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "遥闭失败";
@@ -971,24 +936,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								break;
 							}
 
-						/*	ArgumentType args;
-							args["Status"] = FieldValue(REMOTE_FAILED);
-							args["Target"] = FieldValue(rmt_addr);
-							args["Type"] = FieldValue(OFF);
-							std::string callJsonStrRes = CRpcJsonParser::buildCall("controlStatus", it->callId, args, "radio");
-							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote && it->radioId == rmt_addr)
-							{
-								pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-								it = tcpCommandTimeOutList.erase(it);
-#if DEBUG_LOG
-								LOG(INFO) << "遥闭失败";
-#endif
-								break;
-							}*/
-
 						}
-
-					
 					}
 					else if (rmt_type_code == 0x02)
 					{
@@ -997,49 +945,34 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							rmtflag = true;                                  //成功
 							if (myTcpCallBackFunc != NULL)
 							{
-								TcpRespone tr;
+								TcpRespone tr = {0};
 								tr.id = rmt_addr;
 								tr.controlType = ON;
 								tr.result = REMOTE_SUCESS;
-								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
+								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
+								////查看状态，状态发生改变时，通知特Tserver
+								if (g_radioStatus.find(stringId) == g_radioStatus.end())
+								{
+									RadioStatus st;
+									st.id = rmt_addr;
+									st.status = RADIO_STATUS_ONLINE;
+									g_radioStatus[stringId] = st;
+									tr.arsStatus = SUCESS;
+									onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
+								}
+								else if (g_radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
+								{
+									g_radioStatus[stringId].status = RADIO_STATUS_ONLINE;
+									tr.arsStatus = SUCESS;
+									onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
+								}
 #if DEBUG_LOG
 								LOG(INFO) << "遥开成功";
 #endif
 								break;
 							}
-	
-						/*	ArgumentType args;
-							args["Status"] = FieldValue(REMOTE_SUCESS);
-							args["Target"] = FieldValue(rmt_addr);
-							args["Type"] = FieldValue(ON);
-							std::string callJsonStrRes = CRpcJsonParser::buildCall("controlStatus", it->callId, args, "radio");
-							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote && it->radioId == rmt_addr)
-							{
-								pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-								it = tcpCommandTimeOutList.erase(it);*/
-
-								//查看状态，状态发生改变时，通知特Tserver
-								/*if (radioStatus.find(stringId) == radioStatus.end())
-								{
-									status st;
-									st.id = rmt_addr;
-									st.status = RADIO_STATUS_ONLINE;
-									radioStatus[stringId] = st;
-								}
-								else if (radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
-								{
-									radioStatus[stringId].status = RADIO_STATUS_ONLINE;
-									ArgumentType arg;
-									arg["Target"] = FieldValue(stringId.c_str());
-									arg["IsOnline"] = FieldValue("True");
-									std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", it->callId, arg, "radio");
-									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								}*/
-
-							}
-
-
+						}
 						}
 						else if (0x0211 == check_result)
 						{
@@ -1051,7 +984,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.id = rmt_addr;
 								tr.controlType = OFF;
 								tr.result = REMOTE_FAILED;
-								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
+								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "遥开失败";
@@ -1083,47 +1016,33 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							//rmtflag = true;                                   //成功
 							if (myTcpCallBackFunc != NULL)
 							{
-								TcpRespone tr;
+								TcpRespone tr = {0};
 								tr.id = rmt_addr;
 								tr.controlType = MONITOR;
 								tr.result = REMOTE_SUCESS;
-								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
+								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
+								////查看状态，状态发生改变时，通知特Tserver
+								if (g_radioStatus.find(stringId) == g_radioStatus.end())
+								{
+									RadioStatus st;
+									st.id = rmt_addr;
+									st.status = RADIO_STATUS_ONLINE;
+									g_radioStatus[stringId] = st;
+									tr.arsStatus = SUCESS;
+									onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
+								}
+								else if (g_radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
+								{
+									g_radioStatus[stringId].status = RADIO_STATUS_ONLINE;
+									tr.arsStatus = SUCESS;
+									onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
+								}
 #if DEBUG_LOG
 								LOG(INFO) << "远程监听成功";
 #endif
 								break;
 							}
-						
-							/*ArgumentType args;
-							args["Status"] = FieldValue(REMOTE_SUCESS);
-							args["Target"] = FieldValue(rmt_addr);
-							args["Type"] = FieldValue(MONITOR);
-							std::string callJsonStrRes = CRpcJsonParser::buildCall("controlStatus", it->callId, args, "radio");
-							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote && it->radioId == rmt_addr)
-							{
-								pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-								it = tcpCommandTimeOutList.erase(it);
-*/
-								//查看状态，状态发生改变时，通知特Tserver
-								/*if (radioStatus.find(stringId) == radioStatus.end())
-								{
-									status st;
-									st.id = rmt_addr;
-									st.status = RADIO_STATUS_ONLINE;
-									radioStatus[stringId] = st;
-								}
-								else if (radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
-								{
-									radioStatus[stringId].status = RADIO_STATUS_ONLINE;
-									ArgumentType arg;
-									arg["Target"] = FieldValue(stringId.c_str());
-									arg["IsOnline"] = FieldValue("True");
-									std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", it->callId, arg, "radio");
-									pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								}*/
-
-								
 							}
 
 						}
@@ -1136,24 +1055,13 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.id = rmt_addr;
 								tr.controlType = MONITOR;
 								tr.result = REMOTE_FAILED;
-								onTcpData(myTcpCallBackFunc, it->peer, it->callId, CHECK_RADIO_ONLINE, tr);
+								onTcpData(myTcpCallBackFunc, CHECK_RADIO_ONLINE, tr);
 								it = tcpCommandTimeOutList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "远程监听失败";
 #endif
 								break;
 							}
-							/*ArgumentType args;
-							args["Status"] = FieldValue(REMOTE_FAILED);
-							args["Target"] = FieldValue(rmt_addr);
-							args["Type"] = FieldValue(MONITOR);
-							std::string callJsonStr = CRpcJsonParser::buildCall("controlStatus", it->callId, args, "radio");
-							if (pRemotePeer != NULL&& pRemotePeer == it->pRemote && it->radioId == rmt_addr)
-							{
-								pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-								it = tcpCommandTimeOutList.erase(it);*/
-
-							//}
 						}
 						
 					}
@@ -1204,7 +1112,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 				{
 					if (myTcpCallBackFunc != NULL)
 					{
-						TcpRespone tr;
+						TcpRespone tr = {0};
 						tr.id = rmt_addr;
 						/*ArgumentType args;
 						args["Status"] = FieldValue(REMOTE_SUCESS);
@@ -1225,8 +1133,24 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 
 						}
 						tr.result = REMOTE_SUCESS;
-						onTcpData(myTcpCallBackFunc, it->peer, it->callId, it->command, tr);
+						onTcpData(myTcpCallBackFunc, it->command, tr);
 						it = tcpCommandTimeOutList.erase(it);
+						////查看状态，状态发生改变时，通知特Tserver
+						if (g_radioStatus.find(stringId) == g_radioStatus.end())
+						{
+							RadioStatus st;
+							st.id = rmt_addr;
+							st.status = RADIO_STATUS_ONLINE;
+							g_radioStatus[stringId] = st;
+							tr.arsStatus = SUCESS;
+							onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
+						}
+						else if (g_radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
+						{
+							g_radioStatus[stringId].status = RADIO_STATUS_ONLINE;
+							tr.arsStatus = SUCESS;
+							onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
+						}
 						break;
 					}
 					
@@ -1279,7 +1203,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						tr.id = rmt_addr;
 						tr.callType = STOP;
 						tr.result = REMOTE_SUCESS;
-						onTcpData(myTcpCallBackFunc, it->peer, it->callId, it->command, tr);
+						onTcpData(myTcpCallBackFunc,  it->command, tr);
 						it = tcpCommandTimeOutList.erase(it);
 						break;
 					}
@@ -1938,8 +1862,4 @@ void CXNLConnection::decode_xcmp_radio_status_reply(char *p_msg)
 	
 
 	}
-}
-void CXNLConnection::setRemotePeer(CRemotePeer * pRemote)
-{
-	pRemotePeer = pRemote;
 }

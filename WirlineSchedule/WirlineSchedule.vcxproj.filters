@@ -70,6 +70,9 @@
     <ClCompile Include="..\lib\radio\text\TextMsg.cpp">
       <Filter>mins\source</Filter>
     </ClCompile>
+    <ClCompile Include="..\lib\radio\allCommonl.cpp">
+      <Filter>mins\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ambe3000.h">
@@ -358,6 +361,9 @@
       <Filter>mins\include</Filter>
     </ClInclude>
     <ClInclude Include="..\lib\radio\common.h">
+      <Filter>mins\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\radio\allCommon.h">
       <Filter>mins\include</Filter>
     </ClInclude>
   </ItemGroup>
