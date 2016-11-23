@@ -313,10 +313,10 @@ void CDataScheduling::workThreadFunc()
 				sendRadioStatusToClient();
 				break;
 			case SEND_PRIVATE_MSG:
-				//sendMsg(it->callId, it->text, it->radioId, PRIVATE_MSG_FLG);
+				sendMsg(it->callId, it->text, it->radioId, PRIVATE_MSG_FLG);
 				break;
 			case SEND_GROUP_MSG:
-				//sendMsg(it->callId, it->text, it->radioId, GROUP_MSG_FLG);
+				sendMsg(it->callId, it->text, it->radioId, GROUP_MSG_FLG);
 				break;
 			case  GPS_IMME_COMM:
 				getGps(it->radioId, it->querymode, it->cycle);
