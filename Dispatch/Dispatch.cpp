@@ -58,8 +58,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 
 
-	CService::instance()->SetServiceNameAndDescription(_T("Trbox.Dispatch"), _T("Trbox Dispatch Server"));
-	CService::instance()->SetServiceCode([&](){
+	//CService::instance()->SetServiceNameAndDescription(_T("Trbox.Dispatch"), _T("Trbox Dispatch Server"));
+	//CService::instance()->SetServiceCode([&](){
 
 		/*初始化变量 开始工作*/
 		CRpcServer rpcServer;
@@ -98,53 +98,53 @@ int _tmain(int argc, _TCHAR* argv[])
 		//cs.setCallBackFunc(DispatchOperate::OnData);
 		/*while (1){ Sleep(1); };*/
 		/*等待结束标识*/
-		//char temp = 0x00;
-		//printf("press any key to end\r\n");
-		//scanf_s("%c", &temp, 1);
+		char temp = 0x00;
+		printf("press any key to end\r\n");
+		scanf_s("%c", &temp, 1);
 
-		///*释放资源*/
-		//dis.disConnect();
-	});
+		/*释放资源*/
+		dis.disConnect();
+//	});
 
 	
-	std::wstring strArg = argv[1];
-	try{
-		if (0 == strArg.compare(_T("install")))
-		{
-			CService::instance()->InstallService();
-			//InstallService();
-		}
-		else if (0 == strArg.compare(_T("uninstall")))
-		{
-			CService::instance()->UninstallService();
-			//LOG(INFO) << "UnInstall Service";
-		}
-		else if (0 == strArg.compare(_T("start")))
-		{
-			CService::instance()->StartWindowsService();
-			//LOG(INFO) << "Start Service";
-		}
-		else if (0 == strArg.compare(_T("stop")))
-		{
-			CService::instance()->StopService();
-			//LOG(INFO) << "Stop Service";
-		}
-		else if (0 == strArg.compare(_T("run")))
-		{
-			CService::instance()->RunService();
-		}
-	}
-	catch (std::system_error syserr) {
-		exit(1);
-	}
-	catch (std::runtime_error runerr) {
-		exit(1);
-	}
-	catch (...) {
-		exit(1);
-	}
+	//std::wstring strArg = argv[1];
+	//try{
+	//	if (0 == strArg.compare(_T("install")))
+	//	{
+	//		CService::instance()->InstallService();
+	//		//InstallService();
+	//	}
+	//	else if (0 == strArg.compare(_T("uninstall")))
+	//	{
+	//		CService::instance()->UninstallService();
+	//		//LOG(INFO) << "UnInstall Service";
+	//	}
+	//	else if (0 == strArg.compare(_T("start")))
+	//	{
+	//		CService::instance()->StartWindowsService();
+	//		//LOG(INFO) << "Start Service";
+	//	}
+	//	else if (0 == strArg.compare(_T("stop")))
+	//	{
+	//		CService::instance()->StopService();
+	//		//LOG(INFO) << "Stop Service";
+	//	}
+	//	else if (0 == strArg.compare(_T("run")))
+	//	{
+	//		CService::instance()->RunService();
+	//	}
+	//}
+	//catch (std::system_error syserr) {
+	//	exit(1);
+	//}
+	//catch (std::runtime_error runerr) {
+	//	exit(1);
+	//}
+	//catch (...) {
+	//	exit(1);
+	//}
 
-	wprintf(argv[1]);
+	//wprintf(argv[1]);
 	return 0;
 }
 
