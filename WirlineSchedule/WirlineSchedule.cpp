@@ -57,9 +57,11 @@ HWND GetConsoleHwnd(void)
 
 void handleLog(char *pLog)
 {
+#if _DEBUG	
 	SYSTEMTIME now = { 0 };
 	GetLocalTime(&now);
 	printf_s("\r\n%04u-%02u-%02u %02u:%02u:%02u %03u %s\r\n", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond, now.wMilliseconds, pLog);
+#endif
 }
 
 int main()

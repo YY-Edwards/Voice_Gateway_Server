@@ -17,7 +17,7 @@ BOOL g_bTX;       //Set or cleared by dongle.
 CSerialDongle* g_pDongle;
 BOOL g_dongleIsUsing;
 
-CManager::CManager(CMySQL *pDb,CDataScheduling* pMnis)
+CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis)
 {
 	g_pNet = new CWLNet(pDb, this);
 	g_pDongle = new CSerialDongle();
@@ -424,9 +424,9 @@ int CManager::SendFile(unsigned int length, char* pData)
 // 	return m_hWaitDecodeEvent;
 // }
 
-int CManager::setPlayCallOfCare(unsigned char calltype,unsigned long targetId)
+int CManager::setPlayCallOfCare(unsigned char calltype, unsigned long targetId)
 {
-	return g_pNet->setPlayCallOfCare( calltype,targetId);
+	return g_pNet->setPlayCallOfCare(calltype, targetId);
 }
 
 int CManager::config(REMOTE_TASK* pTask)
@@ -491,7 +491,7 @@ int CManager::config(REMOTE_TASK* pTask)
 		if (!g_pNet->StartNet(inet_addr(CONFIG_MASTER_IP), CONFIG_MASTER_PORT, INADDR_ANY, CONFIG_LOCAL_PEER_ID, CONFIG_LOCAL_RADIO_ID, CONFIG_RECORD_TYPE))
 		{
 			Env_NetIsOk = false;
-			sprintf_s(m_reportMsg,"net initial fail");
+			sprintf_s(m_reportMsg, "net initial fail");
 			sendLogToWindow();
 		}
 		else
@@ -610,7 +610,7 @@ void CManager::startHandleRemoteTask()
 		&m_remoteTaskThreadId);
 	m_bRemoteTaskThreadRun = true;
 	ResumeThread(m_hRemoteTaskThread);
-	
+
 }
 
 unsigned __stdcall CManager::HandleRemoteTaskProc(void * pThis)
@@ -630,7 +630,8 @@ void CManager::handleRemoteTask()
 	{
 		//sprintf_s(m_reportMsg, "3");
 		//sendLogToWindow();
-		if (g_remoteCommandTaskQueue.size() > 0)
+		WaitForSingleObject(g_waitHandleRemoteTask, 1000);
+		while (g_remoteCommandTaskQueue.size() > 0)
 		{
 			//sprintf_s(m_reportMsg, "have task");
 			//sendLogToWindow();
@@ -641,7 +642,7 @@ void CManager::handleRemoteTask()
 			{
 			case REMOTE_CMD_CONFIG:
 			{
-									  sprintf_s(m_reportMsg,"Handle REMOTE_CMD_CONFIG");
+									  sprintf_s(m_reportMsg, "Handle REMOTE_CMD_CONFIG");
 									  sendLogToWindow();
 									  config(&task);
 			}
@@ -666,7 +667,7 @@ void CManager::handleRemoteTask()
 											 if (setPlayCallOfCare(task.param.info.setCareCallParam.playParam.callType, task.param.info.setCareCallParam.playParam.targetId))
 											 {
 												 g_pNet->wlPlayStatus(CMD_FAIL, task.param.info.setCareCallParam.playParam.targetId);
-												 
+
 											 }
 											 else
 											 {
@@ -743,14 +744,6 @@ void CManager::handleRemoteTask()
 				break;
 			}
 		}
-		else
-		{
-			//sprintf_s(m_reportMsg, "0 task");
-			//sendLogToWindow();
-			/*ÐÝÃß*/
-			Sleep(20);
-			continue;
-		}
 	}
 }
 
@@ -759,6 +752,7 @@ void CManager::stop()
 	if (m_hRemoteTaskThread)
 	{
 		m_bRemoteTaskThreadRun = false;
+		SetEvent(g_waitHandleRemoteTask);
 		WaitForSingleObject(m_hRemoteTaskThread, 1000);
 		CloseHandle(m_hRemoteTaskThread);
 	}
@@ -928,11 +922,11 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 						   //FieldValue info(FieldValue::TInt);
 						   //if (Env_MnisIsOk)
 						   //{
-							  // info.setInt(0);
+						   // info.setInt(0);
 						   //}
 						   //else
 						   //{
-							  // info.setInt(1);
+						   // info.setInt(1);
 						   //}
 						   //g_pNet->wlMnisStatus(MNIS_GET_TYPE_CONNECT, info);
 	}

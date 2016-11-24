@@ -9,6 +9,14 @@ DispatchOperate::DispatchOperate()
 
 DispatchOperate::~DispatchOperate()
 {
+	if (pDs)
+	{
+		delete pDs;
+	}
+	if (pTs)
+	{
+		delete pTs;
+	}
 }
 
 int DispatchOperate::getLic(const char* licPath)
@@ -567,4 +575,9 @@ void DispatchOperate::getStatus( int type)
 		pDs->getRadioStatus(type);
 		break;
 	}
+}
+void DispatchOperate::disConnect()
+{
+	pDs->radioDisConnect();
+	pTs->disConnect();
 }

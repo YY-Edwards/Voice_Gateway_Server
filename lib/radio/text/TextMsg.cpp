@@ -70,12 +70,7 @@ bool CTextMsg::InitSocket(DWORD dwAddress/*, CRemotePeer * pRemote*/)
 
 bool CTextMsg::CloseSocket()
 {
-	if (m_mWth)
-	{
-		m_msgThread = false;
-		WaitForSingleObject(m_mWth, 1000);
-		CloseHandle(m_mWth);
-	}
+	
 	if (m_RcvSocketOpened)        // 只有在前面已经打开了，才有必要关闭，否则没有必要了
 	{
 		closesocket(m_ThreadMsg->mySocket);							        // Close socket
@@ -83,6 +78,12 @@ bool CTextMsg::CloseSocket()
 		WSACleanup();
 
 		m_RcvSocketOpened = FALSE;
+		if (m_mWth)
+		{
+			m_msgThread = false;
+			WaitForSingleObject(m_mWth, 1000);
+			CloseHandle(m_mWth);
+		}
 	}
 	return TRUE;
 }

@@ -104,12 +104,7 @@ bool CRadioGps::InitGPSOverturnSocket(DWORD dwAddress)
 
 bool CRadioGps::CloseGPSSocket()
 {
-	if(m_gWth)
-	{
-		m_gpsThread = false;
-		WaitForSingleObject(m_gWth, 1000);
-		CloseHandle(m_gWth);
-	}
+
 	if (m_RcvSocketOpened)        // 只有在前面已经打开了，才有必要关闭，否则没有必要了
 	{
 		closesocket(m_ThreadGps->mySocket);							        // Close socket
@@ -117,6 +112,12 @@ bool CRadioGps::CloseGPSSocket()
 		WSACleanup();
 
 		m_RcvSocketOpened = FALSE;
+		if (m_gWth)
+		{
+			m_gpsThread = false;
+			WaitForSingleObject(m_gWth, 1000);
+			CloseHandle(m_gWth);
+		}
 	}
 	return TRUE;
 }

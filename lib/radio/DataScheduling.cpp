@@ -261,7 +261,9 @@ void CDataScheduling::addUdpCommand(int command, std::string radioIP, std::strin
 	m_command.cycle = cycle;
 	m_command.gpsIP = gpsIP;
 	m_command.text = text;
+	std::lock_guard <std::mutex> locker(m_timeOutListLocker);
 	timeOutList.push_back(m_command);
+	std::lock_guard <std::mutex> wlocker(m_workListLocker);
 	workList.push_back(m_command);
 
 }
@@ -313,10 +315,10 @@ void CDataScheduling::workThreadFunc()
 				sendRadioStatusToClient();
 				break;
 			case SEND_PRIVATE_MSG:
-				//sendMsg(it->callId, it->text, it->radioId, PRIVATE_MSG_FLG);
+				sendMsg(it->callId, it->text, it->radioId, PRIVATE_MSG_FLG);
 				break;
 			case SEND_GROUP_MSG:
-				//sendMsg(it->callId, it->text, it->radioId, GROUP_MSG_FLG);
+				sendMsg(it->callId, it->text, it->radioId, GROUP_MSG_FLG);
 				break;
 			case  GPS_IMME_COMM:
 				getGps(it->radioId, it->querymode, it->cycle);

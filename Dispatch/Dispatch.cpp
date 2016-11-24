@@ -552,6 +552,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	wprintf(argv[1]);*/
 	
+	/*初始化变量 开始工作*/
 	CRpcServer rpcServer;
 	rpcServer.setOnConnectHandler(DispatchOperate::OnConnect);
 	rpcServer.setOnDisconnectHandler(DispatchOperate::OnDisConnect);
@@ -586,8 +587,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);                    //检查内存泄漏
 	//dis = new DispatchOperate();
 	//cs.setCallBackFunc(DispatchOperate::OnData);
-	while (1){ Sleep(1); };
-
+	/*while (1){ Sleep(1); };*/
+	/*等待结束标识*/
+	char temp = 0x00;
+	printf("press any key to end\r\n");
+	scanf_s("%c", &temp, 1);
+	
+	/*释放资源*/
+	dis.disConnect();
 	return 0;
 }
 

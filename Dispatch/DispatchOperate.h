@@ -27,6 +27,7 @@ public:
 	bool sendMsg( std::string text, int id,  int opterateType);
 	void getStatus( int type);
 	void setCallBack();
+	void disConnect();
 private:
 	std::map <int, int> gpsDic;
 	int getLic(const char* licPath);
