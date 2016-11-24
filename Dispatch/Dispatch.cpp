@@ -10,7 +10,7 @@
 #include "../lib/rpc/include/RpcServer.h"
 #include "../lib/service/service.h"
 #include "DispatchOperate.h"
-
+#include "../lib/utf8/utf8.h"
 //#include"AllCallEventAction.h"
 //#include"CallEventAction.h"
 //#include"CancelgpspEventAction.h"
@@ -50,6 +50,13 @@ static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+
+
+	
+	google::InitGoogleLogging("");
+	 google::SetLogDestination(google::GLOG_INFO, "../debug/log/info");
+	
+
 
 	CService::instance()->SetServiceNameAndDescription(_T("Trbox.Dispatch"), _T("Trbox Dispatch Server"));
 	CService::instance()->SetServiceCode([&](){

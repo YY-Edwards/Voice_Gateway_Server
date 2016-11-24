@@ -53,21 +53,21 @@ void recvGpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 				{
 					source = d["Source"].GetInt();
 				}
-				if (d.HasMember("Lon") && d["Lon"].IsFloat())
+				if (d.HasMember("Lon") && d["Lon"].IsDouble())
 				{
-					lon = d["Lon"].GetFloat();
+					lon = d["Lon"].GetDouble();
 				}
-				if (d.HasMember("Lat") && d["Lat"].IsFloat())
+				if (d.HasMember("Lat") && d["Lat"].IsDouble())
 				{
-					lat = d["Lat"].GetFloat();
+					lat = d["Lat"].GetDouble();
 				}
-				if (d.HasMember("Speed") && d["Speed"].IsFloat())
+				if (d.HasMember("Speed") && d["Speed"].IsDouble())
 				{
-					lon = d["Speed"].GetFloat();
+					lon = d["Speed"].GetDouble();
 				}
-				if (d.HasMember("Altitude") && d["Altitude"].IsFloat())
+				if (d.HasMember("Altitude") && d["Altitude"].IsDouble())
 				{
-					altitude = d["Altitude"].GetFloat();
+					altitude = d["Altitude"].GetDouble();
 				}
 				ArgumentType args;
 				FieldValue f(FieldValue::TArray);

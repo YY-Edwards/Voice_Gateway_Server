@@ -309,9 +309,9 @@ void DispatchOperate::OnData(  int call, Respone data)
 	case CONNECT_STATUS:
 		try
 		{
-			//args["getType"] = CONNECT_STATUS;
-			//args["info"] = FieldValue(data.connectStatus);
-			//dis.send2Client("status", args, peer);
+			args["getType"] = CONNECT_STATUS;
+			args["info"] = FieldValue(data.connectStatus);
+			dis.send2Client("status", args);
 		}
 		catch (std::exception e)
 		{
@@ -433,9 +433,9 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 	case RADIO_CONNECT:
 		try
 		{
-			//args["getType"] = MNIS_CONNECT;
-			//args["info"] = FieldValue(0);
-			//dis.send2Client("status", args, peer);
+			args["getType"] = CONNECT_STATUS;
+			args["info"] = FieldValue(0);
+			dis.send2Client("status", args);
 		}
 		catch (std::exception e)
 		{

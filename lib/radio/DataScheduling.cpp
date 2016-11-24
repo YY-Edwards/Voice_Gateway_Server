@@ -144,6 +144,9 @@ void CDataScheduling::getRadioStatus( int type)
 }
 void CDataScheduling::connect( const char* ip)
 {
+
+	m_hWthd = CreateThread(NULL, 0, workThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	m_hTthd = CreateThread(NULL, 0, timeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
 	int result = 1;
 	if (INADDR_NONE != inet_addr(ip)) 
 	if( !isUdpConnect) 
@@ -158,6 +161,7 @@ void CDataScheduling::connect( const char* ip)
 			isUdpConnect = true;
 			result = 0;
 			lastIP = ip;
+
 #if DEBUG_LOG
 			LOG(INFO) << "数据连接成功！";
 #endif 
@@ -180,8 +184,11 @@ void CDataScheduling::connect( const char* ip)
 		LOG(INFO) << "数据连接失败！";
 #endif 
 	}
-	std::list<Command>::iterator it;
-	m_timeOutListLocker.lock();
+	Respone r = { 0 };
+	r.connectStatus = result;
+	onData(myCallBackFunc, RADIO_STATUS, r);
+	//std::list<Command>::iterator it;
+	/*m_timeOutListLocker.lock();
 	for (it = timeOutList.begin(); it != timeOutList.end(); ++it)
 	{
 		if (it->command == MNIS_CONNECT)
@@ -194,9 +201,8 @@ void CDataScheduling::connect( const char* ip)
 			break;
 		}
 	}
-	m_timeOutListLocker.unlock();
-	m_hWthd = CreateThread(NULL, 0, workThread, this, THREAD_PRIORITY_NORMAL, NULL);
-	m_hTthd = CreateThread(NULL, 0, timeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	m_timeOutListLocker.unlock();*/
+	
 }
 void CDataScheduling::disConnect()
 {
