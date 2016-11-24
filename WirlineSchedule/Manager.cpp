@@ -752,6 +752,7 @@ void CManager::stop()
 	if (m_hRemoteTaskThread)
 	{
 		m_bRemoteTaskThreadRun = false;
+		SetEvent(g_waitHandleRemoteTask);
 		WaitForSingleObject(m_hRemoteTaskThread, 1000);
 		CloseHandle(m_hRemoteTaskThread);
 	}
