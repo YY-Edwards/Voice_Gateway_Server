@@ -16,9 +16,7 @@ CTcpScheduling::CTcpScheduling()
 	m_workThread = true;
 	m_timeThread = true;
 	m_usbThread = true;
-	m_wMt = CreateThread(NULL, 0, workThread, this, THREAD_PRIORITY_NORMAL, NULL);
-	m_tMt = CreateThread(NULL, 0, timeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
-	m_uMt = CreateThread(NULL, 0, radioUsbStatusThread, this, THREAD_PRIORITY_NORMAL, NULL);
+
 }
 CTcpScheduling::~CTcpScheduling()
 {
@@ -32,7 +30,8 @@ int CTcpScheduling::radioConnect(const char* ip)
 	memcpy(iptemp, (void *)&dwip, 4);
 	iptemp[3] = 1;
 	dwip = *((DWORD *)iptemp);
-	addTcpCommand( RADIO_CONNECT,ip,0,0);
+	connect();
+	//addTcpCommand( RADIO_CONNECT,ip,0,0);
 	return 0;
 
 }
@@ -320,10 +319,10 @@ void CTcpScheduling::workThreadFunc()
 			switch (it->command)
 			{
 			case  RADIO_CONNECT:
-				if (it->radioIP != "")
+				/*if (it->radioIP != "")
 				{
 					connect();
-				}
+				}*/
 				break;
 			case PRIVATE_CALL:
 				privateCall(it->radioId);
@@ -386,8 +385,8 @@ void CTcpScheduling::timeOut()
 {
 	while (m_timeThread)
 	{
-		std::list<TcpCommand>::iterator it;
 		m_allCommandListLocker.lock();
+		std::list<TcpCommand>::iterator it;
 		for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); it++)
 		{
 			it->timeCount++;
@@ -606,9 +605,9 @@ int CTcpScheduling::tcpConnect()
 				strtoul("0x9E3779B9", NULL, 16));
 
 			std::list<TcpCommand>::iterator it;
-			for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); it++)
+			//for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); it++)
 			{
-				if (it->command == RADIO_CONNECT)
+			//	if (it->command == RADIO_CONNECT)
 				{
 					if (pXnlConnection == NULL)    //0:调度业务和数据业务都连接失败 1： 调度业务连接成功，数据业务连接失败 2：调度业务连接失败，数据业务连接成功 3. 调度业务和数据业务都连接成功
 					{
@@ -787,6 +786,9 @@ void  CTcpScheduling::setCallBackFunc(void(*callBackFunc)( int, TcpRespone))
 void CTcpScheduling::connect()
 {
 	m_cMt = CreateThread(NULL, 0, tcpConnectionThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	m_wMt = CreateThread(NULL, 0, workThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	m_tMt = CreateThread(NULL, 0, timeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	m_uMt = CreateThread(NULL, 0, radioUsbStatusThread, this, THREAD_PRIORITY_NORMAL, NULL);
 }
 void CTcpScheduling::call( int type, int op, int id )
 {
@@ -834,7 +836,7 @@ void CTcpScheduling::control( int type, int id)
 }
 void CTcpScheduling::disConnect()
 {
-	if (m_wMt)
+	if (m_wMt && isTcpConnect)
 	{
 		m_workThread = false;
 		WaitForSingleObject(m_wMt, 1000);
@@ -846,13 +848,13 @@ void CTcpScheduling::disConnect()
 		WaitForSingleObject(m_cMt, 1000);
 		CloseHandle(m_cMt);
 	}
-	if (m_tMt)
+	if (m_tMt && isTcpConnect)
 	{
 		m_timeThread = false;
 		WaitForSingleObject(m_tMt, 1000);
 		CloseHandle(m_tMt);
 	}
-	if (m_uMt)
+	if (m_uMt && isTcpConnect)
 	{
 		m_usbThread = false;
 		WaitForSingleObject(m_uMt, 1000);

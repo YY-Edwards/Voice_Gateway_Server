@@ -15,8 +15,7 @@ CDataScheduling::CDataScheduling()
 	pRadioMsg = new CTextMsg(this);
 	m_workThread = true;
 	m_timeoutThread = true;
-	m_hWthd = CreateThread(NULL, 0, workThread, this, THREAD_PRIORITY_NORMAL, NULL);
-	m_hTthd = CreateThread(NULL, 0, timeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
+
 }
 CDataScheduling::~CDataScheduling()
 {
@@ -36,12 +35,17 @@ CDataScheduling::~CDataScheduling()
 
 bool CDataScheduling::radioConnect(const char* ip)
 {
-	if (myCallBackFunc != NULL )
+	if (ip != "")
 	{
-		addUdpCommand(MNIS_CONNECT, ip, "", 0, "", 0, 0);
-	
+		connect(ip);
 		return true;
 	}
+	//if (myCallBackFunc != NULL )
+	//{
+	//	//addUdpCommand(MNIS_CONNECT, ip, "", 0, "", 0, 0);
+	//
+	//	return true;
+	//}
 	return false;
 }
 void CDataScheduling::radioDisConnect()
@@ -191,16 +195,18 @@ void CDataScheduling::connect( const char* ip)
 		}
 	}
 	m_timeOutListLocker.unlock();
+	m_hWthd = CreateThread(NULL, 0, workThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	m_hTthd = CreateThread(NULL, 0, timeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
 }
 void CDataScheduling::disConnect()
 {
-	if (m_hWthd)
+	if (m_hWthd && isUdpConnect)
 	{
 		m_workThread = false;
 		WaitForSingleObject(m_hWthd,1000);
 		CloseHandle(m_hWthd);
 	}
-	if (m_hTthd)
+	if (m_hTthd && isUdpConnect)
 	{
 		m_timeoutThread = false;
 		WaitForSingleObject(m_hTthd, 1000);
@@ -297,10 +303,10 @@ void CDataScheduling::workThreadFunc()
 			switch (it->command)
 			{
 			case  MNIS_CONNECT:
-				if (it->radioIP != "")
+				/*if (it->radioIP != "")
 				{
 					connect(it->radioIP.c_str());
-				}
+				}*/
 				break;
 			case CONNECT_STATUS:
 				if (myCallBackFunc != NULL)
