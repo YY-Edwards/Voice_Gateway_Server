@@ -16,10 +16,6 @@ CRpcServer::CRpcServer()
 
 CRpcServer::~CRpcServer()
 {
-	if (NULL != m_thdPool)
-	{
-		delete m_thdPool;
-	}
 }
 
 int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
@@ -206,10 +202,20 @@ int CRpcServer::sendNextCommands(CRemotePeer* remote, std::list<CRequest*>& lstC
 
 void CRpcServer::stop()
 {
+
+	if (NULL != m_thdPool)
+	{
+		delete m_thdPool;
+	}
+	
+
 	if (m_pConnector)
 	{
 		delete m_pConnector;
 	}
+
+	m_bQuit = true;
+	m_maintainThread.join();
 
 	m_mpActions.erase(m_mpActions.begin(), m_mpActions.end());
 }
