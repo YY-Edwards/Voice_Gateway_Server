@@ -8,6 +8,8 @@
 #include "actionHandler.h"
 #include "WLNet.h"
 #include "../lib/radio/DataScheduling.h"
+#include "../lib/service/service.h"
+#include <fstream>
 
 extern CWLNet* g_pNet;
 
@@ -57,120 +59,273 @@ HWND GetConsoleHwnd(void)
 
 void handleLog(char *pLog)
 {
-#if _DEBUG	
-	SYSTEMTIME now = { 0 };
-	GetLocalTime(&now);
-	printf_s("\r\n%04u-%02u-%02u %02u:%02u:%02u %03u %s\r\n", now.wYear, now.wMonth, now.wDay, now.wHour, now.wMinute, now.wSecond, now.wMilliseconds, pLog);
+#if _DEBUG
+	LOG(INFO) << pLog;
 #endif
 }
 
-int main()
+int _tmain(int argc, _TCHAR* argv[])
 {
-	//_CrtSetBreakAlloc(358);
-	/*声明变量并初始化*/
-	CMySQL *m_pDb = new CMySQL();
-	CDataScheduling *m_pMnis = new CDataScheduling();
-	CManager *m_pManager = new CManager(m_pDb, m_pMnis);
-	BOOL m_ret = FALSE;
-	PLogReport m_report = NULL;
-	HWND m_hwnd = NULL;
-	char m_temp = 0x00;
-	CRpcServer *m_pRpcServer = new CRpcServer();
+#pragma region 正式服务代码
+	CService::instance()->SetServiceNameAndDescription(_T("Trbox.Wirelan"), _T("Trbox Wirelan Server"));
+	CService::instance()->SetServiceCode([&](){
+		/************************************************************************/
+		/* 运行代码
+		/************************************************************************/
+		/*log初始化*/
+		google::InitGoogleLogging((const char*)argv[0]);
+		google::SetLogDestination(google::GLOG_INFO, "\log./info_");
+		LOG(INFO) << "================Service started================";
 
-	/*设置回调*/
-	m_pMnis->setCallBackFunc(CManager::OnMnisCallBack);
-	m_pRpcServer->setOnConnectHandler(CManager::OnConnect);
-	m_pRpcServer->setOnDisconnectHandler(CManager::OnDisConnect);
+		/*声明变量并初始化*/
+		CMySQL *m_pDb = new CMySQL();
+		CDataScheduling *m_pMnis = new CDataScheduling();
+		CManager *m_pManager = new CManager(m_pDb, m_pMnis);
+		BOOL m_ret = FALSE;
+		PLogReport m_report = NULL;
+		HWND m_hwnd = NULL;
+		char m_temp = 0x00;
+		CRpcServer *m_pRpcServer = new CRpcServer();
 
-	/*设置基本参数*/
-	m_report = handleLog;
-	m_hwnd = GetConsoleHwnd();
-	m_pManager->initWnd(m_hwnd);
-	m_pDb->SetLogPtr(m_report);
-	m_pManager->setLogPtr(m_report);
-	/*开启远程任务处理线程*/
-	m_pManager->startHandleRemoteTask();
-	/*初始化服务部分*/
-	m_pRpcServer->addActionHandler("wlConnect", wlConnectActionHandler);
-	m_pRpcServer->addActionHandler("wlCall", wlCallActionHandler);
-	m_pRpcServer->addActionHandler("wlCallStatus", wlCallStatusActionHandler);
-	m_pRpcServer->addActionHandler("wlPlay", wlPlayActionHandler);
-	m_pRpcServer->addActionHandler("wlInfo", wlInfoActionHandler);
-	m_pRpcServer->addActionHandler("queryGps", wlMnisQueryGpsActionHandler);
-	m_pRpcServer->addActionHandler("message", wlMnisMessageHandler);
-	m_pRpcServer->addActionHandler("status", wlMnisStatusHandler);
-	m_pRpcServer->start(WL_SERVER_PORT);
+		/*设置回调*/
+		m_pMnis->setCallBackFunc(CManager::OnMnisCallBack);
+		m_pRpcServer->setOnConnectHandler(CManager::OnConnect);
+		m_pRpcServer->setOnDisconnectHandler(CManager::OnDisConnect);
 
-	/*初始化数据库*/
-	m_ret = m_pDb->Open(DB_HOST, DB_PORT, DB_USER, DB_PWD, DB_NAME);
-	if (!m_ret)
-	{
-		handleLog("open data server fail");
-		scanf_s("%c", &m_temp, 1);
-		return 0;
-	}
+		/*设置基本参数*/
+		m_report = handleLog;
+		m_hwnd = GetConsoleHwnd();
+		m_pManager->initWnd(m_hwnd);
+		m_pDb->SetLogPtr(m_report);
+		m_pManager->setLogPtr(m_report);
+		/*开启远程任务处理线程*/
+		m_pManager->startHandleRemoteTask();
+		/*初始化服务部分*/
+		m_pRpcServer->addActionHandler("wlConnect", wlConnectActionHandler);
+		m_pRpcServer->addActionHandler("wlCall", wlCallActionHandler);
+		m_pRpcServer->addActionHandler("wlCallStatus", wlCallStatusActionHandler);
+		m_pRpcServer->addActionHandler("wlPlay", wlPlayActionHandler);
+		m_pRpcServer->addActionHandler("wlInfo", wlInfoActionHandler);
+		m_pRpcServer->addActionHandler("queryGps", wlMnisQueryGpsActionHandler);
+		m_pRpcServer->addActionHandler("message", wlMnisMessageHandler);
+		m_pRpcServer->addActionHandler("status", wlMnisStatusHandler);
+		m_pRpcServer->start(WL_SERVER_PORT);
+		/*初始化数据库*/
+		m_ret = m_pDb->Open(DB_HOST, DB_PORT, DB_USER, DB_PWD, DB_NAME);
 
-	/*等待用户选择退出*/
-	handleLog("input any for end");
-	scanf_s("%c", &m_temp, 1);
-
-	/*释放资源*/
-	if (m_pManager)
-	{
-		//m_pManager->stop();
-		delete m_pManager;
-		m_pManager = NULL;
-	}
-	if (NULL != m_pMnis)
-	{
-		m_pMnis->radioDisConnect();
-		delete m_pMnis;
-		m_pMnis = NULL;
-	}
-	if (g_pNet)
-	{
-		//g_pNet->stop();
-		delete g_pNet;
-		g_pNet = NULL;
-	}
-	while (g_onLineClients.size() > 0)
-	{
-		TcpClient *p = g_onLineClients.front();
-		g_onLineClients.pop_front();
-		if (p)
+		while (!CService::instance()->m_bServiceStopped);
+		/************************************************************************/
+		/* 资源释放
+		/************************************************************************/
+		if (m_pManager)
 		{
-			delete p;
-			p = NULL;
+			//m_pManager->stop();
+			delete m_pManager;
+			m_pManager = NULL;
+		}
+		if (NULL != m_pMnis)
+		{
+			m_pMnis->radioDisConnect();
+			delete m_pMnis;
+			m_pMnis = NULL;
+		}
+		if (g_pNet)
+		{
+			//g_pNet->stop();
+			delete g_pNet;
+			g_pNet = NULL;
+		}
+		while (g_onLineClients.size() > 0)
+		{
+			TcpClient *p = g_onLineClients.front();
+			g_onLineClients.pop_front();
+			if (p)
+			{
+				delete p;
+				p = NULL;
+			}
+		}
+		if (m_pRpcServer)
+		{
+			m_pRpcServer->stop();
+			delete m_pRpcServer;
+			m_pRpcServer = NULL;
+		}
+
+		if (g_pSound)
+		{
+			//g_pSound->stop();
+			delete g_pSound;
+			g_pSound = NULL;
+		}
+
+		if (g_pDongle)
+		{
+			//g_pDongle->stop();
+			delete g_pDongle;
+			g_pDongle = NULL;
+		}
+
+		if (m_pDb)
+		{
+			//m_pDb->stop();
+			delete m_pDb;
+			m_pDb = NULL;
+		}
+	});
+
+	std::wstring strArg = argv[1];
+	try{
+		if (0 == strArg.compare(_T("install")))
+		{
+			CService::instance()->InstallService();
+			//InstallService();
+		}
+		else if (0 == strArg.compare(_T("uninstall")))
+		{
+			CService::instance()->UninstallService();
+			//LOG(INFO) << "UnInstall Service";
+		}
+		else if (0 == strArg.compare(_T("start")))
+		{
+			CService::instance()->StartWindowsService();
+			//LOG(INFO) << "Start Service";
+		}
+		else if (0 == strArg.compare(_T("stop")))
+		{
+			CService::instance()->StopService();
+			//LOG(INFO) << "Stop Service";
+		}
+		else if (0 == strArg.compare(_T("run")))
+		{
+			CService::instance()->RunService();
 		}
 	}
-	if (m_pRpcServer)
-	{
-		m_pRpcServer->stop();
-		delete m_pRpcServer;
-		m_pRpcServer = NULL;
+	catch (std::system_error syserr) {
+		exit(1);
+	}
+	catch (std::runtime_error runerr) {
+		exit(1);
+	}
+	catch (...) {
+		exit(1);
 	}
 
-	if (g_pSound)
-	{
-		//g_pSound->stop();
-		delete g_pSound;
-		g_pSound = NULL;
-	}
-
-	if (g_pDongle)
-	{
-		//g_pDongle->stop();
-		delete g_pDongle;
-		g_pDongle = NULL;
-	}
-
-	if (m_pDb)
-	{
-		//m_pDb->stop();
-		delete m_pDb;
-		m_pDb = NULL;
-	}
-
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	wprintf(argv[1]);
 	return 0;
+#pragma endregion
+
+	//#pragma region 控制台调试代码
+	//	//_CrtSetBreakAlloc(358);
+	//
+	//	/*log初始化*/
+	//	google::InitGoogleLogging((const char*)argv[0]);
+	//	google::SetLogDestination(google::GLOG_INFO, "\log./info_");
+	//	LOG(INFO) << "================Service started================";
+	//
+	//	CMySQL *m_pDb = new CMySQL();
+	//	CDataScheduling *m_pMnis = new CDataScheduling();
+	//	CManager *m_pManager = new CManager(m_pDb, m_pMnis);
+	//	BOOL m_ret = FALSE;
+	//	PLogReport m_report = NULL;
+	//	HWND m_hwnd = NULL;
+	//	char m_temp = 0x00;
+	//	CRpcServer *m_pRpcServer = new CRpcServer();
+	//
+	//	/*设置回调*/
+	//	m_pMnis->setCallBackFunc(CManager::OnMnisCallBack);
+	//	m_pRpcServer->setOnConnectHandler(CManager::OnConnect);
+	//	m_pRpcServer->setOnDisconnectHandler(CManager::OnDisConnect);
+	//
+	//	/*设置基本参数*/
+	//	m_report = handleLog;
+	//	m_hwnd = GetConsoleHwnd();
+	//	m_pManager->initWnd(m_hwnd);
+	//	m_pDb->SetLogPtr(m_report);
+	//	m_pManager->setLogPtr(m_report);
+	//	/*开启远程任务处理线程*/
+	//	m_pManager->startHandleRemoteTask();
+	//	/*初始化服务部分*/
+	//	m_pRpcServer->addActionHandler("wlConnect", wlConnectActionHandler);
+	//	m_pRpcServer->addActionHandler("wlCall", wlCallActionHandler);
+	//	m_pRpcServer->addActionHandler("wlCallStatus", wlCallStatusActionHandler);
+	//	m_pRpcServer->addActionHandler("wlPlay", wlPlayActionHandler);
+	//	m_pRpcServer->addActionHandler("wlInfo", wlInfoActionHandler);
+	//	m_pRpcServer->addActionHandler("queryGps", wlMnisQueryGpsActionHandler);
+	//	m_pRpcServer->addActionHandler("message", wlMnisMessageHandler);
+	//	m_pRpcServer->addActionHandler("status", wlMnisStatusHandler);
+	//	m_pRpcServer->start(WL_SERVER_PORT);
+	//
+	//	/*初始化数据库*/
+	//	m_ret = m_pDb->Open(DB_HOST, DB_PORT, DB_USER, DB_PWD, DB_NAME);
+	//	if (!m_ret)
+	//	{
+	//		handleLog("open data server fail");
+	//		scanf_s("%c", &m_temp, 1);
+	//		return 0;
+	//	}
+	//
+	//	/*等待用户选择退出*/
+	//	handleLog("input any for end");
+	//	scanf_s("%c", &m_temp, 1);
+	//
+	//	/*释放资源*/
+	//	if (m_pManager)
+	//	{
+	//		//m_pManager->stop();
+	//		delete m_pManager;
+	//		m_pManager = NULL;
+	//	}
+	//	if (NULL != m_pMnis)
+	//	{
+	//		m_pMnis->radioDisConnect();
+	//		delete m_pMnis;
+	//		m_pMnis = NULL;
+	//	}
+	//	if (g_pNet)
+	//	{
+	//		//g_pNet->stop();
+	//		delete g_pNet;
+	//		g_pNet = NULL;
+	//	}
+	//	while (g_onLineClients.size() > 0)
+	//	{
+	//		TcpClient *p = g_onLineClients.front();
+	//		g_onLineClients.pop_front();
+	//		if (p)
+	//		{
+	//			delete p;
+	//			p = NULL;
+	//		}
+	//	}
+	//	if (m_pRpcServer)
+	//	{
+	//		m_pRpcServer->stop();
+	//		delete m_pRpcServer;
+	//		m_pRpcServer = NULL;
+	//	}
+	//
+	//	if (g_pSound)
+	//	{
+	//		//g_pSound->stop();
+	//		delete g_pSound;
+	//		g_pSound = NULL;
+	//	}
+	//
+	//	if (g_pDongle)
+	//	{
+	//		//g_pDongle->stop();
+	//		delete g_pDongle;
+	//		g_pDongle = NULL;
+	//	}
+	//
+	//	if (m_pDb)
+	//	{
+	//		//m_pDb->stop();
+	//		delete m_pDb;
+	//		m_pDb = NULL;
+	//	}
+	//	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//	return 0;
+	//#pragma endregion
 }
