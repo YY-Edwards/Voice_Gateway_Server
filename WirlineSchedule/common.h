@@ -14,6 +14,9 @@
 #include "../lib/rpc/include/TcpServer.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
 
+#include "../lib//glog/logging.h"
+#pragma comment(lib, "../lib//glog/lib/libglog.lib")
+
 #ifdef _DEBUG
 #define DEBUG_CLIENTBLOCK new( _CLIENT_BLOCK, __FILE__, __LINE__)
 #else

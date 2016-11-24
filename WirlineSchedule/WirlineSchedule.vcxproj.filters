@@ -73,6 +73,9 @@
     <ClCompile Include="..\lib\radio\allCommonl.cpp">
       <Filter>mins\source</Filter>
     </ClCompile>
+    <ClCompile Include="..\lib\service\service.cpp">
+      <Filter>rpc\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ambe3000.h">
@@ -366,6 +369,12 @@
     <ClInclude Include="..\lib\radio\allCommon.h">
       <Filter>mins\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\lib\service\service.h">
+      <Filter>rpc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\glog\logging.h">
+      <Filter>glog</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -430,6 +439,9 @@
     </Filter>
     <Filter Include="mins\source">
       <UniqueIdentifier>{c649651e-6a9b-404a-a246-941ecba8f1ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="glog">
+      <UniqueIdentifier>{897a0b18-5e89-4115-8a72-bb3fcc983ebf}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

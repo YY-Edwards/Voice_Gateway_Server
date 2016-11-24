@@ -481,8 +481,8 @@ DECLARE_bool(stop_logging_if_full_disk);
 namespace google {
 
 // They need the definitions of integer types.
-#include "glog/log_severity.h"
-#include "glog/vlog_is_on.h"
+#include "log_severity.h"
+#include "vlog_is_on.h"
 
 // Initialize google's logging library. You will see the program name
 // specified by argv0 in log outputs.
