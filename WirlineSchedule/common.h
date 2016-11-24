@@ -160,6 +160,7 @@ extern _SlotNumber CONFIG_DEFAULT_SLOT;//默认信道
 //////////////////////////////////////////////////////////////////////////
 /*信号*/
 extern HANDLE g_taskLockerEvent;
+extern HANDLE g_waitHandleRemoteTask;
 /*JSON相关远程命令*/
 #define REMOTE_CMD_CONFIG 0x01
 #define REMOTE_CMD_CALL 0x02
