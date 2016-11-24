@@ -190,8 +190,8 @@ DWORD WINAPI CService::ServiceWorkerThread(LPVOID lpParam)
 		{
 			CService::instance()->m_fnServiceCode();
 		}
-		
-		SetEvent(CService::instance()->m_ServiceStopEvent);
+		while (WaitForSingleObject(CService::instance()->m_ServiceStopEvent, 0) != WAIT_OBJECT_0);
+		//SetEvent(CService::instance()->m_ServiceStopEvent);
 
 		return ERROR_SUCCESS;
 	}
