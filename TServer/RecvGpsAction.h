@@ -43,7 +43,7 @@ void recvGpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 		int valid = 0;
 		if (d.HasMember("valid") && d["valid"].IsInt())
 		{
-			if (1 == d["valid"])
+			if (1 == d["valid"].GetInt())
 			{
 				if (d.HasMember("Target") && d["Target"].IsInt())
 				{

@@ -46,6 +46,9 @@
     <Filter Include="radioTcp\xcmp">
       <UniqueIdentifier>{454dd649-d9c5-4f17-a18c-bcc324b5c658}</UniqueIdentifier>
     </Filter>
+    <Filter Include="service">
+      <UniqueIdentifier>{c6e4c2d0-f37e-4c82-85c4-2bf814f7b506}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -180,6 +183,9 @@
     <ClInclude Include="..\lib\radio\allCommon.h">
       <Filter>radioUdp</Filter>
     </ClInclude>
+    <ClInclude Include="..\lib\service\service.h">
+      <Filter>service</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -226,6 +232,9 @@
     </ClCompile>
     <ClCompile Include="..\lib\radio\allCommonl.cpp">
       <Filter>radioUdp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\service\service.cpp">
+      <Filter>service</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

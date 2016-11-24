@@ -150,7 +150,7 @@ std::string CTextMsg::ParseUserMsg(TextMsg* HandleMsg, int * len)
 	}
 
 
-	memcpy((char*)szMessage, &HandleMsg->TextPayload[MsgOffset], MsgSize - MsgOffset - 2);
+	memcpy((char*)szMessage, &HandleMsg->TextPayload[MsgOffset+4], MsgSize - MsgOffset - 6);
 	//*len = MsgSize - MsgOffset - 2;
 	ParsedMsg = TCHAR2STRING(szMessage);
 	//	memcpy((char*)szMessage, &HandleMsg->TextPayload[MsgOffset], MsgSize - MsgOffset - 2);
