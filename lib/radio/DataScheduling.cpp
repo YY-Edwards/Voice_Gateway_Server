@@ -261,7 +261,9 @@ void CDataScheduling::addUdpCommand(int command, std::string radioIP, std::strin
 	m_command.cycle = cycle;
 	m_command.gpsIP = gpsIP;
 	m_command.text = text;
+	std::lock_guard <std::mutex> locker(m_timeOutListLocker);
 	timeOutList.push_back(m_command);
+	std::lock_guard <std::mutex> wlocker(m_workListLocker);
 	workList.push_back(m_command);
 
 }
