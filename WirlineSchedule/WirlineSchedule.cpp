@@ -66,15 +66,16 @@ void handleLog(char *pLog)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	/*log初始化*/
+	google::InitGoogleLogging((const char*)argv[0]);
+	google::SetLogDestination(google::GLOG_INFO, "\log./info_");
+
 #pragma region 正式服务代码
 	CService::instance()->SetServiceNameAndDescription(_T("Trbox.Wirelan"), _T("Trbox Wirelan Server"));
 	CService::instance()->SetServiceCode([&](){
 		/************************************************************************/
 		/* 运行代码
 		/************************************************************************/
-		/*log初始化*/
-		google::InitGoogleLogging((const char*)argv[0]);
-		google::SetLogDestination(google::GLOG_INFO, "\log./info_");
 		LOG(INFO) << "================Service started================";
 
 		/*声明变量并初始化*/
@@ -217,12 +218,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//#pragma region 控制台调试代码
 	//	//_CrtSetBreakAlloc(358);
-	//
-	//	/*log初始化*/
-	//	google::InitGoogleLogging((const char*)argv[0]);
-	//	google::SetLogDestination(google::GLOG_INFO, "\log./info_");
-	//	LOG(INFO) << "================Service started================";
-	//
 	//	CMySQL *m_pDb = new CMySQL();
 	//	CDataScheduling *m_pMnis = new CDataScheduling();
 	//	CManager *m_pManager = new CManager(m_pDb, m_pMnis);
