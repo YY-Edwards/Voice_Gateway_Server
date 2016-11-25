@@ -127,7 +127,6 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="tcpCommon.h" />
     <ClInclude Include="TcpScheduling.h" />
-    <ClInclude Include="UnitTest.h" />
     <ClInclude Include="WiretapEventAction.h" />
     <ClInclude Include="xcmp_msg_defs.h" />
     <ClInclude Include="XNLConnection.h" />
@@ -153,9 +152,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="TcpScheduling.cpp" />
-    <ClCompile Include="UnitTest.cpp">
-      <AdditionalIncludeDirectories Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\Dispatch\gtest\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-    </ClCompile>
     <ClCompile Include="XNLConnection.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -29,7 +29,7 @@ void  controlAction(CRemotePeer* pRemote, const std::string& param, uint64_t cal
 				break;
 			}
 		}
-		if (isHave)
+		if (isHave && param != "")
 		{
 			int  opterateType;
 			int id;

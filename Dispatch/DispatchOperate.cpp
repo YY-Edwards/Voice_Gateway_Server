@@ -21,7 +21,7 @@ DispatchOperate::~DispatchOperate()
 
 int DispatchOperate::getLic(const char* licPath)
 {
-
+	
 
 	//char* strmac;
 	//strmac = pXnlConnection->readmac;
@@ -265,7 +265,7 @@ void DispatchOperate::delPeer(CRemotePeer* peer)
 }
 void DispatchOperate::OnConnect(CRemotePeer* pRemotePeer)
 {
-	LOG(INFO) << "onconnect";
+	
 	if (pRemotePeer)
 	{
 		dis.addPeer(pRemotePeer);
@@ -525,9 +525,6 @@ void DispatchOperate::control( int type,  int id)
 
 void DispatchOperate::setCallBack()
 {
-#if DEBUG_LOG
-	LOG(INFO) << "callback";
-#endif
 	pDs->setCallBackFunc(DispatchOperate::OnData);
 	pTs->setCallBackFunc(DispatchOperate::OnTcpData);
 }
@@ -584,4 +581,5 @@ void DispatchOperate::disConnect()
 {
 	pDs->radioDisConnect();
 	pTs->disConnect();
+	
 }

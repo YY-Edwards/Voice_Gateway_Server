@@ -30,7 +30,7 @@ void  msgAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 				break;
 			}
 		}
-		if (isHave)
+		if (isHave && param != "")
 		{
 			int opterateType = -1;
 			int id = -1;

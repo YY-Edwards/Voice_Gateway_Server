@@ -55,18 +55,31 @@ int _tmain(int argc, _TCHAR* argv[])
 	rpcServer.addActionHandler("status", statusAction);
 	rpcServer.start(TCP_PORT, rpcServer.TCP);
 
-	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);                    //检查内存泄漏
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);                    //检查内存泄漏
 	//dis = new DispatchOperate();
 	//cs.setCallBackFunc(DispatchOperate::OnData);
 	/*while (1){ Sleep(1); };*/
-	/*等待结束标识*/
+	///*等待结束标识*/
 	//char temp = 0x00;
 	//printf("press any key to end\r\n");
 	//scanf_s("%c", &temp, 1);
 
-	///*释放资源*/
+	/*释放资源*/
 	while (!CService::instance()->m_bServiceStopped);
+	
 	dis.disConnect();
+	while (rmtPeerList.size() > 0)
+	{
+		TcpClient *p = rmtPeerList.front();
+		rmtPeerList.pop_front();
+		if (p)
+		{
+			delete p;
+			p = NULL;
+		}
+	}
+		rpcServer.stop();
+	
 		});
 
 
@@ -75,7 +88,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		if (0 == strArg.compare(_T("install")))
 		{
 			CService::instance()->InstallService();
-			//InstallService();
+			
 			LOG(INFO) << "Install Service";
 		}
 		else if (0 == strArg.compare(_T("uninstall")))

@@ -75,9 +75,6 @@
     <ClInclude Include="DispatchOperate.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="UnitTest.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\lib\rpc\include\AbstractAction.h">
       <Filter>rpc\include</Filter>
     </ClInclude>
@@ -195,9 +192,6 @@
       <Filter>radioTcp\xcmp</Filter>
     </ClCompile>
     <ClCompile Include="DispatchOperate.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="UnitTest.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp">

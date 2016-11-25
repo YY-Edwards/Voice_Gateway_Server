@@ -85,7 +85,6 @@ typedef struct tagTcpCommand
 	int command;
 	int radioId;
 	std::string radioIP;
-	TcpClient* peer;
 	//SOCKET s;
 }TcpCommand;
 extern std::list <TcpCommand> tcpCommandTimeOutList;

@@ -31,7 +31,7 @@ void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 				break;
 			}
 		}
-		if (isHave)
+		if (isHave && param != "")
 		{
 			int operate = -1;
 			int opterateType = -1;;

@@ -30,7 +30,7 @@ void  statusAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 				break;
 			}
 		}
-		if (isHave)
+		if (isHave && param != "")
 		{
 			if (d.HasMember("getType") && d["getType"].IsInt())
 			{

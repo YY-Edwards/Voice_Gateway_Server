@@ -28,7 +28,7 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 				break;
 			}
 		}
-		if (isHave)
+		if (isHave && param !="")
 		{
 			std::string radioIP = "";
 			std::string mnisIP = "";

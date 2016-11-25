@@ -20,7 +20,10 @@ CTcpScheduling::CTcpScheduling()
 }
 CTcpScheduling::~CTcpScheduling()
 {
-
+	if (pXnlConnection)
+	{
+		delete pXnlConnection;
+	}
 }
 int CTcpScheduling::radioConnect(const char* ip)
 {
@@ -32,6 +35,7 @@ int CTcpScheduling::radioConnect(const char* ip)
 	dwip = *((DWORD *)iptemp);
 	connect();
 	//addTcpCommand( RADIO_CONNECT,ip,0,0);
+	delete[]iptemp;
 	return 0;
 
 }
@@ -393,7 +397,7 @@ void CTcpScheduling::timeOut()
 			if (it->timeCount % (it->timeOut / 100) == 0)
 			{
 
-				if (it->peer != NULL)
+			//	if (it->peer != NULL)
 				{
 					int operate = -1;
 					int type = -1;
