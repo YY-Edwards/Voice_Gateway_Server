@@ -157,7 +157,7 @@ void CDataScheduling::connect( const char* ip)
 		if (pRadioMsg->InitSocket(dwIP))
 		if (pRadioARS->InitARSSocket(dwIP))
 		if (pRadioGPS->InitGPSSocket(dwIP))
-		{
+		{	
 			isUdpConnect = true;
 			result = 0;
 			lastIP = ip;
@@ -186,7 +186,7 @@ void CDataScheduling::connect( const char* ip)
 	}
 	Respone r = { 0 };
 	r.connectStatus = result;
-	onData(myCallBackFunc, RADIO_STATUS, r);
+	onData(myCallBackFunc,  CONNECT_STATUS, r);
 	//std::list<Command>::iterator it;
 	/*m_timeOutListLocker.lock();
 	for (it = timeOutList.begin(); it != timeOutList.end(); ++it)

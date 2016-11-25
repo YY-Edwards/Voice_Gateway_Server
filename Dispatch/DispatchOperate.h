@@ -31,7 +31,7 @@ public:
 private:
 	std::map <int, int> gpsDic;
 	int getLic(const char* licPath);
-	void sendConnectStatusToClient(CRemotePeer* pRemote);
+	void sendConnectStatusToClient();
 	void sendRadioStatusToClient(CRemotePeer* pRemote);
 	void sendCallStatusToClient();
 	void send2Client(char* name, ArgumentType args);
@@ -41,5 +41,7 @@ private:
 	CTcpScheduling* pTs;
 	bool isUdpConnect;
 	std::mutex m_locker;
+	std::string  mnisIP;
+	
 };
 

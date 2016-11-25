@@ -35,7 +35,7 @@ int CTcpScheduling::radioConnect(const char* ip)
 	dwip = *((DWORD *)iptemp);
 	connect();
 	//addTcpCommand( RADIO_CONNECT,ip,0,0);
-	delete[]iptemp;
+	
 	return 0;
 
 }
@@ -623,7 +623,7 @@ int CTcpScheduling::tcpConnect()
 #if DEBUG_LOG
 						LOG(ERROR) << "调度连接失败！";
 #endif
-						break;
+						//break;
 					}
 					else
 					{
@@ -635,7 +635,7 @@ int CTcpScheduling::tcpConnect()
 #if DEBUG_LOG
 						LOG(ERROR) << "调度连接成功！";
 #endif
-						break;
+						//break;
 					}
 
 				}

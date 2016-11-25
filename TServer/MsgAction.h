@@ -55,12 +55,20 @@ void msgAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, 
 		{
 			message = d["Contents"].GetString();
 		}
+		int maxlen = 256;
+		char* str = new char[maxlen];
+		memset(str, 0, maxlen);
+		wchar_t* text = new wchar_t[maxlen];
+		MultiByteToWideChar(CP_ACP, 0, message.c_str(), -1, text, maxlen);
+		WideCharToMultiByte(CP_UTF8, 0, text, -1, str, maxlen, NULL, NULL);
+		
+
 		ArgumentType args;
 		FieldValue f(FieldValue::TArray);
 		FieldValue element(FieldValue::TObject);
 		element.setKeyVal("source",FieldValue(source));
 		element.setKeyVal("destination", FieldValue(destination));
-		element.setKeyVal("message", FieldValue(message.c_str()));
+		element.setKeyVal("message", FieldValue(str));
 		f.push(element);
 		args["operation"] = FieldValue("add");
 		args["sms"] = FieldValue(f);

@@ -2,6 +2,7 @@
 #include "extern.h"
 DispatchOperate::DispatchOperate()
 {
+	mnisIP = "";
 	isUdpConnect = false;
 	pDs = new CDataScheduling();
 	pTs = new CTcpScheduling();
@@ -131,50 +132,33 @@ int DispatchOperate::getLic(const char* licPath)
 return 1;
 }
 
-
-
-
-void DispatchOperate::sendConnectStatusToClient(CRemotePeer* pRemote)
+void DispatchOperate::sendConnectStatusToClient()
 {
-	
-		if (isTcpConnect)
-		{
-#if DEBUG_LOG
-			LOG(INFO) << "调度业务连接成功";      //DATA_SUCESS_DISPATCH_SUCESS
-#endif
-			if (pRemote != NULL)
-			{
-
-				ArgumentType args;
-				args["getType"] = RADIO_CONNECT;
-				args["info"] = FieldValue(DATA_SUCESS_DISPATCH_SUCESS);
-				std::string callJsonStr = CRpcJsonParser::buildCall("status", ++g_sn, args, "radio");
-				if (pRemote != NULL)
-				{
-					pRemote->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-						
-				}
-
-			}
-
-		}
-		else
-		{
-#if DEBUG_LOG
-			LOG(INFO) << "调度业务连接失败";              //DATA_SUCESS_DISPATCH_FAIL
-#endif
-			if (pRemote != NULL)
-			{
-				ArgumentType args;
-				args["getType"] = RADIO_CONNECT;
-				args["info"] = FieldValue(DATA_SUCESS_DISPATCH_FAILED);
-				std::string callJsonStr = CRpcJsonParser::buildCall("status", ++g_sn, args, "radio");
-				if (pRemote != NULL)
-				{
-					pRemote->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-				}
-			}
-		}
+	ArgumentType args;
+	if (isUdpConnect && isTcpConnect)
+	{
+		args["getType"] = CONNECT_STATUS;
+		args["info"] = FieldValue(DATA_SUCESS_DISPATCH_SUCESS);
+		dis.send2Client("status", args);
+	}
+	else if (isUdpConnect && !isTcpConnect)
+	{
+		args["getType"] = CONNECT_STATUS;
+		args["info"] = FieldValue(DATA_SUCESS_DISPATCH_FAILED);
+		dis.send2Client("status", args);
+	}
+	else if (!isUdpConnect && isTcpConnect)
+	{
+		args["getType"] = CONNECT_STATUS;
+		args["info"] = FieldValue(DATA_FAILED_DISPATCH_SUCESS);
+		dis.send2Client("status", args);
+	}
+	else if (!isUdpConnect && !isTcpConnect)
+	{
+		args["getType"] = CONNECT_STATUS;
+		args["info"] = FieldValue(DATA_FAILED_DISPATCH_FAILED);
+		dis.send2Client("status", args);
+	}
 }
 //void DispatchOperate::sendRadioStatusToClient(CRemotePeer* pRemote)
 //{
@@ -310,9 +294,15 @@ void DispatchOperate::OnData(  int call, Respone data)
 	case CONNECT_STATUS:
 		try
 		{
-			args["getType"] = CONNECT_STATUS;
-			args["info"] = FieldValue(data.connectStatus);
-			dis.send2Client("status", args);
+			if (SUCESS == data.connectStatus)
+			{
+				dis.isUdpConnect = true;
+			}
+			else
+			{
+				dis.isUdpConnect = false;
+			}
+			dis.sendConnectStatusToClient();
 		}
 		catch (std::exception e)
 		{
@@ -434,9 +424,15 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 	case RADIO_CONNECT:
 		try
 		{
-			args["getType"] = CONNECT_STATUS;
-			args["info"] = FieldValue(0);
-			dis.send2Client("status", args);
+			if ("" == dis.mnisIP && !isTcpConnect)
+			{
+				dis.isUdpConnect = false;
+			}
+			else if ("" == dis.mnisIP && isTcpConnect && !dis.isUdpConnect)
+			{
+				dis.isUdpConnect = true;
+			}
+			dis.sendConnectStatusToClient();
 		}
 		catch (std::exception e)
 		{
@@ -503,6 +499,7 @@ void DispatchOperate::connect(const char * ip ,const char* mIp )
 {
 	if (INADDR_NONE != inet_addr(mIp))
 	{
+		mnisIP = mIp;
 		pDs->radioConnect(mIp);
 		pTs->radioConnect(ip);
 	}
