@@ -9,7 +9,11 @@
 #include "WLNet.h"
 #include "../lib/radio/DataScheduling.h"
 #include "../lib/service/service.h"
-#include <fstream>
+
+#include <shlobj.h> 
+
+#include <Shlwapi.h>
+#pragma comment(lib, "Shlwapi.lib")
 
 extern CWLNet* g_pNet;
 
@@ -64,11 +68,54 @@ void handleLog(char *pLog)
 #endif
 }
 
+std::wstring getAppdataPath(){
+	TCHAR szBuffer[MAX_PATH];
+	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
+
+	return std::wstring(szBuffer);
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	/*log初始化*/
-	google::InitGoogleLogging((const char*)argv[0]);
-	google::SetLogDestination(google::GLOG_INFO, "\log./info_");
+	int createFileRlt = 0;
+	std::wstring appFolder = getAppdataPath() + _T("\\Jihua Information");
+	if (!PathFileExists(appFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(appFolder.c_str());
+	}
+	appFolder = appFolder + _T("\\Trbox");
+	if (!PathFileExists(appFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(appFolder.c_str());
+	}
+	appFolder = appFolder + _T("\\3.0");
+	if (!PathFileExists(appFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(appFolder.c_str());
+	}
+	appFolder = appFolder + _T("\\WirelineSchedule");
+	if (!PathFileExists(appFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(appFolder.c_str());
+	}
+
+	std::wstring logFolder = appFolder + _T("\\log");
+	if (!PathFileExists(logFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(logFolder.c_str());
+	}
+
+	std::wstring pathLogInfo = logFolder + _T("/info_");
+	std::wstring pathLogError = logFolder + _T("/error_");
+	std::wstring pathLogWarning = logFolder + _T("/warning_");
+
+	//FLAGS_log_dir = "./";
+	google::InitGoogleLogging("");
+	google::SetLogDestination(google::GLOG_INFO, g_tool.UnicodeToUTF8(pathLogInfo).c_str());
+	google::SetLogDestination(google::GLOG_ERROR, g_tool.UnicodeToUTF8(pathLogError).c_str());
+	google::SetLogDestination(google::GLOG_WARNING, g_tool.UnicodeToUTF8(pathLogWarning).c_str());
+	google::SetLogFilenameExtension("log");
 
 #pragma region 正式服务代码
 	CService::instance()->SetServiceNameAndDescription(_T("Trbox.Wirelan"), _T("Trbox Wirelan Server"));
