@@ -183,6 +183,7 @@
     <ClInclude Include="WLNet.h" />
     <ClInclude Include="WLRecord.h" />
     <ClInclude Include="WLRecordFile.h" />
+    <ClInclude Include="WLSocketLog.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\lib\radio\allCommonl.cpp" />
@@ -213,6 +214,7 @@
     <ClCompile Include="WLNet.cpp" />
     <ClCompile Include="WLRecord.cpp" />
     <ClCompile Include="WLRecordFile.cpp" />
+    <ClCompile Include="WLSocketLog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="mysql-connector-c\lib\libmysql.dll" />

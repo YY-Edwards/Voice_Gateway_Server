@@ -74,6 +74,17 @@ std::wstring getAppdataPath(){
 
 	return std::wstring(szBuffer);
 }
+HWND g_hwnd = NULL;
+HANDLE g_waitHwnd = CreateEvent(NULL, FALSE, FALSE, NULL);
+
+BOOL CALLBACK EnumWindowsProc(HWND hwdnd, LPARAM lparam)
+{
+	g_hwnd = hwdnd;
+	SetEvent(g_waitHwnd);
+	return FALSE;
+}
+
+#define SERVICE_CODDE TRUE
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -117,13 +128,14 @@ int _tmain(int argc, _TCHAR* argv[])
 	google::SetLogDestination(google::GLOG_WARNING, g_tool.UnicodeToUTF8(pathLogWarning).c_str());
 	google::SetLogFilenameExtension("log");
 
-#pragma region 正式服务代码
+#if SERVICE_CODDE
 	CService::instance()->SetServiceNameAndDescription(_T("Trbox.Wirelan"), _T("Trbox Wirelan Server"));
 	CService::instance()->SetServiceCode([&](){
 		/************************************************************************/
 		/* 运行代码
 		/************************************************************************/
 		LOG(INFO) << "================Service started================";
+#endif
 
 		/*声明变量并初始化*/
 		CMySQL *m_pDb = new CMySQL();
@@ -142,7 +154,20 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		/*设置基本参数*/
 		m_report = handleLog;
+		//g_WLlog.sendLog("startEnumWindows");
+		//EnumWindows(EnumWindowsProc, NULL);
+		//g_WLlog.sendLog("start WaitForSingleObject g_waitHwnd");
+		//WaitForSingleObject(g_waitHwnd, INFINITE);
+		//m_hwnd = (HWND)0x000302e6;
 		m_hwnd = GetConsoleHwnd();
+		if (m_hwnd)
+		{
+			g_WLlog.sendLog("m_hwnd is not null");
+		}
+		else
+		{
+			g_WLlog.sendLog("m_hwnd is null");
+		}
 		m_pManager->initWnd(m_hwnd);
 		m_pDb->SetLogPtr(m_report);
 		m_pManager->setLogPtr(m_report);
@@ -158,10 +183,17 @@ int _tmain(int argc, _TCHAR* argv[])
 		m_pRpcServer->addActionHandler("message", wlMnisMessageHandler);
 		m_pRpcServer->addActionHandler("status", wlMnisStatusHandler);
 		m_pRpcServer->start(WL_SERVER_PORT);
+
 		/*初始化数据库*/
 		m_ret = m_pDb->Open(DB_HOST, DB_PORT, DB_USER, DB_PWD, DB_NAME);
 
+#if SERVICE_CODDE
 		while (!CService::instance()->m_bServiceStopped);
+#else
+		/*等待用户选择退出*/
+		handleLog("input any for end");
+		scanf_s("%c", &m_temp, 1);
+#endif
 		/************************************************************************/
 		/* 资源释放
 		/************************************************************************/
@@ -220,8 +252,8 @@ int _tmain(int argc, _TCHAR* argv[])
 			delete m_pDb;
 			m_pDb = NULL;
 		}
+#if SERVICE_CODDE
 	});
-
 	std::wstring strArg = argv[1];
 	try{
 		if (0 == strArg.compare(_T("install")))
@@ -260,114 +292,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	wprintf(argv[1]);
-	return 0;
-#pragma endregion
 
-	//#pragma region 控制台调试代码
-	//	//_CrtSetBreakAlloc(358);
-	//	CMySQL *m_pDb = new CMySQL();
-	//	CDataScheduling *m_pMnis = new CDataScheduling();
-	//	CManager *m_pManager = new CManager(m_pDb, m_pMnis);
-	//	BOOL m_ret = FALSE;
-	//	PLogReport m_report = NULL;
-	//	HWND m_hwnd = NULL;
-	//	char m_temp = 0x00;
-	//	CRpcServer *m_pRpcServer = new CRpcServer();
-	//
-	//	/*设置回调*/
-	//	m_pMnis->setCallBackFunc(CManager::OnMnisCallBack);
-	//	m_pRpcServer->setOnConnectHandler(CManager::OnConnect);
-	//	m_pRpcServer->setOnDisconnectHandler(CManager::OnDisConnect);
-	//
-	//	/*设置基本参数*/
-	//	m_report = handleLog;
-	//	m_hwnd = GetConsoleHwnd();
-	//	m_pManager->initWnd(m_hwnd);
-	//	m_pDb->SetLogPtr(m_report);
-	//	m_pManager->setLogPtr(m_report);
-	//	/*开启远程任务处理线程*/
-	//	m_pManager->startHandleRemoteTask();
-	//	/*初始化服务部分*/
-	//	m_pRpcServer->addActionHandler("wlConnect", wlConnectActionHandler);
-	//	m_pRpcServer->addActionHandler("wlCall", wlCallActionHandler);
-	//	m_pRpcServer->addActionHandler("wlCallStatus", wlCallStatusActionHandler);
-	//	m_pRpcServer->addActionHandler("wlPlay", wlPlayActionHandler);
-	//	m_pRpcServer->addActionHandler("wlInfo", wlInfoActionHandler);
-	//	m_pRpcServer->addActionHandler("queryGps", wlMnisQueryGpsActionHandler);
-	//	m_pRpcServer->addActionHandler("message", wlMnisMessageHandler);
-	//	m_pRpcServer->addActionHandler("status", wlMnisStatusHandler);
-	//	m_pRpcServer->start(WL_SERVER_PORT);
-	//
-	//	/*初始化数据库*/
-	//	m_ret = m_pDb->Open(DB_HOST, DB_PORT, DB_USER, DB_PWD, DB_NAME);
-	//	if (!m_ret)
-	//	{
-	//		handleLog("open data server fail");
-	//		scanf_s("%c", &m_temp, 1);
-	//		return 0;
-	//	}
-	//
-	//	/*等待用户选择退出*/
-	//	handleLog("input any for end");
-	//	scanf_s("%c", &m_temp, 1);
-	//
-	//	/*释放资源*/
-	//	if (m_pManager)
-	//	{
-	//		//m_pManager->stop();
-	//		delete m_pManager;
-	//		m_pManager = NULL;
-	//	}
-	//	if (NULL != m_pMnis)
-	//	{
-	//		m_pMnis->radioDisConnect();
-	//		delete m_pMnis;
-	//		m_pMnis = NULL;
-	//	}
-	//	if (g_pNet)
-	//	{
-	//		//g_pNet->stop();
-	//		delete g_pNet;
-	//		g_pNet = NULL;
-	//	}
-	//	while (g_onLineClients.size() > 0)
-	//	{
-	//		TcpClient *p = g_onLineClients.front();
-	//		g_onLineClients.pop_front();
-	//		if (p)
-	//		{
-	//			delete p;
-	//			p = NULL;
-	//		}
-	//	}
-	//	if (m_pRpcServer)
-	//	{
-	//		m_pRpcServer->stop();
-	//		delete m_pRpcServer;
-	//		m_pRpcServer = NULL;
-	//	}
-	//
-	//	if (g_pSound)
-	//	{
-	//		//g_pSound->stop();
-	//		delete g_pSound;
-	//		g_pSound = NULL;
-	//	}
-	//
-	//	if (g_pDongle)
-	//	{
-	//		//g_pDongle->stop();
-	//		delete g_pDongle;
-	//		g_pDongle = NULL;
-	//	}
-	//
-	//	if (m_pDb)
-	//	{
-	//		//m_pDb->stop();
-	//		delete m_pDb;
-	//		m_pDb = NULL;
-	//	}
-	//	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
-	//	return 0;
-	//#pragma endregion
-}
+#else
+		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+		return 0;
+	}

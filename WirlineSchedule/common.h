@@ -17,6 +17,8 @@
 #include "../lib//glog/logging.h"
 #pragma comment(lib, "../lib//glog/lib/libglog.lib")
 
+#include "WLSocketLog.h"
+
 #ifdef _DEBUG
 #define DEBUG_CLIENTBLOCK new( _CLIENT_BLOCK, __FILE__, __LINE__)
 #else
@@ -37,6 +39,7 @@
 
 //#define TALK_TIME (20*1000)
 
+extern WLSocketLog g_WLlog;
 /************************************************************************/
 /* MNIS
 /************************************************************************/

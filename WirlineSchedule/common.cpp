@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+WLSocketLog g_WLlog;
+
 bool Env_DongleIsOk = false;
 bool Env_NetIsOk = false;
 bool Env_SoundIsOk = false;

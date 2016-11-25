@@ -76,6 +76,9 @@
     <ClCompile Include="..\lib\service\service.cpp">
       <Filter>rpc\source</Filter>
     </ClCompile>
+    <ClCompile Include="WLSocketLog.cpp">
+      <Filter>source\class</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ambe3000.h">
@@ -374,6 +377,9 @@
     </ClInclude>
     <ClInclude Include="..\lib\glog\logging.h">
       <Filter>glog</Filter>
+    </ClInclude>
+    <ClInclude Include="WLSocketLog.h">
+      <Filter>include\class</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
