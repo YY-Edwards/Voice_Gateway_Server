@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "TcpScheduling.h"
+#include "../lib/service/service.h"
 
 std::list <TcpCommand>tcpCommandTimeOutList;
 std::mutex m_allCommandListLocker;
@@ -9,6 +10,7 @@ std::string m_mnisIP = "0.0.0.0";
 int num;
 void(*myTcpCallBackFunc)( int, TcpRespone);
 void onTcpData(void(*func)( int, TcpRespone),  int call, TcpRespone data);
+static HDEVNOTIFY hDeviceNotify;
 CTcpScheduling::CTcpScheduling()
 {
 	pXnlConnection = NULL;
@@ -724,62 +726,113 @@ LRESULT message_handler(HWND__* hwnd, UINT uint, WPARAM wparam, LPARAM lparam)
 	}
 	return 0L;
 }
+unsigned long __stdcall DeviceEventNotify(DWORD evtype, PVOID evdata)
+{
+	switch (evtype)
+	{
+		case DBT_DEVICEREMOVECOMPLETE:
+		{			
+			isTcpConnect = false;
+		}
+			break;
+		case DBT_DEVICEARRIVAL:
+		{
+			isTcpConnect = true;
+		}
+		break;
+	}
+	return 0;
+}
+DWORD WINAPI CtrlHandler(_In_ DWORD dwCtrl, _In_ DWORD dwEventType, _In_ LPVOID lpEventData, _In_ LPVOID lpContext)
+{
+	switch (dwCtrl)
+	{
+	case SERVICE_CONTROL_DEVICEEVENT:
+	{
+		DeviceEventNotify(dwEventType, lpEventData);
+	}
+		break;
+	default:
+		break;
+	}
+	return 1;
+}
 void CTcpScheduling::radioUsbStatus()
 {
-	while (m_usbThread)
+
+	DEV_BROADCAST_DEVICEINTERFACE NotificationFilter;
+	ZeroMemory(&NotificationFilter, sizeof(NotificationFilter));
+	NotificationFilter.dbcc_size = sizeof(DEV_BROADCAST_DEVICEINTERFACE);
+	NotificationFilter.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
+	NotificationFilter.dbcc_classguid = GUID_DEVINTERFACE_NET;
+	hDeviceNotify = RegisterDeviceNotification(CService::instance()->m_StatusHandle,	// events recipient
+		&NotificationFilter,	// type of device 
+		DEVICE_NOTIFY_SERVICE_HANDLE	// type of recipient handle 
+		);
+	if (SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE))
 	{
-		HWND hWnd = NULL;
-		WNDCLASSEX wx;
-		ZeroMemory(&wx, sizeof(wx));
-
-		wx.cbSize = sizeof(WNDCLASSEX);
-		wx.lpfnWndProc = reinterpret_cast<WNDPROC>(message_handler);
-		wx.hInstance = reinterpret_cast<HINSTANCE>(GetModuleHandle(0));
-		wx.style = CS_HREDRAW | CS_VREDRAW;
-		wx.hInstance = GetModuleHandle(0);
-		wx.hbrBackground = (HBRUSH)(COLOR_WINDOW);
-		wx.lpszClassName = CLS_NAME;
-
-		GUID guid = GUID_DEVINTERFACE_NET;
-
-		if (RegisterClassEx(&wx))
+		//while (m_usbThread)
 		{
+			/*HWND hWnd = NULL;
+			WNDCLASSEX wx;
+			ZeroMemory(&wx, sizeof(wx));
+
+			wx.cbSize = sizeof(WNDCLASSEX);
+			wx.lpfnWndProc = reinterpret_cast<WNDPROC>(message_handler);
+			wx.hInstance = reinterpret_cast<HINSTANCE>(GetModuleHandle(0));
+			wx.style = CS_HREDRAW | CS_VREDRAW;
+			wx.hInstance = GetModuleHandle(0);
+			wx.hbrBackground = (HBRUSH)(COLOR_WINDOW);
+			wx.lpszClassName = CLS_NAME;
+
+			GUID guid = GUID_DEVINTERFACE_NET;
+
+			if (RegisterClassEx(&wx))
+			{
 			hWnd = CreateWindow(CLS_NAME, _T("DevNotifWnd"), WS_ICONIC,
-				0, 0, CW_USEDEFAULT, 0, HWND_MESSAGE,
-				NULL, GetModuleHandle(0), (void*)&guid);
-		}
+			0, 0, CW_USEDEFAULT, 0, HWND_MESSAGE,
+			NULL, GetModuleHandle(0), (void*)&guid);
+			}
 
-		if (hWnd == NULL)
-		{
+			if (hWnd == NULL)
+			{
 			throw std::runtime_error("Could not create message window!");
-		}
+			}
 
-		MSG msg;
-		BOOL bRet;
+			MSG msg;
+			BOOL bRet;
 
 
-		while (((bRet = GetMessage(&msg, NULL, 0, 0) > 0)) != 0)
-		{
+			while (((bRet = GetMessage(&msg, NULL, 0, 0) > 0)) != 0)
+			{
 			try
 			{
-				if (bRet == -1)
-				{
+			if (bRet == -1)
+			{
 
-				}
-				else
-				{
-					TranslateMessage(&msg);
-					DispatchMessage(&msg);
-				}
+			}
+			else
+			{
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
+			}
 
 			}
 			catch (std::exception e)
 			{
 
 			}
+			}*/
+
+
+			/*while (CService::instance()->m_StatusHandle)
+			{
+
+			}*/
+			Sleep(100);
 		}
-		Sleep(100);
 	}
+	
 
 }
 void  CTcpScheduling::setCallBackFunc(void(*callBackFunc)( int, TcpRespone))
@@ -866,6 +919,7 @@ void CTcpScheduling::disConnect()
 	}
 	workList.clear();
 	tcpCommandTimeOutList.clear();
+	UnregisterDeviceNotification(hDeviceNotify);
 }
 void onTcpData(void(*func)(int, TcpRespone),  int call, TcpRespone data)
 {

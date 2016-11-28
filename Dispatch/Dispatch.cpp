@@ -39,8 +39,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	google::SetLogDestination(google::GLOG_WARNING, "../debug/warning/info");
 	google::SetLogDestination(google::GLOG_ERROR, "../debug/error/info");
 
-	//CService::instance()->SetServiceNameAndDescription(_T("Trbox.Dispatch"), _T("Trbox Dispatch Server"));
-	//CService::instance()->SetServiceCode([&](){
+	CService::instance()->SetServiceNameAndDescription(_T("Trbox.Dispatch"), _T("Trbox Dispatch Server"));
+	CService::instance()->SetServiceCode([&](){
 	/*设置回调*/
 	dis.setCallBack();
 	/*初始化变量 开始工作*/
@@ -60,12 +60,12 @@ int _tmain(int argc, _TCHAR* argv[])
 	//cs.setCallBackFunc(DispatchOperate::OnData);
 	/*while (1){ Sleep(1); };*/
 	/*等待结束标识*/
-	char temp = 0x00;
-	printf("press any key to end\r\n");
-	scanf_s("%c", &temp, 1);
+	//char temp = 0x00;
+	//printf("press any key to end\r\n");
+	//scanf_s("%c", &temp, 1);
 
 	/*释放资源*/
-	//while (!CService::instance()->m_bServiceStopped);
+	while (!CService::instance()->m_bServiceStopped);
 	dis.disConnect();
 	while (rmtPeerList.size() > 0)
 	{
@@ -78,9 +78,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 	}
 		rpcServer.stop();
+		
 	
-	/*	});
-
+		});
 
 	std::wstring strArg = argv[1];
 	try{
@@ -120,7 +120,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		exit(1);
 	}
 
-	wprintf(argv[1]);*/
+	wprintf(argv[1]);
 	return 0;
 }
 
