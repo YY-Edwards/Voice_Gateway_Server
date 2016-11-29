@@ -44,7 +44,7 @@ private:
 	HANDLE m_tMt;
 	HANDLE m_uMt;
 	HANDLE m_cMt;
-	
+	bool isTcpConnect;
 public:
 	void addTcpCommand(int command, std::string radioIP, int id, int callType);
 	int  radioConnect( const char* ip);
@@ -53,6 +53,7 @@ public:
 	void  setCallBackFunc(void(*callBackFunc)( int, TcpRespone));
 	void disConnect();
 	std::mutex m_workLocker;
+	void setUsb(bool result);
 	
 };
 

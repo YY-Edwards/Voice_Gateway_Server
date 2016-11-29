@@ -48,7 +48,7 @@ void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 			{
 				id = d["Target"].GetInt();
 			}
-			if (isTcpConnect)
+			if (dis.isTcpConnect)
 			{
 				dis.call( opterateType, id, operate);
 			}

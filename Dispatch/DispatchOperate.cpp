@@ -4,6 +4,7 @@ DispatchOperate::DispatchOperate()
 {
 	mnisIP = "";
 	isUdpConnect = false;
+	isTcpConnect = false;
 	pDs = new CDataScheduling();
 	pTs = new CTcpScheduling();
 }
@@ -264,6 +265,7 @@ void DispatchOperate::OnDisConnect(CRemotePeer* pRemotePeer)
 	if (pRemotePeer)
 	{
 		dis.delPeer(pRemotePeer);
+		dis.disConnect();
 
 	}
 }
@@ -302,7 +304,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 			{
 				dis.isUdpConnect = false;
 			}
-			dis.sendConnectStatusToClient();
+			//dis.sendConnectStatusToClient();
 		}
 		catch (std::exception e)
 		{
@@ -424,11 +426,19 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 	case RADIO_CONNECT:
 		try
 		{
-			if ("" == dis.mnisIP && !isTcpConnect)
+			if(SUCESS == data.result)
+			{
+				dis.isTcpConnect = true;
+			}
+			else
+			{
+				dis.isTcpConnect = false;
+			}
+			if ("" == dis.mnisIP && !dis.isTcpConnect)
 			{
 				dis.isUdpConnect = false;
 			}
-			else if ("" == dis.mnisIP && isTcpConnect && !dis.isUdpConnect)
+			else if ("" == dis.mnisIP && dis.isTcpConnect && !dis.isUdpConnect)
 			{
 				dis.isUdpConnect = true;
 			}
@@ -578,5 +588,12 @@ void DispatchOperate::disConnect()
 {
 	pDs->radioDisConnect();
 	pTs->disConnect();
+	isTcpConnect = false;
+	isUdpConnect = false;
 	
+}
+void DispatchOperate::OnRadioUsb(bool isConnected)
+{
+	dis.isTcpConnect = isConnected;
+	dis.pTs->setUsb(isConnected);
 }

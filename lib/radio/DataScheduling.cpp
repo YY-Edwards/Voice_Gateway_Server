@@ -144,7 +144,8 @@ void CDataScheduling::getRadioStatus( int type)
 }
 void CDataScheduling::connect( const char* ip)
 {
-
+	m_workThread = true;
+	m_timeoutThread = true;
 	m_hWthd = CreateThread(NULL, 0, workThread, this, THREAD_PRIORITY_NORMAL, NULL);
 	m_hTthd = CreateThread(NULL, 0, timeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
 	int result = 1;
@@ -223,7 +224,7 @@ void CDataScheduling::disConnect()
 	pRadioARS->CloseARSSocket();
 	pRadioGPS->CloseGPSSocket();
 	pRadioMsg->CloseSocket();
-
+	isUdpConnect = false;
 }
 void CDataScheduling::getGps(DWORD dwRadioID, int queryMode, double cycle)
 {

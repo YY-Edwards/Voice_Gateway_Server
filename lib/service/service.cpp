@@ -7,7 +7,9 @@
 #include <shlobj.h>  
 #include <tchar.h>
 #include <WinSvc.h>
-
+#include <Dbt.h>
+#include <initguid.h>
+#include <Ndisguid.h>
 #include "service.h"
 
 #pragma comment(lib, "advapi32.lib")
@@ -172,7 +174,25 @@ DWORD WINAPI CService::ServiceCtrlHandler(DWORD dwControl, DWORD dwEventType, LP
 
 			break;
 		}
+			/*radio usb ¼à²â     add by wx */
+		case SERVICE_CONTROL_DEVICEEVENT:
+		{
 
+			switch (dwEventType)
+			{
+			case DBT_DEVICEREMOVECOMPLETE:
+			{
+				CService::instance()->m_radioUsb(false);
+			}
+				break;
+			case DBT_DEVICEARRIVAL:
+			{
+				CService::instance()->m_radioUsb(true);
+			}
+				break;
+			}
+		}
+			break;
 		default:
 		{
 			break;
@@ -450,4 +470,8 @@ void CService::StopService()
 void CService::SetServiceCode(std::function<void(void)> fn)
 {
 	m_fnServiceCode = fn;
+}
+void CService::SetRadioUsb(std::function < void(bool)>radioUsb)
+{
+	m_radioUsb = radioUsb;
 }

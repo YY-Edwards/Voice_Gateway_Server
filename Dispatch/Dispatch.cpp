@@ -42,6 +42,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	CService::instance()->SetServiceNameAndDescription(_T("Trbox.Dispatch"), _T("Trbox Dispatch Server"));
 	CService::instance()->SetServiceCode([&](){
 	/*设置回调*/
+		CService::instance()->SetRadioUsb(DispatchOperate::OnRadioUsb);
 	dis.setCallBack();
 	/*初始化变量 开始工作*/
 	CRpcServer rpcServer;

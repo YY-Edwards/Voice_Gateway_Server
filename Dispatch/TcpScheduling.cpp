@@ -4,7 +4,7 @@
 
 std::list <TcpCommand>tcpCommandTimeOutList;
 std::mutex m_allCommandListLocker;
-bool isTcpConnect = false;
+
 std::string m_radioIP = "0.0.0.0";
 std::string m_mnisIP = "0.0.0.0";
 int num;
@@ -18,7 +18,9 @@ CTcpScheduling::CTcpScheduling()
 	m_workThread = true;
 	m_timeThread = true;
 	m_usbThread = true;
-
+	m_connectThread = true;
+	isTcpConnect = false;
+	
 }
 CTcpScheduling::~CTcpScheduling()
 {
@@ -677,86 +679,86 @@ DWORD WINAPI CTcpScheduling::radioUsbStatusThread(LPVOID lpParam)
 	}
 	return 1;
 }
-LRESULT message_handler(HWND__* hwnd, UINT uint, WPARAM wparam, LPARAM lparam)
-{
-	switch (uint)
-	{
-	case WM_NCCREATE: // before window creation
-		return true;
-		break;
-
-	case WM_CREATE: // the actual creation of the window
-	{
-						// you can get your creation params here..like GUID..
-						LPCREATESTRUCT params = (LPCREATESTRUCT)lparam;
-						GUID InterfaceClassGuid = *((GUID*)params->lpCreateParams);
-						DEV_BROADCAST_DEVICEINTERFACE NotificationFilter;
-						ZeroMemory(&NotificationFilter, sizeof(NotificationFilter));
-						NotificationFilter.dbcc_size = sizeof(DEV_BROADCAST_DEVICEINTERFACE);
-						NotificationFilter.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
-						NotificationFilter.dbcc_classguid = InterfaceClassGuid;
-						HDEVNOTIFY dev_notify = RegisterDeviceNotification(hwnd, &NotificationFilter,
-							DEVICE_NOTIFY_WINDOW_HANDLE);
-						if (dev_notify == NULL)
-						{
-							throw std::runtime_error("Could not register for devicenotifications!");
-						}
-						break;
-	}
-
-	case WM_DEVICECHANGE:
-	{
-							PDEV_BROADCAST_HDR lpdb = (PDEV_BROADCAST_HDR)lparam;
-							PDEV_BROADCAST_DEVICEINTERFACE lpdbv = (PDEV_BROADCAST_DEVICEINTERFACE)lpdb;
-							std::string path;
-							if (lpdb->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE)
-							{
-								switch (wparam)
-								{
-								case DBT_DEVICEARRIVAL:
-									break;
-								case DBT_DEVICEREMOVECOMPLETE:
-									isTcpConnect = false;
-									break;
-								}
-							}
-							break;
-	}
-
-	}
-	return 0L;
-}
-unsigned long __stdcall DeviceEventNotify(DWORD evtype, PVOID evdata)
-{
-	switch (evtype)
-	{
-		case DBT_DEVICEREMOVECOMPLETE:
-		{			
-			isTcpConnect = false;
-		}
-			break;
-		case DBT_DEVICEARRIVAL:
-		{
-			isTcpConnect = true;
-		}
-		break;
-	}
-	return 0;
-}
-DWORD WINAPI CtrlHandler(_In_ DWORD dwCtrl, _In_ DWORD dwEventType, _In_ LPVOID lpEventData, _In_ LPVOID lpContext)
-{
-	switch (dwCtrl)
-	{
-	case SERVICE_CONTROL_DEVICEEVENT:
-	{
-		DeviceEventNotify(dwEventType, lpEventData);
-	}
-		break;
-	default:
-		break;
-	}
-	return 1;
-}
+//LRESULT message_handler(HWND__* hwnd, UINT uint, WPARAM wparam, LPARAM lparam)
+//{
+//	switch (uint)
+//	{
+//	case WM_NCCREATE: // before window creation
+//		return true;
+//		break;
+//
+//	case WM_CREATE: // the actual creation of the window
+//	{
+//						// you can get your creation params here..like GUID..
+//						LPCREATESTRUCT params = (LPCREATESTRUCT)lparam;
+//						GUID InterfaceClassGuid = *((GUID*)params->lpCreateParams);
+//						DEV_BROADCAST_DEVICEINTERFACE NotificationFilter;
+//						ZeroMemory(&NotificationFilter, sizeof(NotificationFilter));
+//						NotificationFilter.dbcc_size = sizeof(DEV_BROADCAST_DEVICEINTERFACE);
+//						NotificationFilter.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
+//						NotificationFilter.dbcc_classguid = InterfaceClassGuid;
+//						HDEVNOTIFY dev_notify = RegisterDeviceNotification(hwnd, &NotificationFilter,
+//							DEVICE_NOTIFY_WINDOW_HANDLE);
+//						if (dev_notify == NULL)
+//						{
+//							throw std::runtime_error("Could not register for devicenotifications!");
+//						}
+//						break;
+//	}
+//
+//	case WM_DEVICECHANGE:
+//	{
+//							PDEV_BROADCAST_HDR lpdb = (PDEV_BROADCAST_HDR)lparam;
+//							PDEV_BROADCAST_DEVICEINTERFACE lpdbv = (PDEV_BROADCAST_DEVICEINTERFACE)lpdb;
+//							std::string path;
+//							if (lpdb->dbch_devicetype == DBT_DEVTYP_DEVICEINTERFACE)
+//							{
+//								switch (wparam)
+//								{
+//								case DBT_DEVICEARRIVAL:
+//									break;
+//								case DBT_DEVICEREMOVECOMPLETE:
+//									isTcpConnect = false;
+//									break;
+//								}
+//							}
+//							break;
+//	}
+//
+//	}
+//	return 0L;
+//}
+//unsigned long __stdcall DeviceEventNotify(DWORD evtype, PVOID evdata)
+//{
+//	switch (evtype)
+//	{
+//		case DBT_DEVICEREMOVECOMPLETE:
+//		{			
+//			isTcpConnect = false;
+//		}
+//			break;
+//		case DBT_DEVICEARRIVAL:
+//		{
+//			isTcpConnect = true;
+//		}
+//		break;
+//	}
+//	return 0;
+//}
+//DWORD WINAPI CtrlHandler(_In_ DWORD dwCtrl, _In_ DWORD dwEventType, _In_ LPVOID lpEventData, _In_ LPVOID lpContext)
+//{
+//	switch (dwCtrl)
+//	{
+//	case SERVICE_CONTROL_DEVICEEVENT:
+//	{
+//		DeviceEventNotify(dwEventType, lpEventData);
+//	}
+//		break;
+//	default:
+//		break;
+//	}
+//	return 1;
+//}
 void CTcpScheduling::radioUsbStatus()
 {
 
@@ -765,14 +767,19 @@ void CTcpScheduling::radioUsbStatus()
 	NotificationFilter.dbcc_size = sizeof(DEV_BROADCAST_DEVICEINTERFACE);
 	NotificationFilter.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
 	NotificationFilter.dbcc_classguid = GUID_DEVINTERFACE_NET;
-	hDeviceNotify = RegisterDeviceNotification(CService::instance()->m_StatusHandle,	// events recipient
-		&NotificationFilter,	// type of device 
-		DEVICE_NOTIFY_SERVICE_HANDLE	// type of recipient handle 
-		);
-	if (SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE))
+	while (hDeviceNotify == NULL)
 	{
+		hDeviceNotify = RegisterDeviceNotification(CService::instance()->m_StatusHandle,	// events recipient
+			&NotificationFilter,	// type of device 
+			DEVICE_NOTIFY_SERVICE_HANDLE	// type of recipient handle 
+			);
+		Sleep(100);
+	}
+
+	//if (SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE))
+	//{
 		//while (m_usbThread)
-		{
+		//{
 			/*HWND hWnd = NULL;
 			WNDCLASSEX wx;
 			ZeroMemory(&wx, sizeof(wx));
@@ -829,9 +836,9 @@ void CTcpScheduling::radioUsbStatus()
 			{
 
 			}*/
-			Sleep(100);
-		}
-	}
+		//	Sleep(100);
+		//}
+//	}
 	
 
 }
@@ -842,6 +849,10 @@ void  CTcpScheduling::setCallBackFunc(void(*callBackFunc)( int, TcpRespone))
 
 void CTcpScheduling::connect()
 {
+	m_connectThread = true;
+	m_workThread = true;
+	m_timeThread = true;
+	m_usbThread = true;
 	m_cMt = CreateThread(NULL, 0, tcpConnectionThread, this, THREAD_PRIORITY_NORMAL, NULL);
 	m_wMt = CreateThread(NULL, 0, workThread, this, THREAD_PRIORITY_NORMAL, NULL);
 	m_tMt = CreateThread(NULL, 0, timeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
@@ -920,6 +931,8 @@ void CTcpScheduling::disConnect()
 	workList.clear();
 	tcpCommandTimeOutList.clear();
 	UnregisterDeviceNotification(hDeviceNotify);
+	isTcpConnect = false;
+	pXnlConnection = NULL;
 }
 void onTcpData(void(*func)(int, TcpRespone),  int call, TcpRespone data)
 {
@@ -934,3 +947,8 @@ void onTcpData(void(*func)(int, TcpRespone),  int call, TcpRespone data)
 	}
 
 }
+void CTcpScheduling::setUsb(bool result)
+{
+	isTcpConnect = result;
+}
+
