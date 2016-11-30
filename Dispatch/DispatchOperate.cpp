@@ -318,7 +318,8 @@ void DispatchOperate::OnData(  int call, Respone data)
 			args["Source"] = FieldValue(NULL);
 			args["Target"] = FieldValue(data.target);
 			args["contents"] = FieldValue("");
-			args["status"] = FieldValue(data.msgStatus);
+			args["status"] = FieldValue(data.msgStatus); 
+			args["type"] = FieldValue(data.msgType);
 			dis.send2Client("messageStatus", args);
 		}
 		catch (std::exception e)
@@ -334,7 +335,8 @@ void DispatchOperate::OnData(  int call, Respone data)
 			args["Target"] = FieldValue(data.target);
 			args["contents"] = FieldValue("");
 			args["status"] = FieldValue(data.msgStatus);
-			//dis->send2Client("messageStatus", args, peer);
+			args["type"] = FieldValue(data.msgType);
+			dis.send2Client("messageStatus", args);
 		}
 		catch (std::exception e)
 		{

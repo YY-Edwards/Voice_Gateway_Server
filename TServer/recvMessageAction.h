@@ -30,8 +30,8 @@ void recvMsgAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
 		}
 		//–¥»Îlog
-
-		Document d;
+		addSmsLog(param,callId,pRemote);
+	/*	Document d;
 		d.Parse(param.c_str());
 		int source = -1;
 		int destination = -1;
@@ -68,7 +68,7 @@ void recvMsgAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 			std::map<std::string, std::string> args;
 			std::string strResp = CRpcJsonParser::buildResponse("failed", callId, 404, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
-		}
+		}*/
 	}
 	catch (std::exception e){
 
