@@ -46,7 +46,7 @@ public:
 
 	BOOL changeAMBEToPCM();
 	BOOL changePCMToAMBE();
-	DWORD OpenDongle(LPCTSTR lpszDevice, HWND hParentWnd,CManager* lpCmanager);
+	DWORD OpenDongle(LPCTSTR lpszDevice,CManager* lpCmanager);
 	void  stop(void);
 	void SetLogPtr(PLogReport value);
 	tAMBEFrame* GetFreeAMBEBuffer(void);
@@ -84,7 +84,7 @@ private:
 	tPCMFrame* m_prevPCM;
 	tAMBEFrame* m_curAMBE;
 	tPCMFrame* m_curPCM;
-	HWND m_hParentWnd;
+	//HWND m_hParentWnd;
 	bool m_PleaseStopSerial;
 	HANDLE m_hComm;
 	HANDLE m_hReadSerialEvent;
