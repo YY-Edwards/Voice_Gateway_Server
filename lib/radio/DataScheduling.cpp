@@ -241,7 +241,7 @@ void CDataScheduling::sendMsg(int callId, std::string message, DWORD dwRadioID, 
 }
 void CDataScheduling::initGPSOverturnSocket(DWORD dwAddress)
 {
-	
+	pRadioGPS->InitGPSOverturnSocket(dwAddress);
 }
 void  CDataScheduling::setCallBackFunc(void(*callBackFunc)( int, Respone))
 {
@@ -593,6 +593,10 @@ void CDataScheduling::sendToClient(int callFuncId, Respone response)
 	{
 		m_serverFunHandler(callFuncId, response);
 	}
+}
+void CDataScheduling::InitGPSOverturnSocket(DWORD dwAddress)
+{
+	pRadioGPS->InitGPSOverturnSocket(dwAddress);
 }
 
 

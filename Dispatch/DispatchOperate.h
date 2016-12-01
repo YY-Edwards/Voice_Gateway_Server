@@ -20,7 +20,7 @@ public:
 	static void OnData( int call, Respone data);
 	static void OnTcpData( int call, TcpRespone data);
 	static void OnRadioUsb(bool isConnected );
-	void connect( const char * ip, const char* mIp);
+	void connect( const char * ip, const char* mIp,const char* gpsIP);
 	void call( int type, int op, int id);
 	void control( int type, int id);
 	bool getGps(int id, int querymode, double cycle);

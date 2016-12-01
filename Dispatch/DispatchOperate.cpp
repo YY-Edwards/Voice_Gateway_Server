@@ -507,7 +507,7 @@ void DispatchOperate::send2Client( char* name, ArgumentType args)
 
 
 
-void DispatchOperate::connect(const char * ip ,const char* mIp )
+void DispatchOperate::connect(const char * ip ,const char* mIp,const char* gpsIP )
 {
 	if (INADDR_NONE != inet_addr(mIp))
 	{
@@ -517,6 +517,10 @@ void DispatchOperate::connect(const char * ip ,const char* mIp )
 	}
 	else
 	{
+		if (INADDR_NONE != inet_addr(gpsIP))
+		{
+			pDs->InitGPSOverturnSocket(inet_addr(gpsIP));
+		}
 		pDs->radioConnect(ip);
 		pTs->radioConnect(ip);
 	}
