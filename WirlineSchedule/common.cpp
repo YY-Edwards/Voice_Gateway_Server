@@ -1,6 +1,6 @@
 #include "stdafx.h"
 
-WLSocketLog g_WLlog;
+WLSocketLog *g_pWLlog = NULL;
 
 bool Env_DongleIsOk = false;
 bool Env_NetIsOk = false;

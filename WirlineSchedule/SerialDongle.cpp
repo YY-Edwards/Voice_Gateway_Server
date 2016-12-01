@@ -21,7 +21,7 @@ CSerialDongle::CSerialDongle()
 	m_prevPCM = NULL;
 	m_curAMBE = NULL;
 	m_curPCM = NULL;
-	m_hParentWnd = NULL;
+	//m_hParentWnd = NULL;
 	m_PleaseStopSerial = TRUE;
 	m_hComm = NULL;
 	m_hReadSerialEvent = NULL;
@@ -76,14 +76,14 @@ CSerialDongle::~CSerialDongle()
 	stop();
 }
 
-DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice, HWND hParentWnd, CManager* lpCmanager)
+DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice,CManager* lpCmanager)
 {
 	m_lpCmanager = lpCmanager;
 	//≥ı ºªØevents
 	m_waitNextNetDataEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 	DWORD result;
 
-	m_hParentWnd = hParentWnd; //Save parent window in case
+	//m_hParentWnd = hParentWnd; //Save parent window in case
 	//we need to send msg to ergo
 	m_ParserState = FIND_START;
 	m_RxMsgLength = 0;

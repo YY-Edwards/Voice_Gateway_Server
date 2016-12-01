@@ -74,21 +74,22 @@ std::wstring getAppdataPath(){
 
 	return std::wstring(szBuffer);
 }
-HWND g_hwnd = NULL;
-HANDLE g_waitHwnd = CreateEvent(NULL, FALSE, FALSE, NULL);
+//HWND g_hwnd = NULL;
+//HANDLE g_waitHwnd = CreateEvent(NULL, FALSE, FALSE, NULL);
 
-BOOL CALLBACK EnumWindowsProc(HWND hwdnd, LPARAM lparam)
-{
-	g_hwnd = hwdnd;
-	SetEvent(g_waitHwnd);
-	return FALSE;
-}
+//BOOL CALLBACK EnumWindowsProc(HWND hwdnd, LPARAM lparam)
+//{
+//	g_hwnd = hwdnd;
+//	SetEvent(g_waitHwnd);
+//	return FALSE;
+//}
 
-#define SERVICE_CODDE TRUE
+#define SERVICE_CODDE FALSE
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	/*log³õÊ¼»¯*/
+	g_pWLlog = new WLSocketLog();
 	int createFileRlt = 0;
 	std::wstring appFolder = getAppdataPath() + _T("\\Jihua Information");
 	if (!PathFileExists(appFolder.c_str()))
@@ -159,14 +160,15 @@ int _tmain(int argc, _TCHAR* argv[])
 		//g_WLlog.sendLog("start WaitForSingleObject g_waitHwnd");
 		//WaitForSingleObject(g_waitHwnd, INFINITE);
 		//m_hwnd = (HWND)0x000302e6;
+		//m_hwnd = (HWND)CService::instance()->m_StatusHandle;
 		m_hwnd = GetConsoleHwnd();
 		if (m_hwnd)
 		{
-			g_WLlog.sendLog("m_hwnd is not null");
+			g_pWLlog->sendLog("m_hwnd is not null");
 		}
 		else
 		{
-			g_WLlog.sendLog("m_hwnd is null");
+			g_pWLlog->sendLog("m_hwnd is null");
 		}
 		m_pManager->initWnd(m_hwnd);
 		m_pDb->SetLogPtr(m_report);
@@ -251,6 +253,11 @@ int _tmain(int argc, _TCHAR* argv[])
 			//m_pDb->stop();
 			delete m_pDb;
 			m_pDb = NULL;
+		}
+		if (g_pWLlog)
+		{
+			delete g_pWLlog;
+			g_pWLlog = NULL;
 		}
 #if SERVICE_CODDE
 	});
