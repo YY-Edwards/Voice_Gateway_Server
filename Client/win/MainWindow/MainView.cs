@@ -49,9 +49,9 @@ namespace TrboX
 
             m_Main.grdspl_Mgs_Nav.PreviewMouseLeftButtonDown += delegate
             {
-                m_Main.grd_Nav.RowDefinitions[0].MaxHeight = m_Main.grd_main.ActualHeight - 31;
-                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = 121;
-                m_Main.grd_Nav.RowDefinitions[1].MinHeight = 30;
+                m_Main.grd_Nav.RowDefinitions[0].MaxHeight = m_Main.grd_main.ActualHeight - 42;
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = 165;
+                m_Main.grd_Nav.RowDefinitions[1].MinHeight = 42;
             };
 
             m_Main.grdspl_Main_Event.PreviewMouseLeftButtonDown += delegate
@@ -231,7 +231,7 @@ namespace TrboX
             }
             else
             {
-                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = NavigationMaxHeight == 0 ? 121 : NavigationMaxHeight;
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = NavigationMaxHeight == 0 ? 165 : NavigationMaxHeight;
                 m_Main.grd_Nav.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
                 m_Main.grdspl_Mgs_Nav.Visibility = Visibility.Visible;
             }
@@ -246,16 +246,16 @@ namespace TrboX
             {
                 m_Main.rad_Nav_Map.Visibility = Visibility.Visible;
                 m_Main.grd_Nav.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
-                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 30);
-                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 30;
+                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 41);
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 41;
             }
             else
             {
                 m_Main.rad_Nav_Dispatch.IsChecked = true;
                 m_Main.rad_Nav_Map.Visibility = Visibility.Collapsed;
                 m_Main.grd_Nav.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
-                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 30);
-                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 30;
+                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 41);
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 41;
             }
         }
         public void NavRecordingShow(bool show)
@@ -266,16 +266,16 @@ namespace TrboX
             {
                 m_Main.rad_Nav_Recording.Visibility = Visibility.Visible;
                 m_Main.grd_Nav.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
-                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 30);
-                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 30;
+                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 41);
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 41;
             }
             else
             {
                 m_Main.rad_Nav_Dispatch.IsChecked = true;
                 m_Main.rad_Nav_Recording.Visibility = Visibility.Collapsed;
                 m_Main.grd_Nav.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
-                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 30);
-                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 30;
+                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 41);
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 41;
             }
         }
 
@@ -291,16 +291,16 @@ namespace TrboX
             {
                 m_Main.rad_Nav_Report.Visibility = Visibility.Visible;
                 m_Main.grd_Nav.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
-                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 30);
-                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 30;
+                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 41);
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 41;
             }
             else
             {
                 m_Main.rad_Nav_Dispatch.IsChecked = true;
                 m_Main.rad_Nav_Report.Visibility = Visibility.Collapsed;
                 m_Main.grd_Nav.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
-                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 30);
-                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 30;
+                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 41);
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 41;
             }
         }
 

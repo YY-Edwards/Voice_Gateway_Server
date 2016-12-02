@@ -365,97 +365,97 @@ namespace TrboX
                 };
             }
 
-            Image img_LoginWin = (Image)baseWindowTemplate.FindName("img_LoginWin", this);
-            if (null != img_LoginWin)
-           {
-               img_LoginWin.PreviewMouseLeftButtonDown += delegate
-               {
-                   this.DragMove();
-               };
-           }
+           // Image img_LoginWin = (Image)baseWindowTemplate.FindName("img_LoginWin", this);
+           // if (null != img_LoginWin)
+           //{
+           //    img_LoginWin.PreviewMouseLeftButtonDown += delegate
+           //    {
+           //        this.DragMove();
+           //    };
+           //}
 
             
 
-            Button btn_Header = (Button)baseWindowTemplate.FindName("btn_Header", this);
+           // Button btn_Header = (Button)baseWindowTemplate.FindName("btn_Header", this);
 
-            if (null != btn_Header)
-            {
-                btn_Header.PreviewMouseLeftButtonDown += delegate
-                {
-                    this.DragMove();
-                };
-
-
-
-                btn_Header.PreviewMouseDoubleClick += delegate
-                {
-                    if (this.WindowState == WindowState.Maximized)
-                    {
-                        this.WindowState = WindowState.Normal;
-                    }
-                    else
-                    {
-                        this.WindowState = WindowState.Maximized;
-                    }
-
-                };
-            }
+           // if (null != btn_Header)
+           // {
+           //     btn_Header.PreviewMouseLeftButtonDown += delegate
+           //     {
+           //         this.DragMove();
+           //     };
 
 
-            Image img_SysClose = (Image)baseWindowTemplate.FindName("img_SysClose", this);
 
-            if (null != img_SysClose)
-            {
-                img_SysClose.PreviewMouseLeftButtonUp += delegate
-                {
-                    OnMyWindow_Btn_Close_Click();
-                };
-            }
+           //     btn_Header.PreviewMouseDoubleClick += delegate
+           //     {
+           //         if (this.WindowState == WindowState.Maximized)
+           //         {
+           //             this.WindowState = WindowState.Normal;
+           //         }
+           //         else
+           //         {
+           //             this.WindowState = WindowState.Maximized;
+           //         }
 
-            Image img_SysMin = (Image)baseWindowTemplate.FindName("img_SysMin", this);
-            if (null != img_SysMin)
-            {
-                img_SysMin.PreviewMouseLeftButtonUp += delegate
-                {
-                    OnMyWindow_Btn_Min_Click();
-                };
-            }
+           //     };
+           // }
 
-            Image img_SysMax = (Image)baseWindowTemplate.FindName("img_SysMax", this);
-            Image img_SysRestore = (Image)baseWindowTemplate.FindName("img_SysRestore", this);
 
-            if ((null != img_SysMax) && (null != img_SysRestore))
-            {
-                img_SysMax.PreviewMouseLeftButtonUp += delegate
-                {
-                    OnMyWindow_Btn_Max_Click();
-                };
+           // Image img_SysClose = (Image)baseWindowTemplate.FindName("img_SysClose", this);
 
-                img_SysRestore.PreviewMouseLeftButtonUp += delegate
-                {
-                    OnMyWindow_Btn_Restore_Click();
-                };
-            }
+           // if (null != img_SysClose)
+           // {
+           //     img_SysClose.PreviewMouseLeftButtonUp += delegate
+           //     {
+           //         OnMyWindow_Btn_Close_Click();
+           //     };
+           // }
 
-            this.SizeChanged += delegate
-            {
-                if (this.WindowState == WindowState.Maximized)
-                {
-                    img_SysMax.Visibility = Visibility.Collapsed;
-                    img_SysRestore.Visibility = Visibility.Visible;
+           // Image img_SysMin = (Image)baseWindowTemplate.FindName("img_SysMin", this);
+           // if (null != img_SysMin)
+           // {
+           //     img_SysMin.PreviewMouseLeftButtonUp += delegate
+           //     {
+           //         OnMyWindow_Btn_Min_Click();
+           //     };
+           // }
 
-                    if (null != borderClip) borderClip.Margin = new Thickness(0);
-                    relativeClip = -1;
+           // Image img_SysMax = (Image)baseWindowTemplate.FindName("img_SysMax", this);
+           // Image img_SysRestore = (Image)baseWindowTemplate.FindName("img_SysRestore", this);
 
-                }
-                else
-                {
-                    img_SysMax.Visibility = Visibility.Visible;
-                    img_SysRestore.Visibility = Visibility.Collapsed;
-                    if (null != borderClip) borderClip.Margin = new Thickness(10);
-                    relativeClip = 14;
-                }
-            };
+           // if ((null != img_SysMax) && (null != img_SysRestore))
+           // {
+           //     img_SysMax.PreviewMouseLeftButtonUp += delegate
+           //     {
+           //         OnMyWindow_Btn_Max_Click();
+           //     };
+
+           //     img_SysRestore.PreviewMouseLeftButtonUp += delegate
+           //     {
+           //         OnMyWindow_Btn_Restore_Click();
+           //     };
+           // }
+
+           // this.SizeChanged += delegate
+           // {
+           //     if (this.WindowState == WindowState.Maximized)
+           //     {
+           //         img_SysMax.Visibility = Visibility.Collapsed;
+           //         img_SysRestore.Visibility = Visibility.Visible;
+
+           //         if (null != borderClip) borderClip.Margin = new Thickness(0);
+           //         relativeClip = -1;
+
+           //     }
+           //     else
+           //     {
+           //         img_SysMax.Visibility = Visibility.Visible;
+           //         img_SysRestore.Visibility = Visibility.Collapsed;
+           //         if (null != borderClip) borderClip.Margin = new Thickness(10);
+           //         relativeClip = 14;
+           //     }
+            //};
         }
 
         public new void DragMove()
@@ -467,7 +467,7 @@ namespace TrboX
             }
         }
 
-        private void DisplayResizeCursor(object sender, MouseEventArgs e)
+        public void DisplayResizeCursor(object sender, MouseEventArgs e)
         {
             Point pos = Mouse.GetPosition(this);
             double x = pos.X;
@@ -509,7 +509,7 @@ namespace TrboX
             }
         }
 
-        private void ResetCursor(object sender, MouseEventArgs e)
+        public void ResetCursor(object sender, MouseEventArgs e)
         {
             if (Mouse.LeftButton != MouseButtonState.Pressed)
             {
@@ -517,7 +517,7 @@ namespace TrboX
             }
         }
 
-        private void Resize(object sender, MouseButtonEventArgs e)
+        public void Resize(object sender, MouseButtonEventArgs e)
         {
             Point pos = Mouse.GetPosition(this);
             double x = pos.X;

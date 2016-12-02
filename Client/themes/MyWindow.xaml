@@ -24,15 +24,122 @@
         </Setter>
     </Style>
 
+    <LinearGradientBrush x:Key="CutOffRule"
+			EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FF606064" Offset="0.75"/>
+        <GradientStop Color="#FF2B2B2B" Offset="0.15"/>
+        <GradientStop Color="#FF1D1D1D" Offset="0.3"/>
+        <GradientStop Color="#FF3B3B3D" Offset="0"/>
+        <GradientStop Color="#FF3B3B3D" Offset="1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush  x:Key="CutOffRuleButtom"
+						EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FF3B3B3D" Offset="0"/>
+        <GradientStop Color="#FF2B2B2B" Offset="0.3"/>
+        <GradientStop Color="#FF1D1D1D" Offset="0.6"/>
+        <GradientStop Color="#FF3B3B3D" Offset="0.1"/>
+    </LinearGradientBrush>
+
+    <LinearGradientBrush  x:Key="CutOffRuleTop"
+						EndPoint="0.5,1" StartPoint="0.5,0">
+        <GradientStop Color="#FF3B3B3D" Offset="0"/>
+        <GradientStop Color="#FF606064" Offset="0.5"/>
+        <GradientStop Color="#FF3B3B3D" Offset="1"/>
+    </LinearGradientBrush>
+	
+	<SolidColorBrush x:Key="fbg" Color ="#FFBEBEC0" />
+
+	<LinearGradientBrush x:Key="BorderTop"
+	EndPoint="0.5,1" StartPoint="0.5,0">
+                                    			<GradientStop Color="#FF242424" Offset="0"/>
+                                    			<GradientStop Color="#FF3D3E40" Offset="0.5"/>
+                                    			<GradientStop Color="#FF242424" Offset="1"/>
+                                    		</LinearGradientBrush>
+
+    <ControlTemplate x:Key="MainWinTemplate" TargetType="{x:Type Window}">
+        <Grid>
+            <Border x:Name="bdr_win" BorderBrush="#FF1D1D1F"  BorderThickness="1" Margin="10"  Background="#FF1D1D1F">
+                <Border.Effect>
+                    <DropShadowEffect Color="Black" Direction="315" BlurRadius="10" ShadowDepth="5" Opacity="0.7" />
+                </Border.Effect>
+                <Grid>                   
+                    <DockPanel Margin="0">                      
+                        <AdornerDecorator>
+                            <ContentPresenter />
+                        </AdornerDecorator>
+
+                    </DockPanel>
+                </Grid>
+
+            </Border>
+        </Grid>
+    </ControlTemplate>
+
+    <Style x:Key="MainWinStyle" TargetType="Window">
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="WindowStyle" Value="None" />
+        <Setter Property="AllowsTransparency" Value="True" />
+        <Setter Property="Template" Value="{StaticResource MainWinTemplate}" />
+    </Style>
+
+    <Style x:Key="ComboBoxItemStyle1" TargetType="{x:Type ComboBoxItem}">
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Setter Property="Padding" Value="4,1"/>
+        <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ItemsControl}}}"/>
+        <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource FindAncestor, AncestorLevel=1, AncestorType={x:Type ItemsControl}}}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FocusVisualStyle">
+            <Setter.Value>
+                <Style>
+                    <Setter Property="Control.Template">
+                        <Setter.Value>
+                            <ControlTemplate>
+                                <Rectangle Margin="2" SnapsToDevicePixels="True" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ComboBoxItem}">
+					
+					<Grid  Background="#00000000">
+	
+                    <Border x:Name="Bd" SnapsToDevicePixels="True" Padding="0">
+                        <ContentPresenter ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="Center" Margin="10,0,0,0"/>
+                    </Border>
+					</Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="TextElement.Foreground" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsMouseOver" Value="True"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Background" TargetName="Bd" Value="#FF5695DB"/>
+                        </MultiTrigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+
     <ControlTemplate x:Key="MyWindowTemplate" TargetType="{x:Type Window}">
         <Grid>
-            <Border x:Name="bdr_win" BorderBrush="#FF97C5F7"  BorderThickness="1" Margin="10"  Background="#FF97C5F7">
+            <Border x:Name="bdr_win" BorderBrush="#FF1D1D1F"  BorderThickness="1" Margin="10"  Background="#FFffff">
                 <Border.Effect>
                     <DropShadowEffect Color="Black" Direction="315" BlurRadius="10" ShadowDepth="5" Opacity="0.7" />
                 </Border.Effect>
                 <Grid>
                     <!--<Image Source="resource/HeaderLeft.png" HorizontalAlignment="Left" VerticalAlignment="Top" Stretch="Uniform" Height="90" />-->
-                    <Image Source="resource/HeaderRight.png" HorizontalAlignment="Right" VerticalAlignment="Top" Stretch="Uniform" Height="90" />
+                    <!--<Image Source="resource/HeaderRight.png" HorizontalAlignment="Right" VerticalAlignment="Top" Stretch="Uniform" Height="90" />-->
                     <DockPanel Margin="0">
                         <Border BorderBrush="Black" BorderThickness="0" Margin="0,0,0,0" DockPanel.Dock="Top" Height="30">
                             <Grid x:Name="grd_Header" Margin="0" Height="30" VerticalAlignment="Top">
@@ -59,8 +166,6 @@
                                         <Image x:Name="img_SysMin" Source="/TrboX;component/themes/resource/sys-1.png" Margin="-18, -6, 0, 0" Stretch="None"></Image>
                                     </Border>
                                 </DockPanel>
-
-
                             </Grid>
                         </Border>
                         <AdornerDecorator>
@@ -322,11 +427,16 @@
 
                                 <!-- Popup 是向下展开或横向展开(具体取决于该项所处的级别)的菜单的主体 -->
                                 <Popup IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}" Placement="Right" x:Name="SubMenuPopup" Focusable="false" AllowsTransparency="true" PopupAnimation="{DynamicResource {x:Static SystemParameters.MenuPopupAnimationKey}}" VerticalOffset="-3">
-                                    <Grid x:Name="SubMenu">
-                                        <Border x:Name="SubMenuBorder" Background="{DynamicResource WindowBackgroundBrush}" BorderBrush="#000000" BorderThickness="1"/>
+                                    <Grid x:Name="SubMenu" Background="{x:Null}">
+                                        <Border x:Name="SubMenuBorder" Background="#FF4C4C4F" BorderBrush="#FF262626" BorderThickness="1" Margin="0,0,5,5">
+                                        	<Border.Effect>
+                                        		<DropShadowEffect Color="Black" Direction="315" BlurRadius="10" ShadowDepth="5" Opacity="0.7" />
+
+											 </Border.Effect>                   
+                                        </Border>
 
                                         <!-- StackPanel 保留菜单的子级。这是通过 IsItemsHost=True 来设置的 -->
-                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle" Margin="0,0,5,5"/>
                                     </Grid>
                                 </Popup>
 
@@ -455,9 +565,18 @@
         	<Setter Property="Template">
         		<Setter.Value>
         			<ControlTemplate TargetType="{x:Type Separator}">
-        				<Grid Margin="0,6,0,4" SnapsToDevicePixels="true" UseLayoutRounding="False">
-        					<Rectangle Fill="#E0E0E0" Height="1" Margin="5,0,5,1"/>
-        					<Rectangle Fill="White" Height="1" Margin="5,1,5,0"/>
+        				<Grid Margin="0" SnapsToDevicePixels="true" UseLayoutRounding="False" VerticalAlignment="Center">
+        					<Path Data="M6.8333333,30 L178.16667,30" Height="2" Margin="-1,0" Stretch="Fill" VerticalAlignment="Center" StrokeThickness="2">
+        						<Path.Stroke>
+        							<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+        								<GradientStop Color="#FF707074" Offset="0.75"/>
+        								<GradientStop Color="#FF2B2B2B" Offset="0.15"/>
+        								<GradientStop Color="#FF1D1D1D" Offset="0.3"/>
+        								<GradientStop Color="#FF4C4C4F" Offset="0"/>
+        								<GradientStop Color="#FF4C4C4F" Offset="1"/>
+        							</LinearGradientBrush>
+        						</Path.Stroke>
+        					</Path>
         				</Grid>
         			</ControlTemplate>
         		</Setter.Value>
@@ -511,9 +630,9 @@
         	<Setter Property="Template">
         		<Setter.Value>
         			<ControlTemplate TargetType="{x:Type RadioButton}">
-        				<Border x:Name="border" BorderBrush="Black" BorderThickness="0,0,1,0" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" Background="#00000000">
-        					<Border x:Name="border1" BorderBrush="Black" BorderThickness="0">
-        						<ContentPresenter Margin="0" RecognizesAccessKey="True" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        				<Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" Background="#00000000" BorderThickness="{TemplateBinding BorderThickness}" >
+        					<Border x:Name="border1" BorderBrush="{x:Null}" BorderThickness="0">
+        						<TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="{TemplateBinding Content}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="#FFC9CDD2"/>
         					</Border>
         				</Border>
 				
@@ -521,14 +640,17 @@
 					
         				<ControlTemplate.Triggers>
         					<Trigger Property="IsChecked" Value="true">
-        						<Setter Property="Background" TargetName="border" Value="Black"/>
-        						<Setter Property="Foreground" Value="#FFF"/>
+        						<Setter Property="Foreground" TargetName="textBlock" Value="#FFD2DFF5"/>
+        						<Setter Property="Background" TargetName="border" Value="#FF545D6E"/>
         					</Trigger>
-        					<Trigger Property="IsMouseOver" Value="true">
-        						<Setter Property="Background" TargetName="border1" Value="Black"/>
-        						<Setter Property="Margin" TargetName="border1" Value="1"/>
-        						<Setter Property="Foreground" Value="#FFF"/>
-        					</Trigger>
+        					<MultiTrigger>
+        						<MultiTrigger.Conditions>
+        							<Condition Property="IsMouseOver" Value="True"/>
+        							<Condition Property="IsChecked" Value="False"/>
+        						</MultiTrigger.Conditions>
+        						<Setter Property="Background" TargetName="border1" Value="#FF5695DB"/>
+        						<Setter Property="Foreground" TargetName="textBlock" Value="#FFD2DFF5"/>
+        					</MultiTrigger>
         					<Trigger Property="IsPressed" Value="true">
         						<Setter Property="Background" TargetName="border" Value="Black"/>
         						<Setter Property="Foreground" Value="#FFF"/>
@@ -644,15 +766,12 @@
         				<ControlTemplate.Triggers>
         					<Trigger Property="IsChecked" Value="False"/>
         					<Trigger Property="IsChecked" Value="True">
-        						<Setter Property="Background" TargetName="border" Value="#FF97C5F7"/>
+        						<!--Setter Property="Background" TargetName="border" Value="#FF97C5F7"/-->
         					</Trigger>
         					<Trigger Property="IsEnabled" Value="false">
         						<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
         					</Trigger>
-        					<Trigger Property="IsMouseOver" Value="True">
-        						<Setter Property="BorderBrush" TargetName="border1" Value="White"/>
-        						<Setter Property="Background" TargetName="border" Value="#FF97C5F7"/>
-        					</Trigger>
+        					<Trigger Property="IsMouseOver" Value="True"/>
         				</ControlTemplate.Triggers>
         			</ControlTemplate>
         		</Setter.Value>
@@ -660,7 +779,249 @@
         </Style>
 
 
-    <Style x:Key="TreeViewItemRoot" d:IsControlPart="True" TargetType="{x:Type TreeViewItem}">
+    <Style x:Key="ToggleButtonStyle1" d:IsControlPart="True" TargetType="{x:Type ToggleButton}">
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ToggleButton}">
+                    <Grid Width="15" Height="13" Background="Transparent">
+                        <Path Visibility="Collapsed" HorizontalAlignment="Center" Margin="0" x:Name="IsExpandedPath" VerticalAlignment="Center" Fill="{TemplateBinding Foreground}" Data="M 0 4 L 8 4 L 4 8 Z" Height="6" Stretch="Fill" Width="8"/>
+                        <Path HorizontalAlignment="Center" Margin="0" x:Name="ExpandPath" VerticalAlignment="Center" Fill="{TemplateBinding Foreground}" Data="M 4 0 L 8 4 L 4 8 Z" Width="6" Stretch="Fill" Height="8"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Visibility" Value="Visible" TargetName="IsExpandedPath"/>
+                            <Setter Property="Visibility" Value="Collapsed" TargetName="ExpandPath"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="TreeViewItemStyleRoot" d:IsControlPart="True" TargetType="{x:Type TreeViewItem}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+        <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+        <Setter Property="Padding" Value="1,0,0,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                    <Grid x:Name="grid" Background="{x:Null}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MinWidth="32" Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Border  Grid.ColumnSpan="3" x:Name="Selection_Border" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" VerticalAlignment="Stretch" BorderThickness="0,1"/>
+                        <Border x:Name="border" Grid.Column="1" BorderBrush="{x:Null}" BorderThickness="0" HorizontalAlignment="Stretch" Height="Auto" Grid.RowSpan="1" VerticalAlignment="Stretch" Width="Auto" Margin="0" Background="{x:Null}">
+                            <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="{TemplateBinding Header}" Foreground="#FFBEC3C7" FontSize="13" Margin="0" VerticalAlignment="Center"/>
+                        </Border>
+                        <ToggleButton x:Name="Expander" Style="{DynamicResource ToggleButtonStyle1}" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press" VerticalAlignment="Center" Foreground="#FFBEC3C7" HorizontalAlignment="Right" Height="Auto" Margin="0,0,3.5,0"/>
+                        <ItemsPresenter Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" x:Name="ItemsHost"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True" SourceName="Selection_Border">
+                            <Setter Property="Background" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="BorderBrush" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="Foreground" TargetName="Expander" Value="#FFD2DFF5"/>
+                            <Setter Property="Foreground" TargetName="textBlock" Value="#FFD2DFF5"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True" SourceName="border">
+                            <Setter Property="Background" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="BorderBrush" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="Foreground" TargetName="Expander" Value="#FFD2DFF5"/>
+                            <Setter Property="Foreground" TargetName="textBlock" Value="#FFD2DFF5"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True" SourceName="Expander">
+                            <Setter Property="Background" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="BorderBrush" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="Foreground" TargetName="Expander" Value="#FFD2DFF5"/>
+                            <Setter Property="Foreground" TargetName="textBlock" Value="#FFD2DFF5"/>
+                        </Trigger>
+                        <Trigger Property="IsExpanded" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" TargetName="ItemsHost"/>
+                        </Trigger>
+                        <Trigger Property="HasItems" Value="false">
+                            <Setter Property="Visibility" Value="Hidden" TargetName="Expander"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="true">
+                            <Setter Property="Background" TargetName="Selection_Border" Value="#FF545D6E"/>
+                            <Setter Property="BorderBrush" TargetName="Selection_Border" Value="#FF0C0C0D"/>
+                            <Setter Property="Foreground" TargetName="Expander" Value="#FFD2DFF5"/>
+                            <Setter Property="Foreground" TargetName="textBlock" Value="#FFD2DFF5"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="true"/>
+                                <Condition Property="IsSelectionActive" Value="false"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            <Setter Property="Background" TargetName="Selection_Border" Value="{x:Null}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <local:IconFormOrgConverter x:Key="IconFromOrg" />
+    <local:IconOpFormOrgConverter x:Key="IconOpFromOrg" />
+    <local:IconEnableFormOrgConverter x:Key="IconEnableFromOrg" />
+
+    <Style x:Key="TreeViewItemStyle2nd" d:IsControlPart="True" TargetType="{x:Type TreeViewItem}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+        <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+        <Setter Property="Padding" Value="1,0,0,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                    <Grid x:Name="grid" Background="{x:Null}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MinWidth="48" Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Border  Grid.ColumnSpan="3" x:Name="Selection_Border" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" VerticalAlignment="Stretch" BorderThickness="0,1"/>
+                        <Border x:Name="border" Grid.Column="1" BorderBrush="{x:Null}" BorderThickness="0" HorizontalAlignment="Stretch" Height="Auto" Grid.RowSpan="1" VerticalAlignment="Stretch" Width="Auto" Margin="0" Background="{x:Null}">
+                            <DockPanel HorizontalAlignment="Stretch" LastChildFill="False" Width="Auto">
+                                <Image Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource IconFromOrg}}" Margin="0,0,5,0"/>
+                                <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="{TemplateBinding Header}" Foreground="#FFBEC3C7" FontSize="13" Margin="0,7.745" VerticalAlignment="Center" Width="Auto"/>
+                            </DockPanel>
+                        </Border>
+                        <ToggleButton x:Name="Expander" Style="{DynamicResource ToggleButtonStyle1}" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press" VerticalAlignment="Center" Foreground="#FFBEC3C7" HorizontalAlignment="Right" Height="Auto" Margin="0,0,3.5,0"/>
+                        <ItemsPresenter Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" x:Name="ItemsHost"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True" SourceName="Selection_Border">
+                            <Setter Property="Background" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="BorderBrush" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="Foreground" TargetName="Expander" Value="#FFD2DFF5"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True" SourceName="border">
+                            <Setter Property="Background" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="BorderBrush" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="Foreground" TargetName="Expander" Value="#FFD2DFF5"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True" SourceName="Expander">
+                            <Setter Property="Background" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="BorderBrush" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="Foreground" TargetName="Expander" Value="#FFD2DFF5"/>
+                        </Trigger>
+                        <Trigger Property="IsExpanded" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" TargetName="ItemsHost"/>
+                        </Trigger>
+                        <Trigger Property="HasItems" Value="false">
+                            <Setter Property="Visibility" Value="Hidden" TargetName="Expander"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="true">
+                            <Setter Property="Background" TargetName="Selection_Border" Value="#FF545D6E"/>
+                            <Setter Property="BorderBrush" TargetName="Selection_Border" Value="#FF0C0C0D"/>
+                            <Setter Property="Foreground" TargetName="Expander" Value="#FFD2DFF5"/>
+                            <Setter Property="Foreground" TargetName="textBlock" Value="#FFD2DFF5"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="true"/>
+                                <Condition Property="IsSelectionActive" Value="false"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            <Setter Property="Background" TargetName="Selection_Border" Value="{x:Null}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="TreeViewItemStyle3rd" d:IsControlPart="True" TargetType="{x:Type TreeViewItem}">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+        <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+        <Setter Property="Padding" Value="1,0,0,0"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TreeViewItem}">
+                    <Grid x:Name="grid" Background="{x:Null}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition MinWidth="64" Width="Auto"/>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="32"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Border  Grid.ColumnSpan="3" x:Name="Selection_Border" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" VerticalAlignment="Stretch" BorderThickness="0,1"/>
+                        <Border x:Name="border" Grid.Column="1" BorderBrush="{x:Null}" BorderThickness="0" HorizontalAlignment="Stretch" Height="Auto" Grid.RowSpan="1" VerticalAlignment="Stretch" Width="Auto" Margin="0" Background="{x:Null}">
+                            <DockPanel HorizontalAlignment="Stretch" LastChildFill="False" Width="Auto">
+                                <Image Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="{Binding Tag, Converter={StaticResource IconFromOrg}, RelativeSource={RelativeSource TemplatedParent}}" Margin="0,0,5,0"/>
+                                <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="{TemplateBinding Header}" Foreground="#FFBEC3C7" FontSize="13" Margin="0,7.745" VerticalAlignment="Center" Width="Auto"/>
+                            </DockPanel>
+                        </Border>
+                        <ToggleButton x:Name="Expander" Style="{DynamicResource ToggleButtonStyle1}" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press" VerticalAlignment="Center" Foreground="#FFBEC3C7" HorizontalAlignment="Right" Height="Auto" Margin="0,0,3.5,0"/>
+                        <ItemsPresenter Grid.Column="0" Grid.ColumnSpan="3" Grid.Row="1" x:Name="ItemsHost"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True" SourceName="Selection_Border">
+                            <Setter Property="Background" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="BorderBrush" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="Foreground" TargetName="Expander" Value="#FFD2DFF5"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True" SourceName="border">
+                            <Setter Property="Background" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="BorderBrush" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="Foreground" TargetName="Expander" Value="#FFD2DFF5"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True" SourceName="Expander">
+                            <Setter Property="Background" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="BorderBrush" TargetName="Selection_Border" Value="#FF5695DB"/>
+                            <Setter Property="Foreground" TargetName="Expander" Value="#FFD2DFF5"/>
+                        </Trigger>
+                        <Trigger Property="IsExpanded" Value="False">
+                            <Setter Property="Visibility" Value="Collapsed" TargetName="ItemsHost"/>
+                        </Trigger>
+                        <Trigger Property="HasItems" Value="false">
+                            <Setter Property="Visibility" Value="Hidden" TargetName="Expander"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="true">
+                            <Setter Property="Background" TargetName="Selection_Border" Value="#FF545D6E"/>
+                            <Setter Property="BorderBrush" TargetName="Selection_Border" Value="#FF0C0C0D"/>
+                            <Setter Property="Foreground" TargetName="Expander" Value="#FFD2DFF5"/>
+                            <Setter Property="Foreground" TargetName="textBlock" Value="#FFD2DFF5"/>
+                        </Trigger>
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsSelected" Value="true"/>
+                                <Condition Property="IsSelectionActive" Value="false"/>
+                            </MultiTrigger.Conditions>
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                        </MultiTrigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            <Setter Property="Background" TargetName="Selection_Border" Value="{x:Null}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!--<Style x:Key="TreeViewItemRoot" d:IsControlPart="True" TargetType="{x:Type TreeViewItem}">
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="HorizontalContentAlignment" Value="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
         <Setter Property="VerticalContentAlignment" Value="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
@@ -678,7 +1039,7 @@
                             <RowDefinition Height="24"/>
                             <RowDefinition/>
                         </Grid.RowDefinitions>
-                        <Border x:Name="border" BorderBrush="Black" BorderThickness="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Height="Auto" Grid.RowSpan="1" VerticalAlignment="Stretch" Width="Auto" Margin="0" Background="#FF97C5F7"/>
+                        <Border x:Name="border" BorderBrush="Black" BorderThickness="0" Grid.ColumnSpan="3" HorizontalAlignment="Stretch" Height="Auto" Grid.RowSpan="1" VerticalAlignment="Stretch" Width="Auto" Margin="0" Background="{x:Null}"/>
                     	<ToggleButton x:Name="Expander" Style="{DynamicResource SimpleTreeViewItemToggleButton}" IsChecked="{Binding IsExpanded, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press" VerticalAlignment="Stretch"/>
                     	<Border Grid.Column="1" x:Name="Selection_Border" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Padding="{TemplateBinding Padding}" VerticalAlignment="Center">
                     		<ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" x:Name="PART_Header" ContentSource="Header"/>
@@ -717,7 +1078,7 @@
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
-    </Style>
+    </Style>-->
 		<Style x:Key="TreeViewStyleNav" TargetType="{x:Type TreeView}">
 			<Setter Property="Template">
 				<Setter.Value>
@@ -756,10 +1117,6 @@
 				</Setter.Value>
 			</Setter>
 		</Style>
-
-    <local:IconFormOrgConverter x:Key="IconFromOrg" />
-    <local:IconOpFormOrgConverter x:Key="IconOpFromOrg" />
-    <local:IconEnableFormOrgConverter x:Key="IconEnableFromOrg" />
 
 
     <Style x:Key="TreeViewItemStyleGroup" d:IsControlPart="True" TargetType="{x:Type TreeViewItem}">

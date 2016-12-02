@@ -117,6 +117,12 @@
     <Compile Include="ctrl\FastPanel.xaml.cs">
       <DependentUpon>FastPanel.xaml</DependentUpon>
     </Compile>
+    <Compile Include="ctrl\IconBtn.xaml.cs">
+      <DependentUpon>IconBtn.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ctrl\ListBtn.xaml.cs">
+      <DependentUpon>ListBtn.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ctrl\MaskLoading.xaml.cs">
       <DependentUpon>MaskLoading.xaml</DependentUpon>
     </Compile>
@@ -206,6 +212,14 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ctrl\FastPanel.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ctrl\IconBtn.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="ctrl\ListBtn.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -323,6 +337,104 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="themes\resource\search.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\serach_21_21_n.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\main_title_136_40.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\max_18_18_h.png" />
+    <Resource Include="resource\images\max_18_18_n.png" />
+    <Resource Include="resource\images\min_18_18_h.png" />
+    <Resource Include="resource\images\min_18_18_n.png" />
+    <Resource Include="resource\images\restore_18_18_h.png" />
+    <Resource Include="resource\images\restore_18_18_n.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\close_18_18_h.png" />
+    <Resource Include="resource\images\close_18_18_n.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\new_22_22_d.png" />
+    <Resource Include="resource\images\new_22_22_h.png" />
+    <Resource Include="resource\images\new_22_22_n.png" />
+    <Resource Include="resource\images\new_22_22_p.png" />
+    <Resource Include="resource\images\remove_22_22_d.png" />
+    <Resource Include="resource\images\remove_22_22_h.png" />
+    <Resource Include="resource\images\remove_22_22_n.png" />
+    <Resource Include="resource\images\remove_22_22_p.png" />
+    <Resource Include="resource\images\save_22_22_d.png" />
+    <Resource Include="resource\images\save_22_22_h.png" />
+    <Resource Include="resource\images\save_22_22_n.png" />
+    <Resource Include="resource\images\save_22_22_p.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\call_22_22_d.png" />
+    <Resource Include="resource\images\call_22_22_h.png" />
+    <Resource Include="resource\images\call_22_22_n.png" />
+    <Resource Include="resource\images\call_22_22_p.png" />
+    <Resource Include="resource\images\job_tickets_22_22_d.png" />
+    <Resource Include="resource\images\job_tickets_22_22_h.png" />
+    <Resource Include="resource\images\job_tickets_22_22_n.png" />
+    <Resource Include="resource\images\job_tickets_22_22_p.png" />
+    <Resource Include="resource\images\position_22_22_d.png" />
+    <Resource Include="resource\images\position_22_22_h.png" />
+    <Resource Include="resource\images\position_22_22_n.png" />
+    <Resource Include="resource\images\position_22_22_p.png" />
+    <Resource Include="resource\images\short_message_22_22_d.png" />
+    <Resource Include="resource\images\short_message_22_22_h.png" />
+    <Resource Include="resource\images\short_message_22_22_n.png" />
+    <Resource Include="resource\images\short_message_22_22_p.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\about_22_22_d.png" />
+    <Resource Include="resource\images\about_22_22_h.png" />
+    <Resource Include="resource\images\about_22_22_n.png" />
+    <Resource Include="resource\images\about_22_22_p.png" />
+    <Resource Include="resource\images\help_22_22_d.png" />
+    <Resource Include="resource\images\help_22_22_h.png" />
+    <Resource Include="resource\images\help_22_22_n.png" />
+    <Resource Include="resource\images\help_22_22_p.png" />
+    <Resource Include="resource\images\minitor_22_22_d.png" />
+    <Resource Include="resource\images\minitor_22_22_h.png" />
+    <Resource Include="resource\images\minitor_22_22_n.png" />
+    <Resource Include="resource\images\minitor_22_22_p.png" />
+    <Resource Include="resource\images\new_contact_22_22_d.png" />
+    <Resource Include="resource\images\new_contact_22_22_h.png" />
+    <Resource Include="resource\images\new_contact_22_22_n.png" />
+    <Resource Include="resource\images\new_contact_22_22_p.png" />
+    <Resource Include="resource\images\new_operate_22_22_d.png" />
+    <Resource Include="resource\images\new_operate_22_22_h.png" />
+    <Resource Include="resource\images\new_operate_22_22_n.png" />
+    <Resource Include="resource\images\new_operate_22_22_p.png" />
+    <Resource Include="resource\images\online_check_22_22_d.png" />
+    <Resource Include="resource\images\online_check_22_22_h.png" />
+    <Resource Include="resource\images\online_check_22_22_n.png" />
+    <Resource Include="resource\images\online_check_22_22_p.png" />
+    <Resource Include="resource\images\power_up_22_22_d.png" />
+    <Resource Include="resource\images\power_up_22_22_h.png" />
+    <Resource Include="resource\images\power_up_22_22_n.png" />
+    <Resource Include="resource\images\power_up_22_22_p.png" />
+    <Resource Include="resource\images\shutdown_22_22_d.png" />
+    <Resource Include="resource\images\shutdown_22_22_h.png" />
+    <Resource Include="resource\images\shutdown_22_22_n.png" />
+    <Resource Include="resource\images\shutdown_22_22_p.png" />
+    <Resource Include="resource\images\sleep_22_22_d.png" />
+    <Resource Include="resource\images\sleep_22_22_h.png" />
+    <Resource Include="resource\images\sleep_22_22_n.png" />
+    <Resource Include="resource\images\sleep_22_22_p.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\notice_19_15_n.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\group_18_18_on.png" />
+    <Resource Include="resource\images\radio_18_18_off.png" />
+    <Resource Include="resource\images\staff_18_18_off.png" />
+    <Resource Include="resource\images\vehicle_18_18_off.png" />
+    <Resource Include="resource\images\ride_18_18_off.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

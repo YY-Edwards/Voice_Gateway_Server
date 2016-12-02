@@ -7,27 +7,32 @@
         Icon="/TrboX;component/themes/resource/Logo.png"        
         Style="{StaticResource LoginWindowStyle}"   
         Title="登录" Height="360" Width="600" WindowStartupLocation="CenterScreen" Closed="MyWindow_Closed">
-
 	<Grid>
-		<Border BorderBrush="#FF97C5F7" BorderThickness="0">
-			<Grid>
-				<DockPanel HorizontalAlignment="Left" LastChildFill="False" VerticalAlignment="Top" Margin="316.333,121.166,0,0">
-					<DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="0,0,0,5">
-						<TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="用户：" VerticalAlignment="Center" Width="40"/>
-						<TextBox x:Name="txt_User" HorizontalAlignment="Left" Style="{DynamicResource TextBoxStyleNormal}" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="120" Margin="10,0,0,0"/>
-					</DockPanel>
-					<DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,5">
-						<TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="密码：" VerticalAlignment="Center" Width="40"/>
-						<PasswordBox HorizontalAlignment="Left" VerticalAlignment="Center" Style="{DynamicResource PasswordBoxStyleNormal}" Width="120" Margin="10,0,0,0"/>
-					</DockPanel>
+        <Border BorderBrush="#FF97C5F7" BorderThickness="0">
+            <Grid>
+                <DockPanel HorizontalAlignment="Left" LastChildFill="False" VerticalAlignment="Top" Margin="316.333,121.166,0,0">
+                    <DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="0,0,0,5">
+                        <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="用户：" VerticalAlignment="Center" Width="40"/>
+                        <TextBox x:Name="txt_User" HorizontalAlignment="Left" Style="{DynamicResource TextBoxStyleNormal}" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="120" Margin="10,0,0,0"/>
+                    </DockPanel>
+                    <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,5">
+                        <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="密码：" VerticalAlignment="Center" Width="40"/>
+                        <PasswordBox HorizontalAlignment="Left" VerticalAlignment="Center" Style="{DynamicResource PasswordBoxStyleNormal}" Width="120" Margin="10,0,0,0"/>
+                    </DockPanel>
                     <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top">
                         <Button x:Name="btn_login" Content="Login" VerticalAlignment="Center" HorizontalAlignment="Left" Click="btn_Login_Click" Style="{DynamicResource ButtonStyleNormal}" Margin="50,0,0,0" Width="55"/>
                         <Button x:Name="btn_cancel" Content="Cancel" VerticalAlignment="Center" Width="55" HorizontalAlignment="Right" Style="{DynamicResource ButtonStyleNormal}" Click="btn_cancel_Click" DockPanel.Dock="Right"/>
                     </DockPanel>
                 </DockPanel>
-				<Label Content="TrboX 登录" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="315.333,50.5,0,0" FontSize="24" FontFamily="Magneto"/>
-			</Grid>
-		</Border>
+                <Label Content="TrboX 登录" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="315.333,50.5,0,0" FontSize="24" FontFamily="Magneto"/>
+                <!--<src:ListBtn VOffset="10"  Margin="10,31,466,257" Normal="/TrboX;component/resource/images/首页切图右上角_08.png" Height="28" >
+                    <src:ListBtn.Items>
+                        <ComboBoxItem Content="ceshi" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
+                        <ComboBoxItem Content="ceshi2" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
+                    </src:ListBtn.Items>
+                </src:ListBtn>-->
+            </Grid>
+        </Border>
 
-	</Grid>
+    </Grid>
 </src:MyWindow>

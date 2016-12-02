@@ -409,7 +409,7 @@ namespace TrboX
     public class IconFormOrgConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
+        {           
             if (null == value) return null;
              CMultMember member = null;
              if (value is CMember) member = ((CMember)value).SingleToMult();
@@ -419,24 +419,36 @@ namespace TrboX
             if ((null == member) || (null == member.Target) || (member.Target.Count == 0)) return null;
 
             if ((1 < member.Target.Count) || (SelectionType.Single != member.Type))
-                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/group.png"));
+                return new BitmapImage(new Uri("pack://application:,,,/resource/images/group_18_18_on.png"));
             else 
                 switch (member.Target[0].Type)
                 {
                     case MemberType.Group:
-                        return new BitmapImage(new Uri("pack://application:,,,/themes/resource/group.png"));
+                        return new BitmapImage(new Uri("pack://application:,,,/resource/images/group_18_18_on.png"));
                     case MemberType.Staff:
                         if (null != member.Target[0].Staff)
                         {
-                            if (StaffType.Staff == member.Target[0].Staff.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/contact.png"));
-                            if (StaffType.Vehicle == member.Target[0].Staff.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/vehicle.png"));
+                            if (StaffType.Staff == member.Target[0].Staff.Type) 
+                                return (member.Target[0].Radio != null &&  member.Target[0].Radio.IsOnline == true)
+                                    ? new BitmapImage(new Uri("pack://application:,,,/resource/images/staff_18_18_off.png"))
+                                    : new BitmapImage(new Uri("pack://application:,,,/resource/images/staff_18_18_off.png"));
+                            if (StaffType.Vehicle == member.Target[0].Staff.Type)
+                                return (member.Target[0].Radio != null && member.Target[0].Radio.IsOnline == true)
+                                    ? new BitmapImage(new Uri("pack://application:,,,/resource/images/vehicle_18_18_off.png"))
+                                    : new BitmapImage(new Uri("pack://application:,,,/resource/images/vehicle_18_18_off.png"));
                         }
                         break;
                     case MemberType.Radio:
                         if (null != member.Target[0].Radio)
                         {
-                            if (RadioType.Radio == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/radio.png"));
-                            if (RadioType.Ride == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/ride.png"));
+                            if (RadioType.Radio == member.Target[0].Radio.Type)
+                                return (member.Target[0].Radio.IsOnline == true)
+                                    ? new BitmapImage(new Uri("pack://application:,,,/resource/images/radio_18_18_off.png"))
+                                    : new BitmapImage(new Uri("pack://application:,,,/resource/images/radio_18_18_off.png"));
+                            if (RadioType.Ride == member.Target[0].Radio.Type)
+                                return (member.Target[0].Radio.IsOnline == true)
+                                    ? new BitmapImage(new Uri("pack://application:,,,/resource/images/ride_18_18_off.png"))
+                                    : new BitmapImage(new Uri("pack://application:,,,/resource/images/ride_18_18_off.png"));
                         }
                         break;
                     default: return null;
@@ -657,6 +669,26 @@ namespace TrboX
     }
 
 
+    public class SearchTxtConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if(value != null && (string)value != "")
+            {
+                return "";
+            }
+            else
+            {
+                return "请输入您的关键字";
+            }
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
 }
 
 

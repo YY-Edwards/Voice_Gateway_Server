@@ -33,10 +33,13 @@ namespace TrboX
 
 
             m_Main.tree_OrgView.PreviewMouseDoubleClick += delegate { };
+            m_Main.tree_OrgView.PreviewMouseRightButtonDown += delegate(object sender, MouseButtonEventArgs e) { OnTreeRightClick(sender, e); };
             m_Main.lst_Employee.PreviewMouseDoubleClick += delegate{ };
             m_Main.lst_Vehicle.PreviewMouseDoubleClick += delegate { };
             m_Main.lst_Group.PreviewMouseDoubleClick += delegate { };
             m_Main.lst_Radio.PreviewMouseDoubleClick += delegate { };
+
+
 
             Thread t = new Thread(() => { ResourceUpdateThread(); });
             t.Start();
@@ -88,7 +91,7 @@ namespace TrboX
             TreeViewItem OrginItem = m_Main.tree_OrgView.Items.Count > 0 ? m_Main.tree_OrgView.Items[0] as TreeViewItem : null;
 
             TreeViewItem itemOrg = new TreeViewItem() { Header = "用户/设备" };
-            itemOrg.Style = App.Current.Resources["TreeViewItemRoot"] as Style;
+            itemOrg.Style = App.Current.Resources["TreeViewItemStyleRoot"] as Style;
 
             if (null != OrginItem) itemOrg.IsExpanded = OrginItem.IsExpanded;
             else itemOrg.IsExpanded = true;
@@ -102,7 +105,7 @@ namespace TrboX
             foreach (var group in m_TargetList.Group)
             {
                 TreeViewItem itemGroup = new TreeViewItem() { Header = group.Value.Name};
-                itemGroup.Style = App.Current.Resources["TreeViewItemStyleGroup"] as Style;
+                itemGroup.Style = App.Current.Resources["TreeViewItemStyle2nd"] as Style;
 
                 if ((null != OrginItem) && (OrginItem.Items.Count > groupcount))
                     itemGroup.IsExpanded = ((TreeViewItem)OrginItem.Items[groupcount]).IsExpanded;
@@ -126,7 +129,7 @@ namespace TrboX
                     TreeViewItem childitem = new TreeViewItem();
                     childitem.Header = staff.Value.Name;
                     childitem.ToolTip = staff.Value.Name + (("" == staff.Value.InformationWithoutGroup) ? "" : "：") + staff.Value.InformationWithoutGroup;
-                    childitem.Style = App.Current.Resources["TreeViewItemStyleMember"] as Style;
+                    childitem.Style = App.Current.Resources["TreeViewItemStyle3rd"] as Style;
                     childitem.Tag = staff.Value;
 
                     if ((null != OrginItem) && (OrginItem.Items.Count > groupcount))
@@ -161,7 +164,7 @@ namespace TrboX
                     TreeViewItem childitem = new TreeViewItem();
                     childitem.Header = radio.Value.Name;
                     childitem.ToolTip = radio.Value.Name + (("" == radio.Value.InformationWithoutGroup) ? "" : "：") + radio.Value.InformationWithoutGroup;
-                    childitem.Style = App.Current.Resources["TreeViewItemStyleMember"] as Style;
+                    childitem.Style = App.Current.Resources["TreeViewItemStyle3rd"] as Style;
                     childitem.Tag = radio.Value;
 
                     if ((null != OrginItem) && (OrginItem.Items.Count > groupcount))
@@ -419,7 +422,8 @@ namespace TrboX
                 if (null != m_Main.tab_Mgr) switch (m_Main.tab_Mgr.SelectedIndex)
                     {             
                     case 0:
-                      FillDataToOrgTreeView();break;
+                      FillDataToOrgTreeView();
+                      break;
                 case 1:
                       FillDataToGroupList();break;
                 case 2:
@@ -434,7 +438,23 @@ namespace TrboX
             })); 
         }
 
+        static DependencyObject VisualUpwardSearch<T>(DependencyObject source)
+        {
+            while (source != null && source.GetType() != typeof(T))
+                source = VisualTreeHelper.GetParent(source);
 
+            return source;
+        }
+
+        private void OnTreeRightClick(object sender, MouseButtonEventArgs e)
+        {
+            var treeViewItem = VisualUpwardSearch<TreeViewItem>(e.OriginalSource as DependencyObject) as TreeViewItem;
+            if (treeViewItem != null)
+            {
+                treeViewItem.Focus();
+                e.Handled = true;
+            }
+        }
         private bool IsAccept(string condition, CMember dest)
         {
             if (((null != dest.Group) && (dest.Group.GroupID.ToString().ToLower().Contains(condition.ToLower()) || dest.Group.Name.ToLower().Contains(condition.ToLower())))
