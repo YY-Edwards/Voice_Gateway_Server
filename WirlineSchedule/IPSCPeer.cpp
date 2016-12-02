@@ -239,18 +239,6 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 											   SendToPeer(&m_PeerAddr);
 											   sprintf_s(m_reportMsg, "PEER %lu build 0x94 packet,TickCount:%lu,this:%lu", m_ulPeerID, m_startTickCount, (DWORD)this);
 											   sendLogToWindow();
-											   ////////////////////////////////////////////////////////////////////////////
-											   ///*开启->等待LE注册回复(S)-<定时器,可能会发生以下两种情况*/
-											   ///*1.准时:不做任何操作*/
-											   ///*2.超时:发送0x94*/
-											   ////////////////////////////////////////////////////////////////////////////
-											   //timeKillEvent(m_timerIdWaitPeerAliveRequest);
-											   //m_statusWaitPeerAliveRequest = 0;
-											   //timeKillEvent(m_timerIdWaitPeerAliveResponse);
-											   //m_statusWaitPeerAliveResponse = 0;
-											   //timeKillEvent(m_timerIdWaitPeerRegistrationResponse);
-											   //m_statusWaitPeerRegistrationResponse = 0;
-											   //m_timerIdWaitPeerRegistrationResponse = timeSetEvent(WAIT_LE_PEER_REGISTRATION_RESPONSE_TIMER, 1, Timerwait_LE_PEER_REGISTRATION_RESPONSE, (DWORD)this, TIME_ONESHOT);
 	}
 		break;
 	case LE_PEER_REGISTRATION_RESPONSE_REMOTE:
@@ -259,22 +247,6 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 												 m_peerStatus = PEER_STATUS_ALIVE_REQUES;
 												 sprintf_s(m_reportMsg, "PEER %lu recive 0x95 packet,TickCount:%lu,this:%lu", m_ulPeerID, m_startTickCount, DWORD(this));
 												 sendLogToWindow();
-												 ////////////////////////////////////////////////////////////////////////////
-												 ///*更新->等待LE注册回复(S)-<定时器,使准时*/
-												 ////////////////////////////////////////////////////////////////////////////
-												 //m_statusWaitPeerRegistrationResponse = STATUS_ONTIME;
-												 ////////////////////////////////////////////////////////////////////////////
-												 ///*开启->等待请求心跳包(S)-<定时器,可能会发生以下两种情况*/
-												 ///*1.准时:不做任何操作*/
-												 ///*2.超时:发送0x98*/
-												 ////////////////////////////////////////////////////////////////////////////
-												 //timeKillEvent(m_timerIdWaitPeerAliveRequest);
-												 //m_statusWaitPeerAliveRequest = 0;
-												 //timeKillEvent(m_timerIdWaitPeerAliveResponse);
-												 //m_statusWaitPeerAliveResponse = 0;
-												 //timeKillEvent(m_timerIdWaitPeerRegistrationResponse);
-												 //m_statusWaitPeerRegistrationResponse = 0;
-												 //m_timerIdWaitPeerAliveRequest = timeSetEvent(WAIT_LE_PEER_KEEP_ALIVE_REQUEST_TIMER, 1, Timerwait_LE_PEER_KEEP_ALIVE_REQUEST, (DWORD)this, TIME_ONESHOT);
 	}
 		break;
 	case LE_PEER_KEEP_ALIVE_REQUEST_REMOTE:
@@ -392,41 +364,12 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 												 m_startTickCount = GetTickCount();
 												 SendToPeer(&m_PeerAddr);
 											 }
-
-											 ////////////////////////////////////////////////////////////////////////////
-											 ///*开启->等待回复心跳包(S)-<定时器,可能会发生以下两种情况*/
-											 ///*1.准时:不做任何操作*/
-											 ///*2.超时:发送0x94*/
-											 ////////////////////////////////////////////////////////////////////////////
-											 //timeKillEvent(m_timerIdWaitPeerAliveRequest);
-											 //m_statusWaitPeerAliveRequest = 0;
-											 //timeKillEvent(m_timerIdWaitPeerAliveResponse);
-											 //m_statusWaitPeerAliveResponse = 0;
-											 //timeKillEvent(m_timerIdWaitPeerRegistrationResponse);
-											 //m_statusWaitPeerRegistrationResponse = 0;
-											 //m_timerIdWaitPeerAliveResponse = timeSetEvent(WAIT_LE_PEER_KEEP_ALIVE_RESPONSE_TIMER, 1, Timerwait_LE_PEER_KEEP_ALIVE_RESPONSE, (DWORD)this, TIME_ONESHOT);
 	}
 		break;
 	case LE_PEER_KEEP_ALIVE_RESPONSE_REMOTE:
 	{
 											   m_startTickCount = GetTickCount();
 											   m_peerStatus = PEER_STATUS_ALIVE_REQUES;
-											   ////////////////////////////////////////////////////////////////////////////
-											   ///*更新->等待回复心跳包(S)-<定时器,使准时*/
-											   ////////////////////////////////////////////////////////////////////////////
-											   //m_statusWaitPeerAliveResponse = STATUS_ONTIME;
-											   ////////////////////////////////////////////////////////////////////////////
-											   ///*开启->等待请求心跳包(S)-<定时器,可能会发生以下两种情况*/
-											   ///*1.准时:不做任何操作*/
-											   ///*2.超时:发送0x98*/
-											   ////////////////////////////////////////////////////////////////////////////
-											   //timeKillEvent(m_timerIdWaitPeerAliveRequest);
-											   //m_statusWaitPeerAliveRequest = 0;
-											   //timeKillEvent(m_timerIdWaitPeerAliveResponse);
-											   //m_statusWaitPeerAliveResponse = 0;
-											   //timeKillEvent(m_timerIdWaitPeerRegistrationResponse);
-											   //m_statusWaitPeerRegistrationResponse = 0;
-											   //m_timerIdWaitPeerAliveRequest = timeSetEvent(WAIT_LE_PEER_KEEP_ALIVE_REQUEST_TIMER, 1, Timerwait_LE_PEER_KEEP_ALIVE_REQUEST, (DWORD)this, TIME_ONESHOT);
 
 	}
 		break;

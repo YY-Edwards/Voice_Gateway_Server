@@ -16,7 +16,7 @@ CSerialDongle::CSerialDongle()
 	m_waitNextNetDataTime = VOICE_NEXT_TIMEOUT;
 	m_waitNextNetDataEvent = NULL;
 	m_bCurCodingIsEnd = TRUE;
-	m_bIsStartCoding = FALSE;
+	m_bCoding = FALSE;
 	m_prevAMBE = NULL;
 	m_prevPCM = NULL;
 	m_curAMBE = NULL;
@@ -76,7 +76,7 @@ CSerialDongle::~CSerialDongle()
 	stop();
 }
 
-DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice,CManager* lpCmanager)
+DWORD CSerialDongle::OpenDongle(LPCTSTR lpszDevice, CManager* lpCmanager)
 {
 	m_lpCmanager = lpCmanager;
 	//初始化events
@@ -610,10 +610,6 @@ void CSerialDongle::ParseDVSImsg(DVSI3000struct* pMsg)
 	}
 		break;
 	case AMBE3000_PCM_TYPE_BYTE:
-		//is a codec uncompressed 8000sps 16 bit data packet from the Dongle
-		//send dongle codec data to soundcard output speaker.
-		//SHORT coming from Dongle is Big-endian. 
-		//Do conversion in destination.
 		g_pSound->BigEndianSoundOut((unsigned __int8*)&(pMsg->PCMType.thePCMFrame.fld.Samples[0]), m_AMBE_CirBuff.size());
 		break;
 	case AMBE3000_CCP_TYPE_BYTE:
@@ -751,60 +747,40 @@ void CSerialDongle::DecodeBuffers()
 	}
 }
 
-void CSerialDongle::SendDVSIPCMMsgtoDongle(unsigned __int8* pData, BOOL bIsEnd)
+void CSerialDongle::SendDVSIPCMMsgtoDongle(unsigned __int8* pData, int dataLength)
 {
 	int i = 0;
-	tPCMFrame* pPcmData = new tPCMFrame;
-
-	pPcmData->fld.Sync = AMBE3000_SYNC_BYTE;
-	pPcmData->fld.LengthH = AMBE3000_PCM_LENGTH_HBYTE;
-	pPcmData->fld.LengthL = AMBE3000_PCM_LENGTH_LBYTE;
-	pPcmData->fld.Type = AMBE3000_PCM_TYPE_BYTE;
-	pPcmData->fld.ID = AMBE3000_PCM_SPEECHID_BYTE;
-	pPcmData->fld.Num = AMBE3000_PCM_NUMSAMPLES_BYTE;
-	for (i = 0; i < AMBE3000_PCM_INTSAMPLES_BYTE; i++)
+	int length = dataLength;
+	while (length)
 	{
-		pPcmData->fld.Samples[1 + (i << 1)] = *pData++; //Endian conversion.
-		pPcmData->fld.Samples[(i << 1)] = *pData++;
-	}
-	pPcmData->fld.PT = AMBE3000_PARITYTYPE_BYTE;
-	pPcmData->fld.PP = CheckSum((DVSI3000struct *)pPcmData);
-
-	m_PCMLocker.lock();
-	m_PCM_CirBuff.push_back(pPcmData);
-	m_PCMLocker.unlock();
-
-	//本轮录音结束
-	if (bIsEnd)
-	{
-		m_bCurCodingIsEnd = TRUE;
-	}
-
-	if (
-		!m_bIsStartCoding //当前状态为未开始
-		&& (m_PCM_CirBuff.size() > NUM_IN_BUFFERS || bIsEnd)//达到指定的buffer数目或者本轮结束
-		)
-	{
-		//开始执行PCM装换为AMBE并且发送给中转台
-		//if (!g_bTX)
-		//{
-		//	//temp delete
-		//	//g_net->NetTx(TRUE);
-		//}
-
-		m_bCurCodingIsEnd = FALSE;
-		//本轮录音结束
-		if (bIsEnd)
+		/*存在损失最多20ms音频数据的可能*/
+		if (length < 320)
 		{
-			m_bCurCodingIsEnd = TRUE;
+			break;
 		}
-		//提醒界面
-		sprintf_s(m_reportMsg, "start coding");
-		sendLogToWindow();
-		m_bIsStartCoding = TRUE;
-		readyNextWritePCM();
-	}
+		tPCMFrame* pPcmData = new tPCMFrame;
+		pPcmData->fld.Sync = AMBE3000_SYNC_BYTE;
+		pPcmData->fld.LengthH = AMBE3000_PCM_LENGTH_HBYTE;
+		pPcmData->fld.LengthL = AMBE3000_PCM_LENGTH_LBYTE;
+		pPcmData->fld.Type = AMBE3000_PCM_TYPE_BYTE;
+		pPcmData->fld.ID = AMBE3000_PCM_SPEECHID_BYTE;
+		pPcmData->fld.Num = AMBE3000_PCM_NUMSAMPLES_BYTE;
+		for (i = 0; i < AMBE3000_PCM_INTSAMPLES_BYTE; i++)
+		{
+			pPcmData->fld.Samples[1 + (i << 1)] = *pData++; //Endian conversion.
+			pPcmData->fld.Samples[(i << 1)] = *pData++;
+		}
+		pPcmData->fld.PT = AMBE3000_PARITYTYPE_BYTE;
+		pPcmData->fld.PP = CheckSum((DVSI3000struct *)pPcmData);
 
+		m_PCMLocker.lock();
+		m_PCM_CirBuff.push_back(pPcmData);
+		m_PCMLocker.unlock();
+		length -= 320;
+	}
+	startCoding(0);
+	//sprintf_s(m_reportMsg, "m_PCM_CirBuff.size:%d", m_PCM_CirBuff.size());
+	//g_pWLlog->sendLog(m_reportMsg);
 }
 
 UINT8 CSerialDongle::getDongleFlag()
@@ -893,7 +869,7 @@ void CSerialDongle::readyNextWriteAMBE()
 	if (m_decodeFlag&MASK_DECODE_PREAPRE_END)
 	{
 		//立即播放缓存
-		g_pSound->immediatelyPlay();
+		g_pSound->startPlay(0);
 
 		//initReadyRead();
 		m_decodeFlag = FLAG_DECODE_END;
@@ -919,9 +895,9 @@ void CSerialDongle::readyNextWriteAMBE()
 	////存在待解码的数据
 	//if (!(m_AMBE_CirBuff.size() <= 0))
 	//{
-		m_AMBELocker.lock();
-		m_curAMBE = m_AMBE_CirBuff.front();
-		m_AMBELocker.unlock();
+	m_AMBELocker.lock();
+	m_curAMBE = m_AMBE_CirBuff.front();
+	m_AMBELocker.unlock();
 	//}
 	////不存在待解码的数据
 	//else
@@ -970,23 +946,20 @@ void CSerialDongle::readyNextWritePCM()
 		m_prevPCM = NULL;
 	}
 
-	//音频压缩的速度大于麦克风录制的速度
-	if (m_PCM_CirBuff.size()<=0)
+	//加密完毕
+	if (m_PCM_CirBuff.size() <= 0)
 	{
-		if (m_bCurCodingIsEnd)
-		{
-			g_dongleIsUsing = FALSE;//复位dongle的使用情况
-			g_pSound->closeFile();//关闭测试文件
-			//清除一切对当前dongle的操作
-			result = PurgeDongle(PURGE_RXABORT | PURGE_RXCLEAR | PURGE_TXCLEAR | PURGE_TXABORT, 100);
+		g_dongleIsUsing = FALSE;//复位dongle的使用情况
+		g_pSound->closeFile();//关闭测试文件
+		//清除一切对当前dongle的操作
+		result = PurgeDongle(PURGE_RXABORT | PURGE_RXCLEAR | PURGE_TXCLEAR | PURGE_TXABORT, 100);
 
-			/*通知此次通话结束*/
-			g_pNet->releaseRecordEndEvent();
-			//提醒界面
-			sprintf_s(m_reportMsg, "stop coding");
-			sendLogToWindow();
-		}
-		m_bIsStartCoding = FALSE;//复位当前转换状态
+		/*通知此次通话结束*/
+		g_pNet->releaseRecordEndEvent();
+		//提醒界面
+		sprintf_s(m_reportMsg, "stop coding");
+		sendLogToWindow();
+		m_bCoding = FALSE;//复位当前转换状态
 		return;
 	}
 
@@ -1086,4 +1059,19 @@ BOOL CSerialDongle::changePCMToAMBE()
 void CSerialDongle::releaseWaitNextNetDataEvent()
 {
 	SetEvent(m_waitNextNetDataEvent);
+}
+
+void CSerialDongle::startCoding(int bufferSize)
+{
+	if (
+		!m_bCoding //当前状态为未开始
+		&& (m_PCM_CirBuff.size() > bufferSize)
+		)
+	{
+		//提醒界面
+		sprintf_s(m_reportMsg, "start coding");
+		sendLogToWindow();
+		m_bCoding = TRUE;
+		readyNextWritePCM();
+	}
 }

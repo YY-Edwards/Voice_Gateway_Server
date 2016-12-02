@@ -88,13 +88,13 @@
             <RowDefinition Height="30"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Border x:Name="bdr_PanelTitle" Background="{Binding Type, Converter={StaticResource TypeToColor}}" BorderThickness="0" PreviewMouseLeftButtonDown="bdr_PanelTitle_PreviewMouseLeftButtonDown">
+        <Border x:Name="bdr_PanelTitle" BorderThickness="0" PreviewMouseLeftButtonDown="bdr_PanelTitle_PreviewMouseLeftButtonDown">
             <DockPanel LastChildFill="False">
                 <Label Content="{Binding Type, Converter={StaticResource TypeToTitle}}" VerticalAlignment="Center"/>
             </DockPanel>
         </Border>
         <Button x:Name="btn_Close" Content="x" VerticalAlignment="Top" DockPanel.Dock="Right" HorizontalAlignment="Right" Margin="0,5,5,0" Height="20" Width="20" Click="btn_Close_Click"/>
-        <Border x:Name="bdr_Back" BorderBrush="Black" BorderThickness="0" Grid.RowSpan="3" Grid.Row="1" Padding="0"  ClipToBounds="True" Background="#7F97C5F7">
+        <Border x:Name="bdr_Back" BorderBrush="Black" BorderThickness="0" Grid.RowSpan="3" Grid.Row="1" Padding="0"  ClipToBounds="True">
             <!--<Border.Background>
                 <MultiBinding  Converter="{StaticResource FastStatus}" Mode="OneWay" >
                     <Binding  Path="Type" />
@@ -182,11 +182,11 @@
                                     <Button x:Name="btn_Message"  Content="发送" Margin="3,0,0,0" ToolTip="短消息"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_Message_Click" Grid.Column="1"/>
                                 </Grid>
                             	<DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Height="30" Margin="-10,0,-10,5">
-                            		<local:ComboButton x:Name="btn_Check"  Margin="18,0,3,0" ToolTip="在线检测" Visibility="{Binding m_Contact.target, Converter={StaticResource OpBtnHide}}" Click="btn_Check_Click" Height="20" Width="20" VerticalAlignment="Center" Icon="/TrboX;component/themes/resource/check.png"/>
-                            		<local:ComboButton x:Name="btn_Monitor"  Margin="3,0" ToolTip="远程监听"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_Monitor_Click" Height="20" Width="20" VerticalAlignment="Center" Icon="/TrboX;component/themes/resource/monitor.png"/>
-                            		<local:ComboButton x:Name="btn_StartUp"  Margin="3,0" ToolTip="遥开"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_StartUp_Click" Height="20" Width="20" VerticalAlignment="Center" Icon="/TrboX;component/themes/resource/start.png"/>
-									<local:ComboButton x:Name="btn_ShoutDown"  Margin="3,0" ToolTip="遥毙"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_ShutDown_Click" Height="20" Width="20" VerticalAlignment="Center" Icon="/TrboX;component/themes/resource/shut.png"/>                           		
-                            		<local:ComboButton x:Name="btn_More"  Margin="3,0" ToolTip="更多操作"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_More_Click" Height="20" Width="20" VerticalAlignment="Center" Icon="/TrboX;component/themes/resource/more.png"/>
+                            		<local:ComboButton x:Name="btn_Check"  Margin="18,0,3,0" ToolTip="在线检测" Visibility="{Binding m_Contact.target, Converter={StaticResource OpBtnHide}}" Click="btn_Check_Click" Height="20" Width="20" VerticalAlignment="Center" Normal="/TrboX;component/themes/resource/check.png"/>
+                                    <local:ComboButton x:Name="btn_Monitor"  Margin="3,0" ToolTip="远程监听"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_Monitor_Click" Height="20" Width="20" VerticalAlignment="Center" Normal="/TrboX;component/themes/resource/monitor.png"/>
+                                    <local:ComboButton x:Name="btn_StartUp"  Margin="3,0" ToolTip="遥开"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_StartUp_Click" Height="20" Width="20" VerticalAlignment="Center" Normal="/TrboX;component/themes/resource/start.png"/>
+                                    <local:ComboButton x:Name="btn_ShoutDown"  Margin="3,0" ToolTip="遥毙"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_ShutDown_Click" Height="20" Width="20" VerticalAlignment="Center" Normal="/TrboX;component/themes/resource/shut.png"/>
+                                    <local:ComboButton x:Name="btn_More"  Margin="3,0" ToolTip="更多操作"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_More_Click" Height="20" Width="20" VerticalAlignment="Center" Normal="/TrboX;component/themes/resource/more.png"/>
                             	</DockPanel>
                             	<TextBox x:Name="txt_ShortMessage" TextWrapping="Wrap" Text="" Margin="0" Background="#CCFFFFFF" DockPanel.Dock="Top"/>
                             </DockPanel>

@@ -63,6 +63,7 @@ namespace TrboX
             InitializeComponent();
             this.Loaded += delegate
             {
+                InitializeEvent();
                 RegRxHandler();
                 TServer.InitializeServer();
                 LogServer.InitializeServer();  
@@ -111,6 +112,127 @@ namespace TrboX
             };
         }
 
+
+        private void InitializeEvent()
+        {
+            ControlTemplate baseWindowTemplate = this.Template; //(ControlTemplate)App.Current.Resources["MyWindowTemplate"];
+            Border borderClip = (Border)baseWindowTemplate.FindName("bdr_win", this);
+
+            //if (null != borderClip)
+            //{
+            //    borderClip.MouseMove += delegate
+            //    {
+            //        DisplayResizeCursor(null, null);
+            //    };
+            //    borderClip.PreviewMouseDown += delegate
+            //    {
+            //        Resize(null, null);
+            //    };
+            //    this.PreviewMouseMove += delegate
+            //    {
+            //        ResetCursor(null, null);
+            //    };
+            //}
+
+            //Image img_LoginWin = (Image)baseWindowTemplate.FindName("img_LoginWin", this);
+            //if (null != img_LoginWin)
+            //{
+            //    img_LoginWin.PreviewMouseLeftButtonDown += delegate
+            //    {
+            //        this.DragMove();
+            //    };
+            //}
+
+
+
+            //Button btn_Header = (Button)baseWindowTemplate.FindName("btn_Header", this);
+
+            if (null != btn_Header)
+            {
+                btn_Header.PreviewMouseLeftButtonDown += delegate
+                {
+                    this.DragMove();
+                };
+
+
+
+                btn_Header.PreviewMouseDoubleClick += delegate
+                {
+                    if (this.WindowState == WindowState.Maximized)
+                    {
+                        this.WindowState = WindowState.Normal;
+                    }
+                    else
+                    {
+                        this.WindowState = WindowState.Maximized;
+                    }
+
+                };
+            }
+
+
+            //Image img_SysClose = (Image)baseWindowTemplate.FindName("img_SysClose", this);
+
+            if (null != btn_SysClose)
+            {
+                btn_SysClose.Click += delegate
+                {
+                    OnMyWindow_Btn_Close_Click();
+                };
+            }
+
+            //Image img_SysMin = (Image)baseWindowTemplate.FindName("img_SysMin", this);
+            if (null != btn_SysMin)
+            {
+                btn_SysMin.Click += delegate
+                {
+                    OnMyWindow_Btn_Min_Click();
+                };
+            }
+
+            //Image img_SysMax = (Image)baseWindowTemplate.FindName("img_SysMax", this);
+            //Image img_SysRestore = (Image)baseWindowTemplate.FindName("img_SysRestore", this);
+
+            if ((null != btn_SysMax) && (null != btn_SysRestore))
+            {
+                btn_SysMax.Click += delegate
+                {
+                    OnMyWindow_Btn_Max_Click();
+                };
+
+                btn_SysRestore.Click += delegate
+                {
+                    OnMyWindow_Btn_Restore_Click();
+                };
+            }
+
+            this.SizeChanged += delegate
+            {
+                try
+                {
+                    if (this.WindowState == WindowState.Maximized)
+                    {
+                        btn_SysMax.Visibility = Visibility.Collapsed;
+                        btn_SysRestore.Visibility = Visibility.Visible;
+
+                        if (null != borderClip) borderClip.Margin = new Thickness(0);
+                        relativeClip = -1;
+
+                    }
+                    else
+                    {
+                        btn_SysMax.Visibility = Visibility.Visible;
+                        btn_SysRestore.Visibility = Visibility.Collapsed;
+                        if (null != borderClip) borderClip.Margin = new Thickness(10);
+                        relativeClip = 14;
+                    }
+                }
+                catch
+                {
+
+                }
+            };
+        }
 
         private void OnTimer60s(object sender, EventArgs e)
         {
@@ -1012,6 +1134,14 @@ namespace TrboX
             { DataBase.InsertLog(res.Message); }
            
         }
+
+
+        public void OenDospatch(object sender, RoutedEventArgs e)
+        {
+           SubWindow.OpenCreateOperateWindow(OPType.Dispatch);
+        }
+
+
 
     }
 }

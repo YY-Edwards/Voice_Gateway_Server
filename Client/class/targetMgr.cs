@@ -30,11 +30,11 @@ namespace TrboX
                 return new CMember(MemberType.Group, new Department() { ID = -1, GroupID = ID, Name = "组：" + ID.ToString() }, null, null);
             }
 
-
+            if (TargetMgr.TargetList.Staff != null)
             foreach (var staff in TargetMgr.TargetList.Staff)
                 if ((null != staff.Value.Radio) && (staff.Value.Radio.RadioID == ID)) return staff.Value;
 
-
+            if (TargetMgr.TargetList.Radio != null)
             foreach (var radio in TargetMgr.TargetList.Radio)
                 if ((null != radio.Value.Radio) && (radio.Value.Radio.RadioID == ID)) return radio.Value;
 

@@ -12,7 +12,7 @@
         <ControlTemplate x:Key="ButtonControlTemplateComBtn"  TargetType="{x:Type Button}">
             <Border x:Name="border" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" Background="{x:Null}">
                 <Grid Margin="0">
-                    <ComboBox x:Name="combo" ItemsSource="{Binding Items}" IsEnabled="{Binding IsEnable}"  Margin="0" SelectionChanged="combo_SelectionChanged" Style="{DynamicResource ComboBoxStyleCombox}"/>
+                    <ComboBox x:Name="combo" ItemsSource="{Binding Items}" IsEnabled="{Binding IsEnable}"  Margin="0" SelectionChanged="combo_SelectionChanged" Style="{DynamicResource ComboBoxStyleCombox}" Background="{x:Null}" Foreground="White" BorderThickness="0,0,1,0" BorderBrush="{x:Null}"/>
                 </Grid>
             </Border>
         </ControlTemplate>
@@ -28,10 +28,10 @@
                             <!-- 必须将 TextBox 命名为 PART_EditableTextBox，否则 ComboBox 将无法识别它 -->
 
                             <!-- Popup 可显示 ComboBox 中的项列表。IsOpen 已数据绑定到通过 ComboBoxToggleButton 来切换的 IsDropDownOpen -->
-                            <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" x:Name="Popup" Focusable="False" AllowsTransparency="True" PopupAnimation="Slide" d:IsHidden="True">
+                            <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" x:Name="Popup" Focusable="False" AllowsTransparency="True" PopupAnimation="Slide" d:IsHidden="True" VerticalOffset="9">
                                 <Grid MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{TemplateBinding ActualWidth}" x:Name="DropDown" SnapsToDevicePixels="True">
-                                    <Border x:Name="DropDownBorder" Background="{DynamicResource WindowBackgroundBrush}" BorderBrush="{DynamicResource SolidBorderBrush}" BorderThickness="1"/>
-                                    <ScrollViewer Margin="4,6,4,6" Style="{DynamicResource SimpleScrollViewer}" SnapsToDevicePixels="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
+                                    <Border x:Name="DropDownBorder" Background="#FF4C4C4F" BorderBrush="#FF262626" BorderThickness="1" Margin="0,0,5,5"/>
+                                    <ScrollViewer Margin="0,8,5,13" Style="{DynamicResource SimpleScrollViewer}" SnapsToDevicePixels="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
 
                                         <!-- StackPanel 用于显示子级，方法是将 IsItemsHost 设置为 True -->
                                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
@@ -56,6 +56,7 @@
                             </Trigger>
                             <Trigger Property="IsEditable" Value="true">
                                 <Setter Property="IsTabStop" Value="false"/>
+                                <Setter Property="Margin" TargetName="Popup" Value="0,9,0,0"/>
                             </Trigger>
                         </ControlTemplate.Triggers>
                     </ControlTemplate>
@@ -69,16 +70,10 @@
                     <ColumnDefinition Width="14"/>
                 </Grid.ColumnDefinitions>
                 <Border x:Name="border" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Stretch" Height="Auto" Width="Auto" Grid.Column="1" Background="#00000000" >
-                    <Path HorizontalAlignment="Center" x:Name="Arrow" VerticalAlignment="Center" Fill="{DynamicResource GlyphBrush}" Data="M 0 0 L 4 4 L 8 0 Z" Margin="0"/>
+                    <Path HorizontalAlignment="Center" x:Name="Arrow" VerticalAlignment="Center" Fill="White" Data="M 0 0 L 4 4 L 8 0 Z" Margin="0"/>
                 </Border>
             </Grid>
             <ControlTemplate.Triggers>
-                <Trigger Property="IsMouseOver" Value="true">
-                	<Setter Property="Background" TargetName="border" Value="#FF4E82DC"/>
-                </Trigger>
-                <Trigger Property="IsChecked" Value="true">
-                	<Setter Property="Background" TargetName="border" Value="#FFB5E684"/>
-                </Trigger>
                 <Trigger Property="IsEnabled" Value="False">
                     <Setter Property="Foreground" Value="{DynamicResource DisabledForegroundBrush}"/>
                     <Setter Property="Background" TargetName="border" Value="#00B1B7C1"/>
@@ -110,21 +105,27 @@
     </UserControl.Resources>
     <Grid>
         <Button x:Name="combox" Template="{DynamicResource ButtonControlTemplateComBtn}" BorderThickness="0" Background="{x:Null}" Visibility="Collapsed"  />
-        <Button x:Name="button" Click="button_Click" d:IsHidden="True" Background="{x:Null}" BorderThickness="0" Margin="0" >
+        <Button x:Name="button" Click="button_Click" Background="{x:Null}" BorderThickness="0" Margin="0" BorderBrush="{x:Null}" >
             <Button.Template>
                 <ControlTemplate  TargetType="{x:Type Button}">
                     <Border x:Name="border" BorderBrush="Black" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto">
                         <DockPanel x:Name="panel" Opacity="{Binding IsEnabled, Converter={StaticResource BoolToOp}, RelativeSource={RelativeSource TemplatedParent}}" >
-                            <Image x:Name="icon" Source="{Binding Icon}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="20" Height="20" Visibility="{Binding Source, RelativeSource={RelativeSource Self}, Converter={StaticResource NullHide}}"/>
-                            <Label Content="{Binding Content}" VerticalAlignment="Center" Style="{DynamicResource LabelStyle1}" />
+                            <Image x:Name="icon" Source="{Binding Normal}" HorizontalAlignment="Center" VerticalAlignment="Center" Width="22" Height="22" Visibility="{Binding Source, RelativeSource={RelativeSource Self}, Converter={StaticResource NullHide}}"/>
+                            <Label Content="{Binding Content}" VerticalAlignment="Center" Style="{DynamicResource LabelStyle1}" Foreground="#FFC0C8CF" FontFamily="Hiragino Sans GB W3" FontSize="14" />
                         </DockPanel>
                     </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsMouseOver" Value="True">
-                            <Setter Property="Background" TargetName="border" Value="#FF42C0F0"/>
-                        </Trigger>
+                    <ControlTemplate.Triggers>                      
                         <Trigger Property="IsPressed" Value="True">
-                            <Setter Property="Background" TargetName="border" Value="#FF4ED6A5"/>
+                            <Setter Property="Source" TargetName="icon" Value="{Binding Pressed}"/>
+                        </Trigger>
+                        <!--<Trigger Property="IsKeyboardFocused" Value="true">
+								<Setter Property="Source" TargetName="Image" Value="{Binding Hover, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:IconBtn}}}"/>
+							</Trigger>-->
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Source" TargetName="icon" Value="{Binding Disable}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Source" TargetName="icon" Value="{Binding Hover}"/>
                         </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

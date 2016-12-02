@@ -76,17 +76,48 @@ namespace TrboX
                     combox.Visibility = Visibility.Collapsed;
                     button.Margin = new Thickness(0);
                 }
+
+                //if (Normal != null)
+                //{
+                //    if (Hover == null) Hover = Normal;
+                //    if (Pressed == null) Pressed = Normal;
+                //    if (Disable == null) Disable = Normal;
+                //}
                    
             };
         }
 
-        public ImageSource Icon
+        public ImageSource Normal
         {
-            get { return (ImageSource)GetValue(IconProperty); }
-            set { SetValue(IconProperty, value); }
+            get { return (ImageSource)GetValue(NormalProperty); }
+            set { SetValue(NormalProperty, value); }
         }
-        public static readonly DependencyProperty IconProperty =
-            DependencyProperty.Register("Icon", typeof(ImageSource), typeof(ComboButton));
+        public static readonly DependencyProperty NormalProperty =
+            DependencyProperty.Register("Normal", typeof(ImageSource), typeof(ComboButton));
+
+        public ImageSource Hover
+        {
+            get { return (ImageSource)GetValue(HoverProperty); }
+            set { SetValue(HoverProperty, value); }
+        }
+        public static readonly DependencyProperty HoverProperty =
+            DependencyProperty.Register("Hover", typeof(ImageSource), typeof(ComboButton));
+
+        public ImageSource Press
+        {
+            get { return (ImageSource)GetValue(PressProperty); }
+            set { SetValue(PressProperty, value); }
+        }
+        public static readonly DependencyProperty PressProperty =
+            DependencyProperty.Register("Press", typeof(ImageSource), typeof(ComboButton));
+
+        public ImageSource Disable
+        {
+            get { return (ImageSource)GetValue(DisableProperty); }
+            set { SetValue(DisableProperty, value); }
+        }
+        public static readonly DependencyProperty DisableProperty =
+            DependencyProperty.Register("Disable", typeof(ImageSource), typeof(ComboButton));
 
         public new string Content
         {

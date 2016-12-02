@@ -9,6 +9,37 @@ using System.Windows.Media;
 
 namespace TrboX
 {
+    public class ShortCutKey
+    {
+        public static RoutedUICommand NewCall =
+
+            new RoutedUICommand("菜单管理(_M)", "MenusCommand", typeof(ShortCutKey),
+
+                new InputGestureCollection(new InputGesture[] {
+
+                    new KeyGesture(Key.N, ModifierKeys.Control ) }));
+
+ 
+
+       // public static RoutedUICommand ReportsCommand =
+
+       //    new RoutedUICommand("报表管理(_R)", "ReportsCommand", typeof(MyCommands),
+
+       //        new InputGestureCollection(new InputGesture[] {
+
+       //             new KeyGesture(Key.R, ModifierKeys.Control ) }));
+
+ 
+
+       // public static RoutedUICommand MangeCommand =
+
+       //new RoutedUICommand("我的管理(_A)", "MangeCommand", typeof(MyCommands),
+
+       //    new InputGestureCollection(new InputGesture[] {
+
+       //             new KeyGesture(Key.A , ModifierKeys.Control) }));
+
+    }
     public class MainMenu
     {
         private Main m_Main;
@@ -26,6 +57,7 @@ namespace TrboX
             ToolsItemRegister();
             HelpItemRegister();
         }
+
 
         private void FileIteMRegister()
         {

@@ -44,8 +44,17 @@ CSound::CSound()
 	m_pInputCurData = NULL;
 	m_hRecordDealEvent = NULL;
 	m_hExitEvent = NULL;
-
 	m_bIsDealing = FALSE;
+
+	ZeroMemory(&m_inputFormat, sizeof(WAVEFORMATEX));
+	m_pWaveOutBlocks = NULL;
+	m_waveOutCurrentBlock = 0;
+	m_waveOutFreeBlockCount = 0;
+	m_hWaveOut = NULL;
+	m_hWaveIn = NULL;
+	m_bWaveInReset = false;
+	m_bufflag = 0;
+	m_waitWaveInStop = CreateEvent(NULL, FALSE, FALSE, NULL);
 }
 
 CSound::~CSound()
@@ -56,11 +65,6 @@ CSound::~CSound()
 
 void CSound::BigEndianSoundOut(unsigned __int8* pSamples, DWORD dwCurrentDecodeSize)
 {
-	//if (dwCurrentDecodeSize < 5)
-	//{
-	//	int j = 0;
-	//}
-
 	int i = 0;
 
 	//定义新的数据指针
@@ -78,56 +82,45 @@ void CSound::BigEndianSoundOut(unsigned __int8* pSamples, DWORD dwCurrentDecodeS
 		pData->_head[+(i << 1)] = *pSamples++;
 	}
 
-	//如果这是最后一个数据，目前来说实时播放不需要此标识位。当播放音频发现播放队列为空时就停止播放。
-	//if (dwCurrentDecodeSize <= 1)
-	//{
-	//	pData->_flag = FLAG_END;
-	//}
-
 	//将数据放入数据队列
 	m_PlayTaskLocker.lock();
 	m_playList.push_back(pData);
 	m_PlayTaskLocker.unlock();
 
-	//if (bEndDecode)
-	//{
-	//	sprintf_s(m_reportMsg, "bEndDecode:%d\r\n", bEndDecode);
-	//	sendLogToWindow();
-	//}
-
 	//当前尚未开始播放任何音频并且缓存数量达到一秒或者当前已经结束解码
-	if (m_bStopPlay
-		&& (m_playList.size() > 50)
-		)
-	{
-		m_bStopPlay = FALSE;
-		m_bOutPcmStart = TRUE;
-		SetEvent(m_hPlaySongEvent);
-	}
+	startPlay();
 }
 
-DWORD CSound::StartSound(HWND hParentWnd, int uInDeviceID, int uOutDeviceID)
+DWORD CSound::StartSound()
 {
-	DWORD result;
-
 	if (m_ThreadRunning)
 	{
 		stop();
 	}
 
-	m_hMyParentWind = hParentWnd;
-
-	if (WAVE_MAPPER == uOutDeviceID){
-		m_OutputDevice = 0;
+	/*初始化关键参数*/
+	m_inputFormat.nSamplesPerSec = 8000;
+	m_inputFormat.wBitsPerSample = 16;
+	m_inputFormat.nChannels = 1;
+	m_inputFormat.cbSize = 0;
+	m_inputFormat.wFormatTag = WAVE_FORMAT_PCM;
+	m_inputFormat.nBlockAlign = (m_inputFormat.wBitsPerSample * m_inputFormat.nChannels) >> 3;
+	m_inputFormat.nAvgBytesPerSec = m_inputFormat.nBlockAlign * m_inputFormat.nSamplesPerSec;
+	memcpy(&m_outFormat, &m_inputFormat, sizeof(WAVEFORMATEX));
+	/*检测音频输出设备是否正常*/
+	if (waveOutOpen(NULL, WAVE_MAPPER, &m_outFormat, 0, 0, WAVE_FORMAT_QUERY) != MMSYSERR_NOERROR)
+	{
+		return 1;
 	}
-	else{
-		m_OutputDevice = uOutDeviceID;
+	/*检测音频输入设备是否正常*/
+	if (waveInOpen(NULL, WAVE_MAPPER, &m_inputFormat, 0, 0, WAVE_FORMAT_QUERY) != MMSYSERR_NOERROR)
+	{
+		return 2;
 	}
 
-
-	m_hPlaySongEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-	m_hRecordEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-	m_hExitEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+	m_hPlaySongEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	m_hRecordEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
+	m_hExitEvent = CreateEvent(NULL, FALSE, FALSE, NULL);
 
 	m_hSoundControlEvents[SOUND_PLAY] = m_hPlaySongEvent;
 	m_hSoundControlEvents[SOUND_RECORD] = m_hRecordEvent;
@@ -142,37 +135,9 @@ DWORD CSound::StartSound(HWND hParentWnd, int uInDeviceID, int uOutDeviceID)
 		&m_pSndThreadId
 		);
 	if (NULL == m_pSndThread){
-		return 700;
+		return 3;
 	}
 	m_ThreadRunning = TRUE;
-
-	result = OpenOutput(); //Direct Sound has to open Output before Input.
-	if (0 != result)
-	{
-		m_ThreadRunning = FALSE;
-		m_pSndThread = NULL;
-
-		sprintf_s(m_reportMsg, "output device open fail");
-		sendLogToWindow();
-
-		return 703;
-	}
-
-#if WXJ_DLL
-#else
-	result = OpenInput();
-	if (0 != result)
-	{
-		CloseOutput();
-		m_pSndThread = NULL;
-		m_ThreadRunning = FALSE;
-
-		sprintf_s(m_reportMsg, "input device open fail");
-		sendLogToWindow();
-
-		return 701;
-	}
-#endif // WXJ
 
 	ResumeThread(m_pSndThread);
 	return 0;
@@ -225,9 +190,12 @@ void CSound::stop(void)
 UINT WINAPI CSound::SndThreadProc(LPVOID pParam)
 {
 	CSound* pObject = (CSound*)pParam;
-	pObject->SoundThread();
-	pObject->m_ThreadRunning = FALSE;
-	return 726;
+	if (pObject)
+	{
+		pObject->SoundThread();
+		pObject->m_ThreadRunning = FALSE;
+	}
+	return 0;
 }
 
 void CSound::SoundThread()
@@ -237,22 +205,17 @@ void CSound::SoundThread()
 	while (m_ThreadRunning)
 	{
 		rlt = WaitForMultipleObjects(3, m_hSoundControlEvents, FALSE, dTimeOut);
-		//sprintf_s(m_reportMsg, "SoundThread:%lu", rlt);
-		//sendLogToWindow();
 		switch (rlt)
 		{
 		case WAIT_TIMEOUT:
 			break;
 		case SOUND_PLAY:
-			ResetEvent(m_hPlaySongEvent);
 			SoundOutputControl();
 			break;
 		case SOUND_RECORD:
-			ResetEvent(m_hRecordEvent);
 			SoundInputControl();
 			break;
 		case SOUND_EXIT:
-			ResetEvent(m_hExitEvent);
 			break;
 		default:
 			break;
@@ -280,19 +243,19 @@ DWORD CSound::OpenOutput(void)
 	}
 
 	//创建主缓冲
-	m_OutWFX.wFormatTag = WAVE_FORMAT_PCM;
-	m_OutWFX.nChannels = 1;
-	m_OutWFX.wBitsPerSample = OUT_BITS_PER_SAMPLE;
-	m_OutWFX.nSamplesPerSec = OUT_SOUNDCARD_SAMPLES_PER_S;
-	m_OutWFX.nBlockAlign = m_OutWFX.nChannels *(m_OutWFX.wBitsPerSample / 8);
-	m_OutWFX.nAvgBytesPerSec = m_OutWFX.nSamplesPerSec * m_OutWFX.nBlockAlign;
-	m_OutWFX.cbSize = 0;
+	m_outFormat.wFormatTag = WAVE_FORMAT_PCM;
+	m_outFormat.nChannels = 1;
+	m_outFormat.wBitsPerSample = OUT_BITS_PER_SAMPLE;
+	m_outFormat.nSamplesPerSec = OUT_SOUNDCARD_SAMPLES_PER_S;
+	m_outFormat.nBlockAlign = m_outFormat.nChannels *(m_outFormat.wBitsPerSample / 8);
+	m_outFormat.nAvgBytesPerSec = m_outFormat.nSamplesPerSec * m_outFormat.nBlockAlign;
+	m_outFormat.cbSize = 0;
 
 	ZeroMemory(&m_dscOutputbd, sizeof(m_dscOutputbd));
 	m_dscOutputbd.dwSize = sizeof(m_dscOutputbd);
 	m_dscOutputbd.dwFlags = DSBCAPS_GLOBALFOCUS | DSBCAPS_CTRLPOSITIONNOTIFY | DSBCAPS_GETCURRENTPOSITION2 | DSBCAPS_CTRLVOLUME;
 	m_dscOutputbd.dwBufferBytes = OUT_BYTES_PER_20mS * NUM_OUT_BUFFERS;
-	m_dscOutputbd.lpwfxFormat = &m_OutWFX;
+	m_dscOutputbd.lpwfxFormat = &m_outFormat;
 
 	hr = m_lpOutDS->CreateSoundBuffer(&m_dscOutputbd, &m_lpOutputDSB1, NULL);
 	if (DS_OK != hr)
@@ -646,7 +609,7 @@ DWORD CSound::OpenInput(void)
 	DWORD rlt = 0;
 
 
-	m_hRecordDealEvent = CreateEvent(NULL,TRUE,FALSE,NULL);
+	m_hRecordDealEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 
 	////开启数据处理线程
 	//m_pIptThread = (HANDLE)_beginthreadex(
@@ -799,7 +762,7 @@ void CSound::HandleSoundInput(void)
 				m_dwInputLockSize -= (m_dwInputLockSize%IN_BYTES_PER_20mS);
 			}
 
-			if (m_dwInputLockSize == 0 
+			if (m_dwInputLockSize == 0
 				|| (0 != (m_dwInputLockSize%IN_BYTES_PER_20mS) && !m_bShouldStopRecording)
 				)
 			{
@@ -828,7 +791,7 @@ void CSound::HandleSoundInput(void)
 				sendLogToWindow();
 				return;
 			}
-			
+
 			dwPrepareReadLen = m_dwReadLen1;
 			dwSrcOffset = 0;
 			/*向buff中填充数据*/
@@ -857,7 +820,7 @@ void CSound::HandleSoundInput(void)
 				memcpy(pData->CharBuf, (unsigned __int8*)m_pAudio1 + dwSrcOffset, dwShouldReadLen);
 				dwSrcOffset += dwShouldReadLen;
 			}
-			
+
 			//fwrite(m_pAudio1, 1, m_dwReadLen1, m_pInputFile1);
 
 
@@ -920,14 +883,14 @@ void CSound::HandleSoundInput(void)
 			m_dwInputOffset = m_dwInputOffset % (NUM_IN_BUFFERS*IN_BYTES_PER_20mS);
 
 			//将获取到的音频数据处理为AMBE能够处理的数据
-			while (m_inputDataList.size()>0)
+			while (m_inputDataList.size() > 0)
 			{
 				//sprintf_s(m_reportMsg, "6");
 				//sendLogToWindow();
 				BOOL bIsEnd = FALSE;
 				m_pInputPrevData = m_pInputCurData;
 				m_pInputCurData = NULL;
-				if (m_pInputPrevData!= NULL)
+				if (m_pInputPrevData != NULL)
 				{
 					m_inputDataLocker.lock();
 					m_inputDataList.pop_front();
@@ -935,7 +898,7 @@ void CSound::HandleSoundInput(void)
 					delete m_pInputPrevData;
 					m_pInputPrevData = NULL;
 				}
-				if (m_inputDataList.size()>0)
+				if (m_inputDataList.size() > 0)
 				{
 					if (1 == m_inputDataList.size()
 						&& m_bShouldStopRecording)
@@ -958,130 +921,110 @@ void CSound::HandleSoundInput(void)
 
 void CSound::SoundOutputControl()
 {
-
-	DWORD dTimeOut = INFINITE;
-	while (!m_bStopPlay)
+	/*内存申请*/
+	InitializeCriticalSection(&m_waveCriticalSection);
+	m_pWaveOutBlocks = allocateBlocks(BLOCK_SIZE, BLOCK_COUNT);
+	m_waveOutFreeBlockCount = BLOCK_COUNT;
+	m_waveOutCurrentBlock = 0;
+	/*打开扬声器*/
+	if (waveOutOpen(&m_hWaveOut, WAVE_MAPPER, &m_outFormat, (DWORD_PTR)waveOutProc, (DWORD_PTR)this, CALLBACK_FUNCTION) != MMSYSERR_NOERROR)
 	{
-		//sprintf_s(m_reportMsg, "SoundOutputControl:%d", m_bStopPlay);
-		//sendLogToWindow();
-		if (m_bOutPcmStart)
-		{
-			sprintf_s(m_reportMsg, "start play");
-			sendLogToWindow();
-			//CRecordFile *p = g_pNet->getCurrentPlayInfo();
-			//g_pNet->wlCallStatus(p->callType, p->srcId, p->tagetId, HAVE_CALL_START_PLAY);
-			for (int i = 0; i < NUM_OUT_BUFFERS; i++)
-			{
-				ResetEvent(m_pOutDSPosNotifyEvents[i]);
-			}
-			HandleSoundOutput();
-		}
-		m_dwCurPlayZone = WaitForMultipleObjects(NUM_OUT_BUFFERS, m_pOutDSPosNotifyEvents, FALSE, dTimeOut);
-		//sprintf_s(m_reportMsg, "SoundOutputControl:%lu", m_dwCurPlayZone);
-		//sendLogToWindow();
-		if (m_dwCurPlayZone == WAIT_TIMEOUT)
-		{
-			sprintf_s(m_reportMsg, "unknown error of Audio Device");
-			sendLogToWindow();
-			break;
-		}
-		HandleSoundOutput();
+		sprintf_s(m_reportMsg, "waveOutOpen fail");
+		sendLogToWindow();
+		return;
 	}
-	//待播放完剩余buffer池中的数据
-	Sleep(PLAY_BUFFER_TIME);
-	m_lpOutputDSB2->Stop();
-	sprintf_s(m_reportMsg, "stop play");
-	sendLogToWindow();
-	//CRecordFile *p = g_pNet->getCurrentPlayInfo();
-	//g_pNet->wlCallStatus(p->callType, p->srcId, p->tagetId, HAVE_CALL_END_PLAY);
-	//本次播放完毕,初始下次播放变量
-	m_bOutPcmStart = TRUE;
-	freeOutData(m_pOutCurrentData);
-	m_pOutCurrentData = NULL;
-	//g_bIsHaveAllCall = false;
-	//g_bIsHaveDefaultGroupCall = false;
-	//g_bIsHavePrivateCall = false;
-	//g_bIsHaveCurrentGroupCall = false;
+
+	/*填充音频数据*/
+	while (m_playList.size() > 0)
+	{
+		m_PlayTaskLocker.lock();
+		OUTDATA* p = m_playList.front();
+		writeAudio(m_hWaveOut, (char*)p->_head, p->_length);
+		m_playList.pop_front();
+		delete p->_head;
+		p->_head = NULL;
+		delete p;
+		p = NULL;
+		m_PlayTaskLocker.unlock();
+		//320B为20ms
+		Sleep(20);
+	}
+
+	///*等待内存释放*/
+	while (m_waveOutFreeBlockCount < BLOCK_COUNT)
+		Sleep(10);
+	for (int i = 0; i < m_waveOutFreeBlockCount; i++)
+	{
+		/*对已经释放的内存重置FLAG*/
+		if (m_pWaveOutBlocks[i].dwFlags &WHDR_PREPARED)
+		{
+			waveOutUnprepareHeader(m_hWaveOut, &m_pWaveOutBlocks[i], sizeof(WAVEHDR));
+		}
+	}
+	/*释放资源*/
+	DeleteCriticalSection(&m_waveCriticalSection);
+	freeBlocks(m_pWaveOutBlocks);
+	waveOutClose(m_hWaveOut);
+	m_bStopPlay = TRUE;
 }
 
 void CSound::SoundInputControl()
 {
-	DWORD rlt = 0;
-	DWORD dwWaitTimeOut = INFINITE;
-	while (m_bRecording)
+	m_bShouldStopRecording = FALSE;
+	m_bufflag = 0;
+	m_bWaveInReset = false;
+	/*打开扬声器*/
+	if (waveInOpen(&m_hWaveIn, WAVE_MAPPER, &m_inputFormat, (DWORD_PTR)waveInProc, (DWORD_PTR)this, CALLBACK_FUNCTION) != MMSYSERR_NOERROR)
 	{
-		//sprintf_s(m_reportMsg, "SoundInputControl:%d", m_bRecording);
-		//sendLogToWindow();
-		if (m_bStartRecording)
-		{
-			if (NULL == m_pInputFile)
-			{
-				//打开保存文件
-				rlt = fopen_s(&m_pInputFile, INPUT_DATA_PATH, "wb+");
-
-				if (NULL == m_pInputFile)
-				{
-					return;
-				}
-			}
-
-			//if (NULL == m_pInputFile1)
-			//{
-			//	打开保存文件
-			//		rlt = fopen_s(&m_pInputFile1, INPUT_DATA_PATH_1, "wb+");
-
-			//	if (NULL == m_pInputFile1)
-			//	{
-			//		return;
-			//	}
-			//}
-
-			
-			for (int i = 0; i < NUM_IN_BUFFERS; i++)
-			{
-				ResetEvent(m_pInputPosNotifyEvents[i]);
-			}
-
-			sprintf_s(m_reportMsg, "start record");
-			sendLogToWindow();
-
-			HandleSoundInput();
-		}
-		m_dwCurRecordZone = WaitForMultipleObjects(NUM_IN_BUFFERS, m_pInputPosNotifyEvents, FALSE, dwWaitTimeOut);
-		//sprintf_s(m_reportMsg, "SoundInputControl:%lu", m_dwCurRecordZone);
-		//sendLogToWindow();
-		if (m_dwCurRecordZone == WAIT_TIMEOUT)
-		{
-			sprintf_s(m_reportMsg, "unknown error of Audio Device");
-			sendLogToWindow();
-			break;
-		}
-		HandleSoundInput();
+		sprintf_s(m_reportMsg, "waveInOpen fail");
+		sendLogToWindow();
+		return;
 	}
-	m_pInputBuffer2->Stop();
-	sprintf_s(m_reportMsg, "stop record");
-	sendLogToWindow();
-
-	//if (NULL != m_pInputFile1)
-	//{
-	//	fclose(m_pInputFile1);
-	//	m_pInputFile1 = NULL;
-	//}
-
-	//本次录制完毕,初始下次录制变量
-	m_bStartRecording = TRUE;
+	for (int i = 0; i < BUFFER_NUM; i++)
+	{
+		m_whis[i].lpData = (LPSTR)m_cbBuffer[i];
+		m_whis[i].dwBufferLength = BUFFER_SIZE;
+		m_whis[i].dwBytesRecorded = 0;
+		m_whis[i].dwUser = 0;
+		m_whis[i].dwFlags = 0;
+		m_whis[i].dwLoops = 1;
+		m_whis[i].lpNext = NULL;
+		m_whis[i].reserved = 0;
+	}
+	//起始缓冲
+	waveInPrepareHeader(m_hWaveIn, &m_whis[m_bufflag], sizeof(WAVEHDR));
+	waveInAddBuffer(m_hWaveIn, &m_whis[m_bufflag], sizeof(WAVEHDR));
+	/*开始录音*/
+	if (MMSYSERR_NOERROR != waveInStart(m_hWaveIn))
+	{
+		sprintf_s(m_reportMsg, "waveInStart fail");
+		sendLogToWindow();
+		return;
+	}
+	/*等待结束录音*/
+	WaitForSingleObject(m_waitWaveInStop, 60 * 1000);
+	//g_pWLlog->sendLog("end record");
+	m_bWaveInReset = true;
+	waveInStop(m_hWaveIn);
+	waveInReset(m_hWaveIn);
+	waveInClose(m_hWaveIn);
+	m_bRecording = FALSE;
+	g_pDongle->startCoding(0);
 }
 
 void CSound::StartRecord()
 {
-	m_bStartRecording = TRUE;
-	m_bRecording = TRUE;
-	SetEvent(m_hRecordEvent);
+	if (!m_bRecording)
+	{
+		m_bRecording = TRUE;
+		SetEvent(m_hRecordEvent);
+	}
 }
 
 void CSound::setbRecord(BOOL value)
 {
 	m_bShouldStopRecording = (value == FALSE);
+	SetEvent(m_waitWaveInStop);
 }
 
 void CSound::closeFile()
@@ -1093,18 +1036,14 @@ void CSound::closeFile()
 	}
 }
 
-void CSound::immediatelyPlay()
+void CSound::startPlay(int bufferSize)
 {
 	//立刻播放缓存内容
 	if (m_bStopPlay
-		&& (m_playList.size() > 0)
+		&& (m_playList.size() > bufferSize)
 		)
 	{
-		sprintf_s(m_reportMsg, "immediately play");
-		sendLogToWindow();
-
 		m_bStopPlay = FALSE;
-		m_bOutPcmStart = TRUE;
 		SetEvent(m_hPlaySongEvent);
 	}
 }
@@ -1112,4 +1051,164 @@ void CSound::immediatelyPlay()
 bool CSound::getbRecord()
 {
 	return (m_bShouldStopRecording == FALSE);
+}
+
+void CSound::writeAudio(HWAVEOUT hWaveOut, LPSTR data, int size)
+{
+	WAVEHDR* current;
+	int remain;
+	current = &m_pWaveOutBlocks[m_waveOutCurrentBlock];
+	while (size > 0)
+	{
+		if (current->dwFlags & WHDR_PREPARED)
+		{
+			waveOutUnprepareHeader(hWaveOut, current, sizeof(WAVEHDR));
+		}
+		if (size < (int)(BLOCK_SIZE - current->dwUser))
+		{
+			memcpy(current->lpData + current->dwUser, data, size);
+			current->dwUser += size;
+			break;
+		}
+		remain = BLOCK_SIZE - current->dwUser;
+		memcpy(current->lpData + current->dwUser, data, remain);
+		size -= remain;
+		data += remain;
+		current->dwBufferLength = BLOCK_SIZE;
+		waveOutPrepareHeader(hWaveOut, current, sizeof(WAVEHDR));
+		waveOutWrite(hWaveOut, current, sizeof(WAVEHDR));
+		EnterCriticalSection(&m_waveCriticalSection);
+		m_waveOutFreeBlockCount--;
+		LeaveCriticalSection(&m_waveCriticalSection);
+		while (!m_waveOutFreeBlockCount)
+		{
+			Sleep(10);
+		}
+		m_waveOutCurrentBlock++;
+		m_waveOutCurrentBlock %= BLOCK_COUNT;
+		current = &m_pWaveOutBlocks[m_waveOutCurrentBlock];
+		current->dwUser = 0;
+	}
+}
+
+WAVEHDR* CSound::allocateBlocks(int size, int count)
+{
+	unsigned char* buffer;
+	int i;
+	WAVEHDR* blocks;
+	DWORD totalBufferSize = (size + sizeof(WAVEHDR)) * count;
+	if ((buffer = (unsigned char*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, totalBufferSize)) == NULL)
+	{
+		fprintf(stderr, "Memory allocationerror\n");
+		ExitProcess(1);
+	}
+	blocks = (WAVEHDR*)buffer;
+	buffer += sizeof(WAVEHDR)* count;
+	for (i = 0; i < count; i++) {
+		blocks[i].dwBufferLength = size;
+		blocks[i].lpData = (LPSTR)buffer;
+		buffer += size;
+	}
+	return blocks;
+}
+
+void CSound::freeBlocks(WAVEHDR* blockArray)
+{
+	HeapFree(GetProcessHeap(), 0, blockArray);
+}
+
+void CALLBACK CSound::waveOutProc(HWAVEOUT hwo, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2)
+{
+	CSound *p = (CSound *)dwInstance;
+	if (p)
+	{
+		p->handleWaveOutProc(uMsg);
+	}
+}
+
+void CSound::handleWaveOutProc(UINT uMsg)
+{
+	switch (uMsg)
+	{
+	case WOM_DONE:
+	{
+					 /*一个BLOCK播放完毕并释放*/
+					 EnterCriticalSection(&m_waveCriticalSection);
+					 m_waveOutFreeBlockCount++;
+					 LeaveCriticalSection(&m_waveCriticalSection);
+	}
+		break;
+	case WOM_OPEN:
+	{
+
+	}
+		break;
+	case WOM_CLOSE:
+	{
+	}
+		break;
+	default:
+		break;
+	}
+}
+
+void CALLBACK CSound::waveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2)
+{
+	CSound* p = (CSound*)dwInstance;
+	if (p)
+	{
+		p->handleWaveInProc(hwi, uMsg, dwParam1, dwParam2);
+	}
+}
+
+void CSound::handleWaveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwParam1, DWORD_PTR dwParam2)
+{
+	switch (uMsg)
+	{
+	case WIM_CLOSE:
+	{
+					  for (int i = 0; i < BUFFER_NUM; i++)
+					  {
+						  if (m_whis[i].dwFlags &WHDR_PREPARED)
+						  {
+							  waveInUnprepareHeader(m_hWaveIn, &m_whis[i], sizeof (WAVEHDR));
+						  }
+					  }
+	}
+		break;
+	case WIM_DATA:
+	{
+					 if (!m_bWaveInReset)
+					 {
+						 WAVEHDR *pwhi = &m_whis[m_bufflag];
+						 waveInUnprepareHeader(hwi, pwhi, sizeof(WAVEHDR));
+						 pwhi = &m_whis[BUFFER_NUM - 1 - m_bufflag];
+						 pwhi->dwFlags = 0;
+						 pwhi->dwLoops = 0;
+						 waveInPrepareHeader(hwi, pwhi, sizeof(WAVEHDR));
+						 waveInAddBuffer(hwi, pwhi, sizeof(WAVEHDR));
+						 DWORD dwWrite = 0;
+						 /*处理音频数据*/
+						 g_pDongle->SendDVSIPCMMsgtoDongle((unsigned char*)m_cbBuffer[m_bufflag], BUFFER_SIZE);
+						 m_bufflag = (m_bufflag + 1) % BUFFER_NUM;
+					 }
+					 else
+					 {
+						 WAVEHDR *pwhi = (WAVEHDR*)dwParam1;
+						 if (pwhi->dwBytesRecorded > 0)
+						 {
+							 /*处理音频数据*/
+							 g_pDongle->SendDVSIPCMMsgtoDongle((unsigned char*)pwhi->lpData, pwhi->dwBytesRecorded);
+						 }
+						 return;
+					 }
+	}
+		break;
+	case WIM_OPEN:
+	{
+	}
+		break;
+	default:
+		break;
+	}
 }
