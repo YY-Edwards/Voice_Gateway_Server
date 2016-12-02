@@ -177,6 +177,9 @@
     <ClInclude Include="RecvGetConfigAction.h">
       <Filter>clientAction</Filter>
     </ClInclude>
+    <ClInclude Include="MonitorServer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -207,6 +210,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Broker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MonitorServer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

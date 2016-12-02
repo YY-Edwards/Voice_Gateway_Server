@@ -92,6 +92,7 @@
     <ClInclude Include="CallAction.h" />
     <ClInclude Include="ControlAction.h" />
     <ClInclude Include="GpsAction.h" />
+    <ClInclude Include="MonitorServer.h" />
     <ClInclude Include="MsgAction.h" />
     <ClInclude Include="PrivateCallAction.h" />
     <ClInclude Include="CancelGpsAction.h" />
@@ -133,6 +134,7 @@
     <ClCompile Include="..\lib\rpc\src\TcpServer.cpp" />
     <ClCompile Include="..\lib\strutil\strutil.cpp" />
     <ClCompile Include="Broker.cpp" />
+    <ClCompile Include="MonitorServer.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
