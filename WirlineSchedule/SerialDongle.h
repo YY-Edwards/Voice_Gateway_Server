@@ -43,42 +43,36 @@ class CSerialDongle
 public:
 	CSerialDongle();
 	~CSerialDongle();
-
 	BOOL changeAMBEToPCM();
 	BOOL changePCMToAMBE();
-	DWORD OpenDongle(LPCTSTR lpszDevice,CManager* lpCmanager);
+	DWORD OpenDongle(LPCTSTR lpszDevice, CManager* lpCmanager);
 	void  stop(void);
 	void SetLogPtr(PLogReport value);
 	tAMBEFrame* GetFreeAMBEBuffer(void);
 	void MarkAMBEBufferFilled(void);
 	void deObfuscate(ScrambleDirection theDirection, tAMBEFrame* pAMBEFrame);
-
 	//special function
 	void DecodeBuffers();
-	void SendDVSIPCMMsgtoDongle(unsigned __int8* pData, BOOL bIsEnd);
-
+	void SendDVSIPCMMsgtoDongle(unsigned __int8* pData, int dataLength);
 	BOOL m_bCurCodingIsEnd;//本轮加密是否结束
 	UINT8 getDongleFlag();
 	BOOL setDongleFlag(UINT8 value);
 	void initReadyRead();
 	void readyNextWriteAMBE();
 	void readyNextWritePCM();
-
 	HANDLE m_hTickleTxSerialEvent;
 	HANDLE m_hTickleRxSerialEvent;
-
 	//BOOL m_bDecode;//当前是否在解码状态
 	//BOOL m_bPrepareDecode;//当前是否在待解码状态
 	//BOOL m_bPrepareEndDecode;//当前是否在待结束解码状态
-	
 	void releaseWaitNextNetDataEvent();
-
+	void startCoding(int bufferSize);
 private:
 	DWORD m_waitNextNetDataTime;//等待解压网络数据超时处理:ms
 	HANDLE m_waitNextNetDataEvent;//等待解压网络传输过来的AMBE数据
 	UINT8 m_decodeFlag;//当前解压状态
 
-	BOOL m_bIsStartCoding;//当前是否在加密
+	BOOL m_bCoding;//当前是否在加密
 	//tAMBEFrame* m_pEmptyAMBEFrame;//用于填充的空数据帧
 	tAMBEFrame* m_prevAMBE;
 	tPCMFrame* m_prevPCM;

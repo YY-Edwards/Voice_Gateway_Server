@@ -26,7 +26,7 @@ CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis)
 	g_bTX = FALSE;
 
 	m_report = NULL;
-	m_hwnd = NULL;
+	//m_hwnd = NULL;
 	m_activePort = 0;
 	m_hWaitDecodeEvent = NULL;
 
@@ -45,6 +45,7 @@ CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis)
 	//memset(&m_pCurrentTask, 0, sizeof(REMOTE_TASK));
 	m_pCurrentTask = NULL;
 	m_pMnis = pMnis;
+	m_hWaitDecodeEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 }
 
 CManager::~CManager()
@@ -84,14 +85,14 @@ CManager::~CManager()
 // 	return 0;
 // }
 
-int CManager::initWnd(HWND current_hwnd)
-{
-	// 	sprintf_s(m_reportMsg, "initDongle:current_hwnd:0x%x", current_hwnd);
-	// 	sendLogToWindow();
-	m_hWaitDecodeEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-	m_hwnd = current_hwnd;
-	return 0;
-}
+//int CManager::initWnd(HWND current_hwnd)
+//{
+//	// 	sprintf_s(m_reportMsg, "initDongle:current_hwnd:0x%x", current_hwnd);
+//	// 	sendLogToWindow();
+//	
+//	m_hwnd = current_hwnd;
+//	return 0;
+//}
 
 int CManager::setLogPtr(PLogReport log_handel)
 {
@@ -520,7 +521,7 @@ int CManager::config(REMOTE_TASK* pTask)
 			g_pWLlog->sendLog("open dongle success");
 		}
 		/*ÅäÖÃÂó¿Ë·çºÍÑïÉùÆ÷*/
-		if (WL_RETURN_OK != g_pSound->StartSound(m_hwnd, 0, 0))
+		if (WL_RETURN_OK != g_pSound->StartSound())
 		{
 			Env_SoundIsOk = false;
 			sprintf_s(m_reportMsg, "sound initial fail");
@@ -545,7 +546,7 @@ int CManager::config(REMOTE_TASK* pTask)
 		{
 			g_pSound->stop();
 			/*ÅäÖÃÂó¿Ë·çºÍÑïÉùÆ÷*/
-			if (WL_RETURN_OK != g_pSound->StartSound(m_hwnd, 0, 0))
+			if (WL_RETURN_OK != g_pSound->StartSound())
 			{
 				Env_SoundIsOk = false;
 				sprintf_s(m_reportMsg, "sound initial fail");

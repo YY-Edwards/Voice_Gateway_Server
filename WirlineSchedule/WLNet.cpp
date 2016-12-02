@@ -14,12 +14,9 @@ CWLNet::CWLNet(CMySQL *pDb, CManager *pManager)
 , m_hWorkThread(INVALID_HANDLE_VALUE)
 , m_bExit(TRUE)
 , m_dwRecvMasterKeepAliveTime(0)
-//add code by chenhaidong
 , m_masterAddress(0)
 , m_masterPort(0)
 {
-	//m_isRequestNewCall = false;
-	//m_isFirstBurstA = true;
 	m_burstType = BURST_A;
 	m_SequenceNumber = 1;
 	m_Timestamp = 0;
@@ -2405,7 +2402,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 									   {
 										   if (p->srcId == CONFIG_LOCAL_RADIO_ID)
 										   {
-											   wlCallStatus(p->callType, p->srcId, p->tagetId, STATUS_CALL_END|REMOTE_CMD_SUCCESS);
+											   wlCallStatus(p->callType, p->srcId, p->tagetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
 										   }
 										   else if (isNeedPlay(p->tagetId, p->callType))
 										   {
@@ -2628,7 +2625,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 																	   else if (isNeedPlay(tgtId, p->callType))
 																	   {
 																		   SetCallStatus(CALL_IDLE);
-																		   wlCall(p->callType, srcId, tgtId, OPERATE_CALL_END,(*i)->getBoolPlay());
+																		   wlCall(p->callType, srcId, tgtId, OPERATE_CALL_END, (*i)->getBoolPlay());
 																		   g_pNet->resetPlayFlag();
 																	   }
 																	   (*i)->callStatus = VOICE_STATUS_END;
@@ -4335,14 +4332,10 @@ void CWLNet::NetTx(bool Start)
 
 		m_pSendVoicePackage = new SendVoicePackage;
 		m_pVoice = (char*)calloc(MAX_PACKET_SIZE, sizeof(char));
+		//sprintf_s(m_reportMsg, "m_sendVoices.size:%d", m_sendVoices.size());
+		//g_pWLlog->sendLog(m_reportMsg);
 		/*需要定时间隔发送音频数据*/
-		if (!m_bIsSending)
-		{
-			SetCallStatus(CALL_ONGOING);
-			NetWorker_SendCallByWL();
-			timeSetEvent(SEND_VOICE_INTERVAL, 1, OneMilliSecondProc, (DWORD)this, TIME_PERIODIC);
-			m_bIsSending = true;
-		}
+		startSend();
 	}
 }
 
@@ -5528,10 +5521,7 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 				if (g_callRequstDeclineReasonCodeInfo.BhaveGet && 0x00 == g_callRequstDeclineReasonCodeInfo.Value)
 				{
 					/*开始发送文件数据*/
-					SetCallStatus(CALL_ONGOING);
-					NetWorker_SendCallByWL();
-					timeSetEvent(SEND_VOICE_INTERVAL, 1, OneMilliSecondProc, (DWORD)this, TIME_PERIODIC);
-					m_bIsSending = true;
+					startSend();
 					requestCallSuccess = true;
 					break;
 				}
@@ -5674,10 +5664,7 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 				if (g_callRequstDeclineReasonCodeInfo.BhaveGet && 0x00 == g_callRequstDeclineReasonCodeInfo.Value)
 				{
 					/*开始发送文件数据*/
-					SetCallStatus(CALL_ONGOING);
-					NetWorker_SendCallByWL();
-					timeSetEvent(SEND_VOICE_INTERVAL, 1, OneMilliSecondProc, (DWORD)this, TIME_PERIODIC);
-					m_bIsSending = true;
+					startSend();
 					requestCallSuccess = true;
 					break;
 				}
@@ -6494,6 +6481,8 @@ int CWLNet::newCall()
 				/*初始化*/
 				NetTx(true);
 				requestNewCallEvent();
+				//sprintf_s(m_reportMsg, "requestNewCall:%d", m_retryRequestCallCount);
+				//g_pWLlog->sendLog(m_reportMsg);
 				/*初始化通话*/
 				m_pSitePeer->HandlePacket(WL_VC_CHNL_CTRL_REQUEST_LOCAL, NULL, 0, 0, 0);
 				WaitForSingleObject(m_wlInitNewCallEvent, REQUEST_CALL_OUT_TIMER);
@@ -7376,7 +7365,7 @@ int CWLNet::checkDefaultGroupAndTalkTime()
 	return 0;
 }
 
-int CWLNet::setPlayCallOfCare(unsigned char calltype,unsigned long targetId)
+int CWLNet::setPlayCallOfCare(unsigned char calltype, unsigned long targetId)
 {
 	bool isNeedFind = true;
 	for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
@@ -7506,7 +7495,7 @@ int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned l
 		case REMOTE_CMD_CALL:
 		{
 								operate = OPERATE_CALL_START;
-								
+
 		}
 			break;
 		case REMOTE_CMD_STOP_CALL:
@@ -7570,7 +7559,7 @@ int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned l
 	args["source"] = (int)srcId;
 	args["target"] = (int)tgtId;
 	args["operate"] = operate;
-	std::string strRequest = CRpcJsonParser::buildCall("wlCallStatus", ++g_sn, args,"wl");
+	std::string strRequest = CRpcJsonParser::buildCall("wlCallStatus", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
 
@@ -7722,7 +7711,7 @@ int CWLNet::wlInfo(int getType, FieldValue info)
 	ArgumentType args;
 	args["getType"] = getType;
 	args["info"] = info;
-	std::string strRequest = CRpcJsonParser::buildCall("wlInfo", ++g_sn, args,"wl");
+	std::string strRequest = CRpcJsonParser::buildCall("wlInfo", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
 
@@ -8101,6 +8090,17 @@ int CWLNet::updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode)
 {
 	m_pManager->updateOnLineRadioInfo(radioId, status, gpsQueryMode);
 	return 0;
+}
+
+void CWLNet::startSend()
+{
+	if (!m_bIsSending)
+	{
+		SetCallStatus(CALL_ONGOING);
+		NetWorker_SendCallByWL();
+		timeSetEvent(SEND_VOICE_INTERVAL, 1, OneMilliSecondProc, (DWORD)this, TIME_PERIODIC);
+		m_bIsSending = true;
+	}
 }
 
 //bool CWLNet::getIsFirstBurstA()
