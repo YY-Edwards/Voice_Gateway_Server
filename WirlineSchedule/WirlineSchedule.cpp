@@ -1,6 +1,3 @@
-// WirlineSchedule.cpp : 定义 DLL 应用程序的导出函数。
-//
-
 #include "stdafx.h"
 #include "Manager.h"
 #include "MySQL.h"
@@ -22,6 +19,7 @@ extern CWLNet* g_pNet;
 #define DB_USER				"root"
 #define DB_PWD				""
 #define DB_NAME				"WirelineMotoVoice"
+#define SERVICE_CODDE TRUE
 
 HWND GetConsoleHwnd(void)
 {
@@ -65,6 +63,12 @@ void handleLog(char *pLog)
 {
 #if _DEBUG
 	LOG(INFO) << pLog;
+#if SERVICE_CODDE
+#else
+	SYSTEMTIME t;
+	GetLocalTime(&t);
+	printf_s("\r\n%04d-%02d-%02d %02d:%02d:%02d %03d %s\r\n", t.wYear, t.wMonth, t.wDay, t.wHour, t.wMinute, t.wSecond, t.wMilliseconds, pLog);
+#endif
 #endif
 }
 
@@ -74,21 +78,11 @@ std::wstring getAppdataPath(){
 
 	return std::wstring(szBuffer);
 }
-HWND g_hwnd = NULL;
-HANDLE g_waitHwnd = CreateEvent(NULL, FALSE, FALSE, NULL);
-
-BOOL CALLBACK EnumWindowsProc(HWND hwdnd, LPARAM lparam)
-{
-	g_hwnd = hwdnd;
-	SetEvent(g_waitHwnd);
-	return FALSE;
-}
-
-#define SERVICE_CODDE TRUE
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	/*log初始化*/
+	g_pWLlog = new WLSocketLog();
 	int createFileRlt = 0;
 	std::wstring appFolder = getAppdataPath() + _T("\\Jihua Information");
 	if (!PathFileExists(appFolder.c_str()))
@@ -145,6 +139,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		PLogReport m_report = NULL;
 		HWND m_hwnd = NULL;
 		char m_temp = 0x00;
+		int cmd = 0;
 		CRpcServer *m_pRpcServer = new CRpcServer();
 
 		/*设置回调*/
@@ -154,21 +149,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		/*设置基本参数*/
 		m_report = handleLog;
-		//g_WLlog.sendLog("startEnumWindows");
-		//EnumWindows(EnumWindowsProc, NULL);
-		//g_WLlog.sendLog("start WaitForSingleObject g_waitHwnd");
-		//WaitForSingleObject(g_waitHwnd, INFINITE);
-		//m_hwnd = (HWND)0x000302e6;
-		m_hwnd = GetConsoleHwnd();
-		if (m_hwnd)
-		{
-			g_WLlog.sendLog("m_hwnd is not null");
-		}
-		else
-		{
-			g_WLlog.sendLog("m_hwnd is null");
-		}
-		m_pManager->initWnd(m_hwnd);
 		m_pDb->SetLogPtr(m_report);
 		m_pManager->setLogPtr(m_report);
 		/*开启远程任务处理线程*/
@@ -190,9 +170,39 @@ int _tmain(int argc, _TCHAR* argv[])
 #if SERVICE_CODDE
 		while (!CService::instance()->m_bServiceStopped);
 #else
+		handleLog("input 0 for end");
+		scanf_s("%d", &cmd);
 		/*等待用户选择退出*/
-		handleLog("input any for end");
-		scanf_s("%c", &m_temp, 1);
+		while (cmd != 0)
+		{
+			switch (cmd)
+			{
+			case 1:
+			{
+					  REMOTE_TASK *pTask = new REMOTE_TASK;
+					  pTask->cmd = REMOTE_CMD_CALL;
+					  pTask->param.info.callParam.operateInfo.callType = GROUP_CALL;
+					  pTask->param.info.callParam.operateInfo.isCurrent = 1;
+					  pTask->param.info.callParam.operateInfo.operate = 0;
+					  pTask->param.info.callParam.operateInfo.source = 5;
+					  pTask->param.info.callParam.operateInfo.tartgetId = 9;
+					  push_back_task(pTask);
+			}
+				break;
+			case 2:
+			{
+					  REMOTE_TASK *pTask = new REMOTE_TASK;
+					  pTask->cmd = REMOTE_CMD_STOP_CALL;
+					  push_back_task(pTask);
+			}
+				break;
+			default:
+				break;
+			}
+
+			handleLog("input 0 for end");
+			scanf_s("%d", &cmd);
+		}
 #endif
 		/************************************************************************/
 		/* 资源释放
@@ -251,6 +261,11 @@ int _tmain(int argc, _TCHAR* argv[])
 			//m_pDb->stop();
 			delete m_pDb;
 			m_pDb = NULL;
+		}
+		if (g_pWLlog)
+		{
+			delete g_pWLlog;
+			g_pWLlog = NULL;
 		}
 #if SERVICE_CODDE
 	});

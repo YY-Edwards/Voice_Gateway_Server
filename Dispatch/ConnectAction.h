@@ -32,6 +32,7 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 		{
 			std::string radioIP = "";
 			std::string mnisIP = "";
+			std::string gpsIP = "";
 			Document d;
 			d.Parse(param.c_str());
 
@@ -61,11 +62,11 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 				Value objRadio = d["Gps"].GetObject();
 				if (objRadio.HasMember("Ip") && objRadio["Ip"].IsString())
 				{
-					//radioIP = objRadio["Ip"].GetString();
+					gpsIP = objRadio["Ip"].GetString();
 
 				}
 			}
-			dis.connect( radioIP.c_str(), mnisIP.c_str());
+			dis.connect( radioIP.c_str(), mnisIP.c_str(),gpsIP.c_str());
 		}
 		else
 		{

@@ -41,7 +41,7 @@ void  controlAction(CRemotePeer* pRemote, const std::string& param, uint64_t cal
 			{
 				id = d["Target"].GetInt();
 			}
-			if (isTcpConnect)
+			if (dis.isTcpConnect)
 			{
 				dis.control( opterateType, id);
 			}

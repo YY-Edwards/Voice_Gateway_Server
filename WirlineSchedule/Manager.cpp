@@ -26,7 +26,7 @@ CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis)
 	g_bTX = FALSE;
 
 	m_report = NULL;
-	m_hwnd = NULL;
+	//m_hwnd = NULL;
 	m_activePort = 0;
 	m_hWaitDecodeEvent = NULL;
 
@@ -45,6 +45,7 @@ CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis)
 	//memset(&m_pCurrentTask, 0, sizeof(REMOTE_TASK));
 	m_pCurrentTask = NULL;
 	m_pMnis = pMnis;
+	m_hWaitDecodeEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 }
 
 CManager::~CManager()
@@ -84,14 +85,14 @@ CManager::~CManager()
 // 	return 0;
 // }
 
-int CManager::initWnd(HWND current_hwnd)
-{
-	// 	sprintf_s(m_reportMsg, "initDongle:current_hwnd:0x%x", current_hwnd);
-	// 	sendLogToWindow();
-	m_hWaitDecodeEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-	m_hwnd = current_hwnd;
-	return 0;
-}
+//int CManager::initWnd(HWND current_hwnd)
+//{
+//	// 	sprintf_s(m_reportMsg, "initDongle:current_hwnd:0x%x", current_hwnd);
+//	// 	sendLogToWindow();
+//	
+//	m_hwnd = current_hwnd;
+//	return 0;
+//}
 
 int CManager::setLogPtr(PLogReport log_handel)
 {
@@ -493,20 +494,23 @@ int CManager::config(REMOTE_TASK* pTask)
 			Env_NetIsOk = false;
 			sprintf_s(m_reportMsg, "net initial fail");
 			sendLogToWindow();
+			g_pWLlog->sendLog("net initial fail");
 		}
 		else
 		{
 			Env_NetIsOk = true;
+			g_pWLlog->sendLog("net initial success");
 		}
 		/*ÅäÖÃdongle*/
 		WCHAR tmpStr[128] = { 0 };
 		swprintf_s(tmpStr, 128, L"\\\\.\\COM%d", CONFIG_DONGLE_PORT);
-		if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, m_hwnd, this))
+		if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
 		{
 			//m_bDongleIsOpen = FALSE;
 			Env_DongleIsOk = false;
 			sprintf_s(m_reportMsg, "open dongle fail");
 			sendLogToWindow();
+			g_pWLlog->sendLog("open dongle fail");
 		}
 		else
 		{
@@ -514,19 +518,22 @@ int CManager::config(REMOTE_TASK* pTask)
 			Env_DongleIsOk = true;
 			sprintf_s(m_reportMsg, "open dongle success");
 			sendLogToWindow();
+			g_pWLlog->sendLog("open dongle success");
 		}
 		/*ÅäÖÃÂó¿Ë·çºÍÑïÉùÆ÷*/
-		if (WL_RETURN_OK != g_pSound->StartSound(m_hwnd, 0, 0))
+		if (WL_RETURN_OK != g_pSound->StartSound())
 		{
 			Env_SoundIsOk = false;
 			sprintf_s(m_reportMsg, "sound initial fail");
 			sendLogToWindow();
+			g_pWLlog->sendLog("sound initial fail");
 		}
 		else
 		{
 			Env_SoundIsOk = true;
 			sprintf_s(m_reportMsg, "sound initial success");
 			sendLogToWindow();
+			g_pWLlog->sendLog("sound initial success");
 		}
 		/*ÅäÖÃmnis*/
 		m_pMnis->radioConnect(CONFIG_MNIS_IP);
@@ -539,17 +546,20 @@ int CManager::config(REMOTE_TASK* pTask)
 		{
 			g_pSound->stop();
 			/*ÅäÖÃÂó¿Ë·çºÍÑïÉùÆ÷*/
-			if (WL_RETURN_OK != g_pSound->StartSound(m_hwnd, 0, 0))
+			if (WL_RETURN_OK != g_pSound->StartSound())
 			{
 				Env_SoundIsOk = false;
 				sprintf_s(m_reportMsg, "sound initial fail");
 				sendLogToWindow();
+				g_pWLlog->sendLog("sound initial fail");
+
 			}
 			else
 			{
 				Env_SoundIsOk = true;
 				sprintf_s(m_reportMsg, "sound initial success");
 				sendLogToWindow();
+				g_pWLlog->sendLog("sound initial success");
 			}
 
 		}
@@ -561,10 +571,12 @@ int CManager::config(REMOTE_TASK* pTask)
 				Env_NetIsOk = false;
 				sprintf_s(m_reportMsg, "net initial fail");
 				sendLogToWindow();
+				g_pWLlog->sendLog("net initial fail");
 			}
 			else
 			{
 				Env_NetIsOk = true;
+				g_pWLlog->sendLog("net initial success");
 			}
 		}
 		if (bDongleChange)
@@ -572,12 +584,13 @@ int CManager::config(REMOTE_TASK* pTask)
 			/*ÖØÐÂÅäÖÃdongle*/
 			WCHAR tmpStr[128] = { 0 };
 			swprintf_s(tmpStr, 128, L"\\\\.\\COM%d", CONFIG_DONGLE_PORT);
-			if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, m_hwnd, this))
+			if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
 			{
 				//m_bDongleIsOpen = FALSE;
 				Env_DongleIsOk = false;
 				sprintf_s(m_reportMsg, "initDongle:open dongle fail");
 				sendLogToWindow();
+				g_pWLlog->sendLog("dongle initial fail");
 			}
 			else
 			{
@@ -585,6 +598,7 @@ int CManager::config(REMOTE_TASK* pTask)
 				Env_DongleIsOk = true;
 				sprintf_s(m_reportMsg, "open dongle success");
 				sendLogToWindow();
+				g_pWLlog->sendLog("dongle initial success");
 			}
 		}
 		if (bMnisChange)

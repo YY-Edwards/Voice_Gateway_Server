@@ -11,7 +11,11 @@
 #include <mutex>
 
 
+#define BLOCK_SIZE 5120
+#define BLOCK_COUNT 20
 
+#define BUFFER_NUM 2
+#define BUFFER_SIZE 320
 
 /*播放音频采样配置*/
 const int NUM_OUT_BUFFERS = 32;  //Software managed.
@@ -88,7 +92,7 @@ public:
 	CSound();
 	~CSound();
 	void BigEndianSoundOut(unsigned __int8* pSamples, DWORD dwCurrentDecodeSize);//Dongle数据大小端你转换
-	DWORD StartSound(HWND hParentWnd, int uInDeviceID, int uOutDeviceID);//sound启动
+	DWORD StartSound();//sound启动
 	void stop(void);//关闭音频输出、输入设备
 	void SetLogPtr(PLogReport value);//设置log回调
 	void StartRecord();
@@ -96,7 +100,7 @@ public:
 	FILE* m_pInputFile;
 	//FILE* m_pInputFile1;
 	void closeFile();
-	void immediatelyPlay();
+	void startPlay(int bufferSize = 50);
 	bool getbRecord();
 
 private:
@@ -116,7 +120,7 @@ private:
 	/*实时播放中继台音频数据
 	/************************************************************************/
 	DSBUFFERDESC m_dscOutputbd;  //Output DS Buffer Discriptor.
-	WAVEFORMATEX m_OutWFX;       //Input Wave Format.
+	WAVEFORMATEX m_outFormat;       //Input Wave Format.
 	LPDIRECTSOUND8 m_lpOutDS;      //Pointer to Output DS Object.
 	LPDIRECTSOUNDBUFFER m_lpOutputDSB1; //Pointer to DS managed Output Buffer.
 	LPDIRECTSOUNDBUFFER8 m_lpOutputDSB2; //Pointer to DS managed Output Buffer.
@@ -128,8 +132,10 @@ private:
 	BOOL m_bStopPlay;//是否播放的标识
 	HANDLE m_hPlaySongEvent;//播放event
 	DWORD m_dPreBufCusor;//当前音频数据源填充位置
+
 	std::list<OUTDATA *> m_playList;//待填充的音频数据源
 	std::mutex m_PlayTaskLocker;//待填充的音频数据源锁
+
 	void sendLogToWindow();//将log显示至前台窗口
 	char m_reportMsg[512];//log内容
 	PLogReport m_report;//前台log回调函数指针
@@ -161,13 +167,13 @@ private:
 	DWORD OpenInput(void);//打开音频输入设备，进入待录音状态
 	void CloseInput(void);//关闭音频输入设备
 	void HandleSoundInput(void);//控制音频播放和数据源填充
-	
+
 	DWORD m_dwInputOffset;
 	HANDLE m_hRecordEvent;//录音event
 	HANDLE m_hRecordDealEvent;
 	void SoundInputControl();
-	
-	
+
+
 	BOOL m_bStartRecording;
 	//int m_dwShouldStopRecordOffset;
 	DWORD m_dwCurRecordZone;//当前播放buffer中的录制区域
@@ -177,6 +183,7 @@ private:
 
 	std::list<SoundCardPCM*> m_inputDataList;
 	std::mutex m_inputDataLocker;
+
 	InPCM m_ScratchPCM;
 	SoundCardPCM* m_pInputPrevData;
 	SoundCardPCM* m_pInputCurData;
@@ -184,6 +191,36 @@ private:
 	HANDLE m_hExitEvent;
 
 	HANDLE m_hSoundControlEvents[3];
+	void writeAudio(HWAVEOUT hWaveOut, LPSTR data, int size);
+	WAVEHDR* allocateBlocks(int size, int count);
+	void freeBlocks(WAVEHDR* blockArray);
+	static void CALLBACK waveOutProc(
+		HWAVEOUT  hwo,
+		UINT      uMsg,
+		DWORD_PTR dwInstance,
+		DWORD_PTR dwParam1,
+		DWORD_PTR dwParam2
+		);
+	static void CALLBACK waveInProc(
+		HWAVEIN   hwi,
+		UINT      uMsg,
+		DWORD_PTR dwInstance,
+		DWORD_PTR dwParam1,
+		DWORD_PTR dwParam2
+		);
+	void handleWaveOutProc(UINT uMsg);
+	void handleWaveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwParam1, DWORD_PTR dwParam2);
+	WAVEHDR* m_pWaveOutBlocks;
+	int m_waveOutCurrentBlock;
+	CRITICAL_SECTION m_waveCriticalSection;
+	volatile int m_waveOutFreeBlockCount;
+	HWAVEOUT m_hWaveOut;
+	WAVEHDR m_whis[BUFFER_NUM];
+	HWAVEIN m_hWaveIn;//音频输入句柄
+	bool m_bWaveInReset;
+	DWORD m_bufflag;
+	char m_cbBuffer[BUFFER_NUM][BUFFER_SIZE];    //声音临时缓存
+	HANDLE m_waitWaveInStop;
 };
 
 

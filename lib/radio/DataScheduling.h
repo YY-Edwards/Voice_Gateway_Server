@@ -14,7 +14,7 @@ public:
 	bool radioSendMsg( std::string message, DWORD dwRadioID,  int type);
 	void getRadioStatus( int type);
 	void radioDisConnect();
-	//bool InitGPSOverturnSocket(DWORD dwAddress);
+	void InitGPSOverturnSocket(DWORD dwAddress);
 	void  setCallBackFunc(void(*callBackFunc)(int, Respone));
 	static DWORD WINAPI timeOutThread(LPVOID lpParam);
 	static DWORD WINAPI workThread(LPVOID lpParam);

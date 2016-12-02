@@ -434,6 +434,9 @@ public:
 
 	void setSitePeer(CIPSCPeer* value);
 private:
+	//start send ambe to repeater
+	void startSend();
+
 	DWORD m_dwChangeToCurrentTick;
 	CManager* m_pManager;
 	//HANDLE m_dongleIdleEvent;

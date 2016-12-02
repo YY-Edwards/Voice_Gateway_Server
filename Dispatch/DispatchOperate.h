@@ -19,7 +19,8 @@ public:
 	static void OnDisConnect(CRemotePeer* pRemotePeer);
 	static void OnData( int call, Respone data);
 	static void OnTcpData( int call, TcpRespone data);
-	void connect( const char * ip, const char* mIp);
+	static void OnRadioUsb(bool isConnected );
+	void connect( const char * ip, const char* mIp,const char* gpsIP);
 	void call( int type, int op, int id);
 	void control( int type, int id);
 	bool getGps(int id, int querymode, double cycle);
@@ -28,6 +29,8 @@ public:
 	void getStatus( int type);
 	void setCallBack();
 	void disConnect();
+	bool isTcpConnect;
+
 private:
 	std::map <int, int> gpsDic;
 	int getLic(const char* licPath);
@@ -42,6 +45,7 @@ private:
 	bool isUdpConnect;
 	std::mutex m_locker;
 	std::string  mnisIP;
+	
 	
 };
 

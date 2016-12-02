@@ -3,6 +3,7 @@
 
 WLSocketLog::WLSocketLog()
 {
+#if _DEBUG
 	WORD wVersionRequested;
 	WSADATA wsaData;
 	int err;
@@ -20,12 +21,12 @@ WLSocketLog::WLSocketLog()
 	m_waitSendLog = CreateEvent(NULL, FALSE, FALSE, NULL);
 	m_bSendLog = true;
 	m_hWorkThreadId = CreateThread(NULL, 0, workThread, this, THREAD_PRIORITY_NORMAL, NULL);
-
-	
+#endif
 }
 
 WLSocketLog::~WLSocketLog()
 {
+#if _DEBUG
 	m_bSendLog = false;
 	m_logs.clear();
 	SetEvent(m_waitSendLog);
@@ -33,29 +34,35 @@ WLSocketLog::~WLSocketLog()
 	CloseHandle(m_hWorkThreadId);
 	closesocket(m_serverSocket);
 	WSACleanup();
+#endif
 }
 
 void WLSocketLog::sendLog(std::string log)
 {
+#if _DEBUG
 	m_logLstLocker.lock();
 	log += "\r\n";
 	m_logs.push_back(log);
 	m_logLstLocker.unlock();
 	SetEvent(m_waitSendLog);
+#endif
 }
 
 DWORD WINAPI WLSocketLog::workThread(LPVOID lpParam)
 {
+#if _DEBUG
 	WLSocketLog* p = (WLSocketLog*)lpParam;
 	if (p)
 	{
 		p->workThreadProc();
 	}
+#endif
 	return 0;
 }
 
 void WLSocketLog::workThreadProc()
 {
+#if _DEBUG
 	SOCKADDR_IN addrSrv;
 	addrSrv.sin_addr.S_un.S_addr = inet_addr("192.168.2.106");
 	addrSrv.sin_family = AF_INET;
@@ -73,5 +80,5 @@ void WLSocketLog::workThreadProc()
 			m_logLstLocker.unlock();
 		}
 	}
+#endif
 }
-

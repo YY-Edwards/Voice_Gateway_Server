@@ -4,6 +4,7 @@ DispatchOperate::DispatchOperate()
 {
 	mnisIP = "";
 	isUdpConnect = false;
+	isTcpConnect = false;
 	pDs = new CDataScheduling();
 	pTs = new CTcpScheduling();
 }
@@ -264,6 +265,7 @@ void DispatchOperate::OnDisConnect(CRemotePeer* pRemotePeer)
 	if (pRemotePeer)
 	{
 		dis.delPeer(pRemotePeer);
+		dis.disConnect();
 
 	}
 }
@@ -302,7 +304,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 			{
 				dis.isUdpConnect = false;
 			}
-			dis.sendConnectStatusToClient();
+			//dis.sendConnectStatusToClient();
 		}
 		catch (std::exception e)
 		{
@@ -316,7 +318,8 @@ void DispatchOperate::OnData(  int call, Respone data)
 			args["Source"] = FieldValue(NULL);
 			args["Target"] = FieldValue(data.target);
 			args["contents"] = FieldValue("");
-			args["status"] = FieldValue(data.msgStatus);
+			args["status"] = FieldValue(data.msgStatus); 
+			args["type"] = FieldValue(data.msgType);
 			dis.send2Client("messageStatus", args);
 		}
 		catch (std::exception e)
@@ -332,7 +335,8 @@ void DispatchOperate::OnData(  int call, Respone data)
 			args["Target"] = FieldValue(data.target);
 			args["contents"] = FieldValue("");
 			args["status"] = FieldValue(data.msgStatus);
-			//dis->send2Client("messageStatus", args, peer);
+			args["type"] = FieldValue(data.msgType);
+			dis.send2Client("messageStatus", args);
 		}
 		catch (std::exception e)
 		{
@@ -424,11 +428,19 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 	case RADIO_CONNECT:
 		try
 		{
-			if ("" == dis.mnisIP && !isTcpConnect)
+			if(SUCESS == data.result)
+			{
+				dis.isTcpConnect = true;
+			}
+			else
+			{
+				dis.isTcpConnect = false;
+			}
+			if ("" == dis.mnisIP && !dis.isTcpConnect)
 			{
 				dis.isUdpConnect = false;
 			}
-			else if ("" == dis.mnisIP && isTcpConnect && !dis.isUdpConnect)
+			else if ("" == dis.mnisIP && dis.isTcpConnect && !dis.isUdpConnect)
 			{
 				dis.isUdpConnect = true;
 			}
@@ -495,7 +507,7 @@ void DispatchOperate::send2Client( char* name, ArgumentType args)
 
 
 
-void DispatchOperate::connect(const char * ip ,const char* mIp )
+void DispatchOperate::connect(const char * ip ,const char* mIp,const char* gpsIP )
 {
 	if (INADDR_NONE != inet_addr(mIp))
 	{
@@ -505,6 +517,10 @@ void DispatchOperate::connect(const char * ip ,const char* mIp )
 	}
 	else
 	{
+		if (INADDR_NONE != inet_addr(gpsIP))
+		{
+			pDs->InitGPSOverturnSocket(inet_addr(gpsIP));
+		}
 		pDs->radioConnect(ip);
 		pTs->radioConnect(ip);
 	}
@@ -578,5 +594,12 @@ void DispatchOperate::disConnect()
 {
 	pDs->radioDisConnect();
 	pTs->disConnect();
+	isTcpConnect = false;
+	isUdpConnect = false;
 	
+}
+void DispatchOperate::OnRadioUsb(bool isConnected)
+{
+	dis.isTcpConnect = isConnected;
+	dis.pTs->setUsb(isConnected);
 }

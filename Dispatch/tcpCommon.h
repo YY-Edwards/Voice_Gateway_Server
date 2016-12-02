@@ -74,7 +74,6 @@ typedef struct tagTcpRespone
 }TcpRespone;
 extern void(*myTcpCallBackFunc)(int, TcpRespone);
 void onTcpData(void(*func)( int, TcpRespone), int call, TcpRespone data);
-extern  bool isTcpConnect;
 extern std::string m_radioIP;
 extern std::string m_mnisIP;
 typedef struct tagTcpCommand

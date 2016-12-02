@@ -36,6 +36,7 @@ public:
 	TCHAR m_szServiceDescription[1024];
 	TCHAR m_szServiceRun[300];
 	std::function<void(void)> m_fnServiceCode;
+	std::function<void(bool)> m_radioUsb;
 	BOOL m_bServiceStopped;
 
 public:
@@ -46,7 +47,7 @@ public:
 	void StartWindowsService();
 	void StopService();
 	void SetServiceCode(std::function<void(void)> fn);
-
+	void SetRadioUsb(std::function < void(bool)>radioUsb);
 	static DWORD WINAPI ServiceCtrlHandler(DWORD dwControl, DWORD dwEventType, LPVOID lpEventData, LPVOID lpContext);
 	static DWORD WINAPI ServiceWorkerThread(LPVOID lpParam);
 	static VOID WINAPI ServiceMain(DWORD argc, LPTSTR *argv);
