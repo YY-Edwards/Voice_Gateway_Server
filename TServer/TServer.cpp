@@ -59,13 +59,18 @@ std::string getServerName()
 	std::string strConfig = CSettings::instance()->getValue("radio");
 	Document d;
 	d.Parse(strConfig.c_str());
-	if (d.HasMember("IsEnable") && d["IsEnable"].IsBool())
+	if (d.HasMember("IsEnable") && d["IsEnable"].IsBool() )
 	{
-		serverName = "Trbox.Wirelan";
-	}
-	else
-	{
-		serverName = "Trbox.Dispatch";
+		
+		if (TRUE == d["IsEnable"].GetBool())
+		{
+			serverName = "Trbox.Dispatch";
+		}
+		else
+		{
+			serverName = "Trbox.Wirelan";
+		}
+		
 	}
 	return  serverName;
 }
