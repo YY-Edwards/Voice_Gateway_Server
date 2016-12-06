@@ -76,7 +76,19 @@ void CMonitorServer::monitorThreadFunc()
 			TCHAR szFilePath[MAX_PATH];
 			::GetModuleFileName(NULL, szFilePath, MAX_PATH);
 			(_tcsrchr(szFilePath, _T('\\')))[1] = 0;
-			std::wstring wstr = (std::wstring)szFilePath + _T("Dispatch.exe");
+			std::wstring wstr;
+			if (serverName == _T("Trbox.Dispatch"))
+			{
+				 wstr = (std::wstring)szFilePath + _T("Dispatch.exe");
+			}
+			else if (serverName == _T("Trbox.Wirelan"))
+			{
+				std::wstring wstr = (std::wstring)szFilePath + _T("WirelineSchedule.exe");
+			}
+			else
+			{
+				return;
+			}
 			LPCWSTR pWstr = wstr.c_str();
 
 			std::wstringstream args;
