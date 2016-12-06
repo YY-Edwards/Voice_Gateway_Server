@@ -204,6 +204,13 @@ rapidjson::Value CRpcJsonParser::toNode(FieldValue& v, rapidjson::Document& d)
 
 		return val;
 	}
+	else if (FieldValue::TDouble == v.getType())
+	{
+		rapidjson::Value val(kNumberType);
+		val.SetDouble(v.getDobule());
+
+		return val;
+	}
 	else if (FieldValue::TArray == v.getType())
 	{
 		rapidjson::Value val(kArrayType);
