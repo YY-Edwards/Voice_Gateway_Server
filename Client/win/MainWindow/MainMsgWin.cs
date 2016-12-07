@@ -85,12 +85,6 @@ namespace TrboX
                 }
             }
 
-            m_Main.lst_Alarm.View = (ViewBase)m_Main.FindResource("AlarmView");
-            m_Main.lst_ShortMsg.View = (ViewBase)m_Main.FindResource("MsgView");
-            m_Main.lst_Rx.View = (ViewBase)m_Main.FindResource("RxView");
-            m_Main.lst_Job.View = (ViewBase)m_Main.FindResource("JobView");
-            m_Main.lst_Tracker.View = (ViewBase)m_Main.FindResource("TrackerView");
-
             m_Main.btn_ClearAlarmMsg.Click += delegate { Clear(NotifyType.Alarm); };
             m_Main.btn_ClearShortMsg.Click += delegate { Clear(NotifyType.Message); };
             m_Main.btn_ClearRxMsg.Click += delegate { Clear(NotifyType.Call); };

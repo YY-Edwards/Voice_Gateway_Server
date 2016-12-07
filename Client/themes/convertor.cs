@@ -116,6 +116,60 @@ namespace TrboX
         }
     }
 
+
+    public class TypeToOP : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+           if((value[0] == DependencyProperty.UnsetValue)||( value[0] == DependencyProperty.UnsetValue)||( value[0] == DependencyProperty.UnsetValue))return 1;
+
+            switch ((FastType)value[0])
+            {
+                case FastType.FastType_Contact:
+                    CMultMember member = (CMultMember)value[1];
+                    if ((null != value[1]) && (0 < member.Target.Count))
+                    {
+                        if ((1 < member.Target.Count) || (SelectionType.Single != member.Type)) return 1;
+                        else
+                            switch (((CMultMember)value[1]).Target[0].Type)
+                            {
+                                case MemberType.Group:return 1;
+                                case MemberType.Staff:
+                                    if (null != member.Target[0].Staff)
+                                    {
+                                        if (StaffType.Staff == member.Target[0].Staff.Type) return
+                                            (member.Target[0].Radio == null || !member.Target[0].Radio.IsOnline) ? 0.5 : 1;
+                                        if (StaffType.Vehicle == member.Target[0].Staff.Type)  return
+                                            (member.Target[0].Radio == null || !member.Target[0].Radio.IsOnline) ? 0.5 : 1;
+                                    }
+                                    return null;
+                                case MemberType.Radio:
+                                    if (null != member.Target[0].Radio)
+                                    {
+                                        if (RadioType.Radio == member.Target[0].Radio.Type) return
+                                            (member.Target[0].Radio == null || !member.Target[0].Radio.IsOnline) ? 0.5 : 1;
+                                        if (RadioType.Ride == member.Target[0].Radio.Type) return
+                                            (member.Target[0].Radio == null || !member.Target[0].Radio.IsOnline) ? 0.5 : 1;
+                                    }
+                                    return null;
+                                default:
+                                    return null;
+                            }
+                    }
+                    break;
+                case FastType.FastType_Operate:
+                    return 1;
+            }
+
+            return 1;
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
     public class ItemIconConverter : IMultiValueConverter
     {
         public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
@@ -129,24 +183,24 @@ namespace TrboX
                     if ((null != value[1]) && (0 < member.Target.Count))
                     {
                         if ((1 < member.Target.Count) || (SelectionType.Single != member.Type))
-                            return new BitmapImage(new Uri("pack://application:,,,/themes/resource/group.png"));
+                            return new BitmapImage(new Uri("pack://application:,,,/resource/images/group_37_32_on.png"));
                         else
                             switch (((CMultMember)value[1]).Target[0].Type)
                             {
                                 case MemberType.Group:
-                                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/group.png"));
+                                    return new BitmapImage(new Uri("pack://application:,,,/resource/images/group_37_32_on.png"));
                                 case MemberType.Staff:
                                     if (null != member.Target[0].Staff)
                                     {
-                                        if (StaffType.Staff == member.Target[0].Staff.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/contact.png"));
-                                        if (StaffType.Vehicle == member.Target[0].Staff.Type)  return new BitmapImage(new Uri("pack://application:,,,/themes/resource/vehicle.png"));
+                                        if (StaffType.Staff == member.Target[0].Staff.Type) return new BitmapImage(new Uri("pack://application:,,,/resource/images/staff_32_32_on.png"));
+                                        if (StaffType.Vehicle == member.Target[0].Staff.Type)  return new BitmapImage(new Uri("pack://application:,,,/resource/images/vehicle_35_29_on.png"));
                                     }
                                     return null;
                                 case MemberType.Radio:
                                     if (null != member.Target[0].Radio)
                                     {
-                                        if (RadioType.Radio == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/radio.png"));
-                                        if (RadioType.Ride == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/themes/resource/ride.png"));
+                                        if (RadioType.Radio == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/resource/images/radio_23_47_on.png"));
+                                        if (RadioType.Ride == member.Target[0].Radio.Type) return new BitmapImage(new Uri("pack://application:,,,/resource/images/ride_34_40_on.png"));
                                     }
                                     return null;
                                 default:
@@ -159,15 +213,15 @@ namespace TrboX
                         switch (((COperate)value[2]).Type)
                         {
                             case OPType.Dispatch:
-                                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/rx.png"));
+                                return new BitmapImage(new Uri("pack://application:,,,/resource/images/call_33_34.png"));
                             case OPType.ShortMessage:
-                                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/msg.png"));
+                                return new BitmapImage(new Uri("pack://application:,,,/resource/images/message_34_34.png"));
                             case OPType.Position:
-                                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/position.png"));
+                                return new BitmapImage(new Uri("pack://application:,,,/resource/images/positon_29_38.png"));
                             case OPType.Control:
-                                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/control.png"));
+                                return new BitmapImage(new Uri("pack://application:,,,/resource/images/control_43_43.png"));
                             case OPType.JobTicker:
-                                return new BitmapImage(new Uri("pack://application:,,,/themes/resource/job.png"));
+                                return new BitmapImage(new Uri("pack://application:,,,/resource/images/job_tickets_29_36.png"));
                         }
                     break;
             }
@@ -430,11 +484,11 @@ namespace TrboX
                         {
                             if (StaffType.Staff == member.Target[0].Staff.Type) 
                                 return (member.Target[0].Radio != null &&  member.Target[0].Radio.IsOnline == true)
-                                    ? new BitmapImage(new Uri("pack://application:,,,/resource/images/staff_18_18_off.png"))
+                                    ? new BitmapImage(new Uri("pack://application:,,,/resource/images/staff_18_18_on.png"))
                                     : new BitmapImage(new Uri("pack://application:,,,/resource/images/staff_18_18_off.png"));
                             if (StaffType.Vehicle == member.Target[0].Staff.Type)
                                 return (member.Target[0].Radio != null && member.Target[0].Radio.IsOnline == true)
-                                    ? new BitmapImage(new Uri("pack://application:,,,/resource/images/vehicle_18_18_off.png"))
+                                    ? new BitmapImage(new Uri("pack://application:,,,/resource/images/vehicle_18_18_on.png"))
                                     : new BitmapImage(new Uri("pack://application:,,,/resource/images/vehicle_18_18_off.png"));
                         }
                         break;
@@ -443,11 +497,11 @@ namespace TrboX
                         {
                             if (RadioType.Radio == member.Target[0].Radio.Type)
                                 return (member.Target[0].Radio.IsOnline == true)
-                                    ? new BitmapImage(new Uri("pack://application:,,,/resource/images/radio_18_18_off.png"))
+                                    ? new BitmapImage(new Uri("pack://application:,,,/resource/images/radio_18_18_on.png"))
                                     : new BitmapImage(new Uri("pack://application:,,,/resource/images/radio_18_18_off.png"));
                             if (RadioType.Ride == member.Target[0].Radio.Type)
                                 return (member.Target[0].Radio.IsOnline == true)
-                                    ? new BitmapImage(new Uri("pack://application:,,,/resource/images/ride_18_18_off.png"))
+                                    ? new BitmapImage(new Uri("pack://application:,,,/resource/images/ride_18_18_on.png"))
                                     : new BitmapImage(new Uri("pack://application:,,,/resource/images/ride_18_18_off.png"));
                         }
                         break;
@@ -467,21 +521,29 @@ namespace TrboX
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            if (null == value) return 0.4;
+            if (null == value) return 0.5;
 
             if(value is bool)
             {
-                if (false == (bool)value) return 0.4;
+                if (false == (bool)value) return 0.5;
                 return 1;
             }
+            
 
-            CMember target = value as CMember;
+            CMember target = null;
+
+
+            if (value is CMember) target = value as CMember;
+            if (value is CMultMember) target = ((CMultMember)value).MultToSingle();
+
+            if(target == null) return 0.5;
+           
             if (MemberType.Group == target.Type) return 1;
 
             if (null != target.Radio)
                 if (true == target.Radio.IsOnline) return 1;
 
-            return 0.4;
+            return 0.5;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -595,70 +657,98 @@ namespace TrboX
 
             try
             {
-                if ((value[0] == DependencyProperty.UnsetValue) || (value[0] == DependencyProperty.UnsetValue) || (value[0] == DependencyProperty.UnsetValue)) return null;
-
-                CMultMember target = null;
-                switch ((FastType)value[0])
+                if ((value[0] == DependencyProperty.UnsetValue) || (value[0] == DependencyProperty.UnsetValue) || (value[0] == DependencyProperty.UnsetValue))
                 {
-                    case FastType.FastType_Contact:
-                        target = (CMultMember)value[1];
-                        break;
-                    case FastType.FastType_Operate:
-                        //target = ((COperate)value[2]).Target;
-                        break;
-                    default:
-                        break;
+                    return MyWindow.TargetNormalBrush;
                 }
 
-                if (target.Type == SelectionType.All)
+                if ((FastType)value[0] == FastType.FastType_Contact)
                 {
-                    if (TargetMgr.IsTx)
+                    CMultMember target =  (CMultMember)value[1];
+                    if(target != null)
                     {
-                        return MyWindow.InCallBrush;
-                    }
-                    if (TargetMgr.IsRx)
-                    {
-                        return MyWindow.InCallBrush;
-                    }
-                
-                }
-                else if (target.Type != SelectionType.Null)
-                {
-
-                    foreach (CMember mem in target.Target)
-                    {
-                        if (mem.Type == MemberType.Group)
+                        if (target.Type == SelectionType.All)
                         {
-                            if (mem.Group.IsTx)
+                            if (TargetMgr.IsTx || TargetMgr.IsRx)
                             {
-                                return MyWindow.InCallBrush;
+                                return MyWindow.TargetInCallBrush;
                             }
-                            if (mem.Group.IsRx)
-                            {
-                                return MyWindow.InCallBrush;
-                            }
-
                         }
-                        else
+                        else if (target.Type != SelectionType.Null)
                         {
-                            if (mem.Radio.IsTx)
-                            {
-                                return MyWindow.InCallBrush;
-                            }
 
-                            if (mem.Radio.IsRx)
+                            foreach (CMember mem in target.Target)
                             {
-                                return MyWindow.InCallBrush;
+                                if (mem.Type == MemberType.Group)
+                                {
+                                    if (mem.Group.IsTx || mem.Group.IsRx )
+                                    {
+                                        return MyWindow.TargetInCallBrush;
+                                    }
+                                }
+                                else
+                                {
+                                    if (mem.Radio == null || !mem.Radio.IsOnline)
+                                    {
+                                        return MyWindow.TargetOfflineBrush;
+                                    }                                   
+                                    else if (mem.Radio.IsTx || mem.Radio.IsRx)
+                                    {
+                                        return MyWindow.TargetInCallBrush;
+                                    }
+                                }
                             }
                         }
                     }
+
+                    return MyWindow.TargetNormalBrush;
+                }
+                else if ((FastType)value[0] == FastType.FastType_Operate)
+                { 
+                    COperate operate = (COperate)value[2];
+                    if(operate != null && operate.Type == OPType.Dispatch)
+                    {
+                        CMultMember target = operate.Target;
+                        if (target != null)
+                        {
+                            if (target.Type == SelectionType.All)
+                            {
+                                if (TargetMgr.IsTx || TargetMgr.IsRx)
+                                {
+                                    return MyWindow.OperateInCallBrush;
+                                }
+                            }
+                            else if (target.Type != SelectionType.Null)
+                            {
+
+                                foreach (CMember mem in target.Target)
+                                {
+                                    if (mem.Type == MemberType.Group)
+                                    {
+                                        if (mem.Group.IsTx || mem.Group.IsRx)
+                                        {
+                                            return MyWindow.OperateInCallBrush;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (mem.Radio.IsTx || mem.Radio.IsRx)
+                                        {
+                                            return MyWindow.OperateInCallBrush;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    return MyWindow.OperateNormalBrush;
                 }
 
-                return new SolidColorBrush(Color.FromArgb(255, 151, 197, 247));
+                return MyWindow.TargetNormalBrush;
             }
             catch (Exception e){
                 DataBase.InsertLog("Convert Error" + e.Message);
-                return new SolidColorBrush(Color.FromArgb(255, 151, 197, 247));
+                return MyWindow.TargetNormalBrush;
             }
         }
 

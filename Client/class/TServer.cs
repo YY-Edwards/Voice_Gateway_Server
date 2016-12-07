@@ -361,7 +361,7 @@ namespace TrboX
         messageStatus,
 
         queryGps,
-        queryGpsStatus,
+        sendGpsStatus,
         sendGps,
 
         control,

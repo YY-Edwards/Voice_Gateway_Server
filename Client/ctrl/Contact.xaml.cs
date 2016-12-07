@@ -16,21 +16,21 @@ using System.Globalization;
 
 namespace TrboX
 {
-    public class ContactListVOffset : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            if ((null == value) || (0.000001 > (double)value)) return 0;
-            return ((double)value - 0.000001) / (double)value - 3;
+    //public class ContactListVOffset : IValueConverter
+    //{
+    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        if ((null == value) || (0.000001 > (double)value)) return 0;
+    //        return ((double)value - 0.000001) / (double)value - 3;
 
-            //return 0;
-        }
+    //        //return 0;
+    //    }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-        {
-            return value;
-        }
-    }
+    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+    //    {
+    //        return value;
+    //    }
+    //}
 
 
     public class contact_str
@@ -49,16 +49,6 @@ namespace TrboX
             InitializeComponent();
             this.Loaded += delegate
             {
-                ControlTemplate baseWindowTemplate = combox.Template;
-                ListView lst_ContactList = (ListView)baseWindowTemplate.FindName("lst_ContactList", combox);
-                if (null != lst_ContactList)
-                    lst_ContactList.View = (ViewBase)lst_ContactList.FindResource("ContactListView");
-
-                ListView lst_CurrentContact = (ListView)baseWindowTemplate.FindName("lst_CurrentContact", combox);
-                if (null != lst_CurrentContact)
-                lst_CurrentContact.View = (ViewBase)lst_CurrentContact.FindResource("ContactView");
-
-               
                 OnContactListChange("", this);
                 OnCurrentContactChange("", this);
             };
@@ -130,7 +120,12 @@ namespace TrboX
                 if (null == member.Target) return;
 
                 foreach (var item in member.Target)
-                    lst_CurrentContact.Items.Add(new ListViewItem() { Content = item });
+                    if (lst_CurrentContact.Items.Count < 2) lst_CurrentContact.Items.Add(new ListViewItem() { Content = item });
+                    else if (lst_CurrentContact.Items.Count == 2)
+                    {
+                        lst_CurrentContact.Items.Add(new ListViewItem() { Content = "..." });
+                        break;
+                    }
             }
         }
 
@@ -244,10 +239,17 @@ namespace TrboX
             if (null == CurrentContact.Target) CurrentContact.Target = new List<CMember>();
             CurrentContact.Target.Add(((contact_str)((CheckBox)sender).DataContext).Contact);
 
-            ControlTemplate baseWindowTemplate = combox.Template;
-            ListView lst_CurrentContact = (ListView)baseWindowTemplate.FindName("lst_CurrentContact", combox);
-            if (null != lst_CurrentContact)
-            lst_CurrentContact.Items.Add(new ListViewItem(){Content = ((contact_str)((CheckBox)sender).DataContext).Contact});
+            //ControlTemplate baseWindowTemplate = combox.Template;
+            //ListView lst_CurrentContact = (ListView)baseWindowTemplate.FindName("lst_CurrentContact", combox);
+            //if (null != lst_CurrentContact)
+
+            //if (lst_CurrentContact.Items.Count < 2) lst_CurrentContact.Items.Add(new ListViewItem() { Content = ((contact_str)((CheckBox)sender).DataContext).Contact });
+            //else if (lst_CurrentContact.Items.Count == 2)
+            //{
+            //    lst_CurrentContact.Items.Add(new ListViewItem() { Content = "..." });
+            //}
+
+            OnCurrentContactChange(m_Condition, this);
 
 
             //OnCurrentContactChange(m_Condition, this);
@@ -270,19 +272,24 @@ namespace TrboX
                 }
             }
 
-            ControlTemplate baseWindowTemplate = combox.Template;
-            ListView lst_CurrentContact = (ListView)baseWindowTemplate.FindName("lst_CurrentContact", combox);
-            //ListView lst_ContactList = (ListView)baseWindowTemplate.FindName("lst_ContactList", combox);
+            OnCurrentContactChange(m_Condition, this);
 
-            if (null != lst_CurrentContact)
-                foreach (var item in lst_CurrentContact.Items)
-                {
-                    if (((CMember)((ListViewItem)item).Content).IsEqual(((contact_str)((CheckBox)sender).DataContext).Contact))
-                    {
-                        lst_CurrentContact.Items.Remove(item);
-                        break;
-                    }
-                }
+            //ControlTemplate baseWindowTemplate = combox.Template;
+            //ListView lst_CurrentContact = (ListView)baseWindowTemplate.FindName("lst_CurrentContact", combox);
+            ////ListView lst_ContactList = (ListView)baseWindowTemplate.FindName("lst_ContactList", combox);
+
+            //if (null != lst_CurrentContact)
+            //    foreach (var item in lst_CurrentContact.Items)
+            //    {
+            //        if ((((ListViewItem)item).Content is string) && ((string)((ListViewItem)item).Content == "...")) continue;
+            //        if (((CMember)((ListViewItem)item).Content).IsEqual(((contact_str)((CheckBox)sender).DataContext).Contact))
+            //        {
+            //            lst_CurrentContact.Items.RemoveAt(lst_CurrentContact.Items.Count - 1);
+            //            lst_CurrentContact.Items.Remove(item);
+            //            break;
+            //        }
+            //    }
+
 
             //if (null != lst_ContactList)
             //    foreach (var item in lst_ContactList.Items)
@@ -299,49 +306,49 @@ namespace TrboX
             //    }
         } 
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
-            foreach (CMember mem in CurrentContact.Target)
-            {
-                if (mem.IsEqual((CMember)((Button)sender).DataContext))
-                {
-                    CurrentContact.Target.Remove(mem);
-                    break;
-                }
-            }
+        //private void Button_Click(object sender, RoutedEventArgs e)
+        //{
+        //    foreach (CMember mem in CurrentContact.Target)
+        //    {
+        //        if (mem.IsEqual((CMember)((Button)sender).DataContext))
+        //        {
+        //            CurrentContact.Target.Remove(mem);
+        //            break;
+        //        }
+        //    }
 
-            ControlTemplate baseWindowTemplate = combox.Template;
-            ListView lst_CurrentContact = (ListView)baseWindowTemplate.FindName("lst_CurrentContact", combox);
-            ListView lst_ContactList = (ListView)baseWindowTemplate.FindName("lst_ContactList", combox);
+        //    ControlTemplate baseWindowTemplate = combox.Template;
+        //    ListView lst_CurrentContact = (ListView)baseWindowTemplate.FindName("lst_CurrentContact", combox);
+        //    ListView lst_ContactList = (ListView)baseWindowTemplate.FindName("lst_ContactList", combox);
 
-            if (null != lst_CurrentContact)
-            foreach (var item in lst_CurrentContact.Items)
-            {
-                if (((CMember)((ListViewItem)item).Content).IsEqual((CMember)((Button)sender).DataContext))
-                {
-                    lst_CurrentContact.Items.Remove(item);
-                    break;
-                }
-            }
+        //    if (null != lst_CurrentContact)
+        //    foreach (var item in lst_CurrentContact.Items)
+        //    {
+        //        if (((CMember)((ListViewItem)item).Content).IsEqual((CMember)((Button)sender).DataContext))
+        //        {
+        //            lst_CurrentContact.Items.Remove(item);
+        //            break;
+        //        }
+        //    }
 
-            if (null != lst_ContactList)
-            foreach (var item in lst_ContactList.Items)
-            {
-                if (((contact_str)((ListViewItem)item).Content).Contact.IsEqual((CMember)((Button)sender).DataContext))
-                {
-                    DataTemplate baseLstItemTemplate = ((MsgView)lst_ContactList.View).ItemTemplate;
-                    ContentPresenter myContentPresenter = FindVisualChild<ContentPresenter>(item as ListViewItem);
-                    if (null == myContentPresenter)
-                    {
-                        OnContactListChange("", this);
-                        break;
-                    } 
-                    CheckBox chk_CheckBox = (CheckBox)baseLstItemTemplate.FindName("CheckBox", myContentPresenter);
-                    chk_CheckBox.IsChecked = false;
-                    break;
-                }
-            }
-        }
+        //    if (null != lst_ContactList)
+        //    foreach (var item in lst_ContactList.Items)
+        //    {
+        //        if (((contact_str)((ListViewItem)item).Content).Contact.IsEqual((CMember)((Button)sender).DataContext))
+        //        {
+        //            DataTemplate baseLstItemTemplate = ((MsgView)lst_ContactList.View).ItemTemplate;
+        //            ContentPresenter myContentPresenter = FindVisualChild<ContentPresenter>(item as ListViewItem);
+        //            if (null == myContentPresenter)
+        //            {
+        //                OnContactListChange("", this);
+        //                break;
+        //            } 
+        //            CheckBox chk_CheckBox = (CheckBox)baseLstItemTemplate.FindName("CheckBox", myContentPresenter);
+        //            chk_CheckBox.IsChecked = false;
+        //            break;
+        //        }
+        //    }
+        //}
 
         private childItem FindVisualChild<childItem>(DependencyObject obj)
          where childItem : DependencyObject
@@ -393,15 +400,15 @@ namespace TrboX
                 if (null == CurrentContact.Target) CurrentContact.Target = new List<CMember>();
 
                 CurrentContact.Target.Clear();
-                lst_CurrentContact.Items.Clear();
+                //lst_CurrentContact.Items.Clear();
 
                 CurrentContact.Target.Add(((contact_str)((ListViewItem)lst_ContactList.SelectedItem).Content).Contact);
-                lst_CurrentContact.Items.Add(new ListViewItem() { Content = ((contact_str)((ListViewItem)lst_ContactList.SelectedItem).Content).Contact });
+                //lst_CurrentContact.Items.Add(new ListViewItem() { Content = ((contact_str)((ListViewItem)lst_ContactList.SelectedItem).Content).Contact });
 
                 combox.IsDropDownOpen = false;
             }
-
             lst_ContactList.SelectedIndex = -1;
+            OnCurrentContactChange(m_Condition, this);
         }
     }
 }

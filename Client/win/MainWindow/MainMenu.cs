@@ -19,17 +19,6 @@ namespace TrboX
 
                     new KeyGesture(Key.N, ModifierKeys.Control ) }));
 
- 
-
-       // public static RoutedUICommand ReportsCommand =
-
-       //    new RoutedUICommand("报表管理(_R)", "ReportsCommand", typeof(MyCommands),
-
-       //        new InputGestureCollection(new InputGesture[] {
-
-       //             new KeyGesture(Key.R, ModifierKeys.Control ) }));
-
- 
 
        // public static RoutedUICommand MangeCommand =
 
@@ -62,6 +51,15 @@ namespace TrboX
         private void FileIteMRegister()
         {
             //New
+            CommandBinding cb = new CommandBinding();
+            cb.Command = ShortCutKey.NewCall;
+            cb.Executed += new ExecutedRoutedEventHandler(delegate(object sender, ExecutedRoutedEventArgs e) { m_Main.SubWindow.OpenCreateOperateWindow(OPType.Dispatch); });
+            m_Main.CommandBindings.Add(cb);
+            //m_Main.menu_File_NewDispatch.Command = ShortCutKey.NewCall;
+            //m_Main.menu_File_NewDispatch.Command.Execute += new ExecutedRoutedEventHandler(cb_Executed);
+            
+            //cb.Command = 
+            //ShortCutKey.NewCall.
             m_Main.menu_File_NewDispatch.Click += delegate { m_Main.SubWindow.OpenCreateOperateWindow(OPType.Dispatch); };
             m_Main.menu_File_NewMessage.Click += delegate { m_Main.SubWindow.OpenCreateOperateWindow(OPType.ShortMessage); };
             m_Main.menu_File_NewPosition.Click += delegate { m_Main.SubWindow.OpenCreateOperateWindow(OPType.Position); };

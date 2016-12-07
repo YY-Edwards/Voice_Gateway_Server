@@ -399,14 +399,18 @@ namespace TrboX
             m_Main.btn_SaveStaff.Click += delegate
             {
                 Staff staff = null;
+
+
                 try
                 {
+
+                    int typev= int.Parse((string)((ComboBoxItem)m_Main.cmb_StaffType.SelectedItem).Tag);
                     staff = new Staff()
                     {
                         Name = m_Main.txt_StaffName.Text,
-                        Type = ((StaffType)int.Parse((string)((ComboBoxItem)m_Main.cmb_StaffType.SelectedItem).Tag)),
+                        Type = (StaffType)typev,
                         PhoneNumber = m_Main.txt_StaffPhone.Text,
-                        IsValid = true
+                        //IsValid = true
                     };
                 }
                 catch (Exception ex)

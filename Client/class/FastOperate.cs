@@ -50,7 +50,7 @@ namespace TrboX
             get
             {
                 if (Type == FastType.FastType_Contact)
-                    return Contact.SimpleName;
+                    return Contact.Name;
                 else
                     return (null == Operate.Target) ? "" : Operate.Target.SimpleName;
             }

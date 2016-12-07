@@ -247,15 +247,7 @@ namespace TrboX
         }
         private void OnWindowLoaded()
         {
-           // organzation tree
-            //m_Target.UpdateTragetList();
-            //m_View.FillDataToOrgTreeView();
 
-            ////dispatch
-            //lst_dispatch.View = (ViewBase)this.FindResource("ImageView");
-
-            ////map
-            //MyWebGrid.Children.Insert(0, Map);
         }
 
         private void RegRxHandler()
@@ -267,7 +259,7 @@ namespace TrboX
 
             TServer.RegRxHanddler(RequestType.sendArs, OnRadioArs);
             TServer.RegRxHanddler(RequestType.sendGps, OnRadioGps);
-            TServer.RegRxHanddler(RequestType.queryGpsStatus, OnRadioGpsStatus);
+            TServer.RegRxHanddler(RequestType.sendGpsStatus, OnRadioGpsStatus);
             
 
             TServer.RegRxHanddler(RequestType.controlStatus, OnControlStatus);
@@ -301,6 +293,7 @@ namespace TrboX
                     else if (StatusBar.Get().type == RunMode.Repeater)
                     {
                         WirelanOperate .GetStatus(1);
+                        WirelanOperate.GetStatus(2);
                     }
 
                     break;
@@ -323,12 +316,12 @@ namespace TrboX
 
         private void btn_Notify_Close_Click(object sender, RoutedEventArgs e)
         {
-            MsgWin.RemoveNotify(((Button)sender).DataContext);
+            MsgWin.RemoveNotify(((IconBtn)sender).DataContext);
         }
 
         private void btn_Notify_Explaner_Click(object sender, RoutedEventArgs e)
         {
-            MsgWin.ExplanerNotify(((Button)sender).DataContext);
+            MsgWin.ExplanerNotify(((IconBtn)sender).DataContext);
         }
 
 
@@ -775,6 +768,18 @@ namespace TrboX
             CMember targt = new TargetSimple() { Type = TargetType.Private, ID = sta.Target }.ToMember();
             EventList.AddEvent("提示：申请查询对讲机(ID：" + targt.NameInfo+ ")位置信息" + (sta.Status == 0 ? "成功" : "失败"));
 
+            if (sta.Type == QueryGPSType.GenericCycle || sta.Type == QueryGPSType.CSBKCycle || sta.Type == QueryGPSType.EnhCycyle)
+            {
+                if(sta.Operate == ExecType.Start)
+                {
+                    ResrcMgr.SetGpsOnline(sta.Target, true);
+                }
+                else if(sta.Operate ==  ExecType.Stop)
+                {
+                    ResrcMgr.SetGpsOnline(sta.Target, false);
+                }
+            }
+
             if (sta.Status != 0)
                 SubWindow.AddMessage(targt, new CHistory()
                 {
@@ -801,7 +806,7 @@ namespace TrboX
 
             if (gps == null) return;
 
-            WorkArea.AddPoint(gps);
+            if (WorkArea != null) WorkArea.AddPoint(gps);
         }
 
         private List<WirelanCallParam> m_WirelanCallList = new List<WirelanCallParam>();

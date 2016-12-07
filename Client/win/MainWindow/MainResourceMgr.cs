@@ -18,6 +18,7 @@ namespace TrboX
 
         private Main m_Main;   
         private CTargetRes m_TargetList;
+        private int m_LastNavIndex = -1;
 
         public MainResourceMgr(Main win)
         {
@@ -27,9 +28,15 @@ namespace TrboX
             Target.UpdateTragetList();
 
             UpdateView();
+            m_LastNavIndex = m_Main.tab_Mgr.SelectedIndex;
 
-            m_Main.tab_Mgr.SelectionChanged += delegate {UpdateView();};
-            m_Main.btn_ResSearch.Click += delegate { UpdateView(); };
+            m_Main.tab_Mgr.SelectionChanged += delegate {
+                if (m_LastNavIndex != m_Main.tab_Mgr.SelectedIndex) { m_LastNavIndex = m_Main.tab_Mgr.SelectedIndex;
+                UpdateView();
+                }
+               };
+            m_Main.btn_ResSearch.Click += delegate { 
+                UpdateView(); };
 
 
             m_Main.tree_OrgView.PreviewMouseDoubleClick += delegate { };
@@ -61,24 +68,24 @@ namespace TrboX
 
         private ContextMenu CreateOrgMenu(ContextMenuType type)
         {
-            ContextMenu menu = new ContextMenu();
-            if (ContextMenuType.All != type) menu.Items.Add(new MenuItem() { Header = "添加到快速操作", Width = 160, Tag = "fast", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-            if (ContextMenuType.All != type) menu.Items.Add(new Separator() { Margin = new Thickness(5) });
+            ContextMenu menu = new ContextMenu() { Style = App.Current.Resources["ContextMenuStyleNormal"] as Style };
+            if (ContextMenuType.All != type) menu.Items.Add(new MenuItem() { Header = "添加到快速操作", HorizontalAlignment = HorizontalAlignment.Stretch, FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Height = 32, Tag = "fast", Style = App.Current.Resources["MenuItemStyleSub"] as Style });
+            if (ContextMenuType.All != type) menu.Items.Add(new Separator() { Margin = new Thickness(1, 0, 1, 0), Height = 16, Style = App.Current.Resources["SeparatorStyleNormal"] as Style });
 
-            menu.Items.Add(new MenuItem() { Header = "在线检测", Width = 160, Tag = "check", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+            menu.Items.Add(new MenuItem() { Header = "在线检测", Height = 32, Tag = "check", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
 
             //if ((ContextMenuType.Group == type) || (ContextMenuType.RadioOn == type))
-                menu.Items.Add(new MenuItem() { Header = "远程监听", Width = 160, Tag = "monitor", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+            menu.Items.Add(new MenuItem() { Header = "远程监听", Height = 32, Tag = "monitor", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
 
              //if (ContextMenuType.RadioOff != type)
              {
-                 menu.Items.Add(new Separator() { Margin = new Thickness(5) });
-                 menu.Items.Add(new MenuItem() { Header = "语音调度", Width = 160, Tag = "dispatch", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                 menu.Items.Add(new MenuItem() { Header = "短消息", Width = 160, Tag = "message", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                 menu.Items.Add(new MenuItem() { Header = "位置查询", Width = 160, Tag = "position", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                 menu.Items.Add(new MenuItem() { Header = "指令控制", Width = 160, Tag = "control", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
-                 menu.Items.Add(new Separator() { Margin = new Thickness(5) });
-                 menu.Items.Add(new MenuItem() { Header = "工单", Width = 160, Tag = "jobticker", Style = App.Current.Resources["MenuItemStyleNormal"] as Style });
+                 menu.Items.Add(new Separator() { Margin = new Thickness(1, 0, 1, 0), Height = 16, Style = App.Current.Resources["SeparatorStyleNormal"] as Style });
+                 menu.Items.Add(new MenuItem() { Header = "语音调度", Height = 32, Tag = "dispatch", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
+                 menu.Items.Add(new MenuItem() { Header = "短消息", Height = 32, Tag = "message", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
+                 menu.Items.Add(new MenuItem() { Header = "位置查询", Height = 32, Tag = "position", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
+                 menu.Items.Add(new MenuItem() { Header = "指令控制", Height = 32, Tag = "control", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
+                 menu.Items.Add(new Separator() { Margin = new Thickness(1, 0, 1, 0), Height = 16, Style = App.Current.Resources["SeparatorStyleNormal"] as Style });
+                 menu.Items.Add(new MenuItem() { Header = "工单", Height = 32, Tag = "jobticker", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
              }
 
             foreach(var item in menu.Items)if(item is MenuItem)((MenuItem)item).Click += new RoutedEventHandler(OnOrganizationMenu_Click);  
@@ -329,8 +336,8 @@ namespace TrboX
 
         private void FillDataToGroupList()
         {
-            m_Main.lst_Group.View = (ViewBase)m_Main.FindResource("GroupView");
             m_Main.lst_Group.Items.Clear();
+            m_Main.lst_Group.UpdateLayout();
             if (null != m_TargetList.Group)
             foreach (var group in m_TargetList.Group)
             {
@@ -345,7 +352,6 @@ namespace TrboX
 
         private void FillDataToEmployeeList()
         {
-            m_Main.lst_Employee.View = (ViewBase)m_Main.FindResource("EmployeeView");
             m_Main.lst_Employee.Items.Clear();
 
             if (null != m_TargetList.Staff)
@@ -368,7 +374,6 @@ namespace TrboX
         }
         private void FillDataToVehicleList()
         {
-            m_Main.lst_Vehicle.View = (ViewBase)m_Main.FindResource("VehicleView");
             m_Main.lst_Vehicle.Items.Clear();
 
             if (null != m_TargetList.Staff)

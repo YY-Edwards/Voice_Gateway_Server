@@ -35,7 +35,7 @@ namespace TrboX
                 return IsValid ? StaffType.Staff : StaffType.Vehicle;  }
             set
             {
-                IsValid = value == StaffType.Vehicle ? true : false;
+                IsValid = value == StaffType.Staff ? true : false;
             }
         }
 

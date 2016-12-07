@@ -567,12 +567,44 @@ namespace TrboX
             }
         }
 
-        public static SolidColorBrush InCallBrush
+
+        public static SolidColorBrush OpWinInCallBrush
+        {
+            get
+            {
+                ColorAnimation colorAnm = new ColorAnimation(Color.FromArgb(127, 120, 172, 229), new Duration(TimeSpan.FromSeconds(0.1)));
+                colorAnm.AutoReverse = true;
+                colorAnm.From = Color.FromArgb(255, 120, 172, 229);
+                colorAnm.RepeatBehavior = RepeatBehavior.Forever;
+
+                SolidColorBrush myBrush = new SolidColorBrush();
+                myBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnm);
+                return myBrush;
+            }
+
+        }
+
+        public static SolidColorBrush TargetNormalBrush
+        {
+            get
+            {
+                return new SolidColorBrush(Color.FromArgb(255, 80, 205, 228));
+            }
+        }
+
+        public static SolidColorBrush TargetOfflineBrush
+        {
+            get
+            {
+                return new SolidColorBrush(Color.FromArgb(50, 80, 205, 228));
+            }
+        }
+        public static SolidColorBrush TargetInCallBrush
         {
                     get{
-                        ColorAnimation colorAnm = new ColorAnimation(Color.FromArgb(255, 39, 115, 197), new Duration(TimeSpan.FromSeconds(0.1)));
+                        ColorAnimation colorAnm = new ColorAnimation(Color.FromArgb(127, 80, 205, 228), new Duration(TimeSpan.FromSeconds(0.1)));
                         colorAnm.AutoReverse = true;
-                        colorAnm.From = Color.FromArgb(255, 151, 197, 247);
+                        colorAnm.From = Color.FromArgb(255, 80, 205, 228);
                         colorAnm.RepeatBehavior = RepeatBehavior.Forever;
 
                         SolidColorBrush myBrush = new SolidColorBrush();
@@ -580,6 +612,29 @@ namespace TrboX
                         return myBrush;
                     }                
 
-                }
+          }
+
+        public static SolidColorBrush OperateNormalBrush
+        {
+            get
+            {
+                return new SolidColorBrush(Color.FromArgb(255, 120, 172, 229));
+            }
+        }
+        public static SolidColorBrush OperateInCallBrush
+        {
+            get
+            {
+                ColorAnimation colorAnm = new ColorAnimation(Color.FromArgb(127, 120, 172, 229), new Duration(TimeSpan.FromSeconds(0.1)));
+                colorAnm.AutoReverse = true;
+                colorAnm.From = Color.FromArgb(255, 120, 172, 229);
+                colorAnm.RepeatBehavior = RepeatBehavior.Forever;
+
+                SolidColorBrush myBrush = new SolidColorBrush();
+                myBrush.BeginAnimation(SolidColorBrush.ColorProperty, colorAnm);
+                return myBrush;
+            }
+
+        }
     }
 }

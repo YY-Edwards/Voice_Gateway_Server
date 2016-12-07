@@ -36,8 +36,7 @@ namespace TrboX
         private void DispatchResourceRegister()
         {
             FastPanel = new FastOperateWindow(m_Main);
-            m_Main.lst_dispatch.View = (ViewBase)m_Main.FindResource("IconView");
-                       
+       
             m_Main.lst_dispatch.PreviewMouseLeftButtonDown += delegate(object sender, MouseButtonEventArgs e) { lst_dispatch_PreviewMouseLeftButtonDown(sender, e); };
             m_Main.lst_dispatch.Drop += delegate(object sender, DragEventArgs e) { lst_dispatch_Drop(sender, e); };
             

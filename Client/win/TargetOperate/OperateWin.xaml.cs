@@ -77,11 +77,11 @@ namespace TrboX
                     if (TargetMgr.IsTx)
                     {
                         chk_PTT.IsChecked = true;
-                        WindowBackground = MyWindow.InCallBrush;
+                        WindowBackground = MyWindow.TargetInCallBrush;
                     }
                     if (TargetMgr.IsRx)
                     {
-                        WindowBackground = MyWindow.InCallBrush;
+                        WindowBackground = MyWindow.TargetInCallBrush;
                     }
                 }
                 else if(m_Target.Target !=null && m_Target.Target.Count > 0)
@@ -93,12 +93,12 @@ namespace TrboX
                             if (mem.Group.IsTx)
                             {
                                 chk_PTT.IsChecked = true;
-                                 WindowBackground = MyWindow.InCallBrush;
+                                WindowBackground = MyWindow.TargetInCallBrush;
                               
                             }
                             if (mem.Group.IsRx)
                             {
-                                WindowBackground = MyWindow.InCallBrush;
+                                WindowBackground = MyWindow.TargetInCallBrush;
                             }
 
                         }
@@ -107,12 +107,12 @@ namespace TrboX
                             if (mem.Radio.IsTx)
                             {
                                 chk_PTT.IsChecked = true;
-                                WindowBackground = MyWindow.InCallBrush;
+                                WindowBackground = MyWindow.TargetInCallBrush;
                             }
 
                             if (mem.Radio.IsRx)
                             {
-                                WindowBackground = MyWindow.InCallBrush;
+                                WindowBackground = MyWindow.TargetInCallBrush;
                             }
 
                             if (mem.Radio.IsGPS) chk_QueryCyclePosition.IsChecked = true;
@@ -184,12 +184,12 @@ namespace TrboX
                 {
                     chk_PTT.IsChecked = sta;
 
-                    if (sta) WindowBackground = MyWindow.InCallBrush;
+                    if (sta) WindowBackground = MyWindow.TargetInCallBrush;
                     else WindowBackground = new SolidColorBrush(Color.FromArgb(255, 151, 197, 247));
                 }
                 else if ((mask & 8) != 0)//isRx
                 {
-                    if (sta) WindowBackground = MyWindow.InCallBrush;
+                    if (sta) WindowBackground = MyWindow.TargetInCallBrush;
                     else WindowBackground = new SolidColorBrush(Color.FromArgb(255, 151, 197, 247));
                 }
             })); 

@@ -197,6 +197,10 @@
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
+    <Resource Include="resource\images\checked_14_14.png" />
+    <Resource Include="resource\images\menu_chk_16_16_d .png" />
+    <Resource Include="resource\images\menu_chk_16_16_n.png" />
+    <Resource Include="resource\images\serach_21_21_h.png" />
     <Resource Include="themes\resource\loginbk.jpg" />
   </ItemGroup>
   <ItemGroup>
@@ -435,6 +439,62 @@
     <Resource Include="resource\images\staff_18_18_off.png" />
     <Resource Include="resource\images\vehicle_18_18_off.png" />
     <Resource Include="resource\images\ride_18_18_off.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\panel_close_ 20_20_h.png" />
+    <Resource Include="resource\images\panel_close_ 20_20_n.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\more_22_22_d.png" />
+    <Resource Include="resource\images\more_22_22_h.png" />
+    <Resource Include="resource\images\more_22_22_n.png" />
+    <Resource Include="resource\images\more_22_22_p.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\msg_close_18_18_n.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\alarm_18_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\chk_drop_ 12_12_n.png" />
+    <Resource Include="resource\images\chk_drop_12_12_h.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\group_18_18_off.png" />
+    <Resource Include="resource\images\radio_18_18_on.png" />
+    <Resource Include="resource\images\ride_18_18_on.png" />
+    <Resource Include="resource\images\staff_18_18_on.png" />
+    <Resource Include="resource\images\vehicle_18_18_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\unchecked_14_14.png" />
+    <Resource Include="resource\images\unchecked_dis_14_14.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\call_33_34.png" />
+    <Resource Include="resource\images\control_43_43.png" />
+    <Resource Include="resource\images\group_37_32_on.png" />
+    <Resource Include="resource\images\job_tickets_29_36.png" />
+    <Resource Include="resource\images\message_34_34.png" />
+    <Resource Include="resource\images\positon_29_38.png" />
+    <Resource Include="resource\images\radio_23_47_on.png" />
+    <Resource Include="resource\images\ride_34_40_on.png" />
+    <Resource Include="resource\images\tacker_43_43.png" />
+    <Resource Include="resource\images\vehicle_35_29_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\staff_32_32_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\call_18_18.png" />
+    <Resource Include="resource\images\event_26_26.png" />
+    <Resource Include="resource\images\job_tickets_18_18.png" />
+    <Resource Include="resource\images\message_18_18.png" />
+    <Resource Include="resource\images\tacker_18_18.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\msg_ex_18_18_n.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
