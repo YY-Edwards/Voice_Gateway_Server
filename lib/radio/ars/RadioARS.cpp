@@ -139,7 +139,8 @@ void CRadioARS::RecvData()
 		unsigned short xcmp_opcode = 0;
 		xcmp_opcode = ntohs(*((unsigned short *)(m_ThreadARS->RcvBuffer + 2)));
 		unsigned char ars_code = 0;
-		ars_code = ntohs(*((unsigned short *)(m_ThreadARS->RcvBuffer + 1)));
+		ars_code = static_cast<unsigned char>(ntohs(*((unsigned short *)(m_ThreadARS->RcvBuffer + 1))));
+		
 		char s[12];
 		sprintf_s(s, "%d", m_ThreadARS->radioID);
 		std::string stringId = s;

@@ -124,7 +124,7 @@ bool CRadioGps::CloseGPSSocket()
 
 bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,double cycle)
 {
-	int gpsCycle = cycle;
+	int gpsCycle = static_cast<int>(cycle);
 	int gpsMode = queryMode;
 	memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
 	switch (queryMode)

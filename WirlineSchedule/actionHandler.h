@@ -433,8 +433,13 @@ inline void wlInfoActionHandler(CRemotePeer* pRemote, const std::string& param, 
 			{
 								  pNewTask = new REMOTE_TASK;
 								  pNewTask->cmd = REMOTE_CMD_GET_CONN_STATUS;
-								  //pNewTask->pRemote = pRemote;
-								  //pNewTask->callId = sn;
+			}
+				break;
+			case GET_TYPE_ONLINE_DEVICES:
+			{
+											pNewTask = new REMOTE_TASK;
+											pNewTask->cmd = REMOTE_CMD_MNIS_STATUS;
+											pNewTask->param.info.mnisStatusParam.getType = getType;
 			}
 				break;
 			default:

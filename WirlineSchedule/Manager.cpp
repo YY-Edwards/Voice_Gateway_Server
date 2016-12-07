@@ -958,7 +958,7 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 							 element.setKeyVal("IsInGps", FieldValue((1 == radioStatus.gpsQueryMode)));
 							 info.push(element);
 						 }
-						 g_pNet->wlMnisStatus(MNIS_GET_TYPE_RADIO, info);
+						 g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, info);
 	}
 		break;
 	default:

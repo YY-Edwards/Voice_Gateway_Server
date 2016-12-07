@@ -51,6 +51,29 @@
 
 #include "WireLanRecvAction.h"
 #include "WireLanSendAction.h"
+
+#include "MonitorServer.h"
+std::string getServerName()
+{
+	std::string serverName = "";
+	std::string strConfig = CSettings::instance()->getValue("radio");
+	Document d;
+	d.Parse(strConfig.c_str());
+	if (d.HasMember("IsEnable") && d["IsEnable"].IsBool() )
+	{
+		
+		if (TRUE == d["IsEnable"].GetBool())
+		{
+			serverName = "Trbox.Dispatch";
+		}
+		else
+		{
+			serverName = "Trbox.Wirelan";
+		}
+		
+	}
+	return  serverName;
+}
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//CSettings::instance()->getResponse("sucess", 1, 200, "", rapidjson::Value(NULL));
@@ -175,7 +198,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	//rpcServer.addActionHandler("message", msgAction);
 	//
 	//rpcServer.start();
-
+	
+	CMonitorServer ms;
+	std::string strName = getServerName();
+	std::wstring wstr(strName.length(), L' ');
+	std::copy(strName.begin(), strName.end(), wstr.begin());
+	if (strName != "")
+	{
+		ms.startMonitor(wstr.c_str());
+	}
 	while (1);
 	return 0;
 }

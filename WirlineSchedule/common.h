@@ -178,6 +178,7 @@ extern HANDLE g_waitHandleRemoteTask;
 #define REMOTE_CMD_MNIS_STATUS 0x08
 
 #define GET_TYPE_CONN 0x01
+#define GET_TYPE_ONLINE_DEVICES 0x02
 /*JSON相关结构体*/
 
 /************************************************************************/

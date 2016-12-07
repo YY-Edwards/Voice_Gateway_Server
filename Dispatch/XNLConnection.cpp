@@ -780,7 +780,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 	
 	xnl_opcode = ntohs(*((unsigned short *)(pBuf + 2))); 
 	xcmp_opcode = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t))));
-	rmt_type_code = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+1)));             //feature  or result
+	rmt_type_code = static_cast<unsigned char>( ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+1))));             //feature  or result
 	//xnl_transationid = ntohs(*((unsigned short *)(pBuf + 5)));
 	check_result = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+2)));              //status
 	//rmt_fuction = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+4)));               //function
@@ -1338,7 +1338,7 @@ void CXNLConnection::send_xcmp_dev_init_status()
     p_xcmp_msg->xcmp_ver[0] = 0x00;
     p_xcmp_msg->xcmp_ver[1] = 0x00;
     p_xcmp_msg->xcmp_ver[2] = 0x00;
-    p_xcmp_msg->xcmp_ver[3] = m_XCMP_ver;  /* echo the xcmp version */
+	p_xcmp_msg->xcmp_ver[3] = static_cast<unsigned char>(m_XCMP_ver);  /* echo the xcmp version */
     p_xcmp_msg->dev_init_type = 0x00;
     p_xcmp_msg->dev_type = 0x0A;
     p_xcmp_msg->dev_status = 0x0000;
@@ -1599,7 +1599,7 @@ BOOL CXNLConnection::send_xcmp_menu_navigation_request(unsigned char function,
     
     if (m_XCMP_ver == 1)
     {
-       p_msg->data[0] = count;
+		p_msg->data[0] = static_cast<unsigned char>(count);
        payload_len = sizeof(xcmp_menu_navigation_request_t) - sizeof(xnl_msg_hdr_t)- 1;
     }
     else
@@ -1848,7 +1848,7 @@ void CXNLConnection::decode_xcmp_radio_status_reply(char *p_msg)
 		unsigned short xcmp_opcode = 0;
 		unsigned char result = 0;
 		xcmp_opcode = ntohs(*(unsigned short *)(p_msg + sizeof(xnl_msg_hdr_t)));
-		result = ntohs(*(unsigned short *)(p_msg + sizeof(xnl_msg_hdr_t)+2));
+		result = static_cast<unsigned char>( ntohs(*(unsigned short *)(p_msg + sizeof(xnl_msg_hdr_t)+2)));
 
 		char mac[11];
 		memcpy(mac, p_msg + sizeof(xnl_msg_hdr_t)+4, 10);
