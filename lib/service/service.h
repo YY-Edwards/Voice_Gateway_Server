@@ -2,6 +2,7 @@
 
 #include <mutex>
 #include <functional>
+#include <memory>
 
 class CService{
 private:
