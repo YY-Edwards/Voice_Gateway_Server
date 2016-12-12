@@ -53,7 +53,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSLE;_USRDLL;REALTIMERECORDORPLAYPCM_EXPORTS;GLOG_NO_ABBREVIATED_SEVERITIES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSLE;_USRDLL;REALTIMERECORDORPLAYPCM_EXPORTS;GLOG_NO_ABBREVIATED_SEVERITIES;%(PreprocessorDefinitions);_WINSOCK_DEPRECATED_NO_WARNINGS</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>
       </AdditionalIncludeDirectories>
@@ -70,7 +70,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;REALTIMERECORDORPLAYPCM_EXPORTS;GLOG_NO_ABBREVIATED_SEVERITIES;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_USRDLL;REALTIMERECORDORPLAYPCM_EXPORTS;GLOG_NO_ABBREVIATED_SEVERITIES;%(PreprocessorDefinitions);_WINSOCK_DEPRECATED_NO_WARNINGS</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
     </ClCompile>
     <Link>
