@@ -386,21 +386,42 @@
                             <BulletDecorator.Bullet>
                                 <Border x:Name="border" BorderBrush="Black" BorderThickness="0" Height="18" Width="18">
                                     <Border.Background>
-                                        <ImageBrush ImageSource="/TrboX;component/themes/resource/viewlist.png"/>
+                                        <ImageBrush ImageSource="/TrboX;component/resource/images/icon_view_14_14_n.png"/>
                                     </Border.Background>
                                     <Themes:BulletChrome BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" IsChecked="{TemplateBinding IsChecked}" RenderMouseOver="{TemplateBinding IsMouseOver}" RenderPressed="{TemplateBinding IsPressed}" d:IsHidden="True" Margin="0,0,18,18"/>
                                 </Border>
                             </BulletDecorator.Bullet>
                         </BulletDecorator>
                         <ControlTemplate.Triggers>
-                            <Trigger Property="IsChecked" Value="False"/>
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter Property="Background" TargetName="border">
                                     <Setter.Value>
-                                        <ImageBrush ImageSource="/TrboX;component/themes/resource/viewpane.png"/>
+                                        <ImageBrush ImageSource="/TrboX;component/resource/images/panel_view_14_14_n.png"/>
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
+                            <MultiTrigger>
+                            	<MultiTrigger.Conditions>
+                            		<Condition Property="IsChecked" Value="False"/>
+                            		<Condition Property="IsMouseOver" Value="True"/>
+                            	</MultiTrigger.Conditions>
+                            	<Setter Property="Background" TargetName="border">
+                            		<Setter.Value>
+                            			<ImageBrush ImageSource="/TrboX;component/resource/images/icon_view_14_14_h.png"/>
+                            		</Setter.Value>
+                            	</Setter>
+                            </MultiTrigger>
+                            <MultiTrigger>
+                            	<MultiTrigger.Conditions>
+                            		<Condition Property="IsChecked" Value="True"/>
+                            		<Condition Property="IsMouseOver" Value="True"/>
+                            	</MultiTrigger.Conditions>
+                            	<Setter Property="Background" TargetName="border">
+                            		<Setter.Value>
+                            			<ImageBrush ImageSource="/TrboX;component/resource/images/panel_view_14_14_h.png.png"/>
+                            		</Setter.Value>
+                            	</Setter>
+                            </MultiTrigger>
                             <Trigger Property="HasContent" Value="true">
                                 <Setter Property="FocusVisualStyle" Value="{StaticResource CheckRadioFocusVisual}"/>
                                 <Setter Property="Padding" Value="4,0,0,0"/>
@@ -426,7 +447,7 @@
                             <BulletDecorator.Bullet>
                                 <Border x:Name="border" BorderBrush="Black" BorderThickness="0" Height="18" Width="18">
                                     <Border.Background>
-                                        <ImageBrush ImageSource="/TrboX;component/themes/resource/Max.png"/>
+                                        <ImageBrush ImageSource="/TrboX;component/resource/images/full_screen_14_14_n.png"/>
                                     </Border.Background>
                                     <Themes:BulletChrome BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" IsChecked="{TemplateBinding IsChecked}" RenderMouseOver="{TemplateBinding IsMouseOver}" RenderPressed="{TemplateBinding IsPressed}" d:IsHidden="True" Margin="0,0,18,18"/>
                                 </Border>
@@ -437,10 +458,32 @@
                             <Trigger Property="IsChecked" Value="True">
                                 <Setter Property="Background" TargetName="border">
                                     <Setter.Value>
-                                        <ImageBrush ImageSource="/TrboX;component/themes/resource/Min.png"/>
+                                        <ImageBrush ImageSource="/TrboX;component/resource/images/normall_screen_14_14_n.png"/>
                                     </Setter.Value>
                                 </Setter>
                             </Trigger>
+                            <MultiTrigger>
+                            	<MultiTrigger.Conditions>
+                            		<Condition Property="IsChecked" Value="False"/>
+                            		<Condition Property="IsMouseOver" Value="True"/>
+                            	</MultiTrigger.Conditions>
+                            	<Setter Property="Background" TargetName="border">
+                            		<Setter.Value>
+                            			<ImageBrush ImageSource="/TrboX;component/resource/images/full_screen_14_14_h.png"/>
+                            		</Setter.Value>
+                            	</Setter>
+                            </MultiTrigger>
+                            <MultiTrigger>
+                            	<MultiTrigger.Conditions>
+                            		<Condition Property="IsChecked" Value="True"/>
+                            		<Condition Property="IsMouseOver" Value="True"/>
+                            	</MultiTrigger.Conditions>
+                            	<Setter Property="Background" TargetName="border">
+                            		<Setter.Value>
+                            			<ImageBrush ImageSource="/TrboX;component/resource/images/normall_screen_14_14_h.png"/>
+                            		</Setter.Value>
+                            	</Setter>
+                            </MultiTrigger>
                             <Trigger Property="HasContent" Value="true">
                                 <Setter Property="FocusVisualStyle" Value="{StaticResource CheckRadioFocusVisual}"/>
                                 <Setter Property="Padding" Value="4,0,0,0"/>
@@ -1274,7 +1317,7 @@
                 </DockPanel>
                 <!--<src:Contact x:Name="ChoiceContact" IsMultiple="False" DockPanel.Dock="Top" Margin="0,5,0,0"/>-->
             </Border>
-            <Grid Margin="0" d:IsLocked="True">
+            <Grid Margin="0">
                 <Border BorderBrush="Black" BorderThickness="0" Margin="0" Padding="0,8">
                     <Grid x:Name="grd_main">
                         <Grid.ColumnDefinitions>
@@ -1434,9 +1477,29 @@
                                                     </TreeViewItem>
                                                 </DockPanel>
                                             </TabItem>
-                                            <TabItem Header="报表" Style="{DynamicResource SimpleTabItem}" Width="20" d:IsLocked="True" d:IsHidden="True">
+                                            <TabItem Header="报表" Style="{DynamicResource SimpleTabItem}" Width="20">
                                                 <DockPanel>
-                                                    <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top"/>
+                                                	<TabControl>
+                                                		<TabItem Header="20161208.log">
+                                                			<Grid Background="#FFE5E5E5">
+                                                				<DataGrid>
+                                                					<DataGrid.Columns>
+                                                						<DataGridTextColumn  Width="60" Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="日期"/>
+                                                						<DataGridTextColumn  Width="60" Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="目标"/>
+                                                						<DataGridTextColumn  Width="60" Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="经度"/>
+                                                						<DataGridTextColumn  Width="60" Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="纬度"/>
+                                                					</DataGrid.Columns>
+                                                					
+                                                				</DataGrid>
+                                                			</Grid>
+                                                		</TabItem>
+                                                		<TabItem Header="20161209.log">
+                                                			<Grid Background="#FFE5E5E5"/>
+                                                		</TabItem>
+                                                		<TabItem Header="20161210.log" >
+                                                			<Grid Background="#FFE5E5E5"/>
+                                                		</TabItem>
+                                                	</TabControl>
                                                 </DockPanel>
                                             </TabItem>
                                         </TabControl>
