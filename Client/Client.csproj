@@ -198,8 +198,16 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="resource\images\checked_14_14.png" />
+    <Resource Include="resource\images\full_screen_14_14_h.png" />
+    <Resource Include="resource\images\full_screen_14_14_n.png" />
+    <Resource Include="resource\images\icon_view_14_14_h.png" />
+    <Resource Include="resource\images\icon_view_14_14_n.png" />
     <Resource Include="resource\images\menu_chk_16_16_d .png" />
     <Resource Include="resource\images\menu_chk_16_16_n.png" />
+    <Resource Include="resource\images\normall_screen_14_14_h.png" />
+    <Resource Include="resource\images\normall_screen_14_14_n.png" />
+    <Resource Include="resource\images\panel_view_14_14_h.png.png" />
+    <Resource Include="resource\images\panel_view_14_14_n.png" />
     <Resource Include="resource\images\serach_21_21_h.png" />
     <Resource Include="themes\resource\loginbk.jpg" />
   </ItemGroup>
