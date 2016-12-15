@@ -191,7 +191,7 @@ void CDb::migration()
 
 	for (size_t i = 0; i < sizeof(migrateTable) / sizeof(DbMigrate); i++)
 	{
-		if (CURRENT_DB_VER > migrateTable[i].ver)
+		if (CURRENT_DB_VER < migrateTable[i].ver)
 		{
 			continue;
 		}
