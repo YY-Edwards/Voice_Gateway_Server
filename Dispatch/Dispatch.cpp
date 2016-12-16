@@ -67,6 +67,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	/*ÊÍ·Å×ÊÔ´*/
 	while (!CService::instance()->m_bServiceStopped);
+	{
+		Sleep(100);
+	}
 	dis.disConnect();
 	while (rmtPeerList.size() > 0)
 	{
