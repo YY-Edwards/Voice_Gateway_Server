@@ -168,7 +168,10 @@ int _tmain(int argc, _TCHAR* argv[])
 		m_ret = m_pDb->Open(DB_HOST, DB_PORT, DB_USER, DB_PWD, DB_NAME);
 
 #if SERVICE_CODDE
-		while (!CService::instance()->m_bServiceStopped);
+		while (!CService::instance()->m_bServiceStopped)
+		{
+			Sleep(100);
+		}
 #else
 		handleLog("input 0 for end");
 		scanf_s("%d", &cmd);
