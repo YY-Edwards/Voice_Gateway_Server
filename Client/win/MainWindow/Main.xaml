@@ -1308,7 +1308,7 @@
                         <Grid x:Name="grd_Nav" Margin="0,0,8,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition x:Name="grd_Row_Mgr" MinHeight="34"/>
-                                <RowDefinition Height="124"  MaxHeight="124" MinHeight="42"/>
+                                <RowDefinition Height="83"  MaxHeight="83" MinHeight="42"/>
                             </Grid.RowDefinitions>
                             <Border BorderBrush="#FF0F0F10" BorderThickness="1" Margin="0,0,0,8" Background="#FF3B3B3D">
                                 <DockPanel>
@@ -1394,7 +1394,7 @@
                                     <RadioButton x:Name="rad_Nav_Dispatch" Content="语音调度" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" IsChecked="True" Height="41" Foreground="{DynamicResource fbg}" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D"/>
                                     <RadioButton x:Name="rad_Nav_Map" Content="地图" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" Height="41"  Foreground="{DynamicResource fbg}" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D"/>
                                     <RadioButton x:Name="rad_Nav_Recording" Content="录音" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" Height="41" Foreground="{DynamicResource fbg}" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D" Visibility="Collapsed"/>
-                                    <RadioButton x:Name="rad_Nav_Report" Content="报表" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" Height="41" Foreground="{DynamicResource fbg}" BorderThickness="0" BorderBrush="#FF0C0C0D"/>
+                                    <RadioButton x:Name="rad_Nav_Report" Content="报表" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" Height="41" Foreground="{DynamicResource fbg}" BorderThickness="0" BorderBrush="#FF0C0C0D" Visibility="Collapsed"/>
                                 </DockPanel>
                             </Border>
                             <GridSplitter x:Name="grdspl_Mgs_Nav" HorizontalAlignment="Stretch" Height="8" VerticalAlignment="Bottom" Margin="0" Background="#000C0103" d:IsLocked="True" d:IsHidden="True"/>
