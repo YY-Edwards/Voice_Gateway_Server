@@ -40,6 +40,18 @@ namespace TrboX
         {
             InitializeComponent();
 
+            Process[] processes;
+            processes = Process.GetProcessesByName("TServer");
+
+            if (processes.Count() > 0) return;
+            else
+            {
+                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "/Svr/TServer.exe"))
+                {
+                    System.Diagnostics.Process.Start(AppDomain.CurrentDomain.BaseDirectory + "/Svr/TServer.exe");
+                }
+            }   
+
             this.Loaded += delegate
             {
                 DataBase.open("SetttingLog.lg");
@@ -56,6 +68,27 @@ namespace TrboX
 
                 SettingComponents.Set(SettingMgr.Get());
                // SettingComponents.FileGroupList(TargetMgr.TargetList.Group);
+
+
+                btn_Header.PreviewMouseLeftButtonDown += delegate{this.DragMove();};
+
+
+                if (null != btn_SysClose)
+                {
+                    btn_SysClose.Click += delegate
+                    {
+                        OnMyWindow_Btn_Close_Click();
+                    };
+                }
+
+                //Image img_SysMin = (Image)baseWindowTemplate.FindName("img_SysMin", this);
+                if (null != btn_SysMin)
+                {
+                    btn_SysMin.Click += delegate
+                    {
+                        OnMyWindow_Btn_Min_Click();
+                    };
+                }
             };
 
         }
@@ -206,6 +239,8 @@ namespace TrboX
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
+
+            int i = 0;
         }
 
         private void btn_Apply_Click(object sender, RoutedEventArgs e)
@@ -286,6 +321,5 @@ namespace TrboX
                 import();
             }
         }
-
     }
 }
