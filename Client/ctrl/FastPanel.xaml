@@ -26,6 +26,13 @@
         <local:ButtonHideItemConverter x:Key="OpBtnHide" />
 
         <local:ContactTypeItemConverter x:Key="ContactTypeToItem" />
+
+        <local:TargetTypeConv x:Key="TargetTypeConv" />
+        <local:ControlTypeConv x:Key="ControlTypeConv" />
+
+        
+
+
         <Style x:Key="ComboButtonSCtrl" TargetType="{x:Type local:ComboButton}">
             <Setter Property="Template">
                 <Setter.Value>
@@ -55,89 +62,8 @@
             </Setter>
         </Style>
 
-        <Style x:Key="CheckBoxStylePTT" TargetType="{x:Type CheckBox}">
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-            <Setter Property="Background" Value="{StaticResource CheckBoxFillNormal}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource CheckBoxStroke}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FocusVisualStyle" Value="{StaticResource EmptyCheckBoxFocusVisual}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type CheckBox}">
-                        <Border x:Name="border" Background="#FFE69247" BorderThickness="0" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" >
-                            <TextBlock  x:Name="txt" TextWrapping="Wrap" Text="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" TargetName="border" Value="#FFFF8B23"/>
-                            </Trigger>
-                            <Trigger Property="HasContent" Value="true">
-                                <Setter Property="FocusVisualStyle" Value="{StaticResource CheckRadioFocusVisual}"/>
-                                <Setter Property="Padding" Value="4,0,0,0"/>
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter Property="Text" TargetName="txt" Value="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="ButtonStyleFastSend" TargetType="{x:Type Button}">
-            <Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}"/>
-            <Setter Property="Background" Value="{StaticResource ButtonNormalBackground}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource ButtonNormalBorder}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-            <Setter Property="HorizontalContentAlignment" Value="Center"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="Padding" Value="1"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type Button}">
-                        <Border x:Name="border" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Stretch" Height="32" VerticalAlignment="Top" Width="Auto" Background="#FF78ACE5">
-                            <TextBlock TextWrapping="Wrap" Text="{TemplateBinding Content}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="14"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" TargetName="border" Value="#FF70B4FF"/>
-                            </Trigger>
-                            <Trigger Property="IsEnabled" Value="false">
-                                <Setter Property="Foreground" Value="#ADADAD"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        <Style x:Key="CheckBoxStyleSend" TargetType="{x:Type CheckBox}">
-            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
-            <Setter Property="Background" Value="{StaticResource CheckBoxFillNormal}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource CheckBoxStroke}"/>
-            <Setter Property="BorderThickness" Value="1"/>
-            <Setter Property="FocusVisualStyle" Value="{StaticResource EmptyCheckBoxFocusVisual}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type CheckBox}">
-                        <Border x:Name="border" Background="#FF78ACE5" BorderThickness="0" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" >
-                            <TextBlock x:Name="txt"  TextWrapping="Wrap" Text="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="HasContent" Value="true">
-                                <Setter Property="FocusVisualStyle" Value="{StaticResource CheckRadioFocusVisual}"/>
-                                <Setter Property="Padding" Value="4,0,0,0"/>
-                            </Trigger>
-                            <Trigger Property="IsChecked" Value="True">
-                                <Setter Property="Text" TargetName="txt" Value="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
-                            </Trigger>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter Property="Background" TargetName="border" Value="#FF70B4FF"/>
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+
+
 
     </UserControl.Resources>
     <!--Simple Tree View - 这用来在 ScrollViewer 中对 TreeViewItems 进行布局 -->
@@ -181,13 +107,13 @@
                         <Binding  Path="Operate" />
                     </MultiBinding>
                 </Image.Source>
-                 <Image.Opacity>
-                <MultiBinding  Converter="{StaticResource TypeToOP}" Mode="OneWay">
-                    <Binding  Path="Type" />
-                    <Binding  Path="Contact" />
-                    <Binding  Path="Operate" />
-                </MultiBinding>
-            </Image.Opacity>
+                <Image.Opacity>
+                    <MultiBinding  Converter="{StaticResource TypeToOP}" Mode="OneWay">
+                        <Binding  Path="Type" />
+                        <Binding  Path="Contact" />
+                        <Binding  Path="Operate" />
+                    </MultiBinding>
+                </Image.Opacity>
             </Image>
         </Grid>
         <Border x:Name="bdr_Back" BorderBrush="Black" BorderThickness="0" Grid.RowSpan="3" Grid.Row="2" Padding="0"  ClipToBounds="True">
@@ -260,15 +186,15 @@
                                             <Grid>
                                                 <TextBlock TextWrapping="Wrap" Text="呼叫" VerticalAlignment="Top" FontSize="14" Margin="0,5,3,0" Grid.ColumnSpan="2" HorizontalAlignment="Center" Foreground="#FFC0C8CF" FontFamily="Hiragino Sans GB W3"/>
                                                 <DockPanel LastChildFill="False" Grid.Row="1" Grid.ColumnSpan="2" Margin="8,85,8,10">
-                                                    <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,1.5" Height="27">
+                                                    <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,1.5" Height="27" Visibility="Collapsed">
                                                         <TextBlock TextWrapping="Wrap" Text="呼叫方式：" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,5,0" FontSize="13" Foreground="#FFB6BABE"/>
-                                                        <ComboBox DockPanel.Dock="Top" Margin="0" SelectedIndex="0" Height="27" Style="{DynamicResource ComboBoxStyleNormal}" Foreground="#FFB6BABE" FontSize="14">
+                                                        <ComboBox DockPanel.Dock="Top" Margin="0" SelectedIndex="{Binding Operate.Target, Converter={StaticResource TargetTypeConv}}" Height="27" Style="{DynamicResource ComboBoxStyleNormal}" Foreground="#FFB6BABE" FontSize="14">
                                                             <ComboBoxItem Content="组呼" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFD2DFF5" FontSize="13"/>
                                                             <ComboBoxItem Content="个呼" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFD2DFF5" FontSize="13"/>
                                                             <ComboBoxItem Content="全呼" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFD2DFF5" FontSize="13"/>
                                                         </ComboBox>
                                                     </DockPanel>
-                                                    <DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,1.5" Height="27">
+                                                    <DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,1.5" Height="27" Visibility="Collapsed">
                                                         <TextBlock TextWrapping="Wrap" Text="信　　道：" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,5,0" FontSize="13" Foreground="#FFB6BABE"/>
                                                         <ComboBox SelectedIndex="0" Height="27" Style="{DynamicResource ComboBoxStyleNormal}" Foreground="#FFB6BABE" FontSize="14">
                                                             <ComboBoxItem Content="信道1" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFD2DFF5" FontSize="13"/>
@@ -290,15 +216,15 @@
                                                     <Grid Height="60" DockPanel.Dock="Bottom">
                                                         <Button x:Name="btn_Op_SendMsg" Content="发送" VerticalAlignment="Center" Height="32" Click="btn_Op_SendMsg_Click" Margin="0" Style="{DynamicResource ButtonStyleFastSend}"/>
                                                     </Grid>
-                                                    <DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,1.5" Height="27">
+                                                    <DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,1.5" Height="27" Visibility="Collapsed">
                                                         <TextBlock TextWrapping="Wrap" Text="发送方式：" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,5,0" FontSize="13" Foreground="#FFB6BABE"/>
-                                                        <ComboBox DockPanel.Dock="Top" Margin="0" SelectedIndex="0" Style="{DynamicResource ComboBoxStyleNormal}" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFB6BABE" FontSize="14">
+                                                        <ComboBox DockPanel.Dock="Top" Margin="0"  SelectedIndex="{Binding Operate.Target, Converter={StaticResource TargetTypeConv}}" Style="{DynamicResource ComboBoxStyleNormal}" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="#FFB6BABE" FontSize="14">
                                                             <ComboBoxItem Content="组发" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" FontSize="13" Foreground="#FFD2DFF5"/>
                                                             <ComboBoxItem Content="个发" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" FontSize="13" Foreground="#FFD2DFF5"/>
                                                             <ComboBoxItem Content="全发" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" FontSize="13" Foreground="#FFD2DFF5"/>
                                                         </ComboBox>
                                                     </DockPanel>
-                                                    <DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,1.5" Height="27">
+                                                    <DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,1.5" Height="27" Visibility="Collapsed">
                                                         <TextBlock TextWrapping="Wrap" Text="信　　道：" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,5,0" FontSize="13" Foreground="#FFB6BABE"/>
                                                         <ComboBox SelectedIndex="0" Style="{DynamicResource ComboBoxStyleNormal}" Foreground="#FFB6BABE" FontSize="14">
                                                             <ComboBoxItem Content="信道1" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" FontSize="13" Foreground="#FFD2DFF5"/>
@@ -307,7 +233,7 @@
                                                     </DockPanel>
                                                     <DockPanel Margin="0,1.5,0,0" DockPanel.Dock="Top">
                                                         <TextBlock TextWrapping="Wrap" Text="内　　容：" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="0,2,5,0" FontSize="13" Foreground="#FFB6BABE"/>
-                                                        <TextBox x:Name="txt_Op_msg" TextWrapping="Wrap" Text="{Binding m_Operate.message.message}" Margin="0" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFD2DFF5" CaretBrush="#FFD2DFF5" SelectionBrush="{x:Null}" Background="{x:Null}" BorderBrush="{x:Null}"/>
+                                                        <TextBox x:Name="txt_Op_msg" TextWrapping="Wrap" Text="{Binding Operate.Operate.Message}" Margin="0" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFD2DFF5" CaretBrush="#FFD2DFF5" SelectionBrush="{x:Null}" Background="{x:Null}" BorderBrush="{x:Null}"/>
                                                     </DockPanel>
                                                 </DockPanel>
                                             </Grid>
@@ -322,13 +248,13 @@
                                                     <Grid Height="60" VerticalAlignment="Top" DockPanel.Dock="Bottom" Visibility="{Binding IsChecked, Converter={StaticResource FalseHide}, ElementName=chk_Cycle}">
                                                         <CheckBox x:Name="chk_Op_StartCycle" Content="开始查询" VerticalAlignment="Center" Click="chk_Op_StartCycle_Click" Height="32" Margin="0" Style="{DynamicResource CheckBoxStyleSend}" Tag="停止查询"/>
                                                     </Grid>
-                                                    <CheckBox x:Name="chk_All" Content="　查询所有" Style="{DynamicResource CheckBoxStyleNormal}" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,6" Height="15" Visibility="Collapsed" Foreground="#FFB6BABE"/>
-                                                    <CheckBox x:Name="chk_CSBK" Content="　CSBK" Style="{DynamicResource CheckBoxStyleNormal}" VerticalAlignment="Top" DockPanel.Dock="Top" IsChecked="{Binding m_Operate.position.iscsbk}"  Checked="updatecyclelist" Unchecked="updatecyclelist" Margin="0,6" Height="15" Foreground="#FFB6BABE"/>
-                                                    <CheckBox x:Name="chk_Enh" Content="　CSBK增强型" Style="{DynamicResource CheckBoxStyleNormal}" VerticalAlignment="Top" DockPanel.Dock="Top"  IsChecked="{Binding m_Operate.position.isenh}" IsEnabled="{Binding IsChecked, ElementName=chk_CSBK}" Checked="updatecyclelist" Unchecked="updatecyclelist" Margin="0,6" Height="15" Foreground="#FFB6BABE"/>
-                                                    <CheckBox x:Name="chk_Cycle" Content="　周期查询" Style="{DynamicResource CheckBoxStyleNormal}" VerticalAlignment="Center" Margin="0,6,5,6" Height="15" DockPanel.Dock="Top" Foreground="#FFB6BABE" IsChecked="True"/>
+                                                    <CheckBox x:Name="chk_All" Content="　查询所有" Style="{DynamicResource CheckBoxStyleNormal}" VerticalAlignment="Top"  DockPanel.Dock="Top" Margin="0,6" Height="15" Visibility="Collapsed" Foreground="#FFB6BABE"/>
+                                                    <CheckBox x:Name="chk_CSBK" Content="　CSBK" Style="{DynamicResource CheckBoxStyleNormal}" VerticalAlignment="Top" DockPanel.Dock="Top" IsChecked="{Binding Operate.Operate.IsCSBK}"  Checked="updatecyclelist" Unchecked="updatecyclelist" Margin="0,6" Height="15" Foreground="#FFB6BABE"/>
+                                                    <CheckBox x:Name="chk_Enh" Content="　CSBK增强型" Style="{DynamicResource CheckBoxStyleNormal}" VerticalAlignment="Top" DockPanel.Dock="Top"  IsChecked="{Binding Operate.Operate.IsEnh}" IsEnabled="{Binding IsChecked, ElementName=chk_CSBK}" Checked="updatecyclelist" Unchecked="updatecyclelist" Margin="0,6" Height="15" Foreground="#FFB6BABE"/>
+                                                    <CheckBox x:Name="chk_Cycle" Content="　周期查询" Style="{DynamicResource CheckBoxStyleNormal}" VerticalAlignment="Center" Margin="0,6,5,6" IsChecked="{Binding Operate.Operate.IsCycle}" Height="15" DockPanel.Dock="Top" Foreground="#FFB6BABE"/>
                                                     <DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Height="27" Margin="0,1.5,0,0" Visibility="{Binding IsChecked, Converter={StaticResource FalseHide}, ElementName=chk_Cycle}">
                                                         <TextBlock TextWrapping="Wrap" Text="周　　期：" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,5.245,5,5.245" FontSize="13" Foreground="#FFB6BABE"/>
-                                                        <ComboBox x:Name="cmb_CycleLst" Style="{DynamicResource ComboBoxStyleNormal}" VerticalAlignment="Center"  Margin="0" SelectedIndex="0" Height="27" FontSize="14" Foreground="#FFB6BABE"/>
+                                                        <ComboBox x:Name="cmb_CycleLst" Tag="{Binding Operate.Operate.Cycle}" Style="{DynamicResource ComboBoxStyleNormal}" VerticalAlignment="Center"  Margin="0" Height="27" FontSize="14" Foreground="#FFB6BABE"/>
                                                     </DockPanel>
                                                 </DockPanel>
                                             </Grid>
@@ -341,9 +267,9 @@
                                                     <Grid Height="60" VerticalAlignment="Top" DockPanel.Dock="Bottom">
                                                         <Button x:Name="btn_Op_Control" Content="发送指令" Height="32" VerticalAlignment="Center" Click="btn_Op_Control_Click" Margin="0" Style="{DynamicResource ButtonStyleFastSend}"/>
                                                     </Grid>
-                                                    <DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,1.5" Height="27">
+                                                    <DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,1.5" Height="27" Visibility="Collapsed">
                                                         <TextBlock TextWrapping="Wrap" Text="发送方式：" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,5,0" Foreground="#FFB6BABE" FontSize="13"/>
-                                                        <ComboBox VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0" SelectedIndex="0" Style="{DynamicResource ComboBoxStyleNormal}" Height="27" Foreground="#FFB6BABE" FontSize="14">
+                                                        <ComboBox VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0" SelectedIndex="{Binding Operate.Target, Converter={StaticResource TargetTypeConv}}" Style="{DynamicResource ComboBoxStyleNormal}" Height="27" Foreground="#FFB6BABE" FontSize="14">
                                                             <ComboBoxItem Content="组发" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5" Style="{DynamicResource ComboBoxItemStyleNormal}"/>
                                                             <ComboBoxItem Content="个发" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5" Style="{DynamicResource ComboBoxItemStyleNormal}"/>
                                                             <ComboBoxItem Content="全发" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5" Style="{DynamicResource ComboBoxItemStyleNormal}"/>
@@ -351,13 +277,13 @@
                                                     </DockPanel>
                                                     <DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,1.5" Height="27">
                                                         <TextBlock TextWrapping="Wrap" Text="信　　令：" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,5,0" Foreground="#FFB6BABE" FontSize="13"/>
-                                                        <ComboBox x:Name="cmb_Op_Control" VerticalAlignment="Top" SelectedIndex="0" Height="27" Foreground="#FFB6BABE" FontSize="14" Style="{DynamicResource ComboBoxStyleNormal}">
+                                                        <ComboBox x:Name="cmb_Op_Control" VerticalAlignment="Top" SelectedIndex="{Binding Operate.Operate.Type, Converter={StaticResource ControlTypeConv}}" Height="27" Foreground="#FFB6BABE" FontSize="14" Style="{DynamicResource ComboBoxStyleNormal}">
                                                             <ComboBoxItem Content="在线检测" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5" Style="{DynamicResource ComboBoxItemStyleNormal}"/>
                                                             <ComboBoxItem Content="远程监听" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5" Style="{DynamicResource ComboBoxItemStyleNormal}"/>
                                                             <ComboBoxItem Content="遥毙" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5" Style="{DynamicResource ComboBoxItemStyleNormal}"/>
                                                             <ComboBoxItem Content="遥开" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5" Style="{DynamicResource ComboBoxItemStyleNormal}"/>
-                                                            <ComboBoxItem Content="遥晕" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5" Style="{DynamicResource ComboBoxItemStyleNormal}"/>
-                                                            <ComboBoxItem Content="摇醒" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5" Style="{DynamicResource ComboBoxItemStyleNormal}"/>
+                                                            <ComboBoxItem Content="遥晕" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5" Style="{DynamicResource ComboBoxItemStyleNormal}" Visibility="Collapsed"/>
+                                                            <ComboBoxItem Content="摇醒" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5" Style="{DynamicResource ComboBoxItemStyleNormal}" Visibility="Collapsed"/>
                                                         </ComboBox>
                                                     </DockPanel>
                                                 </DockPanel>
@@ -370,7 +296,7 @@
                                                     <Grid Height="60" VerticalAlignment="Top" DockPanel.Dock="Bottom">
                                                         <Button Content="发送工单" VerticalAlignment="Center" Height="32" Margin="0" Style="{DynamicResource ButtonStyleFastSend}"/>
                                                     </Grid>
-                                                    <DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,1.5" Height="27">
+                                                    <DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,1.5" Height="27" Visibility="Collapsed">
                                                         <TextBlock TextWrapping="Wrap" Text="发送方式：" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,5,0" Foreground="#FFB6BABE" FontSize="13"/>
                                                         <ComboBox VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0" SelectedIndex="0" Style="{DynamicResource ComboBoxStyleNormal}" Height="27" Foreground="#FFB6BABE" FontSize="14">
                                                             <ComboBoxItem Content="组发" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5"/>

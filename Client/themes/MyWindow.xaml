@@ -59,7 +59,7 @@
 
     <ControlTemplate x:Key="MainWinTemplate" TargetType="{x:Type Window}">
         <Grid>
-            <Border x:Name="bdr_win" BorderBrush="#FF1D1D1F"  BorderThickness="1" Margin="10"  Background="#FF1D1D1F">
+            <Border x:Name="bdr_win" BorderBrush="#FF1D1D1F" Margin="10"  Background="#FF1D1D1F">
                 <Border.Effect>
                     <DropShadowEffect Color="Black" Direction="315" BlurRadius="10" ShadowDepth="5" Opacity="0.7" />
                 </Border.Effect>
@@ -68,12 +68,14 @@
                         <AdornerDecorator>
                             <ContentPresenter />
                         </AdornerDecorator>
-
                     </DockPanel>
                 </Grid>
 
             </Border>
         </Grid>
+    	<ControlTemplate.Triggers>
+    		<Trigger Property="IsEnabled" Value="False"/>
+    	</ControlTemplate.Triggers>
     </ControlTemplate>
 
     <Style x:Key="MainWinStyle" TargetType="Window">
@@ -184,7 +186,7 @@
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="WindowStyle" Value="None" />
         <Setter Property="AllowsTransparency" Value="True" />
-        <Setter Property="Template" Value="{StaticResource MyWindowTemplate}" />
+        <Setter Property="Template" Value="{StaticResource MainWinTemplate}" />
     </Style>
 
 
@@ -345,6 +347,8 @@
 
 
     <local:SearchTxtConverter x:Key="SearchTxtConverter"/>
+    <local:UserInputConverter x:Key="UserInputConverter"/>
+    <local:UserPasswordConverter x:Key="UserPasswordConverter"/>
     <Style x:Key="TextBoxStyleSearch" BasedOn="{x:Null}" TargetType="{x:Type TextBox}">
         <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
         <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
@@ -597,31 +601,28 @@
         	<Setter Property="Template">
         		<Setter.Value>
         			<ControlTemplate TargetType="{x:Type RadioButton}">
-        				<Border x:Name="border" BorderBrush="Black" BorderThickness="0,0,0,1" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" Background="#00000000">
-        					<Border x:Name="border1" BorderBrush="Black" BorderThickness="0">
-        						<ContentPresenter Margin="0" RecognizesAccessKey="True" VerticalAlignment="Center" HorizontalAlignment="Center"/>
-        					</Border>
-        				</Border>
+        				<Grid x:Name="grid" Margin="0" Height="24">
+        					<Border x:Name="border1_Copy1" BorderBrush="#FF626262" BorderThickness="1" Background="#FF3B3B3D" CornerRadius="4"/>
+        					<Border x:Name="border1_Copy2" BorderBrush="{x:Null}" BorderThickness="0" Background="#FF78ACE5" CornerRadius="4" Visibility="Collapsed"/>
+        					<Border x:Name="border1" BorderBrush="{x:Null}" BorderThickness="0" Background="#3F000000" CornerRadius="4" Visibility="Collapsed"/>
+        					<Border x:Name="border1_Copy" BorderBrush="{x:Null}" BorderThickness="0" Background="#3FFFFFFF" CornerRadius="4" Visibility="Collapsed"/>
+        					<ContentPresenter Margin="10,1" RecognizesAccessKey="True" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        				</Grid>
 				
 					<!-- BulletDecorator 用于提供 checkmark 与 Content 之间的基线对齐 -->
 					
         				<ControlTemplate.Triggers>
         					<Trigger Property="IsChecked" Value="true">
-        						<Setter Property="Background" TargetName="border" Value="Black"/>
-								<Setter Property="Foreground" Value="#FFF"/>
+        						<Setter Property="Visibility" TargetName="border1_Copy2" Value="Visible"/>
         					</Trigger>
         					<Trigger Property="IsMouseOver" Value="true">
-        						<Setter Property="Background" TargetName="border1" Value="Black"/>
-        						<Setter Property="Margin" TargetName="border1" Value="1"/>
-								<Setter Property="Foreground" Value="#FFF"/>
+        						<Setter Property="Visibility" TargetName="border1_Copy" Value="Visible"/>
         					</Trigger>
         					<Trigger Property="IsPressed" Value="true">
-        						<Setter Property="Background" TargetName="border" Value="Black"/>
-								<Setter Property="Foreground" Value="#FFF"/>
+        						<Setter Property="Visibility" TargetName="border1" Value="Visible"/>
         					</Trigger>
         					<Trigger Property="IsEnabled" Value="false">
-        						<Setter Property="Foreground" Value="#80000000"/>
-        						<Setter Property="BorderBrush" TargetName="border" Value="#80000000"/>
+        						<Setter Property="Opacity" TargetName="grid" Value="0.5"/>
         					</Trigger>
 						
         				</ControlTemplate.Triggers>
@@ -1554,6 +1555,264 @@
                     </Border>
                     </Grid>
 
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="CheckBoxStylePTT" TargetType="{x:Type CheckBox}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        <Setter Property="Background" Value="{StaticResource CheckBoxFillNormal}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource CheckBoxStroke}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FocusVisualStyle" Value="{StaticResource EmptyCheckBoxFocusVisual}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CheckBox}">
+                    <Border x:Name="border" Background="#FFE69247" BorderThickness="0" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" >
+                        <TextBlock  x:Name="txt" TextWrapping="Wrap" Text="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" TargetName="border" Value="#FFFF8B23"/>
+                        </Trigger>
+                        <Trigger Property="HasContent" Value="true">
+                            <Setter Property="FocusVisualStyle" Value="{StaticResource CheckRadioFocusVisual}"/>
+                            <Setter Property="Padding" Value="4,0,0,0"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Text" TargetName="txt" Value="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="ButtonStyleFastSend" TargetType="{x:Type Button}">
+        <Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}"/>
+        <Setter Property="Background" Value="{StaticResource ButtonNormalBackground}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource ButtonNormalBorder}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Padding" Value="1"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+                    <Border x:Name="border" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Stretch" Height="32" VerticalAlignment="Top" Width="Auto" Background="#FF78ACE5">
+                        <TextBlock TextWrapping="Wrap" Text="{TemplateBinding Content}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="14"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" TargetName="border" Value="#FF70B4FF"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="#ADADAD"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="CheckBoxStyleSend" TargetType="{x:Type CheckBox}">
+        <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        <Setter Property="Background" Value="{StaticResource CheckBoxFillNormal}"/>
+        <Setter Property="BorderBrush" Value="{StaticResource CheckBoxStroke}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="FocusVisualStyle" Value="{StaticResource EmptyCheckBoxFocusVisual}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type CheckBox}">
+                    <Border x:Name="border" Background="#FF78ACE5" BorderThickness="0" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" >
+                        <TextBlock x:Name="txt"  TextWrapping="Wrap" Text="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasContent" Value="true">
+                            <Setter Property="FocusVisualStyle" Value="{StaticResource CheckRadioFocusVisual}"/>
+                            <Setter Property="Padding" Value="4,0,0,0"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter Property="Text" TargetName="txt" Value="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" TargetName="border" Value="#FF70B4FF"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="ButtonStyleUnSend" TargetType="{x:Type Button}" BasedOn="{x:Null}">
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource SimpleButtonFocusVisual}"/>
+        <Setter Property="Background" Value="{DynamicResource NormalBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+
+                    <!-- 我们将 Grid 用作根，原因在于这便于添加更多的元素来自定义按钮 -->
+                    <Grid x:Name="Grid">
+                        <Border x:Name="Border" Padding="{TemplateBinding Padding}" BorderThickness="0" Background="#FF4C4C4F" CornerRadius="0" BorderBrush="#FF5C5C5D"/>
+                        <TextBlock x:Name="textBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{TemplateBinding Content}" VerticalAlignment="Center" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" FontSize="14"/>
+
+                        <!-- Content Presenter 是控件放置文本内容等项之处 -->
+                        <!-- 通过利用绑定，无需编辑模板即可将控件参数化 -->
+                    </Grid>
+
+                    <!--每种状态都基于模板中的 Border 来设置画笔 -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocused" Value="true">
+                            <Setter Property="BorderBrush" Value="{DynamicResource DefaultedBorderBrush}" TargetName="Border"/>
+                        </Trigger>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Background" TargetName="Border" Value="#FF545D6E"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter Property="Background" TargetName="Border" Value="#FF545D6E"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="true"/>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Opacity" TargetName="Grid" Value="0.5"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ButtonNormalStyle" TargetType="{x:Type Button}" BasedOn="{x:Null}">
+        <Setter Property="FocusVisualStyle" Value="{DynamicResource SimpleButtonFocusVisual}"/>
+        <Setter Property="Background" Value="{DynamicResource NormalBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Button}">
+
+                    <!-- 我们将 Grid 用作根，原因在于这便于添加更多的元素来自定义按钮 -->
+                    <Grid x:Name="Grid">
+                        <Border x:Name="Border" Padding="{TemplateBinding Padding}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" CornerRadius="{Binding Tag, ElementName=textBlock}" BorderBrush="{TemplateBinding BorderBrush}" ClipToBounds="True" />
+                        <Border x:Name="border1" BorderBrush="Black" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" Background="#3F000000" CornerRadius="{Binding CornerRadius, ElementName=Border}" Visibility="Collapsed"/>
+                        <Border x:Name="border" BorderBrush="Black" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" Background="#3FFFFFFF" CornerRadius="{Binding CornerRadius, ElementName=Border}" Visibility="Collapsed"/>
+                        <TextBlock x:Name="textBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{TemplateBinding Content}" VerticalAlignment="Center" FontFamily="{TemplateBinding FontFamily}" Foreground="{TemplateBinding Foreground}" FontSize="{TemplateBinding FontSize}" Tag="{TemplateBinding Tag}" />
+
+                        <!-- Content Presenter 是控件放置文本内容等项之处 -->
+                        <!-- 通过利用绑定，无需编辑模板即可将控件参数化 -->
+                    </Grid>
+
+                    <!--每种状态都基于模板中的 Border 来设置画笔 -->
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsKeyboardFocused" Value="true"/>
+                        <Trigger Property="IsMouseOver" Value="true">
+                            <Setter Property="Visibility" TargetName="border" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsPressed" Value="true">
+                            <Setter Property="Visibility" TargetName="border1" Value="Visible"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="true"/>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Opacity" TargetName="Grid" Value="0.5"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ComboBoxStyle1" TargetType="{x:Type ComboBox}">
+        <Setter Property="SnapsToDevicePixels" Value="true"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ComboBox}">
+                    <Grid Background="#FFBD9C9C" Margin="0">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="18 "/>
+                        </Grid.ColumnDefinitions>
+                        <!-- ToggleButton 已数据绑定到 ComboBox 本身以切换 IsDropDownOpen -->
+                        <ToggleButton Grid.Column="0" Template="{DynamicResource ToggleButtonControlTemplate1}" x:Name="ToggleButton" Focusable="false" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press" Background="{x:Null}" BorderBrush="{x:Null}" Grid.ColumnSpan="2"/>
+                        <DockPanel HorizontalAlignment="Stretch" Height="Auto" LastChildFill="True" VerticalAlignment="Stretch" Width="Auto" Margin="5,0,0,0" d:IsHidden="True">
+                            <local:IconBtn x:Name="btn_Icon" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{x:Null}" Height="22" Width="22" Margin="0,0,5,0" 
+                    				Hover="{Binding Hover, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:ListBtn}}}"
+                    				Normal="{Binding Normal, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:ListBtn}}}"
+                    				Press="{Binding Presse, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:ListBtn}}}"
+                    				Disable="{Binding Disable, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:ListBtn}}}" Foreground="{x:Null}"/>
+                            <Button x:Name="btn_Content"  Content="{Binding Content, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:ListBtn}}}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Width="Auto" Margin="0,0,5,0" Style="{DynamicResource ButtonStyle1}" BorderThickness="0" 
+                    				Foreground="{TemplateBinding Foreground}" 
+                    				FontFamily="{TemplateBinding FontFamily}"
+                    				FontSize="{TemplateBinding FontSize}" Background="{x:Null}" BorderBrush="{x:Null}"                                       
+                                        />
+                        </DockPanel>
+                        <ContentPresenter HorizontalAlignment="Left" Margin="3,150,0,150" x:Name="ContentSite" VerticalAlignment="Center" Content="{TemplateBinding SelectionBoxItem}" ContentTemplate="{TemplateBinding SelectionBoxItemTemplate}" ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}" IsHitTestVisible="False" Visibility="Collapsed" Height="0" Width="0" d:IsHidden="True"/>
+
+                        <!-- 必须将 TextBox 命名为 PART_EditableTextBox，否则 ComboBox 将无法识别它 -->
+                        <TextBox Visibility="Hidden" Template="{DynamicResource ComboBoxTextBox}" HorizontalAlignment="Left" Margin="3,142,0,142" x:Name="PART_EditableTextBox" Style="{x:Null}" VerticalAlignment="Center" Focusable="True" Background="Transparent" IsReadOnly="{TemplateBinding IsReadOnly}" Height="16" Width="4" d:IsHidden="True"/>
+
+                        <!-- Popup 可显示 ComboBox 中的项列表。IsOpen 已数据绑定到通过 ComboBoxToggleButton 来切换的 IsDropDownOpen -->
+                        <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" x:Name="Popup" Focusable="False" AllowsTransparency="True" PopupAnimation="Slide" Grid.ColumnSpan="2" VerticalOffset="{Binding VOffset, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:ListBtn}}}" d:IsHidden="True">
+                            <Grid MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{TemplateBinding ActualWidth}" x:Name="DropDown" SnapsToDevicePixels="True" Background="{x:Null}">
+                                <Grid HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" Margin="5,0,0,0">
+                                    <Border x:Name="DropDownBorder" Background="#FF4C4C4F" BorderBrush="#FF262626" BorderThickness="1" Margin="0,0,5,5">
+                                        <Border.Effect>
+                                            <DropShadowEffect Color="#FF262626" Direction="315" BlurRadius="5" ShadowDepth="3" Opacity="0.5" />
+                                        </Border.Effect>
+                                    </Border>
+                                    <ScrollViewer Margin="1,8,6,13" Style="{DynamicResource SimpleScrollViewer}" SnapsToDevicePixels="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
+
+                                        <!-- StackPanel 用于显示子级，方法是将 IsItemsHost 设置为 True -->
+                                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>
+
+                                    </ScrollViewer>
+                                </Grid>
+                            </Grid>
+                        </Popup>
+                        <Label x:Name="CornerRadius" Content="{Binding Tag, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:ListBtn}}}" HorizontalAlignment="Left" VerticalAlignment="Top" Visibility="Hidden"/>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <!-- 这会强制 DropDown 的大小有最小限制(如果它为空) -->
+                        <Trigger Property="HasItems" Value="false"/>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Foreground" Value="{DynamicResource DisabledForegroundBrush}"/>
+                        </Trigger>
+                        <Trigger Property="IsGrouping" Value="true">
+                            <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                        </Trigger>
+                        <Trigger Property="IsEditable" Value="true">
+                            <Setter Property="IsTabStop" Value="false"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style x:Key="ListViewStyleNormal" TargetType="{x:Type ListView}">
+        <Setter Property="SnapsToDevicePixels" Value="true"/>
+        <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource SolidBorderBrush}"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type ListView}">
+                    <Grid>
+                        <Border x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"/>
+                        <ScrollViewer Margin="0" Style="{DynamicResource ScrollViewerStyleNormal}" Focusable="false" Background="{TemplateBinding Background}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
+
+                            <!-- StackPanel 用来显示子级，方法是将 IsItemsHost 设置为 True -->
+                            <!--<StackPanel Margin="2" IsItemsHost="true"/>-->
+                            <ItemsPresenter/>
+                        </ScrollViewer>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsEnabled" Value="false">
+                            <Setter Property="Background" Value="{DynamicResource DisabledBackgroundBrush}" TargetName="Border"/>
+                            <Setter Property="BorderBrush" Value="{DynamicResource DisabledBorderBrush}" TargetName="Border"/>
+                        </Trigger>
+                        <Trigger Property="IsGrouping" Value="true">
+                            <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

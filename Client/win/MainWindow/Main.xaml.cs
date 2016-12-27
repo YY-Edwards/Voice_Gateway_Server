@@ -19,7 +19,16 @@ using Newtonsoft.Json.Linq;
 using System.Windows.Threading;
 
 namespace TrboX
-{   
+{
+    public class rec_teat_t
+    {
+        public string time { set; get; }
+        public string target { set; get; }
+        public string nat { set; get; }
+        public string lat { set; get; }
+    }
+
+
   /// <summary>
     /// Main.xaml 的交互逻辑
     /// </summary>
@@ -66,7 +75,7 @@ namespace TrboX
                 InitializeEvent();
                 RegRxHandler();
                 TServer.InitializeServer();
-                LogServer.InitializeServer();  
+                //LogServer.InitializeServer();  
      
                 WindowState = WindowState.Maximized;
 
@@ -89,7 +98,19 @@ namespace TrboX
 
                 OnWindowLoaded();
 
-               
+                List<rec_teat_t> testc = new List<rec_teat_t>();
+                for(int i=0; i<10; i++)
+                {
+                    testc.Add(new rec_teat_t() { 
+                     time  = DateTime.Now.ToString(),
+                    target=(10 + 3*i).ToString(),
+                    nat= (20 + 4.7123 * (double)i).ToString(),
+                    lat= (20 + 4.556* (double)i).ToString(),
+                    });
+                }
+
+                dat_Record.ItemsSource = testc;
+
 
                 //new Thread(new ThreadStart(delegate() {
                 //    ReceiveMsghread();                            
@@ -104,7 +125,15 @@ namespace TrboX
                 myTimer.Interval = TimeSpan.FromSeconds(60);
                 myTimer.Tick += new EventHandler(OnTimer60s);
 
+
+                CommandBinding cq = new CommandBinding();
+                cq.Command = ShortCutKey.Quit;
+                cq.Executed += new ExecutedRoutedEventHandler(delegate(object sender, ExecutedRoutedEventArgs e) { Environment.Exit(0); });
+                CommandBindings.Add(cq);
+
+
                 DataBase.InsertLog("登陆软件");
+
             };
             this.Closed += delegate
             {
@@ -889,9 +918,8 @@ namespace TrboX
                     RadioButton rad = new RadioButton()
                     {
                         IsChecked = p.isCurrent,                        
-                        Height = 20,
-                        Padding = new Thickness(2.5),
-                        Margin = new Thickness(2.5),
+                        Height = 24,
+                        Margin = new Thickness(5,2.5, 5,2.5),
                         Style = App.Current.Resources["RadioButtonStyleNav"] as Style
                     };
 

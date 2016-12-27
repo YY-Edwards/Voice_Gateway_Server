@@ -53,23 +53,24 @@ namespace TrboX
 
             this.Loaded += delegate
             {
+                if (m_Target == null) return;
                 if (SelectionType.All == m_Target.Type)
                 {
-                    Title = "全部设备";
-                    SubTitle = "";
+                    txt_Title.Text = "全部设备";
+                    txt_SubTitle.Text = "";
                 }
                 else if (SelectionType.Single == m_Target.Type)
                 {
-                    Title = m_Target.Target[0].Name;
-                    SubTitle = m_Target.Target[0].Information;
+                    txt_Title.Text = m_Target.Target[0].Name;
+                    txt_SubTitle.Text = m_Target.Target[0].Information;
                 }
                 else if (SelectionType.Multiple == m_Target.Type)
                 {
-                    Title = m_Target.Target[0].Name + "、" + m_Target.Target[1].Name + " 等共" + m_Target.Target.Count.ToString() + "人";
+                    txt_Title.Text = m_Target.Target[0].Name + "、" + m_Target.Target[1].Name + " 等共" + m_Target.Target.Count.ToString() + "人";
                 }
                 else
                 {
-                    //return;
+                    return;
                 }
 
                 if (m_Target.Type == SelectionType.All)
@@ -84,7 +85,7 @@ namespace TrboX
                         WindowBackground = MyWindow.TargetInCallBrush;
                     }
                 }
-                else if(m_Target.Target !=null && m_Target.Target.Count > 0)
+                else if (m_Target.Target != null && m_Target.Target.Count > 0)
                 {
                     foreach (CMember mem in m_Target.Target)
                     {
@@ -94,7 +95,7 @@ namespace TrboX
                             {
                                 chk_PTT.IsChecked = true;
                                 WindowBackground = MyWindow.TargetInCallBrush;
-                              
+
                             }
                             if (mem.Group.IsRx)
                             {
@@ -117,32 +118,27 @@ namespace TrboX
 
                             if (mem.Radio.IsGPS) chk_QueryCyclePosition.IsChecked = true;
                         }
-
-
-
                     }
-                      
-                    
                 }
 
 
                 m_Target.DisableFunc(
                     delegate{
                         chk_PTT.IsEnabled = false;
-                        rad_Call.IsEnabled = false;
-                        rad_Message.IsEnabled = false;
-                        rad_Position.IsEnabled = false;
-                        rad_Jobticket.IsEnabled = false;  
+                        //rad_Call.IsEnabled = false;
+                        //rad_Message.IsEnabled = false;
+                        //rad_Position.IsEnabled = false;
+                        //rad_Jobticket.IsEnabled = false;  
                         btn_Control.IsEnabled = false;
                         btn_Check.IsEnabled = false;
                         btn_Minitor.IsEnabled = false;
                     },
                      null, null, null, null, 
                     delegate{
-                        rad_Position.IsEnabled = false; 
+                        rad_Position.Visibility = Visibility.Collapsed;
                     },
                     delegate{
-                        rad_Message.IsEnabled = false; 
+                        rad_Message.Visibility = Visibility.Collapsed;
                     },
                     null);
 
@@ -174,7 +170,7 @@ namespace TrboX
             {
                 if ((mask & 1) != 0)//olnline
                 {
-                    SubTitle = "(在线)" + SubTitle;
+                    txt_SubTitle.Text = "(在线)" + txt_SubTitle.Text;
                 }
                 else if ((mask & 2) != 0)//ingps
                 {
@@ -456,7 +452,15 @@ namespace TrboX
             List<double> cyclelist = CPosition.UpdateCycleList((bool)chk_IsCSBK.IsChecked, (bool)chk_IsEnh.IsChecked);
             cmb_Cycle.Items.Clear();
             foreach (double cycle in cyclelist)
-                cmb_Cycle.Items.Add(new ComboBoxItem() { Content = cycle.ToString() + "s", Tag = cycle });
+                cmb_Cycle.Items.Add(new ComboBoxItem()
+                {
+                    Content = cycle.ToString() + "s",
+                    Tag = cycle,
+                    Style = App.Current.Resources["ComboBoxItemStyleNormal"] as Style,
+                    Foreground = new SolidColorBrush(Color.FromArgb(255, 210, 223, 245)),
+                    FontSize = 13,
+                    Height = 32
+                });
             cmb_Cycle.SelectedIndex = 0;
 
             if (false == chk_IsCSBK.IsChecked) chk_IsEnh.IsChecked = false;
@@ -644,6 +648,16 @@ namespace TrboX
             }
             catch { }
 
+        }
+
+        private void btn_Header_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
+
+        private void btn_SysClose_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

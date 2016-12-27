@@ -31,6 +31,37 @@ namespace TrboX
             return value;
         }
     }
+
+
+
+    public class ControlTypeConv : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                switch((ControlType)value)
+                {
+                    case ControlType.Check:return 0;
+                    case ControlType.Monitor:return 1;
+                    case ControlType.ShutDown:return 2;
+                    case ControlType.StartUp:return 3;
+                    case ControlType.Sleep:return 4;
+                    case ControlType.Week:return 5;
+                    default: return -1;
+                }
+            }
+            catch
+            {
+                return -1;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
    
     
     /// <summary>
@@ -129,6 +160,14 @@ namespace TrboX
                 {
                     var element = obj as FastPanel;
                     List<double> cyclelist = CPosition.UpdateCycleList(((CPosition)((FastOperate)e.NewValue).Operate.Operate).IsCSBK, ((CPosition)((FastOperate)e.NewValue).Operate.Operate).IsEnh);
+                    double cyc = 0;
+                    
+                    try{
+                        cyc = ((CPosition)((FastOperate)e.NewValue).Operate.Operate).Cycle;
+                    }
+                    catch{
+
+                    }
                     element.cmb_CycleLst.Items.Clear();
                     foreach (double cycle in cyclelist)
                         element.cmb_CycleLst.Items.Add(new ComboBoxItem() { Content = cycle.ToString() + "s",
@@ -136,9 +175,11 @@ namespace TrboX
                             Style = App.Current.Resources["ComboBoxItemStyleNormal"] as Style,
                             Foreground =new SolidColorBrush(Color.FromArgb(255, 210 ,223, 245)),
                             FontSize = 13,
-                            Height = 32
+                            Height = 32,
+                            IsSelected = cyc == cycle ? true : false
+
                         });
-                    element.cmb_CycleLst.SelectedIndex = 0;
+                    //element.cmb_CycleLst.SelectedIndex = 0;
                 }
             }));
 
@@ -154,19 +195,6 @@ namespace TrboX
 
         }));
 
-    //    public static readonly DependencyProperty ShortMessageProperty =
-    //DependencyProperty.Register("PanelItem", typeof(string), typeof(FastPanel), new UIPropertyMetadata(null, delegate(DependencyObject obj, DependencyPropertyChangedEventArgs e)
-    //{
-        //if ((null != ((FastOperate)e.NewValue).Operate) && (OPType.Position == ((FastOperate)e.NewValue).Operate.Type))
-        //{
-        //    var element = obj as FastPanel;
-        //    List<double> cyclelist = CPosition.UpdateCycleList(((CPosition)((FastOperate)e.NewValue).Operate.Operate).IsCSBK, ((CPosition)((FastOperate)e.NewValue).Operate.Operate).IsEnh);
-        //    element.cmb_CycleLst.Items.Clear();
-        //    foreach (double cycle in cyclelist)
-        //        element.cmb_CycleLst.Items.Add(new ComboBoxItem() { Content = cycle.ToString() + "s", Tag = cycle });
-        //}
-    //}));
-
 
         public static readonly RoutedEvent ClosingRoutedEvent =
             EventManager.RegisterRoutedEvent("Closing", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(FastOperate));
@@ -180,15 +208,27 @@ namespace TrboX
         private void updatecyclelist(object sender, RoutedEventArgs e)
         {
             List<double> cyclelist = CPosition.UpdateCycleList((bool)chk_CSBK.IsChecked, (bool)chk_Enh.IsChecked);
+
+            double cyc = 0;
+
+            try
+            {
+                cyc = ((CPosition)((FastOperate)PanelItem).Operate.Operate).Cycle;
+            }
+            catch
+            {
+
+            }
             cmb_CycleLst.Items.Clear();
             foreach (double cycle in cyclelist)
                 cmb_CycleLst.Items.Add(new ComboBoxItem() { Content = cycle.ToString() + "s", Tag = cycle,
                                                             Style = App.Current.Resources["ComboBoxItemStyleNormal"] as Style,
                                                             Foreground = new SolidColorBrush(Color.FromArgb(255, 210, 223, 245)),
                                                             FontSize = 13,
-                                                            Height = 32
+                                                            Height = 32,
+                                                            IsSelected = cyc == cycle ? true : false
                 });
-            cmb_CycleLst.SelectedIndex = 0;
+            //cmb_CycleLst.SelectedIndex = 0;
 
             if (false == chk_CSBK.IsChecked) chk_Enh.IsChecked = false;
         }

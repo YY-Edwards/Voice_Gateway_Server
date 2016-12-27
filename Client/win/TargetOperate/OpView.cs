@@ -17,8 +17,8 @@ namespace TrboX
  
             m_opWin.grdspl_Operate.PreviewMouseLeftButtonDown += delegate
             {
-                m_opWin.grd_Operate.RowDefinitions[0].MaxHeight = m_opWin.grd_OperateWin.ActualHeight - m_opWin.grd_Operate.RowDefinitions[1].MinHeight;
-                m_opWin.grd_Operate.RowDefinitions[1].MaxHeight = m_opWin.grd_OperateWin.ActualHeight - m_opWin.grd_Operate.RowDefinitions[0].MinHeight;
+                m_opWin.grd_Operate.RowDefinitions[0].MaxHeight = m_opWin.grd_Operate.ActualHeight - m_opWin.grd_Operate.RowDefinitions[1].MinHeight;
+                m_opWin.grd_Operate.RowDefinitions[1].MaxHeight = m_opWin.grd_Operate.ActualHeight - m_opWin.grd_Operate.RowDefinitions[0].MinHeight;
 
             };
 

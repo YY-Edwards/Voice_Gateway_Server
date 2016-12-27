@@ -21,6 +21,9 @@ namespace TrboX
         public About()
         {
             InitializeComponent();
+            this.Loaded += delegate {
+                btn_SysClose.Click += delegate { this.Close(); };
+            };
         }
     }
 }

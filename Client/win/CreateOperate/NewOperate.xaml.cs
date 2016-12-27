@@ -39,7 +39,13 @@ namespace TrboX
             List<double> cyclelist = CPosition.UpdateCycleList((bool)chk_CSBK.IsChecked, (bool)chk_Enh.IsChecked);
             cmb_CycleLst.Items.Clear();
             foreach (double cycle in cyclelist)
-                cmb_CycleLst.Items.Add(new ComboBoxItem() { Content = cycle.ToString() + "s", Tag = cycle });
+                cmb_CycleLst.Items.Add(new ComboBoxItem() { Content = cycle.ToString() + "s",
+                            Tag = cycle,
+                            Style = App.Current.Resources["ComboBoxItemStyleNormal"] as Style,
+                            Foreground =new SolidColorBrush(Color.FromArgb(255, 210 ,223, 245)),
+                            FontSize = 13,
+                            Height = 32}
+                            );
             cmb_CycleLst.SelectedIndex = 0;
 
             if (false == chk_CSBK.IsChecked) chk_Enh.IsChecked = false;
@@ -67,6 +73,16 @@ namespace TrboX
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
+        }
+
+        private void btn_SysClose_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
+        }
+
+        private void btn_Header_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
         }
     }
 }

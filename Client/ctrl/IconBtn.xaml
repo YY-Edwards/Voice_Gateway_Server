@@ -48,6 +48,6 @@
 		</Style>
 	</UserControl.Resources>
 	<Grid>
-        <Button Content="Button" Style="{DynamicResource ButtonStyle1}" Click="Button_Click"/>
+        <Button x:Name="mybtn" Content="Button" Style="{DynamicResource ButtonStyle1}" Click="Button_Click"/>
     </Grid>
 </UserControl>

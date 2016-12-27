@@ -3,36 +3,136 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:src="clr-namespace:TrboX"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" 
+		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" 
 		x:Class="TrboX.Login"   
         Icon="/TrboX;component/themes/resource/Logo.png"        
-        Style="{StaticResource LoginWindowStyle}"   
-        Title="登录" Height="360" Width="600" WindowStartupLocation="CenterScreen" Closed="MyWindow_Closed">
-	<Grid>
-        <Border BorderBrush="#FF97C5F7" BorderThickness="0">
-            <Grid>
-                <DockPanel HorizontalAlignment="Left" LastChildFill="False" VerticalAlignment="Top" Margin="316.333,121.166,0,0">
-                    <DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="0,0,0,5">
-                        <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="用户：" VerticalAlignment="Center" Width="40"/>
-                        <TextBox x:Name="txt_User" HorizontalAlignment="Left" Style="{DynamicResource TextBoxStyleNormal}" TextWrapping="Wrap" Text="" VerticalAlignment="Center" Width="120" Margin="10,0,0,0"/>
-                    </DockPanel>
-                    <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,5">
-                        <TextBlock HorizontalAlignment="Right" TextWrapping="Wrap" Text="密码：" VerticalAlignment="Center" Width="40"/>
-                        <PasswordBox HorizontalAlignment="Left" VerticalAlignment="Center" Style="{DynamicResource PasswordBoxStyleNormal}" Width="120" Margin="10,0,0,0"/>
-                    </DockPanel>
-                    <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top">
-                        <Button x:Name="btn_login" Content="Login" VerticalAlignment="Center" HorizontalAlignment="Left" Click="btn_Login_Click" Style="{DynamicResource ButtonStyleNormal}" Margin="50,0,0,0" Width="55"/>
-                        <Button x:Name="btn_cancel" Content="Cancel" VerticalAlignment="Center" Width="55" HorizontalAlignment="Right" Style="{DynamicResource ButtonStyleNormal}" Click="btn_cancel_Click" DockPanel.Dock="Right"/>
+        Title="登录" Height="382" Width="522" WindowStartupLocation="CenterScreen" Closed="MyWindow_Closed">
+    <src:MyWindow.Resources>
+        <Style x:Key="TextBoxUserInput" BasedOn="{x:Null}" TargetType="{x:Type TextBox}">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TextBoxBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="AllowDrop" Value="true"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}"  HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" Background="{TemplateBinding Background}" BorderThickness="{TemplateBinding BorderThickness}">
+                            <Grid Margin="0">
+                                <Label Content="{Binding Text, Converter={StaticResource UserInputConverter}, RelativeSource={RelativeSource TemplatedParent}}" HorizontalAlignment="Left" VerticalAlignment="Stretch" Foreground="#FF999999" Margin="32,0,0,0" VerticalContentAlignment="Center" FontFamily="Hiragino Sans GB W3" FontSize="13" Padding="0"/>
+                                <Image HorizontalAlignment="Left" Height="14" VerticalAlignment="Center" Width="11" Source="/TrboX;component/resource/images/username_11_14.png" Margin="9,0,0,0"/>
+                                <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="27,0,0,0" VerticalContentAlignment="Center" Padding="0,0,10,0" Grid.IsSharedSizeScope="True"/>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="TextBlock.TextWrapping" Value="NoWrap"/>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="PasswordBoxStylleNormal" TargetType="{x:Type PasswordBox}">
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TextBoxBorder}"/>
+            <Setter Property="FontFamily" Value="Times New Roman"/>
+            <Setter Property="PasswordChar" Value="●"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="AllowDrop" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type PasswordBox}">
+                        <Grid Height="Auto" Width="Auto">
+                            <Border x:Name="border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}">
+                                <Grid HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" Margin="0">
+                                    <Image HorizontalAlignment="Left" Height="15" VerticalAlignment="Center" Width="13" Margin="8,0,0,0" Source="/TrboX;component/resource/images/password_13_15.png"/>
+                                    <TextBlock x:Name="textBlock" HorizontalAlignment="Stretch" TextWrapping="Wrap"  VerticalAlignment="Center" Text="{Binding Tag, Converter={StaticResource UserPasswordConverter}, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" Margin="32,0,10,0" Foreground="#FF999999" FontSize="13" FontFamily="Hiragino Sans GB W3"/>
+                                    <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="27,0,10,0" VerticalAlignment="Center"/>
+                                </Grid>
+                            </Border>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ButtonStyle1" TargetType="{x:Type Button}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource ButtonFocusVisual}"/>
+            <Setter Property="Background" Value="{StaticResource ButtonNormalBackground}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ButtonNormalBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Border x:Name="border" BorderBrush="Black" BorderThickness="0" HorizontalAlignment="Stretch" Height="32" VerticalAlignment="Top" Width="Auto" Background="#FF78ACE5" CornerRadius="4">
+                            <TextBlock TextWrapping="Wrap" Text="{TemplateBinding Content}" VerticalAlignment="Center" HorizontalAlignment="Center" Foreground="White" FontSize="14"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" TargetName="border" Value="#FF70B4FF"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="#ADADAD"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+    </src:MyWindow.Resources>
+    <src:MyWindow.Style>
+        <StaticResource ResourceKey="MyWindowStyle"/>
+    </src:MyWindow.Style>
+    <DockPanel>
+        <Border x:Name="bdr_Header" BorderBrush="Black" BorderThickness="0" Height="180" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0">
+            <Border.Background>
+                <ImageBrush ImageSource="/TrboX;component/resource/images/login_background_500_180.png"/>
+            </Border.Background>
+            <Grid Margin="0">
+                <DockPanel LastChildFill="False" Margin="30,0,0,0" HorizontalAlignment="Left" Height="40" VerticalAlignment="Top">
+                    <Image Margin="0" Source="/TrboX;component/resource/images/login_title_60_20.png" Stretch="Fill" VerticalAlignment="Center" HorizontalAlignment="Left" Height="20" Width="60"/>
+                </DockPanel>
+                <Button x:Name="btn_Header"  Style="{StaticResource ButtonStyleHdr}" PreviewMouseLeftButtonDown="btn_Header_PreviewMouseLeftButtonDown"/>
+                <DockPanel LastChildFill="False" HorizontalAlignment="Right" Height="40" VerticalAlignment="Top">
+                    <DockPanel LastChildFill="False" Margin="0"  HorizontalAlignment="Right" DockPanel.Dock="Right">
+                        <src:IconBtn x:Name="btn_SysClose" Height="18" VerticalAlignment="Center" DockPanel.Dock="Right" Width="18" Margin="8,0,11,0" Normal="/TrboX;component/resource/images/close_18_18_n.png" Hover="/TrboX;component/resource/images/close_18_18_h.png" HorizontalAlignment="Center" Press="/TrboX;component/resource/images/close_18_18_h.png" Click="btn_SysClose_Click"/>
                     </DockPanel>
                 </DockPanel>
-                <Label Content="TrboX 登录" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="315.333,50.5,0,0" FontSize="24" FontFamily="Magneto"/>
-                <!--<src:ListBtn VOffset="10"  Margin="10,31,466,257" Normal="/TrboX;component/resource/images/首页切图右上角_08.png" Height="28" >
-                    <src:ListBtn.Items>
-                        <ComboBoxItem Content="ceshi" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
-                        <ComboBoxItem Content="ceshi2" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
-                    </src:ListBtn.Items>
-                </src:ListBtn>-->
             </Grid>
         </Border>
+        <Border BorderBrush="#FF97C5F7" BorderThickness="0" Margin="0" DockPanel.Dock="Top" Background="White">
+            <Grid HorizontalAlignment="Center" Margin="0,25,0,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="50*"/>
+                    <ColumnDefinition Width="50*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <TextBox x:Name="txt_User" Margin="0" VerticalContentAlignment="Center" Padding="0" BorderBrush="#FFADC7EC" Background="White" Foreground="#FF545D6E" Style="{DynamicResource TextBoxUserInput}" Grid.ColumnSpan="2" Width="260" Height="32" CaretBrush="#FF545D6E" FontSize="13" FontFamily="Hiragino Sans GB W3" VerticalAlignment="Top" TextChanged="txt_User_TextChanged"/>
 
-    </Grid>
+                <PasswordBox x:Name="psd_Password" HorizontalAlignment="Center" VerticalAlignment="Top" Style="{DynamicResource PasswordBoxStylleNormal}" Width="260"  Grid.ColumnSpan="2" PasswordChar="●" BorderThickness="1" PasswordChanged="psd_Password_PasswordChanged" BorderBrush="#FFADC7EC" Height="32" Foreground="#FF545D6E" CaretBrush="#FF545D6E" FontSize="10" FontFamily="Hiragino Sans GB W3" Margin="0,31,0,0"/>
+                <Grid x:Name="grd_LoginErr" Height="28" VerticalAlignment="Bottom" Margin="5,0,5,70" Grid.ColumnSpan="2" Visibility="Collapsed">
+                    <Image x:Name="img_alarm" HorizontalAlignment="Left" Height="18" VerticalAlignment="Center" Width="18" Source="/TrboX;component/resource/images/alarm_18_18.png"/>
+                    <Label Content="账户或密码错误！" HorizontalAlignment="Left" Margin="28,0,0,0" VerticalContentAlignment="Center" Background="{x:Null}" Foreground="#FFF44638" FontSize="13" FontFamily="Hiragino Sans GB W3" Padding="0,5,5,5"/>
+                </Grid>
+                <Button x:Name="btn_login" Content="登录" VerticalAlignment="Bottom" HorizontalAlignment="Right" Click="btn_Login_Click" Style="{DynamicResource ButtonNormalStyle}"  Width="126" Margin="4,0,4,35" Height="32" Tag="4,4,4,4" BorderThickness="0" Background="#FF4889EB" Foreground="White" FontSize="15" FontFamily="Hiragino Sans GB W6"/>
+                <Button x:Name="btn_cancel" Content="取消" VerticalAlignment="Bottom" Width="126" HorizontalAlignment="Left" Style="{DynamicResource ButtonNormalStyle}" Click="btn_cancel_Click" Grid.Column="1" Margin="4,0,4,35" Height="32" Tag="4,4,4,4" BorderThickness="0" Background="#FFB9B9B9" Foreground="White" FontSize="15" FontFamily="Hiragino Sans GB W6"/>
+            </Grid>
+        </Border>
+    </DockPanel>
 </src:MyWindow>

@@ -178,6 +178,7 @@ namespace TrboX
 
         private static List<UpdatesUser> s_Update = new List<UpdatesUser>();
 
+        
 
         public static int Count()
         {
@@ -438,6 +439,44 @@ namespace TrboX
             s_Del.Clear();
             s_Update.Clear();
         }
+
+        public delegate void OnEvent(User user);
+        public static void Auth(string user, string password, OnEvent OnSuccess, OnEvent OnFailure)
+        {
+            Dictionary<string, object> authparam = new Dictionary<string, object>();
+            authparam.Add("operation", OperateType.auth.ToString());
+            
+            Dictionary<string, string> authuserparam = new Dictionary<string, string>();
+            authuserparam.Add("username", user);
+            authuserparam.Add("password", password);
+
+            authparam.Add("users", authuserparam);
+
+            LogServerRequest authreq = new LogServerRequest()
+            {
+                call = RequestType.user.ToString(),
+                callId = LogServer.CallId,
+                param = authparam
+            };
+            string authstr = JsonConvert.SerializeObject(authreq);
+            
+            LogServer.Call(authstr, delegate(object obj)
+            {
+                if (((LogServerResponse)obj).status == "success")
+                {
+                    User curruser = JsonConvert.DeserializeObject<User>(JsonConvert.SerializeObject(((LogServerResponse)obj).contents));
+                    if (OnSuccess != null) OnSuccess(curruser);
+                }
+                else
+                {
+                    if (OnFailure != null) OnFailure(null);
+                }
+
+
+                return null;
+            });         
+        }
+
     }
 
 }

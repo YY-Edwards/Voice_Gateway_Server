@@ -33,6 +33,14 @@ namespace TrboX
             };
         }
 
+        public bool IsPressed
+        {
+            get { return mybtn.IsPressed; }
+        }
+
+        public static readonly DependencyProperty IsPressedProperty =
+           DependencyProperty.Register("IsPressed", typeof(bool), typeof(IconBtn));
+
         public ImageSource Normal
         {
             get { return (ImageSource)GetValue(NormalProperty); }

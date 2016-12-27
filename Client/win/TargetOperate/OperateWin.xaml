@@ -5,9 +5,10 @@
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" 
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d"
         x:Class="TrboX.OperateWin" 
+      xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing"
         Icon="/TrboX;component/themes/resource/Logo.png"  
         Style="{StaticResource MyWindowStyle}" 
-        Height="500" Width="600" WindowStartupLocation="Manual" MinWidth="400" MinHeight="400">
+        Height="610" Width="920" WindowStartupLocation="Manual" MinWidth="400" MinHeight="400">
     <src:MyWindow.Resources>
         <src:NullShowConverter x:Key="NullShowConverter"/>
         <src:NullHideConverter x:Key="NullHideConverter"/>
@@ -21,7 +22,7 @@
         <src:MsgView x:Key="HistoryView">
             <src:MsgView.ItemTemplate>
                 <DataTemplate>
-                    <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Padding="5,2">
+                    <!--<Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Padding="5,2">
                         <DockPanel x:Name="MsgPanel" Margin="5, 0, 100, 00">
                             <DockPanel DockPanel.Dock="Top" Height="24" LastChildFill="False">
                                 <Grid x:Name="Icon" Margin="5,0" Width="24" Height="24" HorizontalAlignment="Left" VerticalAlignment="Center" >
@@ -33,7 +34,7 @@
                                     </Border>
                                 </Grid>
 
-                                <!--<Image x:Name="Icon"  Source="{Binding type, Converter={StaticResource IconFromNotify}}" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0"/>-->
+                                --><!--<Image x:Name="Icon"  Source="{Binding type, Converter={StaticResource IconFromNotify}}" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="5,0"/>--><!--
                                 <TextBlock  x:Name="Time" Text="{Binding time, StringFormat=\{0:yyyy-MM-dd HH:mm:ss\}}" TextWrapping="NoWrap" Margin="0"  Foreground="#FF888888" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" FontSize="10" HorizontalAlignment="Left" />
                             </DockPanel>
                             <Grid DockPanel.Dock="Top">
@@ -44,114 +45,300 @@
                                 </Border>
                             </Grid>
                         </DockPanel>
-                    </Border>
+                    </Border>-->
 
+                    <Border x:Name="Msg" Padding="0,8" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch">
+                        <DockPanel x:Name="MsgPanel" Margin="0">
+                            <DockPanel DockPanel.Dock="Top" Height="20" LastChildFill="False">
+                                <Label  x:Name="Time" Content="{Binding time, StringFormat=\{0:yyyy-MM-dd HH:mm:ss\}}" Margin="90,0"  Foreground="#FF888888" VerticalAlignment="Center" Height="20" HorizontalAlignment="Left" Padding="0" VerticalContentAlignment="Center"/>
+                            </DockPanel>
+                            <DockPanel x:Name="dck_Content"  LastChildFill="False" Margin="26,0" DockPanel.Dock="Top" >
+                                <Grid x:Name="Icon" Width="40" Height="40" HorizontalAlignment="Left" VerticalAlignment="Top" >
+                                    <Border BorderBrush="Black" BorderThickness="0">
+                                        <Ellipse  x:Name="Iconbdr" Fill="#FF50CDE4"  Stroke="Black" StrokeThickness="0"/>
+                                    </Border>
+                                    <Border Margin="6">
+                                        <Image  Source="{Binding type, Converter={StaticResource IconFromNotify}}" VerticalAlignment="Top" />
+                                    </Border>
+                                </Grid>
+                                <DockPanel LastChildFill="False" x:Name="content">
+                                    <Grid x:Name="leftArrow" Height="40" VerticalAlignment="Top" Width="24">
+                                        <ed:RegularPolygon Fill="#FF55AEBE" HorizontalAlignment="Right" Height="10" InnerRadius="1" PointCount="3" Stretch="Fill" Stroke="Black" VerticalAlignment="Center" Width="10" RenderTransformOrigin="0.5,0.5" Margin="0" StrokeThickness="0">
+                                            <ed:RegularPolygon.RenderTransform>
+                                                <TransformGroup>
+                                                    <ScaleTransform/>
+                                                    <SkewTransform/>
+                                                    <RotateTransform Angle="-90"/>
+                                                    <TranslateTransform/>
+                                                </TransformGroup>
+                                            </ed:RegularPolygon.RenderTransform>
+                                        </ed:RegularPolygon>
+                                    </Grid>
+                                    <Grid x:Name="rightArrow" Height="40" VerticalAlignment="Top" Width="24" DockPanel.Dock="Right" Visibility="Hidden">
+                                        <ed:RegularPolygon Fill="#FF6996C4" HorizontalAlignment="Left" Height="10" InnerRadius="1" PointCount="3" Stretch="Fill" Stroke="Black" VerticalAlignment="Center" Width="10" RenderTransformOrigin="0.5,0.5" Margin="0" StrokeThickness="0">
+                                            <ed:RegularPolygon.RenderTransform>
+                                                <TransformGroup>
+                                                    <ScaleTransform/>
+                                                    <SkewTransform/>
+                                                    <RotateTransform Angle="90"/>
+                                                    <TranslateTransform/>
+                                                </TransformGroup>
+                                            </ed:RegularPolygon.RenderTransform>
+                                        </ed:RegularPolygon>
+                                    </Grid>
+
+                                    <Border x:Name="brd_Content" Background="#FF55AEBE" BorderBrush="#FF97C5F7" BorderThickness="0" CornerRadius="4" Padding="15,10" HorizontalAlignment="Left" VerticalAlignment="Top"  MinHeight="40">
+                                        <TextBlock Text="{Binding content}" TextWrapping="Wrap" MaxWidth="{Binding ActualWidth, Converter={StaticResource HistoryMaxWidth}, ElementName=Msg, Mode=OneWay}"  Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" />
+                                    </Border>
+                                </DockPanel>
+
+                            </DockPanel>
+                            <Grid DockPanel.Dock="Top"/>
+                        </DockPanel>
+                    </Border>
                     <DataTemplate.Triggers>
                         <DataTrigger Binding="{Binding istx}" Value="true">
-                            <Setter TargetName="MsgPanel" Property="Margin" Value="100, 0, 5, 0" />
-                            <Setter TargetName="Icon" Property="DockPanel.Dock" Value="Right" />
                             <Setter TargetName="Time" Property="DockPanel.Dock" Value="Right" />
-                            <Setter TargetName="brd_Content" Property="HorizontalAlignment" Value="Right" />
+                            <Setter TargetName="Icon" Property="DockPanel.Dock" Value="Right" />
+                            <Setter TargetName="Iconbdr" Property="Fill" Value="#FF6996C4" />
+                            
+                            <Setter TargetName="content" Property="DockPanel.Dock" Value="Right" />
+                            <Setter TargetName="brd_Content" Property="Background" Value="#FF6996C4" />
+                            <Setter TargetName="leftArrow" Property="Visibility" Value="Hidden" />
+                            <Setter TargetName="rightArrow" Property="Visibility" Value="Visible" />                          
                         </DataTrigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>
 
             </src:MsgView.ItemTemplate>
         </src:MsgView>
+        <Style x:Key="ButtonStyleSubWin" TargetType="{x:Type Button}" BasedOn="{x:Null}">
+            <Setter Property="FocusVisualStyle" Value="{DynamicResource SimpleButtonFocusVisual}"/>
+            <Setter Property="Background" Value="{DynamicResource NormalBrush}"/>
+            <Setter Property="BorderBrush" Value="{DynamicResource NormalBorderBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+
+                        <!-- 我们将 Grid 用作根，原因在于这便于添加更多的元素来自定义按钮 -->
+                        <Grid x:Name="Grid">
+                            <Border x:Name="Border" Padding="{TemplateBinding Padding}" BorderThickness="1" Background="#FF3B3B3D" CornerRadius="4" BorderBrush="#FF5C5C5D"/>
+                            <TextBlock x:Name="textBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{TemplateBinding Content}" VerticalAlignment="Center" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" FontSize="14"/>
+
+                            <!-- Content Presenter 是控件放置文本内容等项之处 -->
+                            <!-- 通过利用绑定，无需编辑模板即可将控件参数化 -->
+                        </Grid>
+
+                        <!--每种状态都基于模板中的 Border 来设置画笔 -->
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="true">
+                                <Setter Property="BorderBrush" Value="{DynamicResource DefaultedBorderBrush}" TargetName="Border"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="Border" Value="#FF545D6E"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="Border" Value="#FF545D6E"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="true"/>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Opacity" TargetName="Grid" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TextBoxStyle" TargetType="{x:Type TextBox}">
+            <Setter Property="KeyboardNavigation.TabNavigation" Value="None"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="AllowDrop" Value="true"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Grid>
+                            <Border x:Name="Border" BorderBrush="{DynamicResource SolidBorderBrush}" Padding="2" CornerRadius="0">
+
+                                <!-- 实现时会将 Content 置于 ScrollViewer 中。必须将其命名为 PART_ContentHost，控件才能起作用 -->
+                                <ScrollViewer Margin="0" x:Name="PART_ContentHost" Style="{DynamicResource SimpleScrollViewer}" Background="{TemplateBinding Background}"/>
+
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Background" Value="{DynamicResource DisabledBackgroundBrush}" TargetName="Border"/>
+                                <Setter Property="BorderBrush" Value="{DynamicResource DisabledBackgroundBrush}" TargetName="Border"/>
+                                <Setter Property="Foreground" Value="{DynamicResource DisabledForegroundBrush}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CheckBoxStyle1" TargetType="{x:Type CheckBox}">
+        	<Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+        	<Setter Property="Background" Value="{StaticResource CheckBoxFillNormal}"/>
+        	<Setter Property="BorderBrush" Value="{StaticResource CheckBoxStroke}"/>
+        	<Setter Property="BorderThickness" Value="1"/>
+        	<Setter Property="FocusVisualStyle" Value="{StaticResource EmptyCheckBoxFocusVisual}"/>
+        	<Setter Property="Template">
+        		<Setter.Value>
+        			<ControlTemplate TargetType="{x:Type CheckBox}">
+        				<Border x:Name="border" Background="#FF78ACE5" BorderThickness="0" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" CornerRadius="4" >
+        					<TextBlock x:Name="txt"  TextWrapping="Wrap" Text="{Binding Content, RelativeSource={RelativeSource TemplatedParent}}" FontSize="14" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        				</Border>
+        				<ControlTemplate.Triggers>
+        					<Trigger Property="HasContent" Value="true">
+        						<Setter Property="FocusVisualStyle" Value="{StaticResource CheckRadioFocusVisual}"/>
+        						<Setter Property="Padding" Value="4,0,0,0"/>
+        					</Trigger>
+        					<Trigger Property="IsChecked" Value="True">
+        						<Setter Property="Text" TargetName="txt" Value="{Binding Tag, RelativeSource={RelativeSource TemplatedParent}}"/>
+        					</Trigger>
+        					<Trigger Property="IsMouseOver" Value="True">
+        						<Setter Property="Background" TargetName="border" Value="#FF70B4FF"/>
+        					</Trigger>
+        				</ControlTemplate.Triggers>
+        			</ControlTemplate>
+        		</Setter.Value>
+        	</Setter>
+        </Style>
 
     </src:MyWindow.Resources>
-    <DockPanel Background="White">
-        <Grid x:Name="grd_OperateWin" Margin="5" DockPanel.Dock="Top">
-            <Grid x:Name="grd_Operate" Margin="0">
-                <Grid.RowDefinitions>
-                    <RowDefinition MinHeight="31"/>
-                    <RowDefinition MinHeight="30" Height="160"/>
-                </Grid.RowDefinitions>
-                <Border BorderBrush="Black" BorderThickness="1" Margin="0" Padding="0">
-                    <DockPanel>
-                        <Border x:Name="bdr_UnRead" BorderBrush="Black" BorderThickness="0" Height="25" VerticalAlignment="Top" DockPanel.Dock="Top" Background="#FF97C5F7" PreviewMouseLeftButtonUp="bdr_UnRead_PreviewMouseLeftButtonUp" Visibility="Collapsed">
-                            <DockPanel LastChildFill="False">
-                                <Label Content="有未读消息！" Height="25" VerticalAlignment="Top" Margin="5,0,0,0"/>
-                                <Button x:Name="btn_UnReadClose" Content="X" Height="20" VerticalAlignment="Center" Width="20" DockPanel.Dock="Right" Margin="0,0,5,0" HorizontalAlignment="Right" Click="btn_UnReadClose_Click" PreviewMouseLeftButtonDown="btn_UnReadClose_PreviewMouseLeftButtonDown"/>
-                            </DockPanel>
-                        </Border>
-                        <ListView x:Name="lst_History"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="#99FFF8F8" Margin="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" DockPanel.Dock="Top"  SelectionChanged="lst_History_SelectionChanged" >
-                            <ListView.View>
-                                <src:MsgView />
-                            </ListView.View>
-                        </ListView>
+    <DockPanel>
+        <Border x:Name="bdr_Header" BorderBrush="Black" BorderThickness="0" Background="#FF3B3B3D" Height="40" VerticalAlignment="Top" DockPanel.Dock="Top">
+            <Grid>
+                <DockPanel LastChildFill="False" Margin="22,0,0,0" HorizontalAlignment="Left">
+                    <Image Margin="0,0,0,10" Source="/TrboX;component/resource/images/sub_title_60_20.png" Stretch="None" VerticalAlignment="Bottom"/>
+                    <TextBlock x:Name="txt_Title" Text="调度组" VerticalAlignment="Bottom" FontSize="15" Foreground="#FFF1F1F1" FontFamily="Hiragino Sans GB W3" Margin="19,0,0,5.5" Padding="0"/>
+                    <TextBlock x:Name="txt_SubTitle" Text="调度组" VerticalAlignment="Bottom" FontSize="13" Foreground="#FFF1F1F1" FontFamily="Hiragino Sans GB W3" Margin="14,0,0,6.5" Padding="0"/>
+                </DockPanel>
+                <Button x:Name="btn_Header"  Style="{StaticResource ButtonStyleHdr}" PreviewMouseLeftButtonDown="btn_Header_PreviewMouseLeftButtonDown"/>
+                <DockPanel LastChildFill="False" HorizontalAlignment="Right">
+                    <DockPanel LastChildFill="False" Margin="0"  HorizontalAlignment="Right" DockPanel.Dock="Right">
+                        <src:IconBtn x:Name="btn_SysClose" Height="18" VerticalAlignment="Center" DockPanel.Dock="Right" Width="18" Margin="8,0,11,0" Normal="/TrboX;component/resource/images/close_18_18_n.png" Hover="/TrboX;component/resource/images/close_18_18_h.png" HorizontalAlignment="Center" Press="/TrboX;component/resource/images/close_18_18_h.png" Click="btn_SysClose_Click"/>
+                    </DockPanel>
+                </DockPanel>
+                <Path Data="M6.8333333,30 L178.16667,30" Height="1" Margin="-0.5,0" Stretch="Fill" VerticalAlignment="Bottom" Stroke="{DynamicResource CutOffRuleButtom}"/>
+            </Grid>
+        </Border>
+        <Grid x:Name="grd_Operate" Margin="16,12,16,16">
+            <Grid.RowDefinitions>
+                <RowDefinition MinHeight="31"/>
+                <RowDefinition MinHeight="30" Height="250"/>
+            </Grid.RowDefinitions>
+
+            <Border BorderBrush="Black" BorderThickness="1" Margin="0" Padding="0" Background="#FF3B3B3D">
+                <Grid>
+                    <ListView x:Name="lst_History"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0,0,0,6" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden"  SelectionChanged="lst_History_SelectionChanged" Style="{DynamicResource ListViewStyleNormal}" >
+                        <ListView.View>
+                            <src:MsgView />
+                        </ListView.View>
+                    </ListView>
+                    <Border x:Name="bdr_UnRead" BorderBrush="Black" BorderThickness="0" Height="40" VerticalAlignment="Top" Background="#7F1D1D1F" PreviewMouseLeftButtonUp="bdr_UnRead_PreviewMouseLeftButtonUp" Margin="1" Visibility="Collapsed">
+                        <DockPanel>
+                            <src:IconBtn x:Name="btn_UnReadClose" Height="18" VerticalAlignment="Center" Width="18" Margin="0,0,8,0" Normal="/TrboX;component/resource/images/panel_close_ 20_20_h.png" Hover="/TrboX;component/resource/images/panel_close_ 20_20_n.png" HorizontalAlignment="Center" Press="/TrboX;component/resource/images/panel_close_ 20_20_n.png" DockPanel.Dock="Right"/>
+                            <Label Content="有未读消息，点击查看！" Margin="5,0,0,0" Foreground="#FFF1F1F1" FontSize="14" FontFamily="Hiragino Sans GB W3" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="0" Background="{x:Null}"/>
+                        </DockPanel>
+                    </Border>
+                </Grid>
+            </Border>
+            <DockPanel Margin="0" Grid.Row="1">
+                <Border BorderBrush="#FF0C0C0D" BorderThickness="1,0,1,1" Height="33" DockPanel.Dock="Top" Background="#FF333335" Panel.ZIndex="1" Margin="0">
+                    <DockPanel LastChildFill="False">
+                        <RadioButton x:Name="rad_Call" Content="呼叫" Style="{DynamicResource RadioButtonMgr}" Margin="0" GroupName="OpTab" IsChecked="True" BorderBrush="#FF0C0C0D" Width="55" BorderThickness="0,0,1,0" Foreground="{x:Null}"/>
+                        <RadioButton x:Name="rad_Message" Content="短消息" Style="{DynamicResource RadioButtonMgr}" Margin="0" GroupName="OpTab" BorderBrush="#FF0C0C0D" Width="70" BorderThickness="0,0,1,0"/>
+                        <RadioButton x:Name="rad_Position" Content="定位" Style="{DynamicResource RadioButtonMgr}" Margin="0" GroupName="OpTab" BorderBrush="#FF0C0C0D" Width="55" BorderThickness="0,0,1,0"/>
+                        <RadioButton x:Name="rad_Jobticket" Content="工单" Style="{DynamicResource RadioButtonMgr}" Margin="0" GroupName="OpTab" BorderBrush="#FF0C0C0D" Width="55" BorderThickness="0,0,1,0" Visibility="Collapsed"/>
+                        <src:ListBtn VOffset="5" x:Name="btn_Control"  Content="遥毙" Height="26" Foreground="#FFC9CDD2" VerticalAlignment="Center" Margin="10,0,0,0" Width="70" Tag="4" BorderBrush="#FF626262" BorderThickness="1" Template="{DynamicResource ListBtnTemplate}" Background="#FF3B3B3D" IsSuper="True" HOffset="-13" >
+                            <src:ListBtn.Items>
+                                <ComboBoxItem Content="遥毙" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
+                                <ComboBoxItem Content="遥开" Style="{DynamicResource ComboBoxItemStyle1}" Height="28"  Width="120" Foreground="White"/>
+                                <ComboBoxItem Content="遥晕" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White" Visibility="Collapsed"/>
+                                <ComboBoxItem Content="遥醒" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White" Visibility="Collapsed"/>
+                            </src:ListBtn.Items>
+                        </src:ListBtn>
+                        <Button x:Name="btn_Check" Content="在线检测" Style="{DynamicResource ButtonNormalStyle}" VerticalAlignment="Center" Margin="10,0,0,0" Background="#FF3B3B3D" Click="btn_Check_Click" BorderBrush="#FF626262" Height="26" Width="80" Foreground="#FFC9CDD2" Tag="4,4,4,4"/>
+                        <Button x:Name="btn_Minitor" Content="远程监听" Style="{DynamicResource ButtonNormalStyle}" VerticalAlignment="Center" Margin="10,0,0,0" Background="#FF3B3B3D" Click="btn_Minitor_Click" BorderBrush="#FF626262" Height="26" Width="80" Foreground="#FFC9CDD2" Tag="4"/>
+                        <Button x:Name="btn_AddFastPanel" Content="添加到快速操作" Style="{DynamicResource ButtonNormalStyle}" VerticalAlignment="Center" Margin="10,0,12,0" DockPanel.Dock="Right" Background="#FF3B3B3D" Click="btn_AddFastPanel_Click" BorderBrush="#FF626262" Height="26" Width="121" Foreground="#FFC9CDD2" FontFamily="Hiragino Sans GB W3" FontSize="14" Tag="4,4,4,4" Focusable="False"/>
                     </DockPanel>
                 </Border>
-                <Border BorderBrush="Black" BorderThickness="1,0,1,1" Grid.Row="1" Margin="0" Padding="0">
-                    <DockPanel>
-                        <Border BorderBrush="Black" BorderThickness="0" Height="30" DockPanel.Dock="Top" Background="#FF97C5F7" Panel.ZIndex="1">
-                            <DockPanel LastChildFill="False" VerticalAlignment="Center">
-                                <RadioButton x:Name="rad_Call" Content="呼叫" Style="{DynamicResource SimpleRadioButton}" Margin="5,0,0,0" VerticalAlignment="Center" GroupName="OpTab" IsChecked="True"/>
-                                <RadioButton x:Name="rad_Message" Content="短消息" Style="{DynamicResource SimpleRadioButton}" Margin="5,0,0,0" VerticalAlignment="Center" GroupName="OpTab"/>
-                                <RadioButton x:Name="rad_Position" Content="定位" Style="{DynamicResource SimpleRadioButton}" Margin="5,0,0,0" VerticalAlignment="Center" GroupName="OpTab"/>
-                                <RadioButton x:Name="rad_Jobticket" Content="工单" Style="{DynamicResource SimpleRadioButton}" Margin="5,0,0,0" VerticalAlignment="Center" GroupName="OpTab"/>
-                                <src:ComboButton x:Name="btn_Control"  Content="遥毙" VerticalAlignment="Center" Margin="5,0,0,0" Background="White" Visibility="{Binding Visibility, ElementName=btn_Check}" HorizontalAlignment="Left" Click="btn_Control_Click" Selected="btn_Control_Selected">
-                                    <src:ComboButton.Items>
-                                        <ComboBoxItem Content="遥毙"/>
-                                        <ComboBoxItem Content="遥开"/>
-                                        <ComboBoxItem Content="遥晕"/>
-                                        <ComboBoxItem Content="遥醒"/>
-                                    </src:ComboButton.Items>
-                                </src:ComboButton>
-                                <Button x:Name="btn_Check" Content="在线检测" Style="{DynamicResource ButtonStyleNormal}" VerticalAlignment="Center" Margin="5,0,0,0" Background="Black" Click="btn_Check_Click"/>
-                                <Button x:Name="btn_Minitor" Content="远程监听" Style="{DynamicResource ButtonStyleNormal}" VerticalAlignment="Center" Margin="5,0,0,0" Background="Black" Click="btn_Minitor_Click"/>
-                                <Button x:Name="btn_AddFastPanel" Content="添加到快速操作" Style="{DynamicResource ButtonStyleNormal}" VerticalAlignment="Center" Margin="5,0" DockPanel.Dock="Right" Background="Black" Click="btn_AddFastPanel_Click"/>
-                            </DockPanel>
-                        </Border>
-                        <Border BorderBrush="Black" BorderThickness="0,0,0,1" ClipToBounds="True" Background="#99FFFFFF">
-                            <TabControl Style="{DynamicResource TabControlStyleNormal}" BorderThickness="0" Margin="0,-23,0,0">
-                                <TabControl.SelectedIndex>
-                                    <MultiBinding  Converter="{StaticResource IndexFromRadio}" Mode="OneWay">
-                                        <Binding ElementName="rad_Call" Path="IsChecked" />
-                                        <Binding ElementName="rad_Message" Path="IsChecked" />
-                                        <Binding ElementName="rad_Position" Path="IsChecked" />
-                                        <Binding ElementName="rad_Jobticket" Path="IsChecked" />
-                                    </MultiBinding>
-                                </TabControl.SelectedIndex>
-                                <TabItem Header="呼叫" Style="{DynamicResource SimpleTabItem}">
+                <Border BorderBrush="Black" BorderThickness="0" ClipToBounds="True" Margin="0,0,0,1">
+                    <TabControl Style="{DynamicResource TabControlStyleNormal}" BorderThickness="0" Margin="0,-22,0,0">
+                        <TabControl.SelectedIndex>
+                            <MultiBinding  Converter="{StaticResource IndexFromRadio}" Mode="OneWay">
+                                <Binding ElementName="rad_Call" Path="IsChecked" />
+                                <Binding ElementName="rad_Message" Path="IsChecked" />
+                                <Binding ElementName="rad_Position" Path="IsChecked" />
+                                <Binding ElementName="rad_Jobticket" Path="IsChecked" />
+                            </MultiBinding>
+                        </TabControl.SelectedIndex>
+                        <TabItem Header="呼叫" Style="{DynamicResource SimpleTabItem}">
+                            <Grid>
+                                <Border BorderBrush="#FF0C0C0D" BorderThickness="1,0,1,1" Background="#FF3B3B3D">
                                     <Grid>
-                                        <CheckBox x:Name="chk_PTT" Content="PTT" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FFD8CFCF" Click="chk_PTT_Click"/>
+                                        <CheckBox x:Name="chk_PTT" Content="开始呼叫" HorizontalAlignment="Center" VerticalAlignment="Center" Background="#FFD8CFCF" Click="chk_PTT_Click" Margin="0" Tag="结束呼叫" Style="{DynamicResource CheckBoxStylePTT}" Width="200" Height="40"/>
                                     </Grid>
-                                </TabItem>
-                                <TabItem Header="短消息" Style="{DynamicResource SimpleTabItem}">
+                                </Border>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="短消息" Style="{DynamicResource SimpleTabItem}">
+                            <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="46"/>
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#FF0C0C0D" BorderThickness="1,0,1,1" Background="#FF3B3B3D">
                                     <Grid>
-                                        <Button x:Name="btn_SendMsg" Content="发送" HorizontalAlignment="Right" Style="{DynamicResource SimpleButton}" VerticalAlignment="Bottom" Width="79" Margin="0,0,5,5" Height="22.24" Click="btn_SendMsg_Click"/>
-                                        <TextBox x:Name="txt_Message" Style="{DynamicResource TextBoxStyleNormal}"  TextWrapping="Wrap" Text="" Margin="5,5,5,32.24" AcceptsReturn="True"/>
+                                        <TextBox x:Name="txt_Message" Style="{DynamicResource TextBoxStyle}"  TextWrapping="Wrap" Text="" Margin="0" AcceptsReturn="True" SelectionBrush="#FF1D1D1F" Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" Padding="5,3" Foreground="#FFD2DFF5" CaretBrush="#FFD2DFF5"/>
                                     </Grid>
-                                </TabItem>
-                                <TabItem Header="定位" Style="{DynamicResource SimpleTabItem}">
+                                </Border>
+                                <Button x:Name="btn_SendMsg" Content="发送" HorizontalAlignment="Right" Style="{DynamicResource ButtonNormalStyle}" VerticalAlignment="Bottom" Width="90" Margin="0" Height="30" Click="btn_SendMsg_Click" Grid.Row="1" Tag="4" Background="#FF78ACE5" BorderBrush="Black" BorderThickness="0" Foreground="White" FontFamily="Hiragino Sans GB W6" FontSize="14"/>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="定位" Style="{DynamicResource SimpleTabItem}">
+                            <Grid Tag="结束查询">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="46"/>
+                                </Grid.RowDefinitions>
+                                <Border BorderBrush="#FF0C0C0D" BorderThickness="1,0,1,1" Background="#FF3B3B3D" Margin="0">
                                     <Grid>
-                                        <DockPanel LastChildFill="False">
-                                            <CheckBox x:Name="chk_IsCSBK" Content="CSBK" HorizontalAlignment="Left" Style="{DynamicResource SimpleCheckBox}" VerticalAlignment="Top" DockPanel.Dock="Top" Checked="updatecyclelist" Unchecked="updatecyclelist"/>
-                                            <CheckBox x:Name="chk_IsEnh" Content="增强型GPS" HorizontalAlignment="Left" Style="{DynamicResource SimpleCheckBox}" VerticalAlignment="Top" DockPanel.Dock="Top" Visibility="{Binding IsChecked, Converter={StaticResource NullHideConverter}, ElementName=chk_IsCSBK}" Checked="updatecyclelist" Unchecked="updatecyclelist"/>
-                                            <CheckBox x:Name="chk_IsCycle" Content="周期查询" HorizontalAlignment="Left" Style="{DynamicResource SimpleCheckBox}" VerticalAlignment="Top" DockPanel.Dock="Top" IsChecked="True" Unchecked="updatecyclelist" Checked="updatecyclelist"/>
-                                            <ComboBox x:Name="cmb_Cycle" Style="{DynamicResource SimpleComboBox}" VerticalAlignment="Top" DockPanel.Dock="Top" SelectedIndex="0" HorizontalAlignment="Left" Width="120" Visibility="{Binding IsChecked, Converter={StaticResource NullHideConverter}, ElementName=chk_IsCycle}">
-                                            </ComboBox>
-                                            <DockPanel Height="30" LastChildFill="False" VerticalAlignment="Bottom" DockPanel.Dock="Bottom">
-                                                <Button x:Name="btn_QueryPosition" Content="定位" Style="{DynamicResource SimpleButton}" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0,0,5,2" Height="23" Width="79" Click="btn_QueryPosition_Click" Visibility="{Binding IsChecked, Converter={StaticResource NullShowConverter}, ElementName=chk_IsCycle}" DockPanel.Dock="Right" />
-                                                <CheckBox x:Name="chk_QueryCyclePosition" Content="CheckBox" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0" Visibility="{Binding IsChecked, Converter={StaticResource NullHideConverter}, ElementName=chk_IsCycle}" DockPanel.Dock="Right" Click="chk_QueryCyclePosition_Click"/>
-                                            </DockPanel>
+                                        <DockPanel LastChildFill="False" Margin="0,0,-2,-47">
+                                            <CheckBox x:Name="chk_IsCSBK" Content="　CSBK" HorizontalAlignment="Left" Style="{DynamicResource CheckBoxStyleNormal}" VerticalAlignment="Top" DockPanel.Dock="Top" Checked="updatecyclelist" Unchecked="updatecyclelist" Margin="26,12,0,7" Foreground="#FFB6BABE" FontSize="13"/>
+                                            <CheckBox x:Name="chk_IsEnh" Content="　增强型GPS" HorizontalAlignment="Left" Style="{DynamicResource CheckBoxStyleNormal}" VerticalAlignment="Top" DockPanel.Dock="Top" IsEnabled="{Binding IsChecked, ElementName=chk_IsCSBK}" Checked="updatecyclelist" Unchecked="updatecyclelist" Margin="26,7,0,7" Foreground="#FFB6BABE" FontSize="13"/>
+                                            <CheckBox x:Name="chk_IsCycle" Content="　周期查询" HorizontalAlignment="Left" Style="{DynamicResource CheckBoxStyleNormal}" VerticalAlignment="Top" DockPanel.Dock="Top" Unchecked="updatecyclelist" Checked="updatecyclelist" Margin="26,7,0,7" Foreground="#FFB6BABE" FontSize="13" IsChecked="True"/>
+                                            <Grid VerticalAlignment="Top" Margin="26,5,0,0" DockPanel.Dock="Top">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="37*"/>
+                                                    <ColumnDefinition Width="384*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock HorizontalAlignment="Left" TextWrapping="Wrap" Text="查询周期：" VerticalAlignment="Center" Foreground="#FFB6BABE" FontSize="13" Height="16" Width="65" Margin="0,8" Visibility="{Binding IsChecked, Converter={StaticResource NullHideConverter}, ElementName=chk_IsCycle}"/>
+                                                <ComboBox x:Name="cmb_Cycle"  VerticalAlignment="Center" Foreground="#FFB6BABE" FontSize="14" SelectedIndex="0" Width="230" HorizontalAlignment="Left" Style="{DynamicResource ComboBoxStyleNormal}"  Visibility="{Binding IsChecked, Converter={StaticResource NullHideConverter}, ElementName=chk_IsCycle}" Grid.Column="1" Height="32"/>
+                                            </Grid>
                                         </DockPanel>
                                     </Grid>
-                                </TabItem>
-                                <TabItem Header="工单" Style="{DynamicResource SimpleTabItem}">
-                                    <Grid>
-                                        <Button Content="发送" HorizontalAlignment="Right" Style="{DynamicResource SimpleButton}" VerticalAlignment="Bottom" Width="79" Height="22.24" Margin="0,0,5,5"/>
-                                        <ComboBox HorizontalAlignment="Left" Style="{DynamicResource SimpleComboBox}" VerticalAlignment="Top" Width="544" Height="23.24" Margin="0,11,0,0"/>
-                                    </Grid>
-                                </TabItem>
-                            </TabControl>
-                        </Border>
-                    </DockPanel>
+                                </Border>
+                                <DockPanel LastChildFill="False" Grid.Row="1">
+                                    <Button x:Name="btn_QueryPosition" Content="定位" Style="{DynamicResource ButtonNormalStyle}" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="0" Height="30" Width="90" Click="btn_QueryPosition_Click" Visibility="{Binding IsChecked, Converter={StaticResource NullShowConverter}, ElementName=chk_IsCycle}" DockPanel.Dock="Right" Tag="4" BorderBrush="{x:Null}" BorderThickness="0" Background="#FF78ACE5" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W6" />
+                                    <CheckBox x:Name="chk_QueryCyclePosition" Content="开始查询" VerticalAlignment="Center" HorizontalAlignment="Right" Margin="0" Visibility="{Binding IsChecked, Converter={StaticResource NullHideConverter}, ElementName=chk_IsCycle}" DockPanel.Dock="Right" Click="chk_QueryCyclePosition_Click" Style="{DynamicResource CheckBoxStyle1}" Height="30" Width="120" Tag="结束查询"/>
+                                </DockPanel>
+                            </Grid>
+                        </TabItem>
+                        <TabItem Header="工单" Style="{DynamicResource SimpleTabItem}">
+                            <Grid>
+                                <Button Content="发送" HorizontalAlignment="Right" Style="{DynamicResource SimpleButton}" VerticalAlignment="Bottom" Width="79" Height="22.24" Margin="0,0,5,5"/>
+                                <ComboBox HorizontalAlignment="Left" Style="{DynamicResource SimpleComboBox}" VerticalAlignment="Top" Width="544" Height="23.24" Margin="0,11,0,0"/>
+                            </Grid>
+                        </TabItem>
+                    </TabControl>
                 </Border>
-                <GridSplitter x:Name="grdspl_Operate" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="#000E0101" Height="5" Margin="5,0,5,-2"/>
-            </Grid>
+                <!--<Button Content="关闭" VerticalAlignment="Center" Width="90" DockPanel.Dock="Right" Margin="10,0,0,0" Height="30" Click="Button_Click" Style="{DynamicResource ButtonStyleSubWin}"/>-->
 
+                <!--<Button Content="添加到快速操作" VerticalAlignment="Center" Width="140" DockPanel.Dock="Right" Height="30" Style="{DynamicResource ButtonStyleSubWin}" BorderThickness="0" BorderBrush="{x:Null}" />-->
+
+            </DockPanel>
+            <GridSplitter x:Name="grdspl_Operate" HorizontalAlignment="Stretch" VerticalAlignment="Bottom" Background="#000E0101" Height="5" Margin="5,0,5,-2"/>
         </Grid>
     </DockPanel>
 </src:MyWindow>

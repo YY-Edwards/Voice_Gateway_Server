@@ -267,13 +267,13 @@
         <local:MsgView x:Key="MsgView">
             <local:MsgView.ItemTemplate>
                 <DataTemplate>
-                    
+
                     <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" MinHeight="40" >
                         <DockPanel >
                             <Image x:Name="Icon" Source="/TrboX;component/resource/images/message_18_18.png" Width="18" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="16,11,8,0"/>
                             <local:IconBtn x:Name="btn_AlarmNotify_Close" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="18" Width="18" Margin="0,11,5,0" Click="btn_Notify_Close_Click" Normal="/TrboX;component/resource/images/msg_close_18_18_n.png"/>
                             <local:IconBtn x:Name="btn_AlarmNotify_Explaner"  HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="18" Width="18" Margin="5,11,0,0" Click="btn_Notify_Explaner_Click" Normal="/TrboX;component/resource/images/msg_ex_18_18_n.png" />
-                            
+
                             <DockPanel x:Name="dck_Content" Margin="0,7.5,0,7.5" Width="{Binding ActualWidth, Converter={StaticResource MsgWidth}, ElementName=lst_Alarm, Mode=OneWay}" DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Top" >
                                 <TextBlock  TextWrapping="NoWrap" Margin="0,0,0,3"  Foreground="#FFcdcdcd" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" FontFamily="Arial" HorizontalAlignment="Left">
                                     <TextBlock.Text>
@@ -314,7 +314,7 @@
                             </DockPanel>
                         </DockPanel>
                     </Border>
-                  
+
                 </DataTemplate>
 
             </local:MsgView.ItemTemplate>
@@ -401,26 +401,26 @@
                                 </Setter>
                             </Trigger>
                             <MultiTrigger>
-                            	<MultiTrigger.Conditions>
-                            		<Condition Property="IsChecked" Value="False"/>
-                            		<Condition Property="IsMouseOver" Value="True"/>
-                            	</MultiTrigger.Conditions>
-                            	<Setter Property="Background" TargetName="border">
-                            		<Setter.Value>
-                            			<ImageBrush ImageSource="/TrboX;component/resource/images/icon_view_14_14_h.png"/>
-                            		</Setter.Value>
-                            	</Setter>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsChecked" Value="False"/>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" TargetName="border">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="/TrboX;component/resource/images/icon_view_14_14_h.png"/>
+                                    </Setter.Value>
+                                </Setter>
                             </MultiTrigger>
                             <MultiTrigger>
-                            	<MultiTrigger.Conditions>
-                            		<Condition Property="IsChecked" Value="True"/>
-                            		<Condition Property="IsMouseOver" Value="True"/>
-                            	</MultiTrigger.Conditions>
-                            	<Setter Property="Background" TargetName="border">
-                            		<Setter.Value>
-                            			<ImageBrush ImageSource="/TrboX;component/resource/images/panel_view_14_14_h.png.png"/>
-                            		</Setter.Value>
-                            	</Setter>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsChecked" Value="True"/>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" TargetName="border">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="/TrboX;component/resource/images/panel_view_14_14_h.png.png"/>
+                                    </Setter.Value>
+                                </Setter>
                             </MultiTrigger>
                             <Trigger Property="HasContent" Value="true">
                                 <Setter Property="FocusVisualStyle" Value="{StaticResource CheckRadioFocusVisual}"/>
@@ -463,26 +463,26 @@
                                 </Setter>
                             </Trigger>
                             <MultiTrigger>
-                            	<MultiTrigger.Conditions>
-                            		<Condition Property="IsChecked" Value="False"/>
-                            		<Condition Property="IsMouseOver" Value="True"/>
-                            	</MultiTrigger.Conditions>
-                            	<Setter Property="Background" TargetName="border">
-                            		<Setter.Value>
-                            			<ImageBrush ImageSource="/TrboX;component/resource/images/full_screen_14_14_h.png"/>
-                            		</Setter.Value>
-                            	</Setter>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsChecked" Value="False"/>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" TargetName="border">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="/TrboX;component/resource/images/full_screen_14_14_h.png"/>
+                                    </Setter.Value>
+                                </Setter>
                             </MultiTrigger>
                             <MultiTrigger>
-                            	<MultiTrigger.Conditions>
-                            		<Condition Property="IsChecked" Value="True"/>
-                            		<Condition Property="IsMouseOver" Value="True"/>
-                            	</MultiTrigger.Conditions>
-                            	<Setter Property="Background" TargetName="border">
-                            		<Setter.Value>
-                            			<ImageBrush ImageSource="/TrboX;component/resource/images/normall_screen_14_14_h.png"/>
-                            		</Setter.Value>
-                            	</Setter>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsChecked" Value="True"/>
+                                    <Condition Property="IsMouseOver" Value="True"/>
+                                </MultiTrigger.Conditions>
+                                <Setter Property="Background" TargetName="border">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="/TrboX;component/resource/images/normall_screen_14_14_h.png"/>
+                                    </Setter.Value>
+                                </Setter>
                             </MultiTrigger>
                             <Trigger Property="HasContent" Value="true">
                                 <Setter Property="FocusVisualStyle" Value="{StaticResource CheckRadioFocusVisual}"/>
@@ -1071,44 +1071,14 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        <Style x:Key="ListViewStyleNormal" TargetType="{x:Type ListView}">
-        	<Setter Property="SnapsToDevicePixels" Value="true"/>
-        	<Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}"/>
-        	<Setter Property="BorderBrush" Value="{DynamicResource SolidBorderBrush}"/>
-        	<Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
-        	<Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
-        	<Setter Property="ScrollViewer.CanContentScroll" Value="True"/>
-        	<Setter Property="Template">
-        		<Setter.Value>
-        			<ControlTemplate TargetType="{x:Type ListView}">
-        				<Grid>
-        					<Border x:Name="Border" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"/>
-        					<ScrollViewer Margin="0" Style="{DynamicResource ScrollViewerStyleNormal}" Focusable="false" Background="{TemplateBinding Background}" HorizontalScrollBarVisibility="{TemplateBinding ScrollViewer.HorizontalScrollBarVisibility}" VerticalScrollBarVisibility="{TemplateBinding ScrollViewer.VerticalScrollBarVisibility}">
-							
-							<!-- StackPanel 用来显示子级，方法是将 IsItemsHost 设置为 True -->
-        						<!--<StackPanel Margin="2" IsItemsHost="true"/>-->
-                                <ItemsPresenter/>
-                            </ScrollViewer>
-        				</Grid>
-        				<ControlTemplate.Triggers>
-        					<Trigger Property="IsEnabled" Value="false">
-        						<Setter Property="Background" Value="{DynamicResource DisabledBackgroundBrush}" TargetName="Border"/>
-        						<Setter Property="BorderBrush" Value="{DynamicResource DisabledBorderBrush}" TargetName="Border"/>
-        					</Trigger>
-        					<Trigger Property="IsGrouping" Value="true">
-        						<Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
-        					</Trigger>
-        				</ControlTemplate.Triggers>
-        			</ControlTemplate>
-        		</Setter.Value>
-        	</Setter>
-        </Style>
-
+        
     </local:MyWindow.Resources>
 
     <!--<local:MyWindow.CommandBindings>
         <CommandBinding Command="local:ShortCutKey.NewCall" Executed="OenDospatch"/>
-        --><!--<CommandBinding Command="local:ShortCutKey.NewCall" Executed="local:MainMenu.OenDospatch" />--><!--
+        -->
+    <!--<CommandBinding Command="local:ShortCutKey.NewCall" Executed="local:MainMenu.OenDospatch" />-->
+    <!--
     </local:MyWindow.CommandBindings>-->
 
     <Grid Margin="0">
@@ -1130,8 +1100,8 @@
                                 <MenuItem x:Name="menu_File_NewMessage" Header="短消息" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleSub}" VerticalAlignment="Top" />
                                 <MenuItem x:Name="menu_File_NewPosition" Header="位置查询" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleSub}" VerticalAlignment="Top" />
                                 <MenuItem x:Name="menu_File_NewControl" Header="指令控制" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleSub}" VerticalAlignment="Top" />
-                                <MenuItem x:Name="menu_File_NewJobTicket" Header="工单" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleSub}" VerticalAlignment="Top" />
-                                <MenuItem x:Name="menu_File_NewTracker" Header="巡更任务" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleSub}" VerticalAlignment="Top" />
+                                <MenuItem x:Name="menu_File_NewJobTicket" Header="工单" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleSub}" VerticalAlignment="Top" Visibility="Collapsed" />
+                                <MenuItem x:Name="menu_File_NewTracker" Header="巡更任务" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleSub}" VerticalAlignment="Top" Visibility="Collapsed" />
                             </MenuItem>
                             <MenuItem  x:Name="menu_File_Save" Header="保存" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" IsEnabled="{Binding NeedSave, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Main}}}"/>
                             <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="{DynamicResource CutOffRule}" Height="16"/>
@@ -1245,7 +1215,7 @@
                 </Grid>
             </Border>
 
-            <Border BorderBrush="#FF0F0F10" BorderThickness="0,0,0,1" Height="40" DockPanel.Dock="Top" Margin="0" Panel.ZIndex="1" Background="#FF3B3B3D" d:IsLocked="True" d:IsHidden="True">
+            <Border BorderBrush="#FF0F0F10" BorderThickness="0,0,0,1" Height="40" DockPanel.Dock="Top" Margin="0" Panel.ZIndex="1" Background="#FF3B3B3D">
                 <DockPanel LastChildFill="False">
                     <Path Data="M6.8333333,30 L178.16667,30" Height="1" Margin="-0.5,0" Stretch="Fill" VerticalAlignment="Top" DockPanel.Dock="Top" Stroke="{DynamicResource CutOffRuleTop}"/>
                     <Border BorderBrush="White" BorderThickness="0" HorizontalAlignment="Left" Padding="0,8">
@@ -1261,8 +1231,18 @@
                                     </local:ListBtn.Items>
                                 </local:ListBtn>
                             </Border>
+
                             <Border BorderBrush="#FF1C1D1E" BorderThickness="0,0,1,0" Margin="0" Padding="5,0,3,0">
                                 <DockPanel LastChildFill="False">
+                                    <local:ListBtn VOffset="8"  Margin="5,0" Normal="/TrboX;component/resource/images/new_22_22_n.png" Height="22" Hover="/TrboX;component/resource/images/new_22_22_h.png" Press="/TrboX;component/resource/images/new_22_22_p.png" Disable="/TrboX;component/resource/images/new_22_22_d.png" Width="109" BorderThickness="1" Tag="0,4,4,0" Background="#FFC6E441" BorderBrush="#FF2F28BD" Template="{DynamicResource ListBtnTemplate}" Content="Testtest" IsSuper="True" Visibility="Collapsed" >
+                                        <local:ListBtn.Items>
+                                            <ComboBoxItem Content="新建短消息" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
+                                            <ComboBoxItem Content="新建位置查询" Style="{DynamicResource ComboBoxItemStyle1}" Height="28"  Width="120" Foreground="White"/>
+                                            <ComboBoxItem Content="新建指令控制" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
+                                            <ComboBoxItem Content="新建工单" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
+                                            <ComboBoxItem Content="新建巡更任务" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
+                                        </local:ListBtn.Items>
+                                    </local:ListBtn>
                                     <local:IconBtn Height="22" VerticalAlignment="Center" Margin="5,0" Width="22" Disable="/TrboX;component/resource/images/save_22_22_d.png" Hover="/TrboX;component/resource/images/save_22_22_h.png" Normal="/TrboX;component/resource/images/save_22_22_n.png" Press="/TrboX;component/resource/images/save_22_22_p.png" ToolTip="保存"/>
                                     <local:IconBtn Height="22" VerticalAlignment="Center" Margin="5,0" Width="22" Disable="/TrboX;component/resource/images/remove_22_22_d.png" Hover="/TrboX;component/resource/images/remove_22_22_h.png" Normal="/TrboX;component/resource/images/remove_22_22_n.png" Press="/TrboX;component/resource/images/remove_22_22_p.png" ToolTip="删除"/>
                                 </DockPanel>
@@ -1272,7 +1252,7 @@
                                     <local:IconBtn x:Name="btn_Tool_PTT" ToolTip="呼叫" Height="22" VerticalAlignment="Center" Margin="5,0" Width="22" Disable="/TrboX;component/resource/images/call_22_22_d.png" Hover="/TrboX;component/resource/images/call_22_22_h.png" Normal="/TrboX;component/resource/images/call_22_22_n.png" Press="/TrboX;component/resource/images/call_22_22_p.png"/>
                                     <local:IconBtn x:Name="btn_Tool_Msg" ToolTip="短消息" Height="22" VerticalAlignment="Center" Margin="5,0" Width="22" Disable="/TrboX;component/resource/images/short_message_22_22_d.png" Hover="/TrboX;component/resource/images/short_message_22_22_h.png" Normal="/TrboX;component/resource/images/short_message_22_22_n.png" Press="/TrboX;component/resource/images/short_message_22_22_p.png"/>
                                     <local:IconBtn x:Name="btn_Tool_Position" ToolTip="位置查询" Height="22" VerticalAlignment="Center" Margin="5,0" Width="22" Disable="/TrboX;component/resource/images/position_22_22_d.png" Hover="/TrboX;component/resource/images/position_22_22_h.png" Normal="/TrboX;component/resource/images/position_22_22_n.png" Press="/TrboX;component/resource/images/position_22_22_p.png"/>
-                                    <local:IconBtn x:Name="btn_Tool_Job" ToolTip="工单" Height="22" VerticalAlignment="Center" Margin="5,0" Width="22" Disable="/TrboX;component/resource/images/job_tickets_22_22_d.png" Hover="/TrboX;component/resource/images/job_tickets_22_22_h.png" Normal="/TrboX;component/resource/images/job_tickets_22_22_n.png" Press="/TrboX;component/resource/images/job_tickets_22_22_p.png"/>
+                                    <local:IconBtn x:Name="btn_Tool_Job" ToolTip="工单" Height="22" VerticalAlignment="Center" Margin="5,0" Width="22" Disable="/TrboX;component/resource/images/job_tickets_22_22_d.png" Hover="/TrboX;component/resource/images/job_tickets_22_22_h.png" Normal="/TrboX;component/resource/images/job_tickets_22_22_n.png" Press="/TrboX;component/resource/images/job_tickets_22_22_p.png" Visibility="Collapsed"/>
                                 </DockPanel>
                             </Border>
                             <Border x:Name="bdr_Tool_Fast" BorderBrush="#FF1C1D1E" BorderThickness="0,0,1,0" Margin="0" Padding="5,0,3,0">
@@ -1302,7 +1282,7 @@
                     <DockPanel x:Name="Rx_RadioGroup" LastChildFill="False" VerticalAlignment="Bottom" DockPanel.Dock="Right" Margin="0,0,5,2"/>
                 </DockPanel>
             </Border>
-            <Border BorderThickness="0,1,0,0" Margin="0" DockPanel.Dock="Bottom" Height="30" Background="#FF3B3B3D" BorderBrush="#FF0F0F10" d:IsLocked="True" d:IsHidden="True">
+            <Border BorderThickness="0,1,0,0" Margin="0" DockPanel.Dock="Bottom" Height="30" Background="#FF3B3B3D" BorderBrush="#FF0F0F10">
                 <DockPanel LastChildFill="False">
                     <Path Data="M6.8333333,30 L178.16667,30" Height="1" Margin="-0.5,0" Stretch="Fill" VerticalAlignment="Top" DockPanel.Dock="Top" Stroke="{DynamicResource CutOffRuleTop}"/>
                     <Border BorderBrush="White" BorderThickness="0">
@@ -1328,7 +1308,7 @@
                         <Grid x:Name="grd_Nav" Margin="0,0,8,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition x:Name="grd_Row_Mgr" MinHeight="34"/>
-                                <RowDefinition Height="165"  MaxHeight="165" MinHeight="42"/>
+                                <RowDefinition Height="124"  MaxHeight="124" MinHeight="42"/>
                             </Grid.RowDefinitions>
                             <Border BorderBrush="#FF0F0F10" BorderThickness="1" Margin="0,0,0,8" Background="#FF3B3B3D">
                                 <DockPanel>
@@ -1336,13 +1316,13 @@
                                     <Border BorderBrush="#FF0F0F10" BorderThickness="0,0,0,1" Height="33" VerticalAlignment="Top" DockPanel.Dock="Top" Background="#FF242424">
                                         <TextBlock TextWrapping="Wrap" Text="{Binding SelectedItem.Header, ElementName=tab_Mgr}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="13,0,0,0" Foreground="#FFC9CDD2" FontSize="14"/>
                                     </Border>
-                                    <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="48" DockPanel.Dock="Top" d:IsLocked="True">
+                                    <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="48" DockPanel.Dock="Top">
                                         <Grid>
                                             <TextBox x:Name="txt_ResCondition" Margin="8" VerticalContentAlignment="Center" Padding="8,0,25,0" BorderBrush="#FF48484A" Background="#FF272727" Foreground="#FF747679" Style="{DynamicResource TextBoxStyleSearch}"/>
                                             <local:IconBtn x:Name="btn_ResSearch" ToolTip="搜索" Height="17" VerticalAlignment="Center" Normal="/TrboX;component/resource/images/serach_21_21_n.png" Margin="0,0,15,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" HorizontalAlignment="Right" Width="17" Hover="/TrboX;component/resource/images/serach_21_21_h.png" Press="/TrboX;component/resource/images/serach_21_21_h.png"/>
                                         </Grid>
                                     </Border>
-                                    <Border BorderBrush="#FF0C0C0D" BorderThickness="0,1,0,0" DockPanel.Dock="Bottom" Height="32" Background="#FF333335" d:IsLocked="True">
+                                    <Border BorderBrush="#FF0C0C0D" BorderThickness="0,1,0,0" DockPanel.Dock="Bottom" Height="32" Background="#FF333335">
                                         <DockPanel LastChildFill="False">
                                             <RadioButton x:Name="rad_Mgr_Org" Content="组织" Style="{DynamicResource RadioButtonMgr}" GroupName="radGroup_TragetList" IsChecked="True" Width="55" BorderThickness="0,0,1,0" Foreground="{DynamicResource fbg}" BorderBrush="#FF0C0C0D"/>
                                             <RadioButton x:Name="rad_Mgr_Group" Content="组" Style="{DynamicResource RadioButtonMgr}" GroupName="radGroup_TragetList" Width="55" BorderThickness="0,0,1,0" BorderBrush="#FF0C0C0D" Foreground="{DynamicResource fbg}"/>
@@ -1364,7 +1344,7 @@
                                             </TabControl.SelectedIndex>
                                             <TabItem x:Name="tab_Mgr_Org" Header="组织" Style="{DynamicResource SimpleTabItem}" Width="10">
                                                 <DockPanel>
-                                                    <TreeView x:Name="tree_OrgView" Style="{DynamicResource TreeViewStyleNav}" BorderThickness="0" Margin="0,6" SelectedItemChanged="tree_OrgView_SelectedItemChanged" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" Background="{x:Null}" BorderBrush="{x:Null}" Padding="0" >
+                                                    <TreeView x:Name="tree_OrgView" Style="{DynamicResource TreeViewStyleNav}" BorderThickness="0" Margin="0,6" SelectedItemChanged="tree_OrgView_SelectedItemChanged" ScrollViewer.HorizontalScrollBarVisibility="Auto" ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" BorderBrush="{x:Null}" Padding="0" >
                                                         <!--<TreeViewItem  Header="根目录" Style="{DynamicResource TreeViewItemStyleRoot}" IsExpanded="True">
                                                     		<TreeViewItem Header="TreeViewItem" HorizontalAlignment="Left" Width="310" IsExpanded="True" Style="{DynamicResource TreeViewItemStyle2nd}">
                                                     			<TreeViewItem Header="TreeViewItem" Style="{DynamicResource TreeViewItemStyle3rd}"/>
@@ -1384,24 +1364,24 @@
                                             </TabItem>
                                             <TabItem x:Name="tab_Mgr_Group" Header="组" Style="{DynamicResource SimpleTabItem}" Width="10">
                                                 <DockPanel>
-                                                    <ListView x:Name="lst_Group" View="{StaticResource GroupView}" BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="{x:Null}" Margin="0,6" ScrollViewer.HorizontalScrollBarVisibility="Visible" ScrollViewer.VerticalScrollBarVisibility="Visible" Style="{DynamicResource ListViewStyleNormal}" />
+                                                    <ListView x:Name="lst_Group" View="{StaticResource GroupView}" BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="{x:Null}" Margin="0,6" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" Style="{DynamicResource ListViewStyleNormal}" />
 
                                                 </DockPanel>
                                             </TabItem>
                                             <TabItem x:Name="tab_Mgr_Employee" Header="人员" Style="{DynamicResource SimpleTabItem}" Width="10">
                                                 <DockPanel>
-                                                    <ListView x:Name="lst_Employee"  View="{StaticResource EmployeeView}"  BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="{x:Null}" Margin="0,6" Style="{DynamicResource ListViewStyleNormal}" />
+                                                    <ListView x:Name="lst_Employee"  View="{StaticResource EmployeeView}"  BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="{x:Null}" Margin="0,6" Style="{DynamicResource ListViewStyleNormal}" ScrollViewer.HorizontalScrollBarVisibility="Hidden" />
 
                                                 </DockPanel>
                                             </TabItem>
                                             <TabItem x:Name="tab_Mgr_Vehicle" Header="车辆" Style="{DynamicResource SimpleTabItem}" Width="10">
                                                 <DockPanel>
-                                                    <ListView x:Name="lst_Vehicle"  View="{StaticResource VehicleView}"  BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="{x:Null}" Margin="0,6" Style="{DynamicResource ListViewStyleNormal}" />
+                                                    <ListView x:Name="lst_Vehicle"  View="{StaticResource VehicleView}"  BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="{x:Null}" Margin="0,6" Style="{DynamicResource ListViewStyleNormal}" ScrollViewer.HorizontalScrollBarVisibility="Hidden" />
                                                 </DockPanel>
                                             </TabItem>
                                             <TabItem x:Name="tab_Mgr_Device" Header="设备" Style="{DynamicResource SimpleTabItem}" Margin="0,0,-2,0" Width="10">
                                                 <DockPanel>
-                                                    <ListView x:Name="lst_Radio" View="{StaticResource RadioView}"  BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="{x:Null}" Margin="0,6" Style="{DynamicResource ListViewStyleNormal}" />
+                                                    <ListView x:Name="lst_Radio" View="{StaticResource RadioView}"  BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="{x:Null}" Margin="0,6" Style="{DynamicResource ListViewStyleNormal}" ScrollViewer.HorizontalScrollBarVisibility="Hidden" />
 
                                                 </DockPanel>
                                             </TabItem>
@@ -1413,7 +1393,7 @@
                                 <DockPanel LastChildFill="False">
                                     <RadioButton x:Name="rad_Nav_Dispatch" Content="语音调度" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" IsChecked="True" Height="41" Foreground="{DynamicResource fbg}" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D"/>
                                     <RadioButton x:Name="rad_Nav_Map" Content="地图" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" Height="41"  Foreground="{DynamicResource fbg}" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D"/>
-                                    <RadioButton x:Name="rad_Nav_Recording" Content="录音" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" Height="41" Foreground="{DynamicResource fbg}" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D"/>
+                                    <RadioButton x:Name="rad_Nav_Recording" Content="录音" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" Height="41" Foreground="{DynamicResource fbg}" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D" Visibility="Collapsed"/>
                                     <RadioButton x:Name="rad_Nav_Report" Content="报表" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" Height="41" Foreground="{DynamicResource fbg}" BorderThickness="0" BorderBrush="#FF0C0C0D"/>
                                 </DockPanel>
                             </Border>
@@ -1449,27 +1429,29 @@
                                                 <DockPanel>
                                                     <Grid>
 
-                                                        <ListView x:Name="lst_dispatch"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Visible" Background="{x:Null}" VerticalContentAlignment="Top" MouseDoubleClick="lst_dispatch_MouseDoubleClick" View="{StaticResource IconView}" Margin="10,6,0,6" ScrollViewer.HorizontalScrollBarVisibility="Visible" Style="{DynamicResource ListViewStyleNormal}">
+                                                        <ListView x:Name="lst_dispatch"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" VerticalContentAlignment="Top" MouseDoubleClick="lst_dispatch_MouseDoubleClick" View="{StaticResource IconView}" Margin="10,6,0,6" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Style="{DynamicResource ListViewStyleNormal}">
                                                             <ListView.ContextMenu>
                                                                 <ContextMenu Style="{DynamicResource ContextMenuStyleNormal}">
-                                                                    <MenuItem x:Name="menu_FastListAddContact" Header="添加常用联系人" Style="{DynamicResource MenuItemStyle1}" Height="32" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3"/>
-                                                                    <MenuItem x:Name="menu_FastListAddOperate" Header="添加快速操作" Style="{DynamicResource MenuItemStyle1}" Height="32" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" />
+                                                                    <MenuItem x:Name="menu_FastListAddContact" Header="添加常用联系人" Style="{DynamicResource MenuItemStyle1}" Height="28" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3"/>
+                                                                    <MenuItem x:Name="menu_FastListAddOperate" Header="添加快速操作" Style="{DynamicResource MenuItemStyle1}" Height="28" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" />
                                                                 </ContextMenu>
                                                             </ListView.ContextMenu>
                                                         </ListView>
                                                     </Grid>
                                                 </DockPanel>
                                             </TabItem>
-                                            <TabItem Header="地图" Style="{DynamicResource SimpleTabItem}" Width="20" d:IsLocked="True" d:IsHidden="True">
+                                            <TabItem Header="地图" Style="{DynamicResource SimpleTabItem}" Width="20" d:IsHidden="True">
                                                 <DockPanel>
                                                     <DockPanel DockPanel.Dock="Top">
                                                         <Grid  x:Name="MyWebGrid" Margin="0"/>
                                                     </DockPanel>
                                                 </DockPanel>
                                             </TabItem>
-                                            <TabItem Header="录音" Style="{DynamicResource SimpleTabItem}" d:IsLocked="True" d:IsHidden="True">
+                                            <TabItem Header="录音" Style="{DynamicResource SimpleTabItem}" d:IsHidden="True">
                                                 <DockPanel>
-                                                    <DockPanel LastChildFill="False" DockPanel.Dock="Top"/>
+                                                    <DockPanel LastChildFill="False" DockPanel.Dock="Top">
+                                                    	<RadioButton Content="RadioButton" HorizontalAlignment="Left" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" Foreground="#FFC9CDD2" Height="24" Padding="0"/>
+                                                    </DockPanel>
                                                     <TreeViewItem Header="TreeViewItem" Height="112" Style="{DynamicResource TreeViewItemStyletest}" VerticalAlignment="Top">
                                                         <TreeViewItem.ContextMenu>
                                                             <ContextMenu/>
@@ -1479,27 +1461,27 @@
                                             </TabItem>
                                             <TabItem Header="报表" Style="{DynamicResource SimpleTabItem}" Width="20">
                                                 <DockPanel>
-                                                	<TabControl>
-                                                		<TabItem Header="20161208.log">
-                                                			<Grid Background="#FFE5E5E5">
-                                                				<DataGrid>
-                                                					<DataGrid.Columns>
-                                                						<DataGridTextColumn  Width="60" Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="日期"/>
-                                                						<DataGridTextColumn  Width="60" Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="目标"/>
-                                                						<DataGridTextColumn  Width="60" Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="经度"/>
-                                                						<DataGridTextColumn  Width="60" Binding="{x:Null}" ClipboardContentBinding="{x:Null}" Header="纬度"/>
-                                                					</DataGrid.Columns>
-                                                					
-                                                				</DataGrid>
-                                                			</Grid>
-                                                		</TabItem>
-                                                		<TabItem Header="20161209.log">
-                                                			<Grid Background="#FFE5E5E5"/>
-                                                		</TabItem>
-                                                		<TabItem Header="20161210.log" >
-                                                			<Grid Background="#FFE5E5E5"/>
-                                                		</TabItem>
-                                                	</TabControl>
+                                                    <TabControl>
+                                                        <TabItem Header="20161208.log">
+                                                            <Grid Background="#FFE5E5E5">
+                                                                <DataGrid x:Name="dat_Record" AutoGenerateColumns="False">
+                                                                    <DataGrid.Columns>
+                                                                        <DataGridTextColumn  Width="60" Binding="{Binding time}"  Header="日期"/>
+                                                                        <DataGridTextColumn  Width="60" Binding="{Binding target}"  Header="目标"/>
+                                                                        <DataGridTextColumn  Width="60" Binding="{Binding nat}"  Header="经度"/>
+                                                                        <DataGridTextColumn  Width="60" Binding="{Binding lat}"  Header="纬度"/>
+                                                                    </DataGrid.Columns>
+
+                                                                </DataGrid>
+                                                            </Grid>
+                                                        </TabItem>
+                                                        <TabItem Header="20161209.log">
+                                                            <Grid Background="#FFE5E5E5"/>
+                                                        </TabItem>
+                                                        <TabItem Header="20161210.log" >
+                                                            <Grid Background="#FFE5E5E5"/>
+                                                        </TabItem>
+                                                    </TabControl>
                                                 </DockPanel>
                                             </TabItem>
                                         </TabControl>
@@ -1580,7 +1562,7 @@
                                     </Border>
                                     <Grid>
                                         <ListView x:Name="lst_Rx" View="{StaticResource RxView}"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0,6" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Style="{DynamicResource ListViewStyleNormal}" >
-                                            
+
                                         </ListView>
                                     </Grid>
                                 </DockPanel>
@@ -1597,7 +1579,7 @@
                                     </Border>
                                     <Grid>
                                         <ListView x:Name="lst_Job" View="{StaticResource JobView}" BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0,6" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Style="{DynamicResource ListViewStyleNormal}" >
-                                           
+
                                         </ListView>
                                     </Grid>
                                 </DockPanel>
@@ -1614,7 +1596,7 @@
                                     </Border>
                                     <Grid>
                                         <ListView x:Name="lst_Tracker" View="{StaticResource TrackerView}" BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0,6" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Style="{DynamicResource ListViewStyleNormal}" >
-                                           
+
                                         </ListView>
                                     </Grid>
                                 </DockPanel>
