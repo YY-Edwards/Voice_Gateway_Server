@@ -423,6 +423,7 @@ void CTcpScheduling::timeOut()
 #endif
 							break;
 						}
+						break;
 					case GROUP_CALL:
 						if (myTcpCallBackFunc != NULL)
 						{
@@ -437,6 +438,7 @@ void CTcpScheduling::timeOut()
 #endif
 							break;
 						}
+						break;
 					case ALL_CALL:
 						if (myTcpCallBackFunc != NULL)
 						{
@@ -518,6 +520,7 @@ void CTcpScheduling::timeOut()
 #endif
 							break;
 						}
+						break;
 					case REMOTE_OPEN:
 						try
 						{
@@ -540,6 +543,7 @@ void CTcpScheduling::timeOut()
 						{
 
 						}
+						break;
 					case CHECK_RADIO_ONLINE:
 						try
 						{
@@ -562,6 +566,7 @@ void CTcpScheduling::timeOut()
 						{
 
 						}
+						break;
 					case REMOTE_MONITOR:
 						try
 						{
@@ -584,6 +589,7 @@ void CTcpScheduling::timeOut()
 						{
 
 						}
+						break;
 					default:
 						break;
 					}

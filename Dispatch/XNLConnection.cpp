@@ -177,6 +177,7 @@ unsigned int CXNLConnection::run(void)
 
     while (1)
     {
+		Sleep(1000);
         /* Receive a Message first */
         
         /* Clear the read set before calling select */
