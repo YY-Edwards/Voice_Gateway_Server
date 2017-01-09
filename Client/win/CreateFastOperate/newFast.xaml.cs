@@ -71,7 +71,7 @@ namespace TrboX
 
         private void FillContact()
         {
-            lst_ContactList.View = (ViewBase)lst_ContactList.FindResource("ContactListView");
+            //lst_ContactList.View = (ViewBase)lst_ContactList.FindResource("ContactListView");
 
             CTargetRes TargetRes = TargetMgr.TargetList;
 
@@ -104,8 +104,8 @@ namespace TrboX
 
         private void FillFastOp()
         {
-            lst_SelectContact.View = (ViewBase)lst_ContactList.FindResource("SelectContactView");
-            lst_SelectOperate.View = (ViewBase)lst_ContactList.FindResource("SelectOperateView");           
+            //lst_SelectContact.View = (ViewBase)lst_ContactList.FindResource("SelectContactView");
+            //lst_SelectOperate.View = (ViewBase)lst_ContactList.FindResource("SelectOperateView");           
             
             List<FastOperate> FastOperateList = m_Main.WorkArea.FastPanel.Get();
             lst_SelectContact.Items.Clear();
@@ -134,7 +134,15 @@ namespace TrboX
             List<double> cyclelist = CPosition.UpdateCycleList((bool)chk_CSBK.IsChecked, (bool)chk_Enh.IsChecked);
             cmb_CycleLst.Items.Clear();
             foreach (double cycle in cyclelist)
-                cmb_CycleLst.Items.Add(new ComboBoxItem() { Content = cycle.ToString() + "s", Tag = cycle });
+                cmb_CycleLst.Items.Add(new ComboBoxItem()
+                {
+                    Content = cycle.ToString() + "s",
+                    Tag = cycle,
+                    Style = App.Current.Resources["ComboBoxItemStyleNormal"] as Style,
+                    Foreground = new SolidColorBrush(Color.FromArgb(255, 210, 223, 245)),
+                    FontSize = 13,
+                    Height = 32,
+                });
             cmb_CycleLst.SelectedIndex = 0;
 
             if (false == chk_CSBK.IsChecked) chk_Enh.IsChecked = false;
@@ -224,7 +232,7 @@ namespace TrboX
                     operate = new COperate() { Type = OPType.ShortMessage, Target = contact_OpTarget.CurrentContact.Clone(), Operate = new CShortMessage() { Message = txt_Message.Text} }; 
                     break;
                 case 2:
-                    operate = new COperate() { Type = OPType.Position, Target = contact_OpTarget.CurrentContact.Clone(), Operate = new CPosition() { IsCSBK = (bool)chk_CSBK.IsChecked, IsEnh = (bool)chk_Enh.IsChecked, IsCycle = (bool)chk_Cycle.IsChecked } }; 
+                    operate = new COperate() { Type = OPType.Position, Target = contact_OpTarget.CurrentContact.Clone(), Operate = new CPosition() { IsCSBK = (bool)chk_CSBK.IsChecked, IsEnh = (bool)chk_Enh.IsChecked, IsCycle = (bool)chk_Cycle.IsChecked, Cycle = (double)((ComboBoxItem)cmb_CycleLst.SelectedItem).Tag } }; 
                     break;
                 case 3:
                     operate = new COperate() { Type = OPType.Control, Target = contact_OpTarget.CurrentContact.Clone(), Operate = new CControl() { 
@@ -299,6 +307,16 @@ namespace TrboX
         private void rad_CreateFastOperate_Checked(object sender, RoutedEventArgs e)
         {
 
+        }
+
+        private void btn_Header_PreviewMouseLeftButtonDown(object sender, MouseButtonEventArgs e)
+        {
+            this.DragMove();
+        }
+
+        private void btn_SysClose_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

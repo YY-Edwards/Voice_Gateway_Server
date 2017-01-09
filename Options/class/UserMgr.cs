@@ -29,46 +29,45 @@ namespace TrboX
 
     }
 
+    [Serializable]
     public class CAuthority
     {
         public string Type;
         public string Dept { set; get; }
-        public string Icon;
+        public string Icon{ set; get; }
     }
 
-
+     [Serializable]
     public class User
     {
         private static string AllAudthStr = "["
-        + "{             'Type': 'Call',             'Dept': '呼叫',       'Icon': ''          },"
-        + "{             'Type': 'Message',          'Dept': '短信',       'Icon': ''          },"
-        + "{             'Type': 'Position',         'Dept': '定位',       'Icon': ''          },"
-        + "{             'Type': 'Tracker',          'Dept': '巡更追踪',   'Icon': ''          },"
-        + "{             'Type': 'JobTicket',        'Dept': '工单',       'Icon': ''          }"
+        + "{             'Type': 'Call',             'Dept': '呼叫',       'Icon': 'call_33_34.png'          },"
+        + "{             'Type': 'Message',          'Dept': '短信',       'Icon': 'message_34_34.png'          },"
+        + "{             'Type': 'Position',         'Dept': '定位',       'Icon': 'positon_29_38.png'          },"
+        + "{             'Type': 'Tracker',          'Dept': '巡更追踪',   'Icon': 'tacker_43_43.png'          },"
+        + "{             'Type': 'JobTicket',        'Dept': '工单',       'Icon': 'job_tickets_29_36.png'          }"
 
         + "]";
 
         private static string AdminAuthStr = "["
-        + "{             'Type': 'Call',             'Dept': '呼叫',       'Icon': ''          },"
-        + "{             'Type': 'Message',          'Dept': '短信',       'Icon': ''          },"
-        + "{             'Type': 'Position',         'Dept': '定位',       'Icon': ''          },"
-        + "{             'Type': 'Tracker',          'Dept': '巡更追踪',   'Icon': ''          },"
-        + "{             'Type': 'JobTicket',        'Dept': '工单',       'Icon': ''          }"
+        + "{             'Type': 'Call',             'Dept': '呼叫',       'Icon': 'call_33_34.png'          },"
+        + "{             'Type': 'Message',          'Dept': '短信',       'Icon': 'message_34_34.png'          },"
+        + "{             'Type': 'Position',         'Dept': '定位',       'Icon': 'positon_29_38.png'          },"
+        + "{             'Type': 'Tracker',          'Dept': '巡更追踪',   'Icon': 'tacker_43_43.png'          },"
+        + "{             'Type': 'JobTicket',        'Dept': '工单',       'Icon': 'job_tickets_29_36.png'          }"
 
         + "]";
 
         private static string GuestAuthStr = "["
-         + " {            'Type': 'Call',            'Dept': '呼叫',            'Icon': ''        },"
-         + " {            'Type': 'Message',         'Dept': '短信',            'Icon': ''        },"
-         + " {            'Type': 'Position',        'Dept': '定位',            'Icon': ''        },"
-         + " {            'Type': 'Tracker',         'Dept': '巡更追踪',        'Icon': ''        },"
-         + " {            'Type': 'JobTicket',       'Dept': '工单',            'Icon': ''        }"
+        + "{             'Type': 'Call',             'Dept': '呼叫',       'Icon': 'call_33_34.png'          },"
+        + "{             'Type': 'Message',          'Dept': '短信',       'Icon': 'message_34_34.png'          },"
+        + "{             'Type': 'Position',         'Dept': '定位',       'Icon': 'positon_29_38.png'          }"
          + "]";
 
 
         public static List<CAuthority> AddAuth = JsonConvert.DeserializeObject<List<CAuthority>>(AllAudthStr);
-        private static List<CAuthority> GuestAuth = JsonConvert.DeserializeObject<List<CAuthority>>(AdminAuthStr);
-        private static List<CAuthority> AdminAuth = JsonConvert.DeserializeObject<List<CAuthority>>(GuestAuthStr);
+        private static List<CAuthority> AdminAuth = JsonConvert.DeserializeObject<List<CAuthority>>(AdminAuthStr);
+        private static List<CAuthority> GuestAuth = JsonConvert.DeserializeObject<List<CAuthority>>(GuestAuthStr);
 
         [DefaultValue((long)0), JsonProperty(PropertyName = "id")]
         public long ID;

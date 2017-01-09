@@ -5,6 +5,8 @@
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
 
+#include "../lib/hash/md5.h"
+
 #include "Db.h"
 
 void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
@@ -158,7 +160,10 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 				}
 				if (password.size() > 0)
 				{
-					updateVal["password"] = CDb::md5(password.c_str());
+					MD5 md5;
+					md5.add(password.c_str(), strlen(password.c_str()));
+
+					updateVal["password"] = md5.getHash();  //CDb::md5(password.c_str());
 				}
 				if (authority.size() > 0)
 				{
@@ -196,21 +201,25 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 
 		else if (0 == operation.compare("auth"))
 		{
-			if (!d.HasMember("user") || !d["user"].IsObject())
+			if (!d.HasMember("users") || !d["users"].IsObject())
 			{
 				throw std::exception("call parameter error, user key must be an object");
 			}
 
-			std::string username = d["user"]["username"].GetString();
-			std::string password = d["user"]["password"].GetString();
+			std::string username = d["users"]["username"].GetString();
+			std::string password = d["users"]["password"].GetString();
 
 			std::list<recordType> records;
-			std::string condition = " where username=" + username;
-			condition += " and password=";
-			condition += CDb::md5(password.c_str());
-			CDb::instance()->query("user", condition.c_str(), records);
+			std::string condition = " where username='" + username;
+			condition += "' and password='";
 
-			if (records.size()<=0)
+			MD5 md5;
+			md5.add(password.c_str(), strlen(password.c_str()));
+
+			condition += md5.getHash() + "'";  //CDb::md5(password.c_str()); //CDb::md5(password.c_str());
+			CDb::instance()->query("user", condition.c_str(), records);
+			if(CDb::instance()->query("user", condition.c_str(), records)<=0 )
+			//if (records.size()<=0)
 			{
 				strResp = CRpcJsonParser::buildResponse("failed", callId, 404, "username or password error", ArgumentType());
 			}

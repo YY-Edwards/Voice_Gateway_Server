@@ -151,6 +151,26 @@ namespace TrboX
         }
     }
 
+    public class OrFlaseHideConverter : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (false == (bool)value[0] ||false == (bool)value[1])
+            {
+                return Visibility.Collapsed;
+            }
+            else
+            {
+                return Visibility.Visible;
+            }
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
 
     public class MonitorConverter : IValueConverter
     {
@@ -329,6 +349,33 @@ namespace TrboX
             else
             {
                 return -1;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
+
+    public class StrToImg : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                if (value is string)
+                {
+                    return new BitmapImage(new Uri("pack://application:,,,/resources/images/" + (string)value));
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            catch
+            {
+                return null;
             }
         }
 

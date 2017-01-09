@@ -16,23 +16,6 @@ using System.Globalization;
 
 namespace TrboX
 {
-    //public class ContactListVOffset : IValueConverter
-    //{
-    //    public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
-    //    {
-    //        if ((null == value) || (0.000001 > (double)value)) return 0;
-    //        return ((double)value - 0.000001) / (double)value - 3;
-
-    //        //return 0;
-    //    }
-
-    //    public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
-    //    {
-    //        return value;
-    //    }
-    //}
-
-
     public class contact_str
     {
         public bool IsSel { set; get; }

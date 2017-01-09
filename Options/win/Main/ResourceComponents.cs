@@ -77,7 +77,12 @@ namespace TrboX
             if (m_Main.cmb_AuthorityDest.Items.Count > 0) return;
             if (users != null)
             {
-                foreach (User user in users)m_Main.cmb_AuthorityDest.Items.Add(new ComboBoxItem() { Content = user.UserName + (user.Type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"), Tag = user });                
+                foreach (User user in users)m_Main.cmb_AuthorityDest.Items.Add(new ComboBoxItem() { Content = user.UserName + (user.Type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"), Tag = user,
+                                                                                                    Style = App.Current.Resources["ComboBoxItemStyleNormal"] as Style,
+                                                                                                    Foreground = new SolidColorBrush(Color.FromArgb(255, 190, 195, 199)),
+                                                                                                    FontSize = 13,
+                                                                                                    Height = 32,
+                });                
                 m_Main.cmb_AuthorityDest.SelectedIndex = 0;
             }
         }
@@ -104,7 +109,12 @@ namespace TrboX
                     user.ID = user.Add();
                      m_Main.lst_User.Items.Add(new ListViewItem() { Content = user });
                      m_Main.lst_User.SelectedIndex =  m_Main.lst_User.Items.Count - 1;
-                     m_Main.cmb_AuthorityDest.Items.Add(new ComboBoxItem() { Content = user.UserName + (user.Type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"), Tag = user });
+                     m_Main.cmb_AuthorityDest.Items.Add(new ComboBoxItem() { Content = user.UserName + (user.Type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"), Tag = user,
+                                                                             Style = App.Current.Resources["ComboBoxItemStyleNormal"] as Style,
+                                                                             Foreground = new SolidColorBrush(Color.FromArgb(255, 190, 195, 199)),
+                                                                             FontSize = 13,
+                                                                             Height = 32,
+                     });
                      m_Main.cmb_AuthorityDest.SelectedIndex =  m_Main.cmb_AuthorityDest.Items.Count - 1;
                 }
                 else
@@ -212,8 +222,18 @@ namespace TrboX
                     dept.ID = dept.Add();
                     m_Main.lst_Group.Items.Add(new ListViewItem() { Content = dept });
 
-                    m_Main.cmb_StaffDepartment.Items.Add(new ComboBoxItem() { Content = dept.Name, Tag = dept });
-                    m_Main.cmb_RadioDepartment.Items.Add(new ComboBoxItem() { Content = dept.Name, Tag = dept });
+                    m_Main.cmb_StaffDepartment.Items.Add(new ComboBoxItem() { Content = dept.Name, Tag = dept,
+                                                            Style = App.Current.Resources["ComboBoxItemStyleNormal"] as Style,
+                                                            Foreground = new SolidColorBrush(Color.FromArgb(255, 190,195,199)),
+                                                            FontSize = 13,
+                                                            Height = 32,                                               
+                    });
+                    m_Main.cmb_RadioDepartment.Items.Add(new ComboBoxItem() { Content = dept.Name, Tag = dept,
+                                                                              Style = App.Current.Resources["ComboBoxItemStyleNormal"] as Style,
+                                                                              Foreground = new SolidColorBrush(Color.FromArgb(255, 190, 195, 199)),
+                                                                              FontSize = 13,
+                                                                              Height = 32,
+                    });
                     m_Main.lst_Group.SelectedIndex = m_Main.lst_Group.Items.Count - 1;
                 }
                 else
@@ -355,7 +375,12 @@ namespace TrboX
                     if (item.Value.Group == null) continue;
                     if (item.Value.Group.GroupID <= 0) continue;
 
-                    m_Main.cmb_StaffDepartment.Items.Add(new ComboBoxItem() { Content = item.Value.Group.Name, Tag = item.Value.Group });
+                    m_Main.cmb_StaffDepartment.Items.Add(new ComboBoxItem() { Content = item.Value.Group.Name, Tag = item.Value.Group ,
+                                                                              Style = App.Current.Resources["ComboBoxItemStyleNormal"] as Style,
+                                                                              Foreground = new SolidColorBrush(Color.FromArgb(255, 190, 195, 199)),
+                                                                              FontSize = 13,
+                                                                              Height = 32,
+                    });
                 }
             }
         }
@@ -370,7 +395,12 @@ namespace TrboX
                     if (item.Value.Group == null) continue;
                     if (item.Value.Group.GroupID <= 0) continue;
 
-                    m_Main.cmb_RadioDepartment.Items.Add(new ComboBoxItem() { Content = item.Value.Group.Name, Tag = item.Value.Group });
+                    m_Main.cmb_RadioDepartment.Items.Add(new ComboBoxItem() { Content = item.Value.Group.Name, Tag = item.Value.Group,
+                                                                              Style = App.Current.Resources["ComboBoxItemStyleNormal"] as Style,
+                                                                              Foreground = new SolidColorBrush(Color.FromArgb(255, 190, 195, 199)),
+                                                                              FontSize = 13,
+                                                                              Height = 32,
+                    });
                 }
             }
         }
@@ -433,10 +463,15 @@ namespace TrboX
                         DataBase.InsertLog(ex.Message);
                     }
 
-                    m_Main.lst_Staff.Items.Add(new ListViewItem() { Content = staff, Tag = m_Main.cmb_StaffDepartment.SelectedIndex});
+                    m_Main.lst_Staff.Items.Add(new ListViewItem() { Content = staff, Tag = m_Main.cmb_StaffDepartment.SelectedIndex,});
                     m_Main.lst_Staff.SelectedIndex = m_Main.lst_Staff.Items.Count - 1;
 
-                    m_Main.cmb_RadioStaff.Items.Add(new ComboBoxItem() {Content= staff.Name + "(" + (staff.Type == StaffType.Vehicle ? "车辆" : "人员") + ")",Tag = staff });
+                    m_Main.cmb_RadioStaff.Items.Add(new ComboBoxItem() {Content= staff.Name + "(" + (staff.Type == StaffType.Vehicle ? "车辆" : "人员") + ")",Tag = staff,
+                                                                        Style = App.Current.Resources["ComboBoxItemStyleNormal"] as Style,
+                                                                        Foreground = new SolidColorBrush(Color.FromArgb(255, 190, 195, 199)),
+                                                                        FontSize = 13,
+                                                                        Height = 32,
+                    });
                 }
                 else
                 {
@@ -496,7 +531,12 @@ namespace TrboX
                 {
                     if (item.Value.Staff == null) continue;
                     if (item.Value.Staff.ID <1 ) continue;
-                    m_Main.cmb_RadioStaff.Items.Add(new ComboBoxItem() { Content = item.Value.Staff.Name + "(" + (item.Value.Staff.Type == StaffType.Vehicle ? "车辆" :"人员") + ")", Tag = item.Value.Staff });
+                    m_Main.cmb_RadioStaff.Items.Add(new ComboBoxItem() { Content = item.Value.Staff.Name + "(" + (item.Value.Staff.Type == StaffType.Vehicle ? "车辆" :"人员") + ")", Tag = item.Value.Staff ,
+                                                                         Style = App.Current.Resources["ComboBoxItemStyleNormal"] as Style,
+                                                                         Foreground = new SolidColorBrush(Color.FromArgb(255, 190, 195, 199)),
+                                                                         FontSize = 13,
+                                                                         Height = 32,
+                    });
                 }
                 m_Main.lst_Staff.SelectedIndex = 0;
             }

@@ -18,10 +18,12 @@ namespace TrboX
         count,
         del,
         update,
+        auth,
 
         listUser,
         assignUser,
         detachUser,
+        
 
         listRadio,
         assignRadio,

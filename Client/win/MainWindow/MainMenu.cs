@@ -11,22 +11,32 @@ namespace TrboX
 {
     public class ShortCutKey
     {
-        public static RoutedUICommand NewCall =
+        public static RoutedUICommand Login =
 
-            new RoutedUICommand("菜单管理(_M)", "MenusCommand", typeof(ShortCutKey),
+            new RoutedUICommand("Login", "LoginCommand", typeof(ShortCutKey),
 
                 new InputGestureCollection(new InputGesture[] {
 
+                    new KeyGesture(Key.Enter) }));
+
+        public static RoutedUICommand Quit =
+
+        new RoutedUICommand("菜单管理(_M)", "LoginCommand", typeof(ShortCutKey),
+
+        new InputGestureCollection(new InputGesture[] {
+
+                    new KeyGesture(Key.Escape) }));
+
+
+
+
+        public static RoutedUICommand NewCall =
+
+        new RoutedUICommand("菜单管理(_M)", "MenusCommand", typeof(ShortCutKey),
+
+        new InputGestureCollection(new InputGesture[] {
+
                     new KeyGesture(Key.N, ModifierKeys.Control ) }));
-
-
-       // public static RoutedUICommand MangeCommand =
-
-       //new RoutedUICommand("我的管理(_A)", "MangeCommand", typeof(MyCommands),
-
-       //    new InputGestureCollection(new InputGesture[] {
-
-       //             new KeyGesture(Key.A , ModifierKeys.Control) }));
 
     }
     public class MainMenu
@@ -55,11 +65,7 @@ namespace TrboX
             cb.Command = ShortCutKey.NewCall;
             cb.Executed += new ExecutedRoutedEventHandler(delegate(object sender, ExecutedRoutedEventArgs e) { m_Main.SubWindow.OpenCreateOperateWindow(OPType.Dispatch); });
             m_Main.CommandBindings.Add(cb);
-            //m_Main.menu_File_NewDispatch.Command = ShortCutKey.NewCall;
-            //m_Main.menu_File_NewDispatch.Command.Execute += new ExecutedRoutedEventHandler(cb_Executed);
-            
-            //cb.Command = 
-            //ShortCutKey.NewCall.
+
             m_Main.menu_File_NewDispatch.Click += delegate { m_Main.SubWindow.OpenCreateOperateWindow(OPType.Dispatch); };
             m_Main.menu_File_NewMessage.Click += delegate { m_Main.SubWindow.OpenCreateOperateWindow(OPType.ShortMessage); };
             m_Main.menu_File_NewPosition.Click += delegate { m_Main.SubWindow.OpenCreateOperateWindow(OPType.Position); };

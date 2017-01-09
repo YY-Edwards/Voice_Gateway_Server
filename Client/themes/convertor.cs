@@ -779,6 +779,70 @@ namespace TrboX
             return value;
         }
     }
+
+    public class UserInputConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value != null && (string)value != "")
+            {
+                return "";
+            }
+            else
+            {
+                return "请输入您的用户名";
+            }
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+
+    public class UserPasswordConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (value != null && (string)value != "")
+            {
+                return "";
+            }
+            else
+            {
+                return "请输入您的密码";
+            }
+
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
+
+    public class TargetTypeConv : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (null == value) return -1;
+            if (!(value is CMultMember)) return -1;
+
+            if (((CMultMember)value).Type == SelectionType.All) return 2;
+            if (((CMultMember)value).Type == SelectionType.Null) return -1;
+
+            CMember mem = ((CMultMember)value).MultToSingle();
+
+            if (mem.Type == MemberType.Group) return 0;
+            else return 1;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
 }
 
 
