@@ -207,7 +207,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		ms.startMonitor(wstr.c_str());
 	}
-	while (1);
+	while (1){ Sleep(1000); };
 	return 0;
 }
 
