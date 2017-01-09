@@ -30,7 +30,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		rpcServer.start(9003, CRpcServer::TCP);
 
-		while (!CService::instance()->m_bServiceStopped);
+		while (!CService::instance()->m_bServiceStopped){
+			Sleep(1000);
+		}
 		rpcServer.stop();
 	});
 
@@ -71,8 +73,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		exit(1);
 	}
 
-	wprintf(argv[1]);
-	return 0;
+	//wprintf(argv[1]);
+	//return 0;
 
 	//FieldValue record1(FieldValue::TArray);
 	//FieldValue r1(FieldValue::TString);
@@ -123,7 +125,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	//rpcServer.addActionHandler("gpslog", gpsLogAction);
 
 	//rpcServer.start(9003, CRpcServer::TCP);
-	//while (1);
-	//return 0;
+	while (1)
+	{
+		Sleep(100000000);
+	}
+	return 0;
 }
 
