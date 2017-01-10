@@ -17,6 +17,7 @@
 #include "GpsAction.h"
 #include "MsgAction.h"
 #include "StatusAction.h"
+#include "Tool.h"
 
 #define TCP_PORT 9001
 
@@ -30,14 +31,59 @@ static SERVICE_STATUS g_ServiceStatus = { 0 };
 static HANDLE g_ServiceStopEvent = INVALID_HANDLE_VALUE;
 static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 
+std::wstring getAppdataPath(){
+	TCHAR szBuffer[MAX_PATH];
+	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
 
+	return std::wstring(szBuffer);
+}
 int _tmain(int argc, _TCHAR* argv[])
 {
+	int createFileRlt = 0;
+	TCHAR szBuffer[MAX_PATH];
+	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
+	std::wstring appFolder = getAppdataPath() + _T("\\Jihua Information");
+	if (!PathFileExists(appFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(appFolder.c_str());
+	}
+	appFolder = appFolder + _T("\\Trbox");
+	if (!PathFileExists(appFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(appFolder.c_str());
+	}
+	appFolder = appFolder + _T("\\3.0");
+	if (!PathFileExists(appFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(appFolder.c_str());
+	}
+	appFolder = appFolder + _T("\\Dispatch");
+	if (!PathFileExists(appFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(appFolder.c_str());
+	}
 
+	std::wstring logFolder = appFolder + _T("\\log");
+	if (!PathFileExists(logFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(logFolder.c_str());
+	}
+
+	std::wstring pathLogInfo = logFolder + _T("/info_");
+	std::wstring pathLogError = logFolder + _T("/error_");
+	std::wstring pathLogWarning = logFolder + _T("/warning_");
+
+	//FLAGS_log_dir = "./";
 	google::InitGoogleLogging("");
+	google::SetLogDestination(google::GLOG_INFO, CTool::UnicodeToUTF8(pathLogInfo).c_str());
+	google::SetLogDestination(google::GLOG_ERROR, CTool::UnicodeToUTF8(pathLogError).c_str());
+	google::SetLogDestination(google::GLOG_WARNING, CTool::UnicodeToUTF8(pathLogWarning).c_str());
+	google::SetLogFilenameExtension("log");
+
+	/*google::InitGoogleLogging("");
 	google::SetLogDestination(google::GLOG_INFO, "../debug/log/info");
-	google::SetLogDestination(google::GLOG_WARNING, "../debug/warning/info");
-	google::SetLogDestination(google::GLOG_ERROR, "../debug/error/info");
+	google::SetLogDestination(google::GLOG_WARNING, "../debug/log/warning");
+	google::SetLogDestination(google::GLOG_ERROR, "../debug/log/error");*/
 
 	//CService::instance()->SetServiceNameAndDescription(_T("Trbox.Dispatch"), _T("Trbox Dispatch Server"));
 	//CService::instance()->SetServiceCode([&]()

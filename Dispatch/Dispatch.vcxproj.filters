@@ -49,6 +49,9 @@
     <Filter Include="service">
       <UniqueIdentifier>{c6e4c2d0-f37e-4c82-85c4-2bf814f7b506}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tool">
+      <UniqueIdentifier>{c76e8a81-0919-41e3-b788-14aeba63a397}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -180,6 +183,9 @@
     <ClInclude Include="..\lib\service\service.h">
       <Filter>service</Filter>
     </ClInclude>
+    <ClInclude Include="Tool.h">
+      <Filter>Tool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -227,5 +233,12 @@
     <ClCompile Include="..\lib\service\service.cpp">
       <Filter>service</Filter>
     </ClCompile>
+    <ClCompile Include="Tool.cpp">
+      <Filter>Tool</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\LogServer\LogServer.vcxproj" />
+    <None Include="..\LogServer\LogServer.vcxproj.user" />
   </ItemGroup>
 </Project>
