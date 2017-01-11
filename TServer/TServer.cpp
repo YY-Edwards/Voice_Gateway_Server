@@ -205,7 +205,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::copy(strName.begin(), strName.end(), wstr.begin());
 	if (strName != "")
 	{
-		ms.startMonitor(wstr.c_str());
+		ms.startMonitor(wstr.c_str(),_T("Trbox.Log"));
+		
 	}
 	while (1){ Sleep(1000); };
 	return 0;
