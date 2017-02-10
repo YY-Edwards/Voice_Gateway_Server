@@ -53,17 +53,20 @@ namespace TrboX
 
             RunMode type = RunMode.None;
 
+            if (repeater != null && repeater.IsEnable)
+            {
+                m_Main.lab_DeviceSta.Content = "未连中继台";
+                type = RunMode.Repeater;
+            }
+
+
             if (radio != null && radio.IsEnable)
             {
                 m_Main.lab_DeviceSta.Content = "未连接调度设备　　未连接数据设备";
                 type = RunMode.Radio;
             }
 
-            if (repeater != null && repeater.IsEnable)
-            {
-                m_Main.lab_DeviceSta.Content = "未连中继台";
-                type = RunMode.Repeater;
-            }
+
 
             SetTargetSystemType(type);
             return RunMode.None;

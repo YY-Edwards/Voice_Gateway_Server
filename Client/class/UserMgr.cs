@@ -462,6 +462,8 @@ namespace TrboX
             
             LogServer.Call(authstr, delegate(object obj)
             {
+                if (obj == null) return null;
+                
                 if (((LogServerResponse)obj).status == "success")
                 {
                     User curruser = JsonConvert.DeserializeObject<User>(JsonConvert.SerializeObject(((LogServerResponse)obj).contents));
