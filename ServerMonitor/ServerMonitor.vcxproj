@@ -11,9 +11,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}</ProjectGuid>
+    <ProjectGuid>{2A17AD90-6FA0-4E4E-A998-041753367F78}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>TServer</RootNamespace>
+    <RootNamespace>ServerMonitor</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -42,14 +42,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(SolutionDir)$(Configuration)\Svr\</OutDir>
-    <IntDir>$(Configuration)\Svr\</IntDir>
-    <IncludePath>$(MSBuildProjectDirectory);$(WindowsSDK_IncludePath);$(VC_IncludePath);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>$(SolutionDir)$(Configuration)\Svr\</OutDir>
-    <IntDir>$(Configuration)\Svr\</IntDir>
-    <IncludePath>$(MSBuildProjectDirectory);$(WindowsSDK_IncludePath);$(VC_IncludePath);$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -62,7 +57,6 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -80,77 +74,25 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\lib\rpc\include\BaseConnector.h" />
-    <ClInclude Include="..\lib\rpc\include\request.h" />
-    <ClInclude Include="..\lib\rpc\include\RpcClient.h" />
-    <ClInclude Include="..\lib\rpc\include\RpcJsonParser.h" />
-    <ClInclude Include="..\lib\rpc\include\RpcServer.h" />
-    <ClInclude Include="..\lib\rpc\include\TcpClientConnector.h" />
-    <ClInclude Include="..\lib\rpc\include\TcpServer.h" />
     <ClInclude Include="..\lib\service\service.h" />
-    <ClInclude Include="..\lib\strutil\strutil.h" />
-    <ClInclude Include="AllCallAction.h" />
-    <ClInclude Include="Broker.h" />
-    <ClInclude Include="CallAction.h" />
-    <ClInclude Include="ControlAction.h" />
-    <ClInclude Include="GpsAction.h" />
-    <ClInclude Include="MonitorServer.h" />
-    <ClInclude Include="MsgAction.h" />
-    <ClInclude Include="PrivateCallAction.h" />
-    <ClInclude Include="CancelGpsAction.h" />
-    <ClInclude Include="ConenctRadioAction.h" />
-    <ClInclude Include="GetGpsAction.h" />
-    <ClInclude Include="GetOverTurnGpsAction.h" />
-    <ClInclude Include="GroupCallAction.h" />
-    <ClInclude Include="RadioCheckAction.h" />
-    <ClInclude Include="RecvArsAction.h" />
-    <ClInclude Include="RecvCallStatusAction.h" />
-    <ClInclude Include="RecvConnectResultAction.h" />
-    <ClInclude Include="RecvControlResultAction.h" />
-    <ClInclude Include="RecvGetConfigAction.h" />
-    <ClInclude Include="RecvGpsAction.h" />
-    <ClInclude Include="RecvMessageAction.h" />
-    <ClInclude Include="RecvMessageResultAction.h" />
-    <ClInclude Include="RecvSendGpsStatus.h" />
-    <ClInclude Include="RecvStatusAction.h" />
-    <ClInclude Include="RemotePowerOffAction.h" />
-    <ClInclude Include="RemotePowerOnAction.h" />
-    <ClInclude Include="SendGroupSmsAction.h" />
-    <ClInclude Include="SendSmsAction.h" />
-    <ClInclude Include="SettingAction.h" />
-    <ClInclude Include="Settings.h" />
-    <ClInclude Include="StartAction.h" />
-    <ClInclude Include="StatusAction.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="StopCallAction.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="WireLanRecvAction.h" />
-    <ClInclude Include="WireLanSendAction.h" />
-    <ClInclude Include="WiretapAction.h" />
+    <ClInclude Include="TServerMonitor.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\lib\rpc\src\RpcClient.cpp" />
-    <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp" />
-    <ClCompile Include="..\lib\rpc\src\RpcServer.cpp" />
-    <ClCompile Include="..\lib\rpc\src\TcpClientConnector.cpp" />
-    <ClCompile Include="..\lib\rpc\src\TcpServer.cpp" />
     <ClCompile Include="..\lib\service\service.cpp" />
-    <ClCompile Include="..\lib\strutil\strutil.cpp" />
-    <ClCompile Include="Broker.cpp" />
-    <ClCompile Include="MonitorServer.cpp" />
-    <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="ServerMonitor.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="TServer.cpp" />
+    <ClCompile Include="TServerMonitor.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -53,25 +53,28 @@
 #include "WireLanSendAction.h"
 
 #include "MonitorServer.h"
+#include "../lib/service\service.h"
+
+#define SERVICE_CODE    TRUE
 std::string getServerName()
 {
 	std::string serverName = "";
 	std::string strConfig = CSettings::instance()->getValue("radio");
-	Document d;
-	d.Parse(strConfig.c_str());
-	if (d.HasMember("IsEnable") && d["IsEnable"].IsBool() )
-	{
-		
-		if (TRUE == d["IsEnable"].GetBool())
-		{
-			serverName = "Trbox.Dispatch";
-		}
-		else
-		{
-			serverName = "Trbox.Wirelan";
-		}
-		
-	}
+	Document doc;
+	doc.Parse(strConfig.c_str());
+	//if (doc.HasMember("IsEnable") && doc["IsEnable"].IsBool() )
+	//{
+	//	
+	//	if (TRUE == doc["IsEnable"].GetBool())
+	//	{
+	//		serverName = "Trbox.Dispatch";
+	//	}
+	//	else
+	//	{
+	//		serverName = "Trbox.Wirelan";
+	//	}
+	//	
+	//}
 	return  serverName;
 }
 int _tmain(int argc, _TCHAR* argv[])
@@ -106,8 +109,117 @@ int _tmain(int argc, _TCHAR* argv[])
 	//	Sleep(50);
 	//
 	//}
-
 	std::map<std::string, ACTION> serverActions, clientActions, wlClientActions;
+#if SERVICE_CODE
+	CService::instance()->SetServiceNameAndDescription(_T("Trbox.TServer"), _T("Trbox TServer Server"));
+	CService::instance()->SetServiceCode([&](){
+		serverActions["start"] = startAction;
+
+		serverActions["setBaseSetting"] = setBaseAction;
+		serverActions["getBaseSetting"] = getBaseAction;
+		serverActions["setRadioSetting"] = setRadioAction;
+		serverActions["getRadioSetting"] = getRadioAction;
+		serverActions["setRepeaterSetting"] = setRepeaterAction;
+		serverActions["getRepeaterSetting"] = getRepeaterAction;
+
+		serverActions["call"] = callAction;
+		serverActions["control"] = controlAction;
+		serverActions["queryGps"] = gpsAction;
+		serverActions["message"] = msgAction;
+		serverActions["status"] = statusAction;
+
+		/*wire lan recive*/
+		serverActions["wlCall"] = wlCallActionHandler;
+		serverActions["wlCallStatus"] = wlCallStatusActionHandler;
+		serverActions["wlInfo"] = wlInfoActionHandler;
+		serverActions["wlPlay"] = wlPlayActionHandler;
+
+		clientActions["message"] = recvMsgAction;
+		clientActions["messageStatus"] = recvMessageResultAction;
+		clientActions["sendArs"] = recvArsAction;
+		clientActions["sendGps"] = recvGpsAction;
+		clientActions["connectStatus"] = recvConnetResultAction;
+		clientActions["status"] = recvStatusAction;
+		clientActions["callStatus"] = recvCallStatusAction;
+		clientActions["controlStatus"] = recvControlResultAction;
+		clientActions["sendGpsStatus"] = recvSendGpsStatusAction;
+		clientActions["getRadioConfig"] = recvGetConfigAction;
+		/*wire lan send*/
+		wlClientActions["wlCall"] = wlCallAction;
+		wlClientActions["wlCallStatus"] = wlCallStatusAction;
+		wlClientActions["wlInfo"] = wlInfoAction;
+		wlClientActions["wlPlayStatus"] = wlPlayStatusAction;
+		wlClientActions["wlGetConfig"] = wlGetConfigAction;
+		wlClientActions["connectStatus"] = recvConnetResultAction;
+		wlClientActions["sendGpsStatus"] = recvSendGpsStatusAction;
+		wlClientActions["sendGps"] = recvGpsAction;
+		wlClientActions["messageStatus"] = recvMessageResultAction;
+		wlClientActions["message"] = recvMsgAction;
+		wlClientActions["status"] = recvStatusAction;
+		wlClientActions["sendArs"] = recvArsAction;
+		CBroker::instance()->startLogClient();
+
+		CBroker::instance()->startWireLanClient(wlClientActions);
+		CBroker::instance()->startRpcServer(serverActions);
+		CBroker::instance()->startRadioClient(clientActions);
+
+		CMonitorServer ms;
+		std::string strName = getServerName();
+		std::wstring wstr(strName.length(), L' ');
+		std::copy(strName.begin(), strName.end(), wstr.begin());
+		if (strName != "")
+		{
+			ms.startMonitor(wstr.c_str(), _T("Trbox.Log"));
+
+		}
+		/*ÊÍ·Å×ÊÔ´*/
+		while (!CService::instance()->m_bServiceStopped)
+		{
+			Sleep(100);
+		}
+		
+	});
+	std::wstring strArg = argv[1];
+	try{
+		if (0 == strArg.compare(_T("install")))
+		{
+			CService::instance()->InstallService();
+			//InstallService();
+		}
+		else if (0 == strArg.compare(_T("uninstall")))
+		{
+			CService::instance()->UninstallService();
+			//LOG(INFO) << "UnInstall Service";
+		}
+		else if (0 == strArg.compare(_T("start")))
+		{
+			CService::instance()->StartWindowsService();
+			//LOG(INFO) << "Start Service";
+		}
+		else if (0 == strArg.compare(_T("stop")))
+		{
+			CService::instance()->StopService();
+			//LOG(INFO) << "Stop Service";
+		}
+		else if (0 == strArg.compare(_T("run")))
+		{
+			CService::instance()->RunService();
+		}
+	}
+	catch (std::system_error syserr) {
+		exit(1);
+	}
+	catch (std::runtime_error runerr) {
+		exit(1);
+	}
+	catch (...) {
+		exit(1);
+	}
+
+	wprintf(argv[1]);
+#else
+
+	
 
 	serverActions["start"] = startAction;
 
@@ -209,6 +321,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		
 	}
 	while (1){ Sleep(1000); };
+#endif
 	return 0;
 }
 
