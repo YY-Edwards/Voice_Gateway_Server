@@ -395,7 +395,7 @@ void CTcpScheduling::timeOut()
 	{
 		m_allCommandListLocker.lock();
 		std::list<TcpCommand>::iterator it;
-		for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); it++)
+		for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); ++it)
 		{
 			it->timeCount++;
 			if (it->timeCount % (it->timeOut / 100) == 0)
@@ -513,7 +513,7 @@ void CTcpScheduling::timeOut()
 							tr.id = it->radioId;
 							tr.controlType = OFF;
 							tr.result = REMOTE_FAILED;
-							onTcpData(myTcpCallBackFunc, ALL_CALL, tr);
+							onTcpData(myTcpCallBackFunc, REMOTE_CLOSE, tr);
 							it = tcpCommandTimeOutList.erase(it);
 #if DEBUG_LOG
 							LOG(INFO) << "Ò£±ÕÊ§°Ü£¡";
@@ -530,7 +530,7 @@ void CTcpScheduling::timeOut()
 								tr.id = it->radioId;
 								tr.controlType = ON;
 								tr.result = REMOTE_FAILED;
-								onTcpData(myTcpCallBackFunc, ALL_CALL, tr);
+								onTcpData(myTcpCallBackFunc, REMOTE_CLOSE, tr);
 								it = tcpCommandTimeOutList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "Ò£¿ªÊ§°Ü£¡";
@@ -553,7 +553,7 @@ void CTcpScheduling::timeOut()
 								tr.id = it->radioId;
 								tr.controlType = RADIOCHECK;
 								tr.result = REMOTE_FAILED;
-								onTcpData(myTcpCallBackFunc, ALL_CALL, tr);
+								onTcpData(myTcpCallBackFunc, REMOTE_CLOSE, tr);
 								it = tcpCommandTimeOutList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "ÔÚÏß¼ì²âÊ§°Ü£¡";
@@ -576,7 +576,7 @@ void CTcpScheduling::timeOut()
 								tr.id = it->radioId;
 								tr.controlType = MONITOR;
 								tr.result = REMOTE_FAILED;
-								onTcpData(myTcpCallBackFunc, ALL_CALL, tr);
+								onTcpData(myTcpCallBackFunc, REMOTE_CLOSE, tr);
 								it = tcpCommandTimeOutList.erase(it);
 #if DEBUG_LOG
 								LOG(INFO) << "Ô¶³Ì¼àÌýÊ§°Ü£¡";
@@ -593,7 +593,8 @@ void CTcpScheduling::timeOut()
 					default:
 						break;
 					}
-					if (it->command != RADIO_CONNECT)
+					if (tcpCommandTimeOutList.size()>0)
+					if(it->command != RADIO_CONNECT)
 					{
 						it = tcpCommandTimeOutList.erase(it);
 						break;
@@ -602,7 +603,7 @@ void CTcpScheduling::timeOut()
 				}
 
 			}
-
+			break;
 		}
 		m_allCommandListLocker.unlock();
 		Sleep(100);
