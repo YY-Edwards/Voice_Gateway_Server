@@ -33,9 +33,25 @@
 			<Name>Client</Name>
 			<Project>{45E30D6B-48C5-497B-999C-91994F4B1885}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\Dispatch\Dispatch.vcxproj">
+			<Name>Dispatch</Name>
+			<Project>{1B9D30FE-4CF7-4B77-B53B-5AEF9B59EBE2}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\LogServer\LogServer.vcxproj">
+			<Name>LogServer</Name>
+			<Project>{6426AB0C-F51F-45A0-ADD2-4A30B77D2E49}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\Options\Options.csproj">
 			<Name>Options</Name>
 			<Project>{F9613FD5-3826-4911-AC1D-5C38408E708D}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\TServer\TServer.vcxproj">
+			<Name>TServer</Name>
+			<Project>{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\WirlineSchedule\WirlineSchedule.vcxproj">
+			<Name>WirelineSchedule</Name>
+			<Project>{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}</Project>
 		</ProjectReference>
 	</ItemGroup>
 </Project>

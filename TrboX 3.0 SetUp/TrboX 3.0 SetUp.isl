@@ -1123,7 +1123,9 @@
 		<row><td>ISSelfRegisterFiles</td><td>3073</td><td>ISSELFREG.DLL</td><td>ISSelfRegisterFiles</td><td/><td/></row>
 		<row><td>ISSelfRegisterFinalize</td><td>1</td><td>ISSELFREG.DLL</td><td>ISSelfRegisterFinalize</td><td/><td/></row>
 		<row><td>ISUnSelfRegisterFiles</td><td>3073</td><td>ISSELFREG.DLL</td><td>ISUnSelfRegisterFiles</td><td/><td/></row>
-		<row><td>IntasllServer</td><td>1122</td><td>INSTALLDIR</td><td>[INSTALLDIR]InstallSvr.bat</td><td/><td/></row>
+		<row><td>InstallDispSvr</td><td>1058</td><td>DEVICE</td><td>[DEVICE]InstallDSSvr.bat</td><td/><td/></row>
+		<row><td>InstallLogSvr</td><td>1058</td><td>SVR</td><td>[SVR]InstallLogSvr.bat</td><td/><td/></row>
+		<row><td>InstallWireSvr</td><td>1058</td><td>DEVICE</td><td>[DEVICE]InstallWSSvr.bat</td><td/><td/></row>
 		<row><td>SetARPINSTALLLOCATION</td><td>51</td><td>ARPINSTALLLOCATION</td><td>[INSTALLDIR]</td><td/><td/></row>
 		<row><td>SetAllUsersProfileNT</td><td>51</td><td>ALLUSERSPROFILE</td><td>[%SystemRoot]\Profiles\All Users</td><td/><td/></row>
 		<row><td>ShowMsiLog</td><td>226</td><td>SystemFolder</td><td>[SystemFolder]notepad.exe "[MsiLogFileLocation]"</td><td/><td>Shows Property-driven MSI Log</td></row>
@@ -1210,6 +1212,11 @@
 		<row><td>MyPicturesFolder</td><td>TARGETDIR</td><td>.:MyPict~1|MyPictures</td><td/><td>0</td><td/></row>
 		<row><td>NEW_DIRECTORY1</td><td>TARGETDIR</td><td>NEW_DIRECTORY1</td><td/><td>0</td><td/></row>
 		<row><td>NEW_DIRECTORY2</td><td>TARGETDIR</td><td>NEW_DIRECTORY2</td><td/><td>0</td><td/></row>
+		<row><td>NEW_DIRECTORY3</td><td>TARGETDIR</td><td>NEW_DIRECTORY3</td><td/><td>0</td><td/></row>
+		<row><td>NEW_DIRECTORY4</td><td>TARGETDIR</td><td>NEW_DIRECTORY4</td><td/><td>0</td><td/></row>
+		<row><td>NEW_DIRECTORY5</td><td>TARGETDIR</td><td>NEW_DIRECTORY5</td><td/><td>0</td><td/></row>
+		<row><td>NEW_DIRECTORY6</td><td>TARGETDIR</td><td>NEW_DIRECTORY6</td><td/><td>0</td><td/></row>
+		<row><td>NEW_DIRECTORY7</td><td>TARGETDIR</td><td>NEW_DIRECTORY7</td><td/><td>0</td><td/></row>
 		<row><td>NEW_FOLDER_1</td><td>TARGETDIR</td><td>NEW_FOLDER_1</td><td/><td>0</td><td/></row>
 		<row><td>NEW_FOLDER_11</td><td>TARGETDIR</td><td>NEW_FOLDER_11</td><td/><td>0</td><td/></row>
 		<row><td>NEW_FOLDER_12</td><td>TARGETDIR</td><td>NEW_FOLDER_12</td><td/><td>0</td><td/></row>
@@ -1977,7 +1984,10 @@
 		<row><td>icudt.dll</td><td>icudt.dll</td><td>icudt.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\icudt.dll</td><td>1</td><td/></row>
 		<row><td>index.html</td><td>ISX_DEFAULTCOMPONENT5</td><td>INDEX~1.HTM|index.html</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\index.html</td><td>1</td><td/></row>
 		<row><td>infowin.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>infowin.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\infowin.png</td><td>1</td><td/></row>
+		<row><td>installdssvr.bat</td><td>ISX_DEFAULTCOMPONENT4</td><td>INSTAL~1.BAT|InstallDSSvr.bat</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\Device\InstallDSSvr.bat</td><td>1</td><td/></row>
+		<row><td>installlogsvr.bat</td><td>ISX_DEFAULTCOMPONENT3</td><td>INSTAL~1.BAT|InstallLogSvr.bat</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\Svr\InstallLogSvr.bat</td><td>1</td><td/></row>
 		<row><td>installsvr.bat</td><td>ISX_DEFAULTCOMPONENT1</td><td>INSTAL~1.BAT|InstallSvr.bat</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\InstallSvr.bat</td><td>1</td><td/></row>
+		<row><td>installwssvr.bat</td><td>ISX_DEFAULTCOMPONENT4</td><td>INSTAL~1.BAT|InstallWSSvr.bat</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\Device\InstallWSSvr.bat</td><td>1</td><td/></row>
 		<row><td>libcef.dll</td><td>libcef.dll</td><td>libcef.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\libcef.dll</td><td>1</td><td/></row>
 		<row><td>libglog.dll</td><td>libglog.dll</td><td>libglog.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\libglog.dll</td><td>1</td><td/></row>
 		<row><td>libglog.dll1</td><td>libglog.dll1</td><td>libglog.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\libglog.dll</td><td>1</td><td/></row>
@@ -1996,6 +2006,8 @@
 		<row><td>system.net.http.dll</td><td>System.Net.Http.dll</td><td>SYSTEM~1.DLL|System.Net.Http.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\System.Net.Http.dll</td><td>1</td><td/></row>
 		<row><td>thumbs.db</td><td>ISX_DEFAULTCOMPONENT5</td><td>Thumbs.db</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\Thumbs.db</td><td>1</td><td/></row>
 		<row><td>trace.js</td><td>ISX_DEFAULTCOMPONENT5</td><td>trace.js</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\trace.js</td><td>1</td><td/></row>
+		<row><td>uninstall.bat</td><td>ISX_DEFAULTCOMPONENT4</td><td>UNINST~1.BAT|Uninstall.bat</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\Device\Uninstall.bat</td><td>1</td><td/></row>
+		<row><td>uninstall.bat1</td><td>ISX_DEFAULTCOMPONENT3</td><td>UNINST~1.BAT|Uninstall.bat</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\Svr\Uninstall.bat</td><td>1</td><td/></row>
 		<row><td>vehicle_40_40.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>VEHICL~1.PNG|vehicle_40_40.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\vehicle_40_40.png</td><td>1</td><td/></row>
 	</table>
 
@@ -4042,13 +4054,15 @@
 		<row><td>ISSelfRegisterFiles</td><td/><td>5601</td><td/><td/></row>
 		<row><td>ISSelfRegisterFinalize</td><td/><td>6601</td><td/><td/></row>
 		<row><td>ISUnSelfRegisterFiles</td><td/><td>2202</td><td/><td/></row>
+		<row><td>InstallDispSvr</td><td>Not Installed</td><td>6401</td><td/><td/></row>
 		<row><td>InstallFiles</td><td/><td>4000</td><td>InstallFiles</td><td/></row>
 		<row><td>InstallFinalize</td><td/><td>6600</td><td>InstallFinalize</td><td/></row>
 		<row><td>InstallInitialize</td><td/><td>1501</td><td>InstallInitialize</td><td/></row>
+		<row><td>InstallLogSvr</td><td>Not Installed</td><td>6405</td><td/><td/></row>
 		<row><td>InstallODBC</td><td/><td>5400</td><td>InstallODBC</td><td/></row>
 		<row><td>InstallServices</td><td>VersionNT</td><td>5800</td><td>InstallServices</td><td/></row>
 		<row><td>InstallValidate</td><td/><td>1400</td><td>InstallValidate</td><td/></row>
-		<row><td>IntasllServer</td><td>Not Installed</td><td>6405</td><td/><td/></row>
+		<row><td>InstallWireSvr</td><td>Not Installed</td><td>6402</td><td/><td/></row>
 		<row><td>IsolateComponents</td><td/><td>950</td><td>IsolateComponents</td><td/></row>
 		<row><td>LaunchConditions</td><td>Not Installed</td><td>410</td><td>LaunchConditions</td><td/></row>
 		<row><td>MigrateFeatureStates</td><td/><td>1010</td><td>MigrateFeatureStates</td><td/></row>
