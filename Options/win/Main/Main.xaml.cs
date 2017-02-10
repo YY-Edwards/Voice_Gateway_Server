@@ -43,8 +43,7 @@ namespace TrboX
             Process[] processes;
             processes = Process.GetProcessesByName("TServer");
 
-            if (processes.Count() > 0) return;
-            else
+            if (processes.Count() <= 0)
             {
                 if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "/Svr/TServer.exe"))
                 {
@@ -239,8 +238,7 @@ namespace TrboX
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-
-            int i = 0;
+            this.Close();
         }
 
         private void btn_Apply_Click(object sender, RoutedEventArgs e)
@@ -320,6 +318,16 @@ namespace TrboX
             {
                 import();
             }
+        }
+
+        private void btn_SysMin_Click(object sender, RoutedEventArgs e)
+        {
+            this.WindowState = WindowState.Minimized;
+        }
+
+        private void btn_SysClose_Click(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

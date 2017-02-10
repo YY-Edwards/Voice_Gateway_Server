@@ -262,11 +262,11 @@ namespace TrboX
                 if (dept != null)
                 {
                     dept.Delete();
-                    m_Main.lst_Group.Items.RemoveAt(m_Main.lst_Group.SelectedIndex);
-                    
                     m_Main.cmb_StaffDepartment.Items.RemoveAt(m_Main.lst_Group.SelectedIndex);
                     m_Main.cmb_RadioDepartment.Items.RemoveAt(m_Main.lst_Group.SelectedIndex);
 
+                    m_Main.lst_Group.Items.RemoveAt(m_Main.lst_Group.SelectedIndex);
+                    
                     m_Main.lst_Group.SelectedIndex = m_Main.lst_Group.Items.Count == 0 ? -1 : 0;
                 }
             };
