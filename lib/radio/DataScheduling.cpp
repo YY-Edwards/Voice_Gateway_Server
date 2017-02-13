@@ -373,7 +373,7 @@ void CDataScheduling::timeOut()
 		std::list<Command>::iterator it;
 		std::lock_guard <std::mutex> locker(m_timeOutListLocker);
 		Respone r = { 0 };
-		for (it = timeOutList.begin(); it != timeOutList.end(); it++)
+		for (it = timeOutList.begin(); it != timeOutList.end(); ++it)
 		{
 			it->timeCount++;
 			if (it->timeCount % (it->timeOut / 100) == 0)

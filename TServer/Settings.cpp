@@ -24,18 +24,54 @@ CSettings::~CSettings()
 {
 }
 
+
 int CSettings::getRoot(rapidjson::Document& d)
 {
 	try
 	{
-		std::ifstream ifs(getFilePath().c_str());
-		if (!ifs)
+		HANDLE pFile;
+		DWORD fileSize;
+		char *buffer, *tmpBuf;
+		DWORD dwBytesRead, dwBytesToRead, tmpLen;
+
+		pFile = CreateFile(getFilePath().c_str(), GENERIC_READ,
+			FILE_SHARE_READ,
+			NULL,
+			OPEN_EXISTING,        //打开已存在的文件 
+			FILE_ATTRIBUTE_NORMAL,
+			NULL);
+
+		if (pFile == INVALID_HANDLE_VALUE)
 		{
+			//printf("open file error!\n");
+			CloseHandle(pFile);
 			return -1;
 		}
-		rapidjson::IStreamWrapper isw(ifs);
-		d.ParseStream(isw);
-		ifs.close();
+
+		fileSize = GetFileSize(pFile, NULL);          //得到文件的大小
+
+		buffer = (char *)malloc(fileSize +1);
+		memset(buffer, 0, fileSize  +1);
+		dwBytesToRead = fileSize;
+		dwBytesRead = 0;
+		tmpBuf = buffer;
+
+		do{                                       //循环读文件，确保读出完整的文件    
+
+			ReadFile(pFile, tmpBuf, 100, &dwBytesRead, NULL);
+
+			if (dwBytesRead == 0)
+				break;
+
+			dwBytesToRead -= dwBytesRead;
+			tmpBuf += dwBytesRead;
+
+		} while (dwBytesToRead > 0);
+		
+		d.Parse<0>(buffer);
+
+		free(buffer);
+		CloseHandle(pFile);
 	}
 	catch (std::exception& e)
 	{
@@ -57,7 +93,7 @@ std::string CSettings::getValue(const char* type)
 	rapidjson::Document d;
 	if (0 == getRoot(d))
 	{
-		if (d.HasMember(type) )
+		if (d.IsObject() && d.HasMember(type) )
 		if (d[type].IsObject())
 		{
 			rapidjson::StringBuffer buffer;
@@ -208,21 +244,36 @@ int CSettings::setValue(const char* type,  rapidjson::Value obj)
 		d.AddMember(rapidjson::StringRef(type), obj, d.GetAllocator());
 
 
-		std::lock_guard<std::mutex> locker(m_writeLocker);
-
-		std::ofstream ofs(getFilePath().c_str());
-		rapidjson::OStreamWrapper osw(ofs);
-
-		rapidjson::Writer<rapidjson::OStreamWrapper> writer(osw);
-		d.Accept(writer);
-		ofs.close();
-
-
 		rapidjson::StringBuffer buffer;
+
 		rapidjson::Writer<rapidjson::StringBuffer> writer1(buffer);
 		d.Accept(writer1); // Accept() traverses the DOM and generates Handler events.
 		std::string jsonStr = buffer.GetString();
 
+
+		HANDLE pFile;
+		DWORD fileSize;
+		
+		DWORD dwBytesWrite, dwBytesToRead, tmpLen;
+
+		pFile = CreateFile(getFilePath().c_str(), GENERIC_WRITE,
+			0,
+			NULL,
+			OPEN_ALWAYS,        //打开已存在的文件 
+			FILE_ATTRIBUTE_NORMAL,
+			NULL);
+
+		if (pFile == INVALID_HANDLE_VALUE)
+		{
+			//printf("open file error!\n");
+			CloseHandle(pFile);
+			return -1;
+		}
+
+		fileSize = GetFileSize(pFile, NULL);          //得到文件的大小
+		WriteFile(pFile, jsonStr.c_str(), jsonStr.length(), &dwBytesWrite, NULL);
+		
+		CloseHandle(pFile);
 	}
 	catch (...)
 	{
@@ -267,3 +318,43 @@ std::wstring CSettings::getFilePath()
 
 	return filePath;
 }
+
+
+std::string CSettings::getFilePathA()
+{
+	CHAR appDir[_MAX_PATH];
+	memset(appDir, 0, sizeof(appDir));
+	SHGetSpecialFolderPathA(NULL, appDir, CSIDL_APPDATA, 0);
+	std::string filePath = appDir;
+	filePath += "\\";
+	filePath += ConmpanyNameA;
+
+	if (!PathFileExistsA(filePath.c_str()))
+	{
+		CreateDirectoryA(filePath.c_str(), NULL);
+	}
+
+	filePath += "\\";
+	filePath += AppNameA;
+
+	if (!PathFileExistsA(filePath.c_str()))
+	{
+		CreateDirectoryA(filePath.c_str(), NULL);
+	}
+
+
+	filePath += "\\";
+	filePath += AppVersionA;
+
+	if (!PathFileExistsA(filePath.c_str()))
+	{
+		CreateDirectoryA(filePath.c_str(), NULL);
+	}
+
+	filePath += "\\";
+	filePath += SettingFileA;
+
+	return filePath;
+}
+
+

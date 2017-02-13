@@ -30,7 +30,7 @@ static SERVICE_STATUS_HANDLE g_StatusHandle;
 static SERVICE_STATUS g_ServiceStatus = { 0 };
 static HANDLE g_ServiceStopEvent = INVALID_HANDLE_VALUE;
 static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
-
+#define SERVER_CODE  FALSE
 std::wstring getAppdataPath(){
 	TCHAR szBuffer[MAX_PATH];
 	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
@@ -87,9 +87,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//CService::instance()->SetServiceNameAndDescription(_T("Trbox.Dispatch"), _T("Trbox Dispatch Server"));
 	//CService::instance()->SetServiceCode([&]()
+#if SERVER_CODE
 	CService::instance()->SetServiceNameAndDescription(_T("Trbox.Dispatch"), _T("Trbox Dispatch Server"));
 	CService::instance()->SetServiceCode([&]()
 	{
+#endif
 		/*设置回调*/
 		CService::instance()->SetRadioUsb(DispatchOperate::OnRadioUsb);
 		dis.setCallBack();
@@ -109,16 +111,20 @@ int _tmain(int argc, _TCHAR* argv[])
 		//dis = new DispatchOperate();
 		//cs.setCallBackFunc(DispatchOperate::OnData);
 		/*while (1){ Sleep(1); };*/
-		/*等待结束标识*/
-		char temp = 0x00;
-		printf("press any key to end\r\n");
-		scanf_s("%c", &temp, 1);
 
+		
+#if SERVER_CODE
 		/*释放资源*/
 		while (!CService::instance()->m_bServiceStopped)
 		{
 			Sleep(100);
 		}
+#else
+		/*等待结束标识*/
+		char temp = 0x00;
+		printf("press any key to end\r\n");
+		scanf_s("%c", &temp, 1);
+#endif
 		dis.disConnect();
 		while (rmtPeerList.size() > 0)
 		{
@@ -131,6 +137,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			}
 		}
 		rpcServer.stop();
+#if SERVER_CODE	
 	}
 	);
 
@@ -172,7 +179,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	}
 
 	wprintf(argv[1]);
-
+#endif
 	return 0;
 }
 
