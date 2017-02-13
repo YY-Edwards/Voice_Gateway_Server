@@ -657,7 +657,7 @@ namespace TrboX
 
         private void btn_SysClose_Click(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            this.Hide();
         }
 
         private void btn_Control_Click_1(object sender, RoutedEventArgs e)
@@ -717,10 +717,10 @@ namespace TrboX
                         istx = true,
                         type = NotifyType.Call,
                         time = DateTime.Now,
-                        content = "遥毙"
+                        content = "遥开"
                     });
                     break;
-
+                    
 
             }
 

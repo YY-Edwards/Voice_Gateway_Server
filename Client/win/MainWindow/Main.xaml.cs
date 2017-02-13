@@ -719,6 +719,14 @@ namespace TrboX
                         time = DateTime.Now,
                         content = "远程监听失败"
                     });
+                    else
+                        SubWindow.AddMessage(targt, new CHistory()
+                        {
+                            istx = true,
+                            type = NotifyType.Control,
+                            time = DateTime.Now,
+                            content = "远程监听成功"
+                        });
 
                     break;
                 case ControlType.StartUp:
@@ -731,6 +739,14 @@ namespace TrboX
                             time = DateTime.Now,
                             content = "遥开失败"
                         });
+                    else
+                        SubWindow.AddMessage(targt, new CHistory()
+                        {
+                            istx = true,
+                            type = NotifyType.Control,
+                            time = DateTime.Now,
+                            content = "遥开成功"
+                        });
                     break;
                 case ControlType.ShutDown:
                     EventList.AddEvent("提示：遥毙（" + targt.SimpleName + "，ID:" + sta.Target.ToString() + ")" +(sta.Status == 0? "成功":"失败"));
@@ -741,6 +757,14 @@ namespace TrboX
                             type = NotifyType.Control,
                             time = DateTime.Now,
                             content = "遥毙失败"
+                        });
+                    else
+                        SubWindow.AddMessage(targt, new CHistory()
+                        {
+                            istx = true,
+                            type = NotifyType.Control,
+                            time = DateTime.Now,
+                            content = "遥毙成功"
                         });
                     break;
                 case ControlType.Sleep:

@@ -85,74 +85,76 @@ namespace TrboX
         }
         public void OpenOrCreateTragetWin(COperate operate, CNotification notify = null)
         {
-            //no target
-            if ((null == operate) || (null == operate.Target) || (0 >= operate.Target.Target.Count)) return;
+                //no target
+                if ((null == operate) || (null == operate.Target) || (0 >= operate.Target.Target.Count)) return;
 
-            CMultMember target = IsExitsWindow(operate.Target);
-            if (null == target)
-            {
-                OperateWin newwin = new OperateWin(operate.Target);
-                m_TargetWin.Add(operate.Target, newwin);
-                target = operate.Target;
-            }
-
-            m_TargetWin[target].OwnerWin = m_Main;
-            if (null != notify) m_TargetWin[target].CurrentNotify = notify;
-
-            if (1 < m_TargetWin.Count)
-            {
-                double Top = 0, Left = 0;
-                bool isshow = false;
-                bool isposition = false;
-                foreach (var item in m_TargetWin)
+                CMultMember target = IsExitsWindow(operate.Target);
+                if (null == target)
                 {
-                    if (target == item.Key)
-                    {
-                        if (Visibility.Visible == item.Value.Visibility) isshow = true;
-                        else continue;
-                    }
-
-                    Top = item.Value.Top;
-                    Left = item.Value.Left;
-
-                    if (Visibility.Visible != item.Value.Visibility)
-                    {
-                        isposition = true;
-                        break;
-                    }
+                    OperateWin newwin = new OperateWin(operate.Target);
+                    m_TargetWin.Add(operate.Target, newwin);
+                    target = operate.Target;
                 }
 
-                if (isshow)
+                m_TargetWin[target].OwnerWin = m_Main;
+                if (null != notify) m_TargetWin[target].CurrentNotify = notify;
+
+                if (1 < m_TargetWin.Count)
                 {
-                    m_TargetWin[target].Activate();
-                }
-                else if (isposition)
-                {
-                    m_TargetWin[target].Top = Top;
-                    m_TargetWin[target].Left = Left;
+                    double Top = 0, Left = 0;
+                    bool isshow = false;
+                    bool isposition = false;
+                    foreach (var item in m_TargetWin)
+                    {
+                        if (target == item.Key)
+                        {
+                            if (Visibility.Visible == item.Value.Visibility) isshow = true;
+                            else continue;
+                        }
+
+                        Top = item.Value.Top;
+                        Left = item.Value.Left;
+
+                        if (Visibility.Visible != item.Value.Visibility)
+                        {
+                            isposition = true;
+                            break;
+                        }
+                    }
+
+                    if (isshow)
+                    {
+                        m_TargetWin[target].Activate();
+                    }
+                    else if (isposition)
+                    {
+                        m_TargetWin[target].Top = Top;
+                        m_TargetWin[target].Left = Left;
+                    }
+                    else
+                    {
+                        MINMAXINFO mmi = m_Main.MinMaxInfo;
+                        m_TargetWin[target].Top = (m_TargetWin[target].Height + Top + 35 + 10 > mmi.ptMaxSize.y) ? 100 : Top + 35;
+                        m_TargetWin[target].Left = (m_TargetWin[target].Width + Left + 35 + 30 > mmi.ptMaxSize.x) ? 300 : Left + 35;
+                    }
+                    m_TargetWin[target].Show();
                 }
                 else
                 {
-                    MINMAXINFO mmi = m_Main.MinMaxInfo;
-                    m_TargetWin[target].Top = (m_TargetWin[target].Height + Top + 35 + 10 > mmi.ptMaxSize.y) ? 100 : Top + 35;
-                    m_TargetWin[target].Left = (m_TargetWin[target].Width + Left + 35 + 30 > mmi.ptMaxSize.x) ? 300 : Left + 35;
+                    m_TargetWin[target].WindowStartupLocation = WindowStartupLocation.CenterScreen;
+                    m_TargetWin[target].Show();
                 }
-                m_TargetWin[target].Show();
-            }
-            else
-            {
-                m_TargetWin[target].WindowStartupLocation = WindowStartupLocation.CenterScreen;
-                m_TargetWin[target].Show();
-            }
 
 
 
-            if (false == m_TargetWin[target].IsActive)
-            {
-                m_TargetWin[target].Activate();
-            }
+                if (false == m_TargetWin[target].IsActive)
+                {
+                    m_TargetWin[target].Activate();
+                }
 
-            m_TargetWin[target].SetOperateType(operate);
+                m_TargetWin[target].SetOperateType(operate);
+            
+            
         }
 
         public void AddNotifyToOperateWin(CNotification notify)
