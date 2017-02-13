@@ -1524,10 +1524,7 @@
                                     </Border>
 
                                     <Grid DockPanel.Dock="Top">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="119*"/>
-                                            <ColumnDefinition Width="131*"/>
-                                        </Grid.ColumnDefinitions>
+                                        
                                         <ListView x:Name="lst_Alarm"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0,6" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Grid.ColumnSpan="2" View="{StaticResource AlarmView}" Style="{DynamicResource ListViewStyleNormal}" />
 
                                     </Grid>

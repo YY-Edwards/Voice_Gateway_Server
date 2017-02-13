@@ -317,6 +317,14 @@ namespace TrboX
                         Contact = trg
                     });
                     break;
+                case "check":
+                    new COperate(OPType.Control, trg, new CControl(){Type = ControlType.Check}).Exec();
+                    m_Main.EventList.AddEvent("提示：在线检测（" + trg.NameInfo  + ")");
+                    break;
+                case "monitor":
+                    new COperate(OPType.Control, trg, new CControl() { Type = ControlType.Monitor }).Exec();
+                    m_Main.EventList.AddEvent("提示：远程监听（" + trg.NameInfo + ")");
+                    break;
                 case "dispatch":
                     m_Main.SubWindow.OpenOrCreateTragetWin(new COperate(OPType.Dispatch, trg, null));
                     break;
