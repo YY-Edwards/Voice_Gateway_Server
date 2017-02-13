@@ -250,7 +250,7 @@
                         <RadioButton x:Name="rad_Message" Content="短消息" Style="{DynamicResource RadioButtonMgr}" Margin="0" GroupName="OpTab" BorderBrush="#FF0C0C0D" Width="70" BorderThickness="0,0,1,0"/>
                         <RadioButton x:Name="rad_Position" Content="定位" Style="{DynamicResource RadioButtonMgr}" Margin="0" GroupName="OpTab" BorderBrush="#FF0C0C0D" Width="55" BorderThickness="0,0,1,0"/>
                         <RadioButton x:Name="rad_Jobticket" Content="工单" Style="{DynamicResource RadioButtonMgr}" Margin="0" GroupName="OpTab" BorderBrush="#FF0C0C0D" Width="55" BorderThickness="0,0,1,0" Visibility="Collapsed"/>
-                        <src:ListBtn VOffset="5" x:Name="btn_Control"  Content="遥毙" Height="26" Foreground="#FFC9CDD2" VerticalAlignment="Center" Margin="10,0,0,0" Width="70" Tag="4" BorderBrush="#FF626262" BorderThickness="1" Template="{DynamicResource ListBtnTemplate}" Background="#FF3B3B3D" IsSuper="True" HOffset="-13" >
+                        <src:ListBtn VOffset="5" x:Name="btn_Control"  Content="遥毙" Height="26" Foreground="#FFC9CDD2" VerticalAlignment="Center" Margin="10,0,0,0" Width="70" Tag="4" BorderBrush="#FF626262" BorderThickness="1" Template="{DynamicResource ListBtnTemplate}" Background="#FF3B3B3D" IsSuper="True" HOffset="-13" Click="btn_Control_Click_1" Selected="btn_Control_Selected_1" >
                             <src:ListBtn.Items>
                                 <ComboBoxItem Content="遥毙" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
                                 <ComboBoxItem Content="遥开" Style="{DynamicResource ComboBoxItemStyle1}" Height="28"  Width="120" Foreground="White"/>

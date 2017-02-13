@@ -659,5 +659,71 @@ namespace TrboX
         {
             this.Close();
         }
+
+        private void btn_Control_Click_1(object sender, RoutedEventArgs e)
+        {
+            if (!(bool)new COperate(
+           
+                OPType.Control,
+                m_Target,
+                new CControl() { Type = ControlType.ShutDown }) .Exec())
+            {
+                return;
+            }
+
+            AddMessage(new CHistory()
+            {
+                istx = true,
+                type = NotifyType.Call,
+                time = DateTime.Now,
+                content = "遥毙"
+            });
+        }
+
+        private void btn_Control_Selected_1(object sender, RoutedEventArgs e)
+        {
+            switch(btn_Control.SelectedIndex)
+            {
+                case 0:
+                     if (!(bool)new COperate(
+           
+                        OPType.Control,
+                        m_Target,
+                        new CControl() { Type = ControlType.ShutDown }) .Exec())
+                    {
+                        return;
+                    }
+
+                    AddMessage(new CHistory()
+                    {
+                        istx = true,
+                        type = NotifyType.Call,
+                        time = DateTime.Now,
+                        content = "遥毙"
+                    });
+                    break;
+                case 1:
+                   if (!(bool)new COperate(
+           
+                        OPType.Control,
+                        m_Target,
+                        new CControl() { Type = ControlType.StartUp }) .Exec())
+                    {
+                        return;
+                    }
+
+                    AddMessage(new CHistory()
+                    {
+                        istx = true,
+                        type = NotifyType.Call,
+                        time = DateTime.Now,
+                        content = "遥毙"
+                    });
+                    break;
+
+
+            }
+
+        }
     }
 }
