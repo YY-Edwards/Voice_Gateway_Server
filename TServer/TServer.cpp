@@ -55,26 +55,25 @@
 #include "MonitorServer.h"
 #include "../lib/service\service.h"
 
-#define SERVICE_CODE    TRUE
+#define SERVICE_CODE    FALSE
 std::string getServerName()
 {
 	std::string serverName = "";
 	std::string strConfig = CSettings::instance()->getValue("radio");
+	//std::string strConfig = "{\"IsEnable\":true,\"IsOnlyRide\":true,\"Svr\":{\"Ip\":\"127.0.0.1\",\"Port\":9001},\"Ride\":{\"Ip\":\"192.168.10.2\",\"Port\":0},\"Mnis\":{\"Ip\":null,\"Port\":0},\"GpsC\":{\"Ip\":null,\"Port\":0},\"Ars\":{\"Ip\":null,\"Port\":4007},\"Message\":{\"Ip\":null,\"Port\":4005},\"Gps\":null,\"Xnl\":null}";
 	Document doc;
 	doc.Parse(strConfig.c_str());
-	//if (doc.HasMember("IsEnable") && doc["IsEnable"].IsBool() )
-	//{
-	//	
-	//	if (TRUE == doc["IsEnable"].GetBool())
-	//	{
-	//		serverName = "Trbox.Dispatch";
-	//	}
-	//	else
-	//	{
-	//		serverName = "Trbox.Wirelan";
-	//	}
-	//	
-	//}
+	if (doc.IsObject() && doc.HasMember("IsEnable") && doc["IsEnable"].IsBool())
+	{
+		if (true == doc["IsEnable"].GetBool())
+		{
+			serverName = "Trbox.Dispatch";
+		}
+		{
+			serverName = "Trbox.Wirelan";
+		}
+		
+	}
 	return  serverName;
 }
 int _tmain(int argc, _TCHAR* argv[])

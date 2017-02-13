@@ -370,7 +370,7 @@ void CTcpScheduling::addTcpCommand( int command, std::string radioIP, int id, in
 	std::lock_guard<std::mutex> locker(m_addCommandLocker);
 	TcpCommand      m_allCommand;
 	m_allCommand.command = command;
-	m_allCommand.timeOut = 30000;     //ms
+	m_allCommand.timeOut = 60000;     //ms
 	m_allCommand.timeCount = 0;
 	m_allCommand.radioIP = radioIP;
 	m_allCommand.radioId = id;

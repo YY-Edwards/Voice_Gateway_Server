@@ -771,27 +771,34 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 	}
 	unsigned short xcmp_opcode = 0;
 	unsigned long rmt_addr = 0;
-	xcmp_opcode = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t))));
-
-	unsigned short xnl_opcode = 0;        //add by lcc
-	unsigned short check_result = 0;       //add by lcc
-	unsigned char rmt_fuction = 0;
+	unsigned short xnl_opcode = 0;      
+	unsigned char check_result = 0;       
 	unsigned char  rmt_type_code = 0;
-	unsigned char  rmt_result_code = 0;
-	unsigned short xnl_transationid = 0;
-	unsigned short  indicatorid = 0;
+	unsigned long temp = 0; 
+	int xnl_len = sizeof(xnl_msg_hdr_t);
 	xnl_opcode = ntohs(*((unsigned short *)(pBuf + 2)));  // add by lcc
-	xnl_transationid = ntohs(*((unsigned short *)(pBuf + 5)));
-	check_result = ntohs(*((unsigned short *)(pBuf + 16)));  // add by lcc
-	rmt_fuction = ntohs(*((unsigned short *)(pBuf + 18)));
-	rmt_type_code = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+1)));
-	rmt_result_code = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+1)));
-	indicatorid = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+5)));
-	unsigned long temp = ntohl(*((unsigned long *)(pBuf + sizeof(xnl_msg_hdr_t)+6)));
-	rmt_addr = temp >> 8;
+	xcmp_opcode = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t))));
 	char s[12];
-	sprintf_s(s, "%d", rmt_addr);
-	std::string stringId = s;
+	std::string stringId;
+	if (XCMP_RMT_RADIO_CTRL_REPLY == xcmp_opcode)
+	{
+		check_result = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+1)));
+		rmt_type_code = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+3)));
+		temp = ntohl(*((unsigned long *)(pBuf + sizeof(xnl_msg_hdr_t)+8)));
+		rmt_addr = temp >> 8;
+		sprintf_s(s, "%d", rmt_addr);
+		stringId = s;
+	}
+	else if (XCMP_RMT_RADIO_CTRL_BRDCST == xcmp_opcode)
+	{
+		// control broadcast   0xb41c
+		check_result = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+2)));
+		rmt_type_code = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+1)));
+		temp = ntohl(*((unsigned long *)(pBuf + sizeof(xnl_msg_hdr_t)+6)));
+		rmt_addr = temp >> 8;
+		sprintf_s(s, "%d", rmt_addr);
+		stringId = s;
+	}
 	std::list<TcpCommand>::iterator it;
 	switch (xcmp_opcode)
 	{
@@ -801,19 +808,21 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 		break;
 		//在线检测
 	case XCMP_RMT_RADIO_CTRL_REPLY:
+	
 	case XCMP_RMT_RADIO_CTRL_BRDCST:                         //  Remote Radio Control Broadcast
+	
 		try
-		{
+ 		{
 			m_allCommandListLocker.lock();
 			for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); ++it)
 			{
-				if (0x000B == xnl_opcode && 0xB41C == xcmp_opcode)
+				if (0x000B == xnl_opcode && (0xB41C == xcmp_opcode || 0x841c == xcmp_opcode))
 				{
 
 					BOOL rmtflag = FALSE;
-					if (rmt_type_code == 0x00)                                                   //在线检测
+					if (rmt_type_code == 0x00 && CHECK_RADIO_ONLINE == it->command )                                                   //在线检测
 					{
-						if (0x0010 == check_result/* & 0x00FF)*/)
+						if (0x10 == check_result || 0x00  == check_result)
 						{
 							if (myTcpCallBackFunc != NULL)
 							{
@@ -822,7 +831,11 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.controlType = RADIOCHECK;
 								tr.result = REMOTE_SUCESS;
 								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
-								it = tcpCommandTimeOutList.erase(it);
+								if (CHECK_RADIO_ONLINE == it->command)
+								{
+									it = tcpCommandTimeOutList.erase(it);
+								}
+								
 								
 								////查看状态，状态发生改变时，通知特Tserver
 								if (g_radioStatus.find(stringId) == g_radioStatus.end())
@@ -859,7 +872,10 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.controlType = RADIOCHECK;
 								tr.result = REMOTE_FAILED;
 								onTcpData(myTcpCallBackFunc, CHECK_RADIO_ONLINE, tr);
-								it = tcpCommandTimeOutList.erase(it);
+								if (CHECK_RADIO_ONLINE == it->command)
+								{
+									it = tcpCommandTimeOutList.erase(it);
+								}
 								////查看状态，状态发生改变时，通知特Tserver
 								if (g_radioStatus.find(stringId) == g_radioStatus.end())
 								{
@@ -884,9 +900,9 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 
 						}
 					}
-					else if (rmt_type_code == 0x01)
+					else if (rmt_type_code == 0x01 && REMOTE_CLOSE == it->command)
 					{
-						if (0x0110 == check_result/* & 0x00FF)*/)                                    //摇闭
+						if (0x10 == check_result/* & 0x00FF)*/ || 0x00 == check_result)                                    //摇闭
 						{
 
 							if (myTcpCallBackFunc != NULL)
@@ -897,7 +913,10 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.controlType = OFF;
 								tr.result = REMOTE_SUCESS;
 								onTcpData(myTcpCallBackFunc, CHECK_RADIO_ONLINE, tr);
-								it = tcpCommandTimeOutList.erase(it);
+								if (REMOTE_CLOSE == it->command)
+								{
+									it = tcpCommandTimeOutList.erase(it);
+								}
 								////查看状态，状态发生改变时，通知特Tserver
 								if (g_radioStatus.find(stringId) == g_radioStatus.end())
 								{
@@ -930,7 +949,10 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.controlType = OFF;
 								tr.result = REMOTE_SUCESS;
 								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
-								it = tcpCommandTimeOutList.erase(it);
+								if (REMOTE_CLOSE == it->command)
+								{
+									it = tcpCommandTimeOutList.erase(it);
+								}
 #if DEBUG_LOG
 								LOG(INFO) << "遥闭失败";
 #endif
@@ -939,9 +961,9 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 
 						}
 					}
-					else if (rmt_type_code == 0x02)
+					else if (rmt_type_code == 0x02 && REMOTE_OPEN == it->command)
 					{
-						if (0x0210 == check_result/* & 0x00FF)*/)                                     //摇开
+						if (0x10 == check_result/* & 0x00FF)*/ || 0x00 == check_result)                                     //摇开
 						{
 							rmtflag = true;                                  //成功
 							if (myTcpCallBackFunc != NULL)
@@ -951,7 +973,10 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.controlType = ON;
 								tr.result = REMOTE_SUCESS;
 								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
-								it = tcpCommandTimeOutList.erase(it);
+								if (REMOTE_OPEN == it->command)
+								{
+									it = tcpCommandTimeOutList.erase(it);
+								}
 								////查看状态，状态发生改变时，通知特Tserver
 								if (g_radioStatus.find(stringId) == g_radioStatus.end())
 								{
@@ -983,7 +1008,10 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.controlType = OFF;
 								tr.result = REMOTE_FAILED;
 								onTcpData(myTcpCallBackFunc, CHECK_RADIO_ONLINE, tr);
-								it = tcpCommandTimeOutList.erase(it);
+								if (REMOTE_OPEN == it->command)
+								{
+									it = tcpCommandTimeOutList.erase(it);
+								}
 #if DEBUG_LOG
 								LOG(INFO) << "遥开失败";
 #endif
@@ -992,9 +1020,9 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 
 						}
 					}
-					else if (rmt_type_code == 0x03)
+					else if (rmt_type_code == 0x03 && REMOTE_MONITOR == it->command)
 					{
-						if (0x0310 == check_result/* & 0x00FF)*/)                                    //远程监听
+						if (0x10 == check_result/* & 0x00FF)*/ || 0x00 == check_result)                                    //远程监听
 						{
 							//rmtflag = true;                                   //成功
 							if (myTcpCallBackFunc != NULL)
@@ -1004,7 +1032,10 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.controlType = MONITOR;
 								tr.result = REMOTE_SUCESS;
 								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
-								it = tcpCommandTimeOutList.erase(it);
+								if (REMOTE_MONITOR == it->command)
+								{
+									it = tcpCommandTimeOutList.erase(it);
+								}
 								////查看状态，状态发生改变时，通知特Tserver
 								if (g_radioStatus.find(stringId) == g_radioStatus.end())
 								{
@@ -1038,7 +1069,10 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 								tr.controlType = MONITOR;
 								tr.result = REMOTE_FAILED;
 								onTcpData(myTcpCallBackFunc, CHECK_RADIO_ONLINE, tr);
-								it = tcpCommandTimeOutList.erase(it);
+								if (REMOTE_MONITOR == it->command)
+								{
+									it = tcpCommandTimeOutList.erase(it);
+								}
 #if DEBUG_LOG
 								LOG(INFO) << "远程监听失败";
 #endif
@@ -1492,13 +1526,13 @@ BOOL CXNLConnection::send_xcmp_rmt_radio_ctrl_request(unsigned char feature,
 	if (feature == 0x00)
 	{
 //#if DEBUG_LOG
-//		LOG(INFO) << "打开ptt ";
+//		LOG(INFO) << "在线检测 ";
 //#endif
 	}
 	else if (feature == 0x01)
 	{
 //#if DEBUG_LOG
-//		LOG(INFO) << "打开ptt ";
+//		LOG(INFO) << "遥闭 ";
 //#endif
 	}
 	else if (feature == 0x02)

@@ -27,6 +27,11 @@
 #define			AppName					L"Trbox"
 #define			AppVersion				L"3.0"
 
+#define			SettingFileA			"setting.dat"
+#define			ConmpanyNameA			"JiHua Information"
+#define			AppNameA				"Trbox"
+#define			AppVersionA				"3.0"
+
 class CSettings
 {
 public:
@@ -55,6 +60,7 @@ public:
 protected:
 	int getRoot(rapidjson::Document& d);
 	std::wstring getFilePath();
+	std::string getFilePathA();
 
 private:
 	CSettings();

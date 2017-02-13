@@ -155,7 +155,7 @@ void CMonitorServer::logServerThreadFunc()
 			{
 									if (FALSE == ::StartService(schService, NULL, NULL)) {
 										int a = GetLastError();
-										printf("StartService failed %d \n", a);
+										printf("Start LogServer failed %d \n", a);
 									}
 
 									// it will take at least a couple of seconds for the service to start.
