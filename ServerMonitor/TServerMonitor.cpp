@@ -6,6 +6,7 @@
 #include <system_error>
 #include <Shlwapi.h>
 #include <shlobj.h>  
+#include "WriteLog.h"
 static const ULONGLONG cThirtySeconds = 30 * 1000;
 CTServerMonitor::CTServerMonitor()
 {
@@ -20,7 +21,10 @@ CTServerMonitor::~CTServerMonitor()
 
 void CTServerMonitor::StartMonitor(LPCTSTR lpName)
 {
-	memcpy(serverName,lpName,300);
+	//memcpy(serverName,lpName,300);
+	memcpy(serverName, _T("Trbox.TServer"), 300);
+	CWriteLog::instance()->WriteLog("Trbox.TServer\r\n");
+	
 	//StrCpy(serverName, lpName);
 	m_handle = CreateThread(NULL, 0, monitorThread, this, THREAD_PRIORITY_NORMAL, NULL);
 }
@@ -46,7 +50,7 @@ void CTServerMonitor::monitorThreadFunc()
 {
 	while (isMonitor)
 	{
-
+		CWriteLog::instance()->WriteLog("startMonitor thread\r\n");
 		std::wstring userName = _T("NT AUTHORITY\\NetworkService");
 
 		SC_HANDLE schSCManager;
@@ -64,7 +68,7 @@ void CTServerMonitor::monitorThreadFunc()
 		if (NULL == schSCManager)
 		{
 			//throw std::system_error(GetLastError(), std::system_category(), "OpenSCManager failed");
-
+			CWriteLog::instance()->WriteLog("OpenSCManager failed\r\n");
 		}
 		// Get a handle to the service.
 		schService = OpenService(
@@ -116,6 +120,7 @@ void CTServerMonitor::monitorThreadFunc()
 				}
 				else
 				{
+					CWriteLog::instance()->WriteLog("CreateService  failed\r\n");
 					//throw std::system_error(GetLastError(), std::system_category(), "CreateService failed");
 				}
 			}
@@ -131,6 +136,7 @@ void CTServerMonitor::monitorThreadFunc()
 			&dwBytesNeeded))              // size needed if buffer is too small
 		{
 			//printf("QueryServiceStatusEx failed (%d)\n", GetLastError());
+			CWriteLog::instance()->WriteLog("QueryServiceStatusEx failed\r\n");
 		}
 		else
 		{

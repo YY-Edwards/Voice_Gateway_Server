@@ -30,6 +30,9 @@
     <ClInclude Include="..\lib\service\service.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="WriteLog.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -44,5 +47,11 @@
     <ClCompile Include="..\lib\service\service.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="WriteLog.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="monitorShell.sh" />
   </ItemGroup>
 </Project>
