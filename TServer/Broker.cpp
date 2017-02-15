@@ -101,7 +101,20 @@ void CBroker::startLogClient()
 		m_logClient->start("tcp://127.0.0.1:9003");
 	}
 }
+void CBroker::startMonitorClient(std::map<std::string, ACTION> clientActions)
+{
+	if (NULL == m_monitorClient)
+	{
+		m_monitorClient = new CRpcClient();
 
+		for (auto action = clientActions.begin(); action != clientActions.end(); action++)
+		{
+			m_monitorClient->addActionHandler(action->first.c_str(), action->second);
+		}
+
+		m_monitorClient->start("tcp://127.0.0.1:9004");
+	}
+}
 void CBroker::startWireLanClient(std::map<std::string, ACTION> clientActions)
 {
 
@@ -154,4 +167,9 @@ void CBroker::sendRadioConfig()
 {
 	std::string strConnect = CSettings::instance()->getRequest("connect", "radio", m_radioClient->getCallId(), CSettings::instance()->getValue("radio"));
 	m_radioClient->send(strConnect.c_str(), strConnect.size());
+}
+void CBroker::sendSettingConfig()
+{
+	std::string strConnect = CSettings::instance()->getRequest("connect", "radio", m_monitorClient->getCallId(), CSettings::instance()->getValue("radio"));
+	m_monitorClient->send(strConnect.c_str(), strConnect.size());
 }

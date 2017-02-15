@@ -7,6 +7,8 @@
 #include "../lib/strutil/strutil.h"
 #include "Settings.h"
 
+
+
 #include <map>
 
 #pragma comment(lib, "Shlwapi.lib")
@@ -15,7 +17,6 @@ std::auto_ptr<CSettings> CSettings::m_instance;
 
 CSettings::CSettings()
 {
-	
 	int a = 2;
 }
 
@@ -23,6 +24,7 @@ CSettings::CSettings()
 CSettings::~CSettings()
 {
 }
+
 
 
 int CSettings::getRoot(rapidjson::Document& d)
@@ -33,12 +35,11 @@ int CSettings::getRoot(rapidjson::Document& d)
 		DWORD fileSize;
 		char *buffer, *tmpBuf;
 		DWORD dwBytesRead, dwBytesToRead, tmpLen;
-
-		pFile = CreateFile(getFilePath().c_str(), GENERIC_READ,
+		pFile = CreateFileA(getFilePathA().c_str(), GENERIC_READ,
 			FILE_SHARE_READ,
 			NULL,
 			OPEN_EXISTING,        //打开已存在的文件 
-			FILE_ATTRIBUTE_NORMAL,
+			NULL,
 			NULL);
 
 		if (pFile == INVALID_HANDLE_VALUE)
@@ -72,6 +73,27 @@ int CSettings::getRoot(rapidjson::Document& d)
 
 		free(buffer);
 		CloseHandle(pFile);
+
+		//FILE * fl;
+		//fopen_s(&fl, getFilePathA().c_str(), "r");
+
+		//fseek(fl, 0, SEEK_END);
+		//fileSize = ftell(fl);
+		//fseek(fl, 0, SEEK_SET);
+
+		//buffer = (char *)malloc(fileSize + 1);
+		//memset(buffer, 0, fileSize  +1);
+
+		//fread_s(buffer, 1, 1, fileSize, fl);
+		//	
+		//
+		//std::string s(buffer);
+		////logxxx->sendLog(s);
+
+		//d.Parse<0>(buffer);
+
+
+		//fclose(fl);
 	}
 	catch (std::exception& e)
 	{
@@ -82,28 +104,29 @@ int CSettings::getRoot(rapidjson::Document& d)
 		return -1;
 	}
 
-
+	
 	return 0;
 }
 
 std::string CSettings::getValue(const char* type)
 {
+	//return "{\"base\":{\"Svr\":{\"Ip\":\"127.0.0.1\",\"Port\":9000},\"LogSvr\":{\"Ip\":\"127.0.0.1\",\"Port\":9003},\"IsSaveCallLog\":true,\"IsSaveMsgLog\":true,\"IsSavePositionLog\":true,\"IsSaveControlLog\":true,\"IsSaveJobLog\":true,\"IsSaveTrackerLog\":true},\"radio\":{\"IsEnable\":false,\"IsOnlyRide\":false,\"Svr\":{\"Ip\":\"127.0.0.1\",\"Port\":9001},\"Ride\":{\"Ip\":null,\"Port\":0},\"Mnis\":{\"Ip\":null,\"Port\":0},\"GpsC\":{\"Ip\":null,\"Port\":0},\"Ars\":{\"Ip\":null,\"Port\":4007},\"Message\":{\"Ip\":null,\"Port\":4005},\"Gps\":null,\"Xnl\":null},\"repeater\":{\"IsEnable\":true,\"Type\":0,\"Svr\":{\"Ip\":\"127.0.0.1\",\"Port\":9002},\"Master\":{\"Ip\":null,\"Port\":0},\"Mnis\":{\"Ip\":null,\"Port\":0},\"MnisId\":0,\"DefaultGroupId\":0,\"DefaultChannel\":1,\"MinHungTime\":0,\"MaxSiteAliveTime\":0,\"MaxPeerAliveTime\":0,\"LocalPeerId\":0,\"LocalRadioId\":0,\"Dongle\":{\"Com\":1}}}";
 	std::map<std::string, std::string> contents;
 
 	rapidjson::Document d;
 	if (0 == getRoot(d))
 	{
-		if (d.IsObject() && d.HasMember(type) )
-		if (d[type].IsObject())
+		if (d.IsObject() && d.HasMember(type) && d[type].IsObject())
 		{
+;
 			rapidjson::StringBuffer buffer;
 			rapidjson::Writer<rapidjson::StringBuffer> writer(buffer);
 			d[type].Accept(writer); // Accept() traverses the DOM and generates Handler events.
 			std::string jsonStr = buffer.GetString();
-
 			return jsonStr;
 		}
 	}
+	
 	return "";
 }
 
@@ -226,12 +249,14 @@ std::string CSettings::getRequest(char* pCall, char * type, uint64_t callId, std
 
 int CSettings::setValue(const char* type,  rapidjson::Value obj)
 {
+	std::string s(type);
+
 	try{
 		rapidjson::Document d;
 		getRoot(d);
 
 		if (d.IsNull())
-		{
+		{			
 			d.SetObject();
 		}
 
@@ -250,18 +275,19 @@ int CSettings::setValue(const char* type,  rapidjson::Value obj)
 		d.Accept(writer1); // Accept() traverses the DOM and generates Handler events.
 		std::string jsonStr = buffer.GetString();
 
-
 		HANDLE pFile;
 		DWORD fileSize;
 		
 		DWORD dwBytesWrite, dwBytesToRead, tmpLen;
 
-		pFile = CreateFile(getFilePath().c_str(), GENERIC_WRITE,
-			0,
-			NULL,
-			OPEN_ALWAYS,        //打开已存在的文件 
-			FILE_ATTRIBUTE_NORMAL,
-			NULL);
+		//pFile = CreateFile(getFilePath().c_str(), GENERIC_WRITE,
+		//	FILE_SHARE_WRITE,
+		//	NULL,
+		//	OPEN_ALWAYS,        //打开已存在的文件 
+		//	FILE_ATTRIBUTE_NORMAL,
+		//	NULL);
+
+		pFile = CreateFile(getFilePath().c_str(), GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, CREATE_ALWAYS, NULL, NULL);
 
 		if (pFile == INVALID_HANDLE_VALUE)
 		{
@@ -271,6 +297,8 @@ int CSettings::setValue(const char* type,  rapidjson::Value obj)
 		}
 
 		fileSize = GetFileSize(pFile, NULL);          //得到文件的大小
+		SetFilePointer(pFile, NULL, NULL, FILE_BEGIN);
+
 		WriteFile(pFile, jsonStr.c_str(), jsonStr.length(), &dwBytesWrite, NULL);
 		
 		CloseHandle(pFile);

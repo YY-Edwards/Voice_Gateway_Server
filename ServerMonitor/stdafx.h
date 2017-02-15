@@ -16,3 +16,7 @@
 
 
 // TODO:  在此处引用程序需要的其他头文件
+#define GOOGLE_GLOG_DLL_DECL           // 使用静态glog库用这个
+#define GLOG_NO_ABBREVIATED_SEVERITIES // 没这个编译会出错,传说因为和Windows.h冲突
+#include "../lib/glog/logging.h"
+#pragma comment(lib,"../lib/glog/lib/libglog.lib")

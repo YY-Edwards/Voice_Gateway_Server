@@ -22,6 +22,9 @@
 #include "../lib/rapidjson/ostreamwrapper.h"
 #include "../lib/rapidjson/writer.h"
 
+//#include "WLSocketLog.h"
+
+
 #define			SettingFile				L"setting.dat"
 #define			ConmpanyName			L"JiHua Information"
 #define			AppName					L"Trbox"
@@ -58,6 +61,7 @@ public:
 	std::string getRequest(char* pCall, char * type, uint64_t callId, std::string contents);
 
 protected:
+	//WLSocketLog * logxxx;
 	int getRoot(rapidjson::Document& d);
 	std::wstring getFilePath();
 	std::string getFilePathA();
@@ -71,5 +75,7 @@ private:
 	std::mutex m_writeLocker;
 	friend class std::auto_ptr<CSettings>;
 	static std::auto_ptr<CSettings> m_instance;
+
+
 };
 

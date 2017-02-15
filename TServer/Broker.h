@@ -54,8 +54,9 @@ public:
 	void startWireLanClient(std::map<std::string, ACTION> clientActions);
 	void sendWirelanConfig();
 	void sendRadioConfig();
+	void sendSettingConfig();
 	void startLogClient();
-
+	void startMonitorClient(std::map<std::string, ACTION> clientActions);
 protected:
 	CBroker();
 	~CBroker();
@@ -70,5 +71,6 @@ private:
 	CRpcClient* m_wirelanClient;
 	CRpcClient* m_logClient;
 	CRpcServer* m_rpcServer;
+	CRpcClient* m_monitorClient;
 };
 

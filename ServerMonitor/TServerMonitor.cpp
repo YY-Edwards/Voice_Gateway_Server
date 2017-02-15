@@ -23,7 +23,8 @@ void CTServerMonitor::StartMonitor(LPCTSTR lpName)
 {
 	//memcpy(serverName,lpName,300);
 	memcpy(serverName, _T("Trbox.TServer"), 300);
-	CWriteLog::instance()->WriteLog("Trbox.TServer\r\n");
+	std::string strname = std::string((char*)lpName);
+	LOG(INFO) << strname;
 	
 	//StrCpy(serverName, lpName);
 	m_handle = CreateThread(NULL, 0, monitorThread, this, THREAD_PRIORITY_NORMAL, NULL);
@@ -50,7 +51,7 @@ void CTServerMonitor::monitorThreadFunc()
 {
 	while (isMonitor)
 	{
-		CWriteLog::instance()->WriteLog("startMonitor thread\r\n");
+		LOG(INFO) << " startMonitor ";
 		std::wstring userName = _T("NT AUTHORITY\\NetworkService");
 
 		SC_HANDLE schSCManager;
@@ -67,13 +68,14 @@ void CTServerMonitor::monitorThreadFunc()
 
 		if (NULL == schSCManager)
 		{
+			std::string str = std::to_string(GetLastError());
 			//throw std::system_error(GetLastError(), std::system_category(), "OpenSCManager failed");
-			CWriteLog::instance()->WriteLog("OpenSCManager failed\r\n");
+			LOG(INFO) << str;
 		}
 		// Get a handle to the service.
 		schService = OpenService(
 			schSCManager,         // SCM database 
-			serverName,            // name of service         
+			_T("Trbox.TServer"),            // name of service         
 			SERVICE_ALL_ACCESS
 			);  // full access 
 
@@ -83,7 +85,7 @@ void CTServerMonitor::monitorThreadFunc()
 			::GetModuleFileName(NULL, szFilePath, MAX_PATH);
 			(_tcsrchr(szFilePath, _T('\\')))[1] = 0;
 			std::wstring wstr;
-			if (0 == wcscmp(serverName, L"Trbox.TServer"))
+			if (0 == wcscmp(_T("Trbox.TServer"), L"Trbox.TServer"))
 			{
 				wstr = (std::wstring)szFilePath + _T("TServer.exe");
 			}
@@ -120,7 +122,7 @@ void CTServerMonitor::monitorThreadFunc()
 				}
 				else
 				{
-					CWriteLog::instance()->WriteLog("CreateService  failed\r\n");
+					LOG(INFO) << " CreateService failed ";
 					//throw std::system_error(GetLastError(), std::system_category(), "CreateService failed");
 				}
 			}
@@ -136,7 +138,7 @@ void CTServerMonitor::monitorThreadFunc()
 			&dwBytesNeeded))              // size needed if buffer is too small
 		{
 			//printf("QueryServiceStatusEx failed (%d)\n", GetLastError());
-			CWriteLog::instance()->WriteLog("QueryServiceStatusEx failed\r\n");
+			LOG(INFO) << " QueryServiceStatusEx failed ";
 		}
 		else
 		{
@@ -147,6 +149,7 @@ void CTServerMonitor::monitorThreadFunc()
 									if (FALSE == ::StartService(schService, NULL, NULL)) {
 										int a = GetLastError();
 										printf("StartService failed %d \n", a);
+										LOG(INFO) << " StartService failed ";
 									}
 
 									// it will take at least a couple of seconds for the service to start.

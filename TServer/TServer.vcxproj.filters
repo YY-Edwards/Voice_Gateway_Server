@@ -183,6 +183,9 @@
     <ClInclude Include="..\lib\service\service.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="GetSettingAction.h">
+      <Filter>clientAction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

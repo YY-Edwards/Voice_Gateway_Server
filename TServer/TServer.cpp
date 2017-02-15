@@ -53,6 +53,7 @@
 #include "WireLanSendAction.h"
 
 #include "MonitorServer.h"
+#include "GetSettingAction.h"
 #include "../lib/service\service.h"
 
 #define SERVICE_CODE    TRUE
@@ -108,7 +109,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//	Sleep(50);
 	//
 	//}
-	std::map<std::string, ACTION> serverActions, clientActions, wlClientActions;
+	std::map<std::string, ACTION> serverActions, clientActions, wlClientActions ,mclientActions ;
 #if SERVICE_CODE
 	CService::instance()->SetServiceNameAndDescription(_T("Trbox.TServer"), _T("Trbox TServer Server"));
 	CService::instance()->SetServiceCode([&](){
@@ -156,13 +157,15 @@ int _tmain(int argc, _TCHAR* argv[])
 		wlClientActions["message"] = recvMsgAction;
 		wlClientActions["status"] = recvStatusAction;
 		wlClientActions["sendArs"] = recvArsAction;
+		mclientActions["getSettingConfig"] = GetSettingAction;
 		CBroker::instance()->startLogClient();
 
 		CBroker::instance()->startWireLanClient(wlClientActions);
 		CBroker::instance()->startRpcServer(serverActions);
 		CBroker::instance()->startRadioClient(clientActions);
+		CBroker::instance()->startMonitorClient(mclientActions);
 
-		CMonitorServer ms;
+		/*CMonitorServer ms;
 		std::string strName = getServerName();
 		std::wstring wstr(strName.length(), L' ');
 		std::copy(strName.begin(), strName.end(), wstr.begin());
@@ -170,7 +173,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		{
 			ms.startMonitor(wstr.c_str(), _T("Trbox.Log"));
 
-		}
+		}*/
 		/*ÊÍ·Å×ÊÔ´*/
 		while (!CService::instance()->m_bServiceStopped)
 		{
@@ -264,11 +267,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	wlClientActions["message"] = recvMsgAction;
 	wlClientActions["status"] = recvStatusAction;
 	wlClientActions["sendArs"] = recvArsAction;
+
+	mclientActions["getSettingConfig"] = GetSettingAction;
 	CBroker::instance()->startLogClient();
 	
 	CBroker::instance()->startWireLanClient(wlClientActions);
 	CBroker::instance()->startRpcServer(serverActions);
 	CBroker::instance()->startRadioClient(clientActions);
+	CBroker::instance()->startMonitorClient(mclientActions);
+	
 	//rpcServer.addActionHandler("call", callAction);
 	//rpcServer.addActionHandler("control", controlAction);
 	//rpcServer.addActionHandler("queryGps", gpsAction);
