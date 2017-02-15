@@ -40,16 +40,19 @@ namespace TrboX
         {
             InitializeComponent();
 
-            Process[] processes;
-            processes = Process.GetProcessesByName("TServer");
+            //Process[] processes;
+            //processes = Process.GetProcessesByName("TServer");
 
-            if (processes.Count() <= 0)
-            {
-                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "/Svr/TServer.exe"))
-                {
-                    System.Diagnostics.Process.Start(AppDomain.CurrentDomain.BaseDirectory + "/Svr/TServer.exe");
-                }
-            }   
+            //if (processes.Count() <= 0)
+            //{
+            //    if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "/Svr/TServer.exe"))
+            //    {
+            //        System.Diagnostics.Process.Start(AppDomain.CurrentDomain.BaseDirectory + "/Svr/TServer.exe");
+            //    }
+            //}
+
+            new CServer().StartService("Trbox.Monitor");
+
 
             this.Loaded += delegate
             {
