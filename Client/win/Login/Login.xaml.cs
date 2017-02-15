@@ -32,8 +32,9 @@ namespace TrboX
             InitializeComponent();
 
             //TServer Starup 
-            StaertTServer();
+            //StaertTServer();
 
+            new CServer().StartService("Trbox.Monitor");
 
             LogServer.InitializeServer();  
             //DataBase.open(DateTime.Now.Year.ToString() 
