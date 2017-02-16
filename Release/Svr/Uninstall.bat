@@ -7,7 +7,6 @@ echo %cd%
 
 start LogServer.exe uninstall
 start TServer.exe uninstall
-start ServerMonitor.exe uninstall
 
 echo exit
 
