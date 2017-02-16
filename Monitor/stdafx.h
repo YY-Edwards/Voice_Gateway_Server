@@ -27,6 +27,10 @@
 #include <WinSvc.h>
 #include <string>
 #include <string.h>
+#define GOOGLE_GLOG_DLL_DECL           // 使用静态glog库用这个
+#define GLOG_NO_ABBREVIATED_SEVERITIES // 没这个编译会出错,传说因为和Windows.h冲突
+#include "../lib/glog/logging.h"
+#pragma comment(lib,"../lib/glog/lib/libglog.lib")
 #define			WM_TRAYICON			WM_USER + 1
 
 #ifndef _AFX_NO_OLE_SUPPORT

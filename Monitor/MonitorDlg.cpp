@@ -7,6 +7,7 @@
 #include "MonitorDlg.h"
 #include "afxdialogex.h"
 #include "ConnectAction.h"
+#include "Tool.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -107,20 +108,24 @@ BOOL CMonitorDlg::OnInitDialog()
 	wcscpy_s(m_nid.szInfo, _T("监测程序已启动!"));
 	m_nid.uTimeout = 2000;
 	m_nid.dwInfoFlags = NIIF_INFO;
-
 	Shell_NotifyIcon(NIM_ADD, &m_nid);
-	
-	AfxGetApp()->m_pMainWnd->ShowWindow(SW_HIDE); //隐藏窗口
-	WINDOWPLACEMENT wp;
-	wp.length = sizeof(WINDOWPLACEMENT);
-	wp.flags = WPF_RESTORETOMAXIMIZED;
-	wp.showCmd = SW_HIDE;
-	SetWindowPlacement(&wp);             //隐藏窗口
-	ModifyStyleEx(WS_EX_APPWINDOW, WS_EX_TOOLWINDOW, 1);     //隐藏任务栏
 
+	writeLog();
+
+	//WINDOWPLACEMENT wp;
+	//wp.length = sizeof(WINDOWPLACEMENT);
+	//wp.flags = WPF_RESTORETOMAXIMIZED;
+	//wp.showCmd = SW_HIDE;
+	//SetWindowPlacement(&wp);             //隐藏窗口
+	//ModifyStyleEx(WS_EX_APPWINDOW, WS_EX_TOOLWINDOW, 1);     //隐藏任务栏
+	//AfxGetApp()->m_pMainWnd->ShowWindow(SW_SHOWMINIMIZED); //隐藏窗口
+	int nFullWidth = GetSystemMetrics(SM_CXSCREEN);
+	int nFullHeight = GetSystemMetrics(SM_CYSCREEN);
+	SetWindowPos(NULL, nFullWidth, nFullHeight, 0, 0, SWP_NOZORDER);  //设置0像素,移到最角落  或者:MoveWindow(0,0,0,0);
+	ShowWindow(SW_HIDE);
+	ModifyStyleEx(WS_EX_APPWINDOW, WS_EX_TOOLWINDOW);  //移除任务栏图标显示
 	// TODO:  在此添加额外的初始化代码
 	m_tserver.StartMonitor();
-	Sleep(10000);
 	rpcServer.setOnConnectHandler(CMonitorDlg::OnConnect);
 	rpcServer.addActionHandler("connect", ConnectAction);
 	rpcServer.start(TCP_PORT, rpcServer.TCP);
@@ -198,7 +203,7 @@ LRESULT CMonitorDlg::OnSysTrayMsg(WPARAM w, LPARAM l)
 	switch (uMouseMsg)
 	{
 	case WM_LBUTTONDBLCLK:
-		ShowWindow(SW_SHOWNORMAL);
+		//ShowWindow(SW_SHOWNORMAL);
 		break;
 	case WM_RBUTTONDOWN:
 	{
@@ -250,4 +255,54 @@ std::string CMonitorDlg::getServerName()
 
 	}
 	return  serverName;
+}
+std::wstring CMonitorDlg::getAppdataPath()
+{
+	TCHAR szBuffer[MAX_PATH];
+	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
+
+	return std::wstring(szBuffer);
+}
+void CMonitorDlg::writeLog()
+{
+	int createFileRlt = 0;
+	TCHAR szBuffer[MAX_PATH];
+	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
+	std::wstring appFolder = getAppdataPath() + _T("\\Jihua Information");
+	if (!PathFileExists(appFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(appFolder.c_str());
+	}
+	appFolder = appFolder + _T("\\Trbox");
+	if (!PathFileExists(appFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(appFolder.c_str());
+	}
+	appFolder = appFolder + _T("\\3.0");
+	if (!PathFileExists(appFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(appFolder.c_str());
+	}
+	appFolder = appFolder + _T("\\Monitor");
+	if (!PathFileExists(appFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(appFolder.c_str());
+	}
+
+	std::wstring logFolder = appFolder + _T("\\log");
+	if (!PathFileExists(logFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(logFolder.c_str());
+	}
+
+	std::wstring pathLogInfo = logFolder + _T("/info_");
+	std::wstring pathLogError = logFolder + _T("/error_");
+	std::wstring pathLogWarning = logFolder + _T("/warning_");
+
+	//FLAGS_log_dir = "./";
+	google::InitGoogleLogging("");
+	google::SetLogDestination(google::GLOG_INFO, CTool::UnicodeToUTF8(pathLogInfo).c_str());
+	google::SetLogDestination(google::GLOG_ERROR, CTool::UnicodeToUTF8(pathLogError).c_str());
+	google::SetLogDestination(google::GLOG_WARNING, CTool::UnicodeToUTF8(pathLogWarning).c_str());
+	google::SetLogFilenameExtension("log");
 }

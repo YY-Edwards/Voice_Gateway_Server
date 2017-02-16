@@ -79,7 +79,8 @@ void CMonitorServer::logServerThreadFunc()
 			if (NULL == schSCManager)
 			{
 				//throw std::system_error(GetLastError(), std::system_category(), "OpenSCManager failed");
-
+				std::string str = std::to_string(GetLastError());
+				LOG(INFO) << " Log Server OpenSCManager failed" + str;;
 			}
 			// Get a handle to the service.
 			schService = OpenService(
@@ -131,8 +132,11 @@ void CMonitorServer::logServerThreadFunc()
 					else
 					{
 						//throw std::system_error(GetLastError(), std::system_category(), "CreateService failed");
+						std::string str = std::to_string(GetLastError());
+						LOG(INFO) << " Log Server CreateService failed" + str;
 					}
 				}
+
 			}
 
 			// Check the status in case the service is not stopped. 
@@ -144,6 +148,8 @@ void CMonitorServer::logServerThreadFunc()
 				sizeof(SERVICE_STATUS_PROCESS), // size of structure
 				&dwBytesNeeded))              // size needed if buffer is too small
 			{
+				std::string str = std::to_string(GetLastError());
+				LOG(INFO) << " Log Server QueryServiceStatusEx failed" + str;
 				//printf("QueryServiceStatusEx failed (%d)\n", GetLastError());
 			}
 			else
@@ -154,7 +160,9 @@ void CMonitorServer::logServerThreadFunc()
 				{
 										if (FALSE == ::StartService(schService, NULL, NULL)) {
 											int a = GetLastError();
-											printf("Start LogServer failed %d \n", a);
+											//printf("Start LogServer failed %d \n", a);
+											std::string str = std::to_string(GetLastError());
+											LOG(INFO) << " Log Server Start failed" + str;
 										}
 
 										// it will take at least a couple of seconds for the service to start.
@@ -210,7 +218,8 @@ void CMonitorServer::monitorThreadFunc()
 			if (NULL == schSCManager)
 			{
 				//throw std::system_error(GetLastError(), std::system_category(), "OpenSCManager failed");
-
+				std::string str = std::to_string(GetLastError());
+				LOG(INFO) << " OpenSCManager failed" + str;
 			}
 			// Get a handle to the service.
 			schService = OpenService(
@@ -223,8 +232,10 @@ void CMonitorServer::monitorThreadFunc()
 			{
 				TCHAR szFilePath[MAX_PATH];
 				::GetModuleFileName(NULL, szFilePath, MAX_PATH);
+				wchar_t *ch = _tcsrchr(szFilePath, _T('\\'));
+				ch[0] = 0;
 				(_tcsrchr(szFilePath, _T('\\')))[1] = 0;
-				(_tcsrchr(szFilePath, _T('\\')))[1] = 0;
+				//(_tcsrchr(szFilePath, _T('\Svr')))[1] = 0;
 				std::wstring wstr;
 				if (0 == wcscmp(serverName, L"Trbox.Dispatch"))
 				{
@@ -267,6 +278,8 @@ void CMonitorServer::monitorThreadFunc()
 					}
 					else
 					{
+						std::string str = std::to_string(GetLastError());
+						LOG(INFO) << " CreateService failed" + str;
 						//throw std::system_error(GetLastError(), std::system_category(), "CreateService failed");
 					}
 				}
@@ -282,6 +295,8 @@ void CMonitorServer::monitorThreadFunc()
 				&dwBytesNeeded))              // size needed if buffer is too small
 			{
 				//printf("QueryServiceStatusEx failed (%d)\n", GetLastError());
+				std::string str = std::to_string(GetLastError());
+				LOG(INFO) << " QueryServiceStatusEx failed" + str;
 			}
 			else
 			{
@@ -292,6 +307,8 @@ void CMonitorServer::monitorThreadFunc()
 										if (FALSE == ::StartService(schService, NULL, NULL)) {
 											int a = GetLastError();
 											printf("StartService failed %d \n", a);
+											std::string str = std::to_string(GetLastError());
+											LOG(INFO) << " StartService  failed" + str;
 										}
 
 										// it will take at least a couple of seconds for the service to start.

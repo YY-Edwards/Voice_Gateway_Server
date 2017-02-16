@@ -66,6 +66,9 @@
     <ClInclude Include="ConnectAction.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Tool.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Monitor.cpp">
@@ -94,6 +97,9 @@
     </ClCompile>
     <ClCompile Include="..\lib\rpc\src\TcpServer.cpp">
       <Filter>rpc\src</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

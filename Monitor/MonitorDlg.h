@@ -46,4 +46,6 @@ private:
 	CRpcServer rpcServer;
 	std::string getServerName();
 	static void OnConnect(CRemotePeer* pRemotePeer);
+	std::wstring getAppdataPath();
+	void writeLog();
 };

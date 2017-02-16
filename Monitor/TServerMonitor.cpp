@@ -67,9 +67,9 @@ void CTServerMonitor::monitorThreadFunc()
 
 			if (NULL == schSCManager)
 			{
-				std::string str = std::to_string(GetLastError());
 				//throw std::system_error(GetLastError(), std::system_category(), "OpenSCManager failed");
-				//LOG(INFO) << str;
+				std::string str = std::to_string(GetLastError());
+				LOG(INFO) << " tServer OpenSCManager failed" +  str;
 			}
 			// Get a handle to the service.
 			schService = OpenService(
@@ -121,7 +121,8 @@ void CTServerMonitor::monitorThreadFunc()
 					}
 					else
 					{
-						//LOG(INFO) << " CreateService failed ";
+						std::string str = std::to_string(GetLastError());
+						LOG(INFO) << " TServer CreateService failed" + str;
 						//throw std::system_error(GetLastError(), std::system_category(), "CreateService failed");
 					}
 				}
@@ -137,7 +138,8 @@ void CTServerMonitor::monitorThreadFunc()
 				&dwBytesNeeded))              // size needed if buffer is too small
 			{
 				//printf("QueryServiceStatusEx failed (%d)\n", GetLastError());
-				//LOG(INFO) << " QueryServiceStatusEx failed ";
+				std::string str = std::to_string(GetLastError());
+				LOG(INFO) << " TServer QueryServiceStatusEx failed" + str;;
 			}
 			else
 			{
@@ -148,8 +150,8 @@ void CTServerMonitor::monitorThreadFunc()
 										if (FALSE == ::StartService(schService, NULL, NULL)) {
 											int a = GetLastError();
 											printf("StartService failed %d \n", a);
-											//LOG(INFO) << " StartService failed ";
-										}
+											std::string str = std::to_string(GetLastError());
+											LOG(INFO) << " TServer StartService failed" + str;										}
 
 										// it will take at least a couple of seconds for the service to start.
 										Sleep(2000);
