@@ -14,6 +14,7 @@ CMonitorServer::CMonitorServer()
 	memset(logServerName,0,300);
 	m_handle = CreateThread(NULL, 0, monitorThread, this, THREAD_PRIORITY_NORMAL, NULL);
 	m_logServerHandle = CreateThread(NULL, 0, logServerThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	
 }
 
 
@@ -25,7 +26,7 @@ void CMonitorServer::startMonitor(LPCTSTR lpName)
 	isStart = true;
 	StrCpy(serverName, lpName);
 	StrCpy(logServerName, _T("Trbox.Log"));
-	
+	LOG(INFO) << " start logServer";
 }
 void CMonitorServer::stopMonitor()
 {
@@ -80,7 +81,7 @@ void CMonitorServer::logServerThreadFunc()
 			{
 				//throw std::system_error(GetLastError(), std::system_category(), "OpenSCManager failed");
 				std::string str = std::to_string(GetLastError());
-				LOG(INFO) << " Log Server OpenSCManager failed" + str;;
+				LOG(INFO) << " Log Server OpenSCManager failed" + str;
 			}
 			// Get a handle to the service.
 			schService = OpenService(
@@ -101,6 +102,7 @@ void CMonitorServer::logServerThreadFunc()
 				}
 				else
 				{
+					LOG(INFO) << "logServerName != Trbox.log" ;
 					return;
 				}
 				LPCWSTR pWstr = wstr.c_str();
@@ -126,7 +128,8 @@ void CMonitorServer::logServerThreadFunc()
 				{
 					if (ERROR_SERVICE_EXISTS == GetLastError())
 					{
-						printf("Service already installed");
+						//printf("Service already installed");
+						LOG(INFO) << " Service already installed";
 						exit(1);
 					}
 					else

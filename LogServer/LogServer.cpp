@@ -18,7 +18,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	CService::instance()->SetServiceNameAndDescription(_T("Trbox.Log"), _T("Trbox Log Server"));
 	CService::instance()->SetServiceCode([&](){
-		CDb::instance()->open("localhost", 3306, "root", "", "tbx");
+		CDb::instance()->open("127.0.0.1", 3306, "root", "", "tbx");
 		CRpcServer rpcServer;
 		rpcServer.addActionHandler("appEvent", appEventAction);
 		rpcServer.addActionHandler("user", userAction);
