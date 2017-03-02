@@ -116,6 +116,7 @@
     <ClInclude Include="MonitorDlg.h" />
     <ClInclude Include="MonitorServer.h" />
     <ClInclude Include="Settings.h" />
+    <ClInclude Include="StartMysql.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Tool.h" />
@@ -129,6 +130,7 @@
     <ClCompile Include="MonitorDlg.cpp" />
     <ClCompile Include="MonitorServer.cpp" />
     <ClCompile Include="Settings.cpp" />
+    <ClCompile Include="StartMysql.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

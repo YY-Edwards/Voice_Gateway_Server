@@ -5,6 +5,7 @@
 #pragma once
 #include "MonitorServer.h"
 #include "TServerMonitor.h"
+#include "StartMysql.h"
 #include "Settings.h"
 #include <string.h>
 #include "../lib/rpc/include/BaseConnector.h"
@@ -44,6 +45,7 @@ private:
 	
 	CTServerMonitor m_tserver;
 	CRpcServer rpcServer;
+	CStartMysql m_startMysql;
 	std::string getServerName();
 	static void OnConnect(CRemotePeer* pRemotePeer);
 	std::wstring getAppdataPath();

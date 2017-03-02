@@ -125,6 +125,7 @@ BOOL CMonitorDlg::OnInitDialog()
 	ShowWindow(SW_HIDE);
 	ModifyStyleEx(WS_EX_APPWINDOW, WS_EX_TOOLWINDOW);  //移除任务栏图标显示
 	// TODO:  在此添加额外的初始化代码
+	m_startMysql.startMysql();    //启动检测mysql线程
 	m_tserver.StartMonitor();
 	rpcServer.setOnConnectHandler(CMonitorDlg::OnConnect);
 	rpcServer.addActionHandler("connect", ConnectAction);

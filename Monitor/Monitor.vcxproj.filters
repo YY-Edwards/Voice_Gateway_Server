@@ -69,6 +69,9 @@
     <ClInclude Include="Tool.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="StartMysql.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Monitor.cpp">
@@ -99,6 +102,9 @@
       <Filter>rpc\src</Filter>
     </ClCompile>
     <ClCompile Include="Tool.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="StartMysql.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

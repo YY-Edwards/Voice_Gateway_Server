@@ -12,6 +12,7 @@ CMonitorServer::CMonitorServer()
 	isStart = false;
 	memset(serverName,0,300);
 	memset(logServerName,0,300);
+	StrCpy(logServerName, _T("Trbox.Log"));
 	m_handle = CreateThread(NULL, 0, monitorThread, this, THREAD_PRIORITY_NORMAL, NULL);
 	m_logServerHandle = CreateThread(NULL, 0, logServerThread, this, THREAD_PRIORITY_NORMAL, NULL);
 	
@@ -25,7 +26,6 @@ void CMonitorServer::startMonitor(LPCTSTR lpName)
 {
 	isStart = true;
 	StrCpy(serverName, lpName);
-	StrCpy(logServerName, _T("Trbox.Log"));
 	LOG(INFO) << " start logServer";
 }
 void CMonitorServer::stopMonitor()
@@ -59,7 +59,7 @@ void CMonitorServer::logServerThreadFunc()
 {
 	while (isMonitor)
 	{
-		if (isStart)
+		// (isStart)
 		{
 			std::wstring userName = _T("NT AUTHORITY\\NetworkService");
 
