@@ -575,7 +575,7 @@ void CTcpScheduling::timeOut()
 								TcpRespone tr;
 								tr.id = it->radioId;
 								tr.controlType = MONITOR;
-								tr.result = REMOTE_FAILED;
+								tr.result = REMOTE_FAILED;  
 								onTcpData(myTcpCallBackFunc, REMOTE_CLOSE, tr);
 								it = tcpCommandTimeOutList.erase(it);
 #if DEBUG_LOG
@@ -917,7 +917,7 @@ void CTcpScheduling::disConnect()
 		WaitForSingleObject(m_wMt, 1000);
 		CloseHandle(m_wMt);
 	}
-	if (m_cMt && isTcpConnect)
+	if (m_cMt /*&& isTcpConnect*/)
 	{
 		m_connectThread = false;
 		WaitForSingleObject(m_cMt, 1000);

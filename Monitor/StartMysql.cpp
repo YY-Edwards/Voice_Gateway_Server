@@ -18,6 +18,7 @@ void CStartMysql::startMysql()
 	isStartMonitor = true;
 	CreateThread(NULL, 0, monitorMysqlStatusThread, this, THREAD_PRIORITY_NORMAL, NULL);
 }
+
 DWORD WINAPI CStartMysql::monitorMysqlStatusThread(LPVOID lpParam)
 {
 	CStartMysql * p = (CStartMysql *)(lpParam);
