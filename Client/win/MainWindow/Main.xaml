@@ -7,7 +7,6 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" x:Name="MainWindow" mc:Ignorable="d" 
         x:Class="TrboX.Main"   
-        Icon="/TrboX;component/themes/resource/Logo.png" 
         Title="TrboX" Height="800" Width="1280" WindowStartupLocation="CenterScreen" Style="{DynamicResource MainWinStyle}" Closing="MainWindow_Closing" MinWidth="800" MinHeight="600" 
     >
     <!--<src:MyWindow.InputBindings>

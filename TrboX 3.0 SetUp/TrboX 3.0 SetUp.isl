@@ -340,29 +340,30 @@
 		<col def="S0">ISDotNetInstallerArgsCommit</col>
 		<col def="S0">ISDotNetInstallerArgsUninstall</col>
 		<col def="S0">ISDotNetInstallerArgsRollback</col>
-		<row><td>CefSharp.Wpf.dll</td><td>{37E04599-F09D-42CA-8CE3-057BAA6B6138}</td><td>INSTALLDIR</td><td>2</td><td/><td>cefsharp.wpf.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>CefSharp.dll</td><td>{CC268D12-8F36-4BEF-A8A2-A8D3ED9DC623}</td><td>INSTALLDIR</td><td>2</td><td/><td>cefsharp.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>CefSharp.Wpf.dll</td><td>{F936963C-3E79-4F3C-AE14-C6386AFAF982}</td><td>INSTALLDIR</td><td>2</td><td/><td>cefsharp.wpf.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>CefSharp.dll</td><td>{9F3B580C-53EF-4860-8EDB-7FA245837E37}</td><td>INSTALLDIR</td><td>2</td><td/><td>cefsharp.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component</td><td>{23C68C75-48C6-4DD2-8C2E-28FDA6AEE941}</td><td>INSTALLDIR</td><td>2</td><td/><td>File</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component1</td><td>{17449FF6-A71D-47ED-9A2C-F663453AB8DC}</td><td>INSTALLDIR</td><td>2</td><td/><td>File1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component2</td><td>{D124A3B3-7AC3-42C8-9263-F1C0A885D936}</td><td>SVR</td><td>2</td><td/><td>File2</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component3</td><td>{5D89C466-AA37-404D-BF41-D654070722B2}</td><td>SVR</td><td>2</td><td/><td>File3</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component4</td><td>{6C119965-0621-438B-8CA5-03B9055BF753}</td><td>DEVICE</td><td>2</td><td/><td>File4</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component5</td><td>{3ABAEC26-03B9-4E2B-AAE9-35DC062CB58C}</td><td>DEVICE</td><td>2</td><td/><td>File5</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Component6</td><td>{AECE2066-897E-4624-91AD-1BB4AEDA2A9C}</td><td>SVR</td><td>2</td><td/><td>File6</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT1</td><td>{65A84D9B-8173-4367-804F-E36DFC37D116}</td><td>INSTALLDIR</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT2</td><td>{DBF3BBE9-57E6-49E2-BBA1-1808A20F4798}</td><td>AppDataFolder</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT3</td><td>{37D6B4AA-91C3-4F9F-BF98-26BE9548D7F3}</td><td>SVR</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT4</td><td>{F3EC9F51-AEB8-439E-A009-4814B6F51B77}</td><td>DEVICE</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT5</td><td>{AE407B78-373D-4815-BCEC-FAAB313A23A1}</td><td>AMAP1</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT6</td><td>{C1639911-3E07-4914-BF3F-6DEA774ED95C}</td><td>AMAP1</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>Newtonsoft.Json.dll</td><td>{71414665-9808-4362-82F2-B29E64552737}</td><td>INSTALLDIR</td><td>2</td><td/><td>newtonsoft.json.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>System.Data.SQLite.dll</td><td>{DC3319EE-8F64-431A-A94B-3733915F349D}</td><td>INSTALLDIR</td><td>2</td><td/><td>system.data.sqlite.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>System.Net.Http.dll</td><td>{4C6EA396-6ECB-4327-8D93-E1B44E3B9494}</td><td>INSTALLDIR</td><td>2</td><td/><td>system.net.http.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>icudt.dll</td><td>{55E0A798-FC55-4C3A-84DE-0B2E130ABFB7}</td><td>INSTALLDIR</td><td>2</td><td/><td>icudt.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>libcef.dll</td><td>{3789FEB3-2420-4486-84F8-43D53BD30846}</td><td>INSTALLDIR</td><td>2</td><td/><td>libcef.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>libglog.dll</td><td>{18089CC3-7EEE-4B08-9543-CEACE0146849}</td><td>SVR</td><td>2</td><td/><td>libglog.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>libglog.dll1</td><td>{F6DF21CB-E310-4622-A9DD-5CEAA52DCC4A}</td><td>DEVICE</td><td>2</td><td/><td>libglog.dll1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>libmysql.dll</td><td>{D14D8A3E-0A47-4C84-B8BC-7DD837B9E0EE}</td><td>SVR</td><td>2</td><td/><td>libmysql.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>libmysql.dll1</td><td>{692C743D-32A4-4059-8732-A8743E54352A}</td><td>DEVICE</td><td>2</td><td/><td>libmysql.dll1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Newtonsoft.Json.dll</td><td>{1B122486-EF0C-4641-AA0D-5BBDA7A66EB9}</td><td>INSTALLDIR</td><td>2</td><td/><td>newtonsoft.json.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>System.Data.SQLite.dll</td><td>{620995E8-F6B7-47E8-B3DE-1F6E74F00A8C}</td><td>INSTALLDIR</td><td>2</td><td/><td>system.data.sqlite.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>System.Net.Http.dll</td><td>{B89B3A35-CBFB-4E30-843C-D3DFB628E328}</td><td>INSTALLDIR</td><td>2</td><td/><td>system.net.http.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>icudt.dll</td><td>{7D3DB58D-2D34-40C7-8EBC-8FB23ECA18D5}</td><td>INSTALLDIR</td><td>2</td><td/><td>icudt.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>libcef.dll</td><td>{6C891937-F751-4EF1-81F4-B6FF256A69C1}</td><td>INSTALLDIR</td><td>2</td><td/><td>libcef.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>libglog.dll</td><td>{8E81465D-2E22-4A2C-AC43-42D3EC7ED029}</td><td>SVR</td><td>2</td><td/><td>libglog.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>libglog.dll1</td><td>{D35E8917-B73D-4EA2-B37D-91445D69E92B}</td><td>DEVICE</td><td>2</td><td/><td>libglog.dll1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>libmysql.dll</td><td>{C0A2CBC2-462E-4F55-9372-76DC6C6852AD}</td><td>SVR</td><td>2</td><td/><td>libmysql.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>libmysql.dll1</td><td>{6CE88B13-8959-4738-8131-1F1E899C8A84}</td><td>DEVICE</td><td>2</td><td/><td>libmysql.dll1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 	</table>
 
 	<table name="Condition">
@@ -1031,9 +1032,13 @@
 		<row><td>SetupCompleteError</td><td>Finish</td><td>DoAction</td><td>CleanUp</td><td>ISSCRIPTRUNNING="1"</td><td>1</td></row>
 		<row><td>SetupCompleteError</td><td>Finish</td><td>DoAction</td><td>ShowMsiLog</td><td>MsiLogFileLocation And (ISSHOWMSILOG="1")</td><td>3</td></row>
 		<row><td>SetupCompleteError</td><td>Finish</td><td>EndDialog</td><td>Exit</td><td>1</td><td>2</td></row>
-		<row><td>SetupCompleteSuccess</td><td>OK</td><td>DoAction</td><td>CleanUp</td><td>ISSCRIPTRUNNING="1"</td><td>5</td></row>
-		<row><td>SetupCompleteSuccess</td><td>OK</td><td>DoAction</td><td>ShowMsiLog</td><td>MsiLogFileLocation And (ISSHOWMSILOG="1") And NOT ISENABLEDWUSFINISHDIALOG</td><td>10</td></row>
-		<row><td>SetupCompleteSuccess</td><td>OK</td><td>EndDialog</td><td>Exit</td><td>1</td><td>6</td></row>
+		<row><td>SetupCompleteSuccess</td><td>OK</td><td>DoAction</td><td>CleanUp</td><td>ISSCRIPTRUNNING="1"</td><td>9</td></row>
+		<row><td>SetupCompleteSuccess</td><td>OK</td><td>DoAction</td><td>InstallDev</td><td>Not Installed</td><td>1</td></row>
+		<row><td>SetupCompleteSuccess</td><td>OK</td><td>DoAction</td><td>InstallSvr</td><td>Not Installed</td><td>3</td></row>
+		<row><td>SetupCompleteSuccess</td><td>OK</td><td>DoAction</td><td>ShowMsiLog</td><td>MsiLogFileLocation And (ISSHOWMSILOG="1") And NOT ISENABLEDWUSFINISHDIALOG</td><td>14</td></row>
+		<row><td>SetupCompleteSuccess</td><td>OK</td><td>EndDialog</td><td>Exit</td><td>1</td><td>10</td></row>
+		<row><td>SetupCompleteSuccess</td><td>OK</td><td>[InstallDev]</td><td>InstallDev</td><td>Not Installed</td><td>2</td></row>
+		<row><td>SetupCompleteSuccess</td><td>OK</td><td>[InstallSvr]</td><td>InstallSvr</td><td>Not Installed</td><td>4</td></row>
 		<row><td>SetupError</td><td>A</td><td>EndDialog</td><td>ErrorAbort</td><td>1</td><td>0</td></row>
 		<row><td>SetupError</td><td>C</td><td>EndDialog</td><td>ErrorCancel</td><td>1</td><td>0</td></row>
 		<row><td>SetupError</td><td>I</td><td>EndDialog</td><td>ErrorIgnore</td><td>1</td><td>0</td></row>
@@ -1087,6 +1092,7 @@
 		<row><td>INSTALLDIR</td><td>Component3</td></row>
 		<row><td>INSTALLDIR</td><td>Component4</td></row>
 		<row><td>INSTALLDIR</td><td>Component5</td></row>
+		<row><td>INSTALLDIR</td><td>Component6</td></row>
 		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT1</td></row>
 		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT2</td></row>
 		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT3</td></row>
@@ -1104,6 +1110,7 @@
 		<row><td>INSTALLDIR</td><td>libmysql.dll1</td></row>
 		<row><td>SVR</td><td>Component2</td></row>
 		<row><td>SVR</td><td>Component3</td></row>
+		<row><td>SVR</td><td>Component6</td></row>
 		<row><td>SVR</td><td>ISX_DEFAULTCOMPONENT3</td></row>
 		<row><td>SVR</td><td>libglog.dll</td></row>
 		<row><td>SVR</td><td>libmysql.dll</td></row>
@@ -1123,9 +1130,8 @@
 		<row><td>ISSelfRegisterFiles</td><td>3073</td><td>ISSELFREG.DLL</td><td>ISSelfRegisterFiles</td><td/><td/></row>
 		<row><td>ISSelfRegisterFinalize</td><td>1</td><td>ISSELFREG.DLL</td><td>ISSelfRegisterFinalize</td><td/><td/></row>
 		<row><td>ISUnSelfRegisterFiles</td><td>3073</td><td>ISSELFREG.DLL</td><td>ISUnSelfRegisterFiles</td><td/><td/></row>
-		<row><td>InstallDispSvr</td><td>1058</td><td>DEVICE</td><td>[DEVICE]InstallDSSvr.bat</td><td/><td/></row>
-		<row><td>InstallLogSvr</td><td>1058</td><td>SVR</td><td>[SVR]InstallLogSvr.bat</td><td/><td/></row>
-		<row><td>InstallWireSvr</td><td>1058</td><td>DEVICE</td><td>[DEVICE]InstallWSSvr.bat</td><td/><td/></row>
+		<row><td>InstallDev</td><td>34</td><td>DEVICE</td><td>[DEVICE]InstallSvr.bat</td><td/><td/></row>
+		<row><td>InstallSvr</td><td>34</td><td>SVR</td><td>[SVR]InstallSvr.bat</td><td/><td/></row>
 		<row><td>SetARPINSTALLLOCATION</td><td>51</td><td>ARPINSTALLLOCATION</td><td>[INSTALLDIR]</td><td/><td/></row>
 		<row><td>SetAllUsersProfileNT</td><td>51</td><td>ALLUSERSPROFILE</td><td>[%SystemRoot]\Profiles\All Users</td><td/><td/></row>
 		<row><td>ShowMsiLog</td><td>226</td><td>SystemFolder</td><td>[SystemFolder]notepad.exe "[MsiLogFileLocation]"</td><td/><td>Shows Property-driven MSI Log</td></row>
@@ -1944,6 +1950,7 @@
 		<row><td>AlwaysInstall</td><td>Component3</td></row>
 		<row><td>AlwaysInstall</td><td>Component4</td></row>
 		<row><td>AlwaysInstall</td><td>Component5</td></row>
+		<row><td>AlwaysInstall</td><td>Component6</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT1</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT2</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT3</td></row>
@@ -1979,36 +1986,37 @@
 		<row><td>File3</td><td>Component3</td><td>TServer.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;TServer&gt;|Built</td><td>3</td><td/></row>
 		<row><td>File4</td><td>Component4</td><td>WirelineSchedule.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;WirelineSchedule&gt;|Built</td><td>3</td><td/></row>
 		<row><td>File5</td><td>Component5</td><td>Dispatch.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Dispatch&gt;|Built</td><td>3</td><td/></row>
-		<row><td>cefsharp.dll</td><td>CefSharp.dll</td><td>CefSharp.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\CefSharp.dll</td><td>1</td><td/></row>
-		<row><td>cefsharp.wpf.dll</td><td>CefSharp.Wpf.dll</td><td>CEFSHA~1.DLL|CefSharp.Wpf.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\CefSharp.Wpf.dll</td><td>1</td><td/></row>
-		<row><td>icudt.dll</td><td>icudt.dll</td><td>icudt.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\icudt.dll</td><td>1</td><td/></row>
-		<row><td>index.html</td><td>ISX_DEFAULTCOMPONENT5</td><td>INDEX~1.HTM|index.html</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\index.html</td><td>1</td><td/></row>
-		<row><td>infowin.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>infowin.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\infowin.png</td><td>1</td><td/></row>
-		<row><td>installdssvr.bat</td><td>ISX_DEFAULTCOMPONENT4</td><td>INSTAL~1.BAT|InstallDSSvr.bat</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\Device\InstallDSSvr.bat</td><td>1</td><td/></row>
-		<row><td>installlogsvr.bat</td><td>ISX_DEFAULTCOMPONENT3</td><td>INSTAL~1.BAT|InstallLogSvr.bat</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\Svr\InstallLogSvr.bat</td><td>1</td><td/></row>
-		<row><td>installsvr.bat</td><td>ISX_DEFAULTCOMPONENT1</td><td>INSTAL~1.BAT|InstallSvr.bat</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\InstallSvr.bat</td><td>1</td><td/></row>
-		<row><td>installwssvr.bat</td><td>ISX_DEFAULTCOMPONENT4</td><td>INSTAL~1.BAT|InstallWSSvr.bat</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\Device\InstallWSSvr.bat</td><td>1</td><td/></row>
-		<row><td>libcef.dll</td><td>libcef.dll</td><td>libcef.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\libcef.dll</td><td>1</td><td/></row>
-		<row><td>libglog.dll</td><td>libglog.dll</td><td>libglog.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\libglog.dll</td><td>1</td><td/></row>
-		<row><td>libglog.dll1</td><td>libglog.dll1</td><td>libglog.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\libglog.dll</td><td>1</td><td/></row>
-		<row><td>libmysql.dll</td><td>libmysql.dll</td><td>libmysql.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\libmysql.dll</td><td>1</td><td/></row>
-		<row><td>libmysql.dll1</td><td>libmysql.dll1</td><td>libmysql.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\libmysql.dll</td><td>1</td><td/></row>
-		<row><td>msg_close_18_18_n.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>MSG_CL~1.PNG|msg_close_18_18_n.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\msg_close_18_18_n.png</td><td>1</td><td/></row>
-		<row><td>newtonsoft.json.dll</td><td>Newtonsoft.Json.dll</td><td>NEWTON~1.DLL|Newtonsoft.Json.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\Newtonsoft.Json.dll</td><td>1</td><td/></row>
-		<row><td>pos_radio_36_77.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>POS_RA~1.PNG|pos_radio_36_77.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\pos_radio_36_77.png</td><td>1</td><td/></row>
-		<row><td>pos_ride_36_77.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>POS_RI~1.PNG|pos_ride_36_77.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\pos_ride_36_77.png</td><td>1</td><td/></row>
-		<row><td>pos_staff_36_77.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>POS_ST~1.PNG|pos_staff_36_77.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\pos_staff_36_77.png</td><td>1</td><td/></row>
-		<row><td>pos_vehicle_36_77.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>POS_VE~1.PNG|pos_vehicle_36_77.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\pos_vehicle_36_77.png</td><td>1</td><td/></row>
-		<row><td>radio_40_40.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>RADIO_~1.PNG|radio_40_40.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\radio_40_40.png</td><td>1</td><td/></row>
-		<row><td>ride_40_40.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>RIDE_4~1.PNG|ride_40_40.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\ride_40_40.png</td><td>1</td><td/></row>
-		<row><td>staff_40_40.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>STAFF_~1.PNG|staff_40_40.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\staff_40_40.png</td><td>1</td><td/></row>
-		<row><td>system.data.sqlite.dll</td><td>System.Data.SQLite.dll</td><td>SYSTEM~1.DLL|System.Data.SQLite.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\System.Data.SQLite.dll</td><td>1</td><td/></row>
-		<row><td>system.net.http.dll</td><td>System.Net.Http.dll</td><td>SYSTEM~1.DLL|System.Net.Http.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\TrboX 3.0\Release\System.Net.Http.dll</td><td>1</td><td/></row>
-		<row><td>thumbs.db</td><td>ISX_DEFAULTCOMPONENT5</td><td>Thumbs.db</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\Thumbs.db</td><td>1</td><td/></row>
-		<row><td>trace.js</td><td>ISX_DEFAULTCOMPONENT5</td><td>trace.js</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\trace.js</td><td>1</td><td/></row>
-		<row><td>uninstall.bat</td><td>ISX_DEFAULTCOMPONENT4</td><td>UNINST~1.BAT|Uninstall.bat</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\Device\Uninstall.bat</td><td>1</td><td/></row>
-		<row><td>uninstall.bat1</td><td>ISX_DEFAULTCOMPONENT3</td><td>UNINST~1.BAT|Uninstall.bat</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\Svr\Uninstall.bat</td><td>1</td><td/></row>
-		<row><td>vehicle_40_40.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>VEHICL~1.PNG|vehicle_40_40.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Jihua Information\Projects\TrboX\TrboX 3.0\Prj\trbox\Release\amap\vehicle_40_40.png</td><td>1</td><td/></row>
+		<row><td>File6</td><td>Component6</td><td>Monitor.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Monitor&gt;|Built</td><td>3</td><td/></row>
+		<row><td>cefsharp.dll</td><td>CefSharp.dll</td><td>CefSharp.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\CefSharp.dll</td><td>1</td><td/></row>
+		<row><td>cefsharp.wpf.dll</td><td>CefSharp.Wpf.dll</td><td>CEFSHA~1.DLL|CefSharp.Wpf.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\CefSharp.Wpf.dll</td><td>1</td><td/></row>
+		<row><td>icudt.dll</td><td>icudt.dll</td><td>icudt.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\icudt.dll</td><td>1</td><td/></row>
+		<row><td>index.html</td><td>ISX_DEFAULTCOMPONENT5</td><td>INDEX~1.HTM|index.html</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\amap\index.html</td><td>1</td><td/></row>
+		<row><td>infowin.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>infowin.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\amap\infowin.png</td><td>1</td><td/></row>
+		<row><td>installsvr.bat</td><td>ISX_DEFAULTCOMPONENT4</td><td>INSTAL~1.BAT|InstallSvr.bat</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Device\InstallSvr.bat</td><td>1</td><td/></row>
+		<row><td>installsvr.bat1</td><td>ISX_DEFAULTCOMPONENT3</td><td>INSTAL~1.BAT|InstallSvr.bat</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Svr\InstallSvr.bat</td><td>1</td><td/></row>
+		<row><td>libcef.dll</td><td>libcef.dll</td><td>libcef.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\libcef.dll</td><td>1</td><td/></row>
+		<row><td>libglog.dll</td><td>libglog.dll</td><td>libglog.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Svr\libglog.dll</td><td>1</td><td/></row>
+		<row><td>libglog.dll1</td><td>libglog.dll1</td><td>libglog.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Device\libglog.dll</td><td>1</td><td/></row>
+		<row><td>libmysql.dll</td><td>libmysql.dll</td><td>libmysql.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Svr\libmysql.dll</td><td>1</td><td/></row>
+		<row><td>libmysql.dll1</td><td>libmysql.dll1</td><td>libmysql.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Device\libmysql.dll</td><td>1</td><td/></row>
+		<row><td>msg_close_18_18_n.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>MSG_CL~1.PNG|msg_close_18_18_n.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\amap\msg_close_18_18_n.png</td><td>1</td><td/></row>
+		<row><td>newtonsoft.json.dll</td><td>Newtonsoft.Json.dll</td><td>NEWTON~1.DLL|Newtonsoft.Json.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Newtonsoft.Json.dll</td><td>1</td><td/></row>
+		<row><td>pos_radio_36_77.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>POS_RA~1.PNG|pos_radio_36_77.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\amap\pos_radio_36_77.png</td><td>1</td><td/></row>
+		<row><td>pos_ride_36_77.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>POS_RI~1.PNG|pos_ride_36_77.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\amap\pos_ride_36_77.png</td><td>1</td><td/></row>
+		<row><td>pos_staff_36_77.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>POS_ST~1.PNG|pos_staff_36_77.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\amap\pos_staff_36_77.png</td><td>1</td><td/></row>
+		<row><td>pos_vehicle_36_77.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>POS_VE~1.PNG|pos_vehicle_36_77.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\amap\pos_vehicle_36_77.png</td><td>1</td><td/></row>
+		<row><td>radio_40_40.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>RADIO_~1.PNG|radio_40_40.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\amap\radio_40_40.png</td><td>1</td><td/></row>
+		<row><td>ride_40_40.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>RIDE_4~1.PNG|ride_40_40.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\amap\ride_40_40.png</td><td>1</td><td/></row>
+		<row><td>staff_40_40.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>STAFF_~1.PNG|staff_40_40.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\amap\staff_40_40.png</td><td>1</td><td/></row>
+		<row><td>system.data.sqlite.dll</td><td>System.Data.SQLite.dll</td><td>SYSTEM~1.DLL|System.Data.SQLite.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\System.Data.SQLite.dll</td><td>1</td><td/></row>
+		<row><td>system.net.http.dll</td><td>System.Net.Http.dll</td><td>SYSTEM~1.DLL|System.Net.Http.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\System.Net.Http.dll</td><td>1</td><td/></row>
+		<row><td>thumbs.db</td><td>ISX_DEFAULTCOMPONENT5</td><td>Thumbs.db</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\amap\Thumbs.db</td><td>1</td><td/></row>
+		<row><td>trace.js</td><td>ISX_DEFAULTCOMPONENT5</td><td>trace.js</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\amap\trace.js</td><td>1</td><td/></row>
+		<row><td>trbox.ico</td><td>ISX_DEFAULTCOMPONENT1</td><td>TrboX.ico</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\TrboX.ico</td><td>1</td><td/></row>
+		<row><td>trboxmgr.ico</td><td>ISX_DEFAULTCOMPONENT1</td><td>TrboxMgr.ico</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\TrboxMgr.ico</td><td>1</td><td/></row>
+		<row><td>uninstall.bat</td><td>ISX_DEFAULTCOMPONENT4</td><td>UNINST~1.BAT|Uninstall.bat</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Device\Uninstall.bat</td><td>1</td><td/></row>
+		<row><td>uninstall.bat1</td><td>ISX_DEFAULTCOMPONENT3</td><td>UNINST~1.BAT|Uninstall.bat</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Svr\Uninstall.bat</td><td>1</td><td/></row>
+		<row><td>vehicle_40_40.png</td><td>ISX_DEFAULTCOMPONENT5</td><td>VEHICL~1.PNG|vehicle_40_40.png</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\amap\vehicle_40_40.png</td><td>1</td><td/></row>
 	</table>
 
 	<table name="FileSFPCatalog">
@@ -2025,6 +2033,8 @@
 		<col key="yes" def="s72">Tag</col>
 		<col def="S255">Data</col>
 		<row><td>PROJECT_ASSISTANT_DEFAULT_FEATURE</td><td>AlwaysInstall</td></row>
+		<row><td>_Built</td><td/></row>
+		<row><td>_Built2</td><td/></row>
 	</table>
 
 	<table name="ISBillBoard">
@@ -2151,29 +2161,30 @@
 		<col def="S0">FTPLocation</col>
 		<col def="S0">HTTPLocation</col>
 		<col def="S0">Miscellaneous</col>
-		<row><td>CefSharp.Wpf.dll</td><td/><td/><td>_7F75B4AF_EA4F_42D5_BFC8_526F8BCD3DAB_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>CefSharp.dll</td><td/><td/><td>_3B4D6C60_4A38_4BD6_88D4_9115B07FF328_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>CefSharp.Wpf.dll</td><td/><td/><td>_A75F882D_2792_4DA3_B60E_842F77ACCEFB_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>CefSharp.dll</td><td/><td/><td>_4E83E32E_1B1F_470C_9DFD_C465DFCB8173_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component</td><td/><td/><td>_857275C4_74F4_4527_971B_423EE1CCD34F_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component1</td><td/><td/><td>_C505804C_FC26_4CAC_8BDD_0C431B45135C_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component2</td><td/><td/><td>_ED4FEF4E_69D6_4EE7_9F4E_32CE3356B455_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component3</td><td/><td/><td>_D8487AFD_F3C5_4610_BECF_5E3CFF874F52_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component4</td><td/><td/><td>_D8FD9975_25C4_47D9_B474_D260A135EC34_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component5</td><td/><td/><td>_5D265D2A_F118_4C90_B072_85A20A770FCD_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Component6</td><td/><td/><td>_F1E04BB4_0BB7_478D_B170_C65E21C39D22_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT1</td><td/><td/><td>_5D6F2283_6065_468E_8706_C14D374640CF_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT2</td><td/><td/><td>_2D2E6808_0478_467F_88DA_44604A2E790A_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT3</td><td/><td/><td>_DAA1B157_A405_470F_9FF3_DAC84B53FB47_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT4</td><td/><td/><td>_0F63FA4E_1D74_49E8_A8C6_0421882C848C_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT5</td><td/><td/><td>_56D38822_EBD7_4E34_BECA_F0963E7A9DC9_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT6</td><td/><td/><td>_E82E9B1C_4478_4F9E_82DE_68268F8A395B_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>Newtonsoft.Json.dll</td><td/><td/><td>_3BA4FDD0_DBBE_41FC_8D44_C0DDB8C6C3FA_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>System.Data.SQLite.dll</td><td/><td/><td>_BF7F84BC_797E_4D29_A0CC_5F053DD55696_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>System.Net.Http.dll</td><td/><td/><td>_CE467805_B95F_4BB4_94D9_05ABC674498E_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>icudt.dll</td><td/><td/><td>_3BA4B1B5_BDBD_45E2_96C3_38907D8CE3A2_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>libcef.dll</td><td/><td/><td>_770B3CD9_A6C0_4473_81CB_8035D1EC54CD_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>libglog.dll</td><td/><td/><td>_FAE356A4_5990_4365_A8BB_5EEFBDF0B6CF_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>libglog.dll1</td><td/><td/><td>_6EDFC10E_B403_4E9A_A226_8FA7A8D6A0EA_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>libmysql.dll</td><td/><td/><td>_75F213BF_1FAF_46A1_9986_A78B41018B77_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>libmysql.dll1</td><td/><td/><td>_82373C51_A013_4A94_9AA7_D6363703EFCB_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Newtonsoft.Json.dll</td><td/><td/><td>_DCB1B12A_BF66_4833_B320_FC49231F164D_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>System.Data.SQLite.dll</td><td/><td/><td>_1BFE901F_41EA_40D3_A213_1AFE7880E2FE_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>System.Net.Http.dll</td><td/><td/><td>_0CCC74CF_6C9C_4311_BA85_D0684A391365_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>icudt.dll</td><td/><td/><td>_042384B9_D543_4579_965A_409FE562BB5E_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>libcef.dll</td><td/><td/><td>_B3BD8181_9D4B_4668_9E23_F63B589A8223_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>libglog.dll</td><td/><td/><td>_E83D7441_DCA9_4E34_81DE_BB773BC47363_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>libglog.dll1</td><td/><td/><td>_A3855637_AF70_4774_82BD_2458482BB767_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>libmysql.dll</td><td/><td/><td>_725FB93A_FA2C_4A2D_B66D_835EC5EF1BC7_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>libmysql.dll1</td><td/><td/><td>_9062EBD0_CA64_413F_9C27_B01147072F0C_FILTER</td><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="ISCustomActionReference">
@@ -2462,6 +2473,7 @@
 		<row><td>ISProjectDataFolder</td><td/><td/><td>1</td></row>
 		<row><td>ISProjectFolder</td><td/><td/><td>1</td></row>
 		<row><td>LogServer</td><td>LogServer\LogServer.vcxproj</td><td/><td>2</td></row>
+		<row><td>Monitor</td><td>Monitor\Monitor.vcxproj</td><td/><td>2</td></row>
 		<row><td>Options</td><td>Options\Options.csproj</td><td/><td>2</td></row>
 		<row><td>ProgramFilesFolder</td><td/><td/><td>1</td></row>
 		<row><td>SystemFolder</td><td/><td/><td>1</td></row>
@@ -4008,6 +4020,10 @@
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I2">ISIconIndex</col>
 		<row><td>ARPPRODUCTICON.exe</td><td/><td>&lt;ISProductFolder&gt;\redist\Language Independent\OS Independent\setupicon.ico</td><td>0</td></row>
+		<row><td>NewShortcut1_4315F9063ED447FEA59FF59E401561C4.exe</td><td/><td>&lt;VSSolutionFolder&gt;\Release\TrboxMgr.ico</td><td>0</td></row>
+		<row><td>_Built1_9C2B0A56E17142CB8E2DE3B0C296A11D.exe</td><td/><td>&lt;VSSolutionFolder&gt;\Release\TrboX.ico</td><td>0</td></row>
+		<row><td>_Built2_5B95E3D1F8BF4433AC1AA721CD72702A.exe</td><td/><td>&lt;VSSolutionFolder&gt;\Release\TrboxMgr.ico</td><td>0</td></row>
+		<row><td>_Built_9FDB0445D95F42628ABAD7633AA4DAB7.exe</td><td/><td>&lt;VSSolutionFolder&gt;\Release\TrboX.ico</td><td>0</td></row>
 	</table>
 
 	<table name="IniFile">
@@ -4054,15 +4070,12 @@
 		<row><td>ISSelfRegisterFiles</td><td/><td>5601</td><td/><td/></row>
 		<row><td>ISSelfRegisterFinalize</td><td/><td>6601</td><td/><td/></row>
 		<row><td>ISUnSelfRegisterFiles</td><td/><td>2202</td><td/><td/></row>
-		<row><td>InstallDispSvr</td><td>Not Installed</td><td>6401</td><td/><td/></row>
 		<row><td>InstallFiles</td><td/><td>4000</td><td>InstallFiles</td><td/></row>
 		<row><td>InstallFinalize</td><td/><td>6600</td><td>InstallFinalize</td><td/></row>
 		<row><td>InstallInitialize</td><td/><td>1501</td><td>InstallInitialize</td><td/></row>
-		<row><td>InstallLogSvr</td><td>Not Installed</td><td>6405</td><td/><td/></row>
 		<row><td>InstallODBC</td><td/><td>5400</td><td>InstallODBC</td><td/></row>
 		<row><td>InstallServices</td><td>VersionNT</td><td>5800</td><td>InstallServices</td><td/></row>
 		<row><td>InstallValidate</td><td/><td>1400</td><td>InstallValidate</td><td/></row>
-		<row><td>InstallWireSvr</td><td>Not Installed</td><td>6402</td><td/><td/></row>
 		<row><td>IsolateComponents</td><td/><td>950</td><td>IsolateComponents</td><td/></row>
 		<row><td>LaunchConditions</td><td>Not Installed</td><td>410</td><td>LaunchConditions</td><td/></row>
 		<row><td>MigrateFeatureStates</td><td/><td>1010</td><td>MigrateFeatureStates</td><td/></row>
@@ -4684,10 +4697,10 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<col def="S255">ISComments</col>
 		<col def="S255">ISShortcutName</col>
 		<col def="I4">ISAttributes</col>
-		<row><td>NewShortcut1</td><td>DesktopFolder</td><td>##ID_STRING7##</td><td>Component1</td><td>AlwaysInstall</td><td/><td/><td/><td/><td/><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
-		<row><td>_Built</td><td>trbox3_1.0_trbox_3.0</td><td>##IDS_SHORTCUT_DISPLAY_NAME3##</td><td>Component</td><td>AlwaysInstall</td><td/><td/><td/><td/><td/><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
-		<row><td>_Built1</td><td>DesktopFolder</td><td>##IDS_SHORTCUT_DISPLAY_NAME3##</td><td>Component</td><td>AlwaysInstall</td><td/><td/><td/><td/><td/><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
-		<row><td>_Built2</td><td>trbox3_1.0_trbox_3.0</td><td>##IDS_SHORTCUT_DISPLAY_NAME4##</td><td>Component1</td><td>AlwaysInstall</td><td/><td/><td/><td/><td/><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
+		<row><td>NewShortcut1</td><td>DesktopFolder</td><td>##ID_STRING7##</td><td>Component1</td><td>AlwaysInstall</td><td/><td/><td/><td>NewShortcut1_4315F9063ED447FEA59FF59E401561C4.exe</td><td>0</td><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
+		<row><td>_Built</td><td>trbox3_1.0_trbox_3.0</td><td>##IDS_SHORTCUT_DISPLAY_NAME3##</td><td>Component</td><td>AlwaysInstall</td><td/><td/><td/><td>_Built_9FDB0445D95F42628ABAD7633AA4DAB7.exe</td><td>0</td><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
+		<row><td>_Built1</td><td>DesktopFolder</td><td>##IDS_SHORTCUT_DISPLAY_NAME3##</td><td>Component</td><td>AlwaysInstall</td><td/><td/><td/><td>_Built1_9C2B0A56E17142CB8E2DE3B0C296A11D.exe</td><td>0</td><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
+		<row><td>_Built2</td><td>trbox3_1.0_trbox_3.0</td><td>##IDS_SHORTCUT_DISPLAY_NAME4##</td><td>Component1</td><td>AlwaysInstall</td><td/><td/><td/><td>_Built2_5B95E3D1F8BF4433AC1AA721CD72702A.exe</td><td>0</td><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="Signature">

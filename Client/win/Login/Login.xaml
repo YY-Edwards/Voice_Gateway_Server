@@ -4,8 +4,7 @@
         xmlns:src="clr-namespace:TrboX"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" 
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" 
-		x:Class="TrboX.Login"   
-        Icon="/TrboX;component/themes/resource/Logo.png"        
+		x:Class="TrboX.Login"          
         Title="登录" Height="382" Width="522" WindowStartupLocation="CenterScreen" Closed="MyWindow_Closed">
     <src:MyWindow.Resources>
         <Style x:Key="TextBoxUserInput" BasedOn="{x:Null}" TargetType="{x:Type TextBox}">

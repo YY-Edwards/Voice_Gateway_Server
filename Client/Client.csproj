@@ -38,7 +38,12 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>Logo.ico</ApplicationIcon>
+    <ApplicationIcon>TrboX.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup />
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="CefSharp">
@@ -218,10 +223,6 @@
     <Resource Include="resource\images\serach_21_21_h.png" />
     <Resource Include="resource\images\sub_title_60_20.png" />
     <Resource Include="resource\images\username_11_14.png" />
-    <Resource Include="themes\resource\loginbk.jpg" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\Logo.png" />
   </ItemGroup>
   <ItemGroup>
     <Page Include="ctrl\ComboButton.xaml">
@@ -292,72 +293,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Logo.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\HeaderLeft.png" />
-    <Resource Include="themes\resource\HeaderRight.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\ride.png" />
-    <Resource Include="themes\resource\sys-1.png" />
-    <Resource Include="themes\resource\sys-2.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\contact.png" />
-    <Resource Include="themes\resource\group.png" />
-    <Resource Include="themes\resource\radio.png" />
-    <Resource Include="themes\resource\vehicle.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\control.png" />
-    <Resource Include="themes\resource\position.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\alarm.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\event.png" />
-    <Resource Include="themes\resource\job.png" />
-    <Resource Include="themes\resource\msg.png" />
-    <Resource Include="themes\resource\rx.png" />
-    <Resource Include="themes\resource\tracker.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\check.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\monitor.png" />
-    <Resource Include="themes\resource\more.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\delete.png" />
-    <Resource Include="themes\resource\save.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\new.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\shut.png" />
-    <Resource Include="themes\resource\sleep.png" />
-    <Resource Include="themes\resource\start.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\help.png" />
-    <Resource Include="themes\resource\info.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\viewlist.png" />
-    <Resource Include="themes\resource\viewpane.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\Max.png" />
-    <Resource Include="themes\resource\Min.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="themes\resource\search.jpg" />
   </ItemGroup>
   <ItemGroup>
     <Resource Include="resource\images\serach_21_21_n.png" />
@@ -512,6 +447,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="resource\images\msg_ex_18_18_n.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="TrboX.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

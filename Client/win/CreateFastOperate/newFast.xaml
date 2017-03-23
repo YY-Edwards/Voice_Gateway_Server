@@ -3,8 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:src="clr-namespace:TrboX"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" 
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="TrboX.newFast" 
-        Icon="/TrboX;component/themes/resource/Logo.png"  
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" x:Class="TrboX.newFast"  
         Title="新建快捷操作" Height="612" Width="922" WindowStartupLocation="CenterScreen">
     <src:MyWindow.Resources>
         <src:OpTypeSelectToContactType x:Key="OpTypeSelectToContactType"/>

@@ -4,8 +4,7 @@
         xmlns:src="clr-namespace:TrboX"
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" 
 		xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" mc:Ignorable="d" 
-		x:Class="TrboX.Main"   
-        Icon="/TrboxMgr;component/themes/resource/Logo.png"        
+		x:Class="TrboX.Main"       
         Style="{StaticResource MyWindowStyle}"   
         Title="TrboX 3.0 Management" Height="610" Width="920" WindowStartupLocation="CenterScreen" Closed="MyWindow_Closed" Background="{x:Null}">
     <src:MyWindow.Resources>
