@@ -88,13 +88,18 @@ void CAudioLog::GetCurrentAudioFileFullPath(wchar_t* pAudioFileFullPath)
 //	}
 //}
 
-void CAudioLog::SetAudioFilePath(wchar_t* pAudioFilePath)
+BOOL CAudioLog::SetAudioFilePath(const std::wstring& path)
 {
-	ZeroMemory(m_strAudioFileSaveFolderPath, sizeof(wchar_t)*PATH_FILE_MAXSIZE);
-	wcscat_s(m_strAudioFileSaveFolderPath, pAudioFilePath);
-	wcscat_s(m_strAudioFileSaveFolderPath, L"\\");
+	//ZeroMemory(m_strAudioFileSaveFolderPath, sizeof(wchar_t)*PATH_FILE_MAXSIZE);
+	std::wstring temp = path;
+	temp += L"\\";
+	wcscpy_s(m_strAudioFileSaveFolderPath, temp.c_str());
+	int createFileRlt = 0;
 	if (!PathFileExists(m_strAudioFileSaveFolderPath))
 	{
-		CreateDirectory(m_strAudioFileSaveFolderPath, NULL);
+		//return CreateDirectory(m_strAudioFileSaveFolderPath, NULL);
+		createFileRlt = _wmkdir(m_strAudioFileSaveFolderPath);
+		return (0 == createFileRlt);
 	}
+	return TRUE;
 }

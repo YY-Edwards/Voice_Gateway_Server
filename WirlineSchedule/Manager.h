@@ -22,7 +22,7 @@ extern BOOL g_dongleIsUsing;
 class CManager
 {
 public:
-	CManager(CMySQL *db, CDataScheduling *pMnis);
+	CManager(CMySQL *db, CDataScheduling *pMnis,std::wstring& defaultAudioPath);
 	~CManager();
 	// 	/*初始化系统*/
 	// 	int initSys();

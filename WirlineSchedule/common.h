@@ -76,6 +76,7 @@ typedef struct
 
 #define REPEATER_CONNECT 0
 #define REPEATER_DISCONNECT 1
+#define PATH_FILE_MAXSIZE 1024
 
 enum CLIENT_CALL_TYPE
 {
@@ -222,6 +223,7 @@ typedef struct
 	long peerHeartTime;
 	_SlotNumber defaultSlot;
 	DONGLE dongle;
+	char audioPath[PATH_FILE_MAXSIZE];
 }CONFIG;
 /************************************************************************/
 /* 通话命令参数定义
@@ -320,7 +322,6 @@ extern long GO_BACK_DEFAULT_GROUP_TIME;//处于非调度组的时间
 #define VOICE_STATUS_CALLBACK 1
 #define VOICE_STATUS_END 2
 
-#define PATH_FILE_MAXSIZE 1024
 #define DATA_TABLE_NAME_SIZE 64
 #define FILE_NAME_MAXSIZE 64
 typedef void(*PLogReport)(char* log_msg);

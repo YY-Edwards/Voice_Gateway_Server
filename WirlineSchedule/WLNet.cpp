@@ -9,13 +9,14 @@ static const unsigned char AuthenticId[AUTHENTIC_ID_SIZE] = { 0x01, 0x02, 0x00, 
 static const unsigned char VenderKey[VENDER_KEY_SIZE] = { 0x6b, 0xe5, 0xff, 0x95, 0x6a, 0xb5, 0xe8, 0x82, 0xa8, 0x6f, 0x29, 0x5f, 0x9d, 0x9d, 0x5e, 0xcf, 0xe6, 0x57, 0x61, 0x5a };
 
 
-CWLNet::CWLNet(CMySQL *pDb, CManager *pManager)
+CWLNet::CWLNet(CMySQL *pDb, CManager *pManager, std::wstring& defaultAudioPath)
 : m_socket(INVALID_SOCKET)
 , m_hWorkThread(INVALID_HANDLE_VALUE)
 , m_bExit(TRUE)
 , m_dwRecvMasterKeepAliveTime(0)
 , m_masterAddress(0)
 , m_masterPort(0)
+//, m_dwMasterKeepAliveTime(GetTickCount())
 {
 	m_burstType = BURST_A;
 	m_SequenceNumber = 1;
@@ -56,7 +57,7 @@ CWLNet::CWLNet(CMySQL *pDb, CManager *pManager)
 	m_pCurrentSendVoicePeer = NULL;
 	m_pSitePeer = NULL;
 	m_retryRequestCallCount = REQUEST_CALL_REPEAT_FREQUENCY;
-	m_pEventLoger = new WLRecord(pDb);
+	m_pEventLoger = new WLRecord(pDb,defaultAudioPath);
 	m_pDb = pDb;
 	//m_dongleIdleEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
 	m_pManager = pManager;
@@ -8101,6 +8102,12 @@ void CWLNet::startSend()
 		timeSetEvent(SEND_VOICE_INTERVAL, 1, OneMilliSecondProc, (DWORD)this, TIME_PERIODIC);
 		m_bIsSending = true;
 	}
+}
+
+void CWLNet::setAudioPath(const std::string& path)
+{
+	std::wstring wPath = g_tool.ANSIToUnicode(path);
+	m_pEventLoger->setAudioPath(wPath);
 }
 
 //bool CWLNet::getIsFirstBurstA()
