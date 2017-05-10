@@ -9,7 +9,7 @@ public:
 	/*add code*/
 	BOOL WriteAudioDataToFile(LPBYTE pByte, DWORD& dwSize, DWORD& dwOffset);
 	void GetCurrentAudioFileFullPath(wchar_t* pAudioFileFullPath);
-	void SetAudioFilePath(wchar_t* pAudioFilePath);
+	BOOL SetAudioFilePath(const std::wstring& path);
 private:
 	BOOL CreateNewFileByYearMonth();
 

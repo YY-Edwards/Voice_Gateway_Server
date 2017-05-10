@@ -2,13 +2,18 @@
 #include "WLRecord.h"
 #include <map>
 #include <string>
+#include <shlwapi.h>
+#pragma comment(lib,"shlwapi.lib")
 
-WLRecord::WLRecord(CMySQL *pDb)
+WLRecord::WLRecord(CMySQL *pDb, std::wstring& defaultAudioPath)
 {
 	m_hVoiceDataListLocker = CreateMutex(NULL, FALSE, NULL);
 	m_hFileArrived = CreateEvent(NULL, FALSE, FALSE, NULL);
-	ZeroMemory(m_strAudioFilePath, PATH_FILE_MAXSIZE*sizeof(wchar_t));
-	wcscpy_s(m_strAudioFilePath, L"C:\\WirelineScheduleVoiceData");
+	//ZeroMemory(m_strAudioFilePath, PATH_FILE_MAXSIZE*sizeof(wchar_t));
+	defaultAudioPath += L"\\Voice";
+	m_defaultAudioPath = defaultAudioPath;
+	wcscpy_s(m_strAudioFilePath, m_defaultAudioPath.c_str());
+	//wcscpy_s(m_defaultAudioPath, defaultAudioPath.c_str());
 	m_pDb = pDb;
 	m_bExit = false;
 	m_writeFileThread =(HANDLE)_beginthreadex(NULL,         // security
@@ -47,17 +52,32 @@ BOOL WLRecord::WriteVoiceFile()
 	{
 		//sprintf_s(m_reportMsg, "WriteVoiceFile start write");
 		//sendLogToWindow();
-		m_audioLog.SetAudioFilePath(m_strAudioFilePath);
+		//wcscpy_s(m_strAudioFilePath, temp.c_str());
+		BOOL createStatus = m_audioLog.SetAudioFilePath(m_strAudioFilePath);
+		sprintf_s(m_reportMsg, "createStatus %d", createStatus);
+		sendLogToWindow();
 		//bNeedUpdate = TRUE;
 		// write file
 		DWORD dwOffset = 0;
 		if (!m_audioLog.WriteAudioDataToFile((*i)->m_pData, (*i)->m_dwLen, dwOffset))
 		{
-			sprintf_s(m_reportMsg, "Write File Failed");
+			sprintf_s(m_reportMsg, "Write File Failed,try set default audio path");
 			sendLogToWindow();
-			delete *i;
-			m_voiceDataList.erase(i);
-			return FALSE;
+			wcscpy_s(m_strAudioFilePath, m_defaultAudioPath.c_str());
+			BOOL createStatus = m_audioLog.SetAudioFilePath(m_strAudioFilePath);
+			sprintf_s(m_reportMsg, "createStatus %d", createStatus);
+			sendLogToWindow();
+			dwOffset = 0;
+			BOOL bRlt = m_audioLog.WriteAudioDataToFile((*i)->m_pData, (*i)->m_dwLen, dwOffset);
+			if (bRlt)
+			{
+				sprintf_s(m_reportMsg, "Write File Failed");
+				sendLogToWindow();
+				delete *i;
+				m_voiceDataList.erase(i);
+				ReleaseMutex(m_hVoiceDataListLocker);
+				return FALSE;
+			}
 		}
 		//sprintf_s(m_reportMsg, "WriteVoiceFile end write");
 		//sendLogToWindow();
@@ -163,5 +183,25 @@ void WLRecord::stop()
 		SetEvent(m_hFileArrived);
 		WaitForSingleObject(m_writeFileThread, 1000);
 		CloseHandle(m_writeFileThread);
+	}
+}
+
+void WLRecord::setAudioPath(const std::wstring& path)
+{
+	std::wstring temp = path;
+	temp += L"\\";
+	if (!PathFileExists(temp.c_str()))
+	{
+		std::string str = g_tool.UnicodeToANSI(temp);
+		sprintf_s(m_reportMsg, "error:audio path %s not exist,there will used default audio path", str.c_str());
+		sendLogToWindow();
+	}
+	else
+	{
+		temp += L"Voice";
+		wcscpy_s(m_strAudioFilePath, temp.c_str());
+		BOOL createStatus = m_audioLog.SetAudioFilePath(m_strAudioFilePath);
+		sprintf_s(m_reportMsg, "createStatus %d", createStatus);
+		sendLogToWindow();
 	}
 }

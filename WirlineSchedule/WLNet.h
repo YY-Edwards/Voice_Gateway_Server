@@ -281,7 +281,7 @@ class CWLNet
 	friend class CIPSCPeer;
 
 public:
-	CWLNet(CMySQL *pDb,CManager *pManager);
+	CWLNet(CMySQL *pDb, CManager *pManager, std::wstring& defaultAudioPath);
 	~CWLNet();
 
 	int initCallParam();
@@ -343,6 +343,8 @@ public:
 	int wlMnisStatus(int getType, FieldValue info);
 	/*更新设备在线信息*/
 	int updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode = -1);
+	/*设置语音文件存放位置*/
+	void setAudioPath(const std::string& path);
 protected:
 	/*
 	* Socket work thread

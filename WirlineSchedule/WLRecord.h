@@ -51,18 +51,20 @@ public:
 class WLRecord
 {
 public:
-	WLRecord(CMySQL *pDb);
+	WLRecord(CMySQL *pDb, std::wstring& defaultAudioPath);
 	~WLRecord();
 	BOOL WriteVoiceFile();
 	void OnNewVoiceRecord(LPBYTE pData, DWORD dwSize, DWORD srcId, DWORD tgtId, DWORD callType, int recordType, DWORD srcPeerId, int srcSlot, int srcRssi, int callStatus, SYSTEMTIME *pTime);
 	void SetLogPtr(PLogReport value);
 	void stop();
+	void setAudioPath(const std::wstring& path);
 private:
 	HANDLE m_hVoiceDataListLocker;
 	std::deque<CVoiceData*> m_voiceDataList;
 	CAudioLog m_audioLog;
 	HANDLE m_hFileArrived;
 	wchar_t m_strAudioFilePath[PATH_FILE_MAXSIZE];
+	std::wstring m_defaultAudioPath;
 	CMySQL *m_pDb;
 	PLogReport m_report;
 	char m_reportMsg[512];

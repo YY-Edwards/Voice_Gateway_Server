@@ -17,9 +17,9 @@ BOOL g_bTX;       //Set or cleared by dongle.
 CSerialDongle* g_pDongle;
 BOOL g_dongleIsUsing;
 
-CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis)
+CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis,std::wstring& defaultAudioPath)
 {
-	g_pNet = new CWLNet(pDb, this);
+	g_pNet = new CWLNet(pDb, this, defaultAudioPath);
 	g_pDongle = new CSerialDongle();
 	g_pSound = new CSound();
 	g_bPTT = FALSE;
@@ -439,6 +439,7 @@ int CManager::config(REMOTE_TASK* pTask)
 	bool bMnisChange = false;
 	CONFIG_SCHDULE_ISENABLE = pConfig->IsEnable;
 	CONFIG_MNIS_ID = pConfig->MnisId;
+	g_pNet->setAudioPath(pConfig->audioPath);
 	if (0 != strcmp(CONFIG_MASTER_IP, pConfig->master.ip))
 	{
 		strcpy_s(CONFIG_MASTER_IP, pConfig->master.ip);

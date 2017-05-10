@@ -123,77 +123,78 @@ BOOL CMySQL::Open(LPCSTR pstrHost, WORD port, LPCSTR pstrUserName, LPCSTR pstrPa
 
 	m_bIsConnected = TRUE;
 
-	char migrationTableName[DATA_TABLE_NAME_SIZE] = "migration";
-	//std::map < std::string, std::string > versionRecord;
-	//versionRecord["version"] = VERSION_CURRENT_APP;
-	//string change_1st_version = VERSION_CHANGE_1ST_APP;
-	//string change_2nd_version = VERSION_CHANGE_2ND_APP;
-	/*检查是否存在表 migration*/
-	//存在
-	if (CheckTableExist(migrationTableName))
-	{
-		//std::vector<std::map<std::string, std::string> > records;
-		//GetRows(migrationTableName, records, " order by version desc limit 0,1 ");
+	//char migrationTableName[DATA_TABLE_NAME_SIZE] = "migration";
+	////std::map < std::string, std::string > versionRecord;
+	////versionRecord["version"] = VERSION_CURRENT_APP;
+	////string change_1st_version = VERSION_CHANGE_1ST_APP;
+	////string change_2nd_version = VERSION_CHANGE_2ND_APP;
+	///*检查是否存在表 migration*/
+	////存在
+	//if (CheckTableExist(migrationTableName))
+	//{
+	//	//std::vector<std::map<std::string, std::string> > records;
+	//	//GetRows(migrationTableName, records, " order by version desc limit 0,1 ");
 
-		//CStringA version;
-		//int intVersion = 0;
-		//for (auto i = records.begin(); i != records.end(); i++)
-		//{
-		//	version = (*i)["version"].c_str();
-		//	intVersion = atoi(version);
-		//	//未执行第一次改动
-		//	if (intVersion < (atoi(change_1st_version.c_str())))
-		//	{
-		//		/*执行第一次改动*/
-		//		addPeerIdCoulumn();
-		//		/*执行第二次改动*/
-		//		addSlotAndRssiCoulumn();
-		//		/*更新迁移*/
-		//		InsertRow(migrationTableName, versionRecord);
-		//		break;
-		//	}
-		//	//未执行第二次改动
-		//	else if (intVersion < (atoi(change_2nd_version.c_str())))
-		//	{
-		//		/*执行第二次改动*/
-		//		addSlotAndRssiCoulumn();
-		//		/*更新迁移*/
-		//		InsertRow(migrationTableName, versionRecord);
-		//		break;
-		//	}
-		//	else
-		//	{
-		//		break;
-		//	}
-		//}
+	//	//CStringA version;
+	//	//int intVersion = 0;
+	//	//for (auto i = records.begin(); i != records.end(); i++)
+	//	//{
+	//	//	version = (*i)["version"].c_str();
+	//	//	intVersion = atoi(version);
+	//	//	//未执行第一次改动
+	//	//	if (intVersion < (atoi(change_1st_version.c_str())))
+	//	//	{
+	//	//		/*执行第一次改动*/
+	//	//		addPeerIdCoulumn();
+	//	//		/*执行第二次改动*/
+	//	//		addSlotAndRssiCoulumn();
+	//	//		/*更新迁移*/
+	//	//		InsertRow(migrationTableName, versionRecord);
+	//	//		break;
+	//	//	}
+	//	//	//未执行第二次改动
+	//	//	else if (intVersion < (atoi(change_2nd_version.c_str())))
+	//	//	{
+	//	//		/*执行第二次改动*/
+	//	//		addSlotAndRssiCoulumn();
+	//	//		/*更新迁移*/
+	//	//		InsertRow(migrationTableName, versionRecord);
+	//	//		break;
+	//	//	}
+	//	//	else
+	//	//	{
+	//	//		break;
+	//	//	}
+	//	//}
 
-		//if (records.size() <= 0)
-		//{
-		//	/*执行第一次改动*/
-		//	addPeerIdCoulumn();
-		//	/*执行第二次改动*/
-		//	addSlotAndRssiCoulumn();
-		//	/*更新迁移*/
-		//	InsertRow(migrationTableName, versionRecord);
-		//}
+	//	//if (records.size() <= 0)
+	//	//{
+	//	//	/*执行第一次改动*/
+	//	//	addPeerIdCoulumn();
+	//	//	/*执行第二次改动*/
+	//	//	addSlotAndRssiCoulumn();
+	//	//	/*更新迁移*/
+	//	//	InsertRow(migrationTableName, versionRecord);
+	//	//}
 
-	}
-	else
-	{
-		//创建表migration
-		CreateTable("CREATE TABLE IF NOT EXISTS `migration` (\
-										`id` int(11) NOT NULL AUTO_INCREMENT,\
-															`version` int(11) NOT NULL,\
-																				PRIMARY KEY (`id`)\
-																									) ENGINE=InnoDB  DEFAULT CHARSET=utf8");
-		////所有现有数据表voice_*增加src_peer_id列
-		///*执行第一次改动*/
-		//addPeerIdCoulumn();
-		///*执行第二次改动*/
-		//addSlotAndRssiCoulumn();
-		///*更新迁移*/
-		//InsertRow(migrationTableName, versionRecord);
-	}
+	//}
+	//else
+	//{
+	//	//创建表migration
+	//	CreateTable("CREATE TABLE IF NOT EXISTS `migration` (\
+	//				`id` int(11) NOT NULL AUTO_INCREMENT,\
+	//				`version` int(11) NOT NULL,\
+	//				PRIMARY KEY (`id`)\
+	//				) ENGINE=InnoDB  DEFAULT CHARSET=utf8"
+	//				);
+	//	////所有现有数据表voice_*增加src_peer_id列
+	//	///*执行第一次改动*/
+	//	//addPeerIdCoulumn();
+	//	///*执行第二次改动*/
+	//	//addSlotAndRssiCoulumn();
+	//	///*更新迁移*/
+	//	//InsertRow(migrationTableName, versionRecord);
+	//}
 
 	//if (CheckTableExist("tbl_user"))
 	//{
@@ -578,22 +579,22 @@ std::string CMySQL::CreateCurrentTableByYearMonth()
 		char strSql[1024] = { 0 };
 		sprintf_s(strSql,
 			"CREATE TABLE IF NOT EXISTS `%s` (\
-						`id` int(11) NOT NULL AUTO_INCREMENT,\
-									`src_radio` int(11) NOT NULL,\
-												`target_radio` int(11) NOT NULL,\
-															`time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\
-																		`offset` int(11) NOT NULL,\
-																					`length` int(11) NOT NULL,\
-																								`call_type` int(11) NOT NULL,\
-																											`file_path` varchar(800) NOT NULL,\
-																														`record_type` int(11) NOT NULL, \
-																																	`src_peer_id` int(11) NOT NULL, \
-																																				`src_rssi` int(11) NOT NULL, \
-																																							`src_slot` int(11) NOT NULL, \
-																																										`call_status` int(11) NOT NULL, \
-																																													PRIMARY KEY(`id`)\
-																																																) ENGINE = InnoDB DEFAULT CHARSET = utf8 AUTO_INCREMENT = 1; ",
-																																																strTableName);
+			`id` int(11) NOT NULL AUTO_INCREMENT,\
+			`src_radio` int(11) NOT NULL,\
+			`target_radio` int(11) NOT NULL,\
+			`time` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,\
+			`offset` int(11) NOT NULL,\
+			`length` int(11) NOT NULL,\
+			`call_type` int(11) NOT NULL,\
+			`file_path` varchar(800) NOT NULL,\
+			`record_type` int(11) NOT NULL, \
+			`src_peer_id` int(11) NOT NULL, \
+			`src_rssi` int(11) NOT NULL, \
+			`src_slot` int(11) NOT NULL, \
+			`call_status` int(11) NOT NULL, \
+			PRIMARY KEY(`id`)\
+			) ENGINE = InnoDB DEFAULT CHARSET = utf8 AUTO_INCREMENT = 1; ",
+			strTableName);
 		//size_t length = strlen(strSql);
 		// create table
 		BOOL ret = CreateTable(strSql);
