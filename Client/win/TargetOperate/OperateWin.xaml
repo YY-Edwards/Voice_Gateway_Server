@@ -17,7 +17,6 @@
         <src:ContentFormNotifyConverter x:Key="ContentFromNotify" />
         <src:MsgMAxWidthConverter x:Key="HistoryMaxWidth" />
 
-
         <src:MsgView x:Key="HistoryView">
             <src:MsgView.ItemTemplate>
                 <DataTemplate>

@@ -47,112 +47,99 @@ namespace TrboX
             : base()
         {
             InitializeComponent();
-            
+
             if(null == target)return;
             m_Target = target;
 
             this.Loaded += delegate
             {
-                if (m_Target == null) return;
-                if (SelectionType.All == m_Target.Type)
+                try
                 {
-                    txt_Title.Text = "全部设备";
-                    txt_SubTitle.Text = "";
-                }
-                else if (SelectionType.Single == m_Target.Type)
-                {
-                    txt_Title.Text = m_Target.Target[0].Name;
-                    txt_SubTitle.Text = m_Target.Target[0].Information;
-                }
-                else if (SelectionType.Multiple == m_Target.Type)
-                {
-                    txt_Title.Text = m_Target.Target[0].Name + "、" + m_Target.Target[1].Name + " 等共" + m_Target.Target.Count.ToString() + "人";
-                }
-                else
-                {
-                    return;
-                }
+                    if (m_Main.StatusBar.Get().type == RunMode.Repeater) btn_Check.Visibility = Visibility.Collapsed;
 
-                if (m_Target.Type == SelectionType.All)
-                {
-                    if (TargetMgr.IsTx)
+                    if (m_Target == null) return;
+                    if (SelectionType.All == m_Target.Type)
                     {
-                        chk_PTT.IsChecked = true;
-                        WindowBackground = MyWindow.TargetInCallBrush;
+                        txt_Title.Text = "全部设备";
+                        txt_SubTitle.Text = "";
                     }
-                    if (TargetMgr.IsRx)
+                    else if (SelectionType.Single == m_Target.Type)
                     {
-                        WindowBackground = MyWindow.TargetInCallBrush;
+                        txt_Title.Text = m_Target.Target[0].Name;
+                        txt_SubTitle.Text = m_Target.Target[0].Information;
                     }
-                }
-                else if (m_Target.Target != null && m_Target.Target.Count > 0)
-                {
-                    foreach (CMember mem in m_Target.Target)
+                    else if (SelectionType.Multiple == m_Target.Type)
                     {
-                        if (mem.Type == MemberType.Group)
+                        txt_Title.Text = m_Target.Target[0].Name + "、" + m_Target.Target[1].Name + " 等共" + m_Target.Target.Count.ToString() + "人";
+                    }
+                    else
+                    {
+                        return;
+                    }
+
+                    if (m_Target.Type == SelectionType.All)
+                    {
+                        if (TargetMgr.IsTx)
                         {
-                            if (mem.Group.IsTx)
-                            {
-                                chk_PTT.IsChecked = true;
-                                WindowBackground = MyWindow.TargetInCallBrush;
-
-                            }
-                            if (mem.Group.IsRx)
-                            {
-                                WindowBackground = MyWindow.TargetInCallBrush;
-                            }
-
+                            chk_PTT.IsChecked = true;
+                            bdr_Header.Background = MyWindow.TargetInCallBrush;
                         }
-                        else
+                        if (TargetMgr.IsRx)
                         {
-                            if (mem.Radio.IsTx)
-                            {
-                                chk_PTT.IsChecked = true;
-                                WindowBackground = MyWindow.TargetInCallBrush;
-                            }
-
-                            if (mem.Radio.IsRx)
-                            {
-                                WindowBackground = MyWindow.TargetInCallBrush;
-                            }
-
-                            if (mem.Radio.IsGPS) chk_QueryCyclePosition.IsChecked = true;
+                            bdr_Header.Background = MyWindow.TargetInCallBrush;
                         }
                     }
+                    else if (m_Target.Target != null && m_Target.Target.Count > 0)
+                    {
+                        foreach (CMember mem in m_Target.Target)
+                        {
+                            if (mem.Type == MemberType.Group)
+                            {
+                                if (mem.Group.IsTx)
+                                {
+                                    chk_PTT.IsChecked = true;
+                                    bdr_Header.Background = MyWindow.TargetInCallBrush;
+
+                                }
+                                if (mem.Group.IsRx)
+                                {
+                                    bdr_Header.Background = MyWindow.TargetInCallBrush;
+                                }
+
+                            }
+                            else
+                            {
+                                if (mem.Radio.IsTx)
+                                {
+                                    chk_PTT.IsChecked = true;
+                                    bdr_Header.Background = MyWindow.TargetInCallBrush;
+                                }
+
+                                if (mem.Radio.IsRx)
+                                {
+                                    bdr_Header.Background = MyWindow.TargetInCallBrush;
+                                }
+
+                                if (mem.Radio.IsGPS) chk_QueryCyclePosition.IsChecked = true;
+                            }
+                        }
+                    }
+
+                    m_View = new OpView(this);
+                    OnChangeOperateType();
+
+                    updatecyclelist(null, null);
+
+
+                    lst_History.View = (ViewBase)FindResource("HistoryView");
+
+
+
                 }
+                catch
+                {
 
-
-                m_Target.DisableFunc(
-                    delegate{
-                        chk_PTT.IsEnabled = false;
-                        //rad_Call.IsEnabled = false;
-                        //rad_Message.IsEnabled = false;
-                        //rad_Position.IsEnabled = false;
-                        //rad_Jobticket.IsEnabled = false;  
-                        btn_Control.IsEnabled = false;
-                        btn_Check.IsEnabled = false;
-                        btn_Minitor.IsEnabled = false;
-                    },
-                     null, null, null, null, 
-                    delegate{
-                        rad_Position.Visibility = Visibility.Collapsed;
-                    },
-                    delegate{
-                        rad_Message.Visibility = Visibility.Collapsed;
-                    },
-                    null);
-
-                m_View = new OpView(this);
-
-                updatecyclelist(null, null);
-
-                OnChangeOperateType();
-
-                lst_History.View = (ViewBase)FindResource("HistoryView");
-
-
-  
-
+                }
             };
             this.Activated += delegate {OnOperateWinActivated(); };    
         }
@@ -180,13 +167,13 @@ namespace TrboX
                 {
                     chk_PTT.IsChecked = sta;
 
-                    if (sta) WindowBackground = MyWindow.TargetInCallBrush;
-                    else WindowBackground = new SolidColorBrush(Color.FromArgb(255, 151, 197, 247));
+                    if (sta) bdr_Header.Background = MyWindow.TargetInCallBrush;
+                    else bdr_Header.Background = new SolidColorBrush(Color.FromArgb(255, 59, 59, 61));
                 }
                 else if ((mask & 8) != 0)//isRx
                 {
-                    if (sta) WindowBackground = MyWindow.TargetInCallBrush;
-                    else WindowBackground = new SolidColorBrush(Color.FromArgb(255, 151, 197, 247));
+                    if (sta) bdr_Header.Background = MyWindow.TargetInCallBrush;
+                    else bdr_Header.Background = new SolidColorBrush(Color.FromArgb(255, 59, 59, 61));
                 }
             })); 
         }
@@ -280,6 +267,38 @@ namespace TrboX
                 default:
                     break;
             };
+
+            m_Target.DisableFunc(
+            delegate
+            {
+                chk_PTT.IsEnabled = false;
+                //rad_Call.IsEnabled = false;
+                //rad_Message.IsEnabled = false;
+                //rad_Position.IsEnabled = false;
+                //rad_Jobticket.IsEnabled = false;  
+                btn_Control.IsEnabled = false;
+                btn_Check.IsEnabled = false;
+                btn_Minitor.IsEnabled = false;
+            },
+                null, null, null, null,
+            delegate
+            {
+                rad_Position.Visibility = Visibility.Collapsed;
+
+                if (Operate.Type == OPType.Position)
+                {
+                    rad_Call.IsChecked = true;
+                }
+            },
+            delegate
+            {
+                rad_Message.Visibility = Visibility.Collapsed;
+                if (Operate.Type == OPType.ShortMessage)
+                {
+                    rad_Call.IsChecked = true;
+                }
+            },
+            null);
         }
 
         public void AddMessage(CHistory msg)
@@ -697,7 +716,7 @@ namespace TrboX
                     AddMessage(new CHistory()
                     {
                         istx = true,
-                        type = NotifyType.Call,
+                        type = NotifyType.Control,
                         time = DateTime.Now,
                         content = "遥毙"
                     });
@@ -715,7 +734,7 @@ namespace TrboX
                     AddMessage(new CHistory()
                     {
                         istx = true,
-                        type = NotifyType.Call,
+                        type = NotifyType.Control,
                         time = DateTime.Now,
                         content = "遥开"
                     });

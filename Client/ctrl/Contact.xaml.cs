@@ -44,7 +44,17 @@ namespace TrboX
         }
 
         public static readonly DependencyProperty IsMultipleProperty =
-            DependencyProperty.Register("IsMultiple", typeof(bool), typeof(Contact), new UIPropertyMetadata(true));
+           DependencyProperty.Register("IsMultiple", typeof(bool), typeof(Contact), new UIPropertyMetadata(true));
+
+
+        public bool IsOnlyRadio
+        {
+            get { return (bool)GetValue(IsOnlyRadioProperty); }
+            set { SetValue(IsOnlyRadioProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsOnlyRadioProperty =
+            DependencyProperty.Register("IsOnlyRadio", typeof(bool), typeof(Contact), new UIPropertyMetadata(false));
 
         public CTargetRes ContactList
         {
@@ -65,7 +75,10 @@ namespace TrboX
             {
                 lst_ContactList.Items.Clear();
                 foreach (contact_str con in conlist)
+                {
+                    if (((Contact)obj).IsOnlyRadio && MemberType.Group == con.Contact.Type) continue;
                     lst_ContactList.Items.Add(new ListViewItem() { Content = con });
+                }                   
             }
         }
 

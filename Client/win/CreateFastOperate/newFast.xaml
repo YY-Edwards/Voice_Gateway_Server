@@ -9,8 +9,10 @@
         <src:OpTypeSelectToContactType x:Key="OpTypeSelectToContactType"/>
         <src:FalselHideConverter x:Key="FalseHide" />
         <src:ItemIconConverter x:Key="TypeToIcon" />
+        <src:TypeToOP x:Key="TypeToOP" />
         <src:MainTabIndexFromRadio x:Key="IndexFromRadio" />
         <src:TargetTypeConv x:Key="TargetTypeConv" />
+        <src:StatucToColorConverter x:Key="FastStatus" />
         <src:MsgView x:Key="ContactListView">
             <src:MsgView.ItemTemplate>
                 <DataTemplate>
@@ -29,7 +31,7 @@
                 <DataTemplate>
                     <Border x:Name="Msg" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Padding="0" Height="32">
                         <DockPanel ToolTip="{Binding NameInfo}" >
-                            <Image x:Name="Icon" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="16,0,0,0">
+                            <!--<Image x:Name="Icon" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="16,0,0,0">
                                 <Image.Source>
                                     <MultiBinding  Converter="{StaticResource TypeToIcon}">
                                         <Binding  Path="Type" />
@@ -37,7 +39,36 @@
                                         <Binding  Path="Operate" />
                                     </MultiBinding>
                                 </Image.Source>
-                            </Image>
+                            </Image>-->
+
+
+                            <Grid HorizontalAlignment="Left" Height="20"  Width="20" DockPanel.Dock="Left" Margin="14,0,0,0" >
+                                <Ellipse Margin="0" Stroke="Black" StrokeThickness="0">
+                                    <Ellipse.Fill>
+                                        <MultiBinding  Converter="{StaticResource FastStatus}" Mode="OneWay" >
+                                            <Binding  Path="Type" />
+                                            <Binding  Path="Contact" />
+                                            <Binding  Path="Operate" />
+                                        </MultiBinding>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <Image x:Name="Icon" Width="13" Height="13" VerticalAlignment="Center" HorizontalAlignment="Center" >
+                                    <Image.Source>
+                                        <MultiBinding  Converter="{StaticResource TypeToIcon}">
+                                            <Binding  Path="Type" />
+                                            <Binding  Path="Contact" />
+                                            <Binding  Path="Operate" />
+                                        </MultiBinding>
+                                    </Image.Source>
+                                    <Image.Opacity>
+                                        <MultiBinding  Converter="{StaticResource TypeToOP}" Mode="OneWay">
+                                            <Binding  Path="Type" />
+                                            <Binding  Path="Contact" />
+                                            <Binding  Path="Operate" />
+                                        </MultiBinding>
+                                    </Image.Opacity>
+                                </Image>
+                            </Grid>
                             <TextBlock Text="{Binding Name}"  TextWrapping="NoWrap" Margin="5,0,17,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="#FFD2DFF5" FontSize="13" FontFamily="Hiragino Sans GB W3"/>
                         </DockPanel>
                     </Border>
@@ -50,15 +81,34 @@
                 <DataTemplate>
                     <Border x:Name="Msg" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Padding="0" Height="32">
                         <DockPanel ToolTip="{Binding NameInfo}" >
-                            <Image x:Name="Icon" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="16,0,0,0">
-                                <Image.Source>
-                                    <MultiBinding  Converter="{StaticResource TypeToIcon}">
-                                        <Binding  Path="Type" />
-                                        <Binding  Path="Contact" />
-                                        <Binding  Path="Operate" />
-                                    </MultiBinding>
-                                </Image.Source>
-                            </Image>
+                            <Grid HorizontalAlignment="Left" Height="20"  Width="20" DockPanel.Dock="Left" Margin="14,0,0,0" >
+                                <Ellipse Margin="0" Stroke="Black" StrokeThickness="0">
+                                    <Ellipse.Fill>
+                                        <MultiBinding  Converter="{StaticResource FastStatus}" Mode="OneWay" >
+                                            <Binding  Path="Type" />
+                                            <Binding  Path="Contact" />
+                                            <Binding  Path="Operate" />
+                                        </MultiBinding>
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                                <Image x:Name="Icon" Width="13" Height="13" VerticalAlignment="Center" HorizontalAlignment="Center" >
+                                    <Image.Source>
+                                        <MultiBinding  Converter="{StaticResource TypeToIcon}">
+                                            <Binding  Path="Type" />
+                                            <Binding  Path="Contact" />
+                                            <Binding  Path="Operate" />
+                                        </MultiBinding>
+                                    </Image.Source>
+                                    <Image.Opacity>
+                                        <MultiBinding  Converter="{StaticResource TypeToOP}" Mode="OneWay">
+                                            <Binding  Path="Type" />
+                                            <Binding  Path="Contact" />
+                                            <Binding  Path="Operate" />
+                                        </MultiBinding>
+                                    </Image.Opacity>
+                                </Image>
+                                
+                            </Grid>
                             <TextBlock Text="{Binding Name}"  TextWrapping="NoWrap" Margin="5,0,17,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="#FFD2DFF5" FontSize="13" FontFamily="Hiragino Sans GB W3"/>
                         </DockPanel>
                     </Border>
@@ -213,7 +263,7 @@
                                                     <ComboBoxItem Content="呼叫" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFD2DFF5" FontSize="13"/>
                                                     <ComboBoxItem Content="短信" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFD2DFF5" FontSize="13"/>
                                                     <ComboBoxItem Content="位置查询" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFD2DFF5" FontSize="13"/>
-                                                    <ComboBoxItem Content="信令控制" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFD2DFF5" FontSize="13"/>
+                                                    <ComboBoxItem x:Name="cmbit_Control" Content="信令控制" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFD2DFF5" FontSize="13"/>
                                                     <ComboBoxItem Content="工单" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFD2DFF5" FontSize="13" Visibility="Collapsed"/>
                                                 </ComboBox>
                                                 <src:Contact x:Name="contact_OpTarget" VerticalAlignment="Top" IsMultiple="{Binding SelectedIndex, Converter={StaticResource OpTypeSelectToContactType}, ElementName=cmb_OpType}" DockPanel.Dock="Top" Margin="0,10,0,5" MinHeight="25" MaxHeight="49" Height="30"/>
@@ -318,7 +368,7 @@
                                                                     <ComboBoxItem Content="信道2" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
                                                                 </ComboBox>
                                                                 <ComboBox x:Name="cmb_ControlList" VerticalAlignment="Center" SelectedIndex="0"  Foreground="#FFB6BABE" FontSize="13" Style="{DynamicResource ComboBoxStyleNormal}" Grid.Row="2" Grid.Column="1" Height="30">
-                                                                    <ComboBoxItem Content="在线检测" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
+                                                                    <ComboBoxItem x:Name="cmbit_Check" Content="在线检测" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
                                                                     <ComboBoxItem Content="远程监听" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
                                                                     <ComboBoxItem Content="遥毙" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
                                                                     <ComboBoxItem Content="遥开" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>

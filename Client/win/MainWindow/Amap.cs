@@ -12,7 +12,8 @@ namespace TrboX
         public  Amap(Main main)
         {
             if (main != null)m_Main = main;
-            Map = new MyWebBrowse("file:///amap/index.html");
+            string url = "file:///" + AppDomain.CurrentDomain.BaseDirectory + "amap/index.html";
+            Map = new MyWebBrowse(url);
             try{
                 if(Map != null)m_Main.MyWebGrid.Children.Insert(0, Map);
             }

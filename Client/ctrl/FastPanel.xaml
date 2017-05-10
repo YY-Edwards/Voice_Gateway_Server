@@ -155,9 +155,9 @@
                 <Border BorderBrush="Black" BorderThickness="0" ClipToBounds="True">
                     <TabControl SelectedIndex="{Binding Type, Converter={StaticResource TypeToItem}}" Style="{DynamicResource TabControlStyleNormal}" Margin="0,-22,0,0" BorderThickness="0">
                         <TabItem Header="TabItem" Margin="0,-2.333,0,2.333">
-                            <Grid Margin="0">
+                            <Grid Margin="0" Height="264" VerticalAlignment="Bottom">
 
-                                <TextBlock TextWrapping="Wrap" Text="{Binding Contact.SimpleName}" VerticalAlignment="Top" Margin="0,5,0,0" FontSize="14" HorizontalAlignment="Center" Foreground="#FFC0C8CF" FontFamily="Hiragino Sans GB W3"/>
+                                <TextBlock TextWrapping="Wrap" Text="{Binding SimpleName}" VerticalAlignment="Top" Margin="0,5,0,0" FontSize="14" HorizontalAlignment="Center" Foreground="#FFC0C8CF" FontFamily="Hiragino Sans GB W3"/>
                                 <DockPanel Grid.Row="1" Grid.ColumnSpan="2" Margin="8,40,8,10">
                                     <Grid DockPanel.Dock="Bottom" Margin="0" Height="60">
                                         <Grid.ColumnDefinitions>
@@ -165,14 +165,14 @@
                                             <ColumnDefinition/>
                                         </Grid.ColumnDefinitions>
                                         <CheckBox x:Name="chk_Contact_PTT" Content="开始呼叫" VerticalAlignment="Center" Click="chk_Contact_PTT_Click" Height="32" Margin="0,0,2.5,0" Style="{DynamicResource CheckBoxStylePTT}" Tag="结束呼叫"/>
-                                        <Button x:Name="btn_Message"  Content="发送" Margin="2.5,0,0,0" ToolTip="短消息"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_Message_Click" Grid.Column="1" VerticalAlignment="Center" Height="32" Style="{DynamicResource ButtonStyleFastSend}"/>
+                                        <Button x:Name="btn_Message"  Content="发送" Margin="2.5,0,0,0" ToolTip="短消息" Click="btn_Message_Click" Grid.Column="1" VerticalAlignment="Center" Height="32" Style="{DynamicResource ButtonStyleFastSend}"/>
                                     </Grid>
-                                    <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Height="30" Margin="0,0,0,5">
-                                        <local:IconBtn x:Name="btn_Check"  Margin="2.5,0" ToolTip="在线检测" Visibility="{Binding m_Contact.target, Converter={StaticResource OpBtnHide}}" Click="btn_Check_Click" Height="22" Width="22" VerticalAlignment="Center" Normal="/TrboX;component/resource/images/online_check_22_22_n.png" Disable="/TrboX;component/resource/images/online_check_22_22_d.png" Hover="/TrboX;component/resource/images/online_check_22_22_h.png" Press="/TrboX;component/resource/images/online_check_22_22_p.png"/>
-                                        <local:IconBtn x:Name="btn_Monitor"  Margin="2.5,0" ToolTip="远程监听"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_Monitor_Click" Height="22" Width="22" VerticalAlignment="Center" Normal="/TrboX;component/resource/images/minitor_22_22_n.png" Disable="/TrboX;component/resource/images/minitor_22_22_d.png" Hover="/TrboX;component/resource/images/minitor_22_22_h.png" Press="/TrboX;component/resource/images/minitor_22_22_p.png"/>
-                                        <local:IconBtn x:Name="btn_StartUp"  Margin="2.5,0" ToolTip="遥开"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_StartUp_Click" Height="22" Width="22" VerticalAlignment="Center" Normal="/TrboX;component/resource/images/power_up_22_22_n.png" Disable="/TrboX;component/resource/images/power_up_22_22_d.png" Hover="/TrboX;component/resource/images/power_up_22_22_h.png" Press="/TrboX;component/resource/images/power_up_22_22_p.png"/>
-                                        <local:IconBtn x:Name="btn_ShoutDown"  Margin="2.5,0" ToolTip="遥毙"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_ShutDown_Click" Height="22" Width="22" VerticalAlignment="Center" Normal="/TrboX;component/resource/images/shutdown_22_22_n.png" Hover="/TrboX;component/resource/images/shutdown_22_22_h.png" Disable="/TrboX;component/resource/images/shutdown_22_22_d.png" Press="/TrboX;component/resource/images/shutdown_22_22_p.png"/>
-                                        <local:IconBtn x:Name="btn_More"  Margin="2.5,1,2.5,0" ToolTip="更多操作"  Visibility="{Binding Visibility, ElementName=btn_Check}" Click="btn_More_Click" Height="22" Width="22" VerticalAlignment="Center" Normal="/TrboX;component/resource/images/more_22_22_n.png" Disable="/TrboX;component/resource/images/more_22_22_d.png" Hover="/TrboX;component/resource/images/more_22_22_h.png" Press="/TrboX;component/resource/images/more_22_22_p.png"/>
+                                    <DockPanel x:Name="dock_Control" LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Height="30" Margin="0,0,0,5">
+                                        <local:IconBtn x:Name="btn_Check"  Margin="2.5,0" ToolTip="在线检测"  Click="btn_Check_Click" Height="22" Width="22" VerticalAlignment="Center" Normal="/TrboX;component/resource/images/online_check_22_22_n.png" Disable="/TrboX;component/resource/images/online_check_22_22_d.png" Hover="/TrboX;component/resource/images/online_check_22_22_h.png" Press="/TrboX;component/resource/images/online_check_22_22_p.png"/>
+                                        <local:IconBtn x:Name="btn_Monitor"  Margin="2.5,0" ToolTip="远程监听"   Click="btn_Monitor_Click" Height="22" Width="22" VerticalAlignment="Center" Normal="/TrboX;component/resource/images/minitor_22_22_n.png" Disable="/TrboX;component/resource/images/minitor_22_22_d.png" Hover="/TrboX;component/resource/images/minitor_22_22_h.png" Press="/TrboX;component/resource/images/minitor_22_22_p.png"/>
+                                        <local:IconBtn x:Name="btn_StartUp"  Margin="2.5,0" ToolTip="遥开"  Click="btn_StartUp_Click" Height="22" Width="22" VerticalAlignment="Center" Normal="/TrboX;component/resource/images/power_up_22_22_n.png" Disable="/TrboX;component/resource/images/power_up_22_22_d.png" Hover="/TrboX;component/resource/images/power_up_22_22_h.png" Press="/TrboX;component/resource/images/power_up_22_22_p.png"/>
+                                        <local:IconBtn x:Name="btn_ShoutDown"  Margin="2.5,0" ToolTip="遥毙"   Click="btn_ShutDown_Click" Height="22" Width="22" VerticalAlignment="Center" Normal="/TrboX;component/resource/images/shutdown_22_22_n.png" Hover="/TrboX;component/resource/images/shutdown_22_22_h.png" Disable="/TrboX;component/resource/images/shutdown_22_22_d.png" Press="/TrboX;component/resource/images/shutdown_22_22_p.png"/>
+                                        <local:IconBtn x:Name="btn_More"  Margin="2.5,1,2.5,0" ToolTip="更多操作"   Click="btn_More_Click" Height="22" Width="22" VerticalAlignment="Center" Normal="/TrboX;component/resource/images/more_22_22_n.png" Disable="/TrboX;component/resource/images/more_22_22_d.png" Hover="/TrboX;component/resource/images/more_22_22_h.png" Press="/TrboX;component/resource/images/more_22_22_p.png"/>
                                     </DockPanel>
                                     <TextBox x:Name="txt_ShortMessage" TextWrapping="Wrap" Text="" Margin="0" DockPanel.Dock="Top"  Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFD2DFF5" CaretBrush="#FFD2DFF5"/>
                                 </DockPanel>
@@ -278,7 +278,7 @@
                                                     <DockPanel VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,1.5" Height="27">
                                                         <TextBlock TextWrapping="Wrap" Text="信　　令：" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="0,0,5,0" Foreground="#FFB6BABE" FontSize="13"/>
                                                         <ComboBox x:Name="cmb_Op_Control" VerticalAlignment="Top" SelectedIndex="{Binding Operate.Operate.Type, Converter={StaticResource ControlTypeConv}}" Height="27" Foreground="#FFB6BABE" FontSize="14" Style="{DynamicResource ComboBoxStyleNormal}">
-                                                            <ComboBoxItem Content="在线检测" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5" Style="{DynamicResource ComboBoxItemStyleNormal}"/>
+                                                            <ComboBoxItem x:Name="cmbIt_Check" Content="在线检测" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5" Style="{DynamicResource ComboBoxItemStyleNormal}"/>
                                                             <ComboBoxItem Content="远程监听" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5" Style="{DynamicResource ComboBoxItemStyleNormal}"/>
                                                             <ComboBoxItem Content="遥毙" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5" Style="{DynamicResource ComboBoxItemStyleNormal}"/>
                                                             <ComboBoxItem Content="遥开" Height="32" FontSize="13" FontFamily="Hiragino Sans GB W3" Foreground="#FFD2DFF5" Style="{DynamicResource ComboBoxItemStyleNormal}"/>
@@ -319,7 +319,7 @@
                                         </TabItem>
                                     </TabControl>
                                 </Border>
-                                <local:Contact x:Name="contact_box" MinWidth="30" MinHeight="23" Margin="8,40,8,0" Panel.ZIndex="1" VerticalAlignment="Top" IsMultiple="{Binding Operate, Converter={StaticResource OpTypeToContactType}}" Grid.Column="1" MaxHeight="55" Height="32" />
+                                <local:Contact x:Name="contact_box" MinWidth="30" MinHeight="23" Margin="8,40,8,0" Panel.ZIndex="1" VerticalAlignment="Top"  IsMultiple="{Binding Operate, Converter={StaticResource OpTypeToContactType}}" Grid.Column="1" MaxHeight="55" Height="32" />
                             </Grid>
                         </TabItem>
                     </TabControl>

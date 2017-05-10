@@ -50,9 +50,10 @@ namespace TrboX
                 DataBase.InsertLog("Read Fast Operation List Error" + e.Message);
             }
 
-            foreach (FastOperate item in FastOperateList)
+            for (int i= 0 ; i<  FastOperateList.Count; i++)
             {
-                m_mainWin.lst_dispatch.Items.Add(new ListViewItem() { Content = item, ContextMenu = new ContextMenu() { Visibility = Visibility.Collapsed } });
+                //FastOperateList[i] = ClearInCallStatus(FastOperateList[i]);
+                m_mainWin.lst_dispatch.Items.Add(new ListViewItem() { Content = FastOperateList[i], ContextMenu = new ContextMenu() { Visibility = Visibility.Collapsed } });
             }
         }
 
@@ -166,9 +167,63 @@ namespace TrboX
 
             return FastOperateList;
         }
+
+        private FastOperate ClearInCallStatus(FastOperate operate)
+        {
+            CMultMember cumem = null;
+
+            if (operate.Type == FastType.FastType_Contact)
+            {
+                cumem = operate.Contact;
+            }
+            else if (operate.Type == FastType.FastType_Operate)
+            {
+                cumem = operate.Operate.Target;
+            }
+
+
+            if (cumem.Type == SelectionType.All)
+            {
+                TargetMgr.IsTx = false;
+                TargetMgr.IsRx = false;
+            }
+            else
+            {
+                foreach (CMember mem in cumem.Target)
+                {
+                    if (mem.Type == MemberType.Group)
+                    {
+                        mem.Group.IsTx = false;
+                        mem.Group.IsRx = false;
+                    }
+                    else
+                    {
+                        mem.Radio.IsTx = false;
+                        mem.Radio.IsRx = false;
+                    }
+                }
+            }
+
+            if (operate.Type == FastType.FastType_Contact)
+            {
+               operate.Contact = cumem;
+            }
+            else if (operate.Type == FastType.FastType_Operate)
+            {
+                operate.Operate.Target = cumem;
+            }
+
+            return operate;
+        }
         public void Save()
         {
             List<FastOperate> FastOperateList = Get();
+
+
+            for(int i = 0; i< FastOperateList.Count; i++)
+            {
+                FastOperateList[i] = ClearInCallStatus(FastOperateList[i]);
+            }
 
             Stream FastOperateListFile = new FileStream(m_FastOperateListPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
 

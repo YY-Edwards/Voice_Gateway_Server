@@ -32,7 +32,7 @@ namespace TrboX
             InitializeComponent();
 
             //TServer Starup 
-            StaertMonitorServer();
+            StartMonitorServer();
 
             //new CServer().StartService("Trbox.Monitor");
 
@@ -61,7 +61,7 @@ namespace TrboX
             DataBase.open("DebugLog.lg");
             DataBase.InsertLog("---Records Start----------------------------------------------------------");
         }
-        private void StaertMonitorServer()
+        private void StartMonitorServer()
         {
             Process[] processes;
             processes = Process.GetProcessesByName("Monitor");

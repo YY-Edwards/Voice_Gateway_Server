@@ -52,6 +52,10 @@
     <Reference Include="CefSharp.Wpf">
       <HintPath>..\DLLS\CefSharp.Wpf.dll</HintPath>
     </Reference>
+    <Reference Include="Controls.WPF, Version=1.0.4.1, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Controls.WPF.1.0.4.1\lib\net40\Controls.WPF.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="GifImageLib">
       <HintPath>..\DLLS\GifImageLib.dll</HintPath>
     </Reference>
@@ -65,8 +69,8 @@
     <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite, Version=1.0.66.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\DLLS\System.Data.SQLite.dll</HintPath>
+      <HintPath>..\packages\System.Data.SQLite.1.0.66.0\lib\net40\System.Data.SQLite.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System.Drawing" />
     <Reference Include="System.Net.Http, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
@@ -81,6 +85,10 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="UIAutomationProvider" />
+    <Reference Include="Util.Lib, Version=1.0.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Util.CSharp.1.0.9\lib\net40\Util.Lib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -148,6 +156,7 @@
     <Compile Include="win\MainWindow\MainResourceMgr.cs" />
     <Compile Include="win\MainWindow\MainTool.cs" />
     <Compile Include="win\MainWindow\NewWinMgr.cs" />
+    <Compile Include="win\MainWindow\Report.cs" />
     <Compile Include="win\MainWindow\Status.cs" />
     <Compile Include="win\WarnningWindow.xaml.cs">
       <DependentUpon>WarnningWindow.xaml</DependentUpon>
@@ -198,6 +207,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <None Include="App.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

@@ -123,7 +123,7 @@ namespace TrboX
                     break;
                 case 0x0202://WM_LBUTTON_UP
                 case 0x0205://WM_RBUTTON_UP
-                    OnMouseL_Released();
+                    OnMouseL_Released((int)wParam, (int)lParam);
                                            
                     break;
 
@@ -145,7 +145,7 @@ namespace TrboX
         { 
         
         }
-        public virtual void OnMouseL_Released()
+        public virtual void OnMouseL_Released(int wParam, int lParam)
         { }
         public virtual void OnMyWindow_Show()
         {

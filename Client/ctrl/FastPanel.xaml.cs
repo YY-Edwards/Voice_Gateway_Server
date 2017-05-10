@@ -31,7 +31,20 @@ namespace TrboX
             return value;
         }
     }
+    public class OpTypeToContactRadioOnly : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (null == value) return true;
+            if (OPType.Dispatch != ((COperate)value).Type) return true;
+            else return true;
+        }
 
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
 
 
     public class ControlTypeConv : IValueConverter
@@ -135,6 +148,14 @@ namespace TrboX
                         }
                     }
                  
+                    if(IsRepeater)
+                    {
+                        dock_Control.Visibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        dock_Control.Visibility = Visibility.Visible;
+                    }
                 }
                 catch(Exception e){
                     DataBase.InsertLog("FastPanel创建失败:" + e.Message);
@@ -146,6 +167,16 @@ namespace TrboX
                 //SelectContact = contact_box.CurrentContact;
             };
         }
+
+
+        public bool IsRepeater
+        {
+            get { return (bool)GetValue(IsRepeaterProperty); }
+            set { SetValue(IsRepeaterProperty, value); }
+        }
+
+        public static readonly DependencyProperty IsRepeaterProperty =
+            DependencyProperty.Register("IsRepeater", typeof(bool), typeof(FastPanel), new UIPropertyMetadata(false));
 
         public FastOperate PanelItem 
         {
@@ -177,7 +208,6 @@ namespace TrboX
                             FontSize = 13,
                             Height = 32,
                             IsSelected = cyc == cycle ? true : false
-
                         });
                     //element.cmb_CycleLst.SelectedIndex = 0;
                 }
@@ -398,7 +428,7 @@ EventManager.RegisterRoutedEvent("More", RoutingStrategy.Bubble, typeof(RoutedEv
                 IsCycle = (bool)chk_Cycle.IsChecked,                   
                 IsCSBK = (bool)chk_CSBK.IsChecked,
                 IsEnh = (bool)chk_Enh.IsChecked,
-                Cycle = (double)((ComboBoxItem)cmb_CycleLst.SelectedItem).Tag});               
+                Cycle = (ComboBoxItem)cmb_CycleLst.SelectedItem == null ? 0.0 :(double)((ComboBoxItem)cmb_CycleLst.SelectedItem).Tag});               
             }
                
             RoutedEventArgs newEventArgs = new RoutedEventArgs(MessageRoutedEvent);
@@ -428,7 +458,7 @@ EventManager.RegisterRoutedEvent("More", RoutingStrategy.Bubble, typeof(RoutedEv
         private void btn_Op_Control_Click(object sender, RoutedEventArgs e)
         {
             if (FastType.FastType_Operate == PanelItem.Type)
-                PanelItem.Operate = new COperate(OPType.Control, CurrentContact, new CControl() { Type = (ControlType)cmb_Op_Control.SelectedIndex });
+                PanelItem.Operate = new COperate(OPType.Control, contact_box.CurrentContact, new CControl() { Type = (ControlType)cmb_Op_Control.SelectedIndex });
             RoutedEventArgs newEventArgs = new RoutedEventArgs(ShutDownRoutedEvent);
             RaiseEvent(newEventArgs);
         }

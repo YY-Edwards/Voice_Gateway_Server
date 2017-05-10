@@ -27,6 +27,14 @@ namespace TrboX
                 m_Main = this.Owner as Main;
                 contact_OpTarget.ContactList = TargetMgr.TargetList;
 
+                if (m_Main.StatusBar.Get().type == RunMode.Repeater)
+                {
+                    rad_CreateCtrl.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    rad_CreateCtrl.Visibility = Visibility.Visible;
+                }
             };
         }
 

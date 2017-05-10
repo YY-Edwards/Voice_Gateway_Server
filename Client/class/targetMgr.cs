@@ -599,6 +599,8 @@ namespace TrboX
             foreach (var team in m_DepartmentList)
             {
                 if (null == team.Value) continue;
+
+                if (!m_TargetList.Radio.ContainsKey((int)team.Value.ID))
                 m_TargetList.Group.Add((int)team.Value.ID, new CMember(MemberType.Group, team.Value, null, null));
             }
 
@@ -611,6 +613,7 @@ namespace TrboX
                 {
                     if (staff.Value.ID == bing.Staff)//has employee
                     {
+                        if (!m_TargetList.Radio.ContainsKey(staff.Value.ID))
                         m_TargetList.Staff.Add(staff.Value.ID, new CMember(MemberType.Staff, m_DepartmentList[bing.Department], staff.Value, m_RadioList[bing.Radio]));
                         hasinbelong = true;
                         break;
@@ -619,6 +622,7 @@ namespace TrboX
 
                 if (false == hasinbelong)
                 {
+                    if (!m_TargetList.Radio.ContainsKey(staff.Value.ID))
                     m_TargetList.Staff.Add(staff.Value.ID, new CMember(MemberType.Staff, new Department() { ID = -1, GroupID = -1, Name = "未分组" }, staff.Value, null));
                 }
             }
@@ -633,6 +637,7 @@ namespace TrboX
                     if (radio.Value.ID == bing.Radio)
                     {
                         hasinbelong = true;
+                        if (!m_TargetList.Radio.ContainsKey(radio.Value.ID))
                         m_TargetList.Radio.Add(radio.Value.ID, new CMember(MemberType.Radio, m_DepartmentList[bing.Department], m_StaffList[bing.Staff], radio.Value));
                         break;
                     }
@@ -640,6 +645,7 @@ namespace TrboX
 
                 if (false == hasinbelong)
                 {
+                    if (!m_TargetList.Radio.ContainsKey(radio.Value.ID))
                     m_TargetList.Radio.Add(radio.Value.ID, new CMember(MemberType.Radio, new Department() { ID = -1, GroupID = -1, Name = "未分组" }, null, radio.Value));
                 }
             }

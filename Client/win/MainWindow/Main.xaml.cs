@@ -20,15 +20,6 @@ using System.Windows.Threading;
 
 namespace TrboX
 {
-    public class rec_teat_t
-    {
-        public string time { set; get; }
-        public string target { set; get; }
-        public string nat { set; get; }
-        public string lat { set; get; }
-    }
-
-
   /// <summary>
     /// Main.xaml 的交互逻辑
     /// </summary>
@@ -49,7 +40,7 @@ namespace TrboX
 
         public Status StatusBar;
 
-        public CMultMember CurrentTraget = null;
+        public CMultMember CurrentTraget = new CMultMember();
 
         DispatcherTimer myTimer = new DispatcherTimer();//定时周期2秒
 
@@ -98,29 +89,6 @@ namespace TrboX
 
                 OnWindowLoaded();
 
-                List<rec_teat_t> testc = new List<rec_teat_t>();
-                for(int i=0; i<10; i++)
-                {
-                    testc.Add(new rec_teat_t() { 
-                     time  = DateTime.Now.ToString(),
-                    target=(10 + 3*i).ToString(),
-                    nat= (20 + 4.7123 * (double)i).ToString(),
-                    lat= (20 + 4.556* (double)i).ToString(),
-                    });
-                }
-
-                dat_Record.ItemsSource = testc;
-
-
-                //new Thread(new ThreadStart(delegate() {
-                //    ReceiveMsghread();                            
-                //})).Start();
-
-                //ResrcMgr.SetRadioOnline(9, true);
-                //ResrcMgr.SetRadioOnline(10, true);
-                //ResrcMgr.SetRadioOnline(9, false);
-
-                //RadioOperate.GetStatus(1);
 
                 myTimer.Interval = TimeSpan.FromSeconds(60);
                 myTimer.Tick += new EventHandler(OnTimer60s);
@@ -318,29 +286,30 @@ namespace TrboX
                     {
                         RadioOperate.GetStatus(1);
                         RadioOperate.GetStatus(2);
+
+
+                        this.Dispatcher.Invoke(new Action(() =>
+                        {
+                            bdr_Tool_Ctrl.Visibility = Visibility.Visible;
+                            menu_File_NewControl.Visibility = Visibility.Visible;
+                            lbtn_New.Items[3].Visibility = Visibility.Visible;
+                        }));
                     }
                     else if (StatusBar.Get().type == RunMode.Repeater)
                     {
-                        WirelanOperate .GetStatus(1);
+                        WirelanOperate.GetStatus(1);
                         WirelanOperate.GetStatus(2);
+
+                        this.Dispatcher.Invoke(new Action(() =>
+                        {
+                            bdr_Tool_Ctrl.Visibility = Visibility.Collapsed;
+                            menu_File_NewControl.Visibility = Visibility.Collapsed;
+                            lbtn_New.Items[3].Visibility = Visibility.Collapsed;
+                        }));                      
                     }
 
                     break;
             }
-        }
-
-
-        //About
-        private void menu_Help_About_Click(object sender, RoutedEventArgs e)
-        {
-            About aboutwin = new About();
-            aboutwin.ShowDialog();
-        }
-
-        private void btn_About_Click(object sender, RoutedEventArgs e)
-        {
-            About aboutwin = new About();
-            aboutwin.ShowDialog();
         }
 
         private void btn_Notify_Close_Click(object sender, RoutedEventArgs e)
@@ -375,13 +344,13 @@ namespace TrboX
                 {
                     if (operate.Type == OPType.Position)
                     {
-                        if (((CPosition)operate.Operate).IsCycle || ((CPosition)operate.Operate).Type == ExecType.Stop) 
+                        if (((CPosition)operate.Operate).IsCycle || ((CPosition)operate.Operate).Type == ExecType.Stop)
                         {
                             if (operate.Target.Type == SelectionType.All)
                             {
                                 var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Radio != null && p.Value.Radio.RadioID > 0);
-                                foreach (var item in radio)ResrcMgr.SetGpsOnline(item.Value.Radio.RadioID, ((CPosition)operate.Operate).Type == ExecType.Start);              
-                               
+                                foreach (var item in radio) ResrcMgr.SetGpsOnline(item.Value.Radio.RadioID, ((CPosition)operate.Operate).Type == ExecType.Start);
+
                             }
                             else if (operate.Target.Type != SelectionType.Null)
                             {
@@ -391,7 +360,7 @@ namespace TrboX
                                     {
                                         if (trgt.Group == null || trgt.Group.ID <= 0) continue;
                                         var radio = TargetMgr.TargetList.Radio.Where(p => p.Value.Group.ID == trgt.Group.ID && p.Value.Radio != null && p.Value.Radio.RadioID > 0);
-                                        foreach (var item in radio) ResrcMgr.SetGpsOnline(item.Value.Radio.RadioID, ((CPosition)operate.Operate).Type == ExecType.Start); 
+                                        foreach (var item in radio) ResrcMgr.SetGpsOnline(item.Value.Radio.RadioID, ((CPosition)operate.Operate).Type == ExecType.Start);
                                     }
                                     else
                                     {
@@ -405,9 +374,59 @@ namespace TrboX
                 }
                 catch { }
             }
+        }
 
+        public override  void OnMouseL_Released( int w, int p)
+        {
+            if (tab_main.SelectedIndex == 3 && tab_Report.Items.Count > 0)
+            {
+                //Point pp = Mouse.GetPosition(e.Source as FrameworkElement);//WPF方法
 
+                Window window = Window.GetWindow(txt_CurrentPage);
+                Point point = txt_CurrentPage.TransformToAncestor(window).Transform(new Point(0, 0));
 
+                Console.Write("MouseX" + (p & 0xffff).ToString() + "  Y:" + ((p >> 16) & 0xffff).ToString() + "\r\n");
+                Console.Write("ControlX" + point.X.ToString() + "  Y:" + point.Y.ToString() + "\r\n");
+
+                double mouseX = (p & 0xffff);
+                double mouseY = ((p >> 16) & 0xffff);
+
+                if (mouseX < point.X || mouseX > point.X + txt_CurrentPage.ActualWidth) WorkArea.Report.PageChange();
+                if (mouseY < point.Y || mouseY > point.Y + txt_CurrentPage.ActualHeight) WorkArea.Report.PageChange();                
+            }             
+        }
+
+        private void btn_DeleteReport_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                TabItem reportitem = Util.Lib.Find.ParentObject<TabItem>((Controls.WPF.IconBtn)sender);
+
+                int orginindex = tab_Report.SelectedIndex;
+                tab_Report.Items.Remove(reportitem);
+
+                if (tab_Report.Items.Count <= 0)
+                {
+                    dck_ReportList.Visibility = Visibility.Collapsed;
+                }
+                
+            }
+            catch { 
+
+            }
+        }
+
+        private void btn_NewReport_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+
+                tab_Report.SelectedIndex = tab_Report.Items.Count - 1;
+            }
+            catch
+            {
+
+            }
         }
 
         private void dis_More(object sender, RoutedEventArgs e)
@@ -502,7 +521,7 @@ namespace TrboX
             {
                 try
                 {
-                    StatusBar.SetConectSta(int.Parse(sta.info.ToString()));
+                    StatusBar.SetConectSta(int.Parse(sta.info.ToString()));                  
                 }
                 catch { }              
             }
@@ -1197,8 +1216,5 @@ namespace TrboX
         {
            SubWindow.OpenCreateOperateWindow(OPType.Dispatch);
         }
-
-
-
     }
 }
