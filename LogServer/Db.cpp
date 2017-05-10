@@ -137,7 +137,7 @@ void migrate_v100(CMySQL* pMySQL){
 void migrate_v101(CMySQL* pMySQL)
 {
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `sms` (\
-		`id` INT(11) NOT NULL,\
+		`id` INT(11) NOT NULL AUTO_INCREMENT,\
 		`source` MEDIUMTEXT NOT NULL,\
 		`destination` MEDIUMTEXT NOT NULL,\
 		`message` VARCHAR(210) NOT NULL,\
@@ -159,8 +159,110 @@ void migrate_v101(CMySQL* pMySQL)
 		UNIQUE INDEX `id_UNIQUE` (`id` ASC))\
 		ENGINE = InnoDB; ");
 
+	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `migration` (\
+`id` int(11) NOT NULL AUTO_INCREMENT, \
+`ver` varchar(64) NOT NULL, \
+`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+PRIMARY KEY(`id`)\
+) ENGINE = InnoDB  DEFAULT CHARSET = utf8");
 
-}
+	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `user` ( \
+`id` INT(11) NOT NULL AUTO_INCREMENT, \
+`username` VARCHAR(45) NOT NULL, \
+`password` VARCHAR(300) NOT NULL, \
+`type` VARCHAR(45) NOT NULL DEFAULT 'radio', \
+`authority` TinyText NOT NULL, \
+`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+PRIMARY KEY(`id`), \
+UNIQUE INDEX `id_UNIQUE` (`id` ASC), \
+UNIQUE INDEX `username_UNIQUE` (`username` ASC)) \
+ENGINE = InnoDB; \
+");
+
+	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `department` ( \
+`id` INT(11) NOT NULL AUTO_INCREMENT, \
+`name` VARCHAR(300) NOT NULL, \
+`gid` INT NOT NULL COMMENT 'radio group id', \
+PRIMARY KEY(`id`), \
+UNIQUE INDEX `id_UNIQUE` (`id` ASC),\
+UNIQUE INDEX `gid_UNIQUE` (`gid` ASC))\
+ENGINE = InnoDB; \
+");
+
+	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `staff` ( \
+`id` INT(11) NOT NULL AUTO_INCREMENT, \
+`name` VARCHAR(45) NOT NULL, \
+`phone` VARCHAR(45) NULL, \
+`user` INT, \
+`valid` INT NOT NULL DEFAULT 1 COMMENT 'staff is valid?', \
+PRIMARY KEY(`id`), \
+INDEX `fk_employee_user_idx` (`user` ASC), \
+CONSTRAINT `fk_employee_user` \
+FOREIGN KEY(`user`) \
+REFERENCES `user` (`id`) \
+ON DELETE SET NULL \
+ON UPDATE NO ACTION) \
+ENGINE = InnoDB; \
+");
+
+	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `organize` ( \
+`staff` INT NOT NULL AUTO_INCREMENT, \
+`department` INT NOT NULL, \
+INDEX `fk_organize_staff_idx` (`staff` ASC), \
+INDEX `fk_organize_department_idx` (`department` ASC), \
+CONSTRAINT `fk_organize_staff` \
+FOREIGN KEY(`staff`) \
+REFERENCES `staff` (`id`) \
+ON DELETE CASCADE \
+ON UPDATE NO ACTION, \
+CONSTRAINT `fk_organize_department` \
+FOREIGN KEY(`department`) \
+REFERENCES `department` (`id`) \
+ON DELETE CASCADE \
+ON UPDATE NO ACTION) \
+ENGINE = InnoDB; \
+");
+
+	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `radios` ( \
+`id` INT(11) NOT NULL AUTO_INCREMENT,	\
+`radio_id` MEDIUMTEXT NOT NULL, \
+`type` INT NOT NULL DEFAULT 0 COMMENT '0:手台;1:车台;2:第三方应用', \
+	`screen` INT NOT NULL DEFAULT 0, \
+`gps` INT NOT NULL DEFAULT 0, \
+`keyboard` INT NOT NULL DEFAULT 0, \
+`sn` VARCHAR(45) NULL, \
+`valid` INT NOT NULL DEFAULT 1 COMMENT 'radio is valid?', \
+PRIMARY KEY(`id`), \
+UNIQUE INDEX `id_UNIQUE` (`id` ASC)) \
+ENGINE = InnoDB; \
+");
+
+	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `radio_belong` ( \
+`staff` INT NULL, \
+`department` INT NULL, \
+`radio` INT NOT NULL, \
+INDEX `fk_radio_staff_idx` (`staff` ASC), \
+INDEX `fk_radio_department_idx` (`department` ASC), \
+INDEX `fk_radio_self_idx` (`radio` ASC), \
+CONSTRAINT `fk_radio_staff` \
+FOREIGN KEY(`staff`) \
+REFERENCES `staff` (`id`) \
+ON DELETE CASCADE \
+ON UPDATE NO ACTION, \
+CONSTRAINT `fk_radio_department` \
+FOREIGN KEY(`department`) \
+REFERENCES `department` (`id`) \
+ON DELETE CASCADE \
+ON UPDATE NO ACTION, \
+CONSTRAINT `fk_radio_self` \
+FOREIGN KEY(`radio`) \
+REFERENCES `radios` (`id`) \
+ON DELETE CASCADE \
+ON UPDATE NO ACTION) \
+ENGINE = InnoDB; \
+");
+
+	}
 
 DbMigrate migrateTable[] = {
 	{ 100, migrate_v100 },
