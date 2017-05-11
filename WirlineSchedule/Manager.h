@@ -57,6 +57,7 @@ public:
 	int config(REMOTE_TASK* pTask);
 	void startHandleRemoteTask();
 	void handleRemoteTask();
+	//void handleVoiceLog(const VOICE_LOG& param);
 	void stop();
 	REMOTE_TASK* getCurrentTask();
 	void freeCurrentTask();
