@@ -15,7 +15,7 @@ typedef struct
 typedef struct
 {
 	Condition conditions[64];
-	char sort[2][64];
+	//char sort[2][64];
 	int offset;
 	int count;
 }Critera;
@@ -44,35 +44,41 @@ inline void voiceLogQueryAction(CRemotePeer* pRemote, const std::string& param, 
 	strcpy_s(status, CLIENT_TRANSFER_OK);
 	std::string statusText = "";
 	VOICE_LOG voiceLog = { 0 };
-	Value tempJsonSub, sortArray, conditionsArray, conditionArray;
+	Value critera, sortArray, conditionsArray, conditionArray;
 	try
 	{
 		d.Parse(param.c_str());
 		VoiceQureyParam *pVoiceQureyParam = &(voiceLog.param);
-		strcpy_s(pVoiceQureyParam->operation, d["operation"].GetString());
-		if (!d["critera"].IsObject())
+		if (d.HasMember("operation"))
+		{
+			strcpy_s(pVoiceQureyParam->operation, d["operation"].GetString());
+		}
+		if (!d.HasMember("critera") ||
+			!d["critera"].IsObject())
 		{
 			strcpy_s(status, CLIENT_TRANSFER_FAIL);
 		}
 		else
 		{
-			tempJsonSub = d["critera"].GetObject();
-			pVoiceQureyParam->critera.count = tempJsonSub["count"].GetInt();
-			pVoiceQureyParam->critera.offset = tempJsonSub["offset"].GetInt();
-			if (!tempJsonSub["sort"].IsArray() || !tempJsonSub["condition"].IsArray())
+			critera = d["critera"].GetObject();
+			if (critera.HasMember("count"))
+			{
+				pVoiceQureyParam->critera.count = critera["count"].GetInt();
+			}
+			if (critera.HasMember("offset"))
+			{
+				pVoiceQureyParam->critera.offset = critera["offset"].GetInt();
+			}
+			if (!critera.HasMember("condition") ||
+				!critera["condition"].IsArray()
+				)
 			{
 				strcpy_s(status, CLIENT_TRANSFER_FAIL);
 			}
 			else
 			{
-				sortArray = tempJsonSub["sort"].GetArray();
-				int size = sortArray.Size();
-				for (int i = 0; i < size; i++)
-				{
-					strcpy_s(pVoiceQureyParam->critera.sort[i], sortArray[i].GetString());
-				}
-				conditionsArray = tempJsonSub["condition"].GetArray();
-				size = conditionsArray.Size();
+				conditionsArray = critera["condition"].GetArray();
+				int size = conditionsArray.Size();
 				bool invalid = false;
 				for (int i = 0; i < size; i++)
 				{
@@ -91,80 +97,98 @@ inline void voiceLogQueryAction(CRemotePeer* pRemote, const std::string& param, 
 						break;
 					}
 				}
-				if (!invalid)
+				if (invalid)
 				{
 					strcpy_s(status, CLIENT_TRANSFER_FAIL);
 				}
 				else
 				{
-					if ("list" == voiceLog.param.operation)
+					std::list<recordType> templList, list;
+					std::string condition = "";
+					std::string tempCondition = "";
+					std::string tableName = "";
+					CDb* m_pDb = CDb::instance();
+					tableName = "voice";
+					tempCondition += "where ";
+					int which = 0;
+					std::map<int, int> years;
+					std::map<int, int>::iterator it;
+					while ('\0' != voiceLog.param.critera.conditions[which++].condition[0][0])
 					{
-						std::list<recordType> templList, list;
-						std::string condition = NULL;
-						std::string tempCondition = NULL;
-						std::string tableName = NULL;
-						CDb* m_pDb = CDb::instance();
-						tableName = "voice";
-						tempCondition += "where ";
-						int which = 0;
-						std::map<int, int> years;
-						std::map<int, int>::iterator it;
-						while (NULL != voiceLog.param.critera.conditions[which++].condition[0])
+						std::string andOr, name, operators, value;
+						int index = which - 1;
+						if (index == 0)
 						{
-							std::string andOr, name, operators, value;
-							int index = which - 1;
-							if (index == 0)
+							name = voiceLog.param.critera.conditions[index].condition[1];
+							operators = voiceLog.param.critera.conditions[index].condition[0];
+							value = voiceLog.param.critera.conditions[index].condition[2];
+							tempCondition += "`";
+							tempCondition += name;
+							tempCondition += "`";
+							tempCondition += " ";
+							tempCondition += operators;
+							tempCondition += " ";
+							tempCondition += "'";
+							tempCondition += value;
+							tempCondition += "' ";
+							if (name == "time")
 							{
-								name = voiceLog.param.critera.conditions[index].condition[1];
-								operators = voiceLog.param.critera.conditions[index].condition[0];
-								value = voiceLog.param.critera.conditions[index].condition[2];
-								tempCondition += name;
-								tempCondition += " ";
-								tempCondition += operators;
-								tempCondition += " ";
-								tempCondition += value;
-								tempCondition += " ";
-								if (name == "time")
-								{
-									int year, month, day, hour, minute, second;
-									sscanf_s(value.c_str(), "%04d-%02d-%02d %02d:%02d:%02d", &year, &month, &day, &hour, &minute, &second);
-									years[year] = 0;
-								}
-							}
-							else
-							{
-								andOr = voiceLog.param.critera.conditions[index].condition[0];
-								name = voiceLog.param.critera.conditions[index].condition[2];
-								operators = voiceLog.param.critera.conditions[index].condition[1];
-								value = voiceLog.param.critera.conditions[index].condition[3];
-								tempCondition += andOr;
-								tempCondition += " ";
-								tempCondition += name;
-								tempCondition += " ";
-								tempCondition += operators;
-								tempCondition += " ";
-								tempCondition += value;
-								tempCondition += " ";
-								if (name == "time")
-								{
-									int year, month, day, hour, minute, second;
-									sscanf_s(value.c_str(), "%04d-%02d-%02d %02d:%02d:%02d", &year, &month, &day, &hour, &minute, &second);
-									years[year] = 0;
-								}
+								int year, month, day, hour, minute, second;
+								sscanf_s(value.c_str(), "%04d-%02d-%02d %02d:%02d:%02d", &year, &month, &day, &hour, &minute, &second);
+								years[year] = 0;
 							}
 						}
-
-						std::list<int> lst;
-						for (auto i = years.begin(); i != years.end(); i++)
+						else
 						{
-							lst.push_back(i->first);
+							andOr = voiceLog.param.critera.conditions[index].condition[0];
+							name = voiceLog.param.critera.conditions[index].condition[2];
+							operators = voiceLog.param.critera.conditions[index].condition[1];
+							value = voiceLog.param.critera.conditions[index].condition[3];
+							tempCondition += andOr;
+							tempCondition += " ";
+							tempCondition += "`";
+							tempCondition += name;
+							tempCondition += "`";
+							tempCondition += " ";
+							tempCondition += operators;
+							tempCondition += " ";
+							tempCondition += "'";
+							tempCondition += value;
+							tempCondition += "' ";
+							if (name == "time")
+							{
+								int year, month, day, hour, minute, second;
+								sscanf_s(value.c_str(), "%04d-%02d-%02d %02d:%02d:%02d", &year, &month, &day, &hour, &minute, &second);
+								years[year] = 0;
+							}
 						}
-						lst.sort();
+					}
 
-						int count = voiceLog.param.critera.count;
-						int offset = voiceLog.param.critera.offset;
-						std::string orderByName = voiceLog.param.critera.sort[0];
-						std::string orderByOrder = voiceLog.param.critera.sort[1];
+					std::list<int> lst;
+					for (auto i = years.begin(); i != years.end(); i++)
+					{
+						lst.push_back(i->first);
+					}
+					lst.sort();
+
+					int count = voiceLog.param.critera.count;
+					int offset = voiceLog.param.critera.offset;
+					std::string orderByName = "id";
+					std::string orderByOrder = "";
+					if (0 == strcmp("count", voiceLog.param.operation))
+					{
+						int rltCount = 0;
+						for each (int var in lst)
+						{
+							char temp[1024] = { 0 };
+							sprintf_s(temp, "%s_%d", tableName.c_str(), var);
+							tableName = temp;
+							rltCount += m_pDb->count(tableName.c_str(), tempCondition.c_str());
+						}
+						args["count"] = FieldValue(rltCount);
+					}
+					else if (0 == strcmp("list", voiceLog.param.operation))
+					{
 						for each (int var in lst)
 						{
 							char temp[1024] = { 0 };
@@ -188,8 +212,7 @@ inline void voiceLogQueryAction(CRemotePeer* pRemote, const std::string& param, 
 								list.insert(list.end(), templList.begin(), templList.end());
 							}
 						}
-						//ArgumentType args;
-						FieldValue contents(FieldValue::TArray);
+						//FieldValue contents(FieldValue::TArray);
 						FieldValue records(FieldValue::TArray);
 
 						for (auto i = list.begin(); i != list.end(); i++)
@@ -201,8 +224,7 @@ inline void voiceLogQueryAction(CRemotePeer* pRemote, const std::string& param, 
 							}
 							records.push(r);
 						}
-						contents.push(records);
-						args["contents"] = contents;
+						args["records"] = records;
 					}
 				}
 			}
@@ -213,6 +235,6 @@ inline void voiceLogQueryAction(CRemotePeer* pRemote, const std::string& param, 
 		strcpy_s(status, CLIENT_TRANSFER_FAIL);
 	}
 	/*·¢ËÍµ½Client*/
-	std::string strResp = CRpcJsonParser::buildResponse(status, callId, 200, "", args);
+	strResp = CRpcJsonParser::buildResponse(status, callId, 200, "", args);
 	pRemote->sendResponse(strResp.c_str(), strResp.size());
 }

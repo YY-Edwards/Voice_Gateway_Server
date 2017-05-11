@@ -14,7 +14,7 @@
 #include "DbSmsLogAction.h"
 #include "DbGpsAction.h"
 #include "DbVoiceLogQueryAction.h"
-#define SERVICE_CODE    TRUE
+#define SERVICE_CODE FALSE
 int _tmain(int argc, _TCHAR* argv[])
 {
 #if SERVICE_CODE
@@ -83,7 +83,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		exit(1);
 	}
 #endif
-	wprintf(argv[1]);
+	//wprintf(argv[1]);
+	getchar();
 	return 0;
 
 	//FieldValue record1(FieldValue::TArray);
