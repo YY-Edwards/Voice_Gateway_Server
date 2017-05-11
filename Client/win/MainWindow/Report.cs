@@ -135,7 +135,7 @@ namespace TrboX
     { 
         private Main m_Main;
         private static int ReportIndex = 1;
-        public static int PageCount = 1;
+        public static int PageCount = 50;
 
         private bool IsInit = false;
      
@@ -183,7 +183,7 @@ namespace TrboX
             m_Main.dam_End.Value = DateTime.Now;
             m_Main.txt_ReportName.Text = "报表-" + ReportIndex.ToString();
 
-            m_Main.cmb_ReportType.SelectedIndex = 1;
+            m_Main.cmb_ReportType.SelectedIndex = 0;
             m_Main.txt_ReportTraget.Text = string.Empty;
 
 
@@ -478,6 +478,7 @@ namespace TrboX
 
         public void ResotreReport()
         {
+            m_Main.dck_ReportList.Visibility = Visibility.Visible;
             BinaryFormatter m_BinFormat = new BinaryFormatter();
             Stream ReportListFile = new FileStream(App.ReportTempPath, FileMode.OpenOrCreate, FileAccess.ReadWrite);
             ReportListFile.Position = 0;
@@ -1041,8 +1042,8 @@ namespace TrboX
             {
                 if (Target <= 0)
                 {
-                    res = AddCondition(res, "",">","createdf_at",Start.Value.ToString("yyyy-MM-dd HH:mm:ss"));
-                    res = AddCondition(res, "and", "<", "createdf_at", End.Value.ToString("yyyy-MM-dd HH:mm:ss"));
+                    res = AddCondition(res, "",">","time",Start.Value.ToString("yyyy-MM-dd HH:mm:ss"));
+                    res = AddCondition(res, "and", "<", "time", End.Value.ToString("yyyy-MM-dd HH:mm:ss"));
 
                     if (RecType >= 1 && RecType <= 3)
                     {
@@ -1051,13 +1052,13 @@ namespace TrboX
 
                     if (CallType == 79 || CallType == 80 || CallType == 83)
                     {
-                        res = AddCondition(res, "and", "=", "call_type", RecType.ToString());
+                        res = AddCondition(res, "and", "=", "call_type", CallType.ToString());
                     }
                 }
                 else
                 {
-                    res = AddCondition(res, "", ">", "createdf_at", Start.Value.ToString("yyyy-MM-dd HH:mm:ss"));
-                    res = AddCondition(res, "and", "<", "createdf_at", End.Value.ToString("yyyy-MM-dd HH:mm:ss"));
+                    res = AddCondition(res, "", ">", "time", Start.Value.ToString("yyyy-MM-dd HH:mm:ss"));
+                    res = AddCondition(res, "and", "<", "time", End.Value.ToString("yyyy-MM-dd HH:mm:ss"));
 
                     if (RecType >= 1 && RecType <= 3)
                     {
@@ -1066,7 +1067,7 @@ namespace TrboX
 
                     if (CallType == 79 || CallType == 80 || CallType == 83)
                     {
-                        res = AddCondition(res, "and", "=", "call_type", RecType.ToString());
+                        res = AddCondition(res, "and", "=", "call_type", CallType.ToString());
                     }
 
                     res = AddCondition(res, "and", "=", "src_radio", Target.ToString());
@@ -1081,7 +1082,7 @@ namespace TrboX
 
                     if (CallType == 79 || CallType == 80 || CallType == 83)
                     {
-                        res = AddCondition(res, "and", "=", "call_type", RecType.ToString());
+                        res = AddCondition(res, "and", "=", "call_type", CallType.ToString());
                     }
 
                     res = AddCondition(res, "and", "=", "target_radio", Target.ToString());
@@ -1154,7 +1155,7 @@ namespace TrboX
 
             param.Add("operation", OperateType.list.ToString());
 
-            string[][] conobj = BuildSmsCondition(Start, End, Target);
+            string[][] conobj = BuildCallCondition(Start, End, Target, RecType, CallType);
             if (null != conobj && null != conobj[0] && conobj[0][0] == "empty") return null;
 
             int tmp_offset = (page - 1) * PageCount;

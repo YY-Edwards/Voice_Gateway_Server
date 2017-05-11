@@ -1822,7 +1822,7 @@
             <RowDefinition Height="3*"/>
         </Grid.RowDefinitions>
         <DockPanel Grid.RowSpan="2">
-            <Border x:Name="bdr_Header" BorderBrush="Black" BorderThickness="0" Margin="0" DockPanel.Dock="Top" Height="40" Background="#FF3B3B3D" d:IsHidden="True">
+            <Border x:Name="bdr_Header" BorderBrush="Black" BorderThickness="0" Margin="0" DockPanel.Dock="Top" Height="40" Background="#FF3B3B3D">
                 <Grid>
                     <DockPanel LastChildFill="False" Margin="0" HorizontalAlignment="Left" Width="150">
                         <Image Margin="0" Source="/TrboX;component/resource/images/main_title_136_40.png"/>
@@ -1950,7 +1950,7 @@
                 </Grid>
             </Border>
 
-            <Border BorderBrush="#FF0F0F10" BorderThickness="0,0,0,1" Height="40" DockPanel.Dock="Top" Margin="0" Panel.ZIndex="1" Background="#FF3B3B3D" d:IsHidden="True">
+            <Border BorderBrush="#FF0F0F10" BorderThickness="0,0,0,1" Height="40" DockPanel.Dock="Top" Margin="0" Panel.ZIndex="1" Background="#FF3B3B3D">
                 <DockPanel LastChildFill="False">
                     <Path Data="M6.8333333,30 L178.16667,30" Height="1" Margin="-0.5,0" Stretch="Fill" VerticalAlignment="Top" DockPanel.Dock="Top" Stroke="{DynamicResource CutOffRuleTop}"/>
                     <Border BorderBrush="White" BorderThickness="0" HorizontalAlignment="Left" Padding="0,8">
@@ -2037,7 +2037,7 @@
                 </DockPanel>
                 <!--<src:Contact x:Name="ChoiceContact" IsMultiple="False" DockPanel.Dock="Top" Margin="0,5,0,0"/>-->
             </Border>
-            <Grid Margin="0" d:IsHidden="True">
+            <Grid Margin="0">
                 <Border BorderBrush="Black" BorderThickness="0" Margin="0" Padding="0,8">
                     <Grid x:Name="grd_main">
                         <Grid.ColumnDefinitions>
@@ -2212,7 +2212,7 @@
                                                             <ctrls:IconBtn x:Name="btn_NewReportView" Height="22" VerticalAlignment="Center" Margin="5,0,0,0" Width="22" Normal="/TrboX;component/resource/images/new_22_22_n.png" Hover="/TrboX;component/resource/images/new_22_22_h.png" Disable="/TrboX;component/resource/images/new_22_22_d.png" Press="/TrboX;component/resource/images/new_22_22_p.png" HorizontalAlignment="Left"/>
                                                         </DockPanel>
                                                         <Border BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Top">
-                                                            <DockPanel x:Name="dck_ReportList">
+                                                            <DockPanel x:Name="dck_ReportList" Visibility="Collapsed">
                                                                 <Border BorderBrush="#FF1F1F1F" BorderThickness="0" Margin="0,0,0,-2" Width="250" Visibility="{Binding IsChecked, Converter={StaticResource FalseHide}, ElementName=chk_OnOffCon}">
                                                                     <DockPanel LastChildFill="False" Margin="0,0,8,0">
                                                                         <Grid DockPanel.Dock="Top">
