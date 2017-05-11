@@ -352,6 +352,7 @@ namespace TrboX
         staff,
         smslog,
         gpslog,
+        voicelog,
 
 
         status,

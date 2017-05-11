@@ -66,6 +66,7 @@ namespace TrboX
         public static string WorkSpaceTempFile = "tmp.workspace";
         public static string SettingTempFile = "tmp.setting.xml";
         public static string ResourceTempFile = "tmp.Resource.db";
+        public static string ReportTempFile = "tmp.report";
 
         public static string TmpDirectory
         {
@@ -117,6 +118,14 @@ namespace TrboX
             get
             {
                 return TmpDirectory + WorkSpaceTempFile;
+            }
+        }
+
+        public static string ReportTempPath
+        {
+            get
+            {
+                return TmpDirectory + ReportTempFile;
             }
         }
 

@@ -409,6 +409,8 @@ namespace TrboX
                 {
                     dck_ReportList.Visibility = Visibility.Collapsed;
                 }
+
+                g_IsNeedSaveWorkSpace = true;
                 
             }
             catch { 
@@ -461,6 +463,7 @@ namespace TrboX
         {
             WorkArea.FastPanel.Save();
             MsgWin.SaveNotify();
+            WorkArea.Report.SaveReport();
             g_IsNeedSaveWorkSpace = false;
         }
 

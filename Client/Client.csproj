@@ -461,6 +461,12 @@
   <ItemGroup>
     <Resource Include="TrboX.ico" />
   </ItemGroup>
+  <ItemGroup>
+    <Resource Include="resource\images\export_16_16_d.png" />
+    <Resource Include="resource\images\export_16_16_h.png" />
+    <Resource Include="resource\images\export_16_16_n.png" />
+    <Resource Include="resource\images\export_16_16_p.png" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -15,7 +15,9 @@ namespace TrboX
             if (null == win) return;
             m_Main = win;
 
-            m_Main.lbtn_New.Click += delegate { m_Main.SubWindow.OpenCreateOperateWindow(OPType.Dispatch); };
+            m_Main.lbtn_New.Click += delegate {
+                m_Main.SubWindow.OpenCreateOperateWindow(OPType.Dispatch); 
+            };
             m_Main.lbtn_New.Selected += delegate { 
                 switch(m_Main.lbtn_New.SelectedIndex)
                 {
