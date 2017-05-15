@@ -13,11 +13,14 @@
 #include "DbStaffAction.h"
 #include "DbSmsLogAction.h"
 #include "DbGpsAction.h"
-
+#include "DbVoiceLogQueryAction.h"
+#define SERVICE_CODE FALSE
 int _tmain(int argc, _TCHAR* argv[])
 {
+#if SERVICE_CODE
 	CService::instance()->SetServiceNameAndDescription(_T("Trbox.Log"), _T("Trbox Log Server"));
 	CService::instance()->SetServiceCode([&](){
+#endif
 		bool db_connected = false;
 		while (!db_connected){
 			db_connected = CDb::instance()->open("127.0.0.1", 3306, "root", "", "tbx");
@@ -32,8 +35,10 @@ int _tmain(int argc, _TCHAR* argv[])
 		rpcServer.addActionHandler("department", groupAction);
 		rpcServer.addActionHandler("smslog", smsLogAction);
 		rpcServer.addActionHandler("gpslog", gpsLogAction);
+		rpcServer.addActionHandler("voicelog", voiceLogQueryAction);
 
 		rpcServer.start(9003, CRpcServer::TCP);
+#if SERVICE_CODE
 
 		while (!CService::instance()->m_bServiceStopped){
 			Sleep(1000);
@@ -77,9 +82,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	catch (...) {
 		exit(1);
 	}
-
+#endif
 	//wprintf(argv[1]);
-	//return 0;
+	getchar();
+	return 0;
 
 	//FieldValue record1(FieldValue::TArray);
 	//FieldValue r1(FieldValue::TString);
@@ -130,10 +136,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	//rpcServer.addActionHandler("gpslog", gpsLogAction);
 
 	//rpcServer.start(9003, CRpcServer::TCP);
-	while (1)
-	{
-		Sleep(100000000);
-	}
-	return 0;
+	//while (1)
+	//{
+	//	Sleep(100000000);
+	//}
+	//return 0;
 }
 

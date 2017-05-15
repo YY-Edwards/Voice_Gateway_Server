@@ -350,6 +350,10 @@ namespace TrboX
         department,
         radio,
         staff,
+        smslog,
+        gpslog,
+        voicelog,
+
 
         status,
         sendArs,

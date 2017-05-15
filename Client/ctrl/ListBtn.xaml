@@ -46,7 +46,7 @@
                     <!-- ToggleButton 已数据绑定到 ComboBox 本身以切换 IsDropDownOpen -->
                     <ToggleButton Grid.Column="0" Template="{DynamicResource ToggleButtonControlTemplate1}" x:Name="ToggleButton" Focusable="false" IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource TemplatedParent}}" ClickMode="Press" Background="{x:Null}" BorderBrush="{x:Null}" Grid.ColumnSpan="2"/>
                     <DockPanel x:Name="dockPanel" HorizontalAlignment="Stretch" Height="Auto" LastChildFill="True" VerticalAlignment="Stretch" Width="Auto" Margin="5,0,0,0" d:IsHidden="True">
-                        <TrboX:IconBtn x:Name="btn_Icon" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{x:Null}" Height="22" Width="22" Margin="0,0,5,0" 
+                        <TrboX:IconBtn x:Name="btn_Icon" Click="btn_Content_Click" HorizontalAlignment="Center" VerticalAlignment="Center" Background="{x:Null}" Height="22" Width="22" Margin="0,0,5,0" 
                 			Hover="{Binding Hover, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TrboX:ListBtn}}}"
                 			Normal="{Binding Normal, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TrboX:ListBtn}}}"
                 			Press="{Binding Press, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type TrboX:ListBtn}}}"

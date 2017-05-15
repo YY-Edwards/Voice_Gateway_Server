@@ -22,7 +22,7 @@ extern BOOL g_dongleIsUsing;
 class CManager
 {
 public:
-	CManager(CMySQL *db, CDataScheduling *pMnis);
+	CManager(CMySQL *db, CDataScheduling *pMnis,std::wstring& defaultAudioPath);
 	~CManager();
 	// 	/*初始化系统*/
 	// 	int initSys();
@@ -57,6 +57,7 @@ public:
 	int config(REMOTE_TASK* pTask);
 	void startHandleRemoteTask();
 	void handleRemoteTask();
+	//void handleVoiceLog(const VOICE_LOG& param);
 	void stop();
 	REMOTE_TASK* getCurrentTask();
 	void freeCurrentTask();

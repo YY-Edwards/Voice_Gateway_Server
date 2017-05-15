@@ -76,6 +76,7 @@ typedef struct
 
 #define REPEATER_CONNECT 0
 #define REPEATER_DISCONNECT 1
+#define PATH_FILE_MAXSIZE 1024
 
 enum CLIENT_CALL_TYPE
 {
@@ -176,6 +177,7 @@ extern HANDLE g_waitHandleRemoteTask;
 #define REMOTE_CMD_MNIS_QUERY_GPS 0x06
 #define REMOTE_CMD_MNIS_MSG 0x07
 #define REMOTE_CMD_MNIS_STATUS 0x08
+//#define REMOTE_CMD_VOICE_LOG 0x09
 
 #define GET_TYPE_CONN 0x01
 #define GET_TYPE_ONLINE_DEVICES 0x02
@@ -222,6 +224,7 @@ typedef struct
 	long peerHeartTime;
 	_SlotNumber defaultSlot;
 	DONGLE dongle;
+	char audioPath[PATH_FILE_MAXSIZE];
 }CONFIG;
 /************************************************************************/
 /* 通话命令参数定义
@@ -291,6 +294,7 @@ typedef struct
 		QUERY_GPS queryGpsParam;
 		MNIS_MSG msgParam;
 		ARS mnisStatusParam;
+		//VOICE_LOG voiceLogParam;
 	}info;
 }JSON_PARAM;
 /*远程命令*/
@@ -320,7 +324,6 @@ extern long GO_BACK_DEFAULT_GROUP_TIME;//处于非调度组的时间
 #define VOICE_STATUS_CALLBACK 1
 #define VOICE_STATUS_END 2
 
-#define PATH_FILE_MAXSIZE 1024
 #define DATA_TABLE_NAME_SIZE 64
 #define FILE_NAME_MAXSIZE 64
 typedef void(*PLogReport)(char* log_msg);

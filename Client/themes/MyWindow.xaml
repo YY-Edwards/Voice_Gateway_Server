@@ -1037,20 +1037,20 @@
     				<Grid x:Name="GridRoot" Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" Background="{TemplateBinding Background}">
     					<Grid.RowDefinitions>
     						<RowDefinition MaxHeight="5"/>
-    						<RowDefinition Height="0.00001*"/>
+    						<RowDefinition Height="*"/>
     						<RowDefinition MaxHeight="5"/>
     					</Grid.RowDefinitions>
 
-    					<RepeatButton x:Name="DecreaseRepeat" Style="{DynamicResource SimpleRepeatButton}" Command="ScrollBar.LineUpCommand" Visibility="Hidden">
+    					<RepeatButton x:Name="DecreaseRepeat" Style="{DynamicResource SimpleRepeatButton}" Command="ScrollBar.LineUpCommand" Visibility="Hidden" Background="{x:Null}">
     						<Grid>
     							<Path x:Name="DecreaseArrow" Stroke="{TemplateBinding Foreground}" StrokeThickness="1" Data="M 0 4 L 8 4 L 4 0 Z"/>
     						</Grid>
     					</RepeatButton>
 
                         <!-- Track 是一种特殊的布局容器，可调整用于在其一侧执行跳转滚动的 thumb 和 repeat button 的大小 -->
-    					<Track Grid.Row="1" x:Name="PART_Track" Orientation="Vertical" IsDirectionReversed="true">
+    					<Track Grid.Row="1" x:Name="PART_Track" Orientation="Vertical" IsDirectionReversed="true" MinHeight="50">
     						<Track.Thumb>
-    							<Thumb Style="{DynamicResource ThumbStyleNormal}"/>
+    							<Thumb Style="{DynamicResource ThumbStyleNormal}" Height="50" MinHeight="50" Margin="0,0,0,-30.834" VerticalAlignment="Top"/>
     						</Track.Thumb>
     						<Track.IncreaseRepeatButton>
     							<RepeatButton x:Name="PageUp" Style="{DynamicResource SimpleScrollRepeatButtonStyle}" Command="ScrollBar.PageDownCommand"/>
@@ -1060,7 +1060,7 @@
     						</Track.DecreaseRepeatButton>
     					</Track>
 
-    					<RepeatButton Grid.Row="2" x:Name="IncreaseRepeat" Style="{DynamicResource SimpleRepeatButton}" Command="ScrollBar.LineDownCommand" Visibility="Hidden">
+    					<RepeatButton Grid.Row="2" x:Name="IncreaseRepeat" Style="{DynamicResource SimpleRepeatButton}" Command="ScrollBar.LineDownCommand" Visibility="Hidden" Background="{x:Null}">
     						<Grid>
     							<Path x:Name="IncreaseArrow" Stroke="{TemplateBinding Foreground}" StrokeThickness="1" Data="M 0 0 L 4 4 L 8 0 Z"/>
     						</Grid>
@@ -1097,7 +1097,7 @@
     	<Setter Property="Template">
     		<Setter.Value>
     			<ControlTemplate TargetType="{x:Type Thumb}">
-    				<Grid Margin="0,0,0,0" x:Name="Grid">
+    				<Grid Margin="0,0,0,0" x:Name="Grid" VerticalAlignment="Stretch">
     					<Rectangle HorizontalAlignment="Stretch" x:Name="Rectangle" VerticalAlignment="Stretch" Width="4" Height="Auto" RadiusX="2" RadiusY="2" Fill="#FF535353" StrokeThickness="0"/>
     				</Grid>
     				<ControlTemplate.Triggers>
@@ -1817,4 +1817,6 @@
             </Setter.Value>
         </Setter>
     </Style>
+
+    
 </ResourceDictionary>

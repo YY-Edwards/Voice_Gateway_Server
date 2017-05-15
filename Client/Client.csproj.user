@@ -6,4 +6,7 @@
   <PropertyGroup>
     <ReferencePath>E:\Home\Projects\TrboX 3.0\Prj\Trbox\Debug\core\</ReferencePath>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
+    <EnableUnmanagedDebugging>true</EnableUnmanagedDebugging>
+  </PropertyGroup>
 </Project>

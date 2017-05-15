@@ -32,9 +32,9 @@ namespace TrboX
             InitializeComponent();
 
             //TServer Starup 
-            //StaertTServer();
+            StartMonitorServer();
 
-            new CServer().StartService("Trbox.Monitor");
+            //new CServer().StartService("Trbox.Monitor");
 
             LogServer.InitializeServer();  
             //DataBase.open(DateTime.Now.Year.ToString() 
@@ -61,17 +61,17 @@ namespace TrboX
             DataBase.open("DebugLog.lg");
             DataBase.InsertLog("---Records Start----------------------------------------------------------");
         }
-        private void StaertTServer()
+        private void StartMonitorServer()
         {
             Process[] processes;
-            processes = Process.GetProcessesByName("TServer");
+            processes = Process.GetProcessesByName("Monitor");
 
             if (processes.Count() > 0) return;
             else
             {
-                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "/Svr/TServer.exe"))
+                if (File.Exists(AppDomain.CurrentDomain.BaseDirectory + "/Svr/Monitor.exe"))
                 {
-                    System.Diagnostics.Process.Start(AppDomain.CurrentDomain.BaseDirectory + "/Svr/TServer.exe");
+                    System.Diagnostics.Process.Start(AppDomain.CurrentDomain.BaseDirectory + "/Svr/Monitor.exe");
                 }
             }          
         }

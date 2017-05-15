@@ -41,6 +41,10 @@
 			<Name>LogServer</Name>
 			<Project>{6426AB0C-F51F-45A0-ADD2-4A30B77D2E49}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\Monitor\Monitor.vcxproj">
+			<Name>Monitor</Name>
+			<Project>{811EDE63-7C0E-4A12-B5DF-A846A68BD8EB}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\Options\Options.csproj">
 			<Name>Options</Name>
 			<Project>{F9613FD5-3826-4911-AC1D-5C38408E708D}</Project>

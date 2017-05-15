@@ -5,21 +5,29 @@
         xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" 
         xmlns:local="clr-namespace:TrboX"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" x:Name="MainWindow" mc:Ignorable="d" 
-        x:Class="TrboX.Main"   
-        Icon="/TrboX;component/themes/resource/Logo.png" 
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" xmlns:Forms="clr-namespace:System.Windows.Forms;assembly=System.Windows.Forms" 
+        xmlns:ctrls="clr-namespace:Controls.WPF;assembly=Controls.WPF" 
+    xmlns:ed="http://schemas.microsoft.com/expression/2010/drawing" xmlns:System="clr-namespace:System;assembly=mscorlib" x:Name="MainWindow" mc:Ignorable="d" 
+    x:Class="TrboX.Main"   
         Title="TrboX" Height="800" Width="1280" WindowStartupLocation="CenterScreen" Style="{DynamicResource MainWinStyle}" Closing="MainWindow_Closing" MinWidth="800" MinHeight="600" 
     >
     <!--<src:MyWindow.InputBindings>
         <KeyBinding Key="D" Modifiers="Control" Command="local:CustomCommands.DoStuff"/>
     </src:MyWindow.InputBindings>-->
     <local:MyWindow.Resources>
+        <local:ReportItem x:Key="reportitem1" Date="2017-05-08" Content="test" TargetID="12" Type="msg" />
+        <local:ReportItem x:Key="reportitem2" Date="2017-05-09" Content="test" TargetID="12" Type="msg" />
+        <local:ReportItem x:Key="reportitem3" Date="2017-05-10" Content="test" TargetID="12" Type="msg" />
+        <local:ReportItem x:Key="reportitem4" Date="2017-05-11" Content="test" TargetID="12" Type="msg" />
+        <local:ReportItem x:Key="reportitem5" Date="2017-05-12" Content="test" TargetID="12" Type="msg" />
+
 
         <local:MsgWidthValueConverter x:Key="MsgWidth"/>
         <!--Simple Tree View - 这用来在 ScrollViewer 中对 TreeViewItems 进行布局 -->
         <local:IsNullValueConverter x:Key="IsObjNull" />
         <local:MainTabIndexFromRadio x:Key="IndexFromRadio" />
         <local:FalselHideConverter x:Key="FalseHide" />
+        <local:IsHideConverter x:Key="IsHide" />
         <local:ItemIconConverter x:Key="TypeToIcon" />
         <local:TypeToOP x:Key="TypeToOP" />
         <local:StatucToColorConverter x:Key="FastStatus" />
@@ -37,7 +45,7 @@
                         <!--<DockPanel.ContextMenu >
                             <ContextMenu Visibility="Hidden"/>
                         </DockPanel.ContextMenu>-->
-                        <local:FastPanel x:Name="dis"  PanelItem ="{Binding}" AllowDrop="True" TitlePressed="FastPanel_TiltePressed" Closing = "FastPanel_Closing"
+                        <local:FastPanel x:Name="fp_ImageIcon"  PanelItem ="{Binding}" AllowDrop="True" TitlePressed="FastPanel_TiltePressed" Closing = "FastPanel_Closing" IsRepeater="{Binding Visibility, Converter={StaticResource IsHide}, ElementName=btn_Tool_Check}"
                                          Dispatch="dis_Operate" 
                                          Message="dis_Operate" 
                                          Monitor="dis_Operate" 
@@ -190,9 +198,7 @@
                                 <Condition Binding="{Binding Radio.Type}" Value="RADIO" />
                                 <Condition Binding="{Binding Converter={StaticResource IconOpFromOrg}}" Value="1"  />
                             </MultiDataTrigger.Conditions>
-                            <MultiDataTrigger.Setters>
-                                <Setter TargetName="Icon" Property="Source" Value="/TrboX;component/resource/images/radio_18_18_on.png"/>
-                            </MultiDataTrigger.Setters>
+                            <Setter TargetName="Icon" Property="Source" Value="/TrboX;component/resource/images/radio_18_18_on.png"/>
                         </MultiDataTrigger>
 
                         <MultiDataTrigger>
@@ -200,9 +206,7 @@
                                 <Condition Binding="{Binding Radio.Type}" Value="RIDE" />
                                 <Condition Binding="{Binding Converter={StaticResource IconOpFromOrg}}" Value="1" />
                             </MultiDataTrigger.Conditions>
-                            <MultiDataTrigger.Setters>
-                                <Setter TargetName="Icon" Property="Source" Value="/TrboX;component/resource/images/ride_18_18_on.png"/>
-                            </MultiDataTrigger.Setters>
+                            <Setter TargetName="Icon" Property="Source" Value="/TrboX;component/resource/images/ride_18_18_on.png"/>
                         </MultiDataTrigger>
 
                         <MultiDataTrigger>
@@ -210,9 +214,7 @@
                                 <Condition Binding="{Binding Radio.Type}" Value="RIDE" />
                                 <Condition Binding="{Binding Converter={StaticResource IconOpFromOrg}}"  Value="0.5" />
                             </MultiDataTrigger.Conditions>
-                            <MultiDataTrigger.Setters>
-                                <Setter TargetName="Icon" Property="Source" Value="/TrboX;component/resource/images/ride_18_18_off.png"/>
-                            </MultiDataTrigger.Setters>
+                            <Setter TargetName="Icon" Property="Source" Value="/TrboX;component/resource/images/ride_18_18_off.png"/>
                         </MultiDataTrigger>
                     </DataTemplate.Triggers>
                 </DataTemplate>
@@ -310,7 +312,7 @@
                                         </MultiBinding>
                                     </TextBlock.Text>
                                 </TextBlock>
-                                <TextBlock Text="{Binding Source.Name, StringFormat=来自({0})的呼叫}"  Foreground="#FFcdcdcd" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, Converter={StaticResource MsgWidth}, ElementName=lst_Alarm, Mode=OneWay}"  VerticalAlignment="Center" DockPanel.Dock="Top" />
+                                <TextBlock Text="{Binding Source.Name, StringFormat=来自(\{0\})的呼叫}"  Foreground="#FFcdcdcd" TextWrapping="Wrap" Margin="0" Width="{Binding ActualWidth, Converter={StaticResource MsgWidth}, ElementName=lst_Alarm, Mode=OneWay}"  VerticalAlignment="Center" DockPanel.Dock="Top" />
                             </DockPanel>
                         </DockPanel>
                     </Border>
@@ -1071,7 +1073,740 @@
                 </Setter.Value>
             </Setter>
         </Style>
-        
+        <Style x:Key="TabItemFocusVisual">
+            <Setter Property="Control.Template">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <Rectangle Margin="3,3,3,1" SnapsToDevicePixels="true" Stroke="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}" StrokeThickness="1" StrokeDashArray="1 2"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <LinearGradientBrush x:Key="TabItemHotBackground" EndPoint="0,1" StartPoint="0,0">
+            <GradientStop Color="#EAF6FD" Offset="0.15"/>
+            <GradientStop Color="#D9F0FC" Offset=".5"/>
+            <GradientStop Color="#BEE6FD" Offset=".5"/>
+            <GradientStop Color="#A7D9F5" Offset="1"/>
+        </LinearGradientBrush>
+        <SolidColorBrush x:Key="TabItemSelectedBackground" Color="#F9F9F9"/>
+        <SolidColorBrush x:Key="TabItemHotBorderBrush" Color="#3C7FB1"/>
+        <SolidColorBrush x:Key="TabItemDisabledBackground" Color="#F4F4F4"/>
+        <SolidColorBrush x:Key="TabItemDisabledBorderBrush" Color="#FFC9C7BA"/>
+        <Style x:Key="TabItemReportStyle" TargetType="{x:Type TabItem}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource TabItemFocusVisual}"/>
+            <Setter Property="Foreground" Value="#FFBEC3C7"/>
+            <Setter Property="Padding" Value="6,1,6,1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TabControlNormalBorderBrush}"/>
+            <Setter Property="Background" Value="{StaticResource ButtonNormalBackground}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="FontFamily" Value="Hiragino Sans GB W3"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Grid SnapsToDevicePixels="true" Margin="-1,0,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition/>
+                                <ColumnDefinition Width="3*"/>
+                            </Grid.ColumnDefinitions>
+                            <Border x:Name="border" BorderBrush="#FF1F1F1F" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Height="29" VerticalAlignment="Stretch" Width="Auto" BorderThickness="1,1,1,0"/>
+                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" Padding="{TemplateBinding Padding}" Grid.ColumnSpan="1" Margin="0,0,10,0" Grid.Column="1">
+                                <ContentPresenter x:Name="Content" ContentSource="Header" HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                            </Border>
+                            <ctrls:IconBtn x:Name="btn_DeleteReport" HorizontalAlignment="Left" VerticalAlignment="Center" Click="btn_DeleteReport_Click" Normal="/TrboX;component/resource/images/close_18_18_h.png" Width="18" Height="18" Hover="/TrboX;component/resource/images/close_18_18_n.png" Margin="10,0,5,2"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true"/>
+                            <Trigger Property="IsSelected" Value="true">
+                                <Setter Property="Panel.ZIndex" Value="1"/>
+                                <Setter Property="Foreground" Value="White"/>
+                                <Setter Property="Background" TargetName="border" Value="#FF535353"/>
+
+                            </Trigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsSelected" Value="false"/>
+                                    <Condition Property="IsMouseOver" Value="true"/>
+                                </MultiTrigger.Conditions>
+                            </MultiTrigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TabItemReportNewStyle" TargetType="{x:Type TabItem}">
+            <Setter Property="FocusVisualStyle" Value="{StaticResource TabItemFocusVisual}"/>
+            <Setter Property="Foreground" Value="#FFBEC3C7"/>
+            <Setter Property="Padding" Value="6,1,6,1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TabControlNormalBorderBrush}"/>
+            <Setter Property="Background" Value="{StaticResource ButtonNormalBackground}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabItem}">
+                        <Grid SnapsToDevicePixels="true" Margin="0,0.581,0,0.169" Width="32">
+                            <Border x:Name="border" BorderBrush="#FF1F1F1F" Grid.ColumnSpan="2" HorizontalAlignment="Stretch" Height="Auto" VerticalAlignment="Stretch" Width="Auto" BorderThickness="0" Margin="0"/>
+                            <Border x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0" Padding="{TemplateBinding Padding}" Grid.ColumnSpan="1" Margin="0,0,-2,0" Grid.Column="1" Visibility="Collapsed">
+                                <ContentPresenter x:Name="Content" ContentSource="Header" HorizontalAlignment="{Binding HorizontalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{Binding VerticalContentAlignment, RelativeSource={RelativeSource AncestorType={x:Type ItemsControl}}}"/>
+                            </Border>
+                            <ctrls:IconBtn x:Name="btn_NewReport" HorizontalAlignment="Center" VerticalAlignment="Center" Normal="/TrboX;component/resource/images/new_22_22_n.png" Width="22" Height="22"  Margin="0"  Click="btn_NewReport_Click" Grid.ColumnSpan="2" Disable="/TrboX;component/resource/images/new_22_22_d.png" Hover="/TrboX;component/resource/images/new_22_22_h.png" Press="/TrboX;component/resource/images/new_22_22_p.png"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TabControlReportStyle" TargetType="{x:Type TabControl}">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="Padding" Value="4,4,4,4"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TabControlNormalBorderBrush}"/>
+            <Setter Property="Background" Value="#F9F9F9"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabControl}">
+                        <Grid ClipToBounds="true" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local" Margin="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition x:Name="ColumnDefinition0"/>
+                                <ColumnDefinition x:Name="ColumnDefinition1" Width="0"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition x:Name="RowDefinition0" Height="Auto"/>
+                                <RowDefinition x:Name="RowDefinition1" Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TabPanel x:Name="HeaderPanel" Grid.Column="0" IsItemsHost="true" Margin="0" Grid.Row="0" KeyboardNavigation.TabIndex="1" Panel.ZIndex="1" Visibility="Collapsed"/>
+                            <Border x:Name="ContentPanel" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.Column="0" KeyboardNavigation.DirectionalNavigation="Contained" Grid.Row="1" KeyboardNavigation.TabIndex="2" KeyboardNavigation.TabNavigation="Local">
+                                <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="TabStripPlacement" Value="Bottom">
+                                <Setter Property="Grid.Row" TargetName="HeaderPanel" Value="1"/>
+                                <Setter Property="Grid.Row" TargetName="ContentPanel" Value="0"/>
+                                <Setter Property="Height" TargetName="RowDefinition0" Value="*"/>
+                                <Setter Property="Height" TargetName="RowDefinition1" Value="Auto"/>
+                                <Setter Property="Margin" TargetName="HeaderPanel" Value="2,0,2,2"/>
+                            </Trigger>
+                            <Trigger Property="TabStripPlacement" Value="Left">
+                                <Setter Property="Grid.Row" TargetName="HeaderPanel" Value="0"/>
+                                <Setter Property="Grid.Row" TargetName="ContentPanel" Value="0"/>
+                                <Setter Property="Grid.Column" TargetName="HeaderPanel" Value="0"/>
+                                <Setter Property="Grid.Column" TargetName="ContentPanel" Value="1"/>
+                                <Setter Property="Width" TargetName="ColumnDefinition0" Value="Auto"/>
+                                <Setter Property="Width" TargetName="ColumnDefinition1" Value="*"/>
+                                <Setter Property="Height" TargetName="RowDefinition0" Value="*"/>
+                                <Setter Property="Height" TargetName="RowDefinition1" Value="0"/>
+                                <Setter Property="Margin" TargetName="HeaderPanel" Value="2,2,0,2"/>
+                            </Trigger>
+                            <Trigger Property="TabStripPlacement" Value="Right">
+                                <Setter Property="Grid.Row" TargetName="HeaderPanel" Value="0"/>
+                                <Setter Property="Grid.Row" TargetName="ContentPanel" Value="0"/>
+                                <Setter Property="Grid.Column" TargetName="HeaderPanel" Value="1"/>
+                                <Setter Property="Grid.Column" TargetName="ContentPanel" Value="0"/>
+                                <Setter Property="Width" TargetName="ColumnDefinition0" Value="*"/>
+                                <Setter Property="Width" TargetName="ColumnDefinition1" Value="Auto"/>
+                                <Setter Property="Height" TargetName="RowDefinition0" Value="*"/>
+                                <Setter Property="Height" TargetName="RowDefinition1" Value="0"/>
+                                <Setter Property="Margin" TargetName="HeaderPanel" Value="0,2,2,2"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="{ComponentResourceKey ResourceId=DataGridSelectAllButtonStyle, TypeInTargetAssembly={x:Type DataGrid}}" TargetType="{x:Type Button}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid>
+                            <Rectangle x:Name="Border" Fill="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" SnapsToDevicePixels="True"/>
+                            <Polygon x:Name="Arrow" Fill="Black" HorizontalAlignment="Right" Margin="8,8,3,3" Opacity="0.15" Points="0,10 10,10 10,0" Stretch="Uniform" VerticalAlignment="Bottom"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Stroke" TargetName="Border" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="True">
+                                <Setter Property="Fill" TargetName="Border" Value="{DynamicResource {x:Static SystemColors.ControlDarkBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Visibility" TargetName="Arrow" Value="Collapsed"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="DataGridReportStyle" TargetType="{x:Type DataGrid}">
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+            <Setter Property="Foreground" Value="#FFC9CDD2"/>
+            <Setter Property="BorderBrush" Value="#FF688CAF"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="RowDetailsVisibilityMode" Value="VisibleWhenSelected"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="ColumnHeaderStyle" Value="{DynamicResource DataGridColumnHeaderReportStyle}"/>
+            <Setter Property="ColumnHeaderHeight" Value="33"/>
+            <Setter Property="HeadersVisibility" Value="Column"/>
+            <Setter Property="IsReadOnly" Value="True"/>
+            <Setter Property="RowHeight" Value="32"/>
+            <Setter Property="SelectionMode" Value="Single"/>
+            <Setter Property="RowStyle" Value="{DynamicResource DataGridRowReportStyle}"/>
+            <Setter Property="HorizontalGridLinesBrush" Value="#FF0C0C0D"/>
+            <Setter Property="VerticalGridLinesBrush" Value="#FF535353"/>
+            <Setter Property="GridLinesVisibility" Value="Vertical"/>
+            <Setter Property="HorizontalScrollBarVisibility" Value="Disabled"/>
+            <Setter Property="CellStyle" Value="{DynamicResource DataGridCellReportStyle}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGrid}">
+                        <Border Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True" BorderThickness="0" BorderBrush="#FF1F1F1F">
+                            <ScrollViewer x:Name="DG_ScrollViewer" Focusable="false" Template="{DynamicResource ScrollViewerControlReportTemplate}">
+                                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </ScrollViewer>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsGrouping" Value="true">
+                    <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <ControlTemplate x:Key="ScrollViewerControlReportTemplate" TargetType="{x:Type ScrollViewer}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Button Command="{x:Static DataGrid.SelectAllCommand}" Focusable="false" Style="{DynamicResource {ComponentResourceKey ResourceId=DataGridSelectAllButtonStyle, TypeInTargetAssembly={x:Type DataGrid}}}" Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.All}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" Width="{Binding CellsPanelHorizontalOffset, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                <DataGridColumnHeadersPresenter x:Name="PART_ColumnHeadersPresenter" Grid.Column="1" Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Column}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" Grid.ColumnSpan="2" Grid.Row="1"/>
+                <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Column="2" Maximum="{TemplateBinding ScrollableHeight}" Orientation="Vertical" Grid.Row="1" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}" Style="{DynamicResource ScrollBarStyleNormal}" Background="{x:Null}" BorderBrush="{x:Null}" Width="20"/>
+                <Grid Grid.Column="1" Grid.Row="2">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="{Binding NonFrozenColumnsViewportHorizontalOffset, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Column="1" Maximum="{TemplateBinding ScrollableWidth}" Orientation="Horizontal" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}" Style="{DynamicResource ScrollBarStyleNormal}" Background="{x:Null}" BorderBrush="{x:Null}" Height="20"/>
+                </Grid>
+            </Grid>
+        </ControlTemplate>
+        <Style x:Key="ColumnHeaderGripperStyle" TargetType="{x:Type Thumb}">
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Cursor" Value="SizeWE"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="DataGridColumnHeaderReportStyle" TargetType="{x:Type DataGridColumnHeader}">
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridColumnHeader}">
+                        <Grid>
+                            <Themes:DataGridHeaderBorder IsClickable="{TemplateBinding CanUserSort}" IsPressed="{TemplateBinding IsPressed}" IsHovered="{TemplateBinding IsMouseOver}" Padding="{TemplateBinding Padding}" SortDirection="{TemplateBinding SortDirection}" SeparatorVisibility="{TemplateBinding SeparatorVisibility}" Background="#FF2E2E2E" SeparatorBrush="{x:Null}" BorderThickness="0,0,1,1" BorderBrush="#FF1F1F1F">
+                                <Label Content="{TemplateBinding Content}" HorizontalAlignment="Center" VerticalAlignment="Center" Foreground="#FFC9CDD2" FontFamily="Hiragino Sans GB W3" FontSize="13"/>
+                            </Themes:DataGridHeaderBorder>
+                            <Thumb x:Name="PART_LeftHeaderGripper" HorizontalAlignment="Left" Style="{DynamicResource ThumbReportStyle}"/>
+                            <Thumb x:Name="PART_RightHeaderGripper" HorizontalAlignment="Right" Style="{StaticResource ColumnHeaderGripperStyle}"/>
+                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}" Visibility="Collapsed" Margin="0,210.5"/>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ThumbReportStyle" TargetType="{x:Type Thumb}">
+            <Setter Property="Width" Value="8"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Cursor" Value="SizeWE"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="DataGridRowReportStyle" TargetType="{x:Type DataGridRow}">
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            <Setter Property="SnapsToDevicePixels" Value="true"/>
+            <Setter Property="Validation.ErrorTemplate" Value="{x:Null}"/>
+            <Setter Property="ValidationErrorTemplate">
+                <Setter.Value>
+                    <ControlTemplate>
+                        <TextBlock Foreground="Red" Margin="2,0,0,0" Text="!" VerticalAlignment="Center"/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridRow}">
+                        <Border x:Name="DGR_Border" SnapsToDevicePixels="True" Background="#FF3B3B3D" BorderThickness="0" BorderBrush="{x:Null}" Padding="0,1">
+                            <SelectiveScrollingGrid>
+                                <SelectiveScrollingGrid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="*"/>
+                                </SelectiveScrollingGrid.ColumnDefinitions>
+                                <SelectiveScrollingGrid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                </SelectiveScrollingGrid.RowDefinitions>
+                                <DataGridCellsPresenter Grid.Column="1" ItemsPanel="{TemplateBinding ItemsPanel}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Visibility="Visible" Style="{DynamicResource DataGridCellsPresenterReportStyle}"/>
+                                <DataGridDetailsPresenter Grid.Column="1" Grid.Row="1" SelectiveScrollingGrid.SelectiveScrollingOrientation="{Binding AreRowDetailsFrozen, ConverterParameter={x:Static SelectiveScrollingOrientation.Vertical}, Converter={x:Static DataGrid.RowDetailsScrollingConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}" Visibility="{TemplateBinding DetailsVisibility}"/>
+                                <DataGridRowHeader Grid.RowSpan="2" SelectiveScrollingGrid.SelectiveScrollingOrientation="Vertical" Visibility="{Binding HeadersVisibility, ConverterParameter={x:Static DataGridHeadersVisibility.Row}, Converter={x:Static DataGrid.HeadersVisibilityConverter}, RelativeSource={RelativeSource AncestorType={x:Type DataGrid}}}"/>
+                            </SelectiveScrollingGrid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="Selector.IsSelected" Value="True">
+                                <Setter Property="Background" TargetName="DGR_Border" Value="#FF545D6E"/>
+                                <Setter Property="BorderBrush" TargetName="DGR_Border" Value="#FF0C0C0D"/>
+                                <Setter Property="Background" Value="{x:Null}"/>
+                                <Setter Property="BorderThickness" TargetName="DGR_Border" Value="0,1"/>
+                                <Setter Property="Padding" TargetName="DGR_Border" Value="0"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Background" TargetName="DGR_Border" Value="#FF45454A"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="DataGridCellsPresenterReportStyle" TargetType="{x:Type DataGridCellsPresenter}">
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridCellsPresenter}">
+                        <ItemsPresenter/>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <SolidColorBrush x:Key="ListBorder" Color="#828790"/>
+        <Style x:Key="{x:Static GridView.GridViewScrollViewerStyleKey}" TargetType="{x:Type ScrollViewer}">
+            <Setter Property="Focusable" Value="false"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                        <Grid Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <DockPanel Margin="{TemplateBinding Padding}">
+                                <ScrollViewer DockPanel.Dock="Top" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden">
+                                    <GridViewHeaderRowPresenter AllowsColumnReorder="{Binding TemplatedParent.View.AllowsColumnReorder, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderContainerStyle="{Binding TemplatedParent.View.ColumnHeaderContainerStyle, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderToolTip="{Binding TemplatedParent.View.ColumnHeaderToolTip, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderStringFormat="{Binding TemplatedParent.View.ColumnHeaderStringFormat, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderContextMenu="{Binding TemplatedParent.View.ColumnHeaderContextMenu, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderTemplate="{Binding TemplatedParent.View.ColumnHeaderTemplate, RelativeSource={RelativeSource TemplatedParent}}" Columns="{Binding TemplatedParent.View.Columns, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderTemplateSelector="{Binding TemplatedParent.View.ColumnHeaderTemplateSelector, RelativeSource={RelativeSource TemplatedParent}}" Margin="2,0,2,0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                                </ScrollViewer>
+                                <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" KeyboardNavigation.DirectionalNavigation="Local" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </DockPanel>
+                            <ScrollBar x:Name="PART_HorizontalScrollBar" Cursor="Arrow" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0.0" Orientation="Horizontal" Grid.Row="1" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}"/>
+                            <ScrollBar x:Name="PART_VerticalScrollBar" Cursor="Arrow" Grid.Column="1" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0.0" Orientation="Vertical" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}"/>
+                            <DockPanel Background="{Binding Background, ElementName=PART_VerticalScrollBar}" Grid.Column="1" LastChildFill="false" Grid.Row="1">
+                                <Rectangle DockPanel.Dock="Left" Fill="White" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Width="1"/>
+                                <Rectangle DockPanel.Dock="Top" Fill="White" Height="1" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
+                            </DockPanel>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ListViewReportStyle" TargetType="{x:Type ListView}">
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource ListBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="#FF042271"/>
+            <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto"/>
+            <Setter Property="ScrollViewer.CanContentScroll" Value="true"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="Both"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListView}">
+                        <Themes:ListBoxChrome x:Name="Bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" RenderMouseOver="{TemplateBinding IsMouseOver}" RenderFocused="{TemplateBinding IsKeyboardFocusWithin}" SnapsToDevicePixels="true">
+                            <ScrollViewer Padding="{TemplateBinding Padding}" Style="{DynamicResource ScrollViewerReportStyle}">
+                                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </ScrollViewer>
+                        </Themes:ListBoxChrome>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Background" TargetName="Bd" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+                            </Trigger>
+                            <Trigger Property="IsGrouping" Value="true">
+                                <Setter Property="ScrollViewer.CanContentScroll" Value="false"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <LinearGradientBrush x:Key="GridViewColumnHeaderBackground" EndPoint="0,1" StartPoint="0,0">
+            <GradientStop Color="#FFFFFFFF" Offset="0"/>
+            <GradientStop Color="#FFFFFFFF" Offset="0.4091"/>
+            <GradientStop Color="#FFF7F8F9" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="GridViewColumnHeaderBorderBackground" EndPoint="0,1" StartPoint="0,0">
+            <GradientStop Color="#FFF2F2F2" Offset="0"/>
+            <GradientStop Color="#FFD5D5D5" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="GridViewColumnHeaderHoverBackground" EndPoint="0,1" StartPoint="0,0">
+            <GradientStop Color="#FFBDEDFF" Offset="0"/>
+            <GradientStop Color="#FFB7E7FB" Offset="1"/>
+        </LinearGradientBrush>
+        <LinearGradientBrush x:Key="GridViewColumnHeaderPressBackground" EndPoint="0,1" StartPoint="0,0">
+            <GradientStop Color="#FF8DD6F7" Offset="0"/>
+            <GradientStop Color="#FF8AD1F5" Offset="1"/>
+        </LinearGradientBrush>
+        <Style x:Key="GridViewColumnHeaderGripper" TargetType="{x:Type Thumb}">
+            <Setter Property="Canvas.Right" Value="-9"/>
+            <Setter Property="Width" Value="18"/>
+            <Setter Property="Height" Value="{Binding ActualHeight, RelativeSource={RelativeSource TemplatedParent}}"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Background" Value="{StaticResource GridViewColumnHeaderBorderBackground}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Thumb}">
+                        <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                            <Rectangle Fill="{TemplateBinding Background}" HorizontalAlignment="Center" Width="1"/>
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="GridViewColumnHeaderReportStyle" TargetType="{x:Type GridViewColumnHeader}">
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Background" Value="{StaticResource GridViewColumnHeaderBackground}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource GridViewColumnHeaderBorderBackground}"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding" Value="2,0,2,0"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+                        <Grid SnapsToDevicePixels="true">
+                            <Border x:Name="HeaderBorder" BorderThickness="0,1,0,1" Background="#FFA29595">
+                                <Grid>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition MaxHeight="7"/>
+                                        <RowDefinition/>
+                                    </Grid.RowDefinitions>
+                                    <Rectangle x:Name="UpperHighlight" Fill="#FFE3F7FF" Visibility="Collapsed"/>
+                                    <Border Padding="{TemplateBinding Padding}" Grid.RowSpan="2">
+                                        <ContentPresenter x:Name="HeaderContent" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="0,0,0,1" RecognizesAccessKey="True" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                                    </Border>
+                                </Grid>
+                            </Border>
+                            <Border x:Name="HeaderHoverBorder" BorderThickness="1,0,1,1" Margin="1,1,0,0"/>
+                            <Border x:Name="HeaderPressBorder" BorderThickness="1,1,1,0" Margin="1,0,0,1"/>
+                            <Canvas>
+                                <Thumb x:Name="PART_HeaderGripper" Style="{StaticResource GridViewColumnHeaderGripper}" Background="{x:Null}"/>
+                            </Canvas>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="true">
+                                <Setter Property="Background" TargetName="HeaderBorder" Value="{StaticResource GridViewColumnHeaderHoverBackground}"/>
+                                <Setter Property="BorderBrush" TargetName="HeaderHoverBorder" Value="#FF88CBEB"/>
+                                <Setter Property="Visibility" TargetName="UpperHighlight" Value="Visible"/>
+                                <Setter Property="Background" TargetName="PART_HeaderGripper" Value="Transparent"/>
+                            </Trigger>
+                            <Trigger Property="IsPressed" Value="true">
+                                <Setter Property="Background" TargetName="HeaderBorder" Value="{StaticResource GridViewColumnHeaderPressBackground}"/>
+                                <Setter Property="BorderBrush" TargetName="HeaderHoverBorder" Value="#FF95DAF9"/>
+                                <Setter Property="BorderBrush" TargetName="HeaderPressBorder" Value="#FF7A9EB1"/>
+                                <Setter Property="Visibility" TargetName="UpperHighlight" Value="Visible"/>
+                                <Setter Property="Fill" TargetName="UpperHighlight" Value="#FFBCE4F9"/>
+                                <Setter Property="Visibility" TargetName="PART_HeaderGripper" Value="Hidden"/>
+                                <Setter Property="Margin" TargetName="HeaderContent" Value="1,1,0,0"/>
+                            </Trigger>
+                            <Trigger Property="Height" Value="Auto">
+                                <Setter Property="MinHeight" Value="20"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="Role" Value="Floating">
+                    <Setter Property="Opacity" Value="0.4082"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+                                <Canvas x:Name="PART_FloatingHeaderCanvas">
+                                    <Rectangle Fill="#FF000000" Height="{TemplateBinding ActualHeight}" Opacity="0.4697" Width="{TemplateBinding ActualWidth}"/>
+                                </Canvas>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+                <Trigger Property="Role" Value="Padding">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type GridViewColumnHeader}">
+                                <Border x:Name="HeaderBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="0,1,0,1" Background="{TemplateBinding Background}"/>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="Height" Value="Auto">
+                                        <Setter Property="MinHeight" Value="20"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="ScrollViewerReportStyle" TargetType="{x:Type ScrollViewer}">
+            <Setter Property="Focusable" Value="false"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ScrollViewer}">
+                        <Grid Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="*"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <DockPanel Margin="{TemplateBinding Padding}">
+                                <ScrollViewer DockPanel.Dock="Top" Focusable="false" HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Hidden" Template="{DynamicResource ScrollViewerControlReportItemTemplate}">
+                                    <GridViewHeaderRowPresenter AllowsColumnReorder="{Binding TemplatedParent.View.AllowsColumnReorder, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderToolTip="{Binding TemplatedParent.View.ColumnHeaderToolTip, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderStringFormat="{Binding TemplatedParent.View.ColumnHeaderStringFormat, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderContextMenu="{Binding TemplatedParent.View.ColumnHeaderContextMenu, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderTemplate="{Binding TemplatedParent.View.ColumnHeaderTemplate, RelativeSource={RelativeSource TemplatedParent}}" Columns="{Binding TemplatedParent.View.Columns, RelativeSource={RelativeSource TemplatedParent}}" ColumnHeaderTemplateSelector="{Binding TemplatedParent.View.ColumnHeaderTemplateSelector, RelativeSource={RelativeSource TemplatedParent}}" Margin="0" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" ColumnHeaderContainerStyle="{DynamicResource GridViewColumnHeaderReportStyle}"/>
+                                </ScrollViewer>
+                                <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" KeyboardNavigation.DirectionalNavigation="Local" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </DockPanel>
+                            <ScrollBar x:Name="PART_HorizontalScrollBar" Cursor="Arrow" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0.0" Orientation="Horizontal" Grid.Row="1" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}" Style="{DynamicResource ScrollBarStyleNormal}"/>
+                            <ScrollBar x:Name="PART_VerticalScrollBar" Cursor="Arrow" Grid.Column="1" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0.0" Orientation="Vertical" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}" Style="{DynamicResource ScrollBarStyleNormal}"/>
+                            <DockPanel Background="{Binding Background, ElementName=PART_VerticalScrollBar}" Grid.Column="1" LastChildFill="false" Grid.Row="1">
+                                <Rectangle DockPanel.Dock="Left" Fill="White" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Width="1"/>
+                                <Rectangle DockPanel.Dock="Top" Fill="White" Height="1" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"/>
+                            </DockPanel>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <ControlTemplate x:Key="ScrollViewerControlReportItemTemplate" TargetType="{x:Type ScrollViewer}">
+            <Grid x:Name="Grid" Background="{TemplateBinding Background}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Rectangle x:Name="Corner" Grid.Column="1" Fill="{DynamicResource {x:Static SystemColors.ControlBrushKey}}" Grid.Row="1"/>
+                <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" CanContentScroll="{TemplateBinding CanContentScroll}" CanHorizontallyScroll="False" CanVerticallyScroll="False" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" Grid.Column="0" Margin="{TemplateBinding Padding}" Grid.Row="0"/>
+                <ScrollBar x:Name="PART_VerticalScrollBar" AutomationProperties.AutomationId="VerticalScrollBar" Cursor="Arrow" Grid.Column="1" Maximum="{TemplateBinding ScrollableHeight}" Minimum="0" Grid.Row="0" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" Value="{Binding VerticalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportHeight}"/>
+                <ScrollBar x:Name="PART_HorizontalScrollBar" AutomationProperties.AutomationId="HorizontalScrollBar" Cursor="Arrow" Grid.Column="0" Maximum="{TemplateBinding ScrollableWidth}" Minimum="0" Orientation="Horizontal" Grid.Row="1" Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" Value="{Binding HorizontalOffset, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}" ViewportSize="{TemplateBinding ViewportWidth}"/>
+            </Grid>
+        </ControlTemplate>
+        <SolidColorBrush x:Key="{x:Static DataGrid.FocusBorderBrushKey}" Color="#FF000000"/>
+        <Style x:Key="DataGridCellReportStyle" TargetType="{x:Type DataGridCell}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderBrush" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type DataGridCell}">
+                        <Border SnapsToDevicePixels="True">
+                            <Label Content="{TemplateBinding Content}" Foreground="#FFBEC3C7" FontFamily="Hiragino Sans GB W3" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0"/>
+                            <!--<ContentPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/> -->
+                        </Border>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+            <Style.Triggers>
+                <Trigger Property="IsSelected" Value="True">
+                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.HighlightTextBrushKey}}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.HighlightBrushKey}}"/>
+                </Trigger>
+                <Trigger Property="IsKeyboardFocusWithin" Value="True">
+                    <Setter Property="BorderBrush" Value="{DynamicResource {x:Static DataGrid.FocusBorderBrushKey}}"/>
+                </Trigger>
+                <MultiTrigger>
+                    <MultiTrigger.Conditions>
+                        <Condition Property="IsSelected" Value="true"/>
+                        <Condition Property="Selector.IsSelectionActive" Value="false"/>
+                    </MultiTrigger.Conditions>
+                    <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.ControlBrushKey}}"/>
+                    <Setter Property="BorderBrush" Value="{DynamicResource {x:Static SystemColors.ControlDarkDarkBrushKey}}"/>
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+                </MultiTrigger>
+                <Trigger Property="IsEnabled" Value="false">
+                    <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <Style x:Key="TabControlReportTitle" TargetType="{x:Type TabControl}">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="Padding" Value="4,4,4,4"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TabControlNormalBorderBrush}"/>
+            <Setter Property="Background" Value="#F9F9F9"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TabControl}">
+                        <Grid ClipToBounds="true" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local" Margin="0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition x:Name="ColumnDefinition0"/>
+                                <ColumnDefinition x:Name="ColumnDefinition1" Width="0"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition x:Name="RowDefinition0" Height="Auto"/>
+                                <RowDefinition x:Name="RowDefinition1" Height="*"/>
+                            </Grid.RowDefinitions>
+                            <TabPanel x:Name="HeaderPanel" Grid.Column="0" IsItemsHost="true" Margin="0" Grid.Row="0" KeyboardNavigation.TabIndex="1" Panel.ZIndex="1"/>
+                            <Border x:Name="ContentPanel" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.Column="0" KeyboardNavigation.DirectionalNavigation="Contained" Grid.Row="1" KeyboardNavigation.TabIndex="2" KeyboardNavigation.TabNavigation="Local" Visibility="Collapsed">
+                                <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"/>
+                            </Border>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="TabStripPlacement" Value="Bottom">
+                                <Setter Property="Grid.Row" TargetName="HeaderPanel" Value="1"/>
+                                <Setter Property="Grid.Row" TargetName="ContentPanel" Value="0"/>
+                                <Setter Property="Height" TargetName="RowDefinition0" Value="*"/>
+                                <Setter Property="Height" TargetName="RowDefinition1" Value="Auto"/>
+                                <Setter Property="Margin" TargetName="HeaderPanel" Value="2,0,2,2"/>
+                            </Trigger>
+                            <Trigger Property="TabStripPlacement" Value="Left">
+                                <Setter Property="Grid.Row" TargetName="HeaderPanel" Value="0"/>
+                                <Setter Property="Grid.Row" TargetName="ContentPanel" Value="0"/>
+                                <Setter Property="Grid.Column" TargetName="HeaderPanel" Value="0"/>
+                                <Setter Property="Grid.Column" TargetName="ContentPanel" Value="1"/>
+                                <Setter Property="Width" TargetName="ColumnDefinition0" Value="Auto"/>
+                                <Setter Property="Width" TargetName="ColumnDefinition1" Value="*"/>
+                                <Setter Property="Height" TargetName="RowDefinition0" Value="*"/>
+                                <Setter Property="Height" TargetName="RowDefinition1" Value="0"/>
+                                <Setter Property="Margin" TargetName="HeaderPanel" Value="2,2,0,2"/>
+                            </Trigger>
+                            <Trigger Property="TabStripPlacement" Value="Right">
+                                <Setter Property="Grid.Row" TargetName="HeaderPanel" Value="0"/>
+                                <Setter Property="Grid.Row" TargetName="ContentPanel" Value="0"/>
+                                <Setter Property="Grid.Column" TargetName="HeaderPanel" Value="1"/>
+                                <Setter Property="Grid.Column" TargetName="ContentPanel" Value="0"/>
+                                <Setter Property="Width" TargetName="ColumnDefinition0" Value="*"/>
+                                <Setter Property="Width" TargetName="ColumnDefinition1" Value="Auto"/>
+                                <Setter Property="Height" TargetName="RowDefinition0" Value="*"/>
+                                <Setter Property="Height" TargetName="RowDefinition1" Value="0"/>
+                                <Setter Property="Margin" TargetName="HeaderPanel" Value="0,2,2,2"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="CheckBoxToogleStyle" TargetType="{x:Type CheckBox}">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="Background" Value="{StaticResource CheckBoxFillNormal}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource CheckBoxStroke}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="FocusVisualStyle" Value="{StaticResource EmptyCheckBoxFocusVisual}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type CheckBox}">
+                        <Border x:Name="border" BorderBrush="Black" BorderThickness="0" Background="{x:Null}">
+                            <Grid Height="Auto" Margin="0">
+                                <ed:RegularPolygon x:Name="regularPolygon" Fill="#FFB2B6B9" Height="5" InnerRadius="1" Margin="-3,0,-1,0" PointCount="3" Stretch="Fill" Stroke="Black" Width="12" RenderTransformOrigin="0.5,0.5" StrokeThickness="0" VerticalAlignment="Center" HorizontalAlignment="Left">
+                                    <ed:RegularPolygon.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform/>
+                                            <SkewTransform/>
+                                            <RotateTransform Angle="-90"/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </ed:RegularPolygon.RenderTransform>
+                                </ed:RegularPolygon>
+                                <ed:RegularPolygon x:Name="regularPolygon1" Fill="#FFB2B6B9" Height="5" InnerRadius="1" Margin="-1,0,-3,0" PointCount="3" Stretch="Fill" Stroke="Black" Width="12" RenderTransformOrigin="0.5,0.5" StrokeThickness="0" VerticalAlignment="Center" HorizontalAlignment="Center">
+                                    <ed:RegularPolygon.RenderTransform>
+                                        <TransformGroup>
+                                            <ScaleTransform/>
+                                            <SkewTransform/>
+                                            <RotateTransform Angle="90"/>
+                                            <TranslateTransform/>
+                                        </TransformGroup>
+                                    </ed:RegularPolygon.RenderTransform>
+                                </ed:RegularPolygon>
+                            </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Fill" TargetName="regularPolygon" Value="#FF5695DB"/>
+                                <Setter Property="Fill" TargetName="regularPolygon1" Value="#FF5695DB"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="True">
+                                <Setter Property="Visibility" TargetName="regularPolygon1" Value="Hidden"/>
+                            </Trigger>
+                            <Trigger Property="IsChecked" Value="False">
+                                <Setter Property="Visibility" TargetName="regularPolygon" Value="Hidden"/>
+                            </Trigger>
+                            <Trigger Property="HasContent" Value="true">
+                                <Setter Property="FocusVisualStyle" Value="{StaticResource CheckRadioFocusVisual}"/>
+                                <Setter Property="Padding" Value="4,0,0,0"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.GrayTextBrushKey}}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="ProgressBarStatusStyle" TargetType="{x:Type ProgressBar}">
+        	<Setter Property="Template">
+        		<Setter.Value>
+        			<ControlTemplate TargetType="{x:Type ProgressBar}">
+        				<Grid>
+					
+						<!-- 此 Border 用于显示跟踪。必须将其命名为 PART_Track -->
+        					<Border x:Name="PART_Track" Background="#7F9C9C9D" BorderBrush="{x:Null}" BorderThickness="0" CornerRadius="0"/>
+						
+						<!-- 此 Border 用于显示进度。必须将其命名为 PART_Indicator，控件才能起作用 -->
+        					<Border HorizontalAlignment="Left" x:Name="PART_Indicator" Background="#FF78ACE5" BorderThickness="0" CornerRadius="0" Margin="0"/>
+					
+        				</Grid>
+        			</ControlTemplate>
+        		</Setter.Value>
+        	</Setter>
+        </Style>
+
     </local:MyWindow.Resources>
 
     <!--<local:MyWindow.CommandBindings>
@@ -1104,9 +1839,9 @@
                                 <MenuItem x:Name="menu_File_NewTracker" Header="巡更任务" Height="28" Margin="0" Style="{DynamicResource MenuItemStyleSub}" VerticalAlignment="Top" Visibility="Collapsed" />
                             </MenuItem>
                             <MenuItem  x:Name="menu_File_Save" Header="保存" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" IsEnabled="{Binding NeedSave, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Main}}}"/>
-                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="{DynamicResource CutOffRule}" Height="16"/>
-                            <MenuItem x:Name="menu_File_Export" Header="导出" Height="28" Margin="1,0" Style="{DynamicResource MenuItemStyleSub}" VerticalAlignment="Top" Foreground="White"/>
-                            <MenuItem x:Name="menu_File_Print" Header="打印" Height="28" Margin="1,0" Style="{DynamicResource MenuItemStyleSub}" VerticalAlignment="Top" Foreground="White"/>
+                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" BorderBrush="{x:Null}" Background="{x:Null}" Foreground="{DynamicResource CutOffRule}" Height="16" Visibility="Collapsed"/>
+                            <MenuItem x:Name="menu_File_Export" Header="导出" Height="28" Margin="1,0" Style="{DynamicResource MenuItemStyleSub}" VerticalAlignment="Top" Foreground="White" Visibility="{Binding IsEnabled, Converter={StaticResource FalseHide}, ElementName=btn_Export}"/>
+                            <MenuItem x:Name="menu_File_Print" Header="打印" Height="28" Margin="1,0" Style="{DynamicResource MenuItemStyleSub}" VerticalAlignment="Top" Foreground="White" Visibility="Collapsed"/>
                             <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
                             <MenuItem x:Name="menu_File_Exit" Header="退出TrboX" Height="28" Margin="1,0" Style="{DynamicResource MenuItemStyleSub}" VerticalAlignment="Top" Foreground="White"/>
                         </MenuItem>
@@ -1128,7 +1863,7 @@
                             <MenuItem Header="导航窗口" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top">
                                 <MenuItem Header="语音调度" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" IsChecked="True" IsEnabled="False"/>
                                 <MenuItem x:Name="menu_View_Nav_Map" Header="地图" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" IsChecked="True"/>
-                                <MenuItem x:Name="menu_View_Nav_Recording" Header="录音" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" IsChecked="True"/>
+                                <MenuItem x:Name="menu_View_Nav_Recording" Header="录音" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" IsChecked="True" Visibility="Collapsed"/>
                                 <MenuItem x:Name="menu_View_Nav_Report" Header="报表" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" IsChecked="True"/>
                             </MenuItem>
                             <MenuItem x:Name="menu_View_Event" Header="事件窗口" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" IsChecked="True"/>
@@ -1185,14 +1920,14 @@
                         <MenuItem Header="工具(_T)" Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" Height="28">
                             <MenuItem  x:Name="menu_Tools_NewContact" Header="新建常用联系人" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top"/>
                             <MenuItem x:Name="menu_Tools_NewOperate" Header="新建快速操作" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top"/>
-                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
-                            <MenuItem x:Name="menu_Tools_Export" Header="导出配置" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top"/>
-                            <MenuItem x:Name="menu_Tools_Import" Header="导入配置" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top"/>
-                            <MenuItem x:Name="menu_Tools_Potions" Header="选项" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top"/>
+                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16" Visibility="Collapsed"/>
+                            <MenuItem x:Name="menu_Tools_Export" Header="导出配置" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" Visibility="Collapsed"/>
+                            <MenuItem x:Name="menu_Tools_Import" Header="导入配置" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" Visibility="Collapsed"/>
+                            <MenuItem x:Name="menu_Tools_Potions" Header="选项" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" Visibility="Collapsed"/>
                         </MenuItem>
                         <MenuItem Header="帮助(_H)" Style="{DynamicResource MenuItemStyleTilte}" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" Height="28">
-                            <MenuItem x:Name="menu_Help_Look" Header="查看帮助" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top"/>
-                            <MenuItem x:Name="menu_Help_About" Header="关于TrboX" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" Click="menu_Help_About_Click"/>
+                            <MenuItem x:Name="menu_Help_Look" Header="查看帮助" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" Visibility="Collapsed"/>
+                            <MenuItem x:Name="menu_Help_About" Header="关于TrboX" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top"/>
                         </MenuItem>
                     </Menu>
                     <DockPanel LastChildFill="False" HorizontalAlignment="Right">
@@ -1220,20 +1955,18 @@
                     <Path Data="M6.8333333,30 L178.16667,30" Height="1" Margin="-0.5,0" Stretch="Fill" VerticalAlignment="Top" DockPanel.Dock="Top" Stroke="{DynamicResource CutOffRuleTop}"/>
                     <Border BorderBrush="White" BorderThickness="0" HorizontalAlignment="Left" Padding="0,8">
                         <DockPanel LastChildFill="False" Margin="0">
-                            <Border BorderBrush="#FF1C1D1E" BorderThickness="0,0,1,0" Height="22" VerticalAlignment="Top" Margin="17,0,0,0" HorizontalAlignment="Left" Padding="5,0,0,0">
-                                <local:ListBtn VOffset="8"  Margin="5,0" Normal="/TrboX;component/resource/images/new_22_22_n.png" Height="22" Hover="/TrboX;component/resource/images/new_22_22_h.png" Press="/TrboX;component/resource/images/new_22_22_p.png" Disable="/TrboX;component/resource/images/new_22_22_d.png" Width="48" >
-                                    <local:ListBtn.Items>
-                                        <ComboBoxItem Content="新建短消息" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
-                                        <ComboBoxItem Content="新建位置查询" Style="{DynamicResource ComboBoxItemStyle1}" Height="28"  Width="120" Foreground="White"/>
-                                        <ComboBoxItem Content="新建指令控制" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
-                                        <ComboBoxItem Content="新建工单" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
-                                        <ComboBoxItem Content="新建巡更任务" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
-                                    </local:ListBtn.Items>
-                                </local:ListBtn>
-                            </Border>
-
-                            <Border BorderBrush="#FF1C1D1E" BorderThickness="0,0,1,0" Margin="0" Padding="5,0,3,0">
+                            <Border BorderBrush="#FF1C1D1E" BorderThickness="0" Height="22" VerticalAlignment="Top" Margin="17,0,0,0" HorizontalAlignment="Left" Padding="5,0,0,0">
                                 <DockPanel LastChildFill="False">
+                                    <local:ListBtn x:Name="lbtn_New" VOffset="8"  Margin="5,0" Normal="/TrboX;component/resource/images/new_22_22_n.png" Height="22" Hover="/TrboX;component/resource/images/new_22_22_h.png" Press="/TrboX;component/resource/images/new_22_22_p.png" Disable="/TrboX;component/resource/images/new_22_22_d.png" Width="48" >
+                                        <local:ListBtn.Items>
+                                            <ComboBoxItem Content="新建语音调度" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
+                                            <ComboBoxItem Content="新建短消息" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
+                                            <ComboBoxItem Content="新建位置查询" Style="{DynamicResource ComboBoxItemStyle1}" Height="28"  Width="120" Foreground="White"/>
+                                            <ComboBoxItem Content="新建指令控制" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
+                                            <ComboBoxItem Content="新建工单" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White" Visibility="Collapsed"/>
+                                            <ComboBoxItem Content="新建巡更任务" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White" Visibility="Collapsed"/>
+                                        </local:ListBtn.Items>
+                                    </local:ListBtn>
                                     <local:ListBtn VOffset="8"  Margin="5,0" Normal="/TrboX;component/resource/images/new_22_22_n.png" Height="22" Hover="/TrboX;component/resource/images/new_22_22_h.png" Press="/TrboX;component/resource/images/new_22_22_p.png" Disable="/TrboX;component/resource/images/new_22_22_d.png" Width="109" BorderThickness="1" Tag="0,4,4,0" Background="#FFC6E441" BorderBrush="#FF2F28BD" Template="{DynamicResource ListBtnTemplate}" Content="Testtest" IsSuper="True" Visibility="Collapsed" >
                                         <local:ListBtn.Items>
                                             <ComboBoxItem Content="新建短消息" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
@@ -1243,11 +1976,12 @@
                                             <ComboBoxItem Content="新建巡更任务" Style="{DynamicResource ComboBoxItemStyle1}" Height="28" Foreground="White"/>
                                         </local:ListBtn.Items>
                                     </local:ListBtn>
-                                    <local:IconBtn Height="22" VerticalAlignment="Center" Margin="5,0" Width="22" Disable="/TrboX;component/resource/images/save_22_22_d.png" Hover="/TrboX;component/resource/images/save_22_22_h.png" Normal="/TrboX;component/resource/images/save_22_22_n.png" Press="/TrboX;component/resource/images/save_22_22_p.png" ToolTip="保存"/>
-                                    <local:IconBtn Height="22" VerticalAlignment="Center" Margin="5,0" Width="22" Disable="/TrboX;component/resource/images/remove_22_22_d.png" Hover="/TrboX;component/resource/images/remove_22_22_h.png" Normal="/TrboX;component/resource/images/remove_22_22_n.png" Press="/TrboX;component/resource/images/remove_22_22_p.png" ToolTip="删除"/>
+                                    <local:IconBtn x:Name="btn_Save" Height="22" VerticalAlignment="Center" Margin="5,0" Width="22" Disable="/TrboX;component/resource/images/save_22_22_d.png" Hover="/TrboX;component/resource/images/save_22_22_h.png" Normal="/TrboX;component/resource/images/save_22_22_n.png" Press="/TrboX;component/resource/images/save_22_22_p.png" ToolTip="保存" IsEnabled="{Binding NeedSave, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:Main}}}"/>
+                                    <local:IconBtn x:Name="btn_Remove" Height="22" VerticalAlignment="Center" Margin="5,0" Width="22" Disable="/TrboX;component/resource/images/remove_22_22_d.png" Hover="/TrboX;component/resource/images/remove_22_22_h.png" Normal="/TrboX;component/resource/images/remove_22_22_n.png" Press="/TrboX;component/resource/images/remove_22_22_p.png" ToolTip="删除" Visibility="Collapsed"/>
+                                    <local:IconBtn x:Name="btn_Export" Height="16" VerticalAlignment="Center" Margin="8.5,4,8.5,0" Width="16" Disable="/TrboX;component/resource/images/export_16_16_d.png" Hover="/TrboX;component/resource/images/export_16_16_h.png" Normal="/TrboX;component/resource/images/export_16_16_n.png" Press="/TrboX;component/resource/images/export_16_16_p.png" ToolTip="导出" IsEnabled="False" />
                                 </DockPanel>
                             </Border>
-                            <Border x:Name="bdr_Tool_Base" BorderBrush="#FF1C1D1E" BorderThickness="0,0,1,0" Margin="0" Padding="5,0,3,0" IsEnabled="False">
+                            <Border x:Name="bdr_Tool_Base" BorderBrush="#FF1C1D1E" BorderThickness="1,0,0,0" Margin="0" Padding="5,0,3,0" IsEnabled="False">
                                 <DockPanel LastChildFill="False" Margin="0">
                                     <local:IconBtn x:Name="btn_Tool_PTT" ToolTip="呼叫" Height="22" VerticalAlignment="Center" Margin="5,0" Width="22" Disable="/TrboX;component/resource/images/call_22_22_d.png" Hover="/TrboX;component/resource/images/call_22_22_h.png" Normal="/TrboX;component/resource/images/call_22_22_n.png" Press="/TrboX;component/resource/images/call_22_22_p.png"/>
                                     <local:IconBtn x:Name="btn_Tool_Msg" ToolTip="短消息" Height="22" VerticalAlignment="Center" Margin="5,0" Width="22" Disable="/TrboX;component/resource/images/short_message_22_22_d.png" Hover="/TrboX;component/resource/images/short_message_22_22_h.png" Normal="/TrboX;component/resource/images/short_message_22_22_n.png" Press="/TrboX;component/resource/images/short_message_22_22_p.png"/>
@@ -1255,25 +1989,25 @@
                                     <local:IconBtn x:Name="btn_Tool_Job" ToolTip="工单" Height="22" VerticalAlignment="Center" Margin="5,0" Width="22" Disable="/TrboX;component/resource/images/job_tickets_22_22_d.png" Hover="/TrboX;component/resource/images/job_tickets_22_22_h.png" Normal="/TrboX;component/resource/images/job_tickets_22_22_n.png" Press="/TrboX;component/resource/images/job_tickets_22_22_p.png" Visibility="Collapsed"/>
                                 </DockPanel>
                             </Border>
-                            <Border x:Name="bdr_Tool_Fast" BorderBrush="#FF1C1D1E" BorderThickness="0,0,1,0" Margin="0" Padding="5,0,3,0">
+                            <Border x:Name="bdr_Tool_Fast" BorderBrush="#FF1C1D1E" BorderThickness="1,0,0,0" Margin="0" Padding="5,0,3,0" IsEnabled="{Binding IsChecked, ElementName=rad_Nav_Dispatch}">
                                 <DockPanel LastChildFill="False" Margin="0">
                                     <local:IconBtn x:Name="btn_Tool_NewContact" Normal="/TrboX;component/resource/images/new_contact_22_22_n.png" Margin="5,0" VerticalAlignment="Center" ToolTip="添加常用联系人" Width="22" Disable="/TrboX;component/resource/images/new_contact_22_22_d.png" Hover="/TrboX;component/resource/images/new_contact_22_22_h.png" Press="/TrboX;component/resource/images/new_contact_22_22_p.png" />
                                     <local:IconBtn x:Name="btn_Tool_NewFastOperate" Normal="/TrboX;component/resource/images/new_operate_22_22_n.png" Margin="5,0" VerticalAlignment="Center" ToolTip="添加快速操作" Width="22" Disable="/TrboX;component/resource/images/new_operate_22_22_d.png" Hover="/TrboX;component/resource/images/new_operate_22_22_h.png" Press="/TrboX;component/resource/images/new_operate_22_22_p.png" />
                                 </DockPanel>
                             </Border>
-                            <Border x:Name="bdr_Tool_Ctrl" BorderBrush="#FF1C1D1E" BorderThickness="0,0,1,0" Margin="0" Padding="5,0,3,0" IsEnabled="False">
+                            <Border x:Name="bdr_Tool_Ctrl" BorderBrush="#FF1C1D1E" BorderThickness="1,0,0,0" Margin="0" Padding="5,0,3,0" IsEnabled="False">
                                 <DockPanel LastChildFill="False" Margin="0">
                                     <local:IconBtn x:Name="btn_Tool_Check" Normal="/TrboX;component/resource/images/online_check_22_22_n.png" Margin="5,0" VerticalAlignment="Center" ToolTip="在线检测" Click="btn_Tool_Check_Click" Hover="/TrboX;component/resource/images/online_check_22_22_h.png" Disable="/TrboX;component/resource/images/online_check_22_22_d.png" Press="/TrboX;component/resource/images/online_check_22_22_p.png" Width="22" />
                                     <local:IconBtn x:Name="btn_Tool_Monitor" Normal="/TrboX;component/resource/images/minitor_22_22_n.png" Margin="5,0" VerticalAlignment="Center" ToolTip="远程监听" Click="btn_Tool_Monitor_Click" Hover="/TrboX;component/resource/images/minitor_22_22_h.png" Disable="/TrboX;component/resource/images/minitor_22_22_d.png" Press="/TrboX;component/resource/images/minitor_22_22_p.png" Width="22" />
                                     <local:IconBtn x:Name="btn_Tool_Start" Normal="/TrboX;component/resource/images/power_up_22_22_n.png" Margin="5,0" VerticalAlignment="Center" ToolTip="遥开" Hover="/TrboX;component/resource/images/power_up_22_22_h.png" Disable="/TrboX;component/resource/images/power_up_22_22_d.png" Press="/TrboX;component/resource/images/power_up_22_22_p.png" Width="22" />
                                     <local:IconBtn x:Name="btn_Tool_Shut" Normal="/TrboX;component/resource/images/shutdown_22_22_n.png" Margin="5,0" VerticalAlignment="Center" ToolTip="遥毙" Hover="/TrboX;component/resource/images/shutdown_22_22_h.png" Disable="/TrboX;component/resource/images/shutdown_22_22_d.png" Press="/TrboX;component/resource/images/shutdown_22_22_p.png" Width="22" />
-                                    <local:IconBtn x:Name="btn_Tool_Sleep" Normal="/TrboX;component/resource/images/sleep_22_22_n.png" Margin="5,0" VerticalAlignment="Center" ToolTip="遥晕" Hover="/TrboX;component/resource/images/sleep_22_22_h.png" Disable="/TrboX;component/resource/images/sleep_22_22_d.png" Press="/TrboX;component/resource/images/sleep_22_22_p.png" Width="22" />
+                                    <local:IconBtn x:Name="btn_Tool_Sleep" Normal="/TrboX;component/resource/images/sleep_22_22_n.png" Margin="5,0" VerticalAlignment="Center" ToolTip="遥晕" Hover="/TrboX;component/resource/images/sleep_22_22_h.png" Disable="/TrboX;component/resource/images/sleep_22_22_d.png" Press="/TrboX;component/resource/images/sleep_22_22_p.png" Width="22" Visibility="Collapsed" />
                                 </DockPanel>
                             </Border>
-                            <Border x:Name="bdr_Tool_Help" BorderBrush="#FF1C1D1E" BorderThickness="0" Margin="0" Padding="5,0,3,0">
+                            <Border x:Name="bdr_Tool_Help" BorderBrush="#FF1C1D1E" BorderThickness="1,0,0,0" Margin="0" Padding="5,0,3,0">
                                 <DockPanel LastChildFill="False" Margin="0">
-                                    <local:IconBtn x:Name="btn_Help" Normal="/TrboX;component/resource/images/help_22_22_n.png" Margin="5,0" VerticalAlignment="Center" ToolTip="查看帮助" Width="22" Hover="/TrboX;component/resource/images/help_22_22_h.png" Disable="/TrboX;component/resource/images/help_22_22_d.png" Press="/TrboX;component/resource/images/help_22_22_p.png" />
-                                    <local:IconBtn x:Name="btn_About" Normal="/TrboX;component/resource/images/about_22_22_n.png" Margin="5,0" VerticalAlignment="Center" ToolTip="关于TrboX" Click="btn_About_Click" Width="22" Hover="/TrboX;component/resource/images/about_22_22_h.png" Disable="/TrboX;component/resource/images/about_22_22_d.png" Press="/TrboX;component/resource/images/about_22_22_p.png"/>
+                                    <local:IconBtn x:Name="btn_Help" Normal="/TrboX;component/resource/images/help_22_22_n.png" Margin="5,0" VerticalAlignment="Center" ToolTip="查看帮助" Width="22" Hover="/TrboX;component/resource/images/help_22_22_h.png" Disable="/TrboX;component/resource/images/help_22_22_d.png" Press="/TrboX;component/resource/images/help_22_22_p.png" Visibility="Collapsed" />
+                                    <local:IconBtn x:Name="btn_About" Normal="/TrboX;component/resource/images/about_22_22_n.png" Margin="5,0" VerticalAlignment="Center" ToolTip="关于TrboX" Width="22" Hover="/TrboX;component/resource/images/about_22_22_h.png" Disable="/TrboX;component/resource/images/about_22_22_d.png" Press="/TrboX;component/resource/images/about_22_22_p.png"/>
 
                                 </DockPanel>
                             </Border>
@@ -1294,6 +2028,12 @@
                     <Border BorderBrush="#FFA68989" BorderThickness="0" DockPanel.Dock="Right">
                         <Label x:Name="lab_SysTime" Content="0000/00/00 00:00:00" VerticalAlignment="Center" HorizontalContentAlignment="Right" VerticalContentAlignment="Center" Margin="0" Foreground="#FFABABAB"/>
                     </Border>
+                    <Border BorderBrush="White" BorderThickness="0" DockPanel.Dock="Right" Margin="0,0,10,0">
+                    	<DockPanel x:Name="dck_ProcessStatus" LastChildFill="False" VerticalAlignment="Center" Margin="0" Visibility="Collapsed">
+                    		<Label x:Name="lab_PrcessName" Content="正在导出：" VerticalAlignment="Center" VerticalContentAlignment="Center" Foreground="#FFABABAB"/>
+                    		<ProgressBar x:Name="pg_StstauPg" Height="11" Width="120" VerticalAlignment="Center" Margin="-2,2,0,0" Style="{DynamicResource ProgressBarStatusStyle}"/>
+                    	</DockPanel>
+                    </Border>
                 </DockPanel>
                 <!--<src:Contact x:Name="ChoiceContact" IsMultiple="False" DockPanel.Dock="Top" Margin="0,5,0,0"/>-->
             </Border>
@@ -1308,7 +2048,7 @@
                         <Grid x:Name="grd_Nav" Margin="0,0,8,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition x:Name="grd_Row_Mgr" MinHeight="34"/>
-                                <RowDefinition Height="83"  MaxHeight="83" MinHeight="42"/>
+                                <RowDefinition Height="124"  MaxHeight="124" MinHeight="42"/>
                             </Grid.RowDefinitions>
                             <Border BorderBrush="#FF0F0F10" BorderThickness="1" Margin="0,0,0,8" Background="#FF3B3B3D">
                                 <DockPanel>
@@ -1394,7 +2134,7 @@
                                     <RadioButton x:Name="rad_Nav_Dispatch" Content="语音调度" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" IsChecked="True" Height="41" Foreground="{DynamicResource fbg}" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D"/>
                                     <RadioButton x:Name="rad_Nav_Map" Content="地图" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" Height="41"  Foreground="{DynamicResource fbg}" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D"/>
                                     <RadioButton x:Name="rad_Nav_Recording" Content="录音" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" Height="41" Foreground="{DynamicResource fbg}" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D" Visibility="Collapsed"/>
-                                    <RadioButton x:Name="rad_Nav_Report" Content="报表" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" Height="41" Foreground="{DynamicResource fbg}" BorderThickness="0" BorderBrush="#FF0C0C0D" Visibility="Collapsed"/>
+                                    <RadioButton x:Name="rad_Nav_Report" Content="报表" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" Height="41" Foreground="{DynamicResource fbg}" BorderThickness="0" BorderBrush="#FF0C0C0D"/>
                                 </DockPanel>
                             </Border>
                             <GridSplitter x:Name="grdspl_Mgs_Nav" HorizontalAlignment="Stretch" Height="8" VerticalAlignment="Bottom" Margin="0" Background="#000C0103" d:IsLocked="True" d:IsHidden="True"/>
@@ -1415,7 +2155,7 @@
                                             <CheckBox x:Name="chk_MinIconView" Content="" VerticalAlignment="Center" ClipToBounds="True" DockPanel.Dock="Right" Style="{DynamicResource CheckBox-View-Style}" Visibility="{Binding IsChecked, Converter={StaticResource FalseHide}, ElementName=rad_Nav_Dispatch}" IsChecked="True"/>
                                         </DockPanel>
                                     </Border>
-                                    <Border x:Name="bdr_MaskMainTab" BorderBrush="Black" BorderThickness="0" ClipToBounds="True" DockPanel.Dock="Top">
+                                    <Border x:Name="bdr_MaskMainTab" BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" ClipToBounds="True">
                                         <TabControl x:Name="tab_main" BorderThickness="0" Margin="0,-22,0,0" ClipToBounds="True" Style="{DynamicResource TabControlStyleNormal}">
                                             <TabControl.SelectedIndex>
                                                 <MultiBinding  Converter="{StaticResource IndexFromRadio}" Mode="OneWay">
@@ -1440,17 +2180,21 @@
                                                     </Grid>
                                                 </DockPanel>
                                             </TabItem>
-                                            <TabItem Header="地图" Style="{DynamicResource SimpleTabItem}" Width="20" d:IsHidden="True">
+                                            <TabItem Header="地图" Style="{DynamicResource SimpleTabItem}" Width="20">
                                                 <DockPanel>
                                                     <DockPanel DockPanel.Dock="Top">
                                                         <Grid  x:Name="MyWebGrid" Margin="0"/>
                                                     </DockPanel>
                                                 </DockPanel>
                                             </TabItem>
-                                            <TabItem Header="录音" Style="{DynamicResource SimpleTabItem}" d:IsHidden="True">
+                                            <TabItem Header="录音" Style="{DynamicResource SimpleTabItem}">
                                                 <DockPanel>
                                                     <DockPanel LastChildFill="False" DockPanel.Dock="Top">
-                                                    	<RadioButton Content="RadioButton" HorizontalAlignment="Left" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" Foreground="#FFC9CDD2" Height="24" Padding="0"/>
+                                                        <RadioButton Content="RadioButton" HorizontalAlignment="Left" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" Foreground="#FFC9CDD2" Height="24" Padding="0"/>
+                                                        <DataGridColumnHeader Content="DataGridColumnHeader" Height="421" VerticalAlignment="Top" Style="{DynamicResource DataGridColumnHeaderReportStyle}" Foreground="#FFC9CDD2"/>
+                                                        <DataGridRow Style="{DynamicResource DataGridRowReportStyle}" DockPanel.Dock="Top" Height="30"/>
+                                                        <DataGridCell Content="DataGridCell" Style="{DynamicResource DataGridCellReportStyle}"/>
+                                                        <GridViewColumnHeader Content="GridViewColumnHeader" Style="{DynamicResource GridViewColumnHeaderReportStyle}"/>
                                                     </DockPanel>
                                                     <TreeViewItem Header="TreeViewItem" Height="112" Style="{DynamicResource TreeViewItemStyletest}" VerticalAlignment="Top">
                                                         <TreeViewItem.ContextMenu>
@@ -1459,30 +2203,123 @@
                                                     </TreeViewItem>
                                                 </DockPanel>
                                             </TabItem>
-                                            <TabItem Header="报表" Style="{DynamicResource SimpleTabItem}" Width="20">
-                                                <DockPanel>
-                                                    <TabControl>
-                                                        <TabItem Header="20161208.log">
-                                                            <Grid Background="#FFE5E5E5">
-                                                                <DataGrid x:Name="dat_Record" AutoGenerateColumns="False">
-                                                                    <DataGrid.Columns>
-                                                                        <DataGridTextColumn  Width="60" Binding="{Binding time}"  Header="日期"/>
-                                                                        <DataGridTextColumn  Width="60" Binding="{Binding target}"  Header="目标"/>
-                                                                        <DataGridTextColumn  Width="60" Binding="{Binding nat}"  Header="经度"/>
-                                                                        <DataGridTextColumn  Width="60" Binding="{Binding lat}"  Header="纬度"/>
-                                                                    </DataGrid.Columns>
+                                            <TabItem Header="报表" Style="{DynamicResource SimpleTabItem}" Width="20" Background="{x:Null}" ToolTip="新建报表">
+                                                <Grid>
+                                                    <DockPanel  Margin="22,12,22,30">
+                                                        <DockPanel Height="30" VerticalAlignment="Top" DockPanel.Dock="Top">
+                                                            <Border BorderBrush="Black" BorderThickness="0" Height="30" VerticalAlignment="Top" Width="1" Background="#FF1F1F1F" Visibility="{Binding Visibility, ElementName=dck_ReportList}"/>
+                                                            <TabControl x:Name="tab_Report" Background="#FF424244" BorderThickness="0" Style="{DynamicResource TabControlReportTitle}" Margin="0,0,1,0" Height="30" SelectedIndex="0" HorizontalAlignment="Left"/>
+                                                            <ctrls:IconBtn x:Name="btn_NewReportView" Height="22" VerticalAlignment="Center" Margin="5,0,0,0" Width="22" Normal="/TrboX;component/resource/images/new_22_22_n.png" Hover="/TrboX;component/resource/images/new_22_22_h.png" Disable="/TrboX;component/resource/images/new_22_22_d.png" Press="/TrboX;component/resource/images/new_22_22_p.png" HorizontalAlignment="Left"/>
+                                                        </DockPanel>
+                                                        <Border BorderBrush="Black" BorderThickness="1" DockPanel.Dock="Top">
+                                                            <DockPanel x:Name="dck_ReportList" Visibility="Collapsed">
+                                                                <Border BorderBrush="#FF1F1F1F" BorderThickness="0" Margin="0,0,0,-2" Width="250" Visibility="{Binding IsChecked, Converter={StaticResource FalseHide}, ElementName=chk_OnOffCon}">
+                                                                    <DockPanel LastChildFill="False" Margin="0,0,8,0">
+                                                                        <Grid DockPanel.Dock="Top">
+                                                                            <Grid.RowDefinitions>
+                                                                                <RowDefinition Height="20"/>
+                                                                                <RowDefinition Height="36"/>
+                                                                                <RowDefinition Height="36"/>
+                                                                                <RowDefinition Height="36"/>
+                                                                                <RowDefinition Height="36"/>
 
-                                                                </DataGrid>
-                                                            </Grid>
-                                                        </TabItem>
-                                                        <TabItem Header="20161209.log">
-                                                            <Grid Background="#FFE5E5E5"/>
-                                                        </TabItem>
-                                                        <TabItem Header="20161210.log" >
-                                                            <Grid Background="#FFE5E5E5"/>
-                                                        </TabItem>
-                                                    </TabControl>
-                                                </DockPanel>
+
+                                                                                <RowDefinition/>
+                                                                            </Grid.RowDefinitions>
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="85"/>
+                                                                                <ColumnDefinition Width="2*"/>
+                                                                                <ColumnDefinition Width="169*"/>
+                                                                            </Grid.ColumnDefinitions>
+                                                                            <Label Content="名称：" Margin="0,4.5" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="1" Height="27" Width="46" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                                            <Label Content="类型：" Margin="0,5.38" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="2" Height="25.24" Width="46" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                                            <Label Content="开始时间：" Margin="0,5.38" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="3" Height="25.24" Width="70" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                                            <Label Content="结束时间：" Margin="0,5.38" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="4" Height="25.24" Width="70" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                                            <ComboBox x:Name="cmb_ReportType" VerticalAlignment="Center" Margin="0" SelectedIndex="{Binding SelectedItem.Tag.Type, ElementName=tab_Report}" Grid.Row="2" Height="31" Grid.Column="2" Style="{DynamicResource ComboBoxStyleNormal}" Foreground="#FFBFBFBF" FontSize="13">
+                                                                                <ComboBoxItem x:Name="cbmIt_Call" Content="通话" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE"/>
+                                                                                <ComboBoxItem Content="短消息" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE"/>
+                                                                                <ComboBoxItem Content="位置信息" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE"/>
+                                                                            </ComboBox>
+                                                                            <TextBox x:Name="txt_ReportName" Height="31" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,2.5" Grid.Column="2" Grid.Row="1" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF4889EB" VerticalContentAlignment="Center" Text="{Binding SelectedItem.Tag.Name, ElementName=tab_Report}"/>
+                                                                            <Border BorderBrush="#FF505053" BorderThickness="1" VerticalAlignment="Center" Height="31" Grid.Row="3" Grid.Column="2" Margin="0" Background="#FF3B3B3D">
+                                                                                <ctrls:Dameer x:Name="dam_Start" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" Checked="True" Format="Custom" CustomFormat="yyyy-MM-dd HH:mm:ss" ShowCheckBox="False" ShowDropDown="False" FontSize="13" Foreground="#FFBFBFBF"/>
+                                                                            </Border>
+                                                                            <Border BorderBrush="#FF505053" BorderThickness="1" VerticalAlignment="Center" Height="31" Grid.Column="2" Grid.Row="4" Margin="0" Background="#FF3B3B3D">
+                                                                                <ctrls:Dameer x:Name="dam_End" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" Checked="True" Format="Custom" CustomFormat="yyyy-MM-dd HH:mm:ss" ShowCheckBox="False" ShowDropDown="False" FontSize="13" Foreground="#FFBFBFBF"/>
+                                                                            </Border>
+                                                                        </Grid>
+                                                                        <Grid DockPanel.Dock="Top" Visibility="{Binding IsSelected, Converter={StaticResource FalseHide}, ElementName=cbmIt_Call}">
+                                                                            <Grid.RowDefinitions>
+
+                                                                                <RowDefinition Height="36"/>
+                                                                                <RowDefinition Height="36"/>
+
+
+                                                                            </Grid.RowDefinitions>
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="85"/>
+                                                                                <ColumnDefinition Width="2*"/>
+                                                                                <ColumnDefinition Width="169*"/>
+                                                                            </Grid.ColumnDefinitions>
+                                                                            <Label Content="工作模式：" Margin="0,4.5" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                                            <Label Content="通话类型：" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="2" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                                            <ComboBox x:Name="cmb_CallType" VerticalAlignment="Center" Margin="0,2.5" SelectedIndex="{Binding SelectedItem.Tag.CallType, ElementName=tab_Report}" Grid.Row="2" Height="31" Grid.Column="2" Style="{DynamicResource ComboBoxStyleNormal}" Foreground="#FFBFBFBF" FontSize="13">
+                                                                                <ComboBoxItem Content="所用通话" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE" Tag="79"/>
+                                                                                <ComboBoxItem Content="组呼" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE" Tag="79"/>
+                                                                                <ComboBoxItem Content="个呼" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE" Tag="80"/>
+                                                                                <ComboBoxItem Content="全呼" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE" Tag="83"/>
+                                                                            </ComboBox>
+                                                                            <ComboBox x:Name="cmb_RecordType" VerticalAlignment="Center" Margin="0,2.5" SelectedIndex="{Binding SelectedItem.Tag.RecordType, ElementName=tab_Report}" Height="31" Grid.Column="2" Style="{DynamicResource ComboBoxStyleNormal}" Foreground="#FFBFBFBF" FontSize="13">
+                                                                                <ComboBoxItem Content="全部" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE"/>
+                                                                                <ComboBoxItem Content="IPSC" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE"/>
+                                                                                <ComboBoxItem Content="CPC" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE"/>
+                                                                                <ComboBoxItem Content="LCP" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE"/>
+                                                                            </ComboBox>
+                                                                        </Grid>
+                                                                        <Grid DockPanel.Dock="Top">
+                                                                            <Grid.RowDefinitions>
+                                                                                <RowDefinition Height="36"/>
+                                                                                <RowDefinition Height="70"/>
+
+                                                                                <RowDefinition/>
+                                                                            </Grid.RowDefinitions>
+                                                                            <Grid.ColumnDefinitions>
+                                                                                <ColumnDefinition Width="85"/>
+                                                                                <ColumnDefinition Width="2*"/>
+                                                                                <ColumnDefinition Width="169*"/>
+                                                                            </Grid.ColumnDefinitions>
+                                                                            <Button x:Name="btn_UpdateReport" Content="查  询" Margin="0" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Height="30" Width="120"  Style="{DynamicResource ButtonNormalStyle}" Tag="4,4,4,4" BorderThickness="0" Background="#FF4889EB" Foreground="White" FontSize="15" FontFamily="Hiragino Sans GB W6"/>
+                                                                            <Label Content="对讲机/组：" Margin="0,4,4,4" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#FFBFBFBF" FontSize="13" Width="77" Padding="5"/>
+                                                                            <TextBox x:Name="txt_ReportTraget" Height="31" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0" Grid.Column="2" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF4889EB" VerticalContentAlignment="Center" Text="{Binding SelectedItem.Tag.Traget, ElementName=tab_Report}"/>
+                                                                        </Grid>
+                                                                    </DockPanel>
+                                                                </Border>
+                                                                <CheckBox x:Name="chk_OnOffCon"  Style="{DynamicResource CheckBoxToogleStyle}" Width="8" IsChecked="True" />
+                                                                <Border BorderBrush="#FF1F1F1F" BorderThickness="1,0">
+                                                                    <DockPanel>
+                                                                        <Border BorderBrush="Black" BorderThickness="0,1,0,0" Height="32" DockPanel.Dock="Bottom" Background="#FF2E2E2E">
+                                                                            <Grid>
+                                                                                <DockPanel HorizontalAlignment="Left" Height="31" LastChildFill="False" VerticalAlignment="Top">
+                                                                                    <Label Content="第" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FFBFBFBF" FontFamily="Hiragino Sans GB W3" FontSize="13"/>
+                                                                                    <TextBox x:Name="txt_CurrentPage" HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"  VerticalAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF4889EB" Margin="0,4" Text="{Binding SelectedItem.Tag.CurrentPage, ElementName=tab_Report, Mode=OneWay}"/>
+                                                                                    <Label x:Name="lab_TotalPage" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FFBFBFBF" FontFamily="Hiragino Sans GB W3" FontSize="13" Content="{Binding SelectedItem.Tag.TotalpageStr, ElementName=tab_Report}">
+                                                                                        <!--<Label.Content>
+                                                                                        <MultiBinding StringFormat="页/共 {0} 页（共 {1} 条记录）">
+                                                                                                <Binding Path="SelectedItem.Tag.TotalPage" ElementName="tab_Report" Mode="OneWay"/>
+                                                                                                <Binding Path="SelectedItem.Tag.TotalRecord" ElementName="tab_Report" Mode="OneWay"  />
+                                                                                            </MultiBinding>
+                                                                                        </Label.Content>-->
+                                                                                    </Label>
+                                                                                </DockPanel>
+                                                                            </Grid>
+                                                                        </Border>
+                                                                        <TabControl x:Name="tab_ReportContent" Background="#FF424244" BorderThickness="0" Style="{DynamicResource TabControlReportStyle}" Margin="0" IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding Items, ElementName=tab_Report}" SelectedIndex="{Binding SelectedIndex, ElementName=tab_Report}" BorderBrush="#FF1F1F1F" Foreground="#FFBFBFBF"/>
+                                                                    </DockPanel>
+                                                                </Border>
+                                                            </DockPanel>
+                                                        </Border>
+                                                    </DockPanel>
+                                                </Grid>
                                             </TabItem>
                                         </TabControl>
                                     </Border>
@@ -1524,7 +2361,7 @@
                                     </Border>
 
                                     <Grid DockPanel.Dock="Top">
-                                        
+
                                         <ListView x:Name="lst_Alarm"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0,6" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Grid.ColumnSpan="2" View="{StaticResource AlarmView}" Style="{DynamicResource ListViewStyleNormal}" />
 
                                     </Grid>
@@ -1558,9 +2395,7 @@
                                         </Grid>
                                     </Border>
                                     <Grid>
-                                        <ListView x:Name="lst_Rx" View="{StaticResource RxView}"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0,6" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Style="{DynamicResource ListViewStyleNormal}" >
-
-                                        </ListView>
+                                        <ListView x:Name="lst_Rx" View="{StaticResource RxView}"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0,6" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Style="{DynamicResource ListViewStyleNormal}" />
                                     </Grid>
                                 </DockPanel>
                             </Border>
@@ -1575,9 +2410,7 @@
                                         </Grid>
                                     </Border>
                                     <Grid>
-                                        <ListView x:Name="lst_Job" View="{StaticResource JobView}" BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0,6" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Style="{DynamicResource ListViewStyleNormal}" >
-
-                                        </ListView>
+                                        <ListView x:Name="lst_Job" View="{StaticResource JobView}" BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0,6" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Style="{DynamicResource ListViewStyleNormal}" />
                                     </Grid>
                                 </DockPanel>
                             </Border>
@@ -1592,9 +2425,7 @@
                                         </Grid>
                                     </Border>
                                     <Grid>
-                                        <ListView x:Name="lst_Tracker" View="{StaticResource TrackerView}" BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0,6" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Style="{DynamicResource ListViewStyleNormal}" >
-
-                                        </ListView>
+                                        <ListView x:Name="lst_Tracker" View="{StaticResource TrackerView}" BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0,6" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Style="{DynamicResource ListViewStyleNormal}" />
                                     </Grid>
                                 </DockPanel>
                             </Border>

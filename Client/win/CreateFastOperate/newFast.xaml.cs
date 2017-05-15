@@ -48,6 +48,15 @@ namespace TrboX
                  FillFastOp();
                  SelectionType();
 
+                if(m_Main.StatusBar.Get().type == RunMode.Repeater)
+                {
+                    cmbit_Control.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    cmbit_Control.Visibility = Visibility.Visible;
+                }
+
             };
 
             this.Activated += delegate {

@@ -18,7 +18,7 @@ extern CWLNet* g_pNet;
 #define DB_PORT				3306
 #define DB_USER				"root"
 #define DB_PWD				""
-#define DB_NAME				"WirelineMotoVoice"
+#define DB_NAME				"tbx"
 #define SERVICE_CODDE TRUE
 
 HWND GetConsoleHwnd(void)
@@ -99,6 +99,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		createFileRlt = _wmkdir(appFolder.c_str());
 	}
+	std::wstring defaultAudioPath = appFolder;
+	//defaultAudioPath += L"\\Voice";
 	appFolder = appFolder + _T("\\WirelineSchedule");
 	if (!PathFileExists(appFolder.c_str()))
 	{
@@ -134,7 +136,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		/*声明变量并初始化*/
 		CMySQL *m_pDb = new CMySQL();
 		CDataScheduling *m_pMnis = new CDataScheduling();
-		CManager *m_pManager = new CManager(m_pDb, m_pMnis);
+		CManager *m_pManager = new CManager(m_pDb, m_pMnis,defaultAudioPath);
 		BOOL m_ret = FALSE;
 		PLogReport m_report = NULL;
 		HWND m_hwnd = NULL;

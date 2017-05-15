@@ -91,8 +91,8 @@ namespace TrboX
             //tools bar
             m_Main.menu_View_Tool_Base.Click += delegate { m_Main.View.ToolsBaseShow(!m_Main.menu_View_Tool_Base.IsChecked, true); };
             m_Main.menu_View_Tool_Fast.Click += delegate { m_Main.View.ToolsFastShow(!m_Main.menu_View_Tool_Fast.IsChecked, true); };
-            m_Main.menu_View_Tool_Ctrl.Click += delegate { m_Main.View.ToolsCtrlShow(!m_Main.menu_View_Tool_Fast.IsChecked, true); };
-            m_Main.menu_View_Tool_Help.Click += delegate { m_Main.View.ToolsHelpShow(!m_Main.menu_View_Tool_Fast.IsChecked, true); };
+            m_Main.menu_View_Tool_Ctrl.Click += delegate { m_Main.View.ToolsCtrlShow(!m_Main.menu_View_Tool_Ctrl.IsChecked, true); };
+            m_Main.menu_View_Tool_Help.Click += delegate {m_Main.View.ToolsHelpShow(!m_Main.menu_View_Tool_Help.IsChecked, true); };
 
             //resource management
             m_Main.menu_View_Mgr_Org.Click += delegate {m_Main.View.ResrcMgrOrgShow(!m_Main.menu_View_Mgr_Org.IsChecked);};
@@ -178,7 +178,10 @@ namespace TrboX
         private void HelpItemRegister()
         {
             m_Main.menu_Help_Look.Click += delegate { };
-            m_Main.menu_Help_About.Click += delegate { };      
+            m_Main.menu_Help_About.Click += delegate {
+                About aboutwin = new About();
+                aboutwin.ShowDialog();
+            };      
         }
     }
 }

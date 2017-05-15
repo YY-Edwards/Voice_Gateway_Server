@@ -2,8 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:src="clr-namespace:TrboX"
-        xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"                   
-        Icon="/TrboX;component/themes/resource/Logo.png"        
+        xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero"                          
         Style="{StaticResource MyWindowStyle}"                    
         Title="关于TrboX" Height="240" Width="400" WindowStartupLocation="CenterScreen">
     <Grid>

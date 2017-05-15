@@ -248,7 +248,6 @@ namespace TrboX
             //}
 
             return Visibility.Visible;
-
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
@@ -388,6 +387,26 @@ namespace TrboX
         }
     }
 
+
+    public class IsHideConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            if (Visibility.Visible == (Visibility)value)
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotSupportedException();
+        }
+    }
 
     public class MonitorConverter : IValueConverter
     {
@@ -583,19 +602,19 @@ namespace TrboX
             switch ((NotifyType)value)
             {
                 case NotifyType.Alarm:
-                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/alarm.png"));
+                    return new BitmapImage(new Uri("pack://application:,,,/resource/images/alarm_18_18.png"));
                 case NotifyType.Call:
-                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/rx.png"));
+                    return new BitmapImage(new Uri("pack://application:,,,/resource/images/call_33_34.png"));
                 case NotifyType.Message:
-                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/msg.png"));
+                    return new BitmapImage(new Uri("pack://application:,,/resource/images/message_34_34.png"));
                 case NotifyType.JobTicker:
-                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/job.png"));
+                    return new BitmapImage(new Uri("pack://application:,,,/resource/images/job_tickets_29_36.png"));
                 case NotifyType.Tracker:
-                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/tracker.png"));
+                    return new BitmapImage(new Uri("pack://application:,,,/resource/images/tacker_43_43.png"));
                 case NotifyType.Position:
-                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/position.png"));
+                    return new BitmapImage(new Uri("pack://application:,,,/resource/images/positon_29_38.png"));
                 case NotifyType.Control:
-                    return new BitmapImage(new Uri("pack://application:,,,/themes/resource/control.png"));
+                    return new BitmapImage(new Uri("pack://application:,,,/resource/images/control_43_43.png"));
             }
 
             return null;
@@ -657,7 +676,7 @@ namespace TrboX
 
             try
             {
-                if ((value[0] == DependencyProperty.UnsetValue) || (value[0] == DependencyProperty.UnsetValue) || (value[0] == DependencyProperty.UnsetValue))
+                if ((value[0] == DependencyProperty.UnsetValue))
                 {
                     return MyWindow.TargetNormalBrush;
                 }

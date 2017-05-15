@@ -174,6 +174,9 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 				temp = CPC;
 			}
 			pNewTask->param.info.configParam.recordType = temp;
+
+			strcpy_s(pNewTask->param.info.configParam.audioPath, d["AudioPath"].GetString());
+			//sprintf_s(pNewTask->param.info.configParam.audioPath, "%s\\Voice", pNewTask->param.info.configParam.audioPath);
 			/*config配置优先级为最高*/
 			push_front_task(pNewTask);
 		}

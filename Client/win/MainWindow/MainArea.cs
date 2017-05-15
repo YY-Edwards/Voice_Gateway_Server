@@ -11,12 +11,11 @@ using System.Windows.Controls.Primitives;
 
 namespace TrboX
 {
-
-
     public class MainArea
     {
         private Main m_Main;
         private Amap m_Amap;
+        public Report Report;
         public FastOperateWindow FastPanel;     
 
         private int SourceIndex = -1;          
@@ -27,6 +26,8 @@ namespace TrboX
         {
             if (null == win) return;
             m_Main = win;
+
+            Report = new Report(m_Main);
 
             DispatchResourceRegister();
             MapResourceRegister();
@@ -165,6 +166,10 @@ namespace TrboX
             m_Amap.ClearPoint();
         }
 
+        public void DeleteReport()
+        {
+
+        }
         
     }
 }

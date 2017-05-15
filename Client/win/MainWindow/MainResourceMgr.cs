@@ -72,21 +72,27 @@ namespace TrboX
             if (ContextMenuType.All != type) menu.Items.Add(new MenuItem() { Header = "添加到快速操作", Height = 28, HorizontalAlignment = HorizontalAlignment.Stretch, FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Tag = "fast", Style = App.Current.Resources["MenuItemStyleSub"] as Style });
             if (ContextMenuType.All != type) menu.Items.Add(new Separator() { Margin = new Thickness(1, 0, 1, 0), Height = 16, Style = App.Current.Resources["SeparatorStyleNormal"] as Style });
 
-            menu.Items.Add(new MenuItem() { Header = "在线检测", Height = 28, Tag = "check", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
 
-            //if ((ContextMenuType.Group == type) || (ContextMenuType.RadioOn == type))
-            menu.Items.Add(new MenuItem() { Header = "远程监听", Height = 28, Tag = "monitor", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
+            if (m_Main.StatusBar.Get().type != RunMode.Repeater)
+            {
+                menu.Items.Add(new MenuItem() { Header = "在线检测", Height = 28, Tag = "check", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
 
+                //if ((ContextMenuType.Group == type) || (ContextMenuType.RadioOn == type))
+                menu.Items.Add(new MenuItem() { Header = "远程监听", Height = 28, Tag = "monitor", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
+                menu.Items.Add(new Separator() { Margin = new Thickness(1, 0, 1, 0), Height = 16, Style = App.Current.Resources["SeparatorStyleNormal"] as Style });
+            }
              //if (ContextMenuType.RadioOff != type)
-             {
-                 menu.Items.Add(new Separator() { Margin = new Thickness(1, 0, 1, 0), Height = 16, Style = App.Current.Resources["SeparatorStyleNormal"] as Style });
+             //{
+                
                  menu.Items.Add(new MenuItem() { Header = "语音调度", Height = 28, Tag = "dispatch", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
                  menu.Items.Add(new MenuItem() { Header = "短消息", Height = 28, Tag = "message", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
                  menu.Items.Add(new MenuItem() { Header = "位置查询", Height = 28, Tag = "position", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
-                 menu.Items.Add(new MenuItem() { Header = "指令控制", Height = 28, Tag = "control", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
+                
+            if (m_Main.StatusBar.Get().type != RunMode.Repeater)   
+            menu.Items.Add(new MenuItem() { Header = "指令控制", Height = 28, Tag = "control", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
                  //menu.Items.Add(new Separator() { Margin = new Thickness(1, 0, 1, 0), Height = 16, Style = App.Current.Resources["SeparatorStyleNormal"] as Style });
                  //menu.Items.Add(new MenuItem() { Header = "工单", Height = 28, Tag = "jobticker", FontSize = 14, FontFamily = new FontFamily("Hiragino Sans GB W3"), Foreground = new SolidColorBrush(Colors.White), Style = App.Current.Resources["MenuItemStyle1"] as Style });
-             }
+             //}
 
             foreach(var item in menu.Items)if(item is MenuItem)((MenuItem)item).Click += new RoutedEventHandler(OnOrganizationMenu_Click);  
             

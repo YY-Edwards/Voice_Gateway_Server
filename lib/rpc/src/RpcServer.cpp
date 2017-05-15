@@ -57,37 +57,40 @@ int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 			{
 				std::lock_guard<std::mutex> lk(m_Clients[pRemote]->m_mtxRequest);
 
-				auto firstRequest = m_Clients[pRemote]->m_lstRequest.begin();
-				if (callId == (*firstRequest)->m_nCallId)
+				if (m_Clients[pRemote]->m_lstRequest.size() > 0)
 				{
-					if (nullptr != (*firstRequest)->success)
+					auto firstRequest = m_Clients[pRemote]->m_lstRequest.begin();
+					if (callId == (*firstRequest)->m_nCallId)
 					{
-						(*firstRequest)->success(str.c_str(), (*firstRequest)->data);
-					}
-					delete *firstRequest;
-					m_Clients[pRemote]->m_lstRequest.pop_front();
+						if (nullptr != (*firstRequest)->success)
+						{
+							(*firstRequest)->success(str.c_str(), (*firstRequest)->data);
+						}
+						delete *firstRequest;
+						m_Clients[pRemote]->m_lstRequest.pop_front();
 
-					// send next command
-					for (auto i = m_Clients[pRemote]->m_lstRequest.begin(); 
-						i != m_Clients[pRemote]->m_lstRequest.end(); )
-					{
-						if ((*i)->m_bNeedResponse)
+						// send next command
+						for (auto i = m_Clients[pRemote]->m_lstRequest.begin();
+							i != m_Clients[pRemote]->m_lstRequest.end();)
 						{
-							pRemote->sendCommand((*i)->m_strRequest.c_str(), (*i)->m_strRequest.size());
-							break;		// wait response
+							if ((*i)->m_bNeedResponse)
+							{
+								pRemote->sendCommand((*i)->m_strRequest.c_str(), (*i)->m_strRequest.size());
+								break;		// wait response
+							}
+							else
+							{
+								pRemote->sendCommand((*i)->m_strRequest.c_str(), (*i)->m_strRequest.size());
+								// don't wait response
+								delete (*i);
+								i = m_Clients[pRemote]->m_lstRequest.erase(i);
+							}
 						}
-						else
-						{
-							pRemote->sendCommand((*i)->m_strRequest.c_str(), (*i)->m_strRequest.size());
-							// don't wait response
-							delete (*i);
-							i = m_Clients[pRemote]->m_lstRequest.erase(i);
-						}
+						//if (m_Clients[pRemote]->m_lstRequest.size() > 0){
+						//	auto head = m_Clients[pRemote]->m_lstRequest.front();
+						//	pRemote->sendCommand(head->m_strRequest.c_str(), head->m_strRequest.size());
+						//}
 					}
-					//if (m_Clients[pRemote]->m_lstRequest.size() > 0){
-					//	auto head = m_Clients[pRemote]->m_lstRequest.front();
-					//	pRemote->sendCommand(head->m_strRequest.c_str(), head->m_strRequest.size());
-					//}
 				}
 			}
 		}
