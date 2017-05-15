@@ -11,6 +11,7 @@ private:
 	static DWORD WINAPI monitorThread(LPVOID lpParam);
 	static DWORD WINAPI logServerThread(LPVOID lpParam);
 	void monitorThreadFunc();
+	void stopServer(LPCTSTR lpName);
 	void logServerThreadFunc();
 	bool isMonitor;
 	HANDLE m_handle;
