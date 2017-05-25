@@ -17,8 +17,6 @@ CMonitorServer::CMonitorServer()
 	m_logServerHandle = CreateThread(NULL, 0, logServerThread, this, THREAD_PRIORITY_NORMAL, NULL);
 	
 }
-
-
 CMonitorServer::~CMonitorServer()
 {
 }
@@ -243,6 +241,8 @@ void CMonitorServer::monitorThreadFunc()
 				if (0 == wcscmp(serverName, L"Trbox.Dispatch"))
 				{
 					wstr = (std::wstring)szFilePath + _T("Device\\Dispatch.exe");
+	
+					
 				}
 				else if (0 == wcscmp(serverName, L"Trbox.Wirelan"))
 				{
@@ -289,7 +289,15 @@ void CMonitorServer::monitorThreadFunc()
 			}
 
 			// Check the status in case the service is not stopped. 
+			if (0 == wcscmp(serverName, L"Trbox.Dispatch"))
+			{
+				stopServer(L"Trbox.Wirelan");
 
+			}
+			else if (0 == wcscmp(serverName, L"Trbox.Wirelan"))
+			{
+				stopServer(L"Trbox.Dispatch");
+			}
 			if (!QueryServiceStatusEx(
 				schService,                     // handle to service 
 				SC_STATUS_PROCESS_INFO,         // information level
@@ -340,5 +348,57 @@ void CMonitorServer::monitorThreadFunc()
 		}
 	
 		Sleep(10000);
+	}
+}
+void CMonitorServer::stopServer(LPCTSTR lpName)
+{
+	SC_HANDLE hSC = OpenSCManager(
+		NULL,                    // local computer
+		NULL,                    // ServicesActive database 
+		SC_MANAGER_ALL_ACCESS);  // full access rights 
+	SC_HANDLE	hSvc = OpenService(
+		hSC,         // SCM database 
+		lpName,            // name of service         
+		SERVICE_ALL_ACCESS
+		);  // full access 
+	if (hSvc != NULL)
+	{
+		SERVICE_STATUS status;
+		if (::QueryServiceStatus(hSvc, &status) == FALSE)
+		{
+			TRACE(_T("Get Service state error。"));
+			::CloseServiceHandle(hSvc);
+			::CloseServiceHandle(hSC);
+		}
+		//如果处于停止状态则启动服务，否则停止服务。
+		if (status.dwCurrentState == SERVICE_RUNNING || status.dwCurrentState == SERVICE_START_PENDING)
+		{
+			if (::ControlService(hSvc,
+				SERVICE_CONTROL_STOP, &status) == FALSE)
+			{
+
+				::CloseServiceHandle(hSvc);
+				::CloseServiceHandle(hSC);
+				return;
+			}
+			// 等待服务停止
+			DWORD start = GetTickCount();
+			while (::QueryServiceStatus(hSvc, &status) == TRUE)
+			{
+				::Sleep(status.dwWaitHint);
+				if (status.dwCurrentState == SERVICE_STOPPED)
+				{
+
+					::CloseServiceHandle(hSvc);
+					::CloseServiceHandle(hSC);
+					break;
+				}
+				DWORD current = GetTickCount();
+				if (current - start >= cThirtySeconds) {
+					//OutputDebugStringA("Service stop timed out.");
+					break;
+				}
+			}
+		}
 	}
 }
