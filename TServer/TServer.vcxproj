@@ -58,6 +58,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <BasicRuntimeChecks>Default</BasicRuntimeChecks>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -87,6 +88,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\lib\AES\Aes.h" />
     <ClInclude Include="..\lib\rpc\include\BaseConnector.h" />
     <ClInclude Include="..\lib\rpc\include\request.h" />
     <ClInclude Include="..\lib\rpc\include\RpcClient.h" />
@@ -110,6 +112,7 @@
     <ClInclude Include="GetGpsAction.h" />
     <ClInclude Include="GetOverTurnGpsAction.h" />
     <ClInclude Include="GroupCallAction.h" />
+    <ClInclude Include="QueryLicenseAction.h" />
     <ClInclude Include="RadioCheckAction.h" />
     <ClInclude Include="RecvArsAction.h" />
     <ClInclude Include="RecvCallStatusAction.h" />
@@ -120,7 +123,9 @@
     <ClInclude Include="RecvMessageAction.h" />
     <ClInclude Include="RecvMessageResultAction.h" />
     <ClInclude Include="RecvSendGpsStatus.h" />
+    <ClInclude Include="RecvSerialAction.h" />
     <ClInclude Include="RecvStatusAction.h" />
+    <ClInclude Include="RegisterLicenseAction.h" />
     <ClInclude Include="RemotePowerOffAction.h" />
     <ClInclude Include="RemotePowerOnAction.h" />
     <ClInclude Include="SendGroupSmsAction.h" />
@@ -137,6 +142,7 @@
     <ClInclude Include="WiretapAction.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\lib\AES\Aes.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcClient.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcServer.cpp" />

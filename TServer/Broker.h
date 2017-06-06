@@ -4,6 +4,22 @@
 #include <mutex>
 #include <map>
 
+struct SerialInformation{
+	char licType[12];
+	int deviceType;
+	char pcMac[16];
+	char radioSerial[16];
+	char repeaterSerial[16];
+	char time[16];
+	short isEver;
+	char expiration[14];
+	int funcList[16];
+	char operate[16];
+	char res[16];
+	char radioMode[13];
+	char repeaterMode[13];
+
+};
 class CRpcClient;
 class CRpcServer;
 
@@ -48,7 +64,12 @@ public:
 	int getCallId(){
 		return callId++;
 	}
-
+	void setSerialInformation(SerialInformation serialInformation);
+	SerialInformation getSerialInformation();
+	void setLicenseInformation(SerialInformation serialInformation);
+	SerialInformation getLicenseInformation();
+	void setLicenseStatus(bool status);
+	bool getLicenseStatus();
 	void startRpcServer(std::map<std::string, ACTION> serverActions);
 	void startRadioClient(std::map<std::string, ACTION> clientActions);
 	void startWireLanClient(std::map<std::string, ACTION> clientActions);
@@ -57,6 +78,7 @@ public:
 	void sendSettingConfig();
 	void startLogClient();
 	void startMonitorClient(std::map<std::string, ACTION> clientActions);
+	bool getLic(std::string license);
 protected:
 	CBroker();
 	~CBroker();
@@ -72,5 +94,9 @@ private:
 	CRpcClient* m_logClient;
 	CRpcServer* m_rpcServer;
 	CRpcClient* m_monitorClient;
+	SerialInformation m_serialInformation;
+	SerialInformation m_licenseInformation;
+	bool licenseStatus;
+	
 };
 

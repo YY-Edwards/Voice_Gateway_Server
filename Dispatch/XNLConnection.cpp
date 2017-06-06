@@ -6,7 +6,7 @@
 #include "stdafx.h"
 #include <process.h>
 #include ".\xnlconnection.h"
-
+#include "extern.h"
 /*******************************************************************************
 *
 * FUNCTION NAME : CXNLConnection
@@ -805,6 +805,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 	case XCMP_DEVICE_INIT_STATUS_BRDCST:
 		decode_xcmp_dev_init_status(pBuf);
 		send_xcmp_radio_status_request(0x08);             //read serial
+		send_xcmp_radio_status_request(0x07);             //read radio mode
 		break;
 		//ÔÚÏß¼ì²â
 	case XCMP_RMT_RADIO_CTRL_REPLY:
@@ -1857,7 +1858,7 @@ MSG_QUEUE_T * CXNLConnection::dequeue_msg()
 }
 void CXNLConnection::decode_xcmp_radio_status_reply(char *p_msg)
 {
-	
+
 	if (p_msg != NULL)
 	{
 		xcmp_radio_status_reply_t *p_radio_status_reply = (xcmp_radio_status_reply_t *)p_msg;
@@ -1865,18 +1866,35 @@ void CXNLConnection::decode_xcmp_radio_status_reply(char *p_msg)
 		unsigned short xcmp_opcode = 0;
 		unsigned char result = 0;
 		xcmp_opcode = ntohs(*(unsigned short *)(p_msg + sizeof(xnl_msg_hdr_t)));
-		result = static_cast<unsigned char>( ntohs(*(unsigned short *)(p_msg + sizeof(xnl_msg_hdr_t)+2)));
+		result = static_cast<unsigned char>(ntohs(*(unsigned short *)(p_msg + sizeof(xnl_msg_hdr_t)+2)));
 
 		char mac[11];
+		char mod[13];
 		memcpy(mac, p_msg + sizeof(xnl_msg_hdr_t)+4, 10);
+		memcpy(mod, p_msg + sizeof(xnl_msg_hdr_t)+4, 12);
 		mac[10] = '\0';
+		mod[12] = '\0';
 
 		if (xcmp_opcode == 0X800E && result == 0x08)
 		{
 			memcpy(readmac, mac, 11);
-			
+			serial = readmac;
+			if (myTcpCallBackFunc != NULL)
+			{
+				TcpRespone tr = { 0 };
+				tr.radioSerial = readmac;
+				onTcpData(myTcpCallBackFunc, RADIO_SERIAL, tr);
+			}
 		}
-	
-
+		else if (xcmp_opcode == 0X800E && result == 0x07)
+		{
+			if (myTcpCallBackFunc != NULL)
+			{
+				radiomode = mod;
+				TcpRespone tr = { 0 };
+				tr.radioSerial =  mod;
+				onTcpData(myTcpCallBackFunc, RADIO_SERIAL, tr);
+			}
+		}
 	}
 }

@@ -2,8 +2,10 @@
 #include "../lib/rpc/include/RpcClient.h"
 #include "../lib/rpc/include/RpcServer.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
+#include "../lib//AES/Aes.h"
 #include "Broker.h"
 #include "Settings.h"
+
 
 std::auto_ptr<CBroker> CBroker::m_instance;
 
@@ -14,7 +16,7 @@ CBroker::CBroker()
 	, m_logClient(NULL)
 	, callId(1)
 {
-
+	licenseStatus = false;
 }
 
 
@@ -172,4 +174,163 @@ void CBroker::sendSettingConfig()
 {
 	std::string strConnect = CSettings::instance()->getRequest("connect", "radio", m_monitorClient->getCallId(), CSettings::instance()->getValue("radio"));
 	m_monitorClient->send(strConnect.c_str(), strConnect.size());
+}
+bool CBroker::getLic(std::string license)
+{
+	unsigned char key[16];
+	unsigned char input[16];
+	unsigned char output[16];
+	SerialInformation lic = { 0 };
+	memset(key, 0, 16);
+	memset(input, 0, 16);
+	memset(output, 0, 16);
+	int lenth = 16;
+	char temp[145];
+	char tempLic[289];
+	strcpy_s(tempLic, license.c_str());
+	for (int j = 0; j < 145; j++)
+	{
+		const char * p = tempLic + j * 2;
+		sscanf_s(p, "%02x", &temp[j]);
+	}
+	memcpy(key, "#^.Lic/.cd@JH.^#", lenth);
+	Aes1 m_Aes1(16, key);
+	for (int i = 0; i < 9; i++)
+	{
+		m_Aes1.InvCipher((unsigned char*)temp + i * 16, (unsigned char*)&lic + i * 16);
+	}
+
+	/*for (int i = 0; i < 9; i++)
+	{
+		memcpy(input, temp + i * 16, 16);
+		m_Aes1.InvCipher(input, output);
+		switch (i)
+		{
+		case 1:
+			memcpy(lic.licType, output, 12);
+			lic.deviceType = *((int*)output + 12);
+			break;
+		case 2:
+			memcpy(lic.pcMac, output, 16);
+			break;
+		case 3:
+			memcpy(lic.radioSerial, output, 16);
+			break;
+		case 4:
+			memcpy(lic.repeaterSerial, output, 16);
+			break;
+		case 5:
+			memcpy(lic.time, output, 16);
+			break;
+		case 6:
+			lic.isEver = *((short *)(output));
+			break;
+		case 7:
+			memcpy(lic.expiration, output + 2, 14);
+			break;
+		case 8:
+			memcpy(lic.funcList, output, 16);
+			break;
+		case 9:
+			memcpy(lic.res, output, 16);
+			break;
+		default:
+			break;
+		}
+
+	}*/
+	SerialInformation s = getSerialInformation();
+	memcpy(lic.repeaterMode, s.repeaterMode,13);
+	memcpy(lic.radioMode, s.radioMode, 13);
+
+	setLicenseInformation(lic);
+	//对比授权文件
+
+
+	if (strcmp(s.licType, lic.licType)==0)
+	if (s.deviceType == lic.deviceType)
+	{
+		if (strcmp(s.radioSerial,lic.radioSerial)==0)
+		{
+			if (s.isEver == 1)      //IsEver:是否永久，1:永久，0：试用
+			{
+				licenseStatus = true;    // 授权成功
+			}
+			else if (s.isEver == 0)
+			{
+				//试用版 ，对比时间，是否过期
+				SYSTEMTIME sys;
+				GetLocalTime(&sys);
+				char tmp[64] = { NULL };
+				//sprintf_s(tmp, "%4d%02d%02d", sys.wYear, sys.wMonth, sys.wDay);
+				int year2, month2, day2, hour2, min2, sec2;
+				sscanf_s(lic.expiration, "%4d%02d%02d ", &year2, &month2, &day2, &hour2, &min2, &sec2);
+				int tm1 = sys.wYear * 10000 + sys.wMonth * 100 + sys.wDay;
+				int tm2 = year2 * 10000 + month2 * 100 + day2;
+				if (tm1 != tm2)
+				{
+					int a = (tm1>tm2) ? 0 : 1;//如果相等，大返回1，小返回0
+					CBroker::instance()->setLicenseStatus(a);
+					
+					return a;
+				}
+			
+			}
+		}
+		else if (strcmp(s.repeaterSerial, lic.repeaterSerial)==0)
+		{
+			if (s.isEver == 1)      //IsEver:是否永久，1:永久，0：试用
+			{
+				licenseStatus = true;    // 授权成功
+			}
+			else if (s.isEver == 0)
+			{
+				//试用版 ，对比时间，是否过期
+				SYSTEMTIME sys;
+				GetLocalTime(&sys);
+				char tmp[64] = { NULL };
+				int year2, month2, day2, hour2, min2, sec2;
+				sscanf_s(lic.expiration, "%4d%02d%02d ", &year2, &month2, &day2, &hour2, &min2, &sec2);
+				int tm1 = sys.wYear * 10000 + sys.wMonth * 100 + sys.wDay;
+				int tm2 = year2 * 10000 + month2 * 100 + day2;
+				if (tm1 != tm2)
+				{
+					int a = (tm1>tm2) ? 0 : 1;//如果相等，大返回1，小返回0
+					CBroker::instance()->setLicenseStatus(a);
+					return a;
+				}
+					
+						
+			}
+		}
+		else
+		{
+			//licenseStatus = false;    授权失败
+		}
+	}
+	return false;
+}
+void CBroker::setSerialInformation(SerialInformation serialInformation)
+{
+	m_serialInformation = serialInformation;
+}
+SerialInformation CBroker::getSerialInformation()
+{
+	return m_serialInformation;
+}
+void CBroker::setLicenseInformation(SerialInformation serialInformation)
+{
+	m_licenseInformation = serialInformation;
+}
+SerialInformation CBroker::getLicenseInformation()
+{
+	return m_licenseInformation;
+}
+void CBroker::setLicenseStatus(bool status)
+{
+	licenseStatus = status;
+}
+bool CBroker::getLicenseStatus()
+{
+	return licenseStatus;
 }

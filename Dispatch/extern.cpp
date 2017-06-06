@@ -3,3 +3,5 @@
 
 DispatchOperate dis;
 std::list<TcpClient *> rmtPeerList;
+ std::string serial;
+ std::string radiomode;

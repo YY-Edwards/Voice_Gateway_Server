@@ -169,5 +169,64 @@ void wlGetConfigAction(CRemotePeer* pRemote, const std::string& param, uint64_t 
 
 	}
 }
+void wlRecvSerialAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
+{
+	static std::mutex lock;
+
+	std::lock_guard<std::mutex> locker(lock);
+
+	try{
+
+		static std::mutex lock;
+		std::lock_guard<std::mutex> locker(lock);
+		Document d;
+		d.Parse(param.c_str());
+		if (d.HasMember("serial") && d["serial"].IsString())
+		{
+			SerialInformation s = CBroker::instance()->getSerialInformation();
+			memcpy(s.licType, "TrboX 3.0", 12);
+			std::string serial = d["serial"].GetString();
+			if (type == "radio")
+			{
+				s.deviceType = CRADIO;    //DeviceType：设备类型(1:车载台，2：中继台，3：对讲机， 4：PC)
+				if (serial.length() == 10)
+				{
+					memcpy(s.radioSerial, serial.c_str(), 16);
+				}
+				else if (serial.length() == 12)
+				{
+					memcpy(s.radioMode, serial.c_str(), 16);
+				}
+
+				CBroker::instance()->setSerialInformation(s);
+			}
+			else if (type == "wlire")
+			{
+				s.deviceType = REPEATER;
+				if (serial.length() == 10)
+				{
+					memcpy(s.repeaterSerial, serial.c_str(), 16);
+				}
+				else if (serial.length() == 12)
+				{
+					memcpy(s.repeaterMode, serial.c_str(), 16);
+				}
+				CBroker::instance()->setSerialInformation(s);
+			}
+
+			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
+			pRemote->sendResponse(strResp.c_str(), strResp.size());
+		}
+
+	}
+	catch (std::exception e){
+
+	}
+	catch (...)
+	{
+
+	}
+
+}
 
 #endif

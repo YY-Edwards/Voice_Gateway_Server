@@ -36,7 +36,8 @@
 #include "GpsAction.h"
 #include "MsgAction.h"
 #include "StatusAction.h"
-
+#include "RegisterLicenseAction.h"
+#include "QueryLicenseAction.h"
 
 #include "RecvMessageAction.h"
 #include "RecvMessageResultAction.h"
@@ -48,6 +49,8 @@
 #include "RecvControlResultAction.h"
 #include "RecvSendGpsStatus.h"
 #include "RecvGetConfigAction.h"
+#include "RecvSerialAction.h"
+
 
 #include "WireLanRecvAction.h"
 #include "WireLanSendAction.h"
@@ -56,7 +59,7 @@
 #include "GetSettingAction.h"
 #include "../lib/service\service.h"
 
-#define SERVICE_CODE    TRUE
+#define SERVICE_CODE    FALSE
 std::string getServerName()
 {
 	std::string serverName = "";
@@ -127,6 +130,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		serverActions["queryGps"] = gpsAction;
 		serverActions["message"] = msgAction;
 		serverActions["status"] = statusAction;
+		serverActions["registerLicense"] = registerLicenseAction;
+		serverActions["queryLicense"] = queryLicenseAction;
+	
 
 		/*wire lan recive*/
 		serverActions["wlCall"] = wlCallActionHandler;
@@ -144,6 +150,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		clientActions["controlStatus"] = recvControlResultAction;
 		clientActions["sendGpsStatus"] = recvSendGpsStatusAction;
 		clientActions["getRadioConfig"] = recvGetConfigAction;
+		clientActions["readSerial"] = readSerialAction;
 		/*wire lan send*/
 		wlClientActions["wlCall"] = wlCallAction;
 		wlClientActions["wlCallStatus"] = wlCallStatusAction;
@@ -237,6 +244,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	serverActions["queryGps"] = gpsAction;
 	serverActions["message"] = msgAction;
 	serverActions["status"] = statusAction;
+	serverActions["registerLicense"] = registerLicenseAction;
+	serverActions["queryLicense"] = queryLicenseAction;
 
 	/*wire lan recive*/
 	serverActions["wlCall"] = wlCallActionHandler;
@@ -254,6 +263,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	clientActions["controlStatus"] = recvControlResultAction;
 	clientActions["sendGpsStatus"] = recvSendGpsStatusAction;
 	clientActions["getRadioConfig"] = recvGetConfigAction;
+	clientActions["readSerial"] = readSerialAction;
 	/*wire lan send*/
 	wlClientActions["wlCall"] = wlCallAction;
 	wlClientActions["wlCallStatus"] = wlCallStatusAction;

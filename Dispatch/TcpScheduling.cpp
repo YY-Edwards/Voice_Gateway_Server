@@ -917,7 +917,7 @@ void CTcpScheduling::disConnect()
 		WaitForSingleObject(m_wMt, 1000);
 		CloseHandle(m_wMt);
 	}
-	if (m_cMt /*&& isTcpConnect*/)
+	if (m_cMt && isTcpConnect)
 	{
 		m_connectThread = false;
 		WaitForSingleObject(m_cMt, 1000);

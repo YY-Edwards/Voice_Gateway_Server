@@ -454,6 +454,33 @@ bool CTextMsg::SendMsg(int callId, std::string text, DWORD dwRadioID, int CaiNet
 #if DEBUG_LOG
 	LOG(INFO) << "发送短信成功 ";
 #endif
+	if (CaiNet == GROUP_MSG_FLG)
+	{
+		m_timeOutListLocker.lock();
+		for (it = timeOutList.begin(); it != timeOutList.end(); ++it)
+		{
+			
+			if (myCallBackFunc != NULL)
+			{
+				Respone r = { 0 };
+				r.target = m_ThreadMsg->radioID;
+				r.msgStatus = SUCESS;
+				r.msg = "";
+				if (it->command == SEND_GROUP_MSG)
+				{
+					r.msgType = GROUP;
+					onData(myCallBackFunc, it->command, r);
+				}
+				it = timeOutList.erase(it);
+				break;
+			}
+
+			
+
+		}
+		m_timeOutListLocker.unlock();
+
+	}
 	return true;
 }
 void CTextMsg::RecvMsg()

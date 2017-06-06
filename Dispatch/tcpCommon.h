@@ -27,6 +27,7 @@
 #define LICENSE                28
 #define CALL_START             29
 #define CALL_END               30
+#define RADIO_SERIAL           31
 
 //#define RADIO_STATUS_OFFLINE   0
 //#define RADIO_STATUS_ONLINE    1
@@ -70,7 +71,7 @@ typedef struct tagTcpRespone
 	int callType;
 	int result;
 	int arsStatus;
-
+	std::string radioSerial;
 }TcpRespone;
 extern void(*myTcpCallBackFunc)(int, TcpRespone);
 void onTcpData(void(*func)( int, TcpRespone), int call, TcpRespone data);

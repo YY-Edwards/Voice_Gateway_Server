@@ -67,9 +67,9 @@ void CMonitorServer::logServerThreadFunc()
 		SC_HANDLE schService;
 
 		SERVICE_STATUS_PROCESS ssStatus;
-		DWORD dwOldCheckPoint;
-		DWORD dwStartTickCount;
-		DWORD dwWaitTime;
+		//DWORD dwOldCheckPoint;
+		//DWORD dwStartTickCount;
+		//DWORD dwWaitTime;
 		DWORD dwBytesNeeded;
 		// Get a handle to the SCM database. 
 		schSCManager = OpenSCManager(
@@ -195,9 +195,9 @@ void CMonitorServer::monitorThreadFunc()
 		SC_HANDLE schService;
 
 		SERVICE_STATUS_PROCESS ssStatus;
-		DWORD dwOldCheckPoint;
-		DWORD dwStartTickCount;
-		DWORD dwWaitTime;
+		//DWORD dwOldCheckPoint;
+		//DWORD dwStartTickCount;
+		//DWORD dwWaitTime;
 		DWORD dwBytesNeeded;
 		// Get a handle to the SCM database. 
 		schSCManager = OpenSCManager(

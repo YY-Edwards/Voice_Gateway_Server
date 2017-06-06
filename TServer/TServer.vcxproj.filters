@@ -186,6 +186,18 @@
     <ClInclude Include="GetSettingAction.h">
       <Filter>clientAction</Filter>
     </ClInclude>
+    <ClInclude Include="RecvSerialAction.h">
+      <Filter>clientAction</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\AES\Aes.h">
+      <Filter>lib</Filter>
+    </ClInclude>
+    <ClInclude Include="QueryLicenseAction.h">
+      <Filter>serverAction</Filter>
+    </ClInclude>
+    <ClInclude Include="RegisterLicenseAction.h">
+      <Filter>serverAction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -223,6 +235,9 @@
     </ClCompile>
     <ClCompile Include="..\lib\service\service.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\AES\Aes.cpp">
+      <Filter>lib</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
