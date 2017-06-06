@@ -116,6 +116,7 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 	std::string statusText = "";
 	//args["module"] = "wl";//wirelanÄ£¿é
 	REMOTE_TASK *pNewTask = new REMOTE_TASK;
+	memset(pNewTask, 0, sizeof(REMOTE_TASK));
 	try
 	{
 		try

@@ -188,20 +188,28 @@ void WLRecord::stop()
 
 void WLRecord::setAudioPath(const std::wstring& path)
 {
-	std::wstring temp = path;
-	temp += L"\\";
-	if (!PathFileExists(temp.c_str()))
+	if (path.empty())
 	{
-		std::string str = g_tool.UnicodeToANSI(temp);
-		sprintf_s(m_reportMsg, "error:audio path %s not exist,there will used default audio path", str.c_str());
+		sprintf_s(m_reportMsg, "error:audio path is null,there will used default audio path");
 		sendLogToWindow();
 	}
 	else
 	{
-		temp += L"Voice";
-		wcscpy_s(m_strAudioFilePath, temp.c_str());
-		BOOL createStatus = m_audioLog.SetAudioFilePath(m_strAudioFilePath);
-		sprintf_s(m_reportMsg, "createStatus %d", createStatus);
-		sendLogToWindow();
+		std::wstring temp = path;
+		temp += L"\\";
+		if (!PathFileExists(temp.c_str()))
+		{
+			std::string str = g_tool.UnicodeToANSI(temp);
+			sprintf_s(m_reportMsg, "error:audio path %s not exist,there will used default audio path", str.c_str());
+			sendLogToWindow();
+		}
+		else
+		{
+			temp += L"Voice";
+			wcscpy_s(m_strAudioFilePath, temp.c_str());
+			BOOL createStatus = m_audioLog.SetAudioFilePath(m_strAudioFilePath);
+			sprintf_s(m_reportMsg, "createStatus %d", createStatus);
+			sendLogToWindow();
+		}
 	}
 }

@@ -1504,7 +1504,8 @@ void CWLNet::Net_WAITFOR_LE_NOTIFICATION_MAP_BROADCAST(DWORD eventIndex)
 
 				/*程序开始正常工作*/
 				//m_WLStatus = ALIVE;
-				setWlStatus(ALIVE);
+				//setWlStatus(ALIVE);
+				setWlStatus(XNL_CONNECT);
 				WCHAR  str[8];
 				swprintf_s(str, __TEXT("%d"), 1);
 				WritePrivateProfileString(SYS_SECTION, CONNECT_RESULT, str, m_strSettingFilePath);
@@ -4079,8 +4080,7 @@ void CWLNet::Net_WAITFOR_XNL_XCMP_READ_SERIAL_RESULT(DWORD eventIndex)
 			if ((m_CurrentRecvBuffer.buf[0] == LE_XNL) && (m_CurrentRecvBuffer.buf[8] == 0X0B) && (m_CurrentRecvBuffer.buf[20] == 0X0E))
 			{
 				memcpy(m_MasterSerial, m_CurrentRecvBuffer.buf + 23, 11);
-
-
+				memcpy((unsigned char*)repeaterSerial.c_str(), m_MasterSerial,11);
 				//bool result = GetLic(m_MasterSerial);
 				int licenseResult;
 				WCHAR str[16] = { 0 };
@@ -7734,7 +7734,39 @@ int CWLNet::wlInfo(int getType, FieldValue info)
 	}
 	return 0;
 }
+int CWLNet::wlSendSerial()
+{
+	if (!wlScheduleIsEnable())
+	{
+		return 0;
+	}
+	/*将参数打包成json格式*/
+	ArgumentType args;
+	FieldValue fSerial(FieldValue::TString);
+	fSerial.setString(repeaterSerial.c_str());
+	args["serial"] = fSerial;
+	std::string strRequest = CRpcJsonParser::buildCall("wlInfo", ++g_sn, args, "wl");
+	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
+	sendLogToWindow();
 
+	TcpClient *redayDelete = NULL;
+	/*发送到Client*/
+	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end(); i++)
+	{
+		TcpClient* p = *i;
+		try
+		{
+			p->sendResponse(strRequest.c_str(), strRequest.size());
+		}
+		catch (...)
+		{
+			redayDelete = p;
+			sprintf_s(m_reportMsg, "sendSerial fail, socket:%lu", p->s);
+			sendLogToWindow();
+		}
+	}
+	return 0;
+}
 int CWLNet::wlPlayStatus(int status, int target)
 {
 	if (!wlScheduleIsEnable())

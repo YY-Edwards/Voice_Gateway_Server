@@ -806,6 +806,10 @@ void CManager::OnConnect(CRemotePeer* pRemotePeer)
 	{
 		addCRemotePeer((TcpClient*)pRemotePeer);
 		g_pNet->wlGetConfig();
+
+		//·¢ËÍserial to tserver
+		g_pNet->wlSendSerial();
+
 	}
 }
 

@@ -992,7 +992,11 @@ typedef struct
 
 extern DECLINE_REASON_CODE_INFO g_callRequstDeclineReasonCodeInfo;
 
-#pragma endregion
 
+//repeater serial  and repeater mode
+extern std::string repeaterSerial;
+extern std::string repeaterMode;
+
+#pragma endregion
 
 #endif

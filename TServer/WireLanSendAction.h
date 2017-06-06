@@ -207,10 +207,7 @@ void wlRecvSerialAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 				{
 					memcpy(s.repeaterSerial, serial.c_str(), 16);
 				}
-				else if (serial.length() == 12)
-				{
-					memcpy(s.repeaterMode, serial.c_str(), 16);
-				}
+				memcpy(s.repeaterMode, "AZH69JDC9KA2AN", 16);
 				CBroker::instance()->setSerialInformation(s);
 			}
 

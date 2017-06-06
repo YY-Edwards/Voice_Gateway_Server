@@ -347,6 +347,9 @@ public:
 	void setAudioPath(const std::string& path);
 	/*返回数据库查询结果*/
 	//int wlVoiceLogQuery(const int callId, const std::vector<std::map<std::string, std::string>>& list, const TcpClient& client);
+
+	/*接收到序列号后通知tserver*/
+	int wlSendSerial();
 protected:
 	/*
 	* Socket work thread
