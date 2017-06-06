@@ -125,45 +125,93 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 			//pNewTask->callId = sn;
 			//pNewTask->pRemote = pRemote;
 			pNewTask->cmd = REMOTE_CMD_CONFIG;
-			pNewTask->param.info.configParam.IsEnable = d["IsEnable"].GetBool();
+			if (d.HasMember("IsEnable") && d["IsEnable"].IsBool())
+			{
+				pNewTask->param.info.configParam.IsEnable = d["IsEnable"].GetBool();
+			}
 			pNewTask->param.info.configParam.Type = d["Type"].GetInt();
-			if (d["Svr"].IsObject())
+			if (d.HasMember("Svr") && d["Svr"].IsObject())
 			{
 				tempJson = d["Svr"].GetObject();
-				strcpy_s(pNewTask->param.info.configParam.Svr.Ip, tempJson["Ip"].GetString());
-				pNewTask->param.info.configParam.Svr.Port = tempJson["Port"].GetInt();
+				if (tempJson.HasMember("Ip") && tempJson["Ip"].IsString())
+				{
+					strcpy_s(pNewTask->param.info.configParam.Svr.Ip, tempJson["Ip"].GetString());
+				}
+				if (tempJson.HasMember("Port") && tempJson["Port"].IsInt())
+				{
+					pNewTask->param.info.configParam.Svr.Port = tempJson["Port"].GetInt();
+				}
 			}
-			pNewTask->param.info.configParam.defaultGroup = (unsigned long)d["DefaultGroupId"].GetInt();
-			pNewTask->param.info.configParam.defaultSlot = (_SlotNumber)d["DefaultChannel"].GetInt();
+			if (d.HasMember("DefaultGroupId") && d["DefaultGroupId"].IsInt())
+			{
+				pNewTask->param.info.configParam.defaultGroup = (unsigned long)d["DefaultGroupId"].GetInt();
+			}
+			if (d.HasMember("DefaultGroupId") && d["DefaultGroupId"].IsInt())
+			{
+				pNewTask->param.info.configParam.defaultSlot = (_SlotNumber)d["DefaultChannel"].GetInt();
+			}
 
 			if (d["Dongle"].IsObject())
 			{
 				tempJson = d["Dongle"].GetObject();
-				pNewTask->param.info.configParam.dongle.donglePort = tempJson["Com"].GetInt();
+				if (tempJson.HasMember("Com") && tempJson["Com"].IsInt())
+				{
+					pNewTask->param.info.configParam.dongle.donglePort = tempJson["Com"].GetInt();
+				}
 			}
 
 			pNewTask->param.info.configParam.hangTime = d["MinHungTime"].GetInt() * 1000;
-			pNewTask->param.info.configParam.localPeerId = (unsigned long)d["LocalPeerId"].GetInt();
-			pNewTask->param.info.configParam.localRadioId = (unsigned long)d["LocalRadioId"].GetInt();
-			pNewTask->param.info.configParam.masterHeartTime = d["MaxSiteAliveTime"].GetInt() * 1000;
+			if (d.HasMember("LocalPeerId") && d["LocalPeerId"].IsInt())
+			{
+				pNewTask->param.info.configParam.localPeerId = (unsigned long)d["LocalPeerId"].GetInt();
+			}
+			if (d.HasMember("LocalRadioId") && d["LocalRadioId"].IsInt())
+			{
+				pNewTask->param.info.configParam.localRadioId = (unsigned long)d["LocalRadioId"].GetInt();
+			}
+			if (d.HasMember("MaxSiteAliveTime") && d["MaxSiteAliveTime"].IsInt())
+			{
+				pNewTask->param.info.configParam.masterHeartTime = d["MaxSiteAliveTime"].GetInt() * 1000;
+			}
 
 			if (d["Master"].IsObject())
 			{
 				tempJson = d["Master"].GetObject();
-				strcpy_s(pNewTask->param.info.configParam.master.ip, tempJson["Ip"].GetString());
-				pNewTask->param.info.configParam.master.port = tempJson["Port"].GetInt();
+				if (tempJson.HasMember("Ip") && tempJson["Ip"].IsString())
+				{
+					strcpy_s(pNewTask->param.info.configParam.master.ip, tempJson["Ip"].GetString());
+				}
+				if (tempJson.HasMember("Port") && tempJson["Port"].IsInt())
+				{
+					pNewTask->param.info.configParam.master.port = tempJson["Port"].GetInt();
+				}
 			}
 
 			if (d["Mnis"].IsObject())
 			{
 				tempJson = d["Mnis"].GetObject();
-				strcpy_s(pNewTask->param.info.configParam.mnis.ip, tempJson["Ip"].GetString());
-				pNewTask->param.info.configParam.mnis.port = tempJson["Port"].GetInt();
+				if (tempJson.HasMember("Ip") && tempJson["Ip"].IsString())
+				{
+					strcpy_s(pNewTask->param.info.configParam.mnis.ip, tempJson["Ip"].GetString());
+				}
+				if (tempJson.HasMember("Port") && tempJson["Port"].IsInt())
+				{
+					pNewTask->param.info.configParam.mnis.port = tempJson["Port"].GetInt();
+				}
 			}
-			pNewTask->param.info.configParam.MnisId = d["MnisId"].GetInt();
-
-			pNewTask->param.info.configParam.peerHeartTime = d["MaxPeerAliveTime"].GetInt() * 1000;
-			int recordType = d["Type"].GetInt();
+			if (d.HasMember("MnisId") && d["MnisId"].IsInt())
+			{
+				pNewTask->param.info.configParam.MnisId = d["MnisId"].GetInt();
+			}
+			if (d.HasMember("MaxPeerAliveTime") && d["MaxPeerAliveTime"].IsInt())
+			{
+				pNewTask->param.info.configParam.peerHeartTime = d["MaxPeerAliveTime"].GetInt() * 1000;
+			}
+			int recordType = 1;
+			if (d.HasMember("Type") && d["Type"].IsInt())
+			{
+				recordType = d["Type"].GetInt();
+			}
 			_RECORD_TYPE_VALUE temp = LCP;
 			if (recordType == 0)
 			{
@@ -174,8 +222,10 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 				temp = CPC;
 			}
 			pNewTask->param.info.configParam.recordType = temp;
-
-			strcpy_s(pNewTask->param.info.configParam.audioPath, d["AudioPath"].GetString());
+			if (d.HasMember("AudioPath") && d["AudioPath"].IsString())
+			{
+				strcpy_s(pNewTask->param.info.configParam.audioPath, d["AudioPath"].GetString());
+			}
 			//sprintf_s(pNewTask->param.info.configParam.audioPath, "%s\\Voice", pNewTask->param.info.configParam.audioPath);
 			/*config配置优先级为最高*/
 			push_front_task(pNewTask);
