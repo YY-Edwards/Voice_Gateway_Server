@@ -115,6 +115,7 @@
     <ClInclude Include="Monitor.h" />
     <ClInclude Include="MonitorDlg.h" />
     <ClInclude Include="MonitorServer.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="Settings.h" />
     <ClInclude Include="StartMysql.h" />
     <ClInclude Include="stdafx.h" />

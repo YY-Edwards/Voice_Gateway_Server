@@ -64,6 +64,7 @@ BEGIN_MESSAGE_MAP(CMonitorDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
+	ON_COMMAND(ID_RESTART, OnRestart)
 END_MESSAGE_MAP()
 
 
@@ -208,21 +209,27 @@ LRESULT CMonitorDlg::OnSysTrayMsg(WPARAM w, LPARAM l)
 		break;
 	case WM_RBUTTONDOWN:
 	{
-						 ///*  CMenu menu;
-						 //  menu.LoadMenu(IDR_MENU1);
-						 //  CMenu*pMenu = menu.GetSubMenu(0);*/
-						 //  CPoint pos;
-						 //  GetCursorPos(&pos);
-						 //  //加入SetForegroundWindow的目的为使用户点菜单之外时菜单可以消失
-						 //  ::SetForegroundWindow(m_hWnd);
-						 //  pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, AfxGetMainWnd());
-						 //  menu.DestroyMenu();
+						   CMenu menu;
+						   menu.LoadMenu(IDR_MENU1);
+						   CMenu*pMenu = menu.GetSubMenu(0);
+						   CPoint pos;
+						   GetCursorPos(&pos);
+						   //加入SetForegroundWindow的目的为使用户点菜单之外时菜单可以消失
+						   ::SetForegroundWindow(m_hWnd);
+						   pMenu->TrackPopupMenu(TPM_LEFTALIGN | TPM_RIGHTBUTTON, pos.x, pos.y, AfxGetMainWnd());
+						   menu.DestroyMenu();
 	}
 		break;
 	default:
 		break;
 	}
 	return 0;
+}
+void CMonitorDlg::OnRestart()
+{
+	m_tserver.stopMonitor();
+	Sleep(1000);
+	m_tserver.StartMonitor();
 }
 void CMonitorDlg::OnWindowPosChanging(WINDOWPOS* lpwndpos)
 {
