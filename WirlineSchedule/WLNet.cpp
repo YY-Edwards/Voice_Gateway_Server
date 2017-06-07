@@ -4081,6 +4081,7 @@ void CWLNet::Net_WAITFOR_XNL_XCMP_READ_SERIAL_RESULT(DWORD eventIndex)
 			{
 				memcpy(m_MasterSerial, m_CurrentRecvBuffer.buf + 23, 11);
 				memcpy((unsigned char*)repeaterSerial.c_str(), m_MasterSerial,11);
+				wlSendSerial();
 				//bool result = GetLic(m_MasterSerial);
 				int licenseResult;
 				WCHAR str[16] = { 0 };
@@ -4101,7 +4102,7 @@ void CWLNet::Net_WAITFOR_XNL_XCMP_READ_SERIAL_RESULT(DWORD eventIndex)
 				//else
 				//{
 				//strSysLog = _T("授权成功！");
-				sprintf_s(m_reportMsg, "授权成功");
+				//sprintf_s(m_reportMsg, "授权成功");
 				sendLogToWindow();
 				licenseResult = 1;
 				swprintf_s(str, L"%d", licenseResult);
@@ -7745,7 +7746,7 @@ int CWLNet::wlSendSerial()
 	FieldValue fSerial(FieldValue::TString);
 	fSerial.setString(repeaterSerial.c_str());
 	args["serial"] = fSerial;
-	std::string strRequest = CRpcJsonParser::buildCall("wlInfo", ++g_sn, args, "wl");
+	std::string strRequest = CRpcJsonParser::buildCall("wlReadSerial", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
 

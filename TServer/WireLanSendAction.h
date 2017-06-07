@@ -169,7 +169,7 @@ void wlGetConfigAction(CRemotePeer* pRemote, const std::string& param, uint64_t 
 
 	}
 }
-void wlRecvSerialAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
+void wlReadSerialAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
 
@@ -200,7 +200,7 @@ void wlRecvSerialAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 
 				CBroker::instance()->setSerialInformation(s);
 			}
-			else if (type == "wlire")
+			else if (type == "wl")
 			{
 				s.deviceType = REPEATER;
 				if (serial.length() == 10)

@@ -277,6 +277,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	wlClientActions["message"] = recvMsgAction;
 	wlClientActions["status"] = recvStatusAction;
 	wlClientActions["sendArs"] = recvArsAction;
+	wlClientActions["wlReadSerial"] = wlReadSerialAction;
 
 	mclientActions["getSettingConfig"] = GetSettingAction;
 	CBroker::instance()->startLogClient();
