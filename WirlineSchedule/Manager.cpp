@@ -791,6 +791,7 @@ void CManager::freeCurrentTask()
 void CManager::applayCurrentTask()
 {
 	m_pCurrentTask = new REMOTE_TASK;
+	memset(m_pCurrentTask, 0, sizeof(REMOTE_TASK));
 }
 
 void CManager::setCurrentTask(REMOTE_TASK* value)

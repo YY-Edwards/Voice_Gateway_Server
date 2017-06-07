@@ -19,7 +19,7 @@ extern CWLNet* g_pNet;
 #define DB_USER				"root"
 #define DB_PWD				""
 #define DB_NAME				"tbx"
-#define SERVICE_CODDE FALSE
+#define SERVICE_CODDE TRUE
 
 HWND GetConsoleHwnd(void)
 {
@@ -185,6 +185,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			case 1:
 			{
 					  REMOTE_TASK *pTask = new REMOTE_TASK;
+					  memset(pTask, 0, sizeof(REMOTE_TASK));
 					  pTask->cmd = REMOTE_CMD_CALL;
 					  pTask->param.info.callParam.operateInfo.callType = GROUP_CALL;
 					  pTask->param.info.callParam.operateInfo.isCurrent = 1;
@@ -197,6 +198,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			case 2:
 			{
 					  REMOTE_TASK *pTask = new REMOTE_TASK;
+					  memset(pTask, 0, sizeof(REMOTE_TASK));
 					  pTask->cmd = REMOTE_CMD_STOP_CALL;
 					  push_back_task(pTask);
 			}

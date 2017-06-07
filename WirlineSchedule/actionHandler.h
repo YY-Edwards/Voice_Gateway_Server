@@ -276,6 +276,7 @@ inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, 
 			case StartCall:
 			{
 							  pNewTask = new REMOTE_TASK;
+							  memset(pNewTask, 0, sizeof(REMOTE_TASK));
 							  pNewTask->cmd = REMOTE_CMD_CALL;
 							  //pNewTask->pRemote = pRemote;
 							  //pNewTask->callId = sn;
@@ -306,6 +307,7 @@ inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, 
 			case StopCall:
 			{
 							 pNewTask = new REMOTE_TASK;
+							 memset(pNewTask, 0, sizeof(REMOTE_TASK));
 							 pNewTask->cmd = REMOTE_CMD_STOP_CALL;
 // 							 pNewTask->pRemote = pRemote;
 // 							 pNewTask->callId = sn;
@@ -417,6 +419,7 @@ inline void wlPlayActionHandler(CRemotePeer* pRemote, const std::string& param, 
 			int target = d["target"].GetInt();
 			/*处理参数*/
 			pNewTask = new REMOTE_TASK;
+			memset(pNewTask, 0, sizeof(REMOTE_TASK));
 			pNewTask->cmd = REMOTE_CMD_SET_PLAY_CALL;
 // 			pNewTask->pRemote = pRemote;
 // 			pNewTask->callId = sn;
@@ -486,12 +489,14 @@ inline void wlInfoActionHandler(CRemotePeer* pRemote, const std::string& param, 
 			case GET_TYPE_CONN:
 			{
 								  pNewTask = new REMOTE_TASK;
+								  memset(pNewTask, 0, sizeof(REMOTE_TASK));
 								  pNewTask->cmd = REMOTE_CMD_GET_CONN_STATUS;
 			}
 				break;
 			case GET_TYPE_ONLINE_DEVICES:
 			{
 											pNewTask = new REMOTE_TASK;
+											memset(pNewTask, 0, sizeof(REMOTE_TASK));
 											pNewTask->cmd = REMOTE_CMD_MNIS_STATUS;
 											pNewTask->param.info.mnisStatusParam.getType = getType;
 			}
@@ -546,6 +551,7 @@ inline void wlMnisQueryGpsActionHandler(CRemotePeer* pRemote, const std::string&
 		try
 		{
 			pNewTask = new REMOTE_TASK;
+			memset(pNewTask, 0, sizeof(REMOTE_TASK));
 			d.Parse(param.c_str());
 			//pNewTask->callId = sn;
 			pNewTask->cmd = REMOTE_CMD_MNIS_QUERY_GPS;
@@ -602,6 +608,7 @@ inline void wlMnisMessageHandler(CRemotePeer* pRemote, const std::string& param,
 		try
 		{
 			pNewTask = new REMOTE_TASK;
+			memset(pNewTask, 0, sizeof(REMOTE_TASK));
 			d.Parse(param.c_str());
 			//pNewTask->callId = sn;
 			pNewTask->cmd = REMOTE_CMD_MNIS_MSG;
@@ -660,6 +667,7 @@ inline void wlMnisStatusHandler(CRemotePeer* pRemote, const std::string& param, 
 		try
 		{
 			pNewTask = new REMOTE_TASK;
+			memset(pNewTask, 0, sizeof(REMOTE_TASK));
 			d.Parse(param.c_str());
 			//pNewTask->callId = sn;
 			pNewTask->cmd = REMOTE_CMD_MNIS_STATUS;
