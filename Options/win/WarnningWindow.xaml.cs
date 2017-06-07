@@ -51,6 +51,12 @@ namespace TrboX
             this.Close();
         }
 
+        private void btn_SysClose_Click(object sender, RoutedEventArgs e)
+        {
+            Reslut = ResultType.Cancle;
+            this.Close();
+        }
+
 
 
 
