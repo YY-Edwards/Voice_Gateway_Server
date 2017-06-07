@@ -100,15 +100,37 @@ namespace TrboX
                {
                    this.Dispatcher.Invoke(new Action(() =>
                    {
+                       lab_LoginErr.Content = "账号或密码错误。";
                        grd_LoginErr.Visibility = Visibility.Visible;
                    }));
                });
        }
         private void btn_Login_Click(object sender, RoutedEventArgs e)
         {
+            if(QueryLicense()) LoginMeath();
 
-            LoginMeath();
+        }
 
+        private bool QueryLicense()
+        {
+            TServer.InitializeServer();
+
+            LisenceRes res = SettingMgr.QueryRegister();
+            if (res == null)
+            {
+                lab_LoginErr.Content = "连接错误。";
+                grd_LoginErr.Visibility = Visibility.Visible;
+                return false;
+            }
+
+            if (res.IsOK != true)
+            {
+                lab_LoginErr.Content = "软件未注册。";
+                grd_LoginErr.Visibility = Visibility.Visible;
+                return false;
+            }
+
+            return true;
         }
 
         private void btn_cancel_Click(object sender, RoutedEventArgs e)

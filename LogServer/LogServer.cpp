@@ -14,7 +14,7 @@
 #include "DbSmsLogAction.h"
 #include "DbGpsAction.h"
 #include "DbVoiceLogQueryAction.h"
-#define SERVICE_CODE FALSE
+#define SERVICE_CODE TRUE
 int _tmain(int argc, _TCHAR* argv[])
 {
 #if SERVICE_CODE

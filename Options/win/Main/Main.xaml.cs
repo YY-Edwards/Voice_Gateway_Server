@@ -70,7 +70,7 @@ namespace TrboX
 
                 SettingComponents.Set(SettingMgr.Get());
                // SettingComponents.FileGroupList(TargetMgr.TargetList.Group);
-
+                QueryLicense();
 
                 btn_Header.PreviewMouseLeftButtonDown += delegate{this.DragMove();};
 
@@ -91,11 +91,102 @@ namespace TrboX
                         OnMyWindow_Btn_Min_Click();
                     };
                 }
+
+                btn_OpenLicense.Click +=delegate{OpenLicense();};
+                btn_Register.Click += delegate { Register(); };
             };
 
         }
 
+        private void QueryLicense()
+        {
+            LisenceRes res = SettingMgr.QueryRegister();
+            if (res == null)
+            {
+                lab_RegisterStatus.Content = "（未注册）";
+                return;
+            }
+
+            if (res.IsOK == true)
+            {
+                if (res.IsEver == 0)
+                {
+                    lab_RegisterStatus.Content = "（已注册," + res.Expiration.ToString("yyyy年Mm月dd日") + "前有效）";
+                }
+                else
+                {
+                    lab_RegisterStatus.Content = "（已注册）";
+                }
+            }
+            else
+            {
+                lab_RegisterStatus.Content = "（未注册）";
+            }
+
+            if((bool)chk_EnableRadio.IsChecked)
+            {
+                 txt_DeviceType.Text = "车载台" ;
+                txt_DeviceSn.Text = ( res.RadioSerial == null || res.RadioSerial == string.Empty ) ? "获取序列号失败":res.RadioSerial;
+            }
+            else if((bool)chk_EnableWireLan.IsChecked) 
+            {
+                 txt_DeviceType.Text = "中继台";
+                 txt_DeviceSn.Text = (res.RepeaterSerial == null || res.RepeaterSerial == string.Empty) ? "获取序列号失败" : res.RepeaterSerial;
+            }
+        }
        
+        private void OpenLicense()
+        {
+            System.Windows.Forms.OpenFileDialog openFileDialog = new System.Windows.Forms.OpenFileDialog();
+            openFileDialog.Title = "选择文件";
+            openFileDialog.Filter = "注册文件|*.lic|所有文件|*.*";
+            openFileDialog.FileName = string.Empty;
+            openFileDialog.FilterIndex = 1;
+            openFileDialog.RestoreDirectory = true;
+            openFileDialog.DefaultExt = "zip";
+            System.Windows.Forms.DialogResult result = openFileDialog.ShowDialog();
+            if (result == System.Windows.Forms.DialogResult.Cancel)
+            {
+                return;
+            }
+
+            this.txt_License.Text = System.IO.File.ReadAllText(openFileDialog.FileName);
+        }
+
+        private void Register()
+        {
+            LisenceRes res = SettingMgr.Register(this.txt_License.Text);
+            if (res == null)
+            {
+                txt_ResgisterRes.Text = "注册失败。";
+                lab_RegisterStatus.Content = "（未注册）";
+                grd_RegisterRes.Visibility = Visibility.Visible;
+                return;
+            }
+
+            if (res.IsOK == true)
+            {
+                txt_ResgisterRes.Text = "注册成功。";
+                if (res.IsEver == 0)
+                {
+                    lab_RegisterStatus.Content = "（已注册,）" + res.Expiration.ToString("yyyy年MM月dd日") + "前有效";
+                }
+                else
+                {
+                    lab_RegisterStatus.Content = "（已注册）";
+                }
+              
+            }
+            else
+            {
+                txt_ResgisterRes.Text = "注册失败。";
+                lab_RegisterStatus.Content = "（未注册）";
+            }
+
+            grd_RegisterRes.Visibility = Visibility.Visible;
+        }
+
+
         private void MyWindow_Closed(object sender, EventArgs e)
         {
             Environment.Exit(0);
@@ -232,9 +323,15 @@ namespace TrboX
                             break;
                     }
                     break;
-                default: break;
-
-                    
+               case "注册认证":
+                    switch ((string)item.Header)
+                    {
+                        case "软件注册":
+                            scrview_UserRoot.ScrollToVerticalOffset(PosInScrView(scrview_UserRoot, dck_User as FrameworkElement));
+                            break;                      
+                    }
+                    break;
+                default: break;     
             }
 
         }
@@ -244,20 +341,30 @@ namespace TrboX
             this.Close();
         }
 
+        private void btn_Enter_Click(object sender, RoutedEventArgs e)
+        {
+            btn_Apply_Click(sender, e);
+            this.Close();
+        }     
+
         private void btn_Apply_Click(object sender, RoutedEventArgs e)
         {
-           SettingMgr.Set(SettingComponents.Get());
+           //SettingMgr.Set(SettingComponents.Get());
 
-           UserMgr.Save();
-           DepartmentMgr.Save();
-           StaffMgr.Save();
-           RadioMgr.Save();
+           //UserMgr.Save();
+           //DepartmentMgr.Save();
+           //StaffMgr.Save();
+           //RadioMgr.Save();
 
 
-           DepartmentMgr.SaveDeptStaff();
-           DepartmentMgr.SaveDeptRadio();
+           //DepartmentMgr.SaveDeptStaff();
+           //DepartmentMgr.SaveDeptRadio();
 
-           StaffMgr.SaveStaffRadio();
+           //StaffMgr.SaveStaffRadio();
+
+           WarnningWindow warn = new WarnningWindow();
+           warn.Owner = this;
+           warn.Show();
         }
 
         private void btn_SetDefault_Click(object sender, RoutedEventArgs e)
@@ -331,6 +438,6 @@ namespace TrboX
         private void btn_SysClose_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
-        }
+        } 
     }
 }

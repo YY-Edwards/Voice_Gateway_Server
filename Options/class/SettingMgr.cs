@@ -112,8 +112,49 @@ namespace TrboX
         Base,
         Radio,
         WireLan,
+        QueryRegister,
+        Register
     };
 
+     public enum Device
+    {
+        Radio = 1,
+        Repeater  = 2,
+        Portable = 3,
+        PC = 4,
+    }
+
+    public class LisenceRes
+    {
+        public Device  DeviceType;
+        public string RadioMode;
+        public string RadioSerial;
+        public string RepeaterMode;
+        public string RepeaterSerial;
+          [JsonProperty(PropertyName = "Time")]
+          public string time;
+        public int IsEver;
+          [JsonProperty(PropertyName = "Expiration")]
+          public string expiration;
+        [JsonIgnore]
+         public bool IsOK;
+        [JsonIgnore]
+        public DateTime Time
+        {
+            get
+            {
+                return DateTime.ParseExact(time, "yyyyMMddHHmmss", System.Globalization.CultureInfo.CurrentCulture);
+            } 
+        }
+        [JsonIgnore]
+        public DateTime Expiration
+        {
+            get
+            {
+                return DateTime.ParseExact(expiration, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture);
+            }
+        }
+    }
 
 
     public class Setting
@@ -195,12 +236,24 @@ namespace TrboX
                     Call = RequestType.getRepeaterSetting;
                     Parse = ParseWireLan;
                 }
+                else if(setting.Type == SettingType.QueryRegister)
+                {
+                    Call = RequestType.queryLicense;
+                    Parse = ParseLisence;
+                }
+                else if(setting.Type == SettingType.Register) 
+                {
+                    Call = RequestType.registerLicense;
+                    Parse = ParseLisence;
+                }
+
             }
             else if (setting.Op == SettingOpType.Set)
             {
                 if (setting.Type == SettingType.Base) Call = RequestType.setBaseSetting;
                 else if (setting.Type == SettingType.Radio) Call = RequestType.setRadioSetting;
                 else if (setting.Type == SettingType.WireLan) Call = RequestType.setRepeaterSetting;
+                else if (setting.Type == SettingType.Register) Call = RequestType.registerLicense;
 
                 Parse = ParseStatus;
             }
@@ -272,6 +325,18 @@ namespace TrboX
             return JsonConvert.DeserializeObject<WireLanSetting>(JsonConvert.SerializeObject(res.contents));
         }
 
+        private static object ParseLisence(object obj)
+        {
+            TServerResponse res = null;
+            if (obj is TServerResponse) res = obj as TServerResponse;
+            else return null;
+            if ((null == res) || (null == res.contents)) return null;
+            LisenceRes licres = JsonConvert.DeserializeObject<LisenceRes>(JsonConvert.SerializeObject(res.contents));
+            licres.IsOK = res.status ==  "success";
+            return licres;
+        }
+
+
         public static void Set(List<Setting> setting)
         {
             if (null == setting) return;
@@ -299,5 +364,22 @@ namespace TrboX
                 SettingType .WireLan,
             });
         }
+
+        public static LisenceRes QueryRegister()
+        {
+            return new Setting() { Type = SettingType.QueryRegister }.Get() as LisenceRes;
+        }
+
+        public static LisenceRes Register(string lic)
+        {
+            string[] licArray = lic.Split(new char[2] { ' ', '-' });
+            if (licArray.Length <= 2 || licArray[2] == null) return new LisenceRes { IsOK = false };
+
+            Dictionary<string, string> pa = new Dictionary<string, string>();
+            pa.Add("license", licArray[2]);
+
+            return (LisenceRes)(new Setting() { Type = SettingType.Register, Configure = pa }.Get());
+        }
+
     }
 }
