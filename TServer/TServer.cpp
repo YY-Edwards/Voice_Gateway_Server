@@ -59,8 +59,7 @@
 #include "GetSettingAction.h"
 #include "../lib/service\service.h"
 
-#define SERVICE_CODE    FALSE
-std::string getServerName()
+#define SERVICE_CODE    TRUE
 {
 	std::string serverName = "";
 	std::string strConfig = CSettings::instance()->getValue("radio");

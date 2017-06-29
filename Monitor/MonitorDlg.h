@@ -40,6 +40,7 @@ protected:
 	afx_msg LRESULT OnSysTrayMsg(WPARAM w, LPARAM l);
 	afx_msg void OnWindowPosChanging(WINDOWPOS* lpwndpos);
 	afx_msg void OnClose();
+	afx_msg void OnRestart();
 	DECLARE_MESSAGE_MAP()
 private:
 	
@@ -50,4 +51,5 @@ private:
 	static void OnConnect(CRemotePeer* pRemotePeer);
 	std::wstring getAppdataPath();
 	void writeLog();
+	
 };

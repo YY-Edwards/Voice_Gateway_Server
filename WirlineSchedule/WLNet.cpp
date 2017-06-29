@@ -5231,6 +5231,7 @@ void PASCAL CWLNet::OneMilliSecondProc(UINT wTimerID, UINT msg, DWORD dwUser, DW
 							   if (p->m_sendVoices.size() < 1)
 							   {
 								   REMOTE_TASK *p = new REMOTE_TASK;
+								   memset(p, 0, sizeof(REMOTE_TASK));
 								   p->cmd = REMOTE_CMD_STOP_CALL;
 								   push_back_task(p);
 							   }
