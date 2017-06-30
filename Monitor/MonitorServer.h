@@ -19,5 +19,6 @@ private:
 	TCHAR serverName[300];
 	TCHAR logServerName[300];
 	bool isStart;
+	std::mutex m_workLocker;
 };
 

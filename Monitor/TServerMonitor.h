@@ -6,7 +6,9 @@ public:
 	~CTServerMonitor();
 	void StartMonitor();
 	void stopMonitor();
+	void stopServer(LPCTSTR lpName);
 private:
+	
 	static DWORD WINAPI monitorThread(LPVOID lpParam);
 	void monitorThreadFunc();
 	bool isMonitor;

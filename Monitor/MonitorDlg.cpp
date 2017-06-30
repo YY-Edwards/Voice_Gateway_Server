@@ -227,8 +227,10 @@ LRESULT CMonitorDlg::OnSysTrayMsg(WPARAM w, LPARAM l)
 }
 void CMonitorDlg::OnRestart()
 {
-	m_tserver.stopMonitor();
-	Sleep(1000);
+	m_tserver.stopServer(L"Trbox.TServer");
+	m_monitorServer.stopMonitor();
+
+	Sleep(10000);
 	m_tserver.StartMonitor();
 }
 void CMonitorDlg::OnWindowPosChanging(WINDOWPOS* lpwndpos)
