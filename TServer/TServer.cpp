@@ -13,6 +13,7 @@
 
 #include <shlobj.h> 
 #include <Shlwapi.h>
+#include "Tool.h"
 
 //
 //#include"AllCallAction.h"
@@ -60,6 +61,8 @@
 #include "../lib/service\service.h"
 
 #define SERVICE_CODE    TRUE
+
+std::string getServerName()
 {
 	std::string serverName = "";
 	std::string strConfig = CSettings::instance()->getValue("radio");
@@ -111,6 +114,47 @@ int _tmain(int argc, _TCHAR* argv[])
 	//	Sleep(50);
 	//
 	//}
+	int createFileRlt = 0;
+	TCHAR szBuffer[MAX_PATH];
+	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
+	std::wstring appFolder = getAppdataPath() + _T("\\Jihua Information");
+	if (!PathFileExists(appFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(appFolder.c_str());
+	}
+	appFolder = appFolder + _T("\\Trbox");
+	if (!PathFileExists(appFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(appFolder.c_str());
+	}
+	appFolder = appFolder + _T("\\3.0");
+	if (!PathFileExists(appFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(appFolder.c_str());
+	}
+	appFolder = appFolder + _T("\\TServer");
+	if (!PathFileExists(appFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(appFolder.c_str());
+	}
+
+	std::wstring logFolder = appFolder + _T("\\log");
+	if (!PathFileExists(logFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(logFolder.c_str());
+	}
+
+	std::wstring pathLogInfo = logFolder + _T("/info_");
+	std::wstring pathLogError = logFolder + _T("/error_");
+	std::wstring pathLogWarning = logFolder + _T("/warning_");
+
+	//FLAGS_log_dir = "./";
+	google::InitGoogleLogging("");
+	google::SetLogDestination(google::GLOG_INFO, CTool::UnicodeToUTF8(pathLogInfo).c_str());
+	google::SetLogDestination(google::GLOG_ERROR, CTool::UnicodeToUTF8(pathLogError).c_str());
+	google::SetLogDestination(google::GLOG_WARNING, CTool::UnicodeToUTF8(pathLogWarning).c_str());
+	google::SetLogFilenameExtension("log");
+
 	std::map<std::string, ACTION> serverActions, clientActions, wlClientActions ,mclientActions ;
 #if SERVICE_CODE
 	CService::instance()->SetServiceNameAndDescription(_T("Trbox.TServer"), _T("Trbox TServer Server"));
@@ -163,6 +207,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		wlClientActions["message"] = recvMsgAction;
 		wlClientActions["status"] = recvStatusAction;
 		wlClientActions["sendArs"] = recvArsAction;
+		wlClientActions["wlReadSerial"] = wlReadSerialAction;
 		mclientActions["getSettingConfig"] = GetSettingAction;
 		CBroker::instance()->startLogClient();
 
@@ -327,7 +372,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	//
 	//rpcServer.start();
 	
-	CMonitorServer ms;
+	/*CMonitorServer ms;
 	std::string strName = getServerName();
 	std::wstring wstr(strName.length(), L' ');
 	std::copy(strName.begin(), strName.end(), wstr.begin());
@@ -335,7 +380,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		ms.startMonitor(wstr.c_str(),_T("Trbox.Log"));
 		
-	}
+	}*/
 	while (1){ Sleep(1000); };
 #endif
 	return 0;

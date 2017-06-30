@@ -6,12 +6,14 @@
 
 void queryLicenseAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
+	LOG(INFO) << "queryLicenseAction";
 	static std::mutex lock;
 
 	std::lock_guard<std::mutex> locker(lock);
 
 	try{
 		bool status = CBroker::instance()->getLicenseStatus();
+		
 		
 		if (status)
 		{

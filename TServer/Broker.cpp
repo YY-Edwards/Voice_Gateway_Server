@@ -250,7 +250,8 @@ bool CBroker::getLic(std::string license)
 	if (strcmp(s.licType, lic.licType)==0)
 	if (s.deviceType == lic.deviceType)
 	{
-		if (strcmp(s.radioSerial,lic.radioSerial)==0)
+		std::string temp = lic.radioSerial;
+		if (strcmp(s.radioSerial, lic.radioSerial) == 0 && temp.length() == 10)
 		{
 			if (s.isEver == 1)      //IsEver:是否永久，1:永久，0：试用
 			{
@@ -270,7 +271,7 @@ bool CBroker::getLic(std::string license)
 				if (tm1 != tm2)
 				{
 					int a = (tm1>tm2) ? 0 : 1;//如果相等，大返回1，小返回0
-					CBroker::instance()->setLicenseStatus(a);
+					//CBroker::instance()->setLicenseStatus(a);
 					
 					return a;
 				}
@@ -279,29 +280,34 @@ bool CBroker::getLic(std::string license)
 		}
 		else if (strcmp(s.repeaterSerial, lic.repeaterSerial)==0)
 		{
-			if (s.isEver == 1)      //IsEver:是否永久，1:永久，0：试用
+			std::string temp1 = lic.repeaterSerial;
+			if (temp1.length() == 10)
 			{
-				licenseStatus = true;    // 授权成功
-			}
-			else if (s.isEver == 0)
-			{
-				//试用版 ，对比时间，是否过期
-				SYSTEMTIME sys;
-				GetLocalTime(&sys);
-				char tmp[64] = { NULL };
-				int year2, month2, day2, hour2, min2, sec2;
-				sscanf_s(lic.expiration, "%4d%02d%02d ", &year2, &month2, &day2, &hour2, &min2, &sec2);
-				int tm1 = sys.wYear * 10000 + sys.wMonth * 100 + sys.wDay;
-				int tm2 = year2 * 10000 + month2 * 100 + day2;
-				if (tm1 != tm2)
+				if (s.isEver == 1)      //IsEver:是否永久，1:永久，0：试用
 				{
-					int a = (tm1>tm2) ? 0 : 1;//如果相等，大返回1，小返回0
-					CBroker::instance()->setLicenseStatus(a);
-					return a;
+					licenseStatus = true;    // 授权成功
 				}
-					
-						
+				else if (s.isEver == 0)
+				{
+					//试用版 ，对比时间，是否过期
+					SYSTEMTIME sys;
+					GetLocalTime(&sys);
+					char tmp[64] = { NULL };
+					int year2, month2, day2, hour2, min2, sec2;
+					sscanf_s(lic.expiration, "%4d%02d%02d ", &year2, &month2, &day2, &hour2, &min2, &sec2);
+					int tm1 = sys.wYear * 10000 + sys.wMonth * 100 + sys.wDay;
+					int tm2 = year2 * 10000 + month2 * 100 + day2;
+					if (tm1 != tm2)
+					{
+						int a = (tm1>tm2) ? 0 : 1;//如果相等，大返回1，小返回0
+						//CBroker::instance()->setLicenseStatus(a);
+						return a;
+					}
+
+
+				}
 			}
+	
 		}
 		else
 		{

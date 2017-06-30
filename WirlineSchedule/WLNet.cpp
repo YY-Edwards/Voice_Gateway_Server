@@ -7759,12 +7759,14 @@ int CWLNet::wlSendSerial()
 		try
 		{
 			p->sendResponse(strRequest.c_str(), strRequest.size());
+			LOG(INFO) << "sendSerial success！";
 		}
 		catch (...)
 		{
 			redayDelete = p;
 			sprintf_s(m_reportMsg, "sendSerial fail, socket:%lu", p->s);
 			sendLogToWindow();
+			LOG(INFO) << "sendSerial fail！";
 		}
 	}
 	return 0;

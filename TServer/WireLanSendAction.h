@@ -170,7 +170,7 @@ void wlGetConfigAction(CRemotePeer* pRemote, const std::string& param, uint64_t 
 	}
 }
 void wlReadSerialAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
-{
+ {
 	static std::mutex lock;
 
 	std::lock_guard<std::mutex> locker(lock);
@@ -181,6 +181,7 @@ void wlReadSerialAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 		std::lock_guard<std::mutex> locker(lock);
 		Document d;
 		d.Parse(param.c_str());
+		LOG(INFO) << "wlReadSerialAction";
 		if (d.HasMember("serial") && d["serial"].IsString())
 		{
 			SerialInformation s = CBroker::instance()->getSerialInformation();
@@ -206,13 +207,15 @@ void wlReadSerialAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 				if (serial.length() == 10)
 				{
 					memcpy(s.repeaterSerial, serial.c_str(), 16);
+					memcpy(s.repeaterMode, "AZH69JDC9KA2AN", 16);
 				}
-				memcpy(s.repeaterMode, "AZH69JDC9KA2AN", 16);
+				
 				CBroker::instance()->setSerialInformation(s);
 			}
 
 			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
+			readSerial();
 		}
 
 	}

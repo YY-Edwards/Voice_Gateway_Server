@@ -37,6 +37,9 @@
     <Filter Include="clientAction">
       <UniqueIdentifier>{953314cb-fdfc-4e31-8dbb-f76bd7e01bd2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Tool">
+      <UniqueIdentifier>{396b2f69-6cc7-4920-9d60-0be70b2f2660}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -198,6 +201,9 @@
     <ClInclude Include="RegisterLicenseAction.h">
       <Filter>serverAction</Filter>
     </ClInclude>
+    <ClInclude Include="Tool.h">
+      <Filter>Tool</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -238,6 +244,9 @@
     </ClCompile>
     <ClCompile Include="..\lib\AES\Aes.cpp">
       <Filter>lib</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool.cpp">
+      <Filter>Tool</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

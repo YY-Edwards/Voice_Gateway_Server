@@ -16,3 +16,7 @@
 #include <WinSvc.h>
 
 // TODO: reference additional headers your program requires here
+#define GOOGLE_GLOG_DLL_DECL           // 使用静态glog库用这个
+#define GLOG_NO_ABBREVIATED_SEVERITIES // 没这个编译会出错,传说因为和Windows.h冲突
+#include "../lib/glog/logging.h"
+#pragma comment(lib,"../lib/glog/lib/libglog.lib")

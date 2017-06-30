@@ -75,7 +75,7 @@ void registerLicenseAction(CRemotePeer* pRemote, const std::string& param, uint6
 	static std::mutex lock;
 
 	std::lock_guard<std::mutex> locker(lock);
-
+	LOG(INFO) << "registerLicenseAction";
 	try{
 		Document d;
 		d.Parse(param.c_str());
@@ -100,6 +100,7 @@ void registerLicenseAction(CRemotePeer* pRemote, const std::string& param, uint6
 				std::string strResp = CRpcJsonParser::buildResponse("faliure", callId, 201, "", ArgumentType());
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
 			}
+			CBroker::instance()->setLicenseStatus(result);
 			
 
 		}

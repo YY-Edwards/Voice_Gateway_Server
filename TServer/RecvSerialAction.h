@@ -34,31 +34,11 @@ std::string wstringToString1(const std::wstring& wstr)
 }
 void readSerial()
 {
-	//打开本地文件获取serial
+	LOG(INFO) << "read serial";	//打开本地文件获取serial
 	int createFileRlt = 0;
 	TCHAR szBuffer[MAX_PATH];
 	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
-	std::wstring appFolder = getAppdataPath1() + _T("\\Jihua Information");
-	if (!PathFileExists(appFolder.c_str()))
-	{
-		createFileRlt = _wmkdir(appFolder.c_str());
-	}
-	appFolder = appFolder + _T("\\Trbox");
-	if (!PathFileExists(appFolder.c_str()))
-	{
-		createFileRlt = _wmkdir(appFolder.c_str());
-	}
-	appFolder = appFolder + _T("\\3.0");
-	if (!PathFileExists(appFolder.c_str()))
-	{
-		createFileRlt = _wmkdir(appFolder.c_str());
-	}
-	appFolder = appFolder + _T("\\TServer");
-	if (!PathFileExists(appFolder.c_str()))
-	{
-		createFileRlt = _wmkdir(appFolder.c_str());
-	}
-
+	std::wstring appFolder = getAppdataPath1() + _T("\\Jihua Information\\Trbox\\3.0\\TServer");
 	std::wstring logFolder = appFolder + _T("\\license");
 	if (!PathFileExists(logFolder.c_str()))
 	{
@@ -79,7 +59,8 @@ void readSerial()
 	}
 
 	fclose(fp);
-	CBroker::instance()->getLic(szTest);
+	bool result = CBroker::instance()->getLic(szTest);
+	CBroker::instance()->setLicenseStatus(result);
 }
 void readSerialAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
@@ -112,7 +93,7 @@ void readSerialAction(CRemotePeer* pRemote, const std::string& param, uint64_t c
 				
 				CBroker::instance()->setSerialInformation(s);
 			}
-			else if (type == "wlire")
+			else if (type == "wl")
 			{
 				s.deviceType = REPEATER;
 				if (serial.length() == 10)
