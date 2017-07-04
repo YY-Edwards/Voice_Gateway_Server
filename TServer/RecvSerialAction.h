@@ -55,10 +55,10 @@ void readSerial()
 			memset(szTest, 0, sizeof(szTest));
 			fgets(szTest, sizeof(szTest)-1, fp); // °üº¬ÁË\n  
 		}
-
+		fclose(fp);
 	}
 
-	fclose(fp);
+	
 	bool result = CBroker::instance()->getLic(szTest);
 	CBroker::instance()->setLicenseStatus(result);
 }
