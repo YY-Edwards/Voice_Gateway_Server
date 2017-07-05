@@ -46,6 +46,7 @@ CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis,std::wstring& defaultAudi
 	m_pCurrentTask = NULL;
 	m_pMnis = pMnis;
 	m_hWaitDecodeEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
+	memset(&m_currentTask, 0, sizeof(REMOTE_TASK));
 }
 
 CManager::~CManager()
@@ -695,14 +696,15 @@ void CManager::handleRemoteTask()
 			{
 										 //memcpy(&m_pCurrentTask, &task, sizeof(REMOTE_TASK));
 										 setCurrentTask(&task);
+										 g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
 										 if (CALL_ONGOING == g_pNet->GetCallStatus())
 										 {
 											 stopCall();
 										 }
-										 else
-										 {
-											 g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
-										 }
+										 //else
+										 //{
+											 //g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+										 //}
 			}
 				break;
 			case REMOTE_CMD_GET_CONN_STATUS:
@@ -799,6 +801,7 @@ void CManager::setCurrentTask(REMOTE_TASK* value)
 	freeCurrentTask();
 	applayCurrentTask();
 	memcpy(m_pCurrentTask, value, sizeof(REMOTE_TASK));
+	memcpy(&m_currentTask, value, sizeof(REMOTE_TASK));
 }
 
 void CManager::OnConnect(CRemotePeer* pRemotePeer)
@@ -976,5 +979,10 @@ int CManager::updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode)
 {
 	m_pMnis->updateOnLineRadioInfo(radioId, status, gpsQueryMode);
 	return 0;
+}
+
+REMOTE_TASK* CManager::getCurrentTaskR()
+{
+	return &m_currentTask;
 }
 

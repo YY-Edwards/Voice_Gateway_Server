@@ -237,16 +237,16 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 											   m_peerStatus = PEER_STATUS_REGIS_RESPONSE;
 											   m_startTickCount = GetTickCount();
 											   SendToPeer(&m_PeerAddr);
-											   sprintf_s(m_reportMsg, "PEER %lu build 0x94 packet,TickCount:%lu,this:%lu", m_ulPeerID, m_startTickCount, (DWORD)this);
-											   sendLogToWindow();
+											   //sprintf_s(m_reportMsg, "PEER %lu build 0x94 packet,TickCount:%lu,this:%lu", m_ulPeerID, m_startTickCount, (DWORD)this);
+											   //sendLogToWindow();
 	}
 		break;
 	case LE_PEER_REGISTRATION_RESPONSE_REMOTE:
 	{
 												 m_startTickCount = GetTickCount();
 												 m_peerStatus = PEER_STATUS_ALIVE_REQUES;
-												 sprintf_s(m_reportMsg, "PEER %lu recive 0x95 packet,TickCount:%lu,this:%lu", m_ulPeerID, m_startTickCount, DWORD(this));
-												 sendLogToWindow();
+												 //sprintf_s(m_reportMsg, "PEER %lu recive 0x95 packet,TickCount:%lu,this:%lu", m_ulPeerID, m_startTickCount, DWORD(this));
+												 //sendLogToWindow();
 	}
 		break;
 	case LE_PEER_KEEP_ALIVE_REQUEST_REMOTE:
@@ -1148,9 +1148,9 @@ void CIPSCPeer::sendLogToWindow()
 
 void CIPSCPeer::printInfo()
 {
-	char* strAddr = inet_ntoa(m_PeerAddr.sin_addr);
-	sprintf_s(m_reportMsg, "peer info->%s:%u,peer id:%lu", strAddr, htons(m_PeerAddr.sin_port), m_ulPeerID);
-	sendLogToWindow();
+	//char* strAddr = inet_ntoa(m_PeerAddr.sin_addr);
+	//sprintf_s(m_reportMsg, "peer info->%s:%u,peer id:%lu", strAddr, htons(m_PeerAddr.sin_port), m_ulPeerID);
+	//sendLogToWindow();
 	//TRACE(_T("peer info->%s:%u\r\n"), (CString)strAddr, htons(m_PeerAddr.sin_port));
 }
 
@@ -1591,8 +1591,8 @@ void CIPSCPeer::PeerStatusCheckProc()
 	{
 									   if (dif > WAIT_LE_PEER_KEEP_ALIVE_RESPONSE_TIMER)
 									   {
-										   sprintf_s(m_reportMsg, "PEER:%lu心跳包异常", m_ulPeerID);
-										   sendLogToWindow();
+										   //sprintf_s(m_reportMsg, "PEER:%lu心跳包异常", m_ulPeerID);
+										   //sendLogToWindow();
 										   HandlePacket(LE_PEER_REGISTRATION_REQUEST_LOCAL, NULL, 0, 0);
 									   }
 	}
@@ -1601,8 +1601,8 @@ void CIPSCPeer::PeerStatusCheckProc()
 	{
 									   if (dif > CONFIG_PEER_HEART_AND_REG_TIME)
 									   {
-										   sprintf_s(m_reportMsg, "PEER:%luLE注册异常,TickCount:%lu,this:%lu", m_ulPeerID, m_startTickCount, (DWORD)this);
-										   sendLogToWindow();
+										   //sprintf_s(m_reportMsg, "PEER:%luLE注册异常,TickCount:%lu,this:%lu", m_ulPeerID, m_startTickCount, (DWORD)this);
+										   //sendLogToWindow();
 										   HandlePacket(LE_PEER_REGISTRATION_REQUEST_LOCAL, NULL, 0, 0);
 									   }
 	}

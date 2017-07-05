@@ -47,8 +47,10 @@ namespace TrboX
 
         public RunMode GetRunMode()
         {
-            radio = new Setting() { Type = SettingType.Radio }.Get() as RadioSetting;
-            repeater = new Setting() { Type = SettingType.WireLan }.Get() as WireLanSetting;
+            RadioSetting tmp_radio = new Setting() { Type = SettingType.Radio }.Get() as RadioSetting;
+            if (tmp_radio != null) radio = tmp_radio;
+            WireLanSetting tmp_repeater = new Setting() { Type = SettingType.WireLan }.Get() as WireLanSetting;
+            if (tmp_repeater != null) repeater = tmp_repeater;
 
 
             RunMode type = RunMode.None;

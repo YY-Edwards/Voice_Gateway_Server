@@ -1812,8 +1812,8 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 				}
 			}
 
-			sprintf_s(m_reportMsg, "MAP peers:");
-			sendLogToWindow();
+			//sprintf_s(m_reportMsg, "MAP peers:");
+			//sendLogToWindow();
 			//print info of peer
 			for (auto i = m_pPeers.begin(); i != m_pPeers.end(); i++)
 			{
@@ -1936,8 +1936,8 @@ void CWLNet::ParseMapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLcp)
 				}
 			}
 
-			sprintf_s(m_reportMsg, "MAP peers:");
-			sendLogToWindow();
+			//sprintf_s(m_reportMsg, "MAP peers:");
+			//sendLogToWindow();
 			//print info of peer
 			for (auto i = m_pPeers.begin(); i != m_pPeers.end(); i++)
 			{
@@ -2402,11 +2402,12 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 									   CRecordFile* p = (CRecordFile*)(*i);
 									   if (diffTimestamp > CONFIG_HUNG_TIME && VOICE_STATUS_CALLBACK == (*i)->callStatus)
 									   {
-										   if (p->srcId == CONFIG_LOCAL_RADIO_ID)
-										   {
-											   wlCallStatus(p->callType, p->srcId, p->tagetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
-										   }
-										   else if (isNeedPlay(p->tagetId, p->callType))
+										   //if (p->srcId == CONFIG_LOCAL_RADIO_ID)
+										   //{
+											   //wlCallStatus(p->callType, p->srcId, p->tagetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+										   //}
+										   //else 
+										   if (isNeedPlay(p->tagetId, p->callType) && p->srcId != CONFIG_LOCAL_RADIO_ID)
 										   {
 											   wlCall(p->callType, p->srcId, p->tagetId, OPERATE_CALL_END, p->getBoolPlay());
 											   g_pNet->resetPlayFlag();
@@ -2429,11 +2430,12 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 										   (*i)->callStatus = VOICE_STATUS_END;
 										   GetLocalTime(&((*i)->recordTime));
 
-										   if (p->srcId == CONFIG_LOCAL_RADIO_ID)
-										   {
-											   wlCallStatus(p->callType, p->srcId, p->tagetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
-										   }
-										   else if (isNeedPlay(p->tagetId, p->callType))
+										   //if (p->srcId == CONFIG_LOCAL_RADIO_ID)
+										   //{
+											   //wlCallStatus(p->callType, p->srcId, p->tagetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+										   //}
+										  //else 
+										   if (isNeedPlay(p->tagetId, p->callType) && p->srcId != CONFIG_LOCAL_RADIO_ID)
 										   {
 											   wlCall(p->callType, p->srcId, p->tagetId, OPERATE_CALL_END, p->getBoolPlay());
 											   g_pNet->resetPlayFlag();
@@ -2620,11 +2622,12 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 																	   (*i)->tagetId == tgtId &&
 																	   (*i)->callId == callId)
 																   {
-																	   if (p->sourceID == CONFIG_LOCAL_RADIO_ID)
-																	   {
-																		   wlCallStatus(p->callType, p->sourceID, p->targetID, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
-																	   }
-																	   else if (isNeedPlay(tgtId, p->callType))
+																	   //if (p->sourceID == CONFIG_LOCAL_RADIO_ID)
+																	   //{
+																		   //wlCallStatus(p->callType, p->sourceID, p->targetID, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+																	   //}
+																	   //else 
+																	   if (isNeedPlay(tgtId, p->callType) && p->sourceID != CONFIG_LOCAL_RADIO_ID)
 																	   {
 																		   SetCallStatus(CALL_IDLE);
 																		   wlCall(p->callType, srcId, tgtId, OPERATE_CALL_END, (*i)->getBoolPlay());
@@ -5213,7 +5216,7 @@ void PASCAL CWLNet::OneMilliSecondProc(UINT wTimerID, UINT msg, DWORD dwUser, DW
 	}
 	switch (p->m_cuurentSendType)
 	{
-	case SEND_TYPE_FILE:
+	case SEND_TYPE_MIC:
 	{
 						   if (!g_bPTT
 							   && p->m_sendVoices.size() <= 0)
@@ -5225,39 +5228,47 @@ void PASCAL CWLNet::OneMilliSecondProc(UINT wTimerID, UINT msg, DWORD dwUser, DW
 							   sprintf_s(p->m_reportMsg, "SendVoices send out end");
 							   p->sendLogToWindow();
 						   }
+						   else if (p->m_sendVoices.size() <= 0)
+						   {
+							   /*关闭timer*/
+							   timeKillEvent(wTimerID);
+							   p->m_bIsSending = false;
+							   p->handleCallTimeOut();
+						   }
 						   else
 						   {
 							   p->NetWorker_SendCallByWL();
-							   if (p->m_sendVoices.size() < 1)
-							   {
-								   REMOTE_TASK *p = new REMOTE_TASK;
-								   memset(p, 0, sizeof(REMOTE_TASK));
-								   p->cmd = REMOTE_CMD_STOP_CALL;
-								   push_back_task(p);
-							   }
+							   //if (p->m_sendVoices.size() < 1)
+							   //{
+								   //REMOTE_TASK *p = new REMOTE_TASK;
+								   //memset(p, 0, sizeof(REMOTE_TASK));
+								   //p->cmd = REMOTE_CMD_STOP_CALL;
+								   //push_back_task(p);
+							   //}
 						   }
 	}
 		break;
-	case SEND_TYPE_MIC:
+	case SEND_TYPE_FILE:
 	{
+						   //invalid switch,do nothing
 						  /*用户松开了PTT并且已发送完毕待发送数据*/
-						  if (!g_bPTT
-							  && p->m_readySendVoices.size() <= 0)
-						  {
+						  //if (!g_bPTT
+							  //&& p->m_readySendVoices.size() <= 0)
+						  //{
 							  /*关闭timer*/
-							  timeKillEvent(wTimerID);
+							  //timeKillEvent(wTimerID);
 							  /*重置flag*/
-							  p->m_bIsSending = false;
+							  //p->m_bIsSending = false;
 
-							  sprintf_s(p->m_reportMsg, "m_readySendVoices send out end");
-							  p->sendLogToWindow();
-						  }
+							  //sprintf_s(p->m_reportMsg, "m_readySendVoices send out end");
+							  //p->sendLogToWindow();
+						  //}
 						  /*发送数据*/
-						  else
-						  {
-							  p->NetWorker_TxIfCall();
+						  //else
+						  //{
+							  //p->NetWorker_TxIfCall();
 							  //p->NetWorker_SendFile();
-						  }
+						  //}
 	}
 		break;
 	default:
@@ -5383,7 +5394,7 @@ DWORD CWLNet::Build_LE_MASTER_PEER_REGISTRATION_REQUEST(CHAR* pPacket, T_LE_PROT
 
 int CWLNet::initCallParam()
 {
-	m_cuurentSendType = SEND_TYPE_FILE;
+	m_cuurentSendType = SEND_TYPE_MIC;
 	m_burstType = BURST_A;
 	//m_isRequestNewCall = false;
 	m_SequenceNumber = 1;
@@ -7555,6 +7566,11 @@ int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned l
 	{
 		clientCallType = CLIENT_CALL_TYPE_Private;
 	}
+
+	std::string operateMemo = (OPERATE_CALL_START == operate)?("CALL_START"):("CALL_END");
+	sprintf_s(m_reportMsg, "tell ui %s", operateMemo.c_str());
+	sendLogToWindow();
+
 	/*将参数打包成json格式*/
 	ArgumentType args;
 	args["status"] = stus;
@@ -8144,6 +8160,30 @@ void CWLNet::setAudioPath(const std::string& path)
 {
 	std::wstring wPath = g_tool.ANSIToUnicode(path);
 	m_pEventLoger->setAudioPath(wPath);
+}
+
+void CWLNet::handleCallTimeOut()
+{
+	sprintf_s(m_reportMsg, "handleCallTimeOut");
+	sendLogToWindow();
+
+	bool value = canStopRecord();
+	if (value)
+	{
+		g_pSound->setbRecord(FALSE);
+		g_bPTT = FALSE;
+	}
+	releaseRecordEndEvent();
+	SetCallStatus(CALL_IDLE);
+	Sleep(500);
+	REMOTE_TASK task = *(m_pManager->getCurrentTaskR());
+	wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+	//if (g_pNet->canStopRecord())
+	//{
+		//g_pNet->requestRecordEndEvent();
+		//g_pSound->setbRecord(FALSE);
+		//g_bPTT = FALSE;
+	//}
 }
 
 //bool CWLNet::getIsFirstBurstA()
