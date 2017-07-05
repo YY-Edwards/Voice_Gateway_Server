@@ -335,6 +335,16 @@
                             <TreeViewItem Header="Dongle" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableWireLan}"/>
                             <TreeViewItem Header="功能" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp" Visibility="Collapsed"/>
                         </TreeViewItem>
+                        <TreeViewItem Header="资源管理" Style="{DynamicResource TreeViewItemStyleRoot}" Tag="3" Selected="tree_OptionsGroup_Selecteded" Width="195" >
+                            <TreeViewItem Header="供应商" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp" Visibility="Collapsed"/>
+                            <TreeViewItem Header="部门" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp" Visibility="Collapsed"/>
+                            <TreeViewItem Header="组" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+                            <TreeViewItem Header="人员" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+                            <TreeViewItem Header="车辆" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp" Visibility="Collapsed"/>
+
+                            <TreeViewItem Header="终端" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+                            <TreeViewItem Header="绑定/分配" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp" Visibility="Collapsed"/>
+                        </TreeViewItem>
                         <TreeViewItem Header="账号及权限" Style="{DynamicResource TreeViewItemStyleRoot}" Tag="4" Selected="tree_OptionsGroup_Selecteded" >
                             <TreeViewItem Header="账户" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
                             <TreeViewItem Header="功能分配" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
@@ -602,16 +612,6 @@
                                                 <Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
                                                 <Label Content="常规" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
                                             </DockPanel>
-                                            <TreeViewItem Header="资源管理" Style="{DynamicResource TreeViewItemStyleRoot}" Tag="3" Selected="tree_OptionsGroup_Selecteded" >
-                                                <TreeViewItem Header="供应商" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp" Visibility="Collapsed"/>
-                                                <TreeViewItem Header="部门" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp" Visibility="Collapsed"/>
-                                                <TreeViewItem Header="组" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
-                                                <TreeViewItem Header="人员" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
-                                                <TreeViewItem Header="车辆" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp" Visibility="Collapsed"/>
-
-                                                <TreeViewItem Header="终端" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
-                                                <TreeViewItem Header="绑定/分配" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp" Visibility="Collapsed"/>
-                                            </TreeViewItem>
                                             <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
                                             <TextBlock TextWrapping="Wrap" Text="使能/禁用WireLan调度功能" Margin="20,5,20,10" DockPanel.Dock="Top" Foreground="#FFBFBFBF" FontSize="13" HorizontalAlignment="Left"/>
                                             <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="28">
@@ -829,7 +829,7 @@
                                                 <DockPanel LastChildFill="False" Height="29.5" DockPanel.Dock="Top" Margin="85,0,0,0">
                                                     <Button Content="ADD" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
                                                     <Button Content="EDIT" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
-                                                    <Button Content="DELETE" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
+                                                    <Button Content="删除" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
                                                 </DockPanel>
                                                 <Separator Height="5" Margin="0,0,0,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
@@ -885,7 +885,7 @@
                                                 <DockPanel LastChildFill="False" Height="29.5" DockPanel.Dock="Top" Margin="85,0,0,0">
                                                     <Button Content="ADD" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
                                                     <Button Content="EDIT" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
-                                                    <Button Content="DELETE" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
+                                                    <Button Content="删除" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
                                                 </DockPanel>
                                                 <Separator Height="5" Margin="0,0,0,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
@@ -918,8 +918,8 @@
                                             <DockPanel DockPanel.Dock="Top">
                                                 <ListView x:Name="lst_Group" View="{StaticResource GroupView}" Width="190" Margin="0,55,0,0" BorderThickness="1" Style="{DynamicResource ListViewStyleNormal}" BorderBrush="#FF1C1D1E" Background="#FF3B3B3D" Padding="1,0" MinHeight="280"/>
                                                 <DockPanel LastChildFill="False" Height="51" DockPanel.Dock="Top" Margin="130,0,0,0" VerticalAlignment="Top">
-                                                    <Button x:Name="btn_DepartmentNew" Content="NEW" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderBrush="Black" BorderThickness="0" Background="#FF54B0C0"/>
-                                                    <Button x:Name="btn_DepartmentDel" Content="DELETE" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderThickness="0" BorderBrush="Black" Background="#FFEDA85D"/>
+                                                    <Button x:Name="btn_DepartmentNew" Content="新建" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderBrush="Black" BorderThickness="0" Background="#FF54B0C0"/>
+                                                    <Button x:Name="btn_DepartmentDel" Content="删除" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderThickness="0" BorderBrush="Black" Background="#FFEDA85D"/>
                                                 </DockPanel>
                                                 <Separator Height="10" Margin="30,0,10,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
@@ -947,7 +947,7 @@
                                                     <TextBox x:Name="txt_SvrIp35" TextWrapping="Wrap" Padding="0,2.5" Margin="5,1.5,0,0" VerticalAlignment="Center" Grid.Column="1" Height="80"/>
                                                 </Grid>-->
                                                 <DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="130,10,0,0" VerticalAlignment="Top">
-                                                    <Button x:Name="btn_SaveDepartment" Content="Save" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" BorderThickness="0" BorderBrush="Black" Background="#FF5C8EC6" Foreground="White" FontSize="14"/>
+                                                    <Button x:Name="btn_SaveDepartment" Content="保存" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" BorderThickness="0" BorderBrush="Black" Background="#FF5C8EC6" Foreground="White" FontSize="14"/>
                                                 </DockPanel>
                                             </DockPanel>
 
@@ -962,8 +962,8 @@
                                             <DockPanel DockPanel.Dock="Top">
                                                 <ListView x:Name="lst_Staff" Width="190" Margin="0,55,0,0" View="{StaticResource EmployeeView}" Style="{DynamicResource ListViewStyleNormal}" Background="#FF3B3B3D" BorderBrush="#FF1C1D1E" BorderThickness="1" MinHeight="280"/>
                                                 <DockPanel LastChildFill="False" Height="51" DockPanel.Dock="Top" Margin="130,0,0,0" VerticalAlignment="Top">
-                                                    <Button x:Name="btn_StaffNew" Content="NEW" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderBrush="Black" BorderThickness="0" Background="#FF54B0C0"/>
-                                                    <Button x:Name="btn_StaffDel" Content="DELETE" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderThickness="0" BorderBrush="Black" Background="#FFEDA85D"/>
+                                                    <Button x:Name="btn_StaffNew" Content="新建" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderBrush="Black" BorderThickness="0" Background="#FF54B0C0"/>
+                                                    <Button x:Name="btn_StaffDel" Content="删除" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderThickness="0" BorderBrush="Black" Background="#FFEDA85D"/>
                                                 </DockPanel>
                                                 <Separator Height="10" Margin="30,0,10,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
@@ -1004,7 +1004,7 @@
                                                         <ColumnDefinition Width="130"/>
                                                         <ColumnDefinition Width="*"/>
                                                     </Grid.ColumnDefinitions>
-                                                    <Label Content="部门 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
+                                                    <Label Content="组 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
                                                     <ComboBox x:Name="cmb_StaffDepartment"  HorizontalAlignment="Left" VerticalAlignment="Center" Width="263" Grid.Column="1" Margin="0" SelectedIndex="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" Height="30" Foreground="#FFBFBFBF" Style="{DynamicResource ComboBoxStyleNormal}">
                                                         <!---->
 													</ComboBox>
@@ -1027,7 +1027,7 @@
                                                     <TextBox x:Name="txt_SvrIp25" TextWrapping="Wrap" Padding="0,2.5" Margin="5,1.5,0,0" VerticalAlignment="Center" Grid.Column="1" Height="80"/>
                                                 </Grid>-->
                                                 <DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="130,10,0,0" VerticalAlignment="Top">
-                                                    <Button x:Name="btn_SaveStaff" Content="Save" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" BorderThickness="0" BorderBrush="Black" Background="#FF5C8EC6" Foreground="White" FontSize="14" />
+                                                    <Button x:Name="btn_SaveStaff" Content="保存" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" BorderThickness="0" BorderBrush="Black" Background="#FF5C8EC6" Foreground="White" FontSize="14" />
                                                 </DockPanel>
                                             </DockPanel>
 
@@ -1050,7 +1050,7 @@
                                                 <DockPanel LastChildFill="False" Height="29.5" DockPanel.Dock="Top" Margin="85,0,0,0">
                                                     <Button Content="ADD" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
                                                     <Button Content="EDIT" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
-                                                    <Button Content="DELETE" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
+                                                    <Button Content="删除" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
                                                 </DockPanel>
                                                 <Separator Height="5" Margin="0,0,0,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
@@ -1104,9 +1104,9 @@
                                                     </ListView.View>-->
                                                 </ListView>
                                                 <DockPanel LastChildFill="False" Height="51" DockPanel.Dock="Top" Margin="130,0,0,0" VerticalAlignment="Top">
-                                                    <Button x:Name="btn_AddRadio" Content="NEW" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderBrush="Black" BorderThickness="0" Background="#FF54B0C0"/>
+                                                    <Button x:Name="btn_AddRadio" Content="新建" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderBrush="Black" BorderThickness="0" Background="#FF54B0C0"/>
                                                     <!--<Button Content="EDIT" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>-->
-                                                    <Button x:Name="btn_DelRadio" Content="DELETE" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderThickness="0" BorderBrush="Black" Background="#FFEDA85D"/>
+                                                    <Button x:Name="btn_DelRadio" Content="删除" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderThickness="0" BorderBrush="Black" Background="#FFEDA85D"/>
                                                 </DockPanel>
                                                 <Separator Height="10" Margin="30,0,10,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
@@ -1180,7 +1180,7 @@
                                                 </Grid>-->
 
                                                 <DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="130,10,0,0" VerticalAlignment="Top">
-                                                    <Button x:Name="btn_SaveRadio" Content="Save" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Background="#FF5C8EC6"  Foreground="White" FontSize="14" BorderThickness="0"/>
+                                                    <Button x:Name="btn_SaveRadio" Content="保存" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Background="#FF5C8EC6"  Foreground="White" FontSize="14" BorderThickness="0"/>
                                                 </DockPanel>
                                             </DockPanel>
 
@@ -1205,7 +1205,7 @@
                                                 <DockPanel LastChildFill="False" Height="29.5" DockPanel.Dock="Top" Margin="85,0,0,0">
                                                     <Button Content="ADD" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
                                                     <Button Content="EDIT" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
-                                                    <Button Content="DELETE" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
+                                                    <Button Content="删除" VerticalAlignment="Center" Width="60" Margin="2.5,0"/>
                                                 </DockPanel>
                                                 <Separator Height="5" Margin="0,0,0,2.5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5"/>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5">
@@ -1270,8 +1270,8 @@
                                                     </ListView.View>-->
                                                 </ListView>
                                                 <DockPanel LastChildFill="False" Height="55" DockPanel.Dock="Top" Margin="130,0,0,0">
-                                                    <Button x:Name="btn_UserNew" Content="NEW" VerticalAlignment="Center" Width="92" Margin="2.5,0" Height="30" Tag="4" AllowDrop="True" Background="#FF54B0C0"  Foreground="White" FontSize="14" BorderThickness="0" Style="{DynamicResource ButtonNormalStyle}"/>
-                                                    <Button x:Name="btn_UserDel" Content="DELETE" VerticalAlignment="Center" Width="92" Margin="2.5,0" Height="30" Tag="4" AllowDrop="True" Background="#FFEDA85D"  Foreground="White" FontSize="14" BorderThickness="0" Style="{DynamicResource ButtonNormalStyle}"/>
+                                                    <Button x:Name="btn_UserNew" Content="新建" VerticalAlignment="Center" Width="92" Margin="2.5,0" Height="30" Tag="4" AllowDrop="True" Background="#FF54B0C0"  Foreground="White" FontSize="14" BorderThickness="0" Style="{DynamicResource ButtonNormalStyle}"/>
+                                                    <Button x:Name="btn_UserDel" Content="删除" VerticalAlignment="Center" Width="92" Margin="2.5,0" Height="30" Tag="4" AllowDrop="True" Background="#FFEDA85D"  Foreground="White" FontSize="14" BorderThickness="0" Style="{DynamicResource ButtonNormalStyle}"/>
                                                 </DockPanel>
                                                 <Separator Height="10" Margin="30,0,10,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
                                                 <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0" Height="36">
@@ -1298,11 +1298,11 @@
                                                     </Grid.ColumnDefinitions>
                                                     <Label Content="类型 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
                                                     <ComboBox x:Name="cmb_UserType" DockPanel.Dock="Top" HorizontalAlignment="Left" Height="30" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Foreground="#FFBFBFBF" Style="{DynamicResource ComboBoxStyleNormal}" FontSize="13" SelectedIndex="0">
-                                                        <ComboBoxItem Content="来宾"  Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFBEC3C7"/>
+                                                        <ComboBoxItem Content="用户"  Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFBEC3C7"/>
                                                         <ComboBoxItem Content="管理员"  Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFBEC3C7"/>
                                                     </ComboBox>
                                                 </Grid>
-                                                <Grid DockPanel.Dock="Top" Margin="0" Height="106">
+                                                <Grid DockPanel.Dock="Top" Margin="0" Height="106" Visibility="Collapsed">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="130"/>
                                                         <ColumnDefinition Width="*"/>
@@ -1319,7 +1319,7 @@
                                                     <TextBox x:Name="txt_UserMark" TextWrapping="Wrap" Padding="0,2.5" Margin="5,2,0,0" VerticalAlignment="Center" Grid.Column="1" Height="60"/>
                                                 </Grid>-->
                                                 <DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="130,10,0,0">
-                                                    <Button x:Name="btn_SaveUser" Content="Save" VerticalAlignment="Center" Width="92" Margin="2.5,0" Height="30" Tag="4" AllowDrop="True" Background="#FF5C8EC6"  Foreground="White" FontSize="14" BorderThickness="0" Style="{DynamicResource ButtonNormalStyle}"/>
+                                                    <Button x:Name="btn_SaveUser" Content="保存" VerticalAlignment="Center" Width="92" Margin="2.5,0" Height="30" Tag="4" AllowDrop="True" Background="#FF5C8EC6"  Foreground="White" FontSize="14" BorderThickness="0" Style="{DynamicResource ButtonNormalStyle}"/>
                                                 </DockPanel>
                                             </DockPanel>
 

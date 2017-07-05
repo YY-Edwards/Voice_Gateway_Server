@@ -60,7 +60,7 @@
 #include "GetSettingAction.h"
 #include "../lib/service\service.h"
 
-#define SERVICE_CODE    FALSE
+#define SERVICE_CODE    TRUE
 
 std::string getServerName()
 {

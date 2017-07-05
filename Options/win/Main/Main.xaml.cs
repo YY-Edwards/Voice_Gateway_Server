@@ -349,18 +349,18 @@ namespace TrboX
 
         private void btn_Apply_Click(object sender, RoutedEventArgs e)
         {
-           //SettingMgr.Set(SettingComponents.Get());
+            SettingMgr.Set(SettingComponents.Get());
 
-           //UserMgr.Save();
-           //DepartmentMgr.Save();
-           //StaffMgr.Save();
-           //RadioMgr.Save();
+            UserMgr.Save();
+            DepartmentMgr.Save();
+            StaffMgr.Save();
+            RadioMgr.Save();
 
 
-           //DepartmentMgr.SaveDeptStaff();
-           //DepartmentMgr.SaveDeptRadio();
+            DepartmentMgr.SaveDeptStaff();
+            DepartmentMgr.SaveDeptRadio();
 
-           //StaffMgr.SaveStaffRadio();
+            StaffMgr.SaveStaffRadio();
 
            WarnningWindow warn = new WarnningWindow();
            warn.Owner = this;

@@ -260,18 +260,18 @@ void DispatchOperate::OnConnect(CRemotePeer* pRemotePeer)
 		std::string strRequest = CRpcJsonParser::buildCall("getRadioConfig", ++g_sn, ArgumentType(), "radio");
 		pRemotePeer->sendResponse((const char *)strRequest.c_str(), strRequest.size());
 
-		//发送序列号到tserver
-		ArgumentType args;
-		FieldValue fSerial(FieldValue::TString);
-		fSerial.setString(serial.c_str());
-		args["serial"] = fSerial;
-		dis.send2Client("readSerial", args);
-		//发送mode到tserver
-		ArgumentType args1;
-		FieldValue fSerial1(FieldValue::TString);
-		fSerial1.setString(radiomode.c_str());
-		args1["serial"] = fSerial;
-		dis.send2Client("readSerial", args1);
+		////发送序列号到tserver
+		//ArgumentType args;
+		//FieldValue fSerial(FieldValue::TString);
+		//fSerial.setString(serial.c_str());
+		//args["serial"] = fSerial;
+		//dis.send2Client("readSerial", args);
+		////发送mode到tserver
+		//ArgumentType args1;
+		//FieldValue fSerial1(FieldValue::TString);
+		//fSerial1.setString(radiomode.c_str());
+		//args1["serial"] = fSerial;
+		//dis.send2Client("readSerial", args1);
 		
 	}
 }
