@@ -352,12 +352,16 @@ int CManager::initialCall(unsigned long targetId, unsigned char callTyp)
 
 int CManager::stopCall()
 {
+	sprintf_s(m_reportMsg, "handle stopCall");
+	sendLogToWindow();
 	if (g_pNet->canStopRecord())
 	{
 		g_pNet->requestRecordEndEvent();
 		g_pSound->setbRecord(FALSE);
 		g_pNet->waitRecordEnd();
 	}
+	sprintf_s(m_reportMsg, "handle success");
+	sendLogToWindow();
 	return 0;
 }
 

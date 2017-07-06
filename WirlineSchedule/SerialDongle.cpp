@@ -957,8 +957,8 @@ void CSerialDongle::readyNextWritePCM()
 		/*通知此次通话结束*/
 		g_pNet->releaseRecordEndEvent();
 		//提醒界面
-		sprintf_s(m_reportMsg, "stop coding");
-		sendLogToWindow();
+		//sprintf_s(m_reportMsg, "stop coding");
+		//sendLogToWindow();
 		m_bCoding = FALSE;//复位当前转换状态
 		return;
 	}
@@ -1069,8 +1069,8 @@ void CSerialDongle::startCoding(int bufferSize)
 		)
 	{
 		//提醒界面
-		sprintf_s(m_reportMsg, "start coding");
-		sendLogToWindow();
+		//sprintf_s(m_reportMsg, "start coding");
+		//sendLogToWindow();
 		m_bCoding = TRUE;
 		readyNextWritePCM();
 	}

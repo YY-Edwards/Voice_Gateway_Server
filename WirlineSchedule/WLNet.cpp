@@ -2402,12 +2402,11 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 									   CRecordFile* p = (CRecordFile*)(*i);
 									   if (diffTimestamp > CONFIG_HUNG_TIME && VOICE_STATUS_CALLBACK == (*i)->callStatus)
 									   {
-										   //if (p->srcId == CONFIG_LOCAL_RADIO_ID)
-										   //{
-											   //wlCallStatus(p->callType, p->srcId, p->tagetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
-										   //}
-										   //else 
-										   if (isNeedPlay(p->tagetId, p->callType) && p->srcId != CONFIG_LOCAL_RADIO_ID)
+										   if (p->srcId == CONFIG_LOCAL_RADIO_ID)
+										   {
+											   wlCallStatus(p->callType, p->srcId, p->tagetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+										   }
+										   else if (isNeedPlay(p->tagetId, p->callType) && p->srcId != CONFIG_LOCAL_RADIO_ID)
 										   {
 											   wlCall(p->callType, p->srcId, p->tagetId, OPERATE_CALL_END, p->getBoolPlay());
 											   g_pNet->resetPlayFlag();
@@ -2430,12 +2429,11 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 										   (*i)->callStatus = VOICE_STATUS_END;
 										   GetLocalTime(&((*i)->recordTime));
 
-										   //if (p->srcId == CONFIG_LOCAL_RADIO_ID)
-										   //{
-											   //wlCallStatus(p->callType, p->srcId, p->tagetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
-										   //}
-										  //else 
-										   if (isNeedPlay(p->tagetId, p->callType) && p->srcId != CONFIG_LOCAL_RADIO_ID)
+										   if (p->srcId == CONFIG_LOCAL_RADIO_ID)
+										   {
+											   wlCallStatus(p->callType, p->srcId, p->tagetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+										   }
+										   else if (isNeedPlay(p->tagetId, p->callType) && p->srcId != CONFIG_LOCAL_RADIO_ID)
 										   {
 											   wlCall(p->callType, p->srcId, p->tagetId, OPERATE_CALL_END, p->getBoolPlay());
 											   g_pNet->resetPlayFlag();
@@ -6710,15 +6708,15 @@ void CWLNet::CorrectingBuffer(DWORD callId)
 
 void CWLNet::requestRecordEndEvent()
 {
-	sprintf_s(m_reportMsg, "requestRecordEndEvent");
-	sendLogToWindow();
+	//sprintf_s(m_reportMsg, "requestRecordEndEvent");
+	//sendLogToWindow();
 	ResetEvent(m_endRecordEvent);
 }
 
 void CWLNet::releaseRecordEndEvent()
 {
-	sprintf_s(m_reportMsg, "releaseRecordEndEvent");
-	sendLogToWindow();
+	//sprintf_s(m_reportMsg, "releaseRecordEndEvent");
+	//sendLogToWindow();
 	SetEvent(m_endRecordEvent);
 }
 
@@ -7567,9 +7565,9 @@ int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned l
 		clientCallType = CLIENT_CALL_TYPE_Private;
 	}
 
-	std::string operateMemo = (OPERATE_CALL_START == operate)?("CALL_START"):("CALL_END");
-	sprintf_s(m_reportMsg, "tell ui %s", operateMemo.c_str());
-	sendLogToWindow();
+	//std::string operateMemo = (OPERATE_CALL_START == operate)?("CALL_START"):("CALL_END");
+	//sprintf_s(m_reportMsg, "tell ui %s", operateMemo.c_str());
+	//sendLogToWindow();
 
 	/*将参数打包成json格式*/
 	ArgumentType args;
