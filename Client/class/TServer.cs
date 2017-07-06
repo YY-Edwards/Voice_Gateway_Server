@@ -84,8 +84,7 @@ namespace TrboX
         }
         public static void InitializeServer()
         {
-
-            if (TCP != null) TCP.Close();
+            if (TCP != null) return;
             TCP = new TcpInterface(new IPEndPoint(IPAddress.Parse("127.0.0.1"), 9000), OnReceive);
             TCP.OnConnect = OnConnect;
             TCP.Open();
