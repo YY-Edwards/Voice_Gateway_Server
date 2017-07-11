@@ -341,22 +341,22 @@ namespace TrboX
 
             this.SizeChanged += delegate
             {
-                if (this.WindowState == WindowState.Maximized)
-                {
-                    img_SysMax.Visibility = Visibility.Collapsed;
-                    img_SysRestore.Visibility = Visibility.Visible;
+                //if (this.WindowState == WindowState.Maximized)
+                //{
+                //    img_SysMax.Visibility = Visibility.Collapsed;
+                //    img_SysRestore.Visibility = Visibility.Visible;
 
-                    if (null != borderClip) borderClip.Margin = new Thickness(0);
-                    relativeClip = -1;
+                //    if (null != borderClip) borderClip.Margin = new Thickness(0);
+                //    relativeClip = -1;
 
-                }
-                else
-                {
-                    img_SysMax.Visibility = Visibility.Visible;
-                    img_SysRestore.Visibility = Visibility.Collapsed;
-                    if (null != borderClip) borderClip.Margin = new Thickness(10);
-                    relativeClip = 14;
-                }
+                //}
+                //else
+                //{
+                //    img_SysMax.Visibility = Visibility.Visible;
+                //    img_SysRestore.Visibility = Visibility.Collapsed;
+                //    if (null != borderClip) borderClip.Margin = new Thickness(10);
+                //    relativeClip = 14;
+                //}
             };
         }
 

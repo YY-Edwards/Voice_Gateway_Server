@@ -24,7 +24,7 @@ namespace TrboX
 
             CheckAdministrator();
             //如果不是管理员，程序会直接退出，并使用管理员身份重新运行。  
-            StartupUri = new Uri("win/Login/Login.xaml", UriKind.RelativeOrAbsolute);
+            StartupUri = new Uri("win/MainWindow/Main.xaml", UriKind.RelativeOrAbsolute);
         }
         private void CheckAdministrator()
         {

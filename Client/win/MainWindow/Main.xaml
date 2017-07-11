@@ -1863,6 +1863,7 @@
                             <MenuItem Header="导航窗口" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top">
                                 <MenuItem Header="语音调度" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" IsChecked="True" IsEnabled="False"/>
                                 <MenuItem x:Name="menu_View_Nav_Map" Header="地图" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" IsChecked="True"/>
+                                <MenuItem x:Name="menu_View_Nav_LocationInDoor" Header="室内定位" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" IsChecked="True"/>
                                 <MenuItem x:Name="menu_View_Nav_Recording" Header="录音" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" IsChecked="True" Visibility="Collapsed"/>
                                 <MenuItem x:Name="menu_View_Nav_Report" Header="报表" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top" IsChecked="True"/>
                             </MenuItem>
@@ -1901,6 +1902,9 @@
                             </MenuItem>
                             <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
                             <MenuItem x:Name="menu_Target_JobTicket" Header="工单" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top"/>
+                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
+                            <MenuItem x:Name="menu_Target_Start_LocationInDoor" Header="启动室内定位" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top"/>
+                            <MenuItem x:Name="menu_Target_Stop_LocationInDoor" Header="停止室内定位" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top"/>
                         </MenuItem>
                         <MenuItem Header="录音(_R)" Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}" Visibility="{Binding IsChecked, Converter={StaticResource FalseHide}, ElementName=rad_Nav_Recording}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" Height="28">
                             <MenuItem x:Name="menu_Rec_Update"   Header="更新" Height="28" Margin="0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top"/>
@@ -2004,6 +2008,12 @@
                                     <local:IconBtn x:Name="btn_Tool_Sleep" Normal="/TrboX;component/resource/images/sleep_22_22_n.png" Margin="5,0" VerticalAlignment="Center" ToolTip="遥晕" Hover="/TrboX;component/resource/images/sleep_22_22_h.png" Disable="/TrboX;component/resource/images/sleep_22_22_d.png" Press="/TrboX;component/resource/images/sleep_22_22_p.png" Width="22" Visibility="Collapsed" />
                                 </DockPanel>
                             </Border>
+                            <Border x:Name="bdr_Tool_LocationInDoor" BorderBrush="#FF1C1D1E" BorderThickness="1,0,0,0" Margin="0" Padding="5,0,3,0" IsEnabled="{Binding IsChecked, ElementName=rad_Nav_Dispatch}">
+                            	<DockPanel LastChildFill="False" Margin="0">
+                            		<local:IconBtn x:Name="btn_Tool_NewContact1" Normal="/TrboX;component/resource/images/start_locationindoor_22_n.png" Margin="5,0" VerticalAlignment="Center" ToolTip="启动室内定位" Width="22" Disable="/TrboX;component/resource/images/start_locationindoor_22_d.png" Hover="/TrboX;component/resource/images/start_locationindoor_22_h.png" Press="/TrboX;component/resource/images/start_locationindoor_22_p.png" Height="22" Padding="4" />
+                            		<local:IconBtn x:Name="btn_Tool_NewFastOperate1" Normal="/TrboX;component/resource/images/stop_locationindoor_22_n.png" Margin="5,0" VerticalAlignment="Center" ToolTip="停止室内定位" Width="22" Disable="/TrboX;component/resource/images/stop_locationindoor_22_d.png" Hover="/TrboX;component/resource/images/stop_locationindoor_22_h.png" Press="/TrboX;component/resource/images/stop_locationindoor_22_p.png" Padding="0" />
+                            	</DockPanel>
+                            </Border>
                             <Border x:Name="bdr_Tool_Help" BorderBrush="#FF1C1D1E" BorderThickness="1,0,0,0" Margin="0" Padding="5,0,3,0">
                                 <DockPanel LastChildFill="False" Margin="0">
                                     <local:IconBtn x:Name="btn_Help" Normal="/TrboX;component/resource/images/help_22_22_n.png" Margin="5,0" VerticalAlignment="Center" ToolTip="查看帮助" Width="22" Hover="/TrboX;component/resource/images/help_22_22_h.png" Disable="/TrboX;component/resource/images/help_22_22_d.png" Press="/TrboX;component/resource/images/help_22_22_p.png" Visibility="Collapsed" />
@@ -2048,7 +2058,7 @@
                         <Grid x:Name="grd_Nav" Margin="0,0,8,0">
                             <Grid.RowDefinitions>
                                 <RowDefinition x:Name="grd_Row_Mgr" MinHeight="34"/>
-                                <RowDefinition Height="124"  MaxHeight="124" MinHeight="42"/>
+                                <RowDefinition Height="166"  MaxHeight="166" MinHeight="42"/>
                             </Grid.RowDefinitions>
                             <Border BorderBrush="#FF0F0F10" BorderThickness="1" Margin="0,0,0,8" Background="#FF3B3B3D">
                                 <DockPanel>
@@ -2133,6 +2143,7 @@
                                 <DockPanel LastChildFill="False">
                                     <RadioButton x:Name="rad_Nav_Dispatch" Content="语音调度" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" IsChecked="True" Height="41" Foreground="{DynamicResource fbg}" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D"/>
                                     <RadioButton x:Name="rad_Nav_Map" Content="地图" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" Height="41"  Foreground="{DynamicResource fbg}" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D"/>
+                                    <RadioButton x:Name="rad_Nav_LocationInDoor" Content="室内定位" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" Height="41" Foreground="{DynamicResource fbg}" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D"/>
                                     <RadioButton x:Name="rad_Nav_Recording" Content="录音" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" Height="41" Foreground="{DynamicResource fbg}" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D" Visibility="Collapsed"/>
                                     <RadioButton x:Name="rad_Nav_Report" Content="报表" Style="{DynamicResource RadioButtonMgr}" DockPanel.Dock="Top" GroupName="MainTab" Height="41" Foreground="{DynamicResource fbg}" BorderThickness="0" BorderBrush="#FF0C0C0D"/>
                                 </DockPanel>
@@ -2160,12 +2171,13 @@
                                             <TabControl.SelectedIndex>
                                                 <MultiBinding  Converter="{StaticResource IndexFromRadio}" Mode="OneWay">
                                                     <Binding ElementName="rad_Nav_Dispatch" Path="IsChecked" />
-                                                    <Binding ElementName="rad_Nav_Map" Path="IsChecked" />
+                                                    <Binding ElementName="rad_Nav_Map" Path="IsChecked" />    
+													<Binding ElementName="rad_Nav_LocationInDoor" Path="IsChecked" />                                               
                                                     <Binding ElementName="rad_Nav_Recording" Path="IsChecked" />
                                                     <Binding ElementName="rad_Nav_Report" Path="IsChecked" />
                                                 </MultiBinding>
                                             </TabControl.SelectedIndex>
-                                            <TabItem Header="语音调度" Style="{DynamicResource SimpleTabItem}" Width="20">
+                                            <TabItem Header="语音调度" Style="{DynamicResource SimpleTabItem}" Width="20" d:IsHidden="True" d:IsLocked="True">
                                                 <DockPanel>
                                                     <Grid>
 
@@ -2180,14 +2192,27 @@
                                                     </Grid>
                                                 </DockPanel>
                                             </TabItem>
-                                            <TabItem Header="地图" Style="{DynamicResource SimpleTabItem}" Width="20">
+                                            <TabItem Header="地图" Style="{DynamicResource SimpleTabItem}" Width="20" d:IsHidden="True" d:IsLocked="True">
                                                 <DockPanel>
                                                     <DockPanel DockPanel.Dock="Top">
                                                         <Grid  x:Name="MyWebGrid" Margin="0"/>
                                                     </DockPanel>
                                                 </DockPanel>
                                             </TabItem>
-                                            <TabItem Header="录音" Style="{DynamicResource SimpleTabItem}">
+                                            <TabItem Header="室内定位" Style="{DynamicResource SimpleTabItem}">
+                                            	<Border BorderBrush="Black" BorderThickness="1" Margin="22,12,22,30">
+                                            		<DockPanel x:Name="dck_ReportList_Copy" Margin="0">
+                                            			<Border BorderBrush="#FF1F1F1F" BorderThickness="0" Margin="0,0,0,-2" Width="200"  Visibility="{Binding IsChecked, Converter={StaticResource FalseHide}, ElementName=chk_ToggleAreas}">
+                                            				<TreeView BorderThickness="0" Background="{x:Null}"/>
+                                            			</Border>
+                                            			<CheckBox x:Name="chk_ToggleAreas"  Style="{DynamicResource CheckBoxToogleStyle}" Width="8" IsChecked="True" />
+                                            			<Border BorderBrush="#FF1F1F1F" BorderThickness="1,0">
+                                            				<TabControl/>
+														</Border>
+                                            		</DockPanel>
+                                            	</Border>
+                                            </TabItem>
+                                            <TabItem Header="录音" Style="{DynamicResource SimpleTabItem}" d:IsHidden="True" d:IsLocked="True">
                                                 <DockPanel>
                                                     <DockPanel LastChildFill="False" DockPanel.Dock="Top">
                                                         <RadioButton Content="RadioButton" HorizontalAlignment="Left" Style="{DynamicResource RadioButtonStyleNav}" VerticalAlignment="Top" Foreground="#FFC9CDD2" Height="24" Padding="0"/>
@@ -2325,7 +2350,7 @@
                                     </Border>
                                 </DockPanel>
                             </Border>
-                            <Border BorderBrush="#FF0F0F10" BorderThickness="1" Grid.Row="1" Margin="0,8,0,0" Background="#FF3B3B3D">
+                            <Border BorderBrush="#FF0F0F10" BorderThickness="1" Grid.Row="1" Margin="0,8,0,0" Background="#FF3B3B3D" d:IsHidden="True" d:IsLocked="True">
                                 <DockPanel>
                                     <Path Data="M6.8333333,30 L178.16667,30" Height="1" Stretch="Fill" VerticalAlignment="Top" DockPanel.Dock="Top" Stroke="{DynamicResource BorderTop}" Margin="-0.5,0"/>
                                     <Border BorderBrush="#FF0F0F10" BorderThickness="0,0,0,1" Height="30" DockPanel.Dock="Top" Background="#FF242424">
@@ -2434,8 +2459,8 @@
                             <GridSplitter x:Name="grdspl_Msg_Row2" HorizontalAlignment="Stretch" Height="8" VerticalAlignment="Bottom" Grid.Row="2" Background="#00000000" Margin="0,0,0,-2" Visibility="Hidden"/>
                             <GridSplitter x:Name="grdspl_Msg_Row3" HorizontalAlignment="Stretch" Height="8" VerticalAlignment="Bottom" Grid.Row="3" Background="#00000000" Margin="0,0,0,-2" Visibility="Hidden"/>
                         </Grid>
-                        <GridSplitter x:Name="grdspl_Nav_Main" Width="8" Background="#00110101" Margin="0" d:IsHidden="True" d:IsLocked="True"/>
-                        <GridSplitter x:Name="grdspl_Main_Msg" HorizontalAlignment="Left" Width="8" Grid.Column="2" Background="#00110101" Margin="0" d:IsHidden="True" d:IsLocked="True" />
+                        <GridSplitter x:Name="grdspl_Nav_Main" Width="8" Background="#00110101" Margin="0" d:IsLocked="True"/>
+                        <GridSplitter x:Name="grdspl_Main_Msg" HorizontalAlignment="Left" Width="8" Grid.Column="2" Background="#00110101" Margin="0" d:IsLocked="True" />
                     </Grid>
                 </Border>
             </Grid>

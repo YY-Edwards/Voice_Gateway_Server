@@ -103,6 +103,7 @@ namespace TrboX
 
             //navigation
             m_Main.menu_View_Nav_Map.Click += delegate { m_Main.View.NavMapShow(!m_Main.menu_View_Nav_Map.IsChecked); };
+            m_Main.menu_View_Nav_LocationInDoor.Click += delegate { m_Main.View.NavLocationInDoorShow(!m_Main.menu_View_Nav_LocationInDoor.IsChecked); };
             m_Main.menu_View_Nav_Recording.Click += delegate { m_Main.View.NavRecordingShow(!m_Main.menu_View_Nav_Recording.IsChecked); };
             m_Main.menu_View_Nav_Report.Click += delegate { m_Main.View.NavReportShow(!m_Main.menu_View_Nav_Report.IsChecked); };
 

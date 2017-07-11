@@ -258,6 +258,28 @@ namespace TrboX
                 m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 41;
             }
         }
+
+        public void NavLocationInDoorShow(bool show)
+        {
+            m_Main.menu_View_Nav_LocationInDoor .IsChecked = show;
+            m_Main.rad_Nav_LocationInDoor.IsChecked = show;
+            if (show)
+            {
+                m_Main.rad_Nav_LocationInDoor.Visibility = Visibility.Visible;
+                m_Main.grd_Nav.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
+                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 41);
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight + 41;
+            }
+            else
+            {
+                m_Main.rad_Nav_Dispatch.IsChecked = true;
+                m_Main.rad_Nav_LocationInDoor.Visibility = Visibility.Collapsed;
+                m_Main.grd_Nav.RowDefinitions[0].Height = new GridLength(1, GridUnitType.Star);
+                m_Main.grd_Nav.RowDefinitions[1].Height = new GridLength(m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 41);
+                m_Main.grd_Nav.RowDefinitions[1].MaxHeight = m_Main.grd_Nav.RowDefinitions[1].ActualHeight - 41;
+            }
+        }
+
         public void NavRecordingShow(bool show)
         {
             m_Main.menu_View_Nav_Recording.IsChecked = show;

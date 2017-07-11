@@ -231,6 +231,14 @@
     <Resource Include="resource\images\panel_view_14_14_n.png" />
     <Resource Include="resource\images\password_13_15.png" />
     <Resource Include="resource\images\serach_21_21_h.png" />
+    <Resource Include="resource\images\start_locationindoor_22_d.png" />
+    <Resource Include="resource\images\start_locationindoor_22_h.png" />
+    <Resource Include="resource\images\start_locationindoor_22_n.png" />
+    <Resource Include="resource\images\start_locationindoor_22_p.png" />
+    <Resource Include="resource\images\stop_locationindoor_22_d.png" />
+    <Resource Include="resource\images\stop_locationindoor_22_h.png" />
+    <Resource Include="resource\images\stop_locationindoor_22_n.png" />
+    <Resource Include="resource\images\stop_locationindoor_22_p.png" />
     <Resource Include="resource\images\sub_title_60_20.png" />
     <Resource Include="resource\images\username_11_14.png" />
   </ItemGroup>

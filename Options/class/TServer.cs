@@ -337,7 +337,11 @@ namespace TrboX
 
 
 
-
+    public enum RequestType
+    {
+        wl, 
+        radio
+    }
     public enum RequestType
     {
         None,
