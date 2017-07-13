@@ -1,0 +1,989 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+        xmlns:local="clr-namespace:Manager"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+        xmlns:WPF="clr-namespace:Controls.WPF;assembly=Controls.WPF" x:Name="win_Main" 
+        mc:Ignorable="d" 
+        x:Class="Manager.Main"
+        Title="MainWindow" Height="728" Width="920" AllowsTransparency="True" WindowStyle="None" Background="#FF1C1D1E">
+    <Window.Resources>
+        <local:CVMPayout x:Key="CVMPayout"/>
+        <local:CVMConfiguration x:Key="CVMConfiguration" />
+        <local:MultiParameter x:Key="MultiParameter" />
+
+        <local:ServerStatusConverter x:Key="ServerStatusConverter" />
+        <local:ConnectBtnConverter x:Key="ConnectBtnConverter" />
+        <local:TrueVisable x:Key="TrueVisable" />
+        <local:FalseHide x:Key="FalseHide" />
+
+        <ResourceDictionary x:Key="CustomStyle">
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="style.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding Load, Mode=OneWay, Source={StaticResource CVMPayout}}" CommandParameter="{Binding ElementName=win_Main, Mode=OneWay}" />
+            <i:InvokeCommandAction Command="{Binding Load, Mode=OneWay, Source={StaticResource CVMConfiguration}}" CommandParameter="{Binding ElementName=win_Main, Mode=OneWay}" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Closed">
+            <i:InvokeCommandAction Command="{Binding Exit, Mode=OneWay, Source={StaticResource CVMPayout}}"/>
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid>
+        <DockPanel>
+            <Grid x:Name="Header" Height="40" VerticalAlignment="Top" DockPanel.Dock="Top">
+                <Border BorderBrush="Black" BorderThickness="0" Background="#FF3B3B3D">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                            <i:InvokeCommandAction Command="{Binding Move, Mode=OneWay, Source={StaticResource CVMPayout}}" CommandParameter="{Binding ElementName=win_Main, Mode=OneWay}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                    <DockPanel LastChildFill="False" Margin="0,0,0,-2" HorizontalAlignment="Left" Width="322">
+                        <Image Margin="22,0,0,0" Source="images/sub_title_60_20.png" Height="20" Width="60"/>
+                        <Label Content="3.0" VerticalAlignment="Top" Foreground="#FF7DABDC" Margin="5,6,0,0" VerticalContentAlignment="Center" FontSize="15" Padding="5,6,5,5" FontFamily="Hiragino Sans GB W3"/>
+                        <Label Content="management" VerticalAlignment="Top" Foreground="#FF7DABDC" FontSize="15" Padding="5,5.5,5,5" Margin="0,6,0,0" FontFamily="Hiragino Sans GB W3"/>
+                    </DockPanel>
+                </Border>
+                <DockPanel HorizontalAlignment="Right" LastChildFill="False">
+                    <WPF:IconBtn Height="18" VerticalAlignment="Center" Width="18" Margin="8,0,11,0" DockPanel.Dock="Right" Normal="images/close_18_18_n.png" Hover="images/close_18_18_h.png" Press="images/close_18_18_h.png">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding Close, Mode=OneWay, Source={StaticResource CVMPayout}}" CommandParameter="{Binding ElementName=win_Main, Mode=OneWay}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </WPF:IconBtn>
+                    <WPF:IconBtn Height="18" VerticalAlignment="Center" Width="18" Margin="8,11" DockPanel.Dock="Right" Normal="images/min_18_18_n.png" Hover="images/min_18_18_h.png" Press="images/min_18_18_h.png">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Click">
+                                <i:InvokeCommandAction Command="{Binding Minimize, Mode=OneWay, Source={StaticResource CVMPayout}}" CommandParameter="{Binding ElementName=win_Main, Mode=OneWay}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </WPF:IconBtn>
+                </DockPanel>
+                <Path Data="M920,2L0,2 0,0 920,0z" VerticalAlignment="Bottom">
+                    <Path.Fill>
+                        <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                            <GradientStop Color="#FF636161" Offset="0"/>
+                            <GradientStop Color="#FF4B4847" Offset="0.16"/>
+                            <GradientStop Color="#FF231915" Offset="0.243"/>
+                            <GradientStop Color="#FF848484" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Path.Fill>
+                    <Path.OpacityMask>
+                        <LinearGradientBrush EndPoint="0.5,0" StartPoint="0.5,1">
+                            <GradientStop Color="#00000000" Offset="0"/>
+                            <GradientStop Color="#59000000" Offset="0.16"/>
+                            <GradientStop Color="#B2000000" Offset="0.243"/>
+                            <GradientStop Color="#00000000" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Path.OpacityMask>
+                </Path>
+            </Grid>
+            <Border x:Name="Status_Operate" BorderBrush="Black" Height="60" VerticalAlignment="Top" DockPanel.Dock="Bottom">
+                <DockPanel LastChildFill="False" Margin="16,0">
+
+                    <Image HorizontalAlignment="Left" Height="15" VerticalAlignment="Center" Width="19" Source="images/notice_19_15_n.png" Margin="0,0,10,0"/>
+
+                    <TextBlock TextWrapping="Wrap"  VerticalAlignment="Center" Foreground="#FFCFCFCF" FontSize="14" FontFamily="Hiragino Sans GB W3">
+                        <TextBlock.Text>
+                            <MultiBinding Converter="{StaticResource ServerStatusConverter}">
+                                <Binding Source="{StaticResource CVMConfiguration}" Path="IsConnect"/>
+                                <Binding Source="{StaticResource CVMConfiguration}" Path="IsConnect"/>
+                            </MultiBinding>
+                        </TextBlock.Text>
+                    </TextBlock>
+                    <Button Content="连接服务" Height="30" VerticalAlignment="Center" Width="90" HorizontalAlignment="Right" Style="{DynamicResource ButtonNormalStyle}" Tag="4" Foreground="#FFCFCFCF" FontSize="14" FontFamily="Hiragino Sans GB W3" BorderBrush="#FF5C5C5D" Background="#FF3B3B3D" Command="{Binding ConnectServer, Mode=OneWay, Source={StaticResource CVMPayout}}" Margin="10,0,0,0">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource MultiParameter}">
+                                <Binding Source="{StaticResource CVMConfiguration}"/>
+                                <Binding Source="{StaticResource CVMPayout}"/>
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                        <Button.Visibility>
+                            <MultiBinding Converter="{StaticResource ConnectBtnConverter}">
+                                <Binding Source="{StaticResource CVMConfiguration}" Path="IsConnect"/>
+                                <Binding Source="{StaticResource CVMConfiguration}" Path="IsConnect"/>
+                            </MultiBinding>
+                        </Button.Visibility>
+                    </Button>
+                    <Button Content="取消" Height="30" VerticalAlignment="Center" Width="90" DockPanel.Dock="Right" Margin="0,15,0,13" HorizontalAlignment="Right" Style="{DynamicResource ButtonNormalStyle}" Tag="4" Foreground="#FFCFCFCF" FontSize="14" FontFamily="Hiragino Sans GB W3" BorderBrush="#FF5C5C5D" Background="#FF3B3B3D" Command="{Binding Close, Mode=OneWay, Source={StaticResource CVMPayout}}" CommandParameter="{Binding ElementName=win_Main, Mode=OneWay}"/>
+                    <Button Content="保存" Height="30" VerticalAlignment="Center" Width="90" DockPanel.Dock="Right" Margin="0,15,10,13" HorizontalAlignment="Right" Style="{DynamicResource ButtonNormalStyle}" Tag="4"  Foreground="#FFCFCFCF" FontSize="14" FontFamily="Hiragino Sans GB W3" BorderBrush="#FF5C5C5D" Background="#FF3B3B3D" Command="{Binding Save, Mode=OneWay, Source={StaticResource CVMPayout}}">
+                        <Button.CommandParameter>
+                            <MultiBinding Converter="{StaticResource MultiParameter}">
+                                <Binding ElementName="win_Main"/>
+                                <Binding Source="{StaticResource CVMConfiguration}"/>
+                                <Binding Source="{StaticResource CVMPayout}"/>
+                            </MultiBinding>
+                        </Button.CommandParameter>
+                    </Button>
+                </DockPanel>
+            </Border>
+            <Border x:Name="MainBoard" BorderBrush="Black" DockPanel.Dock="Top">
+                <DockPanel Margin="16,12,16,0">
+                    <Border BorderBrush="#FF0C0C0D" BorderThickness="1" Background="#FF313133" Margin="0,0,10,0" Width="197">
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="31"/>
+                                <RowDefinition Height="73*"/>
+                            </Grid.RowDefinitions>
+                            <Label Content="配置项" Background="#FF3B3B3D" VerticalContentAlignment="Center" BorderThickness="0,0,0,1" Height="31" Foreground="#FFE4E4E4" BorderBrush="#FF0C0C0D" FontSize="14" FontFamily="Hiragino Sans GB W3" Padding="10,5,5,5"/>
+                            <TreeView x:Name="tree_Options" Margin="0,10" Grid.Row="1" BorderThickness="0" Background="{x:Null}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" Padding="0" Style="{DynamicResource TreeViewStyleNav}">
+                                <TreeViewItem Header="基本设置" Style="{DynamicResource TreeViewItemStyleRoot}" IsSelected="True" IsExpanded="True" >
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Selected">
+                                            <i:InvokeCommandAction Command="{Binding TreeSelectedChanged, Mode=OneWay, Source={StaticResource CVMPayout}}" CommandParameter="0" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <TreeViewItem Header="常规" Style="{DynamicResource TreeViewItemStyle2nd}" Visibility="Collapsed"/>
+                                    <TreeViewItem  Header="网络" Style="{DynamicResource TreeViewItemStyle2nd}" >
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMPayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scr_Base"/>
+                                                            <Binding ElementName="dck_Base_Net"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="日志存储" Style="{DynamicResource TreeViewItemStyle2nd}" >
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMPayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scr_Base"/>
+                                                            <Binding ElementName="dck_Base_Log"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TreeViewItem>
+                                </TreeViewItem>
+                                <TreeViewItem Header="Radio配置" Style="{DynamicResource TreeViewItemStyleRoot}" >
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Selected">
+                                            <i:InvokeCommandAction Command="{Binding TreeSelectedChanged, Mode=OneWay, Source={StaticResource CVMPayout}}" CommandParameter="1" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <TreeViewItem Header="常规" Style="{DynamicResource TreeViewItemStyle2nd}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMPayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_Radio"/>
+                                                            <Binding ElementName="dck_RadioGeneric"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="网络" Style="{DynamicResource TreeViewItemStyle2nd}">
+                                        <TreeViewItem.Visibility>
+                                            <MultiBinding Converter="{StaticResource FalseHide}">
+                                                <Binding ElementName="chk_EnableRadio" Path="IsChecked"/>
+                                            </MultiBinding>
+                                        </TreeViewItem.Visibility>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMPayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_Radio"/>
+                                                            <Binding ElementName="dck_RadioNetwork"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="MNIS" Style="{DynamicResource TreeViewItemStyle2nd}" >
+                                        <TreeViewItem.Visibility>
+                                            <MultiBinding Converter="{StaticResource FalseHide}">
+                                                <Binding ElementName="chk_EnableRadio" Path="IsChecked"/>
+                                                <Binding ElementName="rad_RadioMnisType" Path="IsChecked"/>
+                                            </MultiBinding>
+                                        </TreeViewItem.Visibility>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMPayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_Radio"/>
+                                                            <Binding ElementName="dck_RadioMnis"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="GPS翻转" Style="{DynamicResource TreeViewItemStyle2nd}">
+                                        <TreeViewItem.Visibility>
+                                            <MultiBinding Converter="{StaticResource FalseHide}">
+                                                <Binding ElementName="chk_EnableRadio" Path="IsChecked"/>
+                                            </MultiBinding>
+                                        </TreeViewItem.Visibility>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMPayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_Radio"/>
+                                                            <Binding ElementName="dck_RadioGPS"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="功能" Style="{DynamicResource TreeViewItemStyle2nd}" Visibility="Collapsed">
+                                        <!--<TreeViewItem.Visibility>
+                                            <MultiBinding Converter="{StaticResource FalseHide}">
+                                                <Binding ElementName="chk_EnableRadio" Path="IsChecked"/>
+                                            </MultiBinding>
+                                        </TreeViewItem.Visibility>-->
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMPayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_Radio"/>
+                                                            <Binding ElementName="dck_RadioFunc"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TreeViewItem>
+                                </TreeViewItem>
+                                <TreeViewItem Header="中继台" Style="{DynamicResource TreeViewItemStyleRoot}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Selected">
+                                            <i:InvokeCommandAction Command="{Binding TreeSelectedChanged, Mode=OneWay, Source={StaticResource CVMPayout}}" CommandParameter="2" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <TreeViewItem Header="常规" Style="{DynamicResource TreeViewItemStyle2nd}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMPayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_WireLan"/>
+                                                            <Binding ElementName="dck_WireLanGeneric"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="网络" Style="{DynamicResource TreeViewItemStyle2nd}">
+                                        <TreeViewItem.Visibility>
+                                            <MultiBinding Converter="{StaticResource FalseHide}">
+                                                <Binding ElementName="chk_EnableWireLan" Path="IsChecked"/>
+                                            </MultiBinding>
+                                        </TreeViewItem.Visibility>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMPayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_WireLan"/>
+                                                            <Binding ElementName="dck_WireLanNetwork"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="MNIS" Style="{DynamicResource TreeViewItemStyle2nd}">
+                                        <TreeViewItem.Visibility>
+                                            <MultiBinding Converter="{StaticResource FalseHide}">
+                                                <Binding ElementName="chk_EnableWireLan" Path="IsChecked"/>
+                                            </MultiBinding>
+                                        </TreeViewItem.Visibility>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMPayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_WireLan"/>
+                                                            <Binding ElementName="dck_WireLanMnis"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="Dongle" Style="{DynamicResource TreeViewItemStyle2nd}">
+                                        <TreeViewItem.Visibility>
+                                            <MultiBinding Converter="{StaticResource FalseHide}">
+                                                <Binding ElementName="chk_EnableWireLan" Path="IsChecked"/>
+                                            </MultiBinding>
+                                        </TreeViewItem.Visibility>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMPayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_WireLan"/>
+                                                            <Binding ElementName="dck_WireLanMnis"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="功能" Style="{DynamicResource TreeViewItemStyle2nd}" Visibility="Collapsed"/>
+                                </TreeViewItem>
+                                <TreeViewItem Header="资源管理" Style="{DynamicResource TreeViewItemStyleRoot}"  Width="195" >
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Selected">
+                                            <i:InvokeCommandAction Command="{Binding TreeSelectedChanged, Mode=OneWay, Source={StaticResource CVMPayout}}" CommandParameter="3" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <TreeViewItem Header="供应商" Style="{DynamicResource TreeViewItemStyle2nd}" Visibility="Collapsed"/>
+                                    <TreeViewItem Header="部门" Style="{DynamicResource TreeViewItemStyle2nd}" Visibility="Collapsed"/>
+                                    <TreeViewItem Header="组" Style="{DynamicResource TreeViewItemStyle2nd}"/>
+                                    <TreeViewItem Header="人员" Style="{DynamicResource TreeViewItemStyle2nd}"/>
+                                    <TreeViewItem Header="车辆" Style="{DynamicResource TreeViewItemStyle2nd}" Visibility="Collapsed"/>
+
+                                    <TreeViewItem Header="终端" Style="{DynamicResource TreeViewItemStyle2nd}"/>
+                                    <TreeViewItem Header="绑定/分配" Style="{DynamicResource TreeViewItemStyle2nd}"  Visibility="Collapsed"/>
+                                </TreeViewItem>
+                                <TreeViewItem Header="账号及权限" Style="{DynamicResource TreeViewItemStyleRoot}" >
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Selected">
+                                            <i:InvokeCommandAction Command="{Binding TreeSelectedChanged, Mode=OneWay, Source={StaticResource CVMPayout}}" CommandParameter="4" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <TreeViewItem Header="账户" Style="{DynamicResource TreeViewItemStyle2nd}" />
+                                    <TreeViewItem Header="功能分配" Style="{DynamicResource TreeViewItemStyle2nd}" />
+                                </TreeViewItem>
+                                <TreeViewItem Header="室内定位" Style="{DynamicResource TreeViewItemStyleRoot}" >
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Selected">
+                                            <i:InvokeCommandAction Command="{Binding TreeSelectedChanged, Mode=OneWay, Source={StaticResource CVMPayout}}" CommandParameter="5" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <TreeViewItem Header="常规" Style="{DynamicResource TreeViewItemStyle2nd}" />
+                                    <TreeViewItem Header="网络" Style="{DynamicResource TreeViewItemStyle2nd}" />
+                                    <TreeViewItem Header="区域" Style="{DynamicResource TreeViewItemStyle2nd}" />
+                                    <TreeViewItem Header="蓝牙信标（iBeacon）" Style="{DynamicResource TreeViewItemStyle2nd}" />
+                                    <TreeViewItem Header="信标位置" Style="{DynamicResource TreeViewItemStyle2nd}" />
+                                </TreeViewItem>
+                                <TreeViewItem Header="地图" Style="{DynamicResource TreeViewItemStyleRoot}" Visibility="Collapsed" >
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Selected">
+                                            <i:InvokeCommandAction Command="{Binding TreeSelectedChanged, Mode=OneWay, Source={StaticResource CVMPayout}}" CommandParameter="6" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <TreeViewItem Header="常规" Style="{DynamicResource TreeViewItemStyle2nd}" />
+                                    <TreeViewItem Header="BMP地图" Style="{DynamicResource TreeViewItemStyle2nd}" />
+                                </TreeViewItem>
+                                <TreeViewItem Header="注册认证" Style="{DynamicResource TreeViewItemStyleRoot}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Selected">
+                                            <i:InvokeCommandAction Command="{Binding TreeSelectedChanged, Mode=OneWay, Source={StaticResource CVMPayout}}" CommandParameter="7" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                    <TreeViewItem Header="软件注册" Style="{DynamicResource TreeViewItemStyle2nd}" />
+                                </TreeViewItem>
+                            </TreeView>
+                        </Grid>
+                    </Border>
+                    <Border BorderBrush="#FF0C0C0D" Background="#FF313133" Margin="0" BorderThickness="1">
+                        <DockPanel>
+                            <Label Content="{Binding SelectedItem.Header, ElementName=tab_Options}" Background="#FF3B3B3D" VerticalContentAlignment="Center" Margin="0" Height="31" Foreground="#FFE4E4E4" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D" FontSize="14" FontFamily="Hiragino Sans GB W3" Padding="20,5,5,5" DockPanel.Dock="Top"/>
+                            <Border x:Name="bdr_Options" BorderBrush="Black" ClipToBounds="True" DockPanel.Dock="Top">
+                                <TabControl x:Name="tab_Options" Margin="0,-22,0,0" BorderThickness="0" Background="{x:Null}" SelectedIndex="{Binding TabIndex, Mode=OneWay, Source={StaticResource CVMPayout}}">
+                                    <TabItem Header="基本设置">
+                                        <ScrollViewer x:Name="scr_Base" VerticalScrollBarVisibility="Auto" Padding="20,2.5" Margin="0,0,18,18.76" Style="{DynamicResource ScrollViewerStyleNormal}">
+                                            <DockPanel LastChildFill="False" Margin="0">
+                                                <DockPanel x:Name="dck_Base_Net"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30">
+                                                    <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
+                                                        <Image Source="images/double_arrow_13_10.png" Stretch="UniformToFill" HorizontalAlignment="Left" VerticalAlignment="Center" Width="13" Height="10"/>
+                                                        <Label Content="网络" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                                    </DockPanel>
+                                                    <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                                    <TextBlock TextWrapping="Wrap" Text="服务端地址，该地址用于客户端访问" DockPanel.Dock="Top" Margin="20,5,20,15" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,0" Height="36">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="IP地址 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                        <TextBox x:Name="txt_SvrIp" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding base_Svr_Ip, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" SelectionBrush="#FF1D1D1F" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" FontSize="13" VerticalContentAlignment="Center"/>
+                                                    </Grid>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,0" Height="36">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="89*"/>
+                                                            <ColumnDefinition Width="376*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="端口 :" VerticalAlignment="Center" Margin="0,4.745" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                        <TextBox x:Name="txt_SvrPort" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding base_Svr_Port, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Grid.ColumnSpan="2" Height="30" Style="{DynamicResource TextBoxStyleNormal}" SelectionBrush="#FF1D1D1F" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" FontSize="13" VerticalContentAlignment="Center"/>
+                                                    </Grid>
+                                                </DockPanel>
+                                                <DockPanel x:Name="dck_Base_Log" LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30">
+                                                    <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
+                                                        <Image Height="10" VerticalAlignment="Center" Width="13" Source="images/double_arrow_13_10.png"/>
+                                                        <Label Content="日志存储" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                                    </DockPanel>
+                                                    <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                                    <TextBlock TextWrapping="Wrap" Text="该地址用于访问日志服务" DockPanel.Dock="Top" Margin="20,5,20,15" FontSize="13" Foreground="#FFBFBFBF"/>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,0" Height="36">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="18.761"/>
+                                                            <ColumnDefinition Width="95.239"/>
+                                                            <ColumnDefinition Width="335*"/>
+                                                            <ColumnDefinition Width="173*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="IP地址 :" VerticalAlignment="Center" Margin="0,5.38" HorizontalAlignment="Right" Grid.Column="1" FontSize="13" Foreground="#FFBFBFBF"/>
+                                                        <TextBox x:Name="txt_LogSvrIp" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0,3" VerticalAlignment="Center" Grid.Column="2" Width="263" Text="{Binding base_LogSvr_Ip, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" VerticalContentAlignment="Center" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                    </Grid>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,0" Height="36">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="335*"/>
+                                                            <ColumnDefinition Width="173*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" FontSize="13" Foreground="#FFBFBFBF"/>
+                                                        <TextBox x:Name="txt_LogSvrPort" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding base_LogSvr_Port, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" VerticalContentAlignment="Center" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                    </Grid>
+                                                    <TextBlock TextWrapping="Wrap" Text="选择您需要关心（保存）的日志类型" DockPanel.Dock="Top" Margin="20,15,20,5" FontSize="13" Foreground="#FFBFBFBF" Visibility="Collapsed"/>
+                                                    <Grid DockPanel.Dock="Top" Margin="20,10" Visibility="Collapsed">
+                                                        <Grid.RowDefinitions>
+                                                            <RowDefinition Height="28"/>
+                                                            <RowDefinition Height="28"/>
+                                                            <RowDefinition Height="28"/>
+                                                            <RowDefinition Height="28"/>
+                                                            <RowDefinition Height="28"/>
+                                                            <RowDefinition Height="28"/>
+                                                            <RowDefinition Height="28"/>
+                                                        </Grid.RowDefinitions>
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <CheckBox  Content="　通话" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="{Binding base_IsSaveCallLog, Source={StaticResource CVMConfiguration}}" FontSize="13" Foreground="#FFBFBFBF" Grid.Column="1" BorderThickness="0" Style="{DynamicResource CheckBoxStyleNormal}"/>
+                                                        <CheckBox  Content="　短消息" Margin="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="{Binding base_IsSaveMsgLog, Source={StaticResource CVMConfiguration}}" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="1" Style="{DynamicResource CheckBoxStyleNormal}"/>
+                                                        <CheckBox  Content="　位置信息" Margin="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="{Binding base_IsSavePositionLog, Source={StaticResource CVMConfiguration}}" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="2" Style="{DynamicResource CheckBoxStyleNormal}"/>
+                                                        <CheckBox  Content="　控制" Margin="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="{Binding base_IsSaveControlLog, Source={StaticResource CVMConfiguration}}" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="3" Style="{DynamicResource CheckBoxStyleNormal}"/>
+                                                        <CheckBox  Content="　工单" Margin="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="{Binding base_IsSaveJobLog, Source={StaticResource CVMConfiguration}}" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="4" Style="{DynamicResource CheckBoxStyleNormal}"/>
+                                                        <CheckBox Content="　巡更" Margin="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="{Binding base_IsSaveTrackerLog, Source={StaticResource CVMConfiguration}}" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="5" Style="{DynamicResource CheckBoxStyleNormal}"/>
+                                                        <CheckBox  Content="　室内定位" Margin="0,6.5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="{Binding base_IsSaveLocationInDoorLog, Source={StaticResource CVMConfiguration}}" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="6" Style="{DynamicResource CheckBoxStyleNormal}"/>
+                                                    </Grid>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,10,20,2.5" Height="36" Visibility="Collapsed">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114              "/>
+                                                            <ColumnDefinition Width="283"/>
+                                                            <ColumnDefinition/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="储存路径 :" VerticalAlignment="Center" Margin="0,4.745" HorizontalAlignment="Right" FontSize="13" Foreground="#FFBFBFBF" Height="26.51" Width="68.977"/>
+                                                        <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0,3" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" VerticalContentAlignment="Center" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13" Text="{Binding base_LogPath, Source={StaticResource CVMConfiguration}}"/>
+                                                        <Button Content="浏览" HorizontalAlignment="Left" VerticalAlignment="Center" Width="90" Grid.Column="2" Height="30" Margin="0" Style="{DynamicResource ButtonNormalStyle}" Background="#FF5C8EC6" BorderThickness="0" Tag="4,4,4,4" FontSize="14" Foreground="White" Command="{Binding base_BrowseLogPath, Mode=OneWay, Source={StaticResource CVMConfiguration}}"/>
+                                                    </Grid>
+                                                </DockPanel>
+                                            </DockPanel>
+                                        </ScrollViewer>
+                                    </TabItem>
+                                    <TabItem Header="Radio配置">
+                                        <ScrollViewer x:Name="scrview_Radio" VerticalScrollBarVisibility="Auto" Padding="20,2.5" Margin="0" Style="{DynamicResource ScrollViewerStyleNormal}">
+                                            <DockPanel LastChildFill="False" Margin="0">
+                                                <DockPanel x:Name="dck_RadioGeneric" LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,30">
+                                                    <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
+                                                        <Image Height="10" VerticalAlignment="Center" Width="13" Source="images/double_arrow_13_10.png"/>
+                                                        <Label Content="常规" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                                    </DockPanel>
+                                                    <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                                    <TextBlock TextWrapping="Wrap" Text="使能/禁用Radio调度功能，使能该功能将禁用中继台功能" Margin="20,5,20,10" Width="551.087" DockPanel.Dock="Top" HorizontalAlignment="Left" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="28">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <CheckBox x:Name="chk_EnableRadio" Content="　Radio调度" Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center" IsChecked="{Binding radio_IsEnable, Source={StaticResource CVMConfiguration}}" Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" Grid.Column="1"/>
+                                                    </Grid>
+                                                    <DockPanel DockPanel.Dock="Top" Margin="20,0">
+                                                        <DockPanel.Visibility>
+                                                            <MultiBinding Converter="{StaticResource FalseHide}">
+                                                                <Binding ElementName="chk_EnableRadio" Path="IsChecked"/>
+                                                            </MultiBinding>
+                                                        </DockPanel.Visibility>
+                                                        <TextBlock TextWrapping="Wrap" Text="车载台服务端地址" DockPanel.Dock="Top" Margin="0,15,0,10" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                        <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0" Height="36">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="114"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Label Content="IP地址 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                            <TextBox x:Name="txt_RadioSvrIp" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding radio_Svr_Ip, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" VerticalContentAlignment="Center" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" Foreground="#FFBFBFBF"/>
+                                                        </Grid>
+
+                                                        <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0" Height="36">
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="114"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <Label Content="端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                            <TextBox x:Name="txt_RadioSvrPort" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0,1" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding radio_Svr_port, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Grid.ColumnSpan="2" Height="30" Style="{DynamicResource TextBoxStyleNormal}" VerticalContentAlignment="Center" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" Foreground="#FFBFBFBF"/>
+                                                        </Grid>
+                                                        <TextBlock TextWrapping="Wrap" Text="选择车载台工作模式" Margin="0,15,0,10" Width="551.087" DockPanel.Dock="Top" Foreground="#FFBFBFBF" FontSize="13" />
+                                                        <Grid VerticalAlignment="Top" Margin="0,2.5" DockPanel.Dock="Top" Height="44" >
+                                                            <Grid.RowDefinitions>
+                                                                <RowDefinition Height="4*"/>
+                                                                <RowDefinition Height="5*"/>
+                                                            </Grid.RowDefinitions>
+                                                            <Grid.ColumnDefinitions>
+                                                                <ColumnDefinition Width="114"/>
+                                                                <ColumnDefinition Width="*"/>
+                                                            </Grid.ColumnDefinitions>
+                                                            <RadioButton x:Name="rad_RadioType" Content="车载台" HorizontalAlignment="Left" VerticalAlignment="Center"  IsChecked="{Binding radio_IsOnlyRide, Source={StaticResource CVMConfiguration}}" Foreground="#FFBFBFBF" FontSize="13" Grid.Column="1" Style="{DynamicResource RadioButtonStylenORMAL}" BorderThickness="0" GroupName="RadioTypeRide"/>
+                                                            <RadioButton x:Name="rad_RadioMnisType" Content="车载台+MNIS" VerticalAlignment="Center" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Grid.Row="1" Style="{DynamicResource RadioButtonStylenORMAL}" HorizontalAlignment="Left" Width="150" BorderThickness="0" IsChecked="{Binding radio_IsRideMnis, Source={StaticResource CVMConfiguration}}" GroupName="RadioTypeRideMnis"/>
+                                                        </Grid>
+                                                    </DockPanel>
+                                                </DockPanel>
+
+                                                <DockPanel x:Name="dck_RadioNetwork" LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30"  >
+                                                    <DockPanel.Visibility>
+                                                        <MultiBinding Converter="{StaticResource FalseHide}">
+                                                            <Binding ElementName="chk_EnableRadio" Path="IsChecked"/>
+                                                        </MultiBinding>
+                                                    </DockPanel.Visibility>
+                                                    <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
+                                                        <Image Height="10" VerticalAlignment="Center" Width="13" Source="images/double_arrow_13_10.png"/>
+                                                        <Label Content="网络" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                                    </DockPanel>
+                                                    <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                                    <TextBlock TextWrapping="Wrap" Text="该地址用于设备（车台）连接" DockPanel.Dock="Top" Margin="20,5,0,15" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="36">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="IP地址 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                        <TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13" Text="{Binding radio_Ride_Host, Source={StaticResource CVMConfiguration}}"/>
+                                                    </Grid>
+
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="36">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="ARS端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                        <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding radio_Ride_ArsPort, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                    </Grid>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5"  Height="36">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="短信端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13" />
+                                                        <TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding radio_Ride_MessagePort, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                    </Grid>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5"  Height="36">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="GPS端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13" />
+                                                        <TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding radio_Ride_GpsPort, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                    </Grid>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="36">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="XNL端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13" />
+                                                        <TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding radio_Ride_XnlPort, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                    </Grid>
+                                                </DockPanel>
+
+
+                                                <DockPanel x:Name="dck_RadioMnis"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30">
+                                                    <DockPanel.Visibility>
+                                                        <MultiBinding Converter="{StaticResource FalseHide}">
+                                                            <Binding ElementName="chk_EnableRadio" Path="IsChecked"/>
+                                                            <Binding ElementName="rad_RadioMnisType" Path="IsChecked"/>
+                                                        </MultiBinding>
+                                                    </DockPanel.Visibility>
+                                                    <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,-0.001,0">
+                                                        <Image Height="10" VerticalAlignment="Center" Width="13" Source="images/double_arrow_13_10.png"/>
+                                                        <Label Content="MNIS" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                                    </DockPanel>
+                                                    <Separator Height="10" Margin="0,0,-0.001,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                                    <TextBlock TextWrapping="Wrap" Text="该地址用于MNIS连接" DockPanel.Dock="Top" Margin="20,5,-0.001,15" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5,0,2.5" Height="36" >
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="IP地址 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                        <TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" SelectionBrush="#FF1D1D1F" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" FontSize="13" Text="{Binding radio_Mnis_Host, Source={StaticResource CVMConfiguration}}"/>
+                                                    </Grid>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="36">
+                                                    	<Grid.ColumnDefinitions>
+                                                    		<ColumnDefinition Width="114"/>
+                                                    		<ColumnDefinition Width="*"/>
+                                                    	</Grid.ColumnDefinitions>
+                                                    	<Label Content="ARS端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                    	<TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding radio_Mnis_ArsPort, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                    </Grid>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5"  Height="36">
+                                                    	<Grid.ColumnDefinitions>
+                                                    		<ColumnDefinition Width="114"/>
+                                                    		<ColumnDefinition Width="*"/>
+                                                    	</Grid.ColumnDefinitions>
+                                                    	<Label Content="短信端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13" />
+                                                        <TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding radio_Mnis_MessagePort, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                    </Grid>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5"  Height="36">
+                                                    	<Grid.ColumnDefinitions>
+                                                    		<ColumnDefinition Width="114"/>
+                                                    		<ColumnDefinition Width="*"/>
+                                                    	</Grid.ColumnDefinitions>
+                                                    	<Label Content="GPS端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13" />
+                                                        <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding radio_Mnis_GpsPort, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                    </Grid>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="36">
+                                                    	<Grid.ColumnDefinitions>
+                                                    		<ColumnDefinition Width="114"/>
+                                                    		<ColumnDefinition Width="*"/>
+                                                    	</Grid.ColumnDefinitions>
+                                                    	<Label Content="XNL端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13" />
+                                                        <TextBox x:Name="txt_RadioXNLPort1" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding radio_Mnis_XnlPort, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                    </Grid>
+                                                </DockPanel>
+
+                                                <DockPanel x:Name="dck_RadioGPS" LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30" >
+                                                    <DockPanel.Visibility>
+                                                        <MultiBinding Converter="{StaticResource FalseHide}">
+                                                            <Binding ElementName="chk_EnableRadio" Path="IsChecked"/>
+                                                        </MultiBinding>
+                                                    </DockPanel.Visibility>
+                                                    <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Width="618.762" Margin="0,20,0,0">
+                                                        <Image Height="10" VerticalAlignment="Center" Width="13" Source="images/double_arrow_13_10.png"/>
+                                                        <Label Content="GPS翻转" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                                    </DockPanel>
+                                                    <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E" Width="618.762"/>
+                                                    <TextBlock TextWrapping="Wrap" Text="该地址用于GPS翻转" DockPanel.Dock="Top" Margin="20,5,0,15" Foreground="#FFBFBFBF" FontSize="13" Width="598.762"/>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5,0,2.5" Height="36">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="IP地址 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF"/>
+                                                        <TextBox x:Name="txt_RadioGpsIp" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" SelectionBrush="#FF1D1D1F" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" FontSize="13" Text="{Binding radio_GpsC_Ip, Source={StaticResource CVMConfiguration}}"/>
+                                                    </Grid>
+                                                </DockPanel>
+                                                <DockPanel x:Name="dck_RadioFunc" LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30" Visibility="Collapsed">
+                                                    <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Width="618.762" Margin="0,20,0,0">
+                                                        <Image Height="10" VerticalAlignment="Center" Width="13" Source="images/double_arrow_13_10.png"/>
+                                                        <Label Content="功能" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                                    </DockPanel>
+                                                    <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E" Width="618.762"/>
+                                                </DockPanel>
+                                            </DockPanel>
+                                        </ScrollViewer>
+                                    </TabItem>
+                                    <TabItem Header="中继台">
+                                    	<ScrollViewer x:Name="scrview_WireLan" VerticalScrollBarVisibility="Auto" Padding="20,2.5" Margin="0" Style="{DynamicResource ScrollViewerStyleNormal}">
+                                    		<DockPanel LastChildFill="False" Margin="0">
+                                    			<DockPanel x:Name="dck_WireLanGeneric" LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,30">
+                                    				<DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
+                                    					<Image Height="10" VerticalAlignment="Center" Width="13" Source="images/double_arrow_13_10.png"/>
+                                    					<Label Content="常规" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                    				</DockPanel>
+                                    				<Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                    				<TextBlock TextWrapping="Wrap" Text="使能/禁用WireLan调度功能，使能该功能将禁用Radio调度功能" Margin="20,5,20,10" DockPanel.Dock="Top" Foreground="#FFBFBFBF" FontSize="13" HorizontalAlignment="Left"/>
+                                    				<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="28">
+                                    					<Grid.ColumnDefinitions>
+                                    						<ColumnDefinition Width="114"/>
+                                    						<ColumnDefinition Width="*"/>
+                                    					</Grid.ColumnDefinitions>
+                                    					<CheckBox x:Name="chk_EnableWireLan" Content="　WireLan调度" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" IsChecked="{Binding repeater_IsEnable, Source={StaticResource CVMConfiguration}}"/>
+                                    				</Grid>
+                                    				<DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="20,0" >
+                                                        <DockPanel.Visibility>
+                                                            <MultiBinding Converter="{StaticResource FalseHide}">
+                                                                <Binding ElementName="chk_EnableWireLan" Path="IsChecked"/>
+                                                            </MultiBinding>
+                                                        </DockPanel.Visibility>
+                                                        <TextBlock TextWrapping="Wrap" Text="WireLan服务地址" DockPanel.Dock="Top" Margin="0,15,0,10" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                    						<Grid.ColumnDefinitions>
+                                    							<ColumnDefinition Width="114"/>
+                                    							<ColumnDefinition Width="*"/>
+                                    						</Grid.ColumnDefinitions>
+                                    						<Label Content="IP地址 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    						<TextBox x:Name="txt_WireLanSvrIp" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding repeater_Svr_Ip, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
+                                    					</Grid>
+                                    					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                    						<Grid.ColumnDefinitions>
+                                    							<ColumnDefinition Width="114"/>
+                                    							<ColumnDefinition Width="*"/>
+                                    						</Grid.ColumnDefinitions>
+                                    						<Label Content="端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    						<TextBox x:Name="txt_WireLanSvrPort" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding repeater_Svr_port, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
+                                    					</Grid>
+
+                                    					<TextBlock TextWrapping="Wrap" Text="选择工作模式" Margin="0,15,0,10" DockPanel.Dock="Top" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    					<Grid VerticalAlignment="Top" Margin="0,2.5" DockPanel.Dock="Top" Width="577">
+                                    						<Grid.RowDefinitions>
+                                    							<RowDefinition Height="28"/>
+                                    							<RowDefinition Height="28"/>
+                                    							<RowDefinition Height="28"/>
+                                    						</Grid.RowDefinitions>
+                                    						<Grid.ColumnDefinitions>
+                                    							<ColumnDefinition Width="114"/>
+                                    							<ColumnDefinition Width="*"/>
+                                    						</Grid.ColumnDefinitions>
+                                    						<RadioButton x:Name="rad_IPSCType" Content="IPSC" HorizontalAlignment="Left" VerticalAlignment="Center" Height="14" Width="55" GroupName="WireLanType" IsChecked="{Binding repeater_IPSC, Source={StaticResource CVMConfiguration}}" Foreground="#FFBFBFBF" FontSize="13" Grid.Column="1" Style="{DynamicResource RadioButtonStylenORMAL}"/>
+                                    						<RadioButton x:Name="rad_CPCType" Content="CPC"  HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Height="14" Width="96" GroupName="WireLanType" Foreground="#FFBFBFBF" FontSize="13" Grid.Row="1" Style="{DynamicResource RadioButtonStylenORMAL}" IsChecked="{Binding repeater_CPC, Source={StaticResource CVMConfiguration}}"/>
+                                    						<RadioButton x:Name="rad_LCPType" Content="LCP"  HorizontalAlignment="Left" VerticalAlignment="Center" Grid.Column="1" Height="14" Width="96" GroupName="WireLanType" Foreground="#FFBFBFBF" FontSize="13" Grid.Row="2" Style="{DynamicResource RadioButtonStylenORMAL}" IsChecked="{Binding repeater_LCP, Source={StaticResource CVMConfiguration}}"/>
+                                    					</Grid>
+                                    					<TextBlock TextWrapping="Wrap" Text="设置默认调度组及默认信道" DockPanel.Dock="Top" Margin="0,15,0,10" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                    						<Grid.ColumnDefinitions>
+                                    							<ColumnDefinition Width="114"/>
+                                    							<ColumnDefinition Width="*"/>
+                                    						</Grid.ColumnDefinitions>
+                                    						<Label Content="默认组 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    						<TextBox x:Name="txt_DefaultGroup" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center" Text="{Binding repeater_DefaultGroupId, Source={StaticResource CVMConfiguration}}"/>
+                                    					</Grid>
+                                    					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                    						<Grid.ColumnDefinitions>
+                                    							<ColumnDefinition Width="114"/>
+                                    							<ColumnDefinition Width="*"/>
+                                    						</Grid.ColumnDefinitions>
+                                    						<Label Content="默认信道 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    						<ComboBox x:Name="cmb_DefaultChannel" HorizontalAlignment="Left" VerticalAlignment="Center" Width="263" Grid.Column="1" Margin="0" SelectedIndex="{Binding repeater_DefaultChannel, Source={StaticResource CVMConfiguration}}" Height="30" Padding="0" Style="{DynamicResource ComboBoxStyleNormal}" Foreground="#FFBFBFBF" FontSize="13">
+                                    							<ComboBoxItem Content="信道1" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFBEC3C7"/>
+                                    							<ComboBoxItem Content="信道2" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFBEC3C7"/>
+                                    						</ComboBox>
+                                    					</Grid>
+                                    					<TextBlock TextWrapping="Wrap" Text="最小通话挂起时间，应大于或等于CPS中设置的通话挂起通话挂起时间(单位：秒)" Margin="0,15,0,10" DockPanel.Dock="Top" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                    						<Grid.ColumnDefinitions>
+                                    							<ColumnDefinition Width="114"/>
+                                    							<ColumnDefinition Width="*"/>
+                                    						</Grid.ColumnDefinitions>
+                                    						<Label Content="通话挂起时间 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    						<TextBox x:Name="txt_MinHungTime" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center" Text="{Binding repeater_MinHungTime, Source={StaticResource CVMConfiguration}}"/>
+                                    					</Grid>
+                                    					<TextBlock TextWrapping="Wrap" Text="主中继台心跳包间隔时间，应小于主中继台CPS中设置的对等防火墙时间单位：秒)" Margin="0,15,0,10" DockPanel.Dock="Top" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                    						<Grid.ColumnDefinitions>
+                                    							<ColumnDefinition Width="114"/>
+                                    							<ColumnDefinition Width="*"/>
+                                    						</Grid.ColumnDefinitions>
+                                    						<Label Content="心跳包间隔时间 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    						<TextBox x:Name="txt_MaxMasterAliveTime" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center" Text="{Binding repeater_MaxSiteAliveTime, Source={StaticResource CVMConfiguration}}"/>
+                                    					</Grid>
+                                    					<TextBlock TextWrapping="Wrap" Text="从中继台心跳包间隔时间，应小于从中继台CPS中设置的对等防火墙时间单位：秒)" Margin="0,15,0,10" DockPanel.Dock="Top" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                    						<Grid.ColumnDefinitions>
+                                    							<ColumnDefinition Width="114"/>
+                                    							<ColumnDefinition Width="*"/>
+                                    						</Grid.ColumnDefinitions>
+                                    						<Label Content="心跳包间隔时间 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    						<TextBox x:Name="txt_MaxPeerAliveTime" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center" Text="{Binding repeater_MaxPeerAliveTime, Source={StaticResource CVMConfiguration}}"/>
+                                    					</Grid>
+                                    				</DockPanel>
+                                    			</DockPanel>
+                                    			<DockPanel x:Name="dck_WireLanNetwork" LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30">
+                                                    <DockPanel.Visibility>
+                                                        <MultiBinding Converter="{StaticResource FalseHide}">
+                                                            <Binding ElementName="chk_EnableWireLan" Path="IsChecked"/>
+                                                        </MultiBinding>
+                                                    </DockPanel.Visibility>
+                                                    <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
+                                    					<Image Height="10" VerticalAlignment="Center" Width="13" Source="images/double_arrow_13_10.png"/>
+                                    					<Label Content="网络" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                    				</DockPanel>
+                                    				<Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+
+                                    				<TextBlock TextWrapping="Wrap" Text="该地址用于主中继台连接" DockPanel.Dock="Top" Margin="20,5,20,10" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    				<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="36">
+                                    					<Grid.ColumnDefinitions>
+                                    						<ColumnDefinition Width="114"/>
+                                    						<ColumnDefinition Width="*"/>
+                                    					</Grid.ColumnDefinitions>
+                                    					<Label Content="IP地址 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    					<TextBox x:Name="txt_SiteIp" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center" Text="{Binding repeater_Master_Ip, Source={StaticResource CVMConfiguration}}"/>
+                                    				</Grid>
+                                    				<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="36">
+                                    					<Grid.ColumnDefinitions>
+                                    						<ColumnDefinition Width="114"/>
+                                    						<ColumnDefinition Width="*"/>
+                                    					</Grid.ColumnDefinitions>
+                                    					<Label Content="端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    					<TextBox x:Name="txt_SitePort" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center" Text="{Binding repeater_Master_port, Source={StaticResource CVMConfiguration}}"/>
+                                    				</Grid>
+
+                                    				<TextBlock TextWrapping="Wrap" Text="设置本机参数，包括中继台ID和对讲机ID" DockPanel.Dock="Top" Margin="20,15,20,10" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    				<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="36">
+                                    					<Grid.ColumnDefinitions>
+                                    						<ColumnDefinition Width="114"/>
+                                    						<ColumnDefinition Width="*"/>
+                                    					</Grid.ColumnDefinitions>
+                                    					<Label Content="中继台ID :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    					<TextBox x:Name="txt_LocalPeerId" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center" Text="{Binding repeater_LocalPeerId, Source={StaticResource CVMConfiguration}}"/>
+                                    				</Grid>
+                                    				<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="36">
+                                    					<Grid.ColumnDefinitions>
+                                    						<ColumnDefinition Width="114"/>
+                                    						<ColumnDefinition Width="*"/>
+                                    					</Grid.ColumnDefinitions>
+                                    					<Label Content="对讲机ID :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    					<TextBox x:Name="txt_LocalRadioId" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center" Text="{Binding repeater_LocalRadioId, Source={StaticResource CVMConfiguration}}"/>
+                                    				</Grid>
+                                    			</DockPanel>
+                                    			<DockPanel x:Name="dck_WireLanMnis" LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30" >
+                                                    <DockPanel.Visibility>
+                                                        <MultiBinding Converter="{StaticResource FalseHide}">
+                                                            <Binding ElementName="chk_EnableWireLan" Path="IsChecked"/>
+                                                        </MultiBinding>
+                                                    </DockPanel.Visibility>
+                                                    <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
+                                    					<Image Height="10" VerticalAlignment="Center" Width="13" Source="images/double_arrow_13_10.png"/>
+                                    					<Label Content="MNIS" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                    				</DockPanel>
+                                    				<Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                            <!--<TextBlock TextWrapping="Wrap" DockPanel.Dock="Top" Margin="0,2.5" LineHeight="20"><Run Text="Dongle用于AMBE音频编解码的设备，需要配置器端口号 "/><LineBreak/><Run Text="默认协议为 9600， 8， none， 1"/></TextBlock>-->
+                                    				<TextBlock TextWrapping="Wrap" Text="该地址用于MNIS连接" DockPanel.Dock="Top" Margin="20,5,20,10" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    				<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="36">
+                                    					<Grid.ColumnDefinitions>
+                                    						<ColumnDefinition Width="114"/>
+                                    						<ColumnDefinition Width="*"/>
+                                    					</Grid.ColumnDefinitions>
+                                    					<Label Content="IP地址 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    					<TextBox x:Name="txt_MnisIp" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center" Text="{Binding repeater_Mnis_Host, Source={StaticResource CVMConfiguration}}"/>
+                                    				</Grid>
+                                    				<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="36">
+                                    					<Grid.ColumnDefinitions>
+                                    						<ColumnDefinition Width="114"/>
+                                    						<ColumnDefinition Width="*"/>
+                                    					</Grid.ColumnDefinitions>
+                                    					<Label Content="MNIS ID:" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    					<TextBox x:Name="txt_MnisID" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center" Text="{Binding repeater_Mnis_ID, Source={StaticResource CVMConfiguration}}"/>
+                                    				</Grid>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="36">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="ARS端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                        <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding repeater_Mnis_ArsPort, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                    </Grid>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5"  Height="36">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="短信端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13" />
+                                                        <TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding repeater_Mnis_MessagePort, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                    </Grid>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5"  Height="36">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="GPS端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13" />
+                                                        <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding repeater_Mnis_GpsPort, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                    </Grid>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="36">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="XNL端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13" />
+                                                        <TextBox x:Name="txt_RadioXNLPort2" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="{Binding repeater_Mnis_XnlPort, Source={StaticResource CVMConfiguration}}" IsEnabled="False" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                    </Grid>
+                                                </DockPanel>
+                                    			<DockPanel x:Name="dck_WireLanDongle" LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30">
+                                                    <DockPanel.Visibility>
+                                                        <MultiBinding Converter="{StaticResource FalseHide}">
+                                                            <Binding ElementName="chk_EnableWireLan" Path="IsChecked"/>
+                                                        </MultiBinding>
+                                                    </DockPanel.Visibility>
+                                                    <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
+                                    					<Image Height="10" VerticalAlignment="Center" Width="13" Source="images/double_arrow_13_10.png"/>
+                                    					<Label Content="Dongle" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                    				</DockPanel>
+                                    				<Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                    				<TextBlock TextWrapping="Wrap" DockPanel.Dock="Top" Margin="20,5,20,10" LineHeight="20" Foreground="#FFBFBFBF" FontSize="13"><Run Text="Dongle用于AMBE音频编解码的设备，需要配置器端口号 "/></TextBlock>
+                                    				<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="36">
+                                    					<Grid.ColumnDefinitions>
+                                    						<ColumnDefinition Width="114"/>
+                                    						<ColumnDefinition Width="*"/>
+                                    					</Grid.ColumnDefinitions>
+                                    					<Label Content="通讯端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                    					<ComboBox x:Name="cmb_DongleCom" HorizontalAlignment="Left" Width="263" Grid.Column="1" Height="30" VerticalContentAlignment="Center" SelectedIndex="{Binding repeater_Dongle_Com_Index, Source={StaticResource CVMConfiguration}}" Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource ComboBoxStyleNormal}" VerticalAlignment="Center">
+                                    						<ComboBoxItem Content="COM1" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFBEC3C7"/>
+                                    						<ComboBoxItem Content="COM2" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFBEC3C7"/>
+                                    						<ComboBoxItem Content="COM3" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFBEC3C7" />
+                                    						<ComboBoxItem Content="COM4" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFBEC3C7"/>
+                                    						<ComboBoxItem Content="COM5" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFBEC3C7"/>
+                                    						<ComboBoxItem Content="COM6" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFBEC3C7"/>
+                                    						<ComboBoxItem Content="COM7" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFBEC3C7"/>
+                                    						<ComboBoxItem Content="COM8" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="32" Foreground="#FFBEC3C7"/>
+                                    					</ComboBox>
+                                    				</Grid>
+                                    			</DockPanel>
+                                    			<DockPanel x:Name="dck_WireLanFunc" LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30" Visibility="Collapsed">
+                                    				<DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
+                                    					<Image Height="10" VerticalAlignment="Center" Width="13" Source="double_arrow_13_1065.png"/>
+                                    					<Label Content="功能" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                    				</DockPanel>
+                                    				<Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                    			</DockPanel>
+                                    		</DockPanel>
+                                    	</ScrollViewer>
+                                    </TabItem>
+                                    <TabItem Header="资源管理"/>
+                                    <TabItem Header="账号及权限" />
+                                    <TabItem Header="室内定位" />
+                                    <TabItem Header="地图" />
+                                    <TabItem Header="注册认证" />
+                                </TabControl>
+                            </Border>
+                        </DockPanel>
+                    </Border>
+                </DockPanel>
+            </Border>
+        </DockPanel>
+        <Border BorderBrush="Black" Background="#7F666666" Visibility="{Binding MaskVisible, Mode=OneWay, Source={StaticResource CVMPayout}}">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                    <i:InvokeCommandAction Command="{Binding Move, Mode=OneWay, Source={StaticResource CVMPayout}}" CommandParameter="{Binding ElementName=win_Main, Mode=OneWay}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <Grid>
+                <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="{Binding MaskText, Mode=OneWay, Source={StaticResource CVMPayout}}" VerticalAlignment="Center" FontSize="14" Foreground="White" FontFamily="Hiragino Sans GB W6"/>
+            </Grid>
+        </Border>
+    </Grid>
+</Window>

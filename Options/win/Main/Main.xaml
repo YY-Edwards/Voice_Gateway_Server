@@ -324,7 +324,6 @@
                                 </TreeViewItem.Visibility>
                             </TreeViewItem>
 
-
                             <TreeViewItem Header="GPS翻转" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableRadio}"/>
                             <TreeViewItem Header="功能" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp" Visibility="Collapsed"/>
                         </TreeViewItem>
@@ -350,11 +349,11 @@
                             <TreeViewItem Header="功能分配" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
                         </TreeViewItem>
                         <TreeViewItem Header="室内定位" Style="{DynamicResource TreeViewItemStyleRoot}" Tag="5" Selected="tree_OptionsGroup_Selecteded" >
-                        	<TreeViewItem Header="常规" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
-                        	<TreeViewItem Header="网络" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
-							<TreeViewItem Header="区域" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
-							<TreeViewItem Header="蓝牙信标（iBeacon）" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
-							<TreeViewItem Header="信标位置" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+                            <TreeViewItem Header="常规" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+                            <TreeViewItem Header="网络" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+                            <TreeViewItem Header="区域" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+                            <TreeViewItem Header="蓝牙信标（iBeacon）" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
+                            <TreeViewItem Header="信标位置" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
                         </TreeViewItem>
                         <TreeViewItem Header="地图" Style="{DynamicResource TreeViewItemStyleRoot}" Tag="5" Selected="tree_OptionsGroup_Selecteded" Visibility="Collapsed" >
                             <TreeViewItem Header="常规" Style="{DynamicResource TreeViewItemStyle2nd}" PreviewMouseLeftButtonUp="tree_OptionsItem_PreviewMouseLeftButtonUp"/>
@@ -373,12 +372,12 @@
                         <RowDefinition Height="73*"/>
                     </Grid.RowDefinitions>
                     <Label x:Name="lab_OptionsTilte" Content="{Binding SelectedItem.Header, ElementName=tab_Options}" Background="#FF3B3B3D" VerticalContentAlignment="Center" Margin="0" Height="31" Foreground="#FFE4E4E4" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D" FontSize="14" FontFamily="Hiragino Sans GB W3" Padding="20,5,5,5"/>
-                    <Border x:Name="bdr_Options" BorderBrush="Black" BorderThickness="0" Grid.Row="1" ClipToBounds="True">
+                    <Border x:Name="bdr_Options" BorderBrush="Black" BorderThickness="1" Grid.Row="1" ClipToBounds="True">
                         <TabControl x:Name="tab_Options" Margin="0,-22,0,0" BorderThickness="0" Background="{x:Null}" Style="{DynamicResource TabControlStyleNormal}" SelectedIndex="0">
-                            <TabItem Header="基本设置" d:IsLocked="True">
-                                <ScrollViewer x:Name="scrview_Base" VerticalScrollBarVisibility="Auto" Padding="20,2.5" Margin="0" Style="{DynamicResource ScrollViewerStyleNormal}">
+                            <TabItem Header="基本设置">
+                                <ScrollViewer VerticalScrollBarVisibility="Auto" Padding="20,2.5" Margin="0" Style="{DynamicResource ScrollViewerStyleNormal}">
                                     <DockPanel LastChildFill="False" Margin="0">
-                                        <DockPanel x:Name="dck_BaseNetwork"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30">
+                                        <DockPanel  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30">
                                             <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
                                                 <Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
                                                 <Label Content="网络" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
@@ -391,7 +390,7 @@
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <Label Content="IP地址 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
-                                                <TextBox x:Name="txt_SvrIp" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="127.0.0.1" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" SelectionBrush="#FF1D1D1F" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" FontSize="13" VerticalContentAlignment="Center"/>
+                                                <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="127.0.0.1" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" SelectionBrush="#FF1D1D1F" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" FontSize="13" VerticalContentAlignment="Center"/>
                                             </Grid>
                                             <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,0" Height="36">
                                                 <Grid.ColumnDefinitions>
@@ -400,10 +399,10 @@
                                                     <ColumnDefinition Width="376*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <Label Content="端口 :" VerticalAlignment="Center" Margin="0,4.745" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
-                                                <TextBox x:Name="txt_SvrPort" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="9000" IsEnabled="False" Grid.ColumnSpan="2" Height="30" Style="{DynamicResource TextBoxStyleNormal}" SelectionBrush="#FF1D1D1F" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" FontSize="13" VerticalContentAlignment="Center"/>
+                                                <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="9000" IsEnabled="False" Grid.ColumnSpan="2" Height="30" Style="{DynamicResource TextBoxStyleNormal}" SelectionBrush="#FF1D1D1F" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" FontSize="13" VerticalContentAlignment="Center"/>
                                             </Grid>
                                         </DockPanel>
-                                        <DockPanel x:Name="dck_BaseLog" LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30">
+                                        <DockPanel LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30">
                                             <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
                                                 <Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
                                                 <Label Content="日志存储" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
@@ -418,7 +417,7 @@
                                                     <ColumnDefinition Width="173*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <Label Content="IP地址 :" VerticalAlignment="Center" Margin="0,5.38" HorizontalAlignment="Right" Grid.Column="1" FontSize="13" Foreground="#FFBFBFBF"/>
-                                                <TextBox x:Name="txt_LogSvrIp" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0,3" VerticalAlignment="Center" Grid.Column="2" Width="263" Text="127.0.0.1" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" VerticalContentAlignment="Center" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                <TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0,3" VerticalAlignment="Center" Grid.Column="2" Width="263" Text="127.0.0.1" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" VerticalContentAlignment="Center" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
                                             </Grid>
                                             <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,0" Height="36">
                                                 <Grid.ColumnDefinitions>
@@ -427,11 +426,12 @@
                                                     <ColumnDefinition Width="173*"/>
                                                 </Grid.ColumnDefinitions>
                                                 <Label Content="端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" FontSize="13" Foreground="#FFBFBFBF"/>
-                                                <TextBox x:Name="txt_LogSvrPort" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="9003" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" VerticalContentAlignment="Center" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="9003" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" VerticalContentAlignment="Center" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
                                             </Grid>
-                                            <TextBlock TextWrapping="Wrap" Text="选择您需要关心（保存）的日志类型" DockPanel.Dock="Top" Margin="0,10,0,2.5" Visibility="Collapsed"/>
+                                            <TextBlock TextWrapping="Wrap" Text="选择您需要关心（保存）的日志类型" DockPanel.Dock="Top" Margin="20,15,20,5" FontSize="13" Foreground="#FFBFBFBF" Visibility="Collapsed"/>
                                             <Grid DockPanel.Dock="Top" Margin="20,10" Visibility="Collapsed">
                                                 <Grid.RowDefinitions>
+                                                    <RowDefinition Height="28"/>
                                                     <RowDefinition Height="28"/>
                                                     <RowDefinition Height="28"/>
                                                     <RowDefinition Height="28"/>
@@ -443,12 +443,13 @@
                                                     <ColumnDefinition Width="114"/>
                                                     <ColumnDefinition Width="*"/>
                                                 </Grid.ColumnDefinitions>
-                                                <CheckBox x:Name="chk_LogType_Call" Content="　通话" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="True" FontSize="13" Foreground="#FFBFBFBF" Grid.Column="1" BorderThickness="0" Style="{DynamicResource CheckBoxStyleNormal}"/>
-                                                <CheckBox x:Name="chk_LogType_Msg" Content="　短消息" Margin="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="True" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="1" Style="{DynamicResource CheckBoxStyleNormal}"/>
-                                                <CheckBox x:Name="chk_LogType_Position" Content="　位置信息" Margin="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="True" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="2" Style="{DynamicResource CheckBoxStyleNormal}"/>
-                                                <CheckBox x:Name="chk_LogType_Control" Content="　控制" Margin="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="True" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="3" Style="{DynamicResource CheckBoxStyleNormal}"/>
-                                                <CheckBox x:Name="chk_LogType_JobTicket" Content="　工单" Margin="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="True" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="4" Style="{DynamicResource CheckBoxStyleNormal}"/>
-                                                <CheckBox x:Name="chk_LogType_Tracker" Content="　巡更" Margin="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="True" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="5" Style="{DynamicResource CheckBoxStyleNormal}"/>
+                                                <CheckBox  Content="　通话" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="True" FontSize="13" Foreground="#FFBFBFBF" Grid.Column="1" BorderThickness="0" Style="{DynamicResource CheckBoxStyleNormal}"/>
+                                                <CheckBox  Content="　短消息" Margin="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="True" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="1" Style="{DynamicResource CheckBoxStyleNormal}"/>
+                                                <CheckBox  Content="　位置信息" Margin="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="True" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="2" Style="{DynamicResource CheckBoxStyleNormal}"/>
+                                                <CheckBox  Content="　控制" Margin="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="True" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="3" Style="{DynamicResource CheckBoxStyleNormal}"/>
+                                                <CheckBox  Content="　工单" Margin="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="True" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="4" Style="{DynamicResource CheckBoxStyleNormal}"/>
+                                                <CheckBox Content="　巡更" Margin="0" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="True" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="5" Style="{DynamicResource CheckBoxStyleNormal}"/>
+                                                <CheckBox  Content="　室内定位" Margin="0,6.5" Grid.Column="1" HorizontalAlignment="Left" VerticalAlignment="Center" Height="15" IsChecked="True" FontSize="13" Foreground="#FFBFBFBF" BorderThickness="0" Grid.Row="6" Style="{DynamicResource CheckBoxStyleNormal}"/>
                                             </Grid>
                                             <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,10,20,2.5" Height="36" Visibility="Collapsed">
                                                 <Grid.ColumnDefinitions>
@@ -458,14 +459,14 @@
                                                     <ColumnDefinition/>
                                                 </Grid.ColumnDefinitions>
                                                 <Label Content="储存路径 :" VerticalAlignment="Center" Margin="0,4.745" HorizontalAlignment="Right" FontSize="13" Foreground="#FFBFBFBF" Height="26.51" Width="68.977"/>
-                                                <TextBox x:Name="txt_SvrIp2" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0,3" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" VerticalContentAlignment="Center" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
+                                                <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0,3" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" VerticalContentAlignment="Center" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13"/>
                                                 <Button Content="浏览" HorizontalAlignment="Left" VerticalAlignment="Center" Width="90" Grid.Column="2" Height="30" Margin="0" Style="{DynamicResource ButtonNormalStyle}" Background="#FF5C8EC6" BorderThickness="0" Tag="4,4,4,4" FontSize="14" Foreground="White"/>
                                             </Grid>
                                         </DockPanel>
                                     </DockPanel>
                                 </ScrollViewer>
                             </TabItem>
-                            <TabItem Header="Radio配置" d:IsLocked="True">
+                            <TabItem Header="Radio配置">
                                 <ScrollViewer x:Name="scrview_Radio" VerticalScrollBarVisibility="Auto" Padding="20,2.5" Margin="0" Style="{DynamicResource ScrollViewerStyleNormal}">
                                     <DockPanel LastChildFill="False" Margin="0">
                                         <DockPanel x:Name="dck_RadioGeneric" LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,30">
@@ -1375,64 +1376,64 @@
                                 </ScrollViewer>
                             </TabItem>
                             <TabItem Header="室内定位" Margin="-2,-2,-2,0">
-                            	<ScrollViewer x:Name="scrview_LocatiopnInDoor" VerticalScrollBarVisibility="Auto" Padding="20,2.5" Margin="-2,10,2,10" Style="{DynamicResource ScrollViewerStyleNormal}">
-                            		<DockPanel LastChildFill="False" Margin="0">
-                            			<DockPanel x:Name="Normal"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,20,0,30" Visibility="Collapsed">
-                            				<DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
-                            					<Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
-                            					<Label Content="常规" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
-                            				</DockPanel>
-                            				<Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
-                            				<TextBlock TextWrapping="Wrap" Text="使能/禁用室内定位" DockPanel.Dock="Top" Foreground="#FFBFBFBF" FontSize="13" HorizontalAlignment="Left" Margin="20,5,20,10"/>
-                            				<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Height="28" Margin="20,5,20,10">
-                            					<Grid.ColumnDefinitions>
-                            						<ColumnDefinition Width="114"/>
-                            						<ColumnDefinition Width="*"/>
-                            					</Grid.ColumnDefinitions>
-                            					<CheckBox x:Name="chk_EnableWireLan1" Content="　室内定位" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" IsChecked="True"/>
-                            				</Grid>
-                            				<DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="20,0" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableWireLan}">
-                            					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="114"/>
-                            							<ColumnDefinition Width="*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="查询方式 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
-                            						<TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="127.0.0.1" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
-                            					</Grid>
-                            					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="114"/>
-                            							<ColumnDefinition Width="*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="查询内容 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
-                            						<TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="9002" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
-                            					</Grid>
-                            					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="114"/>
-                            							<ColumnDefinition Width="*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="信标数量 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
-                            						<TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="9002" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
-                            					</Grid>
-                            					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="114"/>
-                            							<ColumnDefinition Width="*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="查询周期 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
-                            						<TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="9002" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
-                            					</Grid>
+                                <ScrollViewer x:Name="scrview_LocatiopnInDoor" VerticalScrollBarVisibility="Auto" Padding="20,2.5" Margin="-2,10,2,10" Style="{DynamicResource ScrollViewerStyleNormal}">
+                                    <DockPanel LastChildFill="False" Margin="0">
+                                        <DockPanel x:Name="Normal"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,20,0,30" Visibility="Collapsed">
+                                            <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
+                                                <Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
+                                                <Label Content="常规" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                            </DockPanel>
+                                            <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                            <TextBlock TextWrapping="Wrap" Text="使能/禁用室内定位" DockPanel.Dock="Top" Foreground="#FFBFBFBF" FontSize="13" HorizontalAlignment="Left" Margin="20,5,20,10"/>
+                                            <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Height="28" Margin="20,5,20,10">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="114"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <CheckBox x:Name="chk_EnableWireLan1" Content="　室内定位" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" IsChecked="True"/>
+                                            </Grid>
+                                            <DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="20,0" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableWireLan}">
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="114"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="查询方式 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                    <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="127.0.0.1" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
+                                                </Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="114"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="查询内容 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                    <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="9002" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
+                                                </Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="114"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="信标数量 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                    <TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="9002" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
+                                                </Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="114"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="查询周期 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                    <TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="9002" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
+                                                </Grid>
 
-												<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Height="28">
-                            					<Grid.ColumnDefinitions>
-                            						<ColumnDefinition Width="114"/>
-                            						<ColumnDefinition Width="*"/>
-                            					</Grid.ColumnDefinitions>
-                            					<CheckBox Content="　报警触发" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" IsChecked="True"/>
-                            				</Grid>
-                            				</DockPanel>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Height="28">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="114"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox Content="　报警触发" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" IsChecked="True"/>
+                                                </Grid>
+                                            </DockPanel>
                                             <!--<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="28">
                                                 <Grid.ColumnDefinitions>
                                                     <ColumnDefinition Width="114"/>
@@ -1440,92 +1441,92 @@
                                                 </Grid.ColumnDefinitions>
                                                 <CheckBox x:Name="chk_EnableWireLan1" Content="　WireLan调度" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" IsChecked="True"/>
                                             </Grid>-->
-                            			</DockPanel>
-                            			<DockPanel x:Name="LocationInDoor_NetWork"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,20,0,30" Visibility="Collapsed">
-                            				<DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
-                            					<Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
-                            					<Label Content="网络（确保与CPS配置一致）" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
-                            				</DockPanel>
-                            				<Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
-                            				<DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="20,0" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableWireLan}">
-                            					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="114"/>
-                            							<ColumnDefinition Width="*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="车载台ID :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
-                            						<TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="127.0.0.1" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
-                            					</Grid>
-                            					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="114"/>
-                            							<ColumnDefinition Width="*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="CAI :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
-                            						<TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="9002" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
-                            					</Grid>
-                            					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="114"/>
-                            							<ColumnDefinition Width="*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="IP地址 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
-                            						<TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="9002" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
-                            					</Grid>
-                            					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="114"/>
-                            							<ColumnDefinition Width="*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
-                            						<TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="9002" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
-                            					</Grid>
+                                        </DockPanel>
+                                        <DockPanel x:Name="LocationInDoor_NetWork"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,20,0,30" Visibility="Collapsed">
+                                            <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
+                                                <Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
+                                                <Label Content="网络（确保与CPS配置一致）" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                            </DockPanel>
+                                            <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                            <DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="20,0" Visibility="{Binding IsChecked, Converter={StaticResource FalselHideConverter}, ElementName=chk_EnableWireLan}">
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="114"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="车载台ID :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                    <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="127.0.0.1" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
+                                                </Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="114"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="CAI :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                    <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="9002" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
+                                                </Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="114"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="IP地址 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                    <TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="9002" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
+                                                </Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="114"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                                                    <TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Text="9002" IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" VerticalContentAlignment="Center"/>
+                                                </Grid>
 
-                            					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Height="28">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="114"/>
-                            							<ColumnDefinition Width="*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<CheckBox Content="　报警触发" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" IsChecked="True"/>
-                            					</Grid>
-                            				</DockPanel>
-                            			</DockPanel>
-                            			<DockPanel x:Name="dck_LocationInDoor_Areas"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30">
-                            				<DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
-                            					<Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
-                            					<Label Content="" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
-                            				</DockPanel>
-                            				<Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
-                            				<DockPanel DockPanel.Dock="Top">
-                            					<ListView x:Name="lst_Staff1" Width="190" Margin="0,55,0,0" Style="{DynamicResource ListViewStyleNormal}" Background="#FF3B3B3D" BorderBrush="#FF1C1D1E" BorderThickness="1" MinHeight="280"/>
-                            					<DockPanel LastChildFill="False" Height="51" DockPanel.Dock="Top" Margin="130,0,0,0" VerticalAlignment="Top">
-                            						<Button x:Name="btn_StaffNew1" Content="新建" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderBrush="Black" BorderThickness="0" Background="#FF54B0C0"/>
-                            						<Button x:Name="btn_StaffDel1" Content="删除" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderThickness="0" BorderBrush="Black" Background="#FFEDA85D"/>
-                            					</DockPanel>
-                            					<Separator Height="10" Margin="30,0,10,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Height="28">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="114"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <CheckBox Content="　报警触发" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" IsChecked="True"/>
+                                                </Grid>
+                                            </DockPanel>
+                                        </DockPanel>
+                                        <DockPanel x:Name="dck_LocationInDoor_Areas"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30">
+                                            <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
+                                                <Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
+                                                <Label Content="" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                            </DockPanel>
+                                            <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                            <DockPanel DockPanel.Dock="Top">
+                                                <ListView x:Name="lst_Staff1" Width="190" Margin="0,55,0,0" Style="{DynamicResource ListViewStyleNormal}" Background="#FF3B3B3D" BorderBrush="#FF1C1D1E" BorderThickness="1" MinHeight="280"/>
+                                                <DockPanel LastChildFill="False" Height="51" DockPanel.Dock="Top" Margin="130,0,0,0" VerticalAlignment="Top">
+                                                    <Button x:Name="btn_StaffNew1" Content="新建" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderBrush="Black" BorderThickness="0" Background="#FF54B0C0"/>
+                                                    <Button x:Name="btn_StaffDel1" Content="删除" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderThickness="0" BorderBrush="Black" Background="#FFEDA85D"/>
+                                                </DockPanel>
+                                                <Separator Height="10" Margin="30,0,10,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
 
 
 
-												<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="130"/>
-                            							<ColumnDefinition Width="*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="名称 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
-                                                     <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
-                            						<TextBox Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}"/>
-                            					</Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="130"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="名称 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
+                                                    <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
+                                                    <TextBox Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}"/>
+                                                </Grid>
 
-                            					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="130"/>
-                            							<ColumnDefinition Width="231*"/>
-                            							<ColumnDefinition Width="50*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="地图 :" VerticalAlignment="Center" Margin="0,4.11" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
-                                                     <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
-                            						<TextBox x:Name="txt_StaffPhone1" Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0,3" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}" Grid.ColumnSpan="2"/>
-                            					</Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="130"/>
+                                                        <ColumnDefinition Width="231*"/>
+                                                        <ColumnDefinition Width="50*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="地图 :" VerticalAlignment="Center" Margin="0,4.11" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
+                                                    <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
+                                                    <TextBox x:Name="txt_StaffPhone1" Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0,3" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}" Grid.ColumnSpan="2"/>
+                                                </Grid>
                                                 <!--<Grid DockPanel.Dock="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="80"/>
@@ -1534,95 +1535,95 @@
                                                     <Label Content="备注 :" VerticalAlignment="Top" Margin="0" HorizontalAlignment="Right"/>
                                                     <TextBox x:Name="txt_SvrIp25" TextWrapping="Wrap" Padding="0,2.5" Margin="5,1.5,0,0" VerticalAlignment="Center" Grid.Column="1" Height="80"/>
                                                 </Grid>-->
-                            					<DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="130,10,0,0" VerticalAlignment="Top">
-                            						<Button x:Name="btn_SaveStaff1" Content="保存" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" BorderThickness="0" BorderBrush="Black" Background="#FF5C8EC6" Foreground="White" FontSize="14" />
-                            					</DockPanel>
-                            				</DockPanel>
+                                                <DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="130,10,0,0" VerticalAlignment="Top">
+                                                    <Button x:Name="btn_SaveStaff1" Content="保存" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" BorderThickness="0" BorderBrush="Black" Background="#FF5C8EC6" Foreground="White" FontSize="14" />
+                                                </DockPanel>
+                                            </DockPanel>
 
-                            			</DockPanel>
-                            			<DockPanel x:Name="dck_LocationInDoor_iBeacons"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30">
-                            				<DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
-                            					<Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
-                            					<Label Content="蓝牙信标（iBeacon）" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
-                            				</DockPanel>
-                            				<Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
-                            				<DockPanel DockPanel.Dock="Top">
-                            					<ListView x:Name="lst_Staff2" Width="190" Margin="0,55,0,0"  Style="{DynamicResource ListViewStyleNormal}" Background="#FF3B3B3D" BorderBrush="#FF1C1D1E" BorderThickness="1" MinHeight="280"/>
-                            					<DockPanel LastChildFill="False" Height="51" DockPanel.Dock="Top" Margin="130,0,0,0" VerticalAlignment="Top">
-                            						<Button x:Name="btn_StaffNew2" Content="新建" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderBrush="Black" BorderThickness="0" Background="#FF54B0C0"/>
-                            						<Button x:Name="btn_StaffDel2" Content="删除" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderThickness="0" BorderBrush="Black" Background="#FFEDA85D"/>
-                            					</DockPanel>
-                            					<Separator Height="10" Margin="30,0,10,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                        </DockPanel>
+                                        <DockPanel x:Name="dck_LocationInDoor_iBeacons"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30">
+                                            <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
+                                                <Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
+                                                <Label Content="蓝牙信标（iBeacon）" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                            </DockPanel>
+                                            <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                            <DockPanel DockPanel.Dock="Top">
+                                                <ListView x:Name="lst_Staff2" Width="190" Margin="0,55,0,0"  Style="{DynamicResource ListViewStyleNormal}" Background="#FF3B3B3D" BorderBrush="#FF1C1D1E" BorderThickness="1" MinHeight="280"/>
+                                                <DockPanel LastChildFill="False" Height="51" DockPanel.Dock="Top" Margin="130,0,0,0" VerticalAlignment="Top">
+                                                    <Button x:Name="btn_StaffNew2" Content="新建" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderBrush="Black" BorderThickness="0" Background="#FF54B0C0"/>
+                                                    <Button x:Name="btn_StaffDel2" Content="删除" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderThickness="0" BorderBrush="Black" Background="#FFEDA85D"/>
+                                                </DockPanel>
+                                                <Separator Height="10" Margin="30,0,10,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
 
 
 
-                            					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="130"/>
-                            							<ColumnDefinition Width="*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="名称 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
-                                                     <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
-                            						<TextBox Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}"/>
-                            					</Grid>
-												<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="130"/>
-                            							<ColumnDefinition Width="*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="UUID :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
-                                                     <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
-                            						<TextBox Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}"/>
-                            					</Grid>
-												<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="130"/>
-                            							<ColumnDefinition Width="*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="主修（Major） :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
-                                                     <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
-                            						<TextBox Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}"/>
-                            					</Grid>
-												<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="130"/>
-                            							<ColumnDefinition Width="*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="辅修（Minor） :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
-                                                     <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
-                            						<TextBox Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}"/>
-                            					</Grid>
-												<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="130"/>
-                            							<ColumnDefinition Width="*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="发射功率 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
-                                                     <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
-                            						<TextBox Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}"/>
-                            					</Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="130"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="名称 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
+                                                    <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
+                                                    <TextBox Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}"/>
+                                                </Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="130"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="UUID :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
+                                                    <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
+                                                    <TextBox Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}"/>
+                                                </Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="130"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="主修（Major） :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
+                                                    <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
+                                                    <TextBox Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}"/>
+                                                </Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="130"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="辅修（Minor） :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
+                                                    <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
+                                                    <TextBox Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}"/>
+                                                </Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="130"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="发射功率 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
+                                                    <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
+                                                    <TextBox Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}"/>
+                                                </Grid>
 
-                            					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="130"/>
-                            							<ColumnDefinition Width="231*"/>
-                            							<ColumnDefinition Width="50*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="RSSI :" VerticalAlignment="Center" Margin="0,4.11" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
-                                                     <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
-                            						<TextBox x:Name="txt_StaffPhone2" Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0,3" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}" Grid.ColumnSpan="2"/>
-                            					</Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="130"/>
+                                                        <ColumnDefinition Width="231*"/>
+                                                        <ColumnDefinition Width="50*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="RSSI :" VerticalAlignment="Center" Margin="0,4.11" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
+                                                    <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
+                                                    <TextBox x:Name="txt_StaffPhone2" Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0,3" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}" Grid.ColumnSpan="2"/>
+                                                </Grid>
 
-												<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36" Visibility="Collapsed">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="130"/>
-                            							<ColumnDefinition Width="231*"/>
-                            							<ColumnDefinition Width="50*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="间隔时间 :" VerticalAlignment="Center" Margin="0,4.11" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
-                                                     <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
-                            						<TextBox  Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0,3" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}" Grid.ColumnSpan="2"/>
-                            					</Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,2.5" Height="36" Visibility="Collapsed">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="130"/>
+                                                        <ColumnDefinition Width="231*"/>
+                                                        <ColumnDefinition Width="50*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="间隔时间 :" VerticalAlignment="Center" Margin="0,4.11" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="14"/>
+                                                    <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
+                                                    <TextBox  Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0,3" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}" Grid.ColumnSpan="2"/>
+                                                </Grid>
                                                 <!--<Grid DockPanel.Dock="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="80"/>
@@ -1631,49 +1632,49 @@
                                                     <Label Content="备注 :" VerticalAlignment="Top" Margin="0" HorizontalAlignment="Right"/>
                                                     <TextBox x:Name="txt_SvrIp25" TextWrapping="Wrap" Padding="0,2.5" Margin="5,1.5,0,0" VerticalAlignment="Center" Grid.Column="1" Height="80"/>
                                                 </Grid>-->
-                            					<DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="130,10,0,0" VerticalAlignment="Top">
-                            						<Button x:Name="btn_SaveStaff2" Content="保存" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" BorderThickness="0" BorderBrush="Black" Background="#FF5C8EC6" Foreground="White" FontSize="14" />
-                            					</DockPanel>
-                            				</DockPanel>
+                                                <DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="130,10,0,0" VerticalAlignment="Top">
+                                                    <Button x:Name="btn_SaveStaff2" Content="保存" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" BorderThickness="0" BorderBrush="Black" Background="#FF5C8EC6" Foreground="White" FontSize="14" />
+                                                </DockPanel>
+                                            </DockPanel>
 
-                            			</DockPanel>
-                            			<DockPanel x:Name="dck_LocationInDoor_Binding"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30">
-                            				<DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
-                            					<Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
-                            					<Label Content="信标位置" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
-                            				</DockPanel>
-                            				<Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
-                            				<DockPanel DockPanel.Dock="Top">
-                            					<ListView x:Name="lst_Staff3" Width="157" Margin="0,55,0,0" Style="{DynamicResource ListViewStyleNormal}" Background="#FF3B3B3D" BorderBrush="#FF1C1D1E" BorderThickness="1" MinHeight="280"/>
-                            					<Separator Height="10" Margin="30,0,10,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                        </DockPanel>
+                                        <DockPanel x:Name="dck_LocationInDoor_Binding"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30">
+                                            <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
+                                                <Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
+                                                <Label Content="信标位置" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                            </DockPanel>
+                                            <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                            <DockPanel DockPanel.Dock="Top">
+                                                <ListView x:Name="lst_Staff3" Width="157" Margin="0,55,0,0" Style="{DynamicResource ListViewStyleNormal}" Background="#FF3B3B3D" BorderBrush="#FF1C1D1E" BorderThickness="1" MinHeight="280"/>
+                                                <Separator Height="10" Margin="30,0,10,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
 
 
 
-                            					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5,0,2.5" Height="36">
-                            						<Grid.ColumnDefinitions>
-                            							<ColumnDefinition Width="130"/>
-                            							<ColumnDefinition Width="*"/>
-                            						</Grid.ColumnDefinitions>
-                            						<Label Content="名称 :" VerticalAlignment="Center" Margin="20,0,0,0" HorizontalAlignment="Left" Foreground="#FFBFBFBF" FontSize="14"/>
-                                                     <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
-                            						<TextBox Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}"/>
-                            					</Grid>
-                            					<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5,0,2.5" Height="225">
-                            						<Grid.Background>
-                            							<DrawingBrush Stretch="None" TileMode="Tile" Viewport="0,0,15,15" ViewportUnits="Absolute">
-                            								<DrawingBrush.Drawing>
-                            									<GeometryDrawing Brush="#FF313133">
-                            										<GeometryDrawing.Geometry>
-                            											<RectangleGeometry Rect="0,0,15,15"/>
-                            										</GeometryDrawing.Geometry>
-                            										<GeometryDrawing.Pen>
-                            											<Pen Brush="White" Thickness="0.3"/>
-                            										</GeometryDrawing.Pen>
-                            									</GeometryDrawing>
-                            								</DrawingBrush.Drawing>
-                            							</DrawingBrush>
-                            						</Grid.Background>
-                            					</Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5,0,2.5" Height="36">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="130"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Label Content="名称 :" VerticalAlignment="Center" Margin="20,0,0,0" HorizontalAlignment="Left" Foreground="#FFBFBFBF" FontSize="14"/>
+                                                    <!--<TextBox x:Name="txt_StaffPhone" Text="{Binding SelectedItem.Tag, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="5,0,0,0" VerticalAlignment="Center" Grid.Column="1" Width="120"/>-->
+                                                    <TextBox Text="{Binding SelectedItem.Content.PhoneNumber, ElementName=lst_Staff, Mode=OneWay}" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1C1D1E" Style="{DynamicResource TextBoxStyleNormal}"/>
+                                                </Grid>
+                                                <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5,0,2.5" Height="225">
+                                                    <Grid.Background>
+                                                        <DrawingBrush Stretch="None" TileMode="Tile" Viewport="0,0,15,15" ViewportUnits="Absolute">
+                                                            <DrawingBrush.Drawing>
+                                                                <GeometryDrawing Brush="#FF313133">
+                                                                    <GeometryDrawing.Geometry>
+                                                                        <RectangleGeometry Rect="0,0,15,15"/>
+                                                                    </GeometryDrawing.Geometry>
+                                                                    <GeometryDrawing.Pen>
+                                                                        <Pen Brush="White" Thickness="0.3"/>
+                                                                    </GeometryDrawing.Pen>
+                                                                </GeometryDrawing>
+                                                            </DrawingBrush.Drawing>
+                                                        </DrawingBrush>
+                                                    </Grid.Background>
+                                                </Grid>
                                                 <!--<Grid DockPanel.Dock="Top" Margin="0,2.5">
                                                     <Grid.ColumnDefinitions>
                                                         <ColumnDefinition Width="80"/>
@@ -1682,14 +1683,14 @@
                                                     <Label Content="备注 :" VerticalAlignment="Top" Margin="0" HorizontalAlignment="Right"/>
                                                     <TextBox x:Name="txt_SvrIp25" TextWrapping="Wrap" Padding="0,2.5" Margin="5,1.5,0,0" VerticalAlignment="Center" Grid.Column="1" Height="80"/>
                                                 </Grid>-->
-                            					<DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="20,10,0,0" VerticalAlignment="Top">
-                            						<Button x:Name="btn_SaveStaff3" Content="保存" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" BorderThickness="0" BorderBrush="Black" Background="#FF5C8EC6" Foreground="White" FontSize="14" />
-                            					</DockPanel>
-                            				</DockPanel>
+                                                <DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="20,10,0,0" VerticalAlignment="Top">
+                                                    <Button x:Name="btn_SaveStaff3" Content="保存" VerticalAlignment="Center" Width="92" Margin="0,0,10,0" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" BorderThickness="0" BorderBrush="Black" Background="#FF5C8EC6" Foreground="White" FontSize="14" />
+                                                </DockPanel>
+                                            </DockPanel>
 
-                            			</DockPanel>
-                            		</DockPanel>
-                            	</ScrollViewer>
+                                        </DockPanel>
+                                    </DockPanel>
+                                </ScrollViewer>
                             </TabItem>
                             <TabItem Header="注册认证" Margin="-2,-2,-2,0">
                                 <ScrollViewer x:Name="scrview_UserRoot1" VerticalScrollBarVisibility="Auto" Padding="20,2.5" Margin="-2,10,2,10" Style="{DynamicResource ScrollViewerStyleNormal}">
