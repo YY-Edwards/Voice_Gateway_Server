@@ -13,8 +13,6 @@ namespace Manager
 {
     public class CConfiguration
     {
-        private static bool m_IsTServerConnected = false;
-
         private bool m_NeedSave = false;
         private bool m_IsUpdated = false;
         private SettingType m_Type;
@@ -27,12 +25,6 @@ namespace Manager
         public delegate void ConfigurationChangedHandle(SettingType type, object config);
         public event ConfigurationChangedHandle OnConfigurationChanged;
 
-        public delegate void ServerStatusChangedHandle(bool isinit);
-        public static event ServerStatusChangedHandle ServerStatusChanged;
-
-        [JsonIgnore]
-        public static bool IsBindingServerStatusChanged { get { return ServerStatusChanged != null; } }
-
         public CConfiguration(SettingType type, RequestOpcode set, RequestOpcode get)
         {
             m_Type = type;
@@ -40,20 +32,9 @@ namespace Manager
             m_GetOpcode = get;
         }
 
-        public static void InitializeTServer()
-        {
-            if (!CTServer.Instance().IsInitialized)
-            {
-                CTServer.Instance().OnReceiveRequest += delegate { };
-                CTServer.Instance().OnStatusChanged += delegate(bool isinit) { m_IsTServerConnected = isinit;  if (ServerStatusChanged != null)ServerStatusChanged(isinit); };
-            }
-
-            CTServer.Instance().Initialize();      
-        }
-
         private void Request(RequestOpcode opcode, object parameter, bool isget = false)
         {
-            if (!m_IsTServerConnected) InitializeTServer();
+            if (!CTServer.Instance().IsInitialized) return;
             new Thread(new ThreadStart(delegate()
             {
                 try
@@ -119,78 +100,6 @@ namespace Manager
         public string Ip { get; set; }
         public int Port { get; set; }
     };
-
-    //public enum TargetSystemType
-    //{
-    //    radio,
-    //    Reapeater
-    //}
-    //public class NetAddress
-    //{
-    //    public string Ip { get; set; }
-    //    public int Port;
-    //};
-
-    //public class BaseSetting
-    //{
-    //    public NetAddress Svr{get; set;}
-    //    public NetAddress LogSvr;
-    //    public bool IsSaveCallLog;
-    //    public bool IsSaveMsgLog;
-    //    public bool IsSavePositionLog;
-    //    public bool IsSaveControlLog;
-    //    public bool IsSaveJobLog;
-    //    public bool IsSaveTrackerLog;
-    //}
-
-    //public class RadioSetting
-    //{
-    //    public bool IsEnable;
-    //    public bool IsOnlyRide;
-    //    public NetAddress Svr;
-    //    public NetAddress Ride;
-    //    public NetAddress Mnis;
-    //    public NetAddress GpsC;
-    //    public NetAddress Ars;
-    //    public NetAddress Message;
-    //    public NetAddress Gps;
-    //    public NetAddress Xnl;
-    //}
-    //public enum WireLanType
-    //{
-    //    IPSC = 0,
-    //    CPC = 1,
-    //    LCP = 2,
-    //};
-
-
-    //public class DongleSetting
-    //{
-    //    public int Com;
-    //}
-
-    //public class WireLanSetting
-    //{
-    //    public bool IsEnable;
-    //    public WireLanType Type;
-    //    public NetAddress Svr;
-    //    public NetAddress Master;
-    //    public NetAddress Mnis;
-    //    public int MnisId;
-    //    public int DefaultGroupId;
-    //    public int DefaultChannel;
-    //    public int MinHungTime;
-
-    //    public int MaxSiteAliveTime;
-    //    public int MaxPeerAliveTime;
-
-    //    public int LocalPeerId;
-    //    public int LocalRadioId;
-
-    //    public DongleSetting Dongle;
-
-    //}
-
     public enum SettingType
     {
         Base,

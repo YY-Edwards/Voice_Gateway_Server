@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+
 using System.Linq;
 using System.Text;
 using System.Windows.Data;
@@ -8,6 +10,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+
 
 namespace Manager
 {
@@ -180,6 +183,33 @@ namespace Manager
         public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
         {
             throw new NotSupportedException();
+        }
+    }
+
+
+
+    public class IDToIndex : IMultiValueConverter
+    {
+        public object Convert(object[] value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                long id = (long)value[0];
+                List<CRElement> list = new List<CRElement>(((ObservableCollection<CRElement>)value[1]).ToList());
+
+                int index = list.FindIndex(p => p.ID == id);
+
+                return index;
+            }
+            catch
+            {
+                return -1;
+            }
+        }
+
+        public object[] ConvertBack(object value, Type[] targetType, object parameter, CultureInfo culture)
+        {                       
+            return null;
         }
     }
 

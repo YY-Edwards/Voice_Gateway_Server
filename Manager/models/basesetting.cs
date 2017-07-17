@@ -51,6 +51,8 @@ namespace Manager
                 IsSaveTrackerLog = tserver.IsSaveTrackerLog;
                 IsSaveLocationInDoorLog = tserver.IsSaveLocationInDoorLog;
                 LogPath = tserver.LogPath;
+
+                return this;
             }
             catch
             {
@@ -58,7 +60,6 @@ namespace Manager
                 return this;
             }
 
- 	        return base.Parse(json);
         }
 
        private void InitializeValue()
@@ -84,7 +85,7 @@ namespace Manager
                 IsSaveTrackerLog = false;
                 IsSaveLocationInDoorLog = true;
 
-                LogPath = null;
+                LogPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\Trbox3.0\\Log\\";
        }
     }
 }

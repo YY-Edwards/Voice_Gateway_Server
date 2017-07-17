@@ -45,14 +45,13 @@ namespace Manager
                 Ride = tserver.Ride;
                 Mnis = tserver.Mnis;
                 GpsC = tserver.GpsC;
+                return this;
             }
             catch
             {
                 InitializeValue();
                 return this;
             }
-
-            return base.Parse(json);
         }
 
         public override object Build(object obj)

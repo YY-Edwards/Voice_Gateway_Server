@@ -63,6 +63,8 @@ namespace Manager
                 LocalRadioId = tserver.LocalRadioId;
 
                 Dongle = tserver.Dongle;
+
+                return this;
             }
             catch
             {
@@ -70,7 +72,6 @@ namespace Manager
                 return this;
             }
 
-            return base.Parse(json);
         }
 
         public override object Build(object obj)

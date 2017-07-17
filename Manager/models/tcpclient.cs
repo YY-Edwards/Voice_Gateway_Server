@@ -61,12 +61,13 @@ namespace Manager
                     m_Socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                     m_Socket.Connect(host, port);
                     m_IsConnect = true;
-                    if (OnConnected != null) OnConnected(this);
-
+                    
                     new Thread(new ThreadStart(delegate()
                     {
                         ReceiveString();
                     })).Start();
+
+                    if (OnConnected != null) OnConnected(this);
                 }
                 catch (Exception ex)
                 {

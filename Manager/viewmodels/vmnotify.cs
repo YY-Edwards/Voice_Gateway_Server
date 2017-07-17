@@ -34,6 +34,9 @@ namespace Manager
 
         #endregion
 
+        private bool m_IsLocked = false;
+        private string m_LockStr = string.Empty;
+
         public event PropertyChangedEventHandler PropertyChanged;
 
 
@@ -89,10 +92,29 @@ namespace Manager
 
         public void AppendNotify(string msg)
         {
-            m_NotifyText += "\r\n" + msg;
+            if (m_IsLocked)
+            {
+                m_NotifyText = m_LockStr + "\r\n" + msg;
+            }
+            else
+            {
+                m_NotifyText += "\r\n" + msg;
+            }
             if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("NotifyText"));
         }
 
+
+        public void Lock()
+        {
+            m_LockStr = m_NotifyText;
+            m_IsLocked = true;
+        }
+
+        public void UnLock()
+        {
+            m_LockStr = string.Empty;
+            m_IsLocked = false ;
+        }
         #endregion
     }
 }

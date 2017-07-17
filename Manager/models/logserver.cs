@@ -10,45 +10,46 @@ using System.Threading;
 
 namespace Manager
 {
-    public class CTServer
+    public class CLogServer
     {
         private CTcpClient s_Tcp;
         private CSender s_Sender;
 
         private string m_Host = "127.0.0.1";
-        private int m_Port = 9000;
+        private int m_Port = 9003;
 
         private long s_CallID = 0;
-        private  bool s_IsInitialized = false;
+        private bool s_IsInitialized = false;
 
-        private  Semaphore m_WaitReponse;
-        private  TServerResponse s_Reponse;
+        private Semaphore m_WaitReponse;
 
-        public  bool IsInitialized { get { return s_IsInitialized; } }
+        private LogServerResponse s_Reponse;
+
+        public bool IsInitialized { get { return s_IsInitialized; } }
 
         public delegate void ReceiveReponseHandel(string contents);
         public delegate void EventHandel(long req);
-        public delegate void ReceiveRequestHandele(RequestOpcode call, RequestType type, object param);
+        public delegate void ReceiveRequestHandele(RequestOpcode call, object param);
 
 
         public delegate void StatusHandel(bool isinit);
-        public  event StatusHandel OnStatusChanged;
-        public  event ReceiveRequestHandele OnReceiveRequest;
+        public event StatusHandel OnStatusChanged;
+        public event ReceiveRequestHandele OnReceiveRequest;
 
-        private  readonly object m_RequestLockHelper = new object();
+        private readonly object m_RequestLockHelper = new object();
 
 
-        private volatile static CTServer _instance = null;
+        private volatile static CLogServer _instance = null;
         private static readonly object lockHelper = new object();
 
-        public static CTServer Instance()
+        public static CLogServer Instance()
         {
             if (_instance == null)
             {
                 lock (lockHelper)
                 {
                     if (_instance == null)
-                        _instance = new CTServer();
+                        _instance = new CLogServer();
                 }
             }
             return _instance;
@@ -73,17 +74,17 @@ namespace Manager
                     s_Sender.OnTimeout += delegate { if (m_WaitReponse != null)m_WaitReponse.Release(); };
                 }
             }
-            
+
             s_Tcp.Connect(m_Host, m_Port);
         }
 
-        private  void SendJson(string json)
+        private void SendJson(string json)
         {
             if (s_Tcp == null || !s_Tcp.IsConnect) return;
             s_Tcp.Write(Encoding.UTF8.GetBytes(json));
 
         }
-        private  void OnReceiveBytes(object sender, byte[] bytes)
+        private void OnReceiveBytes(object sender, byte[] bytes)
         {
             try
             {
@@ -112,9 +113,9 @@ namespace Manager
                         if (json.Property("call") == null || json.Property("call").ToString() == string.Empty)
                         {
                             //response
-                            s_Reponse = JsonConvert.DeserializeObject<TServerResponse>(sArray[i]);
+                            s_Reponse = JsonConvert.DeserializeObject<LogServerResponse>(sArray[i]);
 
-                            if(s_Reponse != null)s_Sender.End(s_Reponse.callId);
+                            if (s_Reponse != null) s_Sender.End(s_Reponse.callId);
 
                             if (m_WaitReponse != null)
                             {
@@ -131,18 +132,18 @@ namespace Manager
                         else
                         {
                             //request
-                            TServerRequest rxrequest = JsonConvert.DeserializeObject<TServerRequest>(JsonConvert.SerializeObject(json));
+                            LogServerRequest rxrequest = JsonConvert.DeserializeObject<LogServerRequest>(JsonConvert.SerializeObject(json));
 
                             if (rxrequest != null)
                             {
-                                s_CallID = rxrequest.CallId;                              
+                                s_CallID = rxrequest.CallId;
                                 SendJson(JsonConvert.SerializeObject(new TServerResponse()
                                 {
                                     status = "success",
                                     callId = rxrequest.CallId,
                                 }));
 
-                                if (OnReceiveRequest != null) OnReceiveRequest(rxrequest.Call, rxrequest.Type, rxrequest.Param);
+                                if (OnReceiveRequest != null) OnReceiveRequest(rxrequest.Call, rxrequest.Param);
                             }
                         }
                     }
@@ -157,7 +158,7 @@ namespace Manager
             }
         }
 
-        public  string Request(RequestOpcode call, RequestType type, object param)
+        public string Request(RequestOpcode call, object param)
         {
             lock (m_RequestLockHelper)
             {
@@ -170,10 +171,9 @@ namespace Manager
 
                     s_Reponse = null;
 
-                    TServerRequest requset = new TServerRequest()
+                    LogServerRequest requset = new LogServerRequest()
                     {
                         Call = call,
-                        Type = type,
                         CallId = s_CallID,
                         Param = param
                     };
@@ -195,20 +195,14 @@ namespace Manager
             }
         }
     }
-    
-    public class TServerRequest
+
+    public class LogServerRequest
     {
         [JsonIgnore]
         public RequestOpcode Call;
 
-        [JsonIgnore]
-        public RequestType Type;
-
         [JsonProperty(PropertyName = "call")]
-        public string callStr{get{return Call.ToString();} set{Call = (RequestOpcode)Enum.Parse(typeof(RequestOpcode),value);}}
-
-        [JsonProperty(PropertyName = "type")]
-        public string typestr{get{return Type.ToString();} set{ Type = (RequestType)Enum.Parse(typeof(RequestType), value);}}
+        public string callStr { get { return Call.ToString(); } set { Call = (RequestOpcode)Enum.Parse(typeof(RequestOpcode), value); } }
 
         [JsonProperty(PropertyName = "callId")]
         public long CallId;
@@ -217,7 +211,7 @@ namespace Manager
 
     }
 
-    public class TServerResponse
+    public class LogServerResponse
     {
         public string status;
         public string statusText;
@@ -225,57 +219,4 @@ namespace Manager
         public long callId;
         public object contents;
     }
-
-    public enum RequestType
-    {
-        wl, 
-        radio
-    }
-
-    public enum RequestOpcode
-    {
-        None,
-        //base
-        setBaseSetting,
-        getBaseSetting,
-        setRadioSetting,
-        getRadioSetting,
-        setRepeaterSetting,
-        getRepeaterSetting,
-
-        queryLicense,
-        registerLicense,
-
-        user,
-        department,
-        radio,
-        staff,
-
-       
-        status,
-        sendArs,
-
-        call,
-        callStatus,
-
-        message,
-        messageStatus,
-
-        queryGps,
-        queryGpsStatus,
-        sendGps,
-
-        control,
-        controlStatus,
-
-
-        wlInfo,
-
-        wlCall,
-        wlCallStatus,
-
-        wlPlay,
-        wlPlayStatus,
-    };
-
 }

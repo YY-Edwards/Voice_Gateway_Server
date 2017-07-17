@@ -64,9 +64,23 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="models\radio.cs" />
+    <Compile Include="models\staff.cs" />
+    <Compile Include="models\group.cs" />
+    <Compile Include="models\logserver.cs" />
     <Compile Include="models\radiosetting.cs" />
     <Compile Include="models\repeatersetting.cs" />
-    <Compile Include="viewmodels\cvmnotify.cs" />
+    <Compile Include="models\resource.cs" />
+    <Compile Include="models\user.cs" />
+    <Compile Include="viewmodels\vmbasesetting.cs" />
+    <Compile Include="viewmodels\vmmanager.cs" />
+    <Compile Include="viewmodels\vmnotify.cs" />
+    <Compile Include="viewmodels\vmrepeatersetting.cs" />
+    <Compile Include="viewmodels\vmradiosetting.cs" />
+    <Compile Include="viewmodels\vmdepartment.cs" />
+    <Compile Include="viewmodels\vmradio.cs" />
+    <Compile Include="viewmodels\vmstaff.cs" />
+    <Compile Include="viewmodels\vmuser.cs" />
     <Compile Include="views\Notify.xaml.cs">
       <DependentUpon>Notify.xaml</DependentUpon>
     </Compile>
@@ -85,7 +99,6 @@
     <Compile Include="tools\convertor.cs" />
     <Compile Include="tools\delegatecommand.cs" />
     <Compile Include="tools\sender.cs" />
-    <Compile Include="viewmodels\vmconfiguration.cs" />
     <Compile Include="viewmodels\vmlayout.cs" />
     <Compile Include="views\Main.xaml.cs">
       <DependentUpon>Main.xaml</DependentUpon>
@@ -153,6 +166,23 @@
   <ItemGroup>
     <Resource Include="views\images\cmb_drop_ 12_12_n.png" />
     <Resource Include="views\images\cmb_drop_12_12_h.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="views\images\new_contact_22_22_p.png" />
+    <Resource Include="views\images\username_11_14.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="views\images\group_18_18_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="views\images\staff_18_18_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="views\images\vehicle_18_18_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="views\images\radio_18_18_on.png" />
+    <Resource Include="views\images\ride_18_18_on.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
