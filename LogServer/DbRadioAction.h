@@ -75,7 +75,8 @@ void radioAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 			if (0 == operation.compare("list"))
 			{
-				CDb::instance()->query("radios", condStr.c_str(), records);
+				//CDb::instance()->query("radios", condStr.c_str(), records);
+				CDb::instance()->listRadio(condStr.c_str(), records);
 
 				FieldValue fvRecords(FieldValue::TArray);
 				for (auto i = records.begin(); i != records.end(); i++)
@@ -165,7 +166,7 @@ void radioAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 				recordType updateVal;
 				if (radioId.size() > 0)
 				{
-					updateVal["radioId"] = radioId;
+					updateVal["radio_id"] = radioId;
 				}
 				if (sn.size() > 0)
 				{
@@ -188,7 +189,7 @@ void radioAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 					updateVal["keyboard"] = std::to_string(keyboard);
 				}
 
-				std::string updCond = " where `id`=" + std::to_string(CDb::instance()->getUserIdByStaffId(id));
+				std::string updCond = " where `id`='" + std::to_string(id) +"'";
 				bool ret = CDb::instance()->updateRadio(updCond.c_str(), updateVal);
 				if (!ret)
 				{

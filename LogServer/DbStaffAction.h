@@ -75,7 +75,8 @@ void staffAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 			if (0 == operation.compare("list"))
 			{
-				CDb::instance()->query("staff", condStr.c_str(), records);
+				//CDb::instance()->query("staff", condStr.c_str(), records);
+				CDb::instance()->listStaff(condStr.c_str(), records);
 
 				FieldValue fvRecords(FieldValue::TArray);
 				for (auto i = records.begin(); i != records.end(); i++)

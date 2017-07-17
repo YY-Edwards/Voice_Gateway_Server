@@ -54,6 +54,8 @@ public:
 	bool insertDepartment(const char* name, int gid);
 	bool updateDepartment(int id, const char* name, int gid);
 	int listUser(const char* condition, std::list<recordType>& records);
+	int listStaff(const char* condition, std::list<recordType>& records);
+	int listRadio(const char* condition, std::list<recordType>& records);
 	int getUserIdByStaffId(int staffId);
 	bool detachUser(int userId, int departmentId);
 	bool assignUser(int userId, int departmentId);

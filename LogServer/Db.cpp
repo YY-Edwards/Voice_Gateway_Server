@@ -465,6 +465,34 @@ int CDb::listUser(const char* condition, std::list<recordType>& records)
 	return m_pMySQLDb->query(sql.c_str(), records);
 }
 
+
+int CDb::listStaff(const char* condition, std::list<recordType>& records)
+{
+	std::string sql = "SELECT staff.*, organize.department FROM staff LEFT JOIN organize ON staff.id=organize.staff";
+	if (NULL != condition && strlen(condition) > 0)
+	{
+		sql += " ";
+		sql += condition;
+	}
+
+	return m_pMySQLDb->query(sql.c_str(), records);
+}
+
+int CDb::listRadio(const char* condition, std::list<recordType>& records)
+{
+	std::string sql = "SELECT radios.*, radio_belong.department, radio_belong.staff FROM radios LEFT JOIN radio_belong ON radios.id = radio_belong.radio";
+	if (NULL != condition && strlen(condition) > 0)
+	{
+		sql += " ";
+		sql += condition;
+	}
+
+	return m_pMySQLDb->query(sql.c_str(), records);
+}
+
+
+
+
 int CDb::query(const char* table, const char* condition, std::list<recordType>& records)
 {
 	return m_pMySQLDb->find(table, condition, records);
@@ -563,7 +591,15 @@ bool CDb::assignUser(int userId, int departmentId)
 		rec["department"] = std::to_string(departmentId);
 		if (!m_pMySQLDb->recordExist("organize", rec))
 		{
-			m_pMySQLDb->insert("organize", rec);
+			std::string constr = " where staff=" + rec["staff"];
+			if (m_pMySQLDb->count("organize", constr.c_str()) > 0)
+			{
+				m_pMySQLDb->update("organize", rec, constr.c_str());
+			}
+			else
+			{
+				m_pMySQLDb->insert("organize", rec);
+			}
 		}
 		m_pMySQLDb->commit();
 		return true;
@@ -617,7 +653,15 @@ bool CDb::assignDepartmentRadio(int radioId, int departmentId)
 		rec["department"] = std::to_string(departmentId);
 		if (!m_pMySQLDb->recordExist("radio_belong", rec))
 		{
-			m_pMySQLDb->insert("radio_belong", rec);
+			std::string constr = " where radio=" + rec["radio"];
+			if (m_pMySQLDb->count("radio_belong", constr.c_str()) > 0)
+			{
+				m_pMySQLDb->update("radio_belong", rec, constr.c_str());
+			}
+			else
+			{
+				m_pMySQLDb->insert("radio_belong", rec);
+			}
 		}
 		m_pMySQLDb->commit();
 		return true;
@@ -741,7 +785,15 @@ bool CDb::assignStaffRadio(int staffId, int radioId)
 		rec["radio"] = std::to_string(radioId);
 		if (!m_pMySQLDb->recordExist("radio_belong", rec))
 		{
-			m_pMySQLDb->insert("radio_belong", rec);
+			std::string constr = " where radio=" + rec["radio"];
+			if (m_pMySQLDb->count("radio_belong", constr.c_str()) > 0)
+			{
+				m_pMySQLDb->update("radio_belong", rec, constr.c_str());
+			}
+			else
+			{
+				m_pMySQLDb->insert("radio_belong", rec);
+			}			
 		}
 		m_pMySQLDb->commit();
 		return true;
