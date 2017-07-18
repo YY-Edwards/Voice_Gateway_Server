@@ -71,6 +71,9 @@ namespace Manager
         public CVMRepeaterSetting RepeaterSettingDataContext { get { return m_RepeaterSettingDataContext; } }
 
 
+        private CVMRegister m_RegisterDataContext = new CVMRegister();
+        public CVMRegister RegisterDataContext { get { return m_RegisterDataContext; } }
+
         //resource
         private CVMUser m_UserDataContext = new CVMUser();
         public CVMUser UserDataContext { get { return m_UserDataContext; } }
@@ -377,6 +380,8 @@ namespace Manager
                 m_BaseSettingDataContext.Get();
                 m_RadioSettingDataContext.Get();
                 m_RepeaterSettingDataContext.Get();
+
+                m_RegisterDataContext.Get();
             }
         }
 

@@ -36,7 +36,8 @@ namespace Manager
 
         public bool IsEnable
         {
-            get { return m_Radio.IsEnable; }
+            get { 
+                return m_Radio.IsEnable; }
             set{
                 m_Radio.IsEnable = value;m_Radio.NeedSave(); }
         }

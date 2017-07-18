@@ -36,7 +36,8 @@ namespace Manager
 
         public bool IsEnable
         {
-            get { return m_Repeater.IsEnable; }
+            get { 
+                return m_Repeater.IsEnable; }
             set { m_Repeater.IsEnable = value; m_Repeater.NeedSave(); }
         }
       

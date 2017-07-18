@@ -157,8 +157,9 @@ namespace Manager
             }
         }
 
-        public  string Request(RequestOpcode call, RequestType type, object param)
+        public string[] Request(RequestOpcode call, RequestType type, object param)
         {
+
             lock (m_RequestLockHelper)
             {
                 try
@@ -186,11 +187,14 @@ namespace Manager
                     s_Sender.Begin(s_CallID, 3000, 3, delegate { SendJson(json); });
                     if (m_WaitReponse != null) m_WaitReponse.WaitOne();
 
-                    return JsonConvert.SerializeObject(s_Reponse.contents, Formatting.Indented, jsetting);
+                    return new string[2] { 
+                        s_Reponse.status,
+                        JsonConvert.SerializeObject(s_Reponse.contents, Formatting.Indented, jsetting)
+                    };
                 }
                 catch
                 {
-                    return string.Empty;
+                    return new string[2] { "faliure", string.Empty };
                 }
             }
         }

@@ -72,23 +72,29 @@ namespace Manager
             if (!CLogServer.Instance().IsInitialized) return;
             try
             {
-                string reply = CLogServer.Instance().Request(opcode, parameter);
+                 string[] reply = CLogServer.Instance().Request(opcode, parameter);
 
-                switch (type)
+                if (reply != null && reply.Length >= 2)
                 {
-                    case OperateType.list:
-                        List.AddRange(ParseList(reply));
-                        List = List.OrderBy(p => p.ID).ToList<CRElement>();
-                        if (OnResourceChanged != null) OnResourceChanged(opcode, List);
-                        ListUpdate();
-                        m_IsUpdated = true;
-                        break;
-                    case OperateType.count:
-                        OnCountUpdate(ParseCount(reply), parameter as Dictionary<string, object>);
-                        break;
-                    default:
-                        CustomTypeReply(type, reply, attach);
-                        break;
+                    switch (type)
+                    {
+                        case OperateType.list:
+                            if (reply[0] == "success")
+                            {
+                                List.AddRange(ParseList(reply[1]));
+                                List = List.OrderBy(p => p.ID).ToList<CRElement>();
+                                if (OnResourceChanged != null) OnResourceChanged(opcode, List);
+                                ListUpdate();
+                                m_IsUpdated = true;
+                            }
+                            break;
+                        case OperateType.count:
+                            if (reply[0] == "success")OnCountUpdate(ParseCount(reply[1]), parameter as Dictionary<string, object>);
+                            break;
+                        default:
+                            CustomTypeReply(type, reply[0] == "success", reply[1], attach);
+                            break;
+                    }
                 }
             }
             catch
@@ -103,7 +109,7 @@ namespace Manager
         {
 
         }
-        public virtual void CustomTypeReply(OperateType type, string reply, object attach)
+        public virtual void CustomTypeReply(OperateType type, bool issuccess, string reply, object attach)
         {
 
         }

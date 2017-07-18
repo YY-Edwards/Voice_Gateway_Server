@@ -819,7 +819,7 @@
                             <TabItem Header="资源管理" Margin="-2,-2,-2,0">
                                 <ScrollViewer x:Name="scrview_ResManager" VerticalScrollBarVisibility="Auto" Padding="20,2.5" Style="{DynamicResource ScrollViewerStyleNormal}" Foreground="#FFBFBFBF" FontSize="14">
                                     <DockPanel LastChildFill="False" Margin="0">
-                                        <DockPanel x:Name="dck_ResManagerCompany"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30" Visibility="Collapsed" d:IsLocked="True" d:IsHidden="True">
+                                        <DockPanel x:Name="dck_ResManagerCompany"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30" Visibility="Collapsed" d:IsHidden="True">
                                             <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
                                                 <Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
                                                 <Label Content="供应商" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
@@ -875,7 +875,7 @@
                                             </DockPanel>
 
                                         </DockPanel>
-                                        <DockPanel x:Name="dck_ResManagerPartment"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30" Visibility="Collapsed" d:IsLocked="True" d:IsHidden="True">
+                                        <DockPanel x:Name="dck_ResManagerPartment"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30" Visibility="Collapsed" d:IsHidden="True">
                                             <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
                                                 <Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
                                                 <Label Content="部门" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
@@ -916,7 +916,7 @@
 
                                         </DockPanel>
 
-                                        <DockPanel x:Name="dck_ResManagerGroup"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30" d:IsLocked="True">
+                                        <DockPanel x:Name="dck_ResManagerGroup"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30">
                                             <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
                                                 <Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
                                                 <Label Content="组" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
@@ -1040,7 +1040,7 @@
                                             </DockPanel>
 
                                         </DockPanel>
-                                        <DockPanel x:Name="dck_ResManagerVehicle"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30" Visibility="Collapsed" d:IsLocked="True" d:IsHidden="True">
+                                        <DockPanel x:Name="dck_ResManagerVehicle"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30" Visibility="Collapsed" d:IsHidden="True">
                                             <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
                                                 <Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
                                                 <Label Content="车辆" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
@@ -1193,7 +1193,7 @@
                                             </DockPanel>
 
                                         </DockPanel>
-                                        <DockPanel x:Name="dck_ResManagerRelationship"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30" Visibility="Collapsed" d:IsHidden="True" d:IsLocked="True">
+                                        <DockPanel x:Name="dck_ResManagerRelationship"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30" Visibility="Collapsed" d:IsHidden="True">
                                             <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
                                                 <Image Height="10" VerticalAlignment="Center" Width="13" Source="/TrboxMgr;component/resources/images/double_arrow_13_10.png"/>
                                                 <Label Content="绑定/分配" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
@@ -1258,8 +1258,8 @@
                                     </DockPanel>
                                 </ScrollViewer>
                             </TabItem>
-                            <TabItem Header="账号及权限" Margin="-2,-2,-2,0" d:IsLocked="True">
-                                <ScrollViewer x:Name="scrview_UserRoot" VerticalScrollBarVisibility="Auto" Padding="20,2.5" Margin="-2,10,2,10" Style="{DynamicResource ScrollViewerStyleNormal}" d:IsLocked="True">
+                            <TabItem Header="账号及权限" Margin="-2,-2,-2,0">
+                                <ScrollViewer x:Name="scrview_UserRoot" VerticalScrollBarVisibility="Auto" Padding="20,2.5" Margin="-2,10,2,10" Style="{DynamicResource ScrollViewerStyleNormal}">
                                     <DockPanel LastChildFill="False" Margin="0">
                                         <DockPanel x:Name="dck_User"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,20,0,30">
                                             <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">

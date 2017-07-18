@@ -64,6 +64,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="models\register.cs" />
     <Compile Include="models\radio.cs" />
     <Compile Include="models\staff.cs" />
     <Compile Include="models\group.cs" />
@@ -72,6 +73,7 @@
     <Compile Include="models\repeatersetting.cs" />
     <Compile Include="models\resource.cs" />
     <Compile Include="models\user.cs" />
+    <Compile Include="viewmodels\vmregister.cs" />
     <Compile Include="viewmodels\vmbasesetting.cs" />
     <Compile Include="viewmodels\vmmanager.cs" />
     <Compile Include="viewmodels\vmnotify.cs" />

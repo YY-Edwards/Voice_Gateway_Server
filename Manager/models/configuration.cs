@@ -32,21 +32,26 @@ namespace Manager
             m_GetOpcode = get;
         }
 
-        private void Request(RequestOpcode opcode, object parameter, bool isget = false)
+        public void Request(RequestOpcode opcode, object parameter, bool isget = false)
         {
             if (!CTServer.Instance().IsInitialized) return;
             new Thread(new ThreadStart(delegate()
             {
                 try
                 {
-                    string reply = CTServer.Instance().Request(opcode, RequestType.radio, parameter);
+                    string[] reply = CTServer.Instance().Request(opcode, RequestType.radio, parameter);
                     m_NeedSave = false;
 
-                    if (isget)
+                    if (reply != null && reply.Length >=2)
                     {
-                        m_Object = Parse(reply);                      
-                        if (OnConfigurationChanged != null) OnConfigurationChanged(m_Type, m_Object);
-                        m_IsUpdated = true;
+                        if (isget && reply[0] == "success")
+                        {
+                            m_Object = Parse(reply[1]);
+                            if (OnConfigurationChanged != null) OnConfigurationChanged(m_Type, m_Object);
+                            m_IsUpdated = true;
+                        }
+
+                        CustomParse(opcode, reply[0] == "success", reply[1]);
                     }
                 }
                 catch
@@ -61,6 +66,11 @@ namespace Manager
             return null;
         }
 
+
+        public virtual void CustomParse(RequestOpcode opcode,bool success, string reply)
+        {
+
+        }
 
         public virtual object Build(object obj)
         {

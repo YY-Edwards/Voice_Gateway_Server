@@ -24,6 +24,56 @@
                 <ResourceDictionary Source="style.xaml" />
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>
+        <Style x:Key="TextBoxStyleLable" BasedOn="{x:Null}" TargetType="{x:Type TextBox}">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TextBoxBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="AllowDrop" Value="true"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border BorderBrush="#FF434346" HorizontalAlignment="Stretch" Width="Auto" Background="#FF353537">
+                            <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="5,2.5" Padding="0"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Opacity" TargetName="PART_ContentHost" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="TextBoxStyleArea" BasedOn="{x:Null}" TargetType="{x:Type TextBox}">
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="Background" Value="{DynamicResource {x:Static SystemColors.WindowBrushKey}}"/>
+            <Setter Property="BorderBrush" Value="{StaticResource TextBoxBorder}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Padding" Value="1"/>
+            <Setter Property="AllowDrop" Value="true"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="ScrollViewer.PanningMode" Value="VerticalFirst"/>
+            <Setter Property="Stylus.IsFlicksEnabled" Value="False"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type TextBox}">
+                        <Border BorderBrush="#FF434346" BorderThickness="1" HorizontalAlignment="Stretch" Width="Auto" Background="#FF353537">
+                            <ScrollViewer x:Name="PART_ContentHost" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Margin="5,2.5" Padding="0"/>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Opacity" TargetName="PART_ContentHost" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
     </Window.Resources>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
@@ -350,14 +400,56 @@
                                     </i:Interaction.Triggers>
                                     <TreeViewItem Header="供应商" Style="{DynamicResource TreeViewItemStyle2nd}" Visibility="Collapsed"/>
                                     <TreeViewItem Header="部门" Style="{DynamicResource TreeViewItemStyle2nd}" Visibility="Collapsed"/>
-                                    <TreeViewItem Header="组" Style="{DynamicResource TreeViewItemStyle2nd}"/>
-                                    <TreeViewItem Header="人员/车辆" Style="{DynamicResource TreeViewItemStyle2nd}"/>
+                                    <TreeViewItem Header="组" Style="{DynamicResource TreeViewItemStyle2nd}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMLayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_ResManager"/>
+                                                            <Binding ElementName="dck_ResManagerGroup"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TreeViewItem>
+                                    <TreeViewItem Header="人员/车辆" Style="{DynamicResource TreeViewItemStyle2nd}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMLayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_ResManager"/>
+                                                            <Binding ElementName="dck_ResManagerEmployee"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TreeViewItem>
                                     <TreeViewItem Header="车辆" Style="{DynamicResource TreeViewItemStyle2nd}" Visibility="Collapsed"/>
 
-                                    <TreeViewItem Header="终端" Style="{DynamicResource TreeViewItemStyle2nd}"/>
+                                    <TreeViewItem Header="终端" Style="{DynamicResource TreeViewItemStyle2nd}">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMLayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_ResManager"/>
+                                                            <Binding ElementName="dck_ResManagerRadio"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TreeViewItem>
                                     <TreeViewItem Header="绑定/分配" Style="{DynamicResource TreeViewItemStyle2nd}"  Visibility="Collapsed"/>
                                 </TreeViewItem>
-                                <TreeViewItem Header="账号及权限" Style="{DynamicResource TreeViewItemStyleRoot}" >
+                                <TreeViewItem Header="账号管理" Style="{DynamicResource TreeViewItemStyleRoot}" >
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="Selected">
                                             <i:InvokeCommandAction Command="{Binding TreeSelectedChanged, Mode=OneWay, Source={StaticResource CVMLayout}}" CommandParameter="4" />
@@ -496,7 +588,7 @@
                                     </TabItem>
                                     <TabItem Header="Radio配置">
                                         <ScrollViewer x:Name="scrview_Radio" VerticalScrollBarVisibility="Auto" Padding="20,2.5" Margin="0" Style="{DynamicResource ScrollViewerStyleNormal}">
-                                            <DockPanel LastChildFill="False" Margin="0" DataContext="{Binding RadioSettingDataContext, Mode=OneWay, Source={StaticResource CVMLayout}}">
+                                            <DockPanel x:Name="dck_radioSetting" LastChildFill="False" Margin="0" DataContext="{Binding RadioSettingDataContext, Mode=OneWay, Source={StaticResource CVMLayout}}">
                                                 <DockPanel x:Name="dck_RadioGeneric" LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,0,0,30">
                                                     <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
                                                         <Image Height="10" VerticalAlignment="Center" Width="13" Source="images/double_arrow_13_10.png"/>
@@ -509,7 +601,17 @@
                                                             <ColumnDefinition Width="114"/>
                                                             <ColumnDefinition Width="*"/>
                                                         </Grid.ColumnDefinitions>
-                                                        <CheckBox x:Name="chk_EnableRadio" Content="　Radio调度" Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"  Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" Grid.Column="1" Command="{Binding EnableCheck, Mode=OneWay}" CommandParameter="{Binding DataContext, ElementName=dockPanel}" IsChecked="{Binding IsEnable}"/>
+                                                        <CheckBox x:Name="chk_EnableRadio" Content="　Radio调度" Margin="20,0,0,0" HorizontalAlignment="Left" VerticalAlignment="Center"  Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" Grid.Column="1" IsChecked="{Binding IsEnable}">
+                                                            <i:Interaction.Triggers>
+                                                                <i:EventTrigger EventName="Checked">
+                                                                    <i:InvokeCommandAction Command="{Binding EnableCheck, Mode=OneWay}" CommandParameter="{Binding DataContext, ElementName=dockPanel}" />
+                                                                    <i:InvokeCommandAction Command="{Binding DataContext.EnableRadio, ElementName=dck_register, Mode=OneWay}"/>
+                                                                </i:EventTrigger>
+                                                                <i:EventTrigger EventName="Unchecked">
+                                                                    <i:InvokeCommandAction Command="{Binding DataContext.EnableRepeater, ElementName=dck_register, Mode=OneWay}"/>
+                                                                </i:EventTrigger>
+                                                            </i:Interaction.Triggers>
+                                                        </CheckBox>
                                                     </Grid>
                                                     <DockPanel DockPanel.Dock="Top" Margin="20,0">
                                                         <DockPanel.Visibility>
@@ -708,7 +810,17 @@
                                                             <ColumnDefinition Width="114"/>
                                                             <ColumnDefinition Width="*"/>
                                                         </Grid.ColumnDefinitions>
-                                                        <CheckBox x:Name="chk_EnableWireLan" Content="　WireLan调度" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" Command="{Binding EnableCheck, Mode=OneWay}" CommandParameter="{Binding DataContext, ElementName=chk_EnableRadio}" IsChecked="True" />
+                                                        <CheckBox x:Name="chk_EnableWireLan" Content="　WireLan调度" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" IsChecked="{Binding IsEnable}" >
+                                                            <i:Interaction.Triggers>
+                                                                <i:EventTrigger EventName="Checked">
+                                                                    <i:InvokeCommandAction Command="{Binding EnableCheck, Mode=OneWay}" CommandParameter="{Binding DataContext, ElementName=dck_radioSetting}" />
+                                                                    <i:InvokeCommandAction Command="{Binding DataContext.EnableRepeater, ElementName=dck_register, Mode=OneWay}"/>
+                                                                </i:EventTrigger>
+                                                                <i:EventTrigger EventName="Unchecked">
+                                                                    <i:InvokeCommandAction Command="{Binding DataContext.EnableRadio, ElementName=dck_register, Mode=OneWay}"/>
+                                                                </i:EventTrigger>
+                                                            </i:Interaction.Triggers>
+                                                        </CheckBox>
                                                     </Grid>
                                                     <DockPanel LastChildFill="False" DockPanel.Dock="Top" Margin="20,0" >
                                                         <DockPanel.Visibility>
@@ -1635,7 +1747,72 @@
                                     </TabItem>
                                     <TabItem Header="室内定位" />
                                     <TabItem Header="地图" />
-                                    <TabItem Header="注册认证" />
+                                    <TabItem Header="注册认证" >
+                                        <ScrollViewer x:Name="scrview_Register" VerticalScrollBarVisibility="Auto" Padding="20,2.5" Margin="0" Style="{DynamicResource ScrollViewerStyleNormal}">
+                                            <DockPanel LastChildFill="False" Margin="0">
+                                                <DockPanel x:Name="dck_register"  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,0,0,30" DataContext="{Binding RegisterDataContext, Mode=OneWay, Source={StaticResource CVMLayout}}">
+                                                    <DockPanel Height="24" LastChildFill="False" DockPanel.Dock="Top" Margin="0,20,0,0">
+                                                        <Image Height="10" VerticalAlignment="Center" Width="13" Source="images/double_arrow_13_10.png"/>
+                                                        <Label Content="注册" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                                        <Label x:Name="lab_RegisterStatus" Content="{Binding Status, Mode=OneWay}" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                                                    </DockPanel>
+                                                    <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+                                                    <TextBlock TextWrapping="Wrap" Text="请向软件供应商提供该序列号及设备类型，以获取软件注册码（文件）" Margin="20,5,20,10" DockPanel.Dock="Top" Foreground="#FFBFBFBF" FontSize="13" HorizontalAlignment="Left"/>
+                                                    <!--<Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="28">
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="114"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                </Grid.ColumnDefinitions>
+                                                <CheckBox x:Name="chk_EnableWireLan1" Content="　WireLan调度" Margin="0" HorizontalAlignment="Left" VerticalAlignment="Center" Grid.ColumnSpan="2" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" IsChecked="True"/>
+                                            </Grid>-->
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="36">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="设备类型 :" VerticalAlignment="Center" Margin="0,4" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13" Height="28" Width="69"/>
+                                                        <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0,5.5" VerticalAlignment="Center" Grid.Column="1" Foreground="#FFBFBFBF" Style="{DynamicResource TextBoxStyleLable}" Text="{Binding DeviceType, Mode=OneWay}"  />
+                                                    </Grid>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="36">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="设备序列号 :" VerticalAlignment="Center" Margin="0,4" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13" Height="28" Width="82"/>
+                                                        <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0,3" VerticalAlignment="Center" Grid.Column="1" Foreground="#FFBFBFBF" Grid.ColumnSpan="3" Grid.Row="1" Style="{DynamicResource TextBoxStyleLable}" Text="{Binding DeviceSN, Mode=OneWay}"  />
+                                                    </Grid>
+                                                    <TextBlock TextWrapping="Wrap" Text="请输入软件注册码（打开注册文件）" Margin="20,15,20,10" DockPanel.Dock="Top" Foreground="#FFBFBFBF" FontSize="13" HorizontalAlignment="Left"/>
+                                                    <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="20,2.5" Height="142">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="114"/>
+                                                            <ColumnDefinition Width="350*"/>
+                                                            <ColumnDefinition Width="97*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Label Content="密钥 :" VerticalAlignment="Top" Margin="0" Foreground="#FFBFBFBF" FontSize="13" Height="27" HorizontalAlignment="Right"/>
+                                                        <TextBox x:Name="txt_License" TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" Grid.Column="1" Width="340" Style="{DynamicResource TextBoxStyleArea}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" Text="{Binding LicenseKey}"/>
+                                                        <Button x:Name="btn_OpenLicense" Content="打开文件" VerticalAlignment="Top" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" Foreground="White" FontSize="14" BorderBrush="Black" BorderThickness="0" Background="#FF54B0C0" Grid.Column="2" Width="92" HorizontalAlignment="Left" Margin="5,0,0,0" Command="{Binding BrowseKey, Mode=OneWay}"/>
+                                                    </Grid>
+                                                    <Grid x:Name="grd_RegisterRes" DockPanel.Dock="Top" Height="46" Visibility="{Binding NotifyVisible, Mode=OneWay}">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="133"/>
+                                                            <ColumnDefinition Width="2*"/>
+                                                            <ColumnDefinition Width="37*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Image HorizontalAlignment="Left" Height="15" VerticalAlignment="Center" Width="19" Source="images/notice_19_15_n.png" Grid.Column="1" Margin="0,0,0,2"/>
+                                                        <TextBlock x:Name="txt_ResgisterRes" TextWrapping="Wrap" Text="{Binding Notify, Mode=OneWay}" Foreground="#FFBFBFBF" FontSize="13" HorizontalAlignment="Left" Grid.Column="2" VerticalAlignment="Center" Height="18" Margin="0,14" Width="208"/>
+                                                    </Grid>
+                                                    <Grid DockPanel.Dock="Top" Height="46">
+                                                        <Grid.ColumnDefinitions>
+                                                            <ColumnDefinition Width="133"/>
+                                                            <ColumnDefinition Width="70*"/>
+                                                            <ColumnDefinition Width="47*"/>
+                                                        </Grid.ColumnDefinitions>
+                                                        <Button x:Name="btn_Register" Content="注册" VerticalAlignment="Center" Style="{DynamicResource ButtonNormalStyle}" Height="30" Tag="4" AllowDrop="True" BorderThickness="0" BorderBrush="Black" Background="#FF5C8EC6" Foreground="White" FontSize="14" Grid.Column="1" Width="92" HorizontalAlignment="Left" Command="{Binding Register, Mode=OneWay}"/>
+                                                    </Grid>
+                                                </DockPanel>
+                                            </DockPanel>
+                                        </ScrollViewer>
+                                    </TabItem>
                                 </TabControl>
                             </Border>
                         </DockPanel>
