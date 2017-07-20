@@ -71,12 +71,12 @@ namespace Manager
 
 
         //command
-        public ICommand New { get { return new CDelegateCommand(NewDepartment); } }
-        public ICommand Delete { get { return new CDelegateCommand(DeleteDepartment); } }
-        public ICommand Save { get { return new CDelegateCommand(SaveDepartment); } }
+        public ICommand New { get { return new CDelegateCommand(NewEle); } }
+        public ICommand Delete { get { return new CDelegateCommand(DeleteEle); } }
+        public ICommand Save { get { return new CDelegateCommand(SaveEle); } }
 
 
-        private void NewDepartment()
+        private void NewEle()
         {
             m_Department.IsNew = true;
             m_EditDepartment = new CDepartment();
@@ -85,7 +85,7 @@ namespace Manager
             PropertyChanged(this, new PropertyChangedEventArgs("GroupID"));
         }
 
-        private void DeleteDepartment()
+        private void DeleteEle()
         {
             if (m_EditDepartment == null) return;
             m_Department.Delete(m_EditDepartment.ID);
@@ -93,7 +93,7 @@ namespace Manager
         }
 
         //parameter:password,can not binding on passwordbox
-        private void SaveDepartment(object parameter)
+        private void SaveEle(object parameter)
         {
             if (m_EditDepartment == null) return;
 

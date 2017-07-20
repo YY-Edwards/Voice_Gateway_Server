@@ -280,6 +280,10 @@ namespace Manager
 
         wlPlay,
         wlPlayStatus,
+
+
+        area,
+        ibeacon,
     };
 
 }

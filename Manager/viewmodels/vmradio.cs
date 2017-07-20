@@ -94,15 +94,15 @@ namespace Manager
         }
 
         //command
-        public ICommand New { get { return new CDelegateCommand(NewStaff); } }
-        public ICommand Delete { get { return new CDelegateCommand(DeleteStaff); } }
-        public ICommand Save { get { return new CDelegateCommand(SaveStaff); } }
+        public ICommand New { get { return new CDelegateCommand(NewEle); } }
+        public ICommand Delete { get { return new CDelegateCommand(DeleteEle); } }
+        public ICommand Save { get { return new CDelegateCommand(SaveEle); } }
 
         public ICommand DepartmentChanged { get { return new CDelegateCommand(OnDepartmentChanged); } }
         public ICommand StaffChanged { get { return new CDelegateCommand(OnStaffChanged); } }
 
 
-        private void NewStaff()
+        private void NewEle()
         {
             m_Radio.IsNew = true;
             m_EditRadio = new CRadio();
@@ -123,7 +123,7 @@ namespace Manager
             }
         }
 
-        private void DeleteStaff()
+        private void DeleteEle()
         {
             if (m_EditRadio == null) return;
             m_Radio.Delete(m_EditRadio.ID);
@@ -138,7 +138,7 @@ namespace Manager
         }
 
         //parameter:password,can not binding on passwordbox
-        private void SaveStaff(object parameter)
+        private void SaveEle(object parameter)
         {
             if (m_EditRadio == null || !(parameter is ListView)) return;
 

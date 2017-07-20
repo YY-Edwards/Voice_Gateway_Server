@@ -89,7 +89,15 @@ namespace Manager
                             }
                             break;
                         case OperateType.count:
-                            if (reply[0] == "success")OnCountUpdate(ParseCount(reply[1]), parameter as Dictionary<string, object>);
+                            if (reply[0] == "success")
+                            {
+                                int count = ParseCount(reply[1]);
+                                if (count > 0) OnCountUpdate(count, parameter as Dictionary<string, object>);
+                                else
+                                {
+                                    if (OnResourceChanged != null) OnResourceChanged(opcode, List);
+                                }
+                            }
                             break;
                         default:
                             CustomTypeReply(type, reply[0] == "success", reply[1], attach);

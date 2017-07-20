@@ -39,12 +39,17 @@
       <HintPath>..\packages\Controls.WPF.1.0.4.1\lib\net40\Controls.WPF.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Microsoft.Expression.Interactions, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="Newtonsoft.Json, Version=9.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
+    <Reference Include="System.Data.SQLite, Version=1.0.66.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
+      <HintPath>..\packages\System.Data.SQLite.1.0.66.0\lib\net40\System.Data.SQLite.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Interactivity, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml" />
@@ -55,6 +60,10 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
+    <Reference Include="Util.Lib, Version=1.0.12.3, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Util.CSharp.1.0.12.3\lib\net40\Util.Lib.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -64,6 +73,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="models\ibeacon.cs" />
+    <Compile Include="models\area.cs" />
     <Compile Include="models\register.cs" />
     <Compile Include="models\radio.cs" />
     <Compile Include="models\staff.cs" />
@@ -73,6 +84,9 @@
     <Compile Include="models\repeatersetting.cs" />
     <Compile Include="models\resource.cs" />
     <Compile Include="models\user.cs" />
+    <Compile Include="tools\dragdropadorner.cs" />
+    <Compile Include="viewmodels\vmibeacon.cs" />
+    <Compile Include="viewmodels\vmarea.cs" />
     <Compile Include="viewmodels\vmregister.cs" />
     <Compile Include="viewmodels\vmbasesetting.cs" />
     <Compile Include="viewmodels\vmmanager.cs" />
@@ -83,9 +97,17 @@
     <Compile Include="viewmodels\vmradio.cs" />
     <Compile Include="viewmodels\vmstaff.cs" />
     <Compile Include="viewmodels\vmuser.cs" />
+    <Compile Include="views\iBeaconPoint.cs" />
+    <Compile Include="views\Map.xaml.cs">
+      <DependentUpon>Map.xaml</DependentUpon>
+    </Compile>
     <Compile Include="views\Notify.xaml.cs">
       <DependentUpon>Notify.xaml</DependentUpon>
     </Compile>
+    <Page Include="views\iBeaconPoint.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="views\Main.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -106,6 +128,10 @@
       <DependentUpon>Main.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Page Include="views\Map.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="views\Notify.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -185,6 +211,15 @@
   <ItemGroup>
     <Resource Include="views\images\radio_18_18_on.png" />
     <Resource Include="views\images\ride_18_18_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="views\images\area_18_18_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="views\images\ibeacon_18_18_on.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="views\images\bluetooth.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

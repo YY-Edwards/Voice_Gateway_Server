@@ -23,6 +23,16 @@ namespace Manager
         public Main()
         {
             InitializeComponent();
+
+            //fortest
+            this.Loaded += delegate {
+
+                Normal.Visibility = Visibility.Visible;
+                LocationInDoor_NetWork.Visibility = Visibility.Visible;
+                dck_LocationInDoor_iBeacons.Visibility = Visibility.Visible;
+                dck_LocationInDoor_Areas.Visibility = Visibility.Visible;
+                
+            };
         }
     }
 }

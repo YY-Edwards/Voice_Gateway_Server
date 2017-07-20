@@ -77,15 +77,15 @@ namespace Manager
 
 
         //command
-        public ICommand New { get { return new CDelegateCommand(NewStaff); } }
-        public ICommand Delete { get { return new CDelegateCommand(DeleteStaff); } }
-        public ICommand Save { get { return new CDelegateCommand(SaveStaff); } }
+        public ICommand New { get { return new CDelegateCommand(NewEle); } }
+        public ICommand Delete { get { return new CDelegateCommand(DeleteEle); } }
+        public ICommand Save { get { return new CDelegateCommand(SaveEle); } }
 
         public ICommand DepartmentChanged { get { return new CDelegateCommand(OnDepartmentChanged); } }
-        
 
 
-        private void NewStaff()
+
+        private void NewEle()
         {
             m_Staff.IsNew = true;
             m_EditStaff = new CStaff();
@@ -99,7 +99,7 @@ namespace Manager
             }
         }
 
-        private void DeleteStaff()
+        private void DeleteEle()
         {
             if (m_EditStaff == null) return;
             m_Staff.Delete(m_EditStaff.ID);
@@ -109,7 +109,7 @@ namespace Manager
         }
 
         //parameter:password,can not binding on passwordbox
-        private void SaveStaff(object parameter)
+        private void SaveEle(object parameter)
         {
             if (m_EditStaff == null || !(parameter is ListView)) return;
 

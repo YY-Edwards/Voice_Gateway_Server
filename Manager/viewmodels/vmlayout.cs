@@ -5,6 +5,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
+using System.Windows.Interop;
+using System.Collections.Generic;
 
 namespace Manager
 {
@@ -28,6 +30,7 @@ namespace Manager
         public ICommand TreeSelectedChanged { get { return new CDelegateCommand(OnTreeSelectedChanged); } }
        
         public ICommand ScrollToItem { get { return new CDelegateCommand(ScrollToItemOffset); } }
+
 
         #endregion
 
@@ -87,6 +90,12 @@ namespace Manager
         private CVMRadio m_RadioDataContext = new CVMRadio();
         public CVMRadio RadioDataContext { get { return m_RadioDataContext; } }
 
+        private CVMArea m_AreaDataContext = new CVMArea();
+        public CVMArea AreaDataContext { get { return m_AreaDataContext; } }
+
+        private CVMiBeacon m_iBeaconDataContext = new CVMiBeacon();
+        public CVMiBeacon iBeaconDataContext { get { return m_iBeaconDataContext; } }
+
         private void LoadWin(object parameter)
         {
             if (PropertyChanged != null)
@@ -94,17 +103,48 @@ namespace Manager
                 PropertyChanged(this, new PropertyChangedEventArgs("BaseSettingDataContext"));
                 PropertyChanged(this, new PropertyChangedEventArgs("RadioSettingDataContext"));
                 PropertyChanged(this, new PropertyChangedEventArgs("RepeaterSettingDataContext"));
+                PropertyChanged(this, new PropertyChangedEventArgs("RegisterDataContext"));
 
                 PropertyChanged(this, new PropertyChangedEventArgs("UserDataContext"));
                 PropertyChanged(this, new PropertyChangedEventArgs("DepartmentDataContext"));
                 PropertyChanged(this, new PropertyChangedEventArgs("StaffDataContext"));
                 PropertyChanged(this, new PropertyChangedEventArgs("RadioDataContext"));
-
+                PropertyChanged(this, new PropertyChangedEventArgs("AreaDataContext"));
+                PropertyChanged(this, new PropertyChangedEventArgs("iBeaconDataContext"));
             }
 
             InitializeTServer();
             InitializeLogServer();
+
+            if (parameter == null) return;
+
+            hs = PresentationSource.FromVisual((Visual)parameter) as HwndSource;
+            hs.AddHook(new HwndSourceHook(WndProc));
         }
+
+        private HwndSource hs;
+
+        List<int> log = new List<int>();
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        {
+
+            log.Add(msg);
+            switch (msg)
+            {
+                case 0x0202:
+                case 0x0205:
+                    //
+                    break;
+                case 0x8023:
+                  
+                    m_iBeaconDataContext.UpdateiBeacon();
+                    break;
+                default: break;
+            }
+            return (System.IntPtr)0;
+        }
+
+
 
         private void InitializeTServer()
         {
@@ -277,6 +317,37 @@ namespace Manager
                         if (cmvnotify != null)
                         {
                             cmvnotify.AppendNotify("完成");
+                            cmvnotify.AppendNotify("保存室内定位区域信息...");
+                        }
+                    });
+
+                    //save area
+                    m_AreaDataContext.Set();
+                    m_AreaDataContext.Get();
+                    System.Threading.Thread.Sleep(100);
+
+                    mainwin.Dispatcher.BeginInvoke((Action)delegate()
+                    {
+                        CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
+                        if (cmvnotify != null)
+                        {
+                            cmvnotify.AppendNotify("完成");
+                            cmvnotify.AppendNotify("保存信标（iBeacons）信息...");
+                        }
+                    });
+
+                    //save ibeacon
+                    m_iBeaconDataContext.Set();
+                    m_iBeaconDataContext.Get();
+                   
+                    System.Threading.Thread.Sleep(100);
+
+                    mainwin.Dispatcher.BeginInvoke((Action)delegate()
+                    {
+                        CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
+                        if (cmvnotify != null)
+                        {
+                            cmvnotify.AppendNotify("完成");
                             cmvnotify.AppendNotify("保存成功.");
                             cmvnotify.SetEnterEnable(true);
                         }
@@ -396,6 +467,9 @@ namespace Manager
                 m_DepartmentDataContext.Get();
                 m_StaffDataContext.Get();
                 m_RadioDataContext.Get();
+
+                m_AreaDataContext.Get();
+                m_iBeaconDataContext.Get();
             }
         }
     }

@@ -213,5 +213,28 @@ namespace Manager
         }
     }
 
+    public class AreaToImage : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            try
+            {
+                CArea area = value as CArea;
+                if(System.IO.File.Exists(area.LocalPath))
+                {
+                    return area.LocalPath;
+                }
+                return area.Map;
+            }
+            catch
+            {
+                return "";
+            }
+        }
 
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            return value;
+        }
+    }
 }
