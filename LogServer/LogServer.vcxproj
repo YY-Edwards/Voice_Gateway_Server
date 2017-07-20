@@ -113,8 +113,10 @@
     <ClInclude Include="..\lib\utf8\utf8.h" />
     <ClInclude Include="AppEventAction.h" />
     <ClInclude Include="Db.h" />
+    <ClInclude Include="DbAreaAction.h" />
     <ClInclude Include="DbGpsAction.h" />
     <ClInclude Include="DbGroupAction.h" />
+    <ClInclude Include="DbIbeaconAction.h" />
     <ClInclude Include="DbSmsLogAction.h" />
     <ClInclude Include="DbRadioAction.h" />
     <ClInclude Include="DbStaffAction.h" />

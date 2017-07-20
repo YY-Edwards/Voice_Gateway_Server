@@ -74,5 +74,23 @@ public:
 	int query(const char* table, const char* condition, std::list<recordType>& records);
 	int count(const char* table, const char* condition);
 	bool del(const char* table, const char* condition);
+
+	bool insertArea(const char* name, const char* map, const char* width, const char* height);
+	bool updateArea(const char* condition, recordType& val);
+
+	bool insertIBeacon(
+		const char* name,
+		const char* uuid,
+		int major,
+		int minor,
+		int tx_power,
+		int rssi,
+		int time_stamp,
+		int valid,
+		const char* area,
+		const char* pointx,
+		const char* pointy
+		);
+	bool updateIBeacon(const char* condition, recordType& val);
 };
 

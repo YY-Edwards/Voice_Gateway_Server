@@ -14,6 +14,9 @@
 #include "DbSmsLogAction.h"
 #include "DbGpsAction.h"
 #include "DbVoiceLogQueryAction.h"
+
+#include "DbAreaAction.h"
+#include "DbIbeaconAction.h"
 #define SERVICE_CODE FALSE
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -36,6 +39,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		rpcServer.addActionHandler("smslog", smsLogAction);
 		rpcServer.addActionHandler("gpslog", gpsLogAction);
 		rpcServer.addActionHandler("voicelog", voiceLogQueryAction);
+
+		rpcServer.addActionHandler("area", areaAction);
+		rpcServer.addActionHandler("ibeacon", ibeaconAction);
 
 		rpcServer.start(9003, CRpcServer::TCP);
 #if SERVICE_CODE
