@@ -40,13 +40,22 @@ namespace Manager
             }
         }
 
-        public void UpLoadMap()
+
+        public void UploadMap()
         {
-            foreach (CArea area in List)
+            if (UpdateList != null)
             {
-                if(System.IO.File.Exists(area.LocalPath))
+                foreach(CArea area in UpdateList)
+                {                   
+                    CImgServer.Instance().Upload(area.Map, area.LocalPath);
+                }
+               
+            }
+            if (AddList != null)
+            {
+                foreach (CArea area in AddList)
                 {
-                    //upload area.LocalPath
+                    CImgServer.Instance().Upload(area.Map, area.LocalPath);
                 }
             }
         }
@@ -78,6 +87,9 @@ namespace Manager
 
         [JsonIgnore]
         public string LocalPath { set; get; }
+
+
+        private Dictionary<string, string> m_WaitUpload = new Dictionary<string, string>();
 
         public CArea()
         {

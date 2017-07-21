@@ -46,9 +46,9 @@ namespace Manager
             get { return !m_Radio.IsOnlyRide; }
             set
             {
-                if (m_Radio.IsOnlyRide != value)
+                if (value && m_Radio.IsOnlyRide != false)              
                 {
-                    m_Radio.IsOnlyRide = value;
+                    m_Radio.IsOnlyRide = false;
                     m_Radio.NeedSave();
                 }
             }
@@ -57,10 +57,10 @@ namespace Manager
         {
             get { return m_Radio.IsOnlyRide; }
             set
-            {              
-                if (m_Radio.IsOnlyRide != value)
+            {
+                if (value && m_Radio.IsOnlyRide != true)  
                 {
-                    m_Radio.IsOnlyRide = value;
+                    m_Radio.IsOnlyRide = true;
                     m_Radio.NeedSave();
                 }
             }

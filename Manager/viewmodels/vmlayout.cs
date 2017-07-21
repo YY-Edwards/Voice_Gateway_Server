@@ -77,6 +77,9 @@ namespace Manager
         private CVMRegister m_RegisterDataContext = new CVMRegister();
         public CVMRegister RegisterDataContext { get { return m_RegisterDataContext; } }
 
+        private CVMLocationInDoorSetting m_LocationInDoorDataContext = new CVMLocationInDoorSetting();
+        public CVMLocationInDoorSetting LocationInDoorDataContext { get { return m_LocationInDoorDataContext; } }
+      
         //resource
         private CVMUser m_UserDataContext = new CVMUser();
         public CVMUser UserDataContext { get { return m_UserDataContext; } }
@@ -104,6 +107,7 @@ namespace Manager
                 PropertyChanged(this, new PropertyChangedEventArgs("RadioSettingDataContext"));
                 PropertyChanged(this, new PropertyChangedEventArgs("RepeaterSettingDataContext"));
                 PropertyChanged(this, new PropertyChangedEventArgs("RegisterDataContext"));
+                PropertyChanged(this, new PropertyChangedEventArgs("LocationInDoorDataContext"));
 
                 PropertyChanged(this, new PropertyChangedEventArgs("UserDataContext"));
                 PropertyChanged(this, new PropertyChangedEventArgs("DepartmentDataContext"));
@@ -241,12 +245,26 @@ namespace Manager
                         if (cmvnotify != null)
                         {
                             cmvnotify.AppendNotify("完成");
-                            cmvnotify.AppendNotify("保存WireLan调度配置息...");
+                            cmvnotify.AppendNotify("保存WireLan调度配置...");
                         }
                     });
 
-                    //save radiosetting
+                    //save repeatersetting
                     m_RepeaterSettingDataContext.Set();
+                    System.Threading.Thread.Sleep(100);
+
+                    mainwin.Dispatcher.BeginInvoke((Action)delegate()
+                    {
+                        CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
+                        if (cmvnotify != null)
+                        {
+                            cmvnotify.AppendNotify("完成");
+                            cmvnotify.AppendNotify("保存室内定位配置...");
+                        }
+                    });
+
+                    //save locationinddoorsetting
+                    m_LocationInDoorDataContext.Set();
                     System.Threading.Thread.Sleep(100);
 
                     mainwin.Dispatcher.BeginInvoke((Action)delegate()
@@ -451,6 +469,7 @@ namespace Manager
                 m_BaseSettingDataContext.Get();
                 m_RadioSettingDataContext.Get();
                 m_RepeaterSettingDataContext.Get();
+                m_LocationInDoorDataContext.Get();
 
                 m_RegisterDataContext.Get();
             }

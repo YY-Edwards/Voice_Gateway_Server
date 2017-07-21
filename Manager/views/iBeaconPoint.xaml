@@ -51,13 +51,8 @@
                             </Ellipse>
                         </Border>
                         <Image x:Name="img_Bluetooth" HorizontalAlignment="Center" Height="20" VerticalAlignment="Center" Source="pack://application:,,,/views/images/bluetooth.png" Width="20">
-                            <!--<Image.ContextMenu>
-                                <ContextMenu>
-                                    <MenuItem x:Name="muItem_Delete" Header="移除" Command="{Binding Save, Mode=OneWay, RelativeSource={RelativeSource TemplatedParent}}"/>
-                                </ContextMenu>
-                            </Image.ContextMenu>-->
                         </Image>
-                        <Border x:Name="border1" BorderBrush="#CC4E77E4" BorderThickness="1" HorizontalAlignment="Center" Height="20" VerticalAlignment="Bottom" Margin="0,0,0,62.669" CornerRadius="4" Background="#99FFFFFF" Visibility="Hidden">
+                        <Border x:Name="border1" BorderBrush="#CC4E77E4" BorderThickness="1" HorizontalAlignment="Center" Height="20" VerticalAlignment="Top" Margin="0,62.669,0,0" CornerRadius="4" Background="#99FFFFFF" Visibility="Hidden">
                             <TextBlock TextWrapping="Wrap" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10,0">
                                 <TextBlock.Text>
                                     <MultiBinding StringFormat="({0},{1})">

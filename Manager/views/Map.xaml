@@ -68,7 +68,7 @@
                             <i:InvokeCommandAction Command="{Binding ImageUpdate, Mode=OneWay, Source={StaticResource CVMMap}}" CommandParameter="{Binding ElementName=uc_Map, Mode=OneWay}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                    <Image x:Name="img_Map" Source="{Binding MapImage, Mode=OneWay, Source={StaticResource CVMMap}}" Loaded="Image_Loaded" />
+                    <Image x:Name="img_Map" Source="{Binding MapImage, Mode=OneWay, Source={StaticResource CVMMap}}"/>
                     <Grid Background="#B2FFFFFF" Visibility="{Binding MapErrVisibe, Mode=OneWay, Source={StaticResource CVMMap}}">
                         <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="地图加载失败" VerticalAlignment="Center" Foreground="#FF3E2020" FontSize="14" FontFamily="Hiragino Sans GB W6"/>
                     </Grid>

@@ -133,7 +133,6 @@ namespace Manager
             PropertyChanged(this, new PropertyChangedEventArgs("Areas"));
         }
 
-        //parameter:password,can not binding on passwordbox
         private void SaveEle(object parameter)
         {
             if (m_EditArea == null) return;
@@ -152,6 +151,7 @@ namespace Manager
                 {
                     m_Area.Modify(m_EditArea.ID, m_EditArea);
                 }
+
 
                 PropertyChanged(this, new PropertyChangedEventArgs("Areas"));
                 lst.ScrollIntoView(lst.SelectedItem);
@@ -202,11 +202,11 @@ namespace Manager
         }
 
 
-
         //base interface
         public event PropertyChangedEventHandler PropertyChanged;
         public void Set()
         {
+            m_Area.UploadMap();       
             m_Area.Save();
         }
 

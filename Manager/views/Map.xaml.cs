@@ -61,8 +61,17 @@ namespace Manager
             if (map != null && map.iBeacons != null)
             {
                 map.cvs_Locations.Children.Clear();
+
+                map.ClearRadio();
+
                 foreach (CiBeacon ibeacon in map.iBeacons)
                 {
+                    //for test
+                    //map.AddRadio(ibeacon, new CRadio() { RadioID = ibeacon.ID });
+                    //map.AddRadio(ibeacon, new CRadio() { RadioID = ibeacon.ID + 1 });
+                    //map.AddRadio(ibeacon, new CRadio() { RadioID = ibeacon.ID + 2 });
+                    //map.AddRadio(ibeacon, new CRadio() { RadioID = ibeacon.ID + 3 });
+                    //end test                    
                     if (double.IsInfinity(ibeacon.X) || double.IsInfinity(ibeacon.Y)) continue;
 
                     double x = map.cvs_Locations.ActualWidth * ibeacon.X - 50;
@@ -122,47 +131,6 @@ namespace Manager
         }
 
 
-        //private void OniBeaconRemove(object sender, RoutedEventArgs e)
-        //{
-        //    iBeaconPoint point = (iBeaconPoint)sender;
-
-        //    if (point != null)
-        //    {
-        //        this.cvs_Locations.Children.Remove(point);
-
-        //        RoutedEventArgs args = new RoutedEventArgs(iBeaconsChangedRoutedEvent, point);
-        //        this.RaiseEvent(args);
-        //    }
-        //}
-
-        //private void UpdatePoints()
-        //{
-        //    cvs_Locations.Children.Clear();
-        //    if (Points != null)
-        //    {
-        //        foreach (CiBeacon p in Points)
-        //        {
-        //            double x = cvs_Locations.ActualWidth * p.X - 50;
-        //            double y = cvs_Locations.ActualHeight * p.Y - 50;
-
-        //            //iBeaconPoint po = new iBeaconPoint()
-        //            //{
-        //            //    Height = 100,
-        //            //    Width = 100,
-        //            //    Margin = new Thickness(x, y, 0, 0),
-        //            //    iBeacon = p,
-        //            //    Tag = p,
-        //            //};
-
-        //            //po.Remove += delegate(object obj, RoutedEventArgs args) { OniBeaconRemove(obj, args); };
-        //            //po.PreviewMouseMove += delegate(object obj, MouseEventArgs args) { OnPreviewMouseMove(obj, args); };
-        //            //po.QueryContinueDrag += delegate(object obj, QueryContinueDragEventArgs args) { OnQueryContinueDrag(obj, args); };
-
-        //            //cvs_Locations.Children.Add(po);
-        //        };
-        //    }
-        //}
-
         public Point GetMapPostion(Point pannel)
         {
             CVMMap cvmmap = this.Resources["CVMMap"] as CVMMap;
@@ -170,67 +138,6 @@ namespace Manager
         }
 
        
-        private void OnMouseUP()
-        {
-            
-        }
-
-        private void Map_Loaded(object sender, RoutedEventArgs e)
-        {
-
-            //BitmapImage mapimage = null; //new BitmapImage(new Uri("pack://application:,,,/View/Images/empty.png"));
-            //try
-            //{
-            //    mapimage = new BitmapImage(new Uri(GetValue(ImageProperty) as string));
-            //}
-            //catch
-            //{
-            //}
-
-            //Map_Img.Source = mapimage;
-
-            //if (m_Map != null)
-            //{
-            //    m_ZoomPoint = new Point(0, 0);
-            //    m_Zoom = 1.0;
-
-            //    m_Map.Initialize(
-            //        new Size(this.ActualWidth, this.ActualHeight),
-            //        new Size(mapimage.Width, mapimage.Height),
-            //        m_ZoomPoint,
-            //        m_Zoom
-            //        );
-            //}
-
-            //if (Points != null)
-            //{
-            //    foreach (CiBeacon p in Points)
-            //    {
-            //        double x = cvs_Locations.ActualWidth * p.X - 50;
-            //        double y = cvs_Locations.ActualHeight * p.Y - 50;
-
-
-            //        //iBeaconPoint po = new iBeaconPoint()
-            //        //{
-            //        //    Height = 100,
-            //        //    Width = 100,
-            //        //    Margin = new Thickness(x, y, 0, 0),
-            //        //    iBeacon = p,
-            //        //    Tag = p,
-            //        //};
-
-            //        //po.Remove += delegate(object obj, RoutedEventArgs args) { OniBeaconRemove(obj, args); };
-            //        //po.PreviewMouseMove += delegate(object obj, MouseEventArgs args) { OnPreviewMouseMove(obj, args); };
-            //        //po.QueryContinueDrag += delegate(object obj, QueryContinueDragEventArgs args) { OnQueryContinueDrag(obj, args); };
-
-            //        //cvs_Locations.Children.Add(po);
-            //    };
-            //}
-        }
-
-       
-
-
         private AdornerLayer mAdornerLayer = null;
         private DateTime mStartHoverTime = DateTime.MinValue;
         private void OnPreviewMouseMove(object sender, MouseEventArgs e)
@@ -271,133 +178,103 @@ namespace Manager
         }
 
 
-        public static readonly DependencyProperty PointsProperty =
-           DependencyProperty.Register("Points", typeof(object), typeof(Map), new UIPropertyMetadata(null));
+        private Dictionary<CiBeacon, List<CRadio>> m_Radios = new Dictionary<CiBeacon, List<CRadio>>();
 
-        public List<CiBeacon> Points
+        public void AddRadio(CiBeacon ibeacon, CRadio radio)
         {
-            get
+            if(m_Radios.ContainsKey(ibeacon))
             {
-                return (List<CiBeacon>)GetValue(PointsProperty);
+                if (m_Radios[ibeacon] == null) m_Radios[ibeacon] = new List<CRadio>();
+                int index = m_Radios[ibeacon].FindIndex(p => p.RadioID == radio.RadioID);
+                if(index >=0 && index < m_Radios[ibeacon].Count)
+                {
+                    m_Radios[ibeacon][index] = radio;
+                }
+                else
+                {
+                    m_Radios[ibeacon].Add(radio);
+                }
+            }
+            else
+            {
+                m_Radios.Add(ibeacon, new List<CRadio>());
+                m_Radios[ibeacon].Add(radio);
             }
 
-            set
-            {
-                SetValue(PointsProperty, value);
-            }
+            DrawRadios();
         }
 
-        public static readonly DependencyProperty RadiosProperty =
-        DependencyProperty.Register("Radios", typeof(object), typeof(Map), new UIPropertyMetadata(null));
-
-        public Dictionary<CRadio, Point> Radios
+        public void RemoveRadio(CRadio radio)
         {
-            get
+            if (m_Radios == null) return;
+            foreach (var item in m_Radios)
             {
-                return (Dictionary<CRadio, Point>)GetValue(RadiosProperty);
+                if (item.Value == null) continue;
+                item.Value.RemoveAll(p => p.RadioID == radio.RadioID);
             }
 
-            set
-            {
-                SetValue(RadiosProperty, value);
-            }
+            DrawRadios();
         }
 
-       
+        public void ClearRadio()
+        {
+            m_Radios.Clear();
+        }
 
-        public void Update()
+        private void DrawRadios()
         {
             this.cvs_Radios.Children.Clear();
+            if (m_Radios == null) return;
 
-            if (this.Radios != null)
+            foreach(var item in m_Radios)
             {
-                List<Point> hasdisp = new List<Point>();
-
-                foreach (var p in this.Radios)
+                if (item.Value == null) continue;
+                for(int i  = item.Value.Count - 1; i >=0; i--)
                 {
-                    double x = this.cvs_Radios.ActualWidth * p.Value.X - 32;
-                    double y = this.cvs_Radios.ActualHeight * p.Value.Y - 64;
+                    double x = this.cvs_Radios.ActualWidth * item.Key.X - 32;
+                    double y = this.cvs_Radios.ActualHeight * item.Key.Y - 64;
 
-                    Point disp = new Point(x, y);
-
-                    while (true)
+                    //adjust postion
+                    if(i > 0)
                     {
-                        if (!hasdisp.Contains(disp))
+                        int layer = i % 3 == 0 ? (i / 3) : (i/3 + 1);
+                        switch(i%3)
                         {
-                            hasdisp.Add(disp);
-                            break;
-                        }
-                        else
-                        {
-                            disp.X += 10;
-                            disp.Y -= 5;
+                            case 1://lefttop y -10;x - 5
+                                x -= layer * 5;
+                                y -= layer * 5;
+                                break;
+                            case 2: //top y-20
+                                y -= layer * 10;
+                                break;
+                            case 0: //right top y - 10 x + 5
+                                x += layer * 5;
+                                y -= layer * 5;
+                                break;
+
                         }
                     }
 
 
-                    //CRadioPos pos = new CRadioPos()
-                    //{
-                    //    Height = 64,
-                    //    Width = 64,
-                    //    Margin = new Thickness(disp.X, disp.Y, 0, 0),
-                    //    Radio = p.Key,
-                    //    Tag = p
-                    //};
+                    Point radiopos = new Point(x, y);
 
-                    //this.cvs_Radios.Children.Add(pos);
-                };
+
+                    RadioPoint pos = new RadioPoint()
+                    {
+                        Height = 64,
+                        Width = 64,
+                        Margin = new Thickness(radiopos.X, radiopos.Y, 0, 0),
+                        Radio = item.Value[i]   
+                    };
+
+                    this.cvs_Radios.Children.Add(pos);
+                }
             }
         }
 
-        public void UpdatePoints()
-        {
-            cvs_Locations.Children.Clear();
-            if (Points != null)
-            {
-                foreach (CiBeacon p in Points)
-                {
-                    double x = cvs_Locations.ActualWidth * p.X - 50;
-                    double y = cvs_Locations.ActualHeight * p.Y - 50;
-
-                    //iBeaconPoint po = new iBeaconPoint()
-                    //{
-                    //    Height = 100,
-                    //    Width = 100,
-                    //    Margin = new Thickness(x, y, 0, 0),
-                    //    iBeacon = p,
-                    //    Tag = p,
-                    //};
-
-                    //po.Remove += delegate(object obj, RoutedEventArgs args) { OniBeaconRemove(obj, args); };
-                    //po.PreviewMouseMove += delegate(object obj, MouseEventArgs args) { OnPreviewMouseMove(obj, args); };
-                    //po.QueryContinueDrag += delegate(object obj, QueryContinueDragEventArgs args) { OnQueryContinueDrag(obj, args); };
-
-                    //cvs_Locations.Children.Add(po);
-                };
-            }
-        }
 
         private void grd_Locations_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            //if (this.iBeacons != null)
-            //{
-            //    this.cvs_Locations.Children.Clear();
-            //    foreach (CiBeacon ibeacon in this.iBeacons)
-            //    {
-
-            //        double x = this.cvs_Locations.ActualWidth * ibeacon.X - 50;
-            //        double y = this.cvs_Locations.ActualHeight * ibeacon.Y - 50;
-
-            //        this.cvs_Locations.Children.Add(new TextBox()
-            //        {
-            //            Text = ibeacon.Major.ToString() + ibeacon.Minor.ToString(),
-            //            Margin = new Thickness(x, y, 0, 0),
-            //        });
-            //
-            //    }              
-            //}
-
-
             if (this.iBeacons != null)
             {
                 foreach (iBeaconPoint point in cvs_Locations.Children)
@@ -408,40 +285,7 @@ namespace Manager
                 }
             }
 
-            //if (Radios != null)
-            //{
-            //    List<Point> hasdisp = new List<Point>();
-
-            //    foreach (CRadioPos ell in cvs_Radios.Children)
-            //    {
-            //        double x = cvs_Radios.ActualWidth * ((KeyValuePair<CRadio, Point>)ell.Tag).Value.X - 32;
-            //        double y = cvs_Radios.ActualHeight * ((KeyValuePair<CRadio, Point>)ell.Tag).Value.Y - 64;
-
-            //        Point disp = new Point(x, y);
-
-            //        while (true)
-            //        {
-            //            if (!hasdisp.Contains(disp))
-            //            {
-            //                hasdisp.Add(disp);
-            //                break;
-            //            }
-            //            else
-            //            {
-            //                disp.X += 10;
-            //                disp.Y -= 5;
-            //            }
-            //        }
-
-
-            //        ell.Margin = new Thickness(disp.X, disp.Y, 0, 0);
-            //    }
-            //}
-        }
-
-        private void Image_Loaded(object sender, RoutedEventArgs e)
-        {
-           
+            DrawRadios();            
         }
     }
 

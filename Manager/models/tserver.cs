@@ -250,6 +250,9 @@ namespace Manager
         queryLicense,
         registerLicense,
 
+        setLocationInDoorSetting,
+        getLocationInDoorSetting,
+
         user,
         department,
         radio,

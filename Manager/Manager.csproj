@@ -73,6 +73,8 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="models\imgserver.cs" />
+    <Compile Include="models\locationdindoorsetting.cs" />
     <Compile Include="models\ibeacon.cs" />
     <Compile Include="models\area.cs" />
     <Compile Include="models\register.cs" />
@@ -85,6 +87,7 @@
     <Compile Include="models\resource.cs" />
     <Compile Include="models\user.cs" />
     <Compile Include="tools\dragdropadorner.cs" />
+    <Compile Include="viewmodels\vmlocationindoorsetting.cs" />
     <Compile Include="viewmodels\vmibeacon.cs" />
     <Compile Include="viewmodels\vmarea.cs" />
     <Compile Include="viewmodels\vmregister.cs" />
@@ -103,6 +106,9 @@
     </Compile>
     <Compile Include="views\Notify.xaml.cs">
       <DependentUpon>Notify.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="views\RadioPoint.xaml.cs">
+      <DependentUpon>RadioPoint.xaml</DependentUpon>
     </Compile>
     <Page Include="views\iBeaconPoint.xaml">
       <SubType>Designer</SubType>
@@ -133,6 +139,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="views\Notify.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="views\RadioPoint.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -220,6 +230,10 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="views\images\bluetooth.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="views\images\radiopoint.png" />
+    <Resource Include="views\images\radiopoint_grey.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

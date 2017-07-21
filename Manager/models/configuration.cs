@@ -116,7 +116,8 @@ namespace Manager
         Radio,
         Repeater,
         QueryRegister,
-        Register
+        Register,
+        LocationInDoor,
     };
 
     //public enum Device

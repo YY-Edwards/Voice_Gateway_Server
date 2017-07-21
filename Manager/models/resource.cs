@@ -53,6 +53,10 @@ namespace Manager
         private List<CRElement> m_Update;
 
 
+        public List<CRElement> AddList { get { return m_Add; } }
+        public List<long> DelList { get { return m_Del; } }
+        public List<CRElement> UpdateList { get { return m_Update; } }
+
         private RequestOpcode m_Opcode;
 
         Critera m_QueryCritera;
