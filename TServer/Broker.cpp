@@ -16,7 +16,7 @@ CBroker::CBroker()
 	, m_logClient(NULL)
 	, callId(1)
 {
-	licenseStatus = false;
+	licenseStatus = 2;
 }
 
 
@@ -334,11 +334,11 @@ SerialInformation CBroker::getLicenseInformation()
 {
 	return m_licenseInformation;
 }
-void CBroker::setLicenseStatus(bool status)
+void CBroker::setLicenseStatus(int status)
 {
 	licenseStatus = status;
 }
-bool CBroker::getLicenseStatus()
+int CBroker::getLicenseStatus()
 {
 	return licenseStatus;
 }
