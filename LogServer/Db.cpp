@@ -286,14 +286,10 @@ CDb::~CDb()
 void CDb::migration()
 {
 	int dbVer = checkDbVersion();
-	if (CURRENT_DB_VER <= dbVer)
-	{
-		return;
-	}
 
 	for (size_t i = 0; i < sizeof(migrateTable) / sizeof(DbMigrate); i++)
 	{
-		if (CURRENT_DB_VER < migrateTable[i].ver)
+		if (dbVer >= migrateTable[i].ver)
 		{
 			continue;
 		}
@@ -310,17 +306,16 @@ void CDb::migration()
 int CDb::checkDbVersion()
 {
 	int ver = 0;
-	recordType record;
-
-	int ret = m_pMySQLDb->findLastOne("migration", record);
-	if (0 == ret)
+	std::list<recordType> records;
+	int n = m_pMySQLDb->query("select * from `migration` order by `ver` desc", records);
+	if (n <= 0)
 	{
-		return ver;
+		return 0;
 	}
 
 	try
 	{
-		ver = std::atoi(record["ver"].c_str());
+		ver = std::stoi(records.front()["ver"]);
 	}
 	catch (std::exception e)
 	{
