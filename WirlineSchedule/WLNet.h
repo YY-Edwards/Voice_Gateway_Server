@@ -730,6 +730,8 @@ public:
 private:
 	bool isLicense;
 	//DWORD m_startTalkTickcount;
+
+	void handleCallTimeOut();
 public:
 	//delete old code
 	//void CloseServer();

@@ -63,6 +63,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <UACExecutionLevel>AsInvoker</UACExecutionLevel>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -90,6 +91,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
+      <UACExecutionLevel>RequireAdministrator</UACExecutionLevel>
     </Link>
     <Midl>
       <MkTypLibCompatible>false</MkTypLibCompatible>
@@ -112,6 +114,7 @@
     <ClInclude Include="..\lib\rpc\include\RpcServer.h" />
     <ClInclude Include="..\lib\rpc\include\TcpServer.h" />
     <ClInclude Include="ConnectAction.h" />
+    <ClInclude Include="ConvertUTF.h" />
     <ClInclude Include="Monitor.h" />
     <ClInclude Include="MonitorDlg.h" />
     <ClInclude Include="MonitorServer.h" />
@@ -122,11 +125,17 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Tool.h" />
     <ClInclude Include="TServerMonitor.h" />
+    <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcServer.cpp" />
     <ClCompile Include="..\lib\rpc\src\TcpServer.cpp" />
+    <ClCompile Include="ConvertUTF.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</SDLCheck>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Monitor.cpp" />
     <ClCompile Include="MonitorDlg.cpp" />
     <ClCompile Include="MonitorServer.cpp" />
@@ -138,6 +147,12 @@
     </ClCompile>
     <ClCompile Include="Tool.cpp" />
     <ClCompile Include="TServerMonitor.cpp" />
+    <ClCompile Include="Util.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</SDLCheck>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <SDLCheck Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</SDLCheck>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Monitor.rc" />

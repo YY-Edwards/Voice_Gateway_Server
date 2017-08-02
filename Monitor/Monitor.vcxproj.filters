@@ -22,6 +22,9 @@
     <Filter Include="rpc\include">
       <UniqueIdentifier>{31039049-f5fd-485f-8318-14c8d253a9b8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="CUtil">
+      <UniqueIdentifier>{a80f3f40-5e2c-41fa-9c19-b37540687352}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -75,6 +78,12 @@
     <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="ConvertUTF.h">
+      <Filter>CUtil</Filter>
+    </ClInclude>
+    <ClInclude Include="Util.h">
+      <Filter>CUtil</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Monitor.cpp">
@@ -109,6 +118,12 @@
     </ClCompile>
     <ClCompile Include="StartMysql.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="ConvertUTF.c">
+      <Filter>CUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="Util.cpp">
+      <Filter>CUtil</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

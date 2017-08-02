@@ -60,6 +60,7 @@ public:
 	//void handleVoiceLog(const VOICE_LOG& param);
 	void stop();
 	REMOTE_TASK* getCurrentTask();
+	REMOTE_TASK* getCurrentTaskR();
 	void freeCurrentTask();
 	void applayCurrentTask();
 	/*设置延时的需要返回操作结果的任务*/
@@ -92,10 +93,12 @@ private:
 	// 	void LoadVoiceData(LPCWSTR filePath);
 
 	REMOTE_TASK *m_pCurrentTask;
+	REMOTE_TASK m_currentTask;
 
 	CDataScheduling* m_pMnis;
 
 	static unsigned __stdcall HandleRemoteTaskProc(void * pThis);
+
 };
 
 

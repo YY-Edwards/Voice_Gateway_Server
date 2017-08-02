@@ -54,8 +54,8 @@ BOOL WLRecord::WriteVoiceFile()
 		//sendLogToWindow();
 		//wcscpy_s(m_strAudioFilePath, temp.c_str());
 		BOOL createStatus = m_audioLog.SetAudioFilePath(m_strAudioFilePath);
-		sprintf_s(m_reportMsg, "createStatus %d", createStatus);
-		sendLogToWindow();
+		//sprintf_s(m_reportMsg, "createStatus %d", createStatus);
+		//sendLogToWindow();
 		//bNeedUpdate = TRUE;
 		// write file
 		DWORD dwOffset = 0;
@@ -65,8 +65,8 @@ BOOL WLRecord::WriteVoiceFile()
 			sendLogToWindow();
 			wcscpy_s(m_strAudioFilePath, m_defaultAudioPath.c_str());
 			BOOL createStatus = m_audioLog.SetAudioFilePath(m_strAudioFilePath);
-			sprintf_s(m_reportMsg, "createStatus %d", createStatus);
-			sendLogToWindow();
+			//sprintf_s(m_reportMsg, "createStatus %d", createStatus);
+			//sendLogToWindow();
 			dwOffset = 0;
 			BOOL bRlt = m_audioLog.WriteAudioDataToFile((*i)->m_pData, (*i)->m_dwLen, dwOffset);
 			if (bRlt)
@@ -208,8 +208,8 @@ void WLRecord::setAudioPath(const std::wstring& path)
 			temp += L"Voice";
 			wcscpy_s(m_strAudioFilePath, temp.c_str());
 			BOOL createStatus = m_audioLog.SetAudioFilePath(m_strAudioFilePath);
-			sprintf_s(m_reportMsg, "createStatus %d", createStatus);
-			sendLogToWindow();
+			//sprintf_s(m_reportMsg, "createStatus %d", createStatus);
+			//sendLogToWindow();
 		}
 	}
 }

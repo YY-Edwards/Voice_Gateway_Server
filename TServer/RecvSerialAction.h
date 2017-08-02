@@ -55,10 +55,10 @@ void readSerial()
 			memset(szTest, 0, sizeof(szTest));
 			fgets(szTest, sizeof(szTest)-1, fp); // 包含了\n  
 		}
-
+		fclose(fp);
 	}
 
-	fclose(fp);
+	
 	bool result = CBroker::instance()->getLic(szTest);
 	CBroker::instance()->setLicenseStatus(result);
 }
@@ -79,39 +79,46 @@ void readSerialAction(CRemotePeer* pRemote, const std::string& param, uint64_t c
 			SerialInformation s = CBroker::instance()->getSerialInformation();
 			memcpy(s.licType, "TrboX 3.0",12);
 			std::string serial = d["serial"].GetString();
-			if (type == "radio")
+			if (serial.length()!= 0)
 			{
-				s.deviceType = CRADIO;    //DeviceType：设备类型(1:车载台，2：中继台，3：对讲机， 4：PC)
-				if (serial.length() == 10)
+				if (type == "radio")
 				{
-					memcpy(s.radioSerial, serial.c_str(), 16);
+					s.deviceType = CRADIO;    //DeviceType：设备类型(1:车载台，2：中继台，3：对讲机， 4：PC)
+					if (serial.length() == 10)
+					{
+						memcpy(s.radioSerial, serial.c_str(), 16);
+					}
+					else if (serial.length() == 12)
+					{
+						memcpy(s.radioMode, serial.c_str(), 16);
+					}
+
+					CBroker::instance()->setSerialInformation(s);
 				}
-				else if (serial.length() == 12)
+				else if (type == "wl")
 				{
-					memcpy(s.radioMode, serial.c_str(), 16);
+					s.deviceType = REPEATER;
+					if (serial.length() == 10)
+					{
+						memcpy(s.repeaterSerial, serial.c_str(), 16);
+					}
+					else if (serial.length() == 12)
+					{
+						memcpy(s.repeaterMode, serial.c_str(), 16);
+					}
+					CBroker::instance()->setSerialInformation(s);
 				}
-				
-				CBroker::instance()->setSerialInformation(s);
+				readSerial();
 			}
-			else if (type == "wl")
+			else
 			{
-				s.deviceType = REPEATER;
-				if (serial.length() == 10)
-				{
-					memcpy(s.repeaterSerial, serial.c_str(), 16);
-				}
-				else if (serial.length() == 12)
-				{
-					memcpy(s.repeaterMode, serial.c_str(), 16);
-				}
-				CBroker::instance()->setSerialInformation(s);
+				CBroker::instance()->setLicenseStatus(2);   //正在连接设备获取序列号
 			}
 			
 		  
 			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
-
-			readSerial();
+			
 		}
 
 	}

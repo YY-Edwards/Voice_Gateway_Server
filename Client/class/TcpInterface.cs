@@ -61,6 +61,7 @@ namespace TrboX
 
         public void Open()
         {
+            if (clientSocket != null) return;
             clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             try
             {

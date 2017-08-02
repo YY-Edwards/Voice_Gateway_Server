@@ -77,7 +77,7 @@ namespace TrboX
             if (m_Main.cmb_AuthorityDest.Items.Count > 0) return;
             if (users != null)
             {
-                foreach (User user in users)m_Main.cmb_AuthorityDest.Items.Add(new ComboBoxItem() { Content = user.UserName + (user.Type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"), Tag = user,
+                foreach (User user in users)m_Main.cmb_AuthorityDest.Items.Add(new ComboBoxItem() { Content = user.UserName + (user.Type == UserType.Admin.ToString() ? "(管理员)" : "(用户)"), Tag = user,
                                                                                                     Style = App.Current.Resources["ComboBoxItemStyleNormal"] as Style,
                                                                                                     Foreground = new SolidColorBrush(Color.FromArgb(255, 190, 195, 199)),
                                                                                                     FontSize = 13,
@@ -109,7 +109,7 @@ namespace TrboX
                     user.ID = user.Add();
                      m_Main.lst_User.Items.Add(new ListViewItem() { Content = user });
                      m_Main.lst_User.SelectedIndex =  m_Main.lst_User.Items.Count - 1;
-                     m_Main.cmb_AuthorityDest.Items.Add(new ComboBoxItem() { Content = user.UserName + (user.Type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)"), Tag = user,
+                     m_Main.cmb_AuthorityDest.Items.Add(new ComboBoxItem() { Content = user.UserName + (user.Type == UserType.Admin.ToString() ? "(管理员)" : "(用户)"), Tag = user,
                                                                              Style = App.Current.Resources["ComboBoxItemStyleNormal"] as Style,
                                                                              Foreground = new SolidColorBrush(Color.FromArgb(255, 190, 195, 199)),
                                                                              FontSize = 13,
@@ -122,7 +122,7 @@ namespace TrboX
                     User destuser = (User)((ListViewItem) m_Main.lst_User.SelectedItem).Content;
                     user.ID = destuser.ID;
                     user.Modify();
-                    ((ComboBoxItem)m_Main.cmb_AuthorityDest.Items[m_Main.lst_User.SelectedIndex]).Content = user.UserName + (user.Type == UserType.Admin.ToString() ? "(管理员)" : "(来宾)");
+                    ((ComboBoxItem)m_Main.cmb_AuthorityDest.Items[m_Main.lst_User.SelectedIndex]).Content = user.UserName + (user.Type == UserType.Admin.ToString() ? "(管理员)" : "(用户)");
                     ((ComboBoxItem) m_Main.cmb_AuthorityDest.Items[ m_Main.lst_User.SelectedIndex]).Tag = user;
                     ((ListViewItem) m_Main.lst_User.Items[ m_Main.lst_User.SelectedIndex]).Content = user;
                 } 

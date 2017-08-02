@@ -8,6 +8,7 @@
 #include "afxdialogex.h"
 #include "ConnectAction.h"
 #include "Tool.h"
+#include "Util.h"
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
@@ -131,6 +132,9 @@ BOOL CMonitorDlg::OnInitDialog()
 	rpcServer.setOnConnectHandler(CMonitorDlg::OnConnect);
 	rpcServer.addActionHandler("connect", ConnectAction);
 	rpcServer.start(TCP_PORT, rpcServer.TCP);
+
+	CUtil::SetApplicationAutoStart();
+
 
 	return TRUE;  // 除非将焦点设置到控件，否则返回 TRUE
 }

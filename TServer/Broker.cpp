@@ -16,7 +16,7 @@ CBroker::CBroker()
 	, m_logClient(NULL)
 	, callId(1)
 {
-	licenseStatus = false;
+	licenseStatus = 2;
 }
 
 
@@ -253,11 +253,12 @@ bool CBroker::getLic(std::string license)
 		std::string temp = lic.radioSerial;
 		if (strcmp(s.radioSerial, lic.radioSerial) == 0 && temp.length() == 10)
 		{
-			if (s.isEver == 1)      //IsEver:是否永久，1:永久，0：试用
+			if (lic.isEver == 1)      //IsEver:是否永久，1:永久，0：试用
 			{
 				licenseStatus = true;    // 授权成功
+				return licenseStatus;
 			}
-			else if (s.isEver == 0)
+			else if (lic.isEver == 0)
 			{
 				//试用版 ，对比时间，是否过期
 				SYSTEMTIME sys;
@@ -283,11 +284,12 @@ bool CBroker::getLic(std::string license)
 			std::string temp1 = lic.repeaterSerial;
 			if (temp1.length() == 10)
 			{
-				if (s.isEver == 1)      //IsEver:是否永久，1:永久，0：试用
+				if (lic.isEver == 1)      //IsEver:是否永久，1:永久，0：试用
 				{
 					licenseStatus = true;    // 授权成功
+					return licenseStatus;
 				}
-				else if (s.isEver == 0)
+				else if (lic.isEver == 0)
 				{
 					//试用版 ，对比时间，是否过期
 					SYSTEMTIME sys;
@@ -332,11 +334,11 @@ SerialInformation CBroker::getLicenseInformation()
 {
 	return m_licenseInformation;
 }
-void CBroker::setLicenseStatus(bool status)
+void CBroker::setLicenseStatus(int status)
 {
 	licenseStatus = status;
 }
-bool CBroker::getLicenseStatus()
+int CBroker::getLicenseStatus()
 {
 	return licenseStatus;
 }
