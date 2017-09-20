@@ -26,6 +26,9 @@
 #define               RECV_GPS               20					 //sendGps
 #define               GPS_IMME_CSBK_EGPS     23					 //sendGpsStatus
 #define               GPS_TRIGG_CSBK_EGPS    24					 //sendGpsStatus
+#define               GPS_TRIGG_COMM_INDOOR  25
+#define               GPS_TRIGG_CSBK_INDOOR  26
+#define               GPS_TRIGG_CSBK_EGPS_INDOOR 27
 #define               MNIS_DIS_CONNECT       30
 
 

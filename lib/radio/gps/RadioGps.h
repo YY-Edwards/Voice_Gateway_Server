@@ -13,6 +13,7 @@
 #define RECV_CSBK_LENTH   19
 #define RECV_CSBK_EGPS_LENTH   32
 #define MAX_RECV_LENGTH     512
+#define RECV_TRG_INDOOR_LENTH 29
 
 #define Immediate_Location_Request                      0x05       //Immediate Location Request
 #define Immediate_Location_Request_Tokens_Length        0x08       //XML协议报中包含8组数据
@@ -40,6 +41,10 @@
 #define Triggered_location_Start_Answer                  0x0B
 #define Triggered_Location_Stop_Answer                   0x11
 #define Location_Operate_Sucess                          0x38
+
+#define Triggered_Location_Request_Tokens_Indoor_Length  0x0c
+#define beacon_data 0x73
+#define bcon_maj_min_time 0x75
 typedef struct tagThreadGPS
 {
 	SOCKET           mySocket;
@@ -61,6 +66,12 @@ typedef struct tagThreadGPSOverturn
 	unsigned long    radioID;
 }ThreadGPSOverturn;
 
+ struct BconMajMinTimeReport
+{
+	 unsigned short Major;
+	 unsigned short Minor;
+	 unsigned short TimeStamp;
+};
 class CDataScheduling;
 
 class CRadioGps
@@ -75,6 +86,7 @@ public:
 	bool SendQueryGPS(DWORD dwRadioID,int queryMode,double cycle);
 	bool StopQueryTriggeredGPS(DWORD dwRadioID,int queryMode);
 	void RecvData();
+	void locationIndoorConfig(int Interval, int iBeaconNumber, bool isEmergency);
 private:
 	bool m_RcvSocketOpened;
 	ThreadGPS * m_ThreadGps;
@@ -83,5 +95,8 @@ private:
 	CDataScheduling *m_pMnis;
 	bool m_gpsThread;
 	HANDLE m_gWth;
+	int interval;
+	int iBconNum;
+	bool isEme;
 };
 

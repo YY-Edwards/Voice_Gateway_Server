@@ -11,6 +11,10 @@ CRadioGps::CRadioGps(CDataScheduling *pMnis)
 	m_ThreadGpsOverturn = new ThreadGPSOverturn;
 	m_pMnis = pMnis;
 	m_gpsThread = true;
+
+	interval = 0;
+	iBconNum = 0;
+	isEme = false;
 }
 
 
@@ -275,6 +279,77 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,double cycle)
 			
 	}
 		break;
+	case GPS_TRIGG_COMM_INDOOR:
+		if (!isEme)
+		{
+			m_ThreadGps->SendBuffer[0] = Triggered_Location_Request;
+			m_ThreadGps->SendBuffer[1] = Triggered_Location_Request_Tokens_Indoor_Length;
+			m_ThreadGps->SendBuffer[3] = Location_RequestID_Start;
+			m_ThreadGps->SendBuffer[4] = 0x04;
+			m_ThreadGps->SendBuffer[5] = 0x24;
+			m_ThreadGps->SendBuffer[6] = 0x68;
+			m_ThreadGps->SendBuffer[7] = 0xAC;
+			m_ThreadGps->SendBuffer[8] = 0xE0;
+			m_ThreadGps->SendBuffer[9] = 0x6c;   //becon only
+			m_ThreadGps->SendBuffer[10] = 0x7A;  //request-bcon-maj-min-time
+			m_ThreadGps->SendBuffer[11] = iBconNum & 0xff;  //becon number
+			m_ThreadGps->SendBuffer[8] = Start_Trigger_Element;
+			m_ThreadGps->SendBuffer[9] = Start_Interval_Element_uint;
+			m_ThreadGps->SendBuffer[10] = 0xff & interval;
+			m_ThreadGps->gpsLength = SEND_IMM_QUERY_LENTH+1;
+		}
+		else
+		{
+			m_ThreadGps->SendBuffer[0] = Triggered_Location_Request;
+			m_ThreadGps->SendBuffer[1] = Triggered_Location_Request_Tokens_Indoor_Length-1;
+			m_ThreadGps->SendBuffer[3] = Location_RequestID_Start;
+			m_ThreadGps->SendBuffer[4] = 0x04;
+			m_ThreadGps->SendBuffer[5] = 0x24;
+			m_ThreadGps->SendBuffer[6] = 0x68;
+			m_ThreadGps->SendBuffer[7] = 0xAC;
+			m_ThreadGps->SendBuffer[8] = 0xE0;
+			m_ThreadGps->SendBuffer[9] = 0x6c;   //becon only
+			m_ThreadGps->SendBuffer[10] = 0x7A;  //request-bcon-maj-min-time
+			m_ThreadGps->SendBuffer[11] = iBconNum & 0xff;  //becon number
+			m_ThreadGps->SendBuffer[8] = 0x4A;    //REQUEST_TRIGGER_CONDITION
+			m_ThreadGps->SendBuffer[9] = 0x02;    //EMERGENCY_CONDITION
+			m_ThreadGps->gpsLength = SEND_IMM_QUERY_LENTH;
+		}
+		
+		break;
+	case GPS_TRIGG_CSBK_INDOOR:
+		memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
+		m_ThreadGps->SendBuffer[0] = Triggered_Location_Request;
+		m_ThreadGps->SendBuffer[1] = Triggered_Location_Request_Tokens_Indoor_Length;
+		m_ThreadGps->SendBuffer[3] = Location_RequestID_Start;
+		m_ThreadGps->SendBuffer[4] = 0x03;
+		m_ThreadGps->SendBuffer[5] = 0x00;
+		m_ThreadGps->SendBuffer[6] = 0x00;
+		m_ThreadGps->SendBuffer[7] = 0x01;
+		m_ThreadGps->SendBuffer[8] = CSBK_Start_Require_Data;
+		m_ThreadGps->SendBuffer[9] = CSBK_Require_Data_Length;
+		m_ThreadGps->SendBuffer[10] = Request_LRRP_CSBK;
+		m_ThreadGps->SendBuffer[11] = iBconNum & 0xff;
+		m_ThreadGps->SendBuffer[12] = Start_Trigger_Element;
+		m_ThreadGps->SendBuffer[13] = Start_Interval_Element_uint;
+		if (interval == 7)
+		{
+			m_ThreadGps->SendBuffer[1] = CSBK_Triggered_Location_Request_Tokens_Length_ufloat;
+			m_ThreadGps->SendBuffer[13] = Start_Interval_Element_ufloat;
+			m_ThreadGps->SendBuffer[14] = 0x07;
+			m_ThreadGps->SendBuffer[15] = 0x40;            //7.5s
+			m_ThreadGps->gpsLength = SEND_TRG_CSBK_QUERY_LENTH+2;
+		}
+		else
+		{
+			m_ThreadGps->SendBuffer[1] = CSBK_Triggered_Location_Request_Tokens_Length_uint;
+			m_ThreadGps->SendBuffer[13] = Start_Interval_Element_uint;
+			m_ThreadGps->SendBuffer[14] = 0xff & interval;
+			m_ThreadGps->gpsLength = SEND_TRG_CSBK_QUERY_LENTH+1 ;
+		}
+		break;
+	case GPS_TRIGG_CSBK_EGPS_INDOOR:
+		
 	default:
 		break;
 	}
@@ -291,52 +366,13 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,double cycle)
 	if (-1 == bytesSend)
 	{
 		int a = GetLastError();
-		/*try
-		{*/
-			/*	list<AllCommand>::iterator it;
-				for (it = allCommandList.begin(); it != allCommandList.end(); it++)
-				{
-				if (it->radioId == m_ThreadGps->radioID)
-				{
-				char radioID[512];
-				sprintf_s(radioID, 512, "%d", m_ThreadGps->radioID);
-				ArgumentType args;
-				args["Target"] = FieldValue(m_ThreadGps->radioID);
-				args["Type"] = FieldValue(it->querymode);
-				args["Cycle"] = FieldValue(it->cycle);
-				args["Operate"] = FieldValue(START);
-				int status = -1;
-				if (m_ThreadGps->RcvBuffer[7] == Location_Operate_Sucess)
-				{
-				status = REMOTE_SUCESS;
-				}
-				else
-				{
-				status = REMOTE_FAILED;
-				}
-				args["Status"] = FieldValue(status);
-				std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGpsStatus", it->callId, args, "radio");
-				if (pRemotePeer != NULL)
-				{
-				pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-				it = allCommandList.erase(it);
-				break;
-				}
-				}
-				}
-				}
-				catch (std::exception e)
-				{
-
-				}*/
-		//}
 		return false;
 	}
 	return true;
 }
 bool CRadioGps::StopQueryTriggeredGPS(DWORD dwRadioID, int	queryMode)
 {
-	if (queryMode == GPS_TRIGG_COMM)
+	if (queryMode == GPS_TRIGG_COMM || queryMode == GPS_TRIGG_COMM_INDOOR)
 	{
 		memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
 		m_ThreadGps->SendBuffer[0] = 0x0F;   //Immediate Location Request
@@ -345,12 +381,11 @@ bool CRadioGps::StopQueryTriggeredGPS(DWORD dwRadioID, int	queryMode)
 		m_ThreadGps->SendBuffer[3] = 0x04;
 		m_ThreadGps->SendBuffer[4] = 0x24;
 		m_ThreadGps->SendBuffer[5] = 0x68;
-		m_ThreadGps->SendBuffer[6] = 0xAC;
+		m_ThreadGps->SendBuffer [6] = 0xAC;
 		m_ThreadGps->SendBuffer[7] = 0xE0;
-
 		m_ThreadGps->gpsLength = SEND_STOP_LENTH;
 	}
-	else if (queryMode == GPS_TRIGG_CSBK || queryMode == GPS_TRIGG_CSBK_EGPS)
+	else if (queryMode == GPS_TRIGG_CSBK || queryMode == GPS_TRIGG_CSBK_EGPS || queryMode == GPS_TRIGG_CSBK_INDOOR)
 	{
 		memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
 		m_ThreadGps->SendBuffer[0] = 0x0F;   //Immediate Location Request
@@ -614,6 +649,21 @@ void CRadioGps::RecvData()
 					speed = (((float)a) + ((float)b) / 128.0f)*3.6f;
 					queryMode = GPS_TRIGG_CSBK_EGPS;
 				}
+				else if (ret == RECV_TRG_INDOOR_LENTH && m_ThreadGps->RcvBuffer[8] == beacon_data && m_ThreadGps->RcvBuffer[9]== bcon_maj_min_time)
+				{
+					int num = 0;
+					std::list <BconMajMinTimeReport> bconList;
+					num = ((unsigned char)m_ThreadGps->RcvBuffer[10]) & 0xff;
+					for (int i = 0; i < num; i++)
+					{
+						BconMajMinTimeReport bcon;
+						ntohs(*((unsigned short *)m_ThreadGps->RcvBuffer[11]));
+						bcon.Major = ntohs(*((unsigned short *)m_ThreadGps->RcvBuffer[11]));
+						bcon.Minor = ntohs(*((unsigned short *)m_ThreadGps->RcvBuffer[13]));
+						bcon.TimeStamp = ntohs(*((unsigned short *)m_ThreadGps->RcvBuffer[15]));
+					}
+
+				}
 				else if ((ret == 9 || bytes == 9 || ret == 10 || bytes == 10) && (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report || m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report))
 				{
 					valid = 0;
@@ -695,4 +745,10 @@ void CRadioGps::RecvData()
 		}
 		Sleep(100);
 	}
+}
+void CRadioGps::locationIndoorConfig(int Interval, int iBeaconNumber, bool isEmergency)
+{
+	interval = Interval;
+	iBconNum = iBeaconNumber;
+	isEme = isEmergency;
 }

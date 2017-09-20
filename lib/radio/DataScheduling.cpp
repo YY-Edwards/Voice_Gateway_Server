@@ -598,5 +598,10 @@ void CDataScheduling::InitGPSOverturnSocket(DWORD dwAddress)
 {
 	pRadioGPS->InitGPSOverturnSocket(dwAddress);
 }
+void CDataScheduling::locationIndoorConfig(int Interval, int iBeaconNumber, bool isEmergency)
+{
+	
+}
+
 
 
