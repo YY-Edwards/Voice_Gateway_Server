@@ -68,7 +68,7 @@ public:
 	bool insertStaff(const char* name, const char* phone, bool isStaff = true);
 	bool insertSmsLog(int source, int destination, const char* message, int is_ticket = 0);
 	bool insertGpsLog(int radio, float latitude, float longitude, float velocity, float altitude = 0.0f);
-
+	bool insertLocationIndoor(int source, int major, int monjor, int timestamp);
 	int query(const char* table, const char* condition, std::list<recordType>& records);
 	int count(const char* table, const char* condition);
 	bool del(const char* table, const char* condition);

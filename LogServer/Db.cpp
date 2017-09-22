@@ -72,14 +72,13 @@ void migrate_v100(CMySQL* pMySQL){
 
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `sms` ( \
 													`id` INT(11) NOT NULL AUTO_INCREMENT,	\
-																				`source` MEDIUMTEXT NOT NULL, \
-																											`destination` MEDIUMTEXT NOT NULL, \
-																																		`message` VARCHAR(210) NOT NULL, \
-																																									`is_ticket` INT NOT NULL DEFAULT 0 COMMENT '0: it\'s normal sms; 1: is ticket', \
-																																																`createdf_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
-																																																							PRIMARY KEY(`id`)) \
-																																																														ENGINE = InnoDB; \
-																																																																				");
+													`source` MEDIUMTEXT NOT NULL, \
+													`destination` MEDIUMTEXT NOT NULL, \
+													`message` VARCHAR(210) NOT NULL, \
+													`is_ticket` INT NOT NULL DEFAULT 0 COMMENT '0: it\'s normal sms; 1: is ticket', \
+													`createdf_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+													PRIMARY KEY(`id`)) \
+													ENGINE = InnoDB;");
 
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `radios` ( \
 													`id` INT(11) NOT NULL AUTO_INCREMENT,	\
@@ -123,15 +122,26 @@ void migrate_v100(CMySQL* pMySQL){
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `gps` ( \
 						`id` INT(11) NOT NULL AUTO_INCREMENT, \
 						`latitude` FLOAT NOT NULL, \
-																											`logitude` FLOAT NOT NULL, \
-																																		`velocity` FLOAT NOT NULL, \
-																																									`radio` MEDIUMTEXT NULL, \
-																																																`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
-																																																							`altitude` FLOAT NULL, \
-																																																														PRIMARY KEY(`id`), \
-																																																																					UNIQUE INDEX `id_UNIQUE` (`id` ASC)) \
-																																																																												ENGINE = InnoDB;  \
-																																																																																		");
+						`logitude` FLOAT NOT NULL, \
+						`velocity` FLOAT NOT NULL, \
+						`radio` MEDIUMTEXT NULL, \
+						`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+						`altitude` FLOAT NULL, \
+						PRIMARY KEY(`id`), \
+						UNIQUE INDEX `id_UNIQUE` (`id` ASC)) \
+						ENGINE = InnoDB;  \
+						");
+	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `location` ( \
+													`source` MEDIUMTEXT NOT NULL, \
+													`major` INT NOT NULL DEFAULT 0, \
+													`minor` INT NOT NULL DEFAULT 0 , \
+													`timestamp` INT NOT NULL DEFAULT 0, \
+													`uuid` VARCHAR(210) NOT NULL,\
+													`txpwr` VARCHAR(210) NOT NULL,\
+													`rssi` VARCHAR(210) NOT NULL,\
+													`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+													PRIMARY KEY(`id`)) \
+													ENGINE = InnoDB;");
 }
 
 void migrate_v101(CMySQL* pMySQL)
@@ -261,7 +271,18 @@ ON DELETE CASCADE \
 ON UPDATE NO ACTION) \
 ENGINE = InnoDB; \
 ");
-
+	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `location` ( \
+						`id` INT(11) NOT NULL AUTO_INCREMENT,	\
+													`source` MEDIUMTEXT NOT NULL, \
+													`major` INT NOT NULL DEFAULT 0, \
+													`minor` INT NOT NULL DEFAULT 0 , \
+													`timestamp` INT NOT NULL DEFAULT 0, \
+													`uuid` VARCHAR(210) NOT NULL,\
+													`txpwr` VARCHAR(210) NOT NULL,\
+													`rssi` VARCHAR(210) NOT NULL,\
+													`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+													PRIMARY KEY(`id`)) \
+													ENGINE = InnoDB;");
 	}
 
 DbMigrate migrateTable[] = {
@@ -837,7 +858,29 @@ bool CDb::insertGpsLog(int radio, float latitude, float longitude, float velocit
 
 	return true;
 }
+bool CDb::insertLocationIndoor(int source, int major, int minor, int timestamp)
+{
+	try{
+		recordType locationIndoor;
 
+		locationIndoor["source"] = std::to_string(source);
+		locationIndoor["major"] = std::to_string(major);;
+		locationIndoor["minor"] = std::to_string(minor);
+		locationIndoor["timestamp"] = std::to_string(timestamp);
+	
+		m_pMySQLDb->insert("location", locationIndoor);
+	}
+	catch (std::exception e)
+	{
+		return false;
+	}
+	catch (...)
+	{
+		return false;
+	}
+
+	return true;
+}
 bool CDb::insertSmsLog(int source, int destination, const char* message, int is_ticket)
 {
 	try{
