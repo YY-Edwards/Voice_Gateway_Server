@@ -80,6 +80,7 @@ public:
 	void startMonitorClient(std::map<std::string, ACTION> clientActions);
 	bool getLic(std::string license);
 	void sendLoactionIndoorConfig();
+	void sendLoactionIndoorConfigToWl();
 protected:
 	CBroker();
 	~CBroker();

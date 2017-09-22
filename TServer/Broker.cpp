@@ -347,3 +347,8 @@ void CBroker::sendLoactionIndoorConfig()
 	std::string strConnect = CSettings::instance()->getRequest("locationIndoor", "radio", m_radioClient->getCallId(), CSettings::instance()->getValue("locIndoor"));
 	m_radioClient->send(strConnect.c_str(), strConnect.size());
 }
+void CBroker::sendLoactionIndoorConfigToWl()
+{
+	std::string strConnect = CSettings::instance()->getRequest("locationIndoor", "radio", m_wirelanClient->getCallId(), CSettings::instance()->getValue("locIndoor"));
+	m_wirelanClient->send(strConnect.c_str(), strConnect.size());
+}
