@@ -164,6 +164,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		m_pRpcServer->addActionHandler("queryGps", wlMnisQueryGpsActionHandler);
 		m_pRpcServer->addActionHandler("message", wlMnisMessageHandler);
 		m_pRpcServer->addActionHandler("status", wlMnisStatusHandler);
+		m_pRpcServer->addActionHandler("locationIndoor", wlMnisLocationIndoorHandler);
 		m_pRpcServer->start(WL_SERVER_PORT);
 
 		/*初始化数据库*/

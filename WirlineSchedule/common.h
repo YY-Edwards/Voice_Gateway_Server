@@ -177,6 +177,7 @@ extern HANDLE g_waitHandleRemoteTask;
 #define REMOTE_CMD_MNIS_QUERY_GPS 0x06
 #define REMOTE_CMD_MNIS_MSG 0x07
 #define REMOTE_CMD_MNIS_STATUS 0x08
+#define REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG 0x09
 //#define REMOTE_CMD_VOICE_LOG 0x09
 
 #define GET_TYPE_CONN 0x01
@@ -282,7 +283,14 @@ typedef struct
 {
 	GET_INFO_PARAM getInfo;
 }GET_INFO;
-
+typedef struct
+{
+	bool isEnable;
+	int internal;
+	int ibconNum;
+	bool isEmergency;
+	int queryType ;
+}LOCATION_INDOOR_CONFIG;
 typedef struct
 {
 	union
@@ -294,6 +302,7 @@ typedef struct
 		QUERY_GPS queryGpsParam;
 		MNIS_MSG msgParam;
 		ARS mnisStatusParam;
+		LOCATION_INDOOR_CONFIG locationParam;
 		//VOICE_LOG voiceLogParam;
 	}info;
 }JSON_PARAM;
