@@ -13,7 +13,7 @@
 #define RECV_CSBK_LENTH   19
 #define RECV_CSBK_EGPS_LENTH   32
 #define MAX_RECV_LENGTH     512
-#define RECV_TRG_INDOOR_LENTH 29
+#define RECV_TRG_INDOOR_LENTH 11
 
 #define Immediate_Location_Request                      0x05       //Immediate Location Request
 #define Immediate_Location_Request_Tokens_Length        0x08       //XML协议报中包含8组数据
@@ -66,12 +66,7 @@ typedef struct tagThreadGPSOverturn
 	unsigned long    radioID;
 }ThreadGPSOverturn;
 
- struct BconMajMinTimeReport
-{
-	 unsigned short Major;
-	 unsigned short Minor;
-	 unsigned short TimeStamp;
-};
+
 class CDataScheduling;
 
 class CRadioGps

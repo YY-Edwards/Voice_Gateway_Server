@@ -83,6 +83,12 @@ bool CDataScheduling::radioGetGps(DWORD dwRadioID, int queryMode, double cycle)
 		case GPS_TRIGG_CSBK_EGPS:
 			addUdpCommand( GPS_TRIGG_CSBK_EGPS, "", "", int(dwRadioID), "", cycle, queryMode);
 			break;
+		case GPS_TRIGG_COMM_INDOOR:
+			addUdpCommand(GPS_TRIGG_COMM_INDOOR, "", "", int(dwRadioID), "", cycle, queryMode);
+			break;
+		case GPS_TRIGG_CSBK_INDOOR:
+			addUdpCommand(GPS_TRIGG_CSBK_INDOOR, "", "", int(dwRadioID), "", cycle, queryMode);
+			break;
 		default:
 			break;
 		}
@@ -351,6 +357,12 @@ void CDataScheduling::workThreadFunc()
 			case GPS_TRIGG_CSBK_EGPS:
 				getGps(it->radioId, it->querymode, it->cycle);
 				break;
+			case GPS_TRIGG_CSBK_INDOOR:
+				getGps(it->radioId, it->querymode, it->cycle);
+				break;
+			case GPS_TRIGG_COMM_INDOOR:
+				getGps(it->radioId, it->querymode, it->cycle);
+				break;
 			case STOP_QUERY_GPS:
 				stopGps(it->radioId, it->callId);
 				break;
@@ -600,7 +612,7 @@ void CDataScheduling::InitGPSOverturnSocket(DWORD dwAddress)
 }
 void CDataScheduling::locationIndoorConfig(int Interval, int iBeaconNumber, bool isEmergency)
 {
-	
+	pRadioGPS->locationIndoorConfig(Interval,iBeaconNumber,isEmergency);
 }
 
 

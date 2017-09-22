@@ -24,6 +24,7 @@
 #define               RADIO_ARS              17					 //sendArs
 #define               RADIO_GPS              18
 #define               RECV_GPS               20					 //sendGps
+#define               RECV_LOCATION_INDOOR   21
 #define               GPS_IMME_CSBK_EGPS     23					 //sendGpsStatus
 #define               GPS_TRIGG_CSBK_EGPS    24					 //sendGpsStatus
 #define               GPS_TRIGG_COMM_INDOOR  25
@@ -48,7 +49,12 @@
 
 #define RADIO_STATUS_OFFLINE   0
 #define RADIO_STATUS_ONLINE    1
-
+struct BconMajMinTimeReport
+{
+	unsigned short Major;
+	unsigned short Minor;
+	unsigned short TimeStamp;
+};
 typedef struct tagCommand
 {
 	int callId;
@@ -84,6 +90,7 @@ typedef struct tagRespone
 	int operate;
 	double altitude;
 	std::map<std::string, RadioStatus> rs;
+	std::list< BconMajMinTimeReport> becon;
 }Respone;
 extern void(*myCallBackFunc)(  int, Respone);
 void onData(void(*func)(int, Respone),  int call, Respone data);
