@@ -37,21 +37,23 @@ void locationIndoorAction(CRemotePeer* pRemote, const std::string& param, uint64
 			{
 				if (true == d["IsEnable"].GetBool())
 				{
+					int interval = 0, iBeaconNumber = 0; bool IsEmergency = false;
 					if (d.HasMember("Interval") && d["Interval"].IsInt())
 					{
-
+						interval = d["Interval"].GetInt();
 
 					}
 					if (d.HasMember("iBeaconNumber") && d["iBeaconNumber"].IsInt())
 					{
 
-
+						iBeaconNumber = d["iBeaconNumber"].GetInt();
 					}
 					if (d.HasMember("IsEmergency") && d["IsEmergency"].IsBool())
 					{
-
+						IsEmergency = d["IsEmergency"].GetBool();
 
 					}
+					dis.locationIndoorConfig(interval, iBeaconNumber, IsEmergency);
 				}
 			}
 		}
