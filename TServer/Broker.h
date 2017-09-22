@@ -79,6 +79,7 @@ public:
 	void startLogClient();
 	void startMonitorClient(std::map<std::string, ACTION> clientActions);
 	bool getLic(std::string license);
+	void sendLoactionIndoorConfig();
 protected:
 	CBroker();
 	~CBroker();

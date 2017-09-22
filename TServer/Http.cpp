@@ -251,13 +251,16 @@ void* CHttp::webThread(void* p)
 
 	mg_mgr_init(&mgr, NULL);
 	nc = mg_bind(&mgr, std::to_string(pThis->m_nPort).c_str(), webEvhandler);
-	mg_register_http_endpoint(nc, "/upload", handle_upload);
-	mg_set_protocol_http_websocket(nc);
-	while (!pThis->m_bQuit)
+	if (NULL != nc)
 	{
-		mg_mgr_poll(&mgr, 1000);
+		mg_register_http_endpoint(nc, "/upload", handle_upload);
+		mg_set_protocol_http_websocket(nc);
+		while (!pThis->m_bQuit)
+		{
+			mg_mgr_poll(&mgr, 1000);
+		}
+		mg_mgr_free(&mgr);
 	}
-	mg_mgr_free(&mgr);
 
 	return 0;
 }

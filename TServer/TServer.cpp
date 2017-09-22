@@ -52,6 +52,7 @@
 #include "RecvSendGpsStatus.h"
 #include "RecvGetConfigAction.h"
 #include "RecvSerialAction.h"
+#include "RecvLocationIndoorAction.h"
 
 
 #include "WireLanRecvAction.h"
@@ -61,7 +62,7 @@
 #include "GetSettingAction.h"
 #include "../lib/service\service.h"
 
-#define SERVICE_CODE    TRUE
+#define SERVICE_CODE    FALSE
 #define HTTP_PORT   8001
 std::string getServerName()
 {
@@ -172,6 +173,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		serverActions["getRadioSetting"] = getRadioAction;
 		serverActions["setRepeaterSetting"] = setRepeaterAction;
 		serverActions["getRepeaterSetting"] = getRepeaterAction;
+		serverActions["setLocationInDoorSetting"] = setLocationInDoorAction;
+		serverActions["getLocationInDoorSetting"] = getLocationInDoorAction;
 
 		serverActions["call"] = callAction;
 		serverActions["control"] = controlAction;
@@ -199,6 +202,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		clientActions["sendGpsStatus"] = recvSendGpsStatusAction;
 		clientActions["getRadioConfig"] = recvGetConfigAction;
 		clientActions["readSerial"] = readSerialAction;
+		clientActions["locationIndoor"] = recvLocationIndoorAction;
 		/*wire lan send*/
 		wlClientActions["wlCall"] = wlCallAction;
 		wlClientActions["wlCallStatus"] = wlCallStatusAction;
@@ -288,6 +292,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	serverActions["getRadioSetting"] = getRadioAction;
 	serverActions["setRepeaterSetting"] = setRepeaterAction;
 	serverActions["getRepeaterSetting"] = getRepeaterAction;
+	serverActions["setLocationInDoorSetting"] = setLocationInDoorAction;
+	serverActions["getLocationInDoorSetting"] = getLocationInDoorAction;
 
 	serverActions["call"] = callAction;
 	serverActions["control"] = controlAction;
@@ -296,6 +302,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	serverActions["status"] = statusAction;
 	serverActions["registerLicense"] = registerLicenseAction;
 	serverActions["queryLicense"] = queryLicenseAction;
+
+
 
 	/*wire lan recive*/
 	serverActions["wlCall"] = wlCallActionHandler;
@@ -314,6 +322,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	clientActions["sendGpsStatus"] = recvSendGpsStatusAction;
 	clientActions["getRadioConfig"] = recvGetConfigAction;
 	clientActions["readSerial"] = readSerialAction;
+	clientActions["locationIndoor"] = recvLocationIndoorAction;
 	/*wire lan send*/
 	wlClientActions["wlCall"] = wlCallAction;
 	wlClientActions["wlCallStatus"] = wlCallStatusAction;

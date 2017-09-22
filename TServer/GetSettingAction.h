@@ -12,6 +12,8 @@ void GetSettingAction(CRemotePeer* pRemote, const std::string& param, uint64_t c
 
 	try{
 		CBroker::instance()->sendSettingConfig();
+		CBroker::instance()->sendLoactionIndoorConfig();
+
 	}
 	catch (std::exception e){
 
