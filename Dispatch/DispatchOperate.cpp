@@ -402,8 +402,21 @@ void DispatchOperate::OnData(  int call, Respone data)
 		dis.send2Client("sendGps", args);
 		break;
 	case RECV_LOCATION_INDOOR:
-
-		
+	/*{
+		 "callId": 4,
+		"call" : "locationIndoor",
+		 "type" : "radio",
+		 "param" : {
+		"source": 9,
+		 "bcons" : [
+			{
+			 "timestamp": 123,
+			"major" : 1,
+			"minor" : 1
+	}
+		]
+}
+	}*/
 		for (mBcon = data.becon.begin(); mBcon != data.becon.end(); mBcon++)
 		{
 			FieldValue element(FieldValue::TObject);

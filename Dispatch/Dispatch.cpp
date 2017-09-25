@@ -31,7 +31,7 @@ static SERVICE_STATUS_HANDLE g_StatusHandle;
 static SERVICE_STATUS g_ServiceStatus = { 0 };
 static HANDLE g_ServiceStopEvent = INVALID_HANDLE_VALUE;
 static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
-#define SERVER_CODE  FALSE
+#define SERVER_CODE  TRUE
 std::wstring getAppdataPath(){
 	TCHAR szBuffer[MAX_PATH];
 	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
