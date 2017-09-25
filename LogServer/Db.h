@@ -54,6 +54,8 @@ public:
 	bool insertDepartment(const char* name, int gid);
 	bool updateDepartment(int id, const char* name, int gid);
 	int listUser(const char* condition, std::list<recordType>& records);
+	int listStaff(const char* condition, std::list<recordType>& records);
+	int listRadio(const char* condition, std::list<recordType>& records);
 	int getUserIdByStaffId(int staffId);
 	bool detachUser(int userId, int departmentId);
 	bool assignUser(int userId, int departmentId);
@@ -68,9 +70,27 @@ public:
 	bool insertStaff(const char* name, const char* phone, bool isStaff = true);
 	bool insertSmsLog(int source, int destination, const char* message, int is_ticket = 0);
 	bool insertGpsLog(int radio, float latitude, float longitude, float velocity, float altitude = 0.0f);
-	bool insertLocationIndoor(int source, int major, int monjor, int timestamp);
+
 	int query(const char* table, const char* condition, std::list<recordType>& records);
 	int count(const char* table, const char* condition);
 	bool del(const char* table, const char* condition);
+
+	bool insertArea(const char* name, const char* map, const char* width, const char* height);
+	bool updateArea(const char* condition, recordType& val);
+	bool insertLocationIndoor(int source, int major, int monjor, int timestamp);
+	bool insertIBeacon(
+		const char* name,
+		const char* uuid,
+		int major,
+		int minor,
+		int tx_power,
+		int rssi,
+		int time_stamp,
+		int valid,
+		const char* area,
+		const char* pointx,
+		const char* pointy
+		);
+	bool updateIBeacon(const char* condition, recordType& val);
 };
 

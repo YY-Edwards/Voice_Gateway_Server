@@ -3,28 +3,22 @@
 
 #include "Db.h"
 
-#define			CURRENT_DB_VER			101
+#define			CURRENT_DB_VER			102
 
 void migrate_v100(CMySQL* pMySQL){
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `migration` (\
-													`id` int(11) NOT NULL AUTO_INCREMENT, \
-																				`ver` varchar(64) NOT NULL, \
-																											`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
-																																				PRIMARY KEY(`id`)\
+			`id` int(11) NOT NULL AUTO_INCREMENT, \
+			`ver` varchar(64) NOT NULL, \
+			`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+			PRIMARY KEY(`id`)\
 																																											) ENGINE = InnoDB  DEFAULT CHARSET = utf8");
 
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `user` ( \
-													`id` INT(11) NOT NULL AUTO_INCREMENT, \
-																				`username` VARCHAR(45) NOT NULL, \
-																											`password` VARCHAR(300) NOT NULL, \
-																																		`type` VARCHAR(45) NOT NULL DEFAULT 'radio', \
-																																									`authority` TinyText NOT NULL, \
-																																																`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
-																																																							PRIMARY KEY(`id`), \
-																																																														UNIQUE INDEX `id_UNIQUE` (`id` ASC), \
-																																																																					UNIQUE INDEX `username_UNIQUE` (`username` ASC)) \
-																																																																												ENGINE = InnoDB; \
-																																																																																		");
+			`id` INT(11) NOT NULL AUTO_INCREMENT, \
+			`username` VARCHAR(45) NOT NULL, \
+			`password` VARCHAR(300) NOT NULL, \
+			`type` VARCHAR(45) NOT NULL DEFAULT 'radio', \
+																																									`authority` TinyText NOT NULL, \																																																																											");
 
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `department` ( \
 													`id` INT(11) NOT NULL AUTO_INCREMENT, \
@@ -72,13 +66,14 @@ void migrate_v100(CMySQL* pMySQL){
 
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `sms` ( \
 													`id` INT(11) NOT NULL AUTO_INCREMENT,	\
-													`source` MEDIUMTEXT NOT NULL, \
-													`destination` MEDIUMTEXT NOT NULL, \
-													`message` VARCHAR(210) NOT NULL, \
-													`is_ticket` INT NOT NULL DEFAULT 0 COMMENT '0: it\'s normal sms; 1: is ticket', \
-													`createdf_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
-													PRIMARY KEY(`id`)) \
-													ENGINE = InnoDB;");
+																				`source` MEDIUMTEXT NOT NULL, \
+																											`destination` MEDIUMTEXT NOT NULL, \
+																																		`message` VARCHAR(210) NOT NULL, \
+																																									`is_ticket` INT NOT NULL DEFAULT 0 COMMENT '0: it\'s normal sms; 1: is ticket', \
+																																																`createdf_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+																																																							PRIMARY KEY(`id`)) \
+																																																														ENGINE = InnoDB; \
+																																																																				");
 
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `radios` ( \
 													`id` INT(11) NOT NULL AUTO_INCREMENT,	\
@@ -122,26 +117,27 @@ void migrate_v100(CMySQL* pMySQL){
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `gps` ( \
 						`id` INT(11) NOT NULL AUTO_INCREMENT, \
 						`latitude` FLOAT NOT NULL, \
-						`logitude` FLOAT NOT NULL, \
-						`velocity` FLOAT NOT NULL, \
-						`radio` MEDIUMTEXT NULL, \
-						`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
-						`altitude` FLOAT NULL, \
-						PRIMARY KEY(`id`), \
-						UNIQUE INDEX `id_UNIQUE` (`id` ASC)) \
-						ENGINE = InnoDB;  \
-						");
+																											`logitude` FLOAT NOT NULL, \
+																																		`velocity` FLOAT NOT NULL, \
+																																									`radio` MEDIUMTEXT NULL, \
+																																																`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+																																																							`altitude` FLOAT NULL, \
+																																																														PRIMARY KEY(`id`), \
+																																																																					UNIQUE INDEX `id_UNIQUE` (`id` ASC)) \
+																																																																												ENGINE = InnoDB;  \
+																																																																																		");
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `location` ( \
-													`source` MEDIUMTEXT NOT NULL, \
-													`major` INT NOT NULL DEFAULT 0, \
-													`minor` INT NOT NULL DEFAULT 0 , \
-													`timestamp` INT NOT NULL DEFAULT 0, \
+												`id` INT(11) NOT NULL AUTO_INCREMENT,	\
+												`source` MEDIUMTEXT NOT NULL, \
+												`major` INT NOT NULL DEFAULT 0, \
+												`minor` INT NOT NULL DEFAULT 0 , \
+												`timestamp` INT NOT NULL DEFAULT 0, \
 													`uuid` VARCHAR(210) NOT NULL,\
-													`txpwr` VARCHAR(210) NOT NULL,\
-													`rssi` VARCHAR(210) NOT NULL,\
-													`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+												`txpwr` VARCHAR(210) NOT NULL,\
+												`rssi` VARCHAR(210) NOT NULL,\
+									             `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
 													PRIMARY KEY(`id`)) \
-													ENGINE = InnoDB;");
+												ENGINE = InnoDB;");
 }
 
 void migrate_v101(CMySQL* pMySQL)
@@ -272,24 +268,70 @@ ON UPDATE NO ACTION) \
 ENGINE = InnoDB; \
 ");
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `location` ( \
-						`id` INT(11) NOT NULL AUTO_INCREMENT,	\
-													`source` MEDIUMTEXT NOT NULL, \
-													`major` INT NOT NULL DEFAULT 0, \
-													`minor` INT NOT NULL DEFAULT 0 , \
-													`timestamp` INT NOT NULL DEFAULT 0, \
-													`uuid` VARCHAR(210) NOT NULL,\
-													`txpwr` VARCHAR(210) NOT NULL,\
-													`rssi` VARCHAR(210) NOT NULL,\
-													`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
-													PRIMARY KEY(`id`)) \
-													ENGINE = InnoDB;");
+												`id` INT(11) NOT NULL AUTO_INCREMENT,	\
+																									`source` MEDIUMTEXT NOT NULL, \
+																																						`major` INT NOT NULL DEFAULT 0, \
+																																																			`minor` INT NOT NULL DEFAULT 0 , \
+																																																																`timestamp` INT NOT NULL DEFAULT 0, \
+																																																																													`uuid` VARCHAR(210) NOT NULL,\
+																																																																																										`txpwr` VARCHAR(210) NOT NULL,\
+																																																																																																							`rssi` VARCHAR(210) NOT NULL,\
+																																																																																																																				`created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+																																																																																																																																	PRIMARY KEY(`id`)) \
+																																																																																																																																														ENGINE = InnoDB;");
 	}
+
+
+	void migrate_v102(CMySQL* pMySQL)
+	{
+		migrate_v101(pMySQL);
+		pMySQL->createTable("CREATE TABLE IF NOT EXISTS `areas` (\
+				`id` INT(11) NOT NULL AUTO_INCREMENT,\
+				`name` VARCHAR(210) NOT NULL,\
+				`map` VARCHAR(210) NOT NULL,\
+				`width` VARCHAR(210) NOT NULL,\
+				`height` VARCHAR(210) NOT NULL,\
+				PRIMARY KEY(`id`))\
+				ENGINE = InnoDB; ");
+
+		pMySQL->createTable("CREATE TABLE IF NOT EXISTS `ibeacons` (\
+				`id` INT(11) NOT NULL AUTO_INCREMENT,\
+				`name` VARCHAR(210) NOT NULL,\
+				`uuid` VARCHAR(210) NOT NULL,\
+				`major` INT NOT NULL DEFAULT 0, \
+				`minor` INT NOT NULL DEFAULT 0, \
+				`tx_power` INT NOT NULL DEFAULT 0, \
+				`rssi` INT NOT NULL DEFAULT 0, \
+				`time_stamp` INT NOT NULL DEFAULT 0, \
+				`valid` INT NOT NULL DEFAULT 0, \
+				`area` INT NOT NULL DEFAULT 0, \
+				`pointx` VARCHAR(210) NOT NULL,\
+				`pointy` VARCHAR(210) NOT NULL,\
+				PRIMARY KEY(`id`))\
+				ENGINE = InnoDB; ");
+
+		pMySQL->createTable("CREATE TABLE IF NOT EXISTS `ble_report` (\
+				`id` INT(11) NOT NULL AUTO_INCREMENT,\
+				`radio_id` INT NOT NULL DEFAULT 0, \
+				`area_name` VARCHAR(210) NOT NULL,\
+				`ibeacon_name` VARCHAR(210) NOT NULL,\
+				`uuid` VARCHAR(210) NOT NULL,\
+				`major` INT NOT NULL DEFAULT 0, \
+				`minor` INT NOT NULL DEFAULT 0, \
+				`tx_power` INT NOT NULL DEFAULT 0, \
+				`rssi` INT NOT NULL DEFAULT 0, \
+				`time_stamp` INT NOT NULL DEFAULT 0, \
+				`time` VARCHAR(210) NOT NULL,\
+				PRIMARY KEY(`id`))\
+				ENGINE = InnoDB; ");
+	}
+
 
 DbMigrate migrateTable[] = {
 	{ 100, migrate_v100 },
 	{ 101, migrate_v101 },
+	{ 102, migrate_v102 },
 };
-
 
 std::auto_ptr<CDb> CDb::m_instance;
 
@@ -307,10 +349,14 @@ CDb::~CDb()
 void CDb::migration()
 {
 	int dbVer = checkDbVersion();
+	if (CURRENT_DB_VER <= dbVer)
+	{
+		return;
+	}
 
 	for (size_t i = 0; i < sizeof(migrateTable) / sizeof(DbMigrate); i++)
 	{
-		if (dbVer >= migrateTable[i].ver)
+		if (CURRENT_DB_VER < migrateTable[i].ver)
 		{
 			continue;
 		}
@@ -327,16 +373,17 @@ void CDb::migration()
 int CDb::checkDbVersion()
 {
 	int ver = 0;
-	std::list<recordType> records;
-	int n = m_pMySQLDb->query("select * from `migration` order by `ver` desc", records);
-	if (n <= 0)
+	recordType record;
+
+	int ret = m_pMySQLDb->findLastOne("migration", record);
+	if (0 == ret)
 	{
-		return 0;
+		return ver;
 	}
 
 	try
 	{
-		ver = std::stoi(records.front()["ver"]);
+		ver = std::atoi(record["ver"].c_str());
 	}
 	catch (std::exception e)
 	{
@@ -481,6 +528,34 @@ int CDb::listUser(const char* condition, std::list<recordType>& records)
 	return m_pMySQLDb->query(sql.c_str(), records);
 }
 
+
+int CDb::listStaff(const char* condition, std::list<recordType>& records)
+{
+	std::string sql = "SELECT staff.*, organize.department FROM staff LEFT JOIN organize ON staff.id=organize.staff";
+	if (NULL != condition && strlen(condition) > 0)
+	{
+		sql += " ";
+		sql += condition;
+	}
+
+	return m_pMySQLDb->query(sql.c_str(), records);
+}
+
+int CDb::listRadio(const char* condition, std::list<recordType>& records)
+{
+	std::string sql = "SELECT radios.*, radio_belong.department, radio_belong.staff FROM radios LEFT JOIN radio_belong ON radios.id = radio_belong.radio";
+	if (NULL != condition && strlen(condition) > 0)
+	{
+		sql += " ";
+		sql += condition;
+	}
+
+	return m_pMySQLDb->query(sql.c_str(), records);
+}
+
+
+
+
 int CDb::query(const char* table, const char* condition, std::list<recordType>& records)
 {
 	return m_pMySQLDb->find(table, condition, records);
@@ -579,7 +654,15 @@ bool CDb::assignUser(int userId, int departmentId)
 		rec["department"] = std::to_string(departmentId);
 		if (!m_pMySQLDb->recordExist("organize", rec))
 		{
-			m_pMySQLDb->insert("organize", rec);
+			std::string constr = " where staff=" + rec["staff"];
+			if (m_pMySQLDb->count("organize", constr.c_str()) > 0)
+			{
+				m_pMySQLDb->update("organize", rec, constr.c_str());
+			}
+			else
+			{
+				m_pMySQLDb->insert("organize", rec);
+			}
 		}
 		m_pMySQLDb->commit();
 		return true;
@@ -633,7 +716,15 @@ bool CDb::assignDepartmentRadio(int radioId, int departmentId)
 		rec["department"] = std::to_string(departmentId);
 		if (!m_pMySQLDb->recordExist("radio_belong", rec))
 		{
-			m_pMySQLDb->insert("radio_belong", rec);
+			std::string constr = " where radio=" + rec["radio"];
+			if (m_pMySQLDb->count("radio_belong", constr.c_str()) > 0)
+			{
+				m_pMySQLDb->update("radio_belong", rec, constr.c_str());
+			}
+			else
+			{
+				m_pMySQLDb->insert("radio_belong", rec);
+			}
 		}
 		m_pMySQLDb->commit();
 		return true;
@@ -757,7 +848,15 @@ bool CDb::assignStaffRadio(int staffId, int radioId)
 		rec["radio"] = std::to_string(radioId);
 		if (!m_pMySQLDb->recordExist("radio_belong", rec))
 		{
-			m_pMySQLDb->insert("radio_belong", rec);
+			std::string constr = " where radio=" + rec["radio"];
+			if (m_pMySQLDb->count("radio_belong", constr.c_str()) > 0)
+			{
+				m_pMySQLDb->update("radio_belong", rec, constr.c_str());
+			}
+			else
+			{
+				m_pMySQLDb->insert("radio_belong", rec);
+			}			
 		}
 		m_pMySQLDb->commit();
 		return true;
@@ -858,29 +957,7 @@ bool CDb::insertGpsLog(int radio, float latitude, float longitude, float velocit
 
 	return true;
 }
-bool CDb::insertLocationIndoor(int source, int major, int minor, int timestamp)
-{
-	try{
-		recordType locationIndoor;
 
-		locationIndoor["source"] = std::to_string(source);
-		locationIndoor["major"] = std::to_string(major);;
-		locationIndoor["minor"] = std::to_string(minor);
-		locationIndoor["timestamp"] = std::to_string(timestamp);
-	
-		m_pMySQLDb->insert("location", locationIndoor);
-	}
-	catch (std::exception e)
-	{
-		return false;
-	}
-	catch (...)
-	{
-		return false;
-	}
-
-	return true;
-}
 bool CDb::insertSmsLog(int source, int destination, const char* message, int is_ticket)
 {
 	try{
@@ -920,6 +997,130 @@ bool CDb::insertStaff(const char* name, const char* phone, bool isStaff)
 		}
 
 		m_pMySQLDb->insert("staff", staff);
+	}
+	catch (std::exception e)
+	{
+		return false;
+	}
+	catch (...)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+
+
+
+
+
+
+bool CDb::insertArea(const char* name, const char* map, const char* width, const char* height )
+{
+	try{
+		recordType area;
+
+		area["name"] = name;
+		area["map"] = map;
+		area["width"] = width;
+		area["height"] = height;
+
+		std::string constr = " where name=" + area["name"] ;
+		if (m_pMySQLDb->count("areas", constr.c_str()) > 0)
+		{
+			throw std::exception("area exist");
+		}
+		else
+		{
+			m_pMySQLDb->insert("areas", area);
+		}
+	}
+	catch (std::exception e)
+	{
+		return false;
+	}
+	catch (...)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool CDb::updateArea(const char* condition, recordType& val)
+{
+	return m_pMySQLDb->update("areas", val, condition);
+}
+
+
+bool CDb::insertIBeacon(
+	const char* name,
+	const char* uuid, 
+	int major,
+	int minor,
+	int tx_power,
+	int rssi,
+	int time_stamp,
+	int valid,
+	const char* area,
+	const char* pointx,
+	const char* pointy
+	)
+{
+	try{
+		recordType ibeacon;
+
+		ibeacon["name"] = name;
+		ibeacon["uuid"] = uuid;
+		ibeacon["major"] = std::to_string(major);
+		ibeacon["minor"] = std::to_string(minor);
+		ibeacon["tx_power"] = std::to_string(tx_power);
+		ibeacon["rssi"] = std::to_string(rssi);
+		ibeacon["time_stamp"] = std::to_string(time_stamp);
+		ibeacon["valid"] = std::to_string(valid);
+		ibeacon["area"] = area;
+		ibeacon["pointx"] = pointx;
+		ibeacon["pointy"] = pointy;
+
+
+		std::string constr = " where major=" + ibeacon["major"] + " and minor=" + ibeacon["minor"];
+		if (m_pMySQLDb->count("ibeacons", constr.c_str()) > 0)
+		{
+			throw std::exception("ibeacon exist");
+		}
+		else
+		{
+			m_pMySQLDb->insert("ibeacons", ibeacon);
+		}
+	}
+	catch (std::exception e)
+	{
+		return false;
+	}
+	catch (...)
+	{
+		return false;
+	}
+
+	return true;
+}
+
+bool CDb::updateIBeacon(const char* condition, recordType& val)
+{
+	return m_pMySQLDb->update("ibeacons", val, condition);
+}
+bool CDb::insertLocationIndoor(int source, int major, int minor, int timestamp)
+{
+	try{
+		recordType locationIndoor;
+
+		locationIndoor["source"] = std::to_string(source);
+		locationIndoor["major"] = std::to_string(major);;
+		locationIndoor["minor"] = std::to_string(minor);
+		locationIndoor["timestamp"] = std::to_string(timestamp);
+
+		m_pMySQLDb->insert("location", locationIndoor);
 	}
 	catch (std::exception e)
 	{
