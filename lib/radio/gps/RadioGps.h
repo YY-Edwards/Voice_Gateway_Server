@@ -16,7 +16,7 @@
 #define RECV_TRG_INDOOR_LENTH 11
 
 #define Immediate_Location_Request                      0x05       //Immediate Location Request
-#define Immediate_Location_Request_Tokens_Length        0x08       //XML协议报中包含8组数据
+#define Immediate_Location_Request_Tokens_Length        0x09       //XML协议报中包含9组数据
 #define Location_RequestID_Start                        0x22       //Start of request-id element
 #define Immediate_Location_Request_Time                 0x51       //Start of ret-info element, "ret-info-time" and "ret-info-accuracy" is specified as "YES"
 #define Immediate_Location_RequestID_Speed              0x62       //Start of request-speed-hor element
