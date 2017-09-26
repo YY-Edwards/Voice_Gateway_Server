@@ -38,7 +38,7 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 			if (d.IsObject() && d.HasMember("IsEnable") && d["IsEnable"].IsBool())
 			if (d.HasMember("IsOnlyRide")&& d["IsOnlyRide"].IsBool())
 			{
-				if (true == d["IsEnable"].GetBool()|| true == d["IsOnlyRide"].GetBool() )
+				if (true == d["IsEnable"].GetBool() )
 				{
 					if (d.HasMember("Ride") && d["Ride"].IsObject())
 					{
@@ -50,6 +50,7 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 						}
 					}
 					//mnisIP
+					if(false == d["IsOnlyRide"].GetBool())
 					if (d.HasMember("Mnis") && d["Mnis"].IsObject())
 					{
 						Value objRadio = d["Mnis"].GetObject();

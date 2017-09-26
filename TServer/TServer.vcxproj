@@ -59,6 +59,8 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <StringPooling>
+      </StringPooling>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -104,6 +106,8 @@
     <ClInclude Include="ControlAction.h" />
     <ClInclude Include="GetSettingAction.h" />
     <ClInclude Include="GpsAction.h" />
+    <ClInclude Include="Http.h" />
+    <ClInclude Include="mongoose.h" />
     <ClInclude Include="MonitorServer.h" />
     <ClInclude Include="MsgAction.h" />
     <ClInclude Include="PrivateCallAction.h" />
@@ -129,6 +133,7 @@
     <ClInclude Include="RegisterLicenseAction.h" />
     <ClInclude Include="RemotePowerOffAction.h" />
     <ClInclude Include="RemotePowerOnAction.h" />
+    <ClInclude Include="schexception.h" />
     <ClInclude Include="SendGroupSmsAction.h" />
     <ClInclude Include="SendSmsAction.h" />
     <ClInclude Include="SettingAction.h" />
@@ -153,6 +158,11 @@
     <ClCompile Include="..\lib\service\service.cpp" />
     <ClCompile Include="..\lib\strutil\strutil.cpp" />
     <ClCompile Include="Broker.cpp" />
+    <ClCompile Include="Http.cpp" />
+    <ClCompile Include="mongoose.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="MonitorServer.cpp" />
     <ClCompile Include="Settings.cpp" />
     <ClCompile Include="stdafx.cpp">

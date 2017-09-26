@@ -40,6 +40,9 @@
     <Filter Include="Tool">
       <UniqueIdentifier>{396b2f69-6cc7-4920-9d60-0be70b2f2660}</UniqueIdentifier>
     </Filter>
+    <Filter Include="http">
+      <UniqueIdentifier>{f337165d-62aa-4384-a67c-5bbd3f7c8d24}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -204,6 +207,18 @@
     <ClInclude Include="Tool.h">
       <Filter>Tool</Filter>
     </ClInclude>
+    <ClInclude Include="Http.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="schexception.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="mongoose.h">
+      <Filter>http</Filter>
+    </ClInclude>
+    <ClInclude Include="RecvLocationIndoorAction.h">
+      <Filter>clientAction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -247,6 +262,12 @@
     </ClCompile>
     <ClCompile Include="Tool.cpp">
       <Filter>Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="Http.cpp">
+      <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="mongoose.c">
+      <Filter>http</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
