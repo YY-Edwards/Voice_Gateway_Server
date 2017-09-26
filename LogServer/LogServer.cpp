@@ -17,7 +17,7 @@
 #include "DbLocationIndoorAction.h"
 #include "DbIbeaconAction.h"
 #include "DbAreaAction.h"
-#define SERVICE_CODE TRUE
+#define SERVICE_CODE FALSE
 int _tmain(int argc, _TCHAR* argv[])
 {
 #if SERVICE_CODE

@@ -20,6 +20,7 @@ void queryLicenseAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 		switch (status)
 		{
 		case 0:
+		case 2:
 			args["DeviceType"] = s.deviceType;
 			args["RadioSerial"] = s.radioSerial;
 			args["RadioMode"] = s.radioMode;
