@@ -53,8 +53,10 @@ bool CMySQL::open(const char* host, unsigned short port, const char* user, const
 			}
 
 			// create db
-			std::string sql = "create database ";
+			//CREATE DATABASE IF NOT EXISTS yourdbname DEFAULT CHARSET utf8 COLLATE utf8_general_ci;
+			std::string sql = "create database if not exists ";
 			sql += db;
+			sql += " DEFAULT CHARSET utf8 COLLATE utf8_general_ci";
 			if (mysql_real_query(m_pMysqlConnection, sql.c_str(), sql.size()))
 			{
 				const char * pstrError = mysql_error(m_pMysqlConnection);

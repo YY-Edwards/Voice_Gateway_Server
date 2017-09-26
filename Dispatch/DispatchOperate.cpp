@@ -289,6 +289,10 @@ void DispatchOperate::OnData(  int call, Respone data)
 {
 	ArgumentType args;
 	FieldValue Gps(FieldValue::TObject);
+	FieldValue Indoor(FieldValue::TObject);
+	std::map<std::string, RadioStatus>::iterator it;
+	std::list<BconMajMinTimeReport>::iterator mBcon;
+	FieldValue bcons(FieldValue::TArray);
 	switch (call)
 	{
 	case MNIS_CONNECT:
@@ -397,6 +401,34 @@ void DispatchOperate::OnData(  int call, Respone data)
 		args["Gps"] = Gps;
 		dis.send2Client("sendGps", args);
 		break;
+	case RECV_LOCATION_INDOOR:
+	/*{
+		 "callId": 4,
+		"call" : "locationIndoor",
+		 "type" : "radio",
+		 "param" : {
+		"source": 9,
+		 "bcons" : [
+			{
+			 "timestamp": 123,
+			"major" : 1,
+			"minor" : 1
+	}
+		]
+}
+	}*/
+		for (mBcon = data.becon.begin(); mBcon != data.becon.end(); mBcon++)
+		{
+			FieldValue element(FieldValue::TObject);
+			element.setKeyVal("timestamp", FieldValue(mBcon->TimeStamp));
+			element.setKeyVal("major", FieldValue(mBcon->Major));
+			element.setKeyVal("minor", FieldValue(mBcon->Minor));
+			bcons.push(element);
+		}
+		args["bcons"] = bcons;
+		args["source"] = data.source;
+		dis.send2Client("locationIndoor", args);
+		break;
 	case RADIO_ARS:
 		args["Target"] = FieldValue(data.source);
 		if (data.arsStatus == SUCESS)
@@ -410,7 +442,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 		dis.send2Client("sendArs", args);
 		break;
 	case RADIO_STATUS:
-		std::map<std::string,RadioStatus>::iterator it;
+	
 		args["getType"] = RADIO_STATUS;
 		FieldValue info(FieldValue::TArray);
 		for (it = data.rs.begin(); it != data.rs.end(); it++)
@@ -435,6 +467,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 		dis.send2Client("status", args);
 		break;
 	}
+	
 }
 void DispatchOperate::OnTcpData(int call, TcpRespone data)
 {
@@ -624,4 +657,8 @@ void DispatchOperate::OnRadioUsb(bool isConnected)
 {
 	dis.isTcpConnect = isConnected;
 	dis.pTs->setUsb(isConnected);
+}
+void DispatchOperate::locationIndoorConfig(int Interval, int iBeaconNumber, bool isEmergency)
+{
+	pDs->locationIndoorConfig(Interval, iBeaconNumber, isEmergency);
 }

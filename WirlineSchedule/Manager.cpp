@@ -761,6 +761,11 @@ void CManager::handleRemoteTask()
 										   }
 			}
 				break;
+			case REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG:
+			{
+				m_pMnis->locationIndoorConfig(task.param.info.locationParam.internal,task.param.info.locationParam.ibconNum,task.param.info.locationParam.isEmergency);
+			}
+				break;
 			default:
 				break;
 			}
@@ -972,6 +977,22 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 							 info.push(element);
 						 }
 						 g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, info);
+	}
+		break;
+	case GPS_TRIGG_COMM_INDOOR:
+	{
+			printf_s("GPS_TRIGG_COMM_INDOOR list size:%d\r\n", response.becon.size());
+			FieldValue info(FieldValue::TArray);
+			std::list<BconMajMinTimeReport>::iterator mBcon;
+			for (auto i = response.becon.begin(); i != response.becon.end(); i++)
+			{
+				FieldValue element(FieldValue::TObject);
+				element.setKeyVal("timestamp", FieldValue(mBcon->TimeStamp));
+				element.setKeyVal("major", FieldValue(mBcon->Major));
+				element.setKeyVal("minor", FieldValue(mBcon->Minor));
+				info.push(element);
+			}
+			g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, info);
 	}
 		break;
 	default:

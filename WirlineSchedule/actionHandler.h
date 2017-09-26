@@ -699,4 +699,60 @@ inline void wlMnisStatusHandler(CRemotePeer* pRemote, const std::string& param, 
 		printf_s("call response send error");
 	}
 }
+inline void wlMnisLocationIndoorHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
+{
+	if (!wlScheduleIsEnable())
+	{
+		return;
+	}
+	g_sn = sn;
+	Document d;
+	int errorCode = 0;
+	ArgumentType args;
+	std::string strResp = "";
+	char status[64] = { 0 };
+	strcpy_s(status, CLIENT_TRANSFER_OK);
+	std::string statusText = "";
+	REMOTE_TASK *pNewTask = NULL;
+	try
+	{
+		try
+		{
+			pNewTask = new REMOTE_TASK;
+			memset(pNewTask, 0, sizeof(REMOTE_TASK));
+			d.Parse(param.c_str());
+			//pNewTask->callId = sn;
+			pNewTask->cmd = REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG;
+			//pNewTask->pRemote = pRemote;
+			pNewTask->param.info.locationParam.isEnable = d["IsEnable"].GetBool();
+			pNewTask->param.info.locationParam.internal = d["Interval"].GetInt();
+			pNewTask->param.info.locationParam.ibconNum = d["iBeaconNumber"].GetInt();
+			pNewTask->param.info.locationParam.isEmergency = d["IsEmergency"].GetBool();
+			if (pNewTask)
+			{
+
+				push_back_task(pNewTask);
+			}
+			else
+			{
+				strcpy_s(status, CLIENT_TRANSFER_FAIL);
+			}
+		}
+		catch (...)
+		{
+			strcpy_s(status, CLIENT_TRANSFER_FAIL);
+		}
+		//do nothing
+		strResp = CRpcJsonParser::buildResponse(status, sn, errorCode, statusText.c_str(), args);
+		pRemote->sendResponse(strResp.c_str(), strResp.size());
+	}
+	catch (std::exception* e)
+	{
+		printf_s("call response send error");
+	}
+	catch (...)
+	{
+		printf_s("call response send error");
+	}
+}
 #endif

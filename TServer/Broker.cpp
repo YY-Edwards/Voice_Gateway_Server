@@ -16,7 +16,7 @@ CBroker::CBroker()
 	, m_logClient(NULL)
 	, callId(1)
 {
-	licenseStatus = false;
+	licenseStatus = 2;
 }
 
 
@@ -334,11 +334,21 @@ SerialInformation CBroker::getLicenseInformation()
 {
 	return m_licenseInformation;
 }
-void CBroker::setLicenseStatus(bool status)
+void CBroker::setLicenseStatus(int status)
 {
 	licenseStatus = status;
 }
-bool CBroker::getLicenseStatus()
+int CBroker::getLicenseStatus()
 {
 	return licenseStatus;
+}
+void CBroker::sendLoactionIndoorConfig()
+{
+	std::string strConnect = CSettings::instance()->getRequest("locationIndoor", "radio", m_radioClient->getCallId(), CSettings::instance()->getValue("locIndoor"));
+	m_radioClient->send(strConnect.c_str(), strConnect.size());
+}
+void CBroker::sendLoactionIndoorConfigToWl()
+{
+	std::string strConnect = CSettings::instance()->getRequest("locationIndoor", "radio", m_wirelanClient->getCallId(), CSettings::instance()->getValue("locIndoor"));
+	m_wirelanClient->send(strConnect.c_str(), strConnect.size());
 }

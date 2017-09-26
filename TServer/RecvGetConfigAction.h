@@ -12,6 +12,7 @@ void recvGetConfigAction(CRemotePeer* pRemote, const std::string& param, uint64_
 
 	try{
 		CBroker::instance()->sendRadioConfig();
+		CBroker::instance()->sendLoactionIndoorConfig();
 	}
 	catch (std::exception e){
 

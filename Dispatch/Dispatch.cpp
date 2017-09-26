@@ -17,6 +17,7 @@
 #include "GpsAction.h"
 #include "MsgAction.h"
 #include "StatusAction.h"
+#include "LocationInDoorAction.h"
 #include "Tool.h"
 
 #define TCP_PORT 9001
@@ -105,6 +106,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		rpcServer.addActionHandler("queryGps", gpsAction);
 		rpcServer.addActionHandler("message", msgAction);
 		rpcServer.addActionHandler("status", statusAction);
+		rpcServer.addActionHandler("locationIndoor", locationIndoorAction);
 		rpcServer.start(TCP_PORT, rpcServer.TCP);
 
 		//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);                    //¼ì²éÄÚ´æÐ¹Â©
