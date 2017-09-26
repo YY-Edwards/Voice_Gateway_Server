@@ -97,7 +97,6 @@ void areaAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			}
 
 			strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", args);
-
 		}
 		else if (0 == operation.compare("add"))
 		{
@@ -113,7 +112,7 @@ void areaAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 				std::string map = d["areas"][i]["map"].GetString();
 				std::string width = d["areas"][i]["width"].GetString();
 				std::string height = d["areas"][i]["height"].GetString();
-				
+
 				bool ret = CDb::instance()->insertArea(name.c_str(), map.c_str(), width.c_str(), height.c_str());
 				if (!ret)
 				{
@@ -160,9 +159,8 @@ void areaAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 				std::string width = val.HasMember("map") ? val["width"].GetString() : "";
 				std::string height = val.HasMember("map") ? val["height"].GetString() : "";
 
-
 				recordType updateVal;
-				
+
 				if (name.size() > 0)
 				{
 					updateVal["name"] = name;

@@ -1040,7 +1040,7 @@ bool CDb::insertIBeacon(
 	int rssi,
 	int time_stamp,
 	int valid,
-	const char* area,
+	int area,
 	const char* pointx,
 	const char* pointy
 	)
@@ -1056,7 +1056,7 @@ bool CDb::insertIBeacon(
 		ibeacon["rssi"] = std::to_string(rssi);
 		ibeacon["time_stamp"] = std::to_string(time_stamp);
 		ibeacon["valid"] = std::to_string(valid);
-		ibeacon["area"] = area;
+		ibeacon["area"] = std::to_string(area);
 		ibeacon["pointx"] = pointx;
 		ibeacon["pointy"] = pointy;
 

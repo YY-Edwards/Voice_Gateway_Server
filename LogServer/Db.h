@@ -87,7 +87,7 @@ public:
 		int rssi,
 		int time_stamp,
 		int valid,
-		const char* area,
+		int area,
 		const char* pointx,
 		const char* pointy
 		);

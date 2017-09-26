@@ -97,7 +97,6 @@ void ibeaconAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 			}
 
 			strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", args);
-
 		}
 		else if (0 == operation.compare("add"))
 		{
@@ -119,16 +118,15 @@ void ibeaconAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 				int rssi = val.HasMember("rssi") ? val["rssi"].GetInt() : -1;
 				int time_stamp = val.HasMember("time_stamp") ? val["time_stamp"].GetInt() : -1;
 				int valid = val.HasMember("valid") ? val["valid"].GetInt() : -1;
-				std::string area = val.HasMember("area") ? val["area"].GetString() : "";
+				int area = val.HasMember("area") ? val["area"].GetInt() : -1;
 
 				std::string pointx = val.HasMember("pointx") ? val["pointx"].GetString() : "";
 				std::string pointy = val.HasMember("pointy") ? val["pointy"].GetString() : "";
 
-
 				bool ret = CDb::instance()->insertIBeacon(
 					name.c_str(),
 					uuid.c_str(),
-					major, minor, tx_power, rssi, time_stamp, valid, area.c_str(),
+					major, minor, tx_power, rssi, time_stamp, valid, area,
 					pointx.c_str(),
 					pointy.c_str()
 					);
@@ -180,7 +178,7 @@ void ibeaconAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 				int rssi = val.HasMember("rssi") ? val["rssi"].GetInt() : -1;
 				int time_stamp = val.HasMember("time_stamp") ? val["time_stamp"].GetInt() : -1;
 				int valid = val.HasMember("valid") ? val["valid"].GetInt() : -1;
-				std::string area = val.HasMember("area") ? val["area"].GetString() : "";
+				int area = val.HasMember("area") ? val["area"].GetInt() : -1;
 
 				std::string pointx = val.HasMember("pointx") ? val["pointx"].GetString() : "";
 				std::string pointy = val.HasMember("pointy") ? val["pointy"].GetString() : "";
@@ -195,11 +193,10 @@ void ibeaconAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 				if (rssi >= 0){ updateVal["rssi"] = std::to_string(rssi); }
 				if (time_stamp >= 0){ updateVal["time_stamp"] = std::to_string(time_stamp); }
 				if (valid >= 0){ updateVal["valid"] = std::to_string(valid); }
-				if (area.size() >= 0){ updateVal["area"] = area; }
+				if (area >= 0){ updateVal["area"] = std::to_string(area);; }
 
 				if (pointx.size() > 0){ updateVal["pointx"] = pointx; }
 				if (pointy.size() > 0){ updateVal["pointy"] = pointy; }
-
 
 				std::string updCond = " where `id`='" + std::to_string(id) + "'";
 				bool ret = CDb::instance()->updateIBeacon(updCond.c_str(), updateVal);
