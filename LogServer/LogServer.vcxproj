@@ -117,6 +117,7 @@
     <ClInclude Include="DbGpsAction.h" />
     <ClInclude Include="DbGroupAction.h" />
     <ClInclude Include="DbIbeaconAction.h" />
+    <ClInclude Include="DbLocationIndoorAction.h" />
     <ClInclude Include="DbSmsLogAction.h" />
     <ClInclude Include="DbRadioAction.h" />
     <ClInclude Include="DbStaffAction.h" />

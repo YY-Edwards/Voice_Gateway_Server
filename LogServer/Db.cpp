@@ -125,7 +125,19 @@ void migrate_v100(CMySQL* pMySQL){
 																																																														PRIMARY KEY(`id`), \
 																																																																					UNIQUE INDEX `id_UNIQUE` (`id` ASC)) \
 																																																																												ENGINE = InnoDB;  \
-																																																																																		");
+																																																																											");
+																																																																																		pMySQL->createTable("CREATE TABLE IF NOT EXISTS `location` ( \
+																																																																																																			`id` INT(11) NOT NULL AUTO_INCREMENT,	\
+																																																																																																															`source` MEDIUMTEXT NOT NULL, \
+																																																																																																																											`major` INT NOT NULL DEFAULT 0, \
+																																																																																																																																							`minor` INT NOT NULL DEFAULT 0 , \
+																																																																																																																																																			`timestamp` INT NOT NULL DEFAULT 0, \
+																																																																																																																																																																`uuid` VARCHAR(210) NOT NULL,\
+																																																																																																																																																																												`txpwr` VARCHAR(210) NOT NULL,\
+																																																																																																																																																																																								`rssi` VARCHAR(210) NOT NULL,\
+																																																																																																																																																																																																	             `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+																																																																																																																																																																																																				 													PRIMARY KEY(`id`)) \
+																																																																																																																																																																																																																													ENGINE = InnoDB;");
 }
 
 void migrate_v101(CMySQL* pMySQL)
@@ -255,7 +267,18 @@ ON DELETE CASCADE \
 ON UPDATE NO ACTION) \
 ENGINE = InnoDB; \
 ");
-
+	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `location` ( \
+																		`id` INT(11) NOT NULL AUTO_INCREMENT,	\
+																														`source` MEDIUMTEXT NOT NULL, \
+																																										`major` INT NOT NULL DEFAULT 0, \
+																																																						`minor` INT NOT NULL DEFAULT 0 , \
+																																																																		`timestamp` INT NOT NULL DEFAULT 0, \
+																																																																															`uuid` VARCHAR(210) NOT NULL,\
+																																																																																											`txpwr` VARCHAR(210) NOT NULL,\
+																																																																																																							`rssi` VARCHAR(210) NOT NULL,\
+																																																																																																																             `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP, \
+																																																																																																																			 													PRIMARY KEY(`id`)) \
+																																																																																																																																												ENGINE = InnoDB;");
 	}
 
 
@@ -1086,4 +1109,27 @@ bool CDb::insertIBeacon(
 bool CDb::updateIBeacon(const char* condition, recordType& val)
 {
 	return m_pMySQLDb->update("ibeacons", val, condition);
+}
+bool CDb::insertLocationIndoor(int source, int major, int minor, int timestamp)
+{
+	try{
+		recordType locationIndoor;
+
+		locationIndoor["source"] = std::to_string(source);
+		locationIndoor["major"] = std::to_string(major);;
+		locationIndoor["minor"] = std::to_string(minor);
+		locationIndoor["timestamp"] = std::to_string(timestamp);
+
+		m_pMySQLDb->insert("location", locationIndoor);
+	}
+	catch (std::exception e)
+	{
+		return false;
+	}
+	catch (...)
+	{
+		return false;
+	}
+
+	return true;
 }

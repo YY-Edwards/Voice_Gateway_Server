@@ -92,5 +92,6 @@ public:
 		const char* pointy
 		);
 	bool updateIBeacon(const char* condition, recordType& val);
+	bool insertLocationIndoor(int source, int major, int minor, int timestamp);
 };
 
