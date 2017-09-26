@@ -12,6 +12,7 @@ CMySQL::CMySQL(void)
 	: m_pMysqlConnection(NULL)
 	, m_bStoped(false)
 	, m_bIsConnected(false)
+	, threadIsStart(false)
 {
 }
 
@@ -82,6 +83,7 @@ bool CMySQL::open(const char* host, unsigned short port, const char* user, const
 
 		// start ping thread
 		m_pingThread = std::thread([&](){
+			threadIsStart = true;
 			while (!m_bStoped)
 			{
 				if (m_bIsConnected && m_pMysqlConnection)
@@ -241,12 +243,15 @@ void CMySQL::close()
 {
 	m_bStoped = true;
 	//m_hExitEvent.notify_one();
-	m_pingThread.join();
-
+	if (threadIsStart)
+	{
+		m_pingThread.join();
+	}
 	if (m_pMysqlConnection)
 	{
 		mysql_close(m_pMysqlConnection);
 		m_pMysqlConnection = NULL;
+		threadIsStart = false;
 	}
 }
 
