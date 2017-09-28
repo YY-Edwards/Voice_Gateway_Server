@@ -17,6 +17,82 @@ public:
 	virtual int onReceive(CRemotePeer* pRemote, char* pData, int dataLen) = 0;
 };
 
+class JsonUtil{
+public:
+	enum _parse_type{
+		IsJsonArray = 1,
+		IsJsonObject,
+		InvalidJson,
+	};
+
+	/*
+	* Find if the pBuffer has a valid json string
+	* @return pop buffer size >0 json string returned in strJson argument
+	*/
+	static int getJsonStr(const char* pBuffer, int len, std::string& strJson)
+	{
+		int nJsonType = InvalidJson;
+		int idx = 0;
+
+		while ((pBuffer[idx] != '{') && (pBuffer[idx] != '['))
+		{
+			idx++;
+		}
+		if (pBuffer[idx] == '{')
+		{
+			nJsonType = IsJsonObject;
+		}
+		else if ('[' == pBuffer[idx])
+		{
+			nJsonType = IsJsonArray;
+		}
+		else
+		{
+			// TODO: this should not happen
+		}
+
+		int nStartPosition = idx;		// json string start position
+
+		int nSignStart = 1;
+		while (nSignStart > 0 && idx < len)
+		{
+			idx++;
+			if (IsJsonObject == nJsonType)
+			{
+				if (pBuffer[idx] == '}')
+				{
+					nSignStart--;
+				}
+				else if (pBuffer[idx] == '{')
+				{
+					nSignStart++;
+				}
+			}
+			else
+			{
+				// json array
+				if (pBuffer[idx] == ']')
+				{
+					nSignStart--;
+				}
+				else if (pBuffer[idx] == '[')
+				{
+					nSignStart++;
+				}
+			}
+		}
+		if (('}' == pBuffer[idx]) || (']' == pBuffer[idx]))
+		{
+			// find valid json string
+			strJson = "";
+			strJson.append(&pBuffer[nStartPosition], idx - nStartPosition + 1);
+			return idx;
+		}
+
+		return 0;
+	}
+};
+
 class CBaseConnector
 {
 public:
@@ -47,6 +123,7 @@ protected:
 	std::function<void(CRemotePeer*)> m_fnDisconnectEvent;
 	std::function<void(CRemotePeer*)> m_fnConnectEvent;
 };
+
 
 #ifndef uint64_t
 typedef unsigned long long uint64_t;
