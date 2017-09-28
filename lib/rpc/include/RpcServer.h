@@ -8,8 +8,6 @@
 
 #include "BaseConnector.h"
 
-#include "..\include\ringbuffer.h"
-
 #define		ThreadCountInPool			4
 
 class ThreadPool;
@@ -54,7 +52,6 @@ protected:
 	int sendNextCommands(CRemotePeer* remote, std::list<CRequest*>& lstCommands);
 
 protected:
-	pRingBuffer						m_pRingBuffer;
 	std::map<std::string, ACTION>  m_mpActions;
 	CBaseConnector* m_pConnector;
 	ThreadPool* m_thdPool;

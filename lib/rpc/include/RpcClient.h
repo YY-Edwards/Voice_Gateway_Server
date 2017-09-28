@@ -11,8 +11,6 @@
 #include <list>
 #include <thread>
 
-#include "..\include\ringbuffer.h"
-
 #ifndef IncomeDataHandler
 typedef std::function<void(CBaseConnector*, const char*, int) > IncomeDataHandler;
 #endif
@@ -46,7 +44,6 @@ protected:
 	int sendNextCommands();
 
 protected:
-	pRingBuffer		m_pRingBuffer;
 	CBaseConnector* m_pConnector;
 	std::list<CRequest*> m_lstRequest;
 	std::mutex m_mtxRequest;
