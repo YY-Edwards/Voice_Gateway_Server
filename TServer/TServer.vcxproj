@@ -93,6 +93,7 @@
     <ClInclude Include="..\lib\AES\Aes.h" />
     <ClInclude Include="..\lib\rpc\include\BaseConnector.h" />
     <ClInclude Include="..\lib\rpc\include\request.h" />
+    <ClInclude Include="..\lib\rpc\include\ringbuffer.h" />
     <ClInclude Include="..\lib\rpc\include\RpcClient.h" />
     <ClInclude Include="..\lib\rpc\include\RpcJsonParser.h" />
     <ClInclude Include="..\lib\rpc\include\RpcServer.h" />
@@ -150,6 +151,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\lib\AES\Aes.cpp" />
+    <ClCompile Include="..\lib\rpc\src\ringbuffer.c" />
     <ClCompile Include="..\lib\rpc\src\RpcClient.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcServer.cpp" />

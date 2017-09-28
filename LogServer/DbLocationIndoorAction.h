@@ -100,20 +100,26 @@ void locationIndoorAction(CRemotePeer* pRemote, const std::string& param, uint64
 		}
 		else if (0 == operation.compare("add"))
 		{
-			if (!d.HasMember("location") || !d["location"].IsArray())
+			if (!d.HasMember("location") || !d["location"].IsObject())
 			{
 				throw std::exception("call parameter error, users key must be an array");
 			}
-			int itemCount = d["location"].Size();
+			//int itemCount = d["location"].Size();
 
-			for (size_t i = 0; i < itemCount; i++)
+			//for (size_t i = 0; i < itemCount; i++)
 			{
-				int source = d["location"][i]["source"].GetInt();
-				int major = d["location"][i]["major"].GetInt();
-				int minor = d["location"][i]["minor"].GetInt();
-				int timestamp = d["location"][i]["timestamp"].GetInt();
-
-				bool ret = CDb::instance()->insertLocationIndoor(source, major, minor, timestamp);
+				int source = d["location"]["source"].GetInt();
+				int major = d["location"]["major"].GetInt();
+				int minor = d["location"]["minor"].GetInt();
+				int timestamp = d["location"]["timestamp"].GetInt();
+				int rssi = d["location"]["rssi"].GetInt();
+				int txpower = d["location"]["txpower"].GetInt();
+				std::string uuid="";
+				for (int j = 0; j < d["location"]["uuid"].Size(); j++)
+				{
+					uuid += std:: to_string(d["location"]["uuid"][j].GetInt());
+				}
+				bool ret = CDb::instance()->insertLocationIndoor(source, major, minor, timestamp,rssi,txpower,uuid);
 				if (!ret)
 				{
 					std::string errMsg = "add location log failed.";

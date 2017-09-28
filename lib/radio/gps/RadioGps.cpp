@@ -290,7 +290,7 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,double cycle)
 			m_ThreadGps->SendBuffer[6] = 0xAC;
 			m_ThreadGps->SendBuffer[7] = 0xE0;
 			m_ThreadGps->SendBuffer[8] = 0x6c;   //becon only
-			m_ThreadGps->SendBuffer[9] = 0x7A;  //request-bcon-maj-min-time
+			m_ThreadGps->SendBuffer[9] = 0x7c;  //request-bcon-maj-min-time
 			m_ThreadGps->SendBuffer[10] = iBconNum & 0xff;  //becon number
 			m_ThreadGps->SendBuffer[11] = Start_Trigger_Element;
 			m_ThreadGps->SendBuffer[12] = Start_Interval_Element_uint;
@@ -308,7 +308,7 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,double cycle)
 			m_ThreadGps->SendBuffer[6] = 0xAC;
 			m_ThreadGps->SendBuffer[7] = 0xE0;
 			m_ThreadGps->SendBuffer[8] = 0x6c;   //becon only
-			m_ThreadGps->SendBuffer[9] = 0x7A;  //request-bcon-maj-min-time
+			m_ThreadGps->SendBuffer[9] = 0x7c;  //request-bcon-maj-min-time:7a  request-bcon-uuid-maj-min-txpwr-rssi-time:7c
 			m_ThreadGps->SendBuffer[10] = iBconNum & 0xff;  //becon number
 			m_ThreadGps->SendBuffer[11] = 0x4A;    //REQUEST_TRIGGER_CONDITION
 			m_ThreadGps->SendBuffer[12] = 0x02;    //EMERGENCY_CONDITION
@@ -330,7 +330,7 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,double cycle)
 		m_ThreadGps->SendBuffer[9] = CSBK_Require_Data_Length;
 		m_ThreadGps->SendBuffer[10] = Request_LRRP_CSBK;
 		m_ThreadGps->SendBuffer[11] = 0x6c;   //becon only
-		m_ThreadGps->SendBuffer[12] = 0x7A;  //request-bcon-maj-min-time
+		m_ThreadGps->SendBuffer[12] = 0x7c;  //request-bcon-maj-min-time:7a  request-bcon-uuid-maj-min-txpwr-rssi-time:7c
 		m_ThreadGps->SendBuffer[13] = iBconNum & 0xff;
 		m_ThreadGps->SendBuffer[14] = Start_Trigger_Element;
 		m_ThreadGps->SendBuffer[15] = Start_Interval_Element_uint;
@@ -651,11 +651,29 @@ void CRadioGps::RecvData()
 					speed = (((float)a) + ((float)b) / 128.0f)*3.6f;
 					queryMode = GPS_TRIGG_CSBK_EGPS;
 				}
-				else if (ret >= RECV_TRG_INDOOR_LENTH && m_ThreadGps->RcvBuffer[8] == beacon_data && m_ThreadGps->RcvBuffer[9]== bcon_maj_min_time)
+				else if (ret >= RECV_TRG_INDOOR_LENTH || bytes == RECV_TRG_INDOOR_LENTH /*&& m_ThreadGps->RcvBuffer[8] == beacon_data && m_ThreadGps->RcvBuffer[9] == start_bcon_uuid_maj_min_txpwr_rssi_time*/)
 				{
+					queryMode = GPS_TRIGG_COMM_INDOOR;
+					int n = 0,index =-1;
+					if (ret != -1)
+					{
+						n = ret;
+					}
+					else if (bytes != -1)
+					{
+						n = bytes;
+					}
+					for (int j = 0; j <n; j++)
+					{
+						if (start_bcon_uuid_maj_min_txpwr_rssi_time == m_ThreadGps->RcvBuffer[j])
+						{
+							index = j;//记录元素下标  
+						}
+					}
+				
 					int num = 0;
 					std::list <BconMajMinTimeReport> bconList;
-					num = ((unsigned char)m_ThreadGps->RcvBuffer[10]) & 0xff;
+					num = ((unsigned char)m_ThreadGps->RcvBuffer[index+1]) & 0xff;
 					if (num == 0)
 					{
 
@@ -666,12 +684,16 @@ void CRadioGps::RecvData()
 						for (int i = 0; i < num; i++)
 						{
 							BconMajMinTimeReport bcon;
-							
-							bcon.Major = ntohs(*((unsigned short *)&m_ThreadGps->RcvBuffer[11+i*6]));
-							bcon.Minor = ntohs(*((unsigned short *)&m_ThreadGps->RcvBuffer[13+i*6]));
-							bcon.TimeStamp = ntohs(*((unsigned short *)&m_ThreadGps->RcvBuffer[15+i*6]));
+							memset(bcon.uuid, 0, 16);
+							memcpy(bcon.uuid, &(m_ThreadGps->RcvBuffer[index+2 + i * 24]), 16);
+							bcon.Major = ntohs(*((unsigned short *)&m_ThreadGps->RcvBuffer[index+2+16+i*24]));
+							bcon.Minor = ntohs(*((unsigned short *)&m_ThreadGps->RcvBuffer[index+2+18 + i * 24]));
+							bcon.TXPower = ntohs(*((unsigned short *)&m_ThreadGps->RcvBuffer[index+2+19 + i * 24]));
+							bcon.RSSI = ntohs(*((unsigned short *)&m_ThreadGps->RcvBuffer[index+2+20 + i * 24]));
+							bcon.TimeStamp = ntohs(*((unsigned short *)&m_ThreadGps->RcvBuffer[index+2+22+i*24]));
 							mBcon.push_back(bcon);
 						}
+						
 						std::list<Command>::iterator it;
 						int count = 0;
 						m_timeOutListLocker.lock();
@@ -683,7 +705,7 @@ void CRadioGps::RecvData()
 								{
 									Respone r = { 0 };
 									r.source = m_ThreadGps->radioID;
-									r.becon = mBcon;
+									r.bcon = getValidBcon(mBcon);
 									onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
 									count++;
 									break;
@@ -698,7 +720,7 @@ void CRadioGps::RecvData()
 							
 								Respone r = { 0 };
 								r.source = m_ThreadGps->radioID;
-								r.becon = mBcon;
+								r.bcon = getValidBcon(mBcon);
 								onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
 							}
 
@@ -802,4 +824,47 @@ void CRadioGps::locationIndoorConfig(int Interval, int iBeaconNumber, bool isEme
 	interval = Interval;
 	iBconNum = iBeaconNumber;
 	isEme = isEmergency;
+}
+BconMajMinTimeReport CRadioGps::getValidBcon(std::list<BconMajMinTimeReport> bcons)
+{
+	
+	BconMajMinTimeReport bcon = {0};
+	int maxPower = 0;
+	std::list<BconMajMinTimeReport>::iterator it;
+	for (it = bcons.begin(); it != bcons.end(); it++)
+	{
+		if (maxPower < it->TXPower)
+		{
+			maxPower = it->TXPower;
+			bcon.Major = it->Major;
+			bcon.Minor = it->Minor;
+			bcon.RSSI = it->RSSI;
+			bcon.TimeStamp = it->TimeStamp;
+			bcon.TXPower = it->TXPower;
+			memcpy(bcon.uuid, it->uuid, 16);
+		}
+	}
+	if (lastBcons.size() <= 0)
+	{
+		lastBcons = bcons;
+		return bcon;
+	}
+	else
+	{
+		std::list<BconMajMinTimeReport>::iterator iter;
+		for (iter = lastBcons.begin(); iter != lastBcons.end(); iter++)
+		{
+			if (bcon.Major == iter->Major && bcon.Minor == iter->Minor)
+			{
+				lastBcons = bcons;
+				return bcon;
+			}
+			else
+			{
+				
+			}
+		}
+		lastBcons = bcons;
+	}
+	return bcon;
 }

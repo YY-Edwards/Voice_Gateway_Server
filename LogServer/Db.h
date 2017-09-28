@@ -92,6 +92,6 @@ public:
 		const char* pointy
 		);
 	bool updateIBeacon(const char* condition, recordType& val);
-	bool insertLocationIndoor(int source, int major, int minor, int timestamp);
+	bool insertLocationIndoor(int source, int major, int minor, int timestamp, int rssi, int txpower, std::string uuid);
 };
 

@@ -179,6 +179,9 @@
     <ClInclude Include="LocationInDoorAction.h">
       <Filter>eventAction</Filter>
     </ClInclude>
+    <ClInclude Include="..\lib\rpc\include\ringbuffer.h">
+      <Filter>rpc\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dispatch.cpp">
@@ -225,6 +228,9 @@
     </ClCompile>
     <ClCompile Include="Tool.cpp">
       <Filter>Tool</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\rpc\src\ringbuffer.c">
+      <Filter>rpc\src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

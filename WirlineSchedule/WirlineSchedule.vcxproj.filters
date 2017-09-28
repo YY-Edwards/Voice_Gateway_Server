@@ -79,6 +79,9 @@
     <ClCompile Include="WLSocketLog.cpp">
       <Filter>source\class</Filter>
     </ClCompile>
+    <ClCompile Include="..\lib\rpc\src\ringbuffer.c">
+      <Filter>rpc\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ambe3000.h">
@@ -380,6 +383,9 @@
     </ClInclude>
     <ClInclude Include="WLSocketLog.h">
       <Filter>include\class</Filter>
+    </ClInclude>
+    <ClInclude Include="..\lib\rpc\include\ringbuffer.h">
+      <Filter>rpc\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

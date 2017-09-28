@@ -54,6 +54,9 @@ struct BconMajMinTimeReport
 	unsigned short Major;
 	unsigned short Minor;
 	unsigned short TimeStamp;
+	unsigned char  TXPower;
+	unsigned char  RSSI;
+	unsigned char uuid[16];
 };
 typedef struct tagCommand
 {
@@ -90,7 +93,8 @@ typedef struct tagRespone
 	int operate;
 	double altitude;
 	std::map<std::string, RadioStatus> rs;
-	std::list< BconMajMinTimeReport> becon;
+	//std::list< BconMajMinTimeReport> becon;
+	BconMajMinTimeReport bcon;
 }Respone;
 extern void(*myCallBackFunc)(  int, Respone);
 void onData(void(*func)(int, Respone),  int call, Respone data);

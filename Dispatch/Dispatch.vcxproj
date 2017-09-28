@@ -102,6 +102,7 @@
     <ClInclude Include="..\lib\radio\text\TextMsg.h" />
     <ClInclude Include="..\lib\rpc\include\AbstractAction.h" />
     <ClInclude Include="..\lib\rpc\include\BaseConnector.h" />
+    <ClInclude Include="..\lib\rpc\include\ringbuffer.h" />
     <ClInclude Include="..\lib\rpc\include\RpcJsonParser.h" />
     <ClInclude Include="..\lib\rpc\include\RpcServer.h" />
     <ClInclude Include="..\lib\rpc\include\TcpServer.h" />
@@ -145,6 +146,7 @@
     <ClCompile Include="..\lib\radio\DataScheduling.cpp" />
     <ClCompile Include="..\lib\radio\gps\RadioGps.cpp" />
     <ClCompile Include="..\lib\radio\text\TextMsg.cpp" />
+    <ClCompile Include="..\lib\rpc\src\ringbuffer.c" />
     <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcServer.cpp" />
     <ClCompile Include="..\lib\rpc\src\TcpServer.cpp" />

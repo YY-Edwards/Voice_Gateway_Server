@@ -219,6 +219,9 @@
     <ClInclude Include="RecvLocationIndoorAction.h">
       <Filter>clientAction</Filter>
     </ClInclude>
+    <ClInclude Include="..\lib\rpc\include\ringbuffer.h">
+      <Filter>lib\rpc\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -268,6 +271,9 @@
     </ClCompile>
     <ClCompile Include="mongoose.c">
       <Filter>http</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\rpc\src\ringbuffer.c">
+      <Filter>lib\rpc\src</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

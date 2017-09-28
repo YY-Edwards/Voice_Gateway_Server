@@ -126,7 +126,7 @@ void migrate_v100(CMySQL* pMySQL){
 																																																																					UNIQUE INDEX `id_UNIQUE` (`id` ASC)) \
 																																																																												ENGINE = InnoDB;  \
 																																																																											");
-																																																																																		pMySQL->createTable("CREATE TABLE IF NOT EXISTS `location` ( \
+pMySQL->createTable("CREATE TABLE IF NOT EXISTS `location` ( \
 																																																																																																			`id` INT(11) NOT NULL AUTO_INCREMENT,	\
 																																																																																																															`source` MEDIUMTEXT NOT NULL, \
 																																																																																																																											`major` INT NOT NULL DEFAULT 0, \
@@ -1110,7 +1110,7 @@ bool CDb::updateIBeacon(const char* condition, recordType& val)
 {
 	return m_pMySQLDb->update("ibeacons", val, condition);
 }
-bool CDb::insertLocationIndoor(int source, int major, int minor, int timestamp)
+bool CDb::insertLocationIndoor(int source, int major, int minor, int timestamp, int rssi, int txpower ,std::string uuid)
 {
 	try{
 		recordType locationIndoor;
@@ -1119,6 +1119,9 @@ bool CDb::insertLocationIndoor(int source, int major, int minor, int timestamp)
 		locationIndoor["major"] = std::to_string(major);;
 		locationIndoor["minor"] = std::to_string(minor);
 		locationIndoor["timestamp"] = std::to_string(timestamp);
+		locationIndoor["rssi"] = std::to_string(rssi);
+		locationIndoor["txpwr"] = std::to_string(txpower);
+		locationIndoor["uuid"] = uuid;
 
 		m_pMySQLDb->insert("location", locationIndoor);
 	}

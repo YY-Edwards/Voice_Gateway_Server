@@ -69,6 +69,8 @@ public:
 	void RecvMsg();
 	std::string WChar2Ansi(LPCWSTR pwszSrc);
 	std::string TCHAR2STRING(TCHAR * STR);
+	std::string UTF8ToGBK(const std::string& strUTF8);
+	std::string  GBKToUTF8(const std::string& strGBK);
 private:
 	int m_nSendSequenceNumber;
 	bool m_RcvSocketOpened;

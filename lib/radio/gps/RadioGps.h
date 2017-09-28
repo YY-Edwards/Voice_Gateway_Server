@@ -44,7 +44,7 @@
 
 #define Triggered_Location_Request_Tokens_Indoor_Length  0x0c
 #define beacon_data 0x73
-#define bcon_maj_min_time 0x75
+#define start_bcon_uuid_maj_min_txpwr_rssi_time 0x77
 typedef struct tagThreadGPS
 {
 	SOCKET           mySocket;
@@ -93,5 +93,9 @@ private:
 	int interval;
 	int iBconNum;
 	bool isEme;
+	std::list<BconMajMinTimeReport> lastBcons;
+	BconMajMinTimeReport getValidBcon(std::list<BconMajMinTimeReport> bcons);
+
+
 };
 

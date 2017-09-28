@@ -157,7 +157,7 @@ void CDataScheduling::connect( const char* ip)
 	int result = 1;
 	if (INADDR_NONE != inet_addr(ip)) 
 	if( !isUdpConnect) 
-	if( lastIP != ip)
+	//if( lastIP != ip)
 	{
 		
 		DWORD dwIP = inet_addr(ip);

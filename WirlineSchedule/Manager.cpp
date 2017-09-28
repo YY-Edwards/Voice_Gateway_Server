@@ -970,10 +970,36 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 						 for (auto i = response.rs.begin(); i != response.rs.end(); i++)
 						 {
 							 RadioStatus radioStatus = i->second;
-							 FieldValue element(FieldValue::TObject);
+							/* FieldValue element(FieldValue::TObject);
 							 element.setKeyVal("radioId", FieldValue(radioStatus.id));
 							 element.setKeyVal("IsOnline", FieldValue((1 == radioStatus.status)));
-							 element.setKeyVal("IsInGps", FieldValue((1 == radioStatus.gpsQueryMode)));
+							 element.setKeyVal("IsInGps", FieldValue((1 == radioStatus.gpsQueryMode)));*/
+							 FieldValue element(FieldValue::TObject);
+							 element.setKeyVal("radioId", FieldValue(radioStatus.id));
+							 bool isGps = false;
+							 if (radioStatus.gpsQueryMode != 0)
+							 {
+								 if (radioStatus.gpsQueryMode != 25)
+								 {
+									 isGps = true;
+								 }
+							 }
+							 bool isLocationIndoor = false;
+							 if (radioStatus.gpsQueryMode != 0)
+							 {
+								 if (radioStatus.gpsQueryMode == 25 || radioStatus.gpsQueryMode == 26)
+								 {
+									 isLocationIndoor = true;
+								 }
+							 }
+							 bool isArs = false;
+							 if (radioStatus.status != 0)
+							 {
+								 isArs = true;
+							 }
+							 element.setKeyVal("IsInLocationIndoor", FieldValue(isLocationIndoor));
+							 element.setKeyVal("IsInGps", FieldValue(isGps));
+							 element.setKeyVal("IsOnline", FieldValue(isArs));
 							 info.push(element);
 						 }
 						 g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, info);
@@ -981,18 +1007,21 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 		break;
 	case GPS_TRIGG_COMM_INDOOR:
 	{
-			printf_s("GPS_TRIGG_COMM_INDOOR list size:%d\r\n", response.becon.size());
-			FieldValue info(FieldValue::TArray);
-			std::list<BconMajMinTimeReport>::iterator mBcon;
-			for (auto i = response.becon.begin(); i != response.becon.end(); i++)
+			FieldValue element(FieldValue::TObject);
+			FieldValue uuid(FieldValue::TArray);
+			for (int i = 0; i < 17; i++)
 			{
-				FieldValue element(FieldValue::TObject);
-				element.setKeyVal("timestamp", FieldValue(mBcon->TimeStamp));
-				element.setKeyVal("major", FieldValue(mBcon->Major));
-				element.setKeyVal("minor", FieldValue(mBcon->Minor));
-				info.push(element);
+				FieldValue temp(FieldValue::TInt);
+				temp.setInt(response.bcon.uuid[i]);
+				uuid.push(temp);
 			}
-			g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, info);
+			element.setKeyVal("uuid", FieldValue(uuid));
+			element.setKeyVal("txpower", FieldValue(response.bcon.TXPower));
+			element.setKeyVal("rssi", FieldValue(response.bcon.RSSI));
+			element.setKeyVal("timestamp", FieldValue(response.bcon.TimeStamp));
+			element.setKeyVal("major", FieldValue(response.bcon.Major));
+			element.setKeyVal("minor", FieldValue(response.bcon.Minor));
+			g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, element);
 	}
 		break;
 	default:
