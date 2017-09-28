@@ -13,11 +13,17 @@ CRpcClient::CRpcClient()
 	, m_bQuit(false)
 	, m_nCallId(0)
 {
+	m_pRingBuffer = createRingBuffer(1024 * 100, 1);		// 100k buffer
 }
 
 
 CRpcClient::~CRpcClient()
 {
+	assert(NULL != m_pRingBuffer);
+	if (NULL != m_pRingBuffer)
+	{
+		freeRingBuffer(m_pRingBuffer);
+	}
 	stop();
 }
 
@@ -104,8 +110,28 @@ void CRpcClient::stop()
 
 int CRpcClient::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 {
+	char buffer[102400];
 	try{
-		std::string str(pData, dataLen);
+		for (int i = 0; i < dataLen; i++)
+		{
+			push(m_pRingBuffer, &pData[i]);
+		}
+		int len = dumpBuffer(m_pRingBuffer, buffer);
+
+		
+		std::string str;// (pData, dataLen);
+		int idx = JsonUtil::getJsonStr(buffer, len, str);
+		if (idx <= 0)
+		{
+			// no valid json string
+			return 0;
+		}
+		// pop string from ring buffer
+		for (int i = 0; i <= idx; i++)
+		{
+			char ch;
+			pop(m_pRingBuffer, &ch);
+		}
 
 		std::map<std::string, std::string> args;
 		CRpcJsonParser parser;

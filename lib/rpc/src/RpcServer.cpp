@@ -11,17 +11,43 @@ CRpcServer::CRpcServer()
 	, m_thdPool(NULL)
 	, m_bQuit(false)
 {
+	m_pRingBuffer = createRingBuffer(102400, 1);
 }
 
 
 CRpcServer::~CRpcServer()
 {
+	if (NULL != m_pRingBuffer)
+	{
+		freeRingBuffer(m_pRingBuffer);
+	}
 }
 
 int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 {
+	char buffer[102400];
 	try{
-		std::string str(pData, dataLen);
+		for (int i = 0; i < dataLen; i++)
+		{
+			push(m_pRingBuffer, &pData[i]);
+		}
+		int len = dumpBuffer(m_pRingBuffer, buffer);
+
+
+		std::string str;// (pData, dataLen);
+		int idx = JsonUtil::getJsonStr(buffer, len, str);
+		if (idx <= 0)
+		{
+			// no valid json string
+			return 0;
+		}
+		// pop string from ring buffer
+		for (int i = 0; i <= idx; i++)
+		{
+			char ch;
+			pop(m_pRingBuffer, &ch);
+		}
+		//std::string str(pData, dataLen);
 		printf("received data:%s", str.c_str());
 
 		std::string callName;
