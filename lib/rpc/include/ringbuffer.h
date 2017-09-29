@@ -53,7 +53,7 @@ extern "C" {
 	/*
 	* Get valid data length in buffer 
 	*/
-	int size(const pRingBuffer pBuff);
+	int getRingBufferSize(const pRingBuffer pBuff);
 
 	/*
 	* Push a element into buffer
