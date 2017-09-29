@@ -172,7 +172,7 @@ int getFreeSize(const pRingBuffer pBuff)
 		goto err;
 	}
 
-	return (pBuff->bufferSize - size(pBuff));
+	return (pBuff->bufferSize - getRingBufferSize(pBuff));
 
 err:
 	return n;
