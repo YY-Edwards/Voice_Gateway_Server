@@ -66,7 +66,7 @@ bool isFull(const pRingBuffer pBuff)
 		BufferEmptyNo == pBuff->empty);
 }
 
-int size(const pRingBuffer pBuff)
+int getRingBufferSize(const pRingBuffer pBuff)
 {
 	int n = 0;
 	if (NULL == pBuff)
