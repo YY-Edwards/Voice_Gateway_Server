@@ -424,7 +424,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 		//{
 			FieldValue element(FieldValue::TObject);
 			FieldValue uuid(FieldValue::TArray);
-			for (int i = 0; i < 17; i++)
+			for (int i = 0; i < 16; i++)
 			{
 				FieldValue temp(FieldValue::TInt);
 				//temp.setInt(mBcon->uuid[i]);

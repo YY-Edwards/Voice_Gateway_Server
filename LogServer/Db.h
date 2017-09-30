@@ -93,5 +93,6 @@ public:
 		);
 	bool updateIBeacon(const char* condition, recordType& val);
 	bool insertLocationIndoor(int source, int major, int minor, int timestamp, int rssi, int txpower, std::string uuid);
+	int listLocation(const char* condition, std::list<recordType>& records);
 };
 

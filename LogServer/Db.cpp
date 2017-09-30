@@ -1136,3 +1136,14 @@ bool CDb::insertLocationIndoor(int source, int major, int minor, int timestamp, 
 
 	return true;
 }
+int CDb::listLocation(const char* condition, std::list<recordType>& records)
+{
+	std::string sql = "select location.*, ibeacons.pointx, ibeacons.pointy, areas.name as areaname from (ibeacons left join areas on areas.id = ibeacons.area) right join location on ibeacons.major = location.major and ibeacons.minor = location.minor ";
+	if (NULL != condition && strlen(condition) > 0)
+	{
+		sql += " ";
+		sql += condition;
+	}
+
+	return m_pMySQLDb->query(sql.c_str(), records);
+}

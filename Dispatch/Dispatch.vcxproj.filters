@@ -182,6 +182,9 @@
     <ClInclude Include="..\lib\rpc\include\ringbuffer.h">
       <Filter>rpc\include</Filter>
     </ClInclude>
+    <ClInclude Include="..\lib\rpc\include\request.h">
+      <Filter>rpc\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Dispatch.cpp">

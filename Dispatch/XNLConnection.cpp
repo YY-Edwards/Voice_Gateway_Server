@@ -1004,7 +1004,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 						{
 							if (myTcpCallBackFunc != NULL)
 							{
-								TcpRespone tr;
+								TcpRespone tr = {0};
 								tr.id = rmt_addr;
 								tr.controlType = OFF;
 								tr.result = REMOTE_FAILED;
@@ -1065,7 +1065,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 							//rmtflag = false;
 							if (myTcpCallBackFunc != NULL)
 							{
-								TcpRespone tr;
+								TcpRespone tr = {0};
 								tr.id = rmt_addr;
 								tr.controlType = MONITOR;
 								tr.result = REMOTE_FAILED;
@@ -1131,7 +1131,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					if (myTcpCallBackFunc != NULL)
 					{
 						TcpRespone tr = {0};
-						tr.id = rmt_addr;
+						tr.id = it->radioId;
 						/*ArgumentType args;
 						args["Status"] = FieldValue(REMOTE_SUCESS);
 						args["Target"] = FieldValue(rmt_addr);
@@ -1217,8 +1217,8 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 				{
 					if (myTcpCallBackFunc != NULL)
 					{
-						TcpRespone tr;
-						tr.id = rmt_addr;
+						TcpRespone tr = {0};
+						tr.id = it->radioId;
 						tr.callType = STOP;
 						tr.result = REMOTE_SUCESS;
 						onTcpData(myTcpCallBackFunc,  it->command, tr);

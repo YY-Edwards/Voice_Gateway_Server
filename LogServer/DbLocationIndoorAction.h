@@ -75,8 +75,8 @@ void locationIndoorAction(CRemotePeer* pRemote, const std::string& param, uint64
 
 			if (0 == operation.compare("list"))
 			{
-				CDb::instance()->query("location", condStr.c_str(), records);
-
+				//CDb::instance()->query("location", condStr.c_str(), records);
+				CDb::instance()->listLocation(condStr.c_str(), records);
 				FieldValue fvRecords(FieldValue::TArray);
 				for (auto i = records.begin(); i != records.end(); i++)
 				{

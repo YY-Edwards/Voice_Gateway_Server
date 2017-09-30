@@ -523,16 +523,20 @@ void CRadioGps::RecvData()
 									r.cycle = it->cycle;
 									r.operate = operate;
 									onData(myCallBackFunc, it->command, r);
+									it = timeOutList.erase(it);
+									break;
 								}
 								else
 								{
 									Respone  r = { 0 };;
-									r.source = m_ThreadGps->radioID;
+									r.target = m_ThreadGps->radioID;
 									r.gpsStatus = UNSUCESS;
 									r.querymode = it->querymode;
 									r.cycle = it->cycle;
 									r.operate = operate;
 									onData(myCallBackFunc, it->command, r);
+									it = timeOutList.erase(it);
+									break;
 								}
 
 #if DEBUG_LOG
@@ -662,12 +666,14 @@ void CRadioGps::RecvData()
 					else if (bytes != -1)
 					{
 						n = bytes;
+						
 					}
 					for (int j = 0; j <n; j++)
 					{
 						if (start_bcon_uuid_maj_min_txpwr_rssi_time == m_ThreadGps->RcvBuffer[j])
 						{
 							index = j;//记录元素下标  
+							break;
 						}
 					}
 				
@@ -692,6 +698,10 @@ void CRadioGps::RecvData()
 							bcon.RSSI = ntohs(*((unsigned short *)&m_ThreadGps->RcvBuffer[index+2+20 + i * 24]));
 							bcon.TimeStamp = ntohs(*((unsigned short *)&m_ThreadGps->RcvBuffer[index+2+22+i*24]));
 							mBcon.push_back(bcon);
+							if (bcon.Major > 1)
+							{
+								int a = bcon.Major;
+							}
 						}
 						
 						std::list<Command>::iterator it;
@@ -829,13 +839,14 @@ BconMajMinTimeReport CRadioGps::getValidBcon(std::list<BconMajMinTimeReport> bco
 {
 	
 	BconMajMinTimeReport bcon = {0};
-	int maxPower = 0;
+	//int maxPower = 0;
+	int maxRssi = 0;
 	std::list<BconMajMinTimeReport>::iterator it;
 	for (it = bcons.begin(); it != bcons.end(); it++)
 	{
-		if (maxPower < it->TXPower)
+		if (maxRssi < it->RSSI)
 		{
-			maxPower = it->TXPower;
+			maxRssi = it->RSSI;
 			bcon.Major = it->Major;
 			bcon.Minor = it->Minor;
 			bcon.RSSI = it->RSSI;

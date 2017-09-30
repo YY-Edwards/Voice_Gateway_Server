@@ -364,7 +364,7 @@ void CDataScheduling::workThreadFunc()
 				getGps(it->radioId, it->querymode, it->cycle);
 				break;
 			case STOP_QUERY_GPS:
-				stopGps(it->radioId, it->callId);
+				stopGps(it->radioId, it->querymode);
 				break;
 			case MNIS_DIS_CONNECT:
 				break;
