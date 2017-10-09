@@ -7,6 +7,7 @@ using Newtonsoft.Json.Linq;
 
 using System.Threading;
 
+using Sigmar.Extension;
 
 namespace Manager
 {
@@ -16,6 +17,7 @@ namespace Manager
         private CSender s_Sender;
 
         private string m_Host = "127.0.0.1";
+        //private string m_Host = "192.168.2.133";
         private int m_Port = 9000;
 
         private long s_CallID = 0;
@@ -34,6 +36,8 @@ namespace Manager
         public delegate void StatusHandel(bool isinit);
         public  event StatusHandel OnStatusChanged;
         public  event ReceiveRequestHandele OnReceiveRequest;
+
+        public event EventHandler Timeout;
 
         private  readonly object m_RequestLockHelper = new object();
 
@@ -70,7 +74,7 @@ namespace Manager
                 if (s_Sender == null)
                 {
                     s_Sender = new CSender();
-                    s_Sender.OnTimeout += delegate { if (m_WaitReponse != null)m_WaitReponse.Release(); };
+                    s_Sender.OnTimeout += delegate { if (m_WaitReponse != null)m_WaitReponse.Release(); if (Timeout != null)Timeout(this, new EventArgs()); };
                 }
             }
             
@@ -83,38 +87,31 @@ namespace Manager
             s_Tcp.Write(Encoding.UTF8.GetBytes(json));
 
         }
-        private  void OnReceiveBytes(object sender, byte[] bytes)
+        private string _untreatedjson = string.Empty;
+        private void OnReceiveBytes(object sender, byte[] bytes)
         {
             try
             {
-                string str = Encoding.UTF8.GetString(bytes);
-                Regex regex = new Regex("}{");
-                string[] sArray = regex.Split(str);
+                string str = _untreatedjson + Encoding.UTF8.GetString(bytes);
+                string[] Jsons = str.ToJsons();
+                if (Jsons.Length <= 0) return;
 
-                for (int i = 0; i < sArray.Length; i++)
+                _untreatedjson = Jsons[Jsons.Length - 1];
+
+                for (int i = 0; i < Jsons.Length - 1; i++)
                 {
+                    string jsonstr = Jsons[i];
                     try
                     {
-                        string jsonstr = string.Empty;
-                        if (sArray.Length > 1)
-                        {
-                            if (i == 0) jsonstr = sArray[i] + "}";
-                            else if (i == sArray.Length - 1) jsonstr = "{" + sArray[i];
-                            else jsonstr = "{" + sArray[i] + "}";
-                        }
-                        else
-                        {
-                            jsonstr = sArray[i];
-                        }
 
                         JObject json = JsonConvert.DeserializeObject<JObject>(jsonstr);
 
                         if (json.Property("call") == null || json.Property("call").ToString() == string.Empty)
                         {
                             //response
-                            s_Reponse = JsonConvert.DeserializeObject<TServerResponse>(sArray[i]);
+                            s_Reponse = JsonConvert.DeserializeObject<TServerResponse>(jsonstr);
 
-                            if(s_Reponse != null)s_Sender.End(s_Reponse.callId);
+                            if (s_Reponse != null) s_Sender.End(s_Reponse.callId);
 
                             if (m_WaitReponse != null)
                             {
@@ -131,11 +128,11 @@ namespace Manager
                         else
                         {
                             //request
-                            TServerRequest rxrequest = JsonConvert.DeserializeObject<TServerRequest>(JsonConvert.SerializeObject(json));
+                            TServerRequest rxrequest = JsonConvert.DeserializeObject<TServerRequest>(jsonstr);
 
                             if (rxrequest != null)
                             {
-                                s_CallID = rxrequest.CallId;                              
+                                if (rxrequest.CallId > s_CallID) s_CallID = rxrequest.CallId;
                                 SendJson(JsonConvert.SerializeObject(new TServerResponse()
                                 {
                                     status = "success",
@@ -160,7 +157,7 @@ namespace Manager
         public string[] Request(RequestOpcode call, RequestType type, object param)
         {
 
-            lock (m_RequestLockHelper)
+            //lock (m_RequestLockHelper)
             {
                 try
                 {
@@ -181,10 +178,10 @@ namespace Manager
 
                     JsonSerializerSettings jsetting = new JsonSerializerSettings();
                     jsetting.NullValueHandling = NullValueHandling.Ignore;
-                    string json = JsonConvert.SerializeObject(requset, Formatting.Indented, jsetting);
+                    string json = JsonConvert.SerializeObject(requset, Formatting.None, jsetting);
 
 
-                    s_Sender.Begin(s_CallID, 3000, 3, delegate { SendJson(json); });
+                    s_Sender.Begin(s_CallID, 3000, 3, delegate { SendJson(json + "\r\n"); });
                     if (m_WaitReponse != null) m_WaitReponse.WaitOne();
 
                     return new string[2] { 
@@ -209,10 +206,37 @@ namespace Manager
         public RequestType Type;
 
         [JsonProperty(PropertyName = "call")]
-        public string callStr{get{return Call.ToString();} set{Call = (RequestOpcode)Enum.Parse(typeof(RequestOpcode),value);}}
+        public string callStr
+        {
+            get { return Call.ToString(); }
+            set
+            {
+                try
+                { 
+                    Call = (RequestOpcode)Enum.Parse(typeof(RequestOpcode), value); }
+                catch
+                {
+
+                }
+            }
+        }
 
         [JsonProperty(PropertyName = "type")]
-        public string typestr{get{return Type.ToString();} set{ Type = (RequestType)Enum.Parse(typeof(RequestType), value);}}
+        public string typestr
+        {
+            get { return Type.ToString(); }
+            set
+            {
+                try
+                {
+                    Type = (RequestType)Enum.Parse(typeof(RequestType), value);
+                }
+                catch
+                {
+
+                }
+            }
+        }
 
         [JsonProperty(PropertyName = "callId")]
         public long CallId;
@@ -287,6 +311,7 @@ namespace Manager
 
         area,
         ibeacon,
+        locationIndoor,
     };
 
 }

@@ -494,7 +494,7 @@ namespace Manager
                     }
                     else
                     {
-                        m_MapImage = new BitmapImage(new Uri(map.Area.Map));
+                        m_MapImage = new BitmapImage(new Uri( CImgServer.Instance().Url + map.Area.Map));
                     }
                     m_MapErrVisibe = Visibility.Hidden;
                 }

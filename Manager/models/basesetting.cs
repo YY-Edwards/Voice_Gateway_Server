@@ -39,8 +39,16 @@ namespace Manager
             try
             {
                 CBaseSetting tserver  = JsonConvert.DeserializeObject<CBaseSetting>(json);
-                Svr = tserver.Svr;
-                LogSvr = tserver.LogSvr;
+                Svr = tserver.Svr ?? new NetAddress()
+                {
+                    Ip = "127.0.0.1",
+                    Port = 9000
+                };
+                LogSvr = tserver.LogSvr ?? new NetAddress()
+                {
+                    Ip = "127.0.0.1",
+                    Port = 9003
+                };
 
                 IsSaveCallLog = tserver.IsSaveCallLog;
                 IsSaveMsgLog = tserver.IsSaveMsgLog;

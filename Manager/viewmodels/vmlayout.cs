@@ -156,6 +156,7 @@ namespace Manager
             {
                 CTServer.Instance().OnReceiveRequest += delegate { };
                 CTServer.Instance().OnStatusChanged += OnTServerChanged;
+                CTServer.Instance().Timeout += OnTimeout;
             }
             CTServer.Instance().Initialize();  
 
@@ -166,10 +167,17 @@ namespace Manager
             if (!CLogServer.Instance().IsInitialized)
             {
                 CLogServer.Instance().OnReceiveRequest += delegate { };
-                CLogServer.Instance().OnStatusChanged += OnLogServerChanged;              
+                CLogServer.Instance().OnStatusChanged += OnLogServerChanged;
+                CLogServer.Instance().Timeout += OnTimeout;
             }
 
             CLogServer.Instance().Initialize();
+        }
+
+        private bool istimeout = false;
+        private void  OnTimeout(object sender, EventArgs e)
+        {
+            istimeout = true;
         }
 
         private void MoveWin(object parameter)
@@ -223,7 +231,7 @@ namespace Manager
 
                     //save basesetting
                     m_BaseSettingDataContext.Set();
-                    System.Threading.Thread.Sleep(100);
+                    //System.Threading.Thread.Sleep(100);
 
                     mainwin.Dispatcher.BeginInvoke((Action)delegate()
                     {
@@ -237,7 +245,7 @@ namespace Manager
 
                     //save radiosetting
                     m_RadioSettingDataContext.Set();
-                    System.Threading.Thread.Sleep(100);
+                    //System.Threading.Thread.Sleep(100);
 
                     mainwin.Dispatcher.BeginInvoke((Action)delegate()
                     {
@@ -251,7 +259,7 @@ namespace Manager
 
                     //save repeatersetting
                     m_RepeaterSettingDataContext.Set();
-                    System.Threading.Thread.Sleep(100);
+                    //System.Threading.Thread.Sleep(100);
 
                     mainwin.Dispatcher.BeginInvoke((Action)delegate()
                     {
@@ -265,7 +273,7 @@ namespace Manager
 
                     //save locationinddoorsetting
                     m_LocationInDoorDataContext.Set();
-                    System.Threading.Thread.Sleep(100);
+                    //System.Threading.Thread.Sleep(100);
 
                     mainwin.Dispatcher.BeginInvoke((Action)delegate()
                     {
@@ -279,8 +287,9 @@ namespace Manager
 
                     //save user
                     m_UserDataContext.Set();
+                    //Thread.Sleep(100);
                     m_UserDataContext.Get();
-                    System.Threading.Thread.Sleep(100);
+                    //System.Threading.Thread.Sleep(100);
 
                     mainwin.Dispatcher.BeginInvoke((Action)delegate()
                     {
@@ -293,9 +302,10 @@ namespace Manager
                     });
 
                     //save department
-                    m_DepartmentDataContext.Set();                                     
+                    m_DepartmentDataContext.Set();
+                    //Thread.Sleep(100);                
                     m_DepartmentDataContext.Get();
-                    System.Threading.Thread.Sleep(100);
+                    //System.Threading.Thread.Sleep(100);
 
                     mainwin.Dispatcher.BeginInvoke((Action)delegate()
                     {
@@ -309,9 +319,10 @@ namespace Manager
 
                     //save staff
                     m_StaffDataContext.Set();
+                    //Thread.Sleep(100);
                     m_StaffDataContext.AssignDetach(m_DepartmentDataContext.DepartmentList);
                     m_StaffDataContext.Get();
-                    System.Threading.Thread.Sleep(100);
+                    //System.Threading.Thread.Sleep(100);
 
                     mainwin.Dispatcher.BeginInvoke((Action)delegate()
                     {
@@ -325,9 +336,10 @@ namespace Manager
 
                     //save radio
                     m_RadioDataContext.Set();
+                    //Thread.Sleep(100);
                     m_RadioDataContext.AssignDetach(m_DepartmentDataContext.DepartmentList, m_StaffDataContext.StaffList);
                     m_RadioDataContext.Get();
-                    System.Threading.Thread.Sleep(100);
+                    //System.Threading.Thread.Sleep(100);
 
                     mainwin.Dispatcher.BeginInvoke((Action)delegate()
                     {
@@ -341,8 +353,9 @@ namespace Manager
 
                     //save area
                     m_AreaDataContext.Set();
+                    //Thread.Sleep(100);
                     m_AreaDataContext.Get();
-                    System.Threading.Thread.Sleep(100);
+                    //System.Threading.Thread.Sleep(100);
 
                     mainwin.Dispatcher.BeginInvoke((Action)delegate()
                     {
@@ -356,9 +369,10 @@ namespace Manager
 
                     //save ibeacon
                     m_iBeaconDataContext.Set();
+                    //Thread.Sleep(100);
                     m_iBeaconDataContext.Get();
                    
-                    System.Threading.Thread.Sleep(100);
+                    //System.Threading.Thread.Sleep(100);
 
                     mainwin.Dispatcher.BeginInvoke((Action)delegate()
                     {
@@ -467,11 +481,16 @@ namespace Manager
             if (isinit)
             {
                 m_BaseSettingDataContext.Get();
+                Thread.Sleep(100);
                 m_RadioSettingDataContext.Get();
+                Thread.Sleep(100);
                 m_RepeaterSettingDataContext.Get();
+                Thread.Sleep(100);
                 m_LocationInDoorDataContext.Get();
+                Thread.Sleep(100);
 
                 m_RegisterDataContext.Get();
+                Thread.Sleep(100);
             }
         }
 
@@ -483,12 +502,18 @@ namespace Manager
             if (isinit)
             {
                 m_UserDataContext.Get();
+                Thread.Sleep(100);
                 m_DepartmentDataContext.Get();
+                Thread.Sleep(100);
                 m_StaffDataContext.Get();
+                Thread.Sleep(100);
                 m_RadioDataContext.Get();
+                Thread.Sleep(100);
 
                 m_AreaDataContext.Get();
+                Thread.Sleep(100);
                 m_iBeaconDataContext.Get();
+                Thread.Sleep(100);
             }
         }
     }

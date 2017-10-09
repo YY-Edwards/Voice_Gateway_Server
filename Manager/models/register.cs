@@ -46,7 +46,15 @@ namespace Manager
        {
            get
            {
-               return DateTime.ParseExact(expiration, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture);
+               try
+               {
+                   return DateTime.ParseExact(expiration, "yyyyMMdd", System.Globalization.CultureInfo.CurrentCulture);
+               }
+               catch
+               {
+                   return default(DateTime);
+               }
+
            }
        }
 
@@ -92,16 +100,18 @@ namespace Manager
 
        public override void CustomParse(RequestOpcode opcode,bool success, string reply)
        {         
-           if (success) Parse(reply);
+           Parse(reply);
 
            if(opcode == RequestOpcode.registerLicense)
            {
-               IsRegistered = success;              
+               IsRegistered = success;    
+               IsConnectedDevice = true;      
                if (OnRegister != null) OnRegister(success, this);
            }
            else if(opcode == RequestOpcode.queryLicense)
            {
-               IsConnectedDevice = success;              
+               IsRegistered = success;    
+               IsConnectedDevice = true;      
                if (OnQuery != null) OnQuery(success, this);
            }
        }

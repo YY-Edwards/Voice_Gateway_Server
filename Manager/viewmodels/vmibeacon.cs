@@ -14,8 +14,6 @@ using System.Threading;
 
 using System.Runtime.InteropServices;
 using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Shapes;
 using Util.Lib;
 using System.Windows.Media.Imaging;
@@ -219,13 +217,13 @@ namespace Manager
             if (m_SelectedAreaIndex < 0 || m_SelectedAreaIndex >= m_Areas.Count) return null;
             List<CRElement> list = m_iBeacon.List.FindAll(p =>
             {
-                return ((CiBeacon)p).Area == ((CArea)m_Areas[m_SelectedAreaIndex]).Name;
+                return ((CiBeacon)p).Area == ((CArea)m_Areas[m_SelectedAreaIndex]).ID;
             });
 
             return new ObservableCollection<CRElement>(list);
         }
             set { 
-                int i = 0; }
+                 }
         }
 
 
@@ -238,7 +236,7 @@ namespace Manager
                 {
                     res.RemoveAll(p =>
                     {
-                        return ((CiBeacon)p).Area == area.Name;
+                        return ((CiBeacon)p).Area == area.ID;
                     });
                 }
 
@@ -246,7 +244,7 @@ namespace Manager
             }
             set
             {
-                int i = 0;
+               
             }
         }
 
@@ -313,7 +311,7 @@ namespace Manager
 
                 if (index >= 0 && index < m_iBeacon.List.Count)
                 {
-                    ibeacon.Area = string.Empty;
+                    ibeacon.Area = -1;
                     ibeacon.X = 0;
                     ibeacon.Y = 0;
                     ibeacon.IsValid = false;
@@ -351,7 +349,7 @@ namespace Manager
 
                 if (index >= 0 && index < m_iBeacon.List.Count)
                 {
-                    ibeacon.Area = ((CArea)m_Areas[m_SelectedAreaIndex]).Name;
+                    ibeacon.Area = ((CArea)m_Areas[m_SelectedAreaIndex]).ID;
                     ibeacon.X = posinmap.X;
                     ibeacon.Y =  posinmap.Y;
                     ibeacon.IsValid = true;

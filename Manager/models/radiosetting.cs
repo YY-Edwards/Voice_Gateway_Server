@@ -41,10 +41,32 @@ namespace Manager
 
                 IsEnable = tserver.IsEnable;
                 IsOnlyRide = tserver.IsOnlyRide;
-                Svr = tserver.Svr;
-                Ride = tserver.Ride;
-                Mnis = tserver.Mnis;
-                GpsC = tserver.GpsC;
+                Svr = tserver.Svr ?? new NetAddress()
+                {
+                    Ip = "127.0.0.1",
+                    Port = 9001
+                };
+                Ride = tserver.Ride ?? new CRideNet()
+                {
+                    Host = "192.168.10.2",
+                    MessagePort = 4007,
+                    ArsPort = 4005,
+                    GpsPort = 4001,
+                    XnlPort = 8002,
+                };
+                Mnis = tserver.Mnis ?? new CMNISNet()
+                {
+                    Host = "192.168.11.2",
+                    MessagePort = 4007,
+                    ArsPort = 4005,
+                    GpsPort = 4001,
+                    XnlPort = 8002,
+                };
+                GpsC = tserver.GpsC ?? new NetAddress()
+                {
+                    Ip = "192.168.12.2",
+                    Port = 50000
+                };
                 return this;
             }
             catch

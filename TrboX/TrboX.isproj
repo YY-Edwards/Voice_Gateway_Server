@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+	<PropertyGroup>
+		<!-- Select a Product Configuration -->
+		<InstallShieldProductConfiguration>Express</InstallShieldProductConfiguration>
+		<!-- Select a Visual Studio Configuration / InstallShield Release -->
+		<Configuration>Debug</Configuration>
+		<InstallShieldRelease>$(Configuration)</InstallShieldRelease>
+	</PropertyGroup>
+	<ItemGroup>
+		<!-- The InstallShieldProject item selects the project to build -->
+		<InstallShieldProject Include="$(MSBuildProjectDirectory)\$(MSBuildProjectName).isl"/>
+		<!-- The InstallShieldReleaseFlags sets Release Flags -->
+		<!--<InstallShieldReleaseFlags Include=""/>-->
+		<!-- The InstallShieldMergeModulePath specifies what directories are
+		searched for Merge Modules -->
+		<!--<InstallShieldMergeModulePath Include=""/>-->
+	</ItemGroup>
+	<ItemGroup>
+		<!-- The ProjectReference items refer to any Visual Studio solutions you want to automatically probe for Project Output Groups.  -->
+	</ItemGroup>
+	<ItemGroup>
+		<!-- The TaggedOutputs items allow you to explicitly add extra files to output groups. Each item must include both Name and OutputGroup, as well as TargetPath metadata values. -->
+		<!--<TaggedOutputs Include="C:\My Test Exe.exe">
+			<Name>My Test Project</Name>
+			<OutputGroup>Primary output</OutputGroup>
+			<TargetPath>My Test Exe.exe</TargetPath>
+		</TaggedOutputs> -->
+	</ItemGroup>
+	<Import Project="$(MSBuildExtensionsPath32)\InstallShield\2015Limited\InstallShield.targets"/>
+	<ItemGroup>
+		<ProjectReference Include="..\Dispatch\Dispatch.vcxproj">
+			<Name>Dispatch</Name>
+			<Project>{1B9D30FE-4CF7-4B77-B53B-5AEF9B59EBE2}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\Dispatcher\Dispatcher.csproj">
+			<Name>Dispatcher</Name>
+			<Project>{F7FAF60D-C0F8-4E18-A3DC-F176FCB95AD0}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\LogServer\LogServer.vcxproj">
+			<Name>LogServer</Name>
+			<Project>{6426AB0C-F51F-45A0-ADD2-4A30B77D2E49}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\Manager\Manager.csproj">
+			<Name>Manager</Name>
+			<Project>{AEB1BCAE-0472-4B08-AFC0-2F58DD6A1593}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\TServer\TServer.vcxproj">
+			<Name>TServer</Name>
+			<Project>{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}</Project>
+		</ProjectReference>
+		<ProjectReference Include="..\WirlineSchedule\WirlineSchedule.vcxproj">
+			<Name>WirelineSchedule</Name>
+			<Project>{D5B64BC2-BDF4-4751-9965-2DDF74810CB5}</Project>
+		</ProjectReference>
+	</ItemGroup>
+</Project>

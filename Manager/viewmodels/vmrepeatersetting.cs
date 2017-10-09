@@ -125,6 +125,7 @@ namespace Manager
         {
             m_Repeater.IsEnable = enable;
             if (PropertyChanged != null)PropertyChanged(this, new PropertyChangedEventArgs("IsEnable"));
+            m_Repeater.NeedSave();
         }
 
         //base interface
