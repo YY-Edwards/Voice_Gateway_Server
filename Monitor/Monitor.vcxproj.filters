@@ -84,6 +84,9 @@
     <ClInclude Include="Util.h">
       <Filter>CUtil</Filter>
     </ClInclude>
+    <ClInclude Include="..\lib\rpc\include\ringbuffer.h">
+      <Filter>rpc\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Monitor.cpp">
@@ -124,6 +127,9 @@
     </ClCompile>
     <ClCompile Include="Util.cpp">
       <Filter>CUtil</Filter>
+    </ClCompile>
+    <ClCompile Include="..\lib\rpc\src\ringbuffer.c">
+      <Filter>rpc\src</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

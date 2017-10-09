@@ -110,6 +110,7 @@
   <ItemGroup>
     <ClInclude Include="..\lib\rpc\include\BaseConnector.h" />
     <ClInclude Include="..\lib\rpc\include\FieldValue.h" />
+    <ClInclude Include="..\lib\rpc\include\ringbuffer.h" />
     <ClInclude Include="..\lib\rpc\include\RpcJsonParser.h" />
     <ClInclude Include="..\lib\rpc\include\RpcServer.h" />
     <ClInclude Include="..\lib\rpc\include\TcpServer.h" />
@@ -128,6 +129,9 @@
     <ClInclude Include="Util.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\lib\rpc\src\ringbuffer.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcServer.cpp" />
     <ClCompile Include="..\lib\rpc\src\TcpServer.cpp" />
