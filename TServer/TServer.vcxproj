@@ -151,7 +151,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\lib\AES\Aes.cpp" />
-    <ClCompile Include="..\lib\rpc\src\ringbuffer.c" />
+    <ClCompile Include="..\lib\rpc\src\ringbuffer.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="..\lib\rpc\src\RpcClient.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcJsonParser.cpp" />
     <ClCompile Include="..\lib\rpc\src\RpcServer.cpp" />
