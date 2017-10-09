@@ -348,6 +348,8 @@
 		<row><td>Component4</td><td>{46236873-5E7A-4B58-92FD-7B6353661882}</td><td>SVR</td><td>2</td><td/><td>File1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component5</td><td>{8F9585EB-1F89-4AB6-8C4C-655C356CBD60}</td><td>SVR</td><td>2</td><td/><td>File4</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component6</td><td>{32415470-17F7-4508-AB49-DFA7201E9C8A}</td><td>TRBOX_MGR</td><td>2</td><td/><td>File5</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Component7</td><td>{2002CE1C-90A4-4C96-BB65-78FD7D4BD84C}</td><td>DEVICE</td><td>2</td><td/><td>File</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Component8</td><td>{D10EFA7D-8E55-46B4-9F30-ACF8CC272A11}</td><td>DEVICE</td><td>2</td><td/><td>File1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Controls.WPF.dll</td><td>{F991DE54-683C-4881-8DA5-5F470BA016AA}</td><td>BIN</td><td>2</td><td/><td>controls.wpf.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT</td><td>{F09857EB-8D31-477F-BAEE-A2014D16DCCC}</td><td>TRBOX_MGR</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT1</td><td>{632073B0-6A63-479F-9F79-8EFD14609438}</td><td>TRBOX_</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
@@ -1099,6 +1101,8 @@
 		<row><td>BIN1</td><td>System.Windows.Interactivity.dll</td></row>
 		<row><td>DEVICE</td><td>Component2</td></row>
 		<row><td>DEVICE</td><td>Component3</td></row>
+		<row><td>DEVICE</td><td>Component7</td></row>
+		<row><td>DEVICE</td><td>Component8</td></row>
 		<row><td>DEVICE</td><td>ISX_DEFAULTCOMPONENT2</td></row>
 		<row><td>DEVICE</td><td>libglog.dll1</td></row>
 		<row><td>DEVICE</td><td>libmysql.dll1</td></row>
@@ -1111,6 +1115,8 @@
 		<row><td>INSTALLDIR</td><td>Component4</td></row>
 		<row><td>INSTALLDIR</td><td>Component5</td></row>
 		<row><td>INSTALLDIR</td><td>Component6</td></row>
+		<row><td>INSTALLDIR</td><td>Component7</td></row>
+		<row><td>INSTALLDIR</td><td>Component8</td></row>
 		<row><td>INSTALLDIR</td><td>Controls.WPF.dll</td></row>
 		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT</td></row>
 		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT1</td></row>
@@ -1978,6 +1984,8 @@
 		<row><td>AlwaysInstall</td><td>Component4</td></row>
 		<row><td>AlwaysInstall</td><td>Component5</td></row>
 		<row><td>AlwaysInstall</td><td>Component6</td></row>
+		<row><td>AlwaysInstall</td><td>Component7</td></row>
+		<row><td>AlwaysInstall</td><td>Component8</td></row>
 		<row><td>AlwaysInstall</td><td>Controls.WPF.dll</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT1</td></row>
@@ -2017,11 +2025,8 @@
 		<col def="S255">ISBuildSourcePath</col>
 		<col def="I4">ISAttributes</col>
 		<col def="S72">ISComponentSubFolder_</col>
-		<row><td>File</td><td>Component</td><td>Dispatcher.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Dispatcher&gt;|Built</td><td>3</td><td/></row>
-		<row><td>File1</td><td>Component4</td><td>TServer.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;TServer&gt;|Built</td><td>3</td><td/></row>
-		<row><td>File2</td><td>Component2</td><td>Dispatch.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Dispatch&gt;|Built</td><td>3</td><td/></row>
-		<row><td>File3</td><td>Component3</td><td>WirelineSchedule.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;WirelineSchedule&gt;|Built</td><td>3</td><td/></row>
-		<row><td>File4</td><td>Component5</td><td>LogServer.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;LogServer&gt;|Built</td><td>3</td><td/></row>
+		<row><td>File</td><td>Component7</td><td>WirelineSchedule.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;WirelineSchedule&gt;|Built</td><td>3</td><td/></row>
+		<row><td>File1</td><td>Component8</td><td>Dispatch.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Dispatch&gt;|Built</td><td>3</td><td/></row>
 		<row><td>File5</td><td>Component6</td><td>Manager.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Manager&gt;|Built</td><td>3</td><td/></row>
 		<row><td>cefsharp.dll</td><td>CefSharp.dll</td><td>CefSharp.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Trbox\bin\CefSharp.dll</td><td>1</td><td/></row>
 		<row><td>cefsharp.wpf.dll</td><td>CefSharp.Wpf.dll</td><td>CEFSHA~1.DLL|CefSharp.Wpf.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Trbox\bin\CefSharp.Wpf.dll</td><td>1</td><td/></row>
@@ -2203,6 +2208,8 @@
 		<row><td>Component4</td><td/><td/><td>_7E42CFF1_E342_4223_99C6_9041EB42389B_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component5</td><td/><td/><td>_5E971E6A_595D_418A_BF19_62A162D7AF89_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component6</td><td/><td/><td>_12B174E1_8580_44C3_97CA_6B7B1BA69768_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Component7</td><td/><td/><td>_22C32C49_CD30_46F3_ACDC_81D170A75181_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Component8</td><td/><td/><td>_C3F02CBE_9128_438D_B34E_86E027DB5715_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Controls.WPF.dll</td><td/><td/><td>_88419199_58C2_445E_81B8_ED3DBE68A052_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT</td><td/><td/><td>_A16784B3_47A6_4F79_AECA_DB2B2C47B561_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT1</td><td/><td/><td>_9B2A7210_5F88_4798_9281_43815C2B9517_FILTER</td><td/><td/><td/><td/></row>
