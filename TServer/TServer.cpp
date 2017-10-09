@@ -14,6 +14,7 @@
 #include <shlobj.h> 
 #include <Shlwapi.h>
 #include "Tool.h"
+#include "Http.h"
 
 //
 //#include"AllCallAction.h"
@@ -51,6 +52,7 @@
 #include "RecvSendGpsStatus.h"
 #include "RecvGetConfigAction.h"
 #include "RecvSerialAction.h"
+#include "RecvLocationIndoorAction.h"
 
 
 #include "WireLanRecvAction.h"
@@ -61,7 +63,7 @@
 #include "../lib/service\service.h"
 
 #define SERVICE_CODE    FALSE
-
+#define HTTP_PORT   8001
 std::string getServerName()
 {
 	std::string serverName = "";
@@ -143,7 +145,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		createFileRlt = _wmkdir(logFolder.c_str());
 	}
-
+	std::wstring tmpFolder = appFolder + _T("\\tmp");
+	if (!PathFileExists(tmpFolder.c_str()))
+	{
+		createFileRlt = _wmkdir(tmpFolder.c_str());
+	}
 	std::wstring pathLogInfo = logFolder + _T("/info_");
 	std::wstring pathLogError = logFolder + _T("/error_");
 	std::wstring pathLogWarning = logFolder + _T("/warning_");
@@ -167,6 +173,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		serverActions["getRadioSetting"] = getRadioAction;
 		serverActions["setRepeaterSetting"] = setRepeaterAction;
 		serverActions["getRepeaterSetting"] = getRepeaterAction;
+		serverActions["setLocationInDoorSetting"] = setLocationInDoorAction;
+		serverActions["getLocationInDoorSetting"] = getLocationInDoorAction;
 
 		serverActions["call"] = callAction;
 		serverActions["control"] = controlAction;
@@ -194,6 +202,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		clientActions["sendGpsStatus"] = recvSendGpsStatusAction;
 		clientActions["getRadioConfig"] = recvGetConfigAction;
 		clientActions["readSerial"] = readSerialAction;
+		clientActions["locationIndoor"] = recvLocationIndoorAction;
 		/*wire lan send*/
 		wlClientActions["wlCall"] = wlCallAction;
 		wlClientActions["wlCallStatus"] = wlCallStatusAction;
@@ -215,7 +224,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		CBroker::instance()->startRpcServer(serverActions);
 		CBroker::instance()->startRadioClient(clientActions);
 		CBroker::instance()->startMonitorClient(mclientActions);
-
+		CHttp::getInstance()->start(HTTP_PORT);
 		/*CMonitorServer ms;
 		std::string strName = getServerName();
 		std::wstring wstr(strName.length(), L' ');
@@ -230,6 +239,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		{
 			Sleep(100);
 		}
+		CHttp::getInstance()->stop();
 		
 	});
 	std::wstring strArg = argv[1];
@@ -282,6 +292,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	serverActions["getRadioSetting"] = getRadioAction;
 	serverActions["setRepeaterSetting"] = setRepeaterAction;
 	serverActions["getRepeaterSetting"] = getRepeaterAction;
+	serverActions["setLocationInDoorSetting"] = setLocationInDoorAction;
+	serverActions["getLocationInDoorSetting"] = getLocationInDoorAction;
 
 	serverActions["call"] = callAction;
 	serverActions["control"] = controlAction;
@@ -290,6 +302,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	serverActions["status"] = statusAction;
 	serverActions["registerLicense"] = registerLicenseAction;
 	serverActions["queryLicense"] = queryLicenseAction;
+
+
 
 	/*wire lan recive*/
 	serverActions["wlCall"] = wlCallActionHandler;
@@ -308,6 +322,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	clientActions["sendGpsStatus"] = recvSendGpsStatusAction;
 	clientActions["getRadioConfig"] = recvGetConfigAction;
 	clientActions["readSerial"] = readSerialAction;
+	clientActions["locationIndoor"] = recvLocationIndoorAction;
 	/*wire lan send*/
 	wlClientActions["wlCall"] = wlCallAction;
 	wlClientActions["wlCallStatus"] = wlCallStatusAction;
@@ -330,6 +345,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	CBroker::instance()->startRpcServer(serverActions);
 	CBroker::instance()->startRadioClient(clientActions);
 	CBroker::instance()->startMonitorClient(mclientActions);
+	CHttp::getInstance()->start(HTTP_PORT);
+	
 	
 	//rpcServer.addActionHandler("call", callAction);
 	//rpcServer.addActionHandler("control", controlAction);
@@ -382,6 +399,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		
 	}*/
 	while (1){ Sleep(1000); };
+	CHttp::getInstance()->stop();
 #endif
 	return 0;
 }

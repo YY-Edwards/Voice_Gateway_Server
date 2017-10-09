@@ -11,85 +11,115 @@ CRpcServer::CRpcServer()
 	, m_thdPool(NULL)
 	, m_bQuit(false)
 {
+	m_pRingBuffer = createRingBuffer(102400, 1);
 }
 
 
 CRpcServer::~CRpcServer()
 {
+	if (NULL != m_pRingBuffer)
+	{
+		freeRingBuffer(m_pRingBuffer);
+	}
 }
 
 int CRpcServer::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 {
+	char buffer[102400];
 	try{
-		std::string str(pData, dataLen);
-		printf("received data:%s", str.c_str());
-
-		std::string callName;
-		uint64_t callId = 0;
-		std::string param = "";
-		std::string type = "";
-
-		std::string status, statusText, content;
-		int errCode = 0;
-
-		if (0 == CRpcJsonParser::getRequest(str, callName, callId, param, type))
+		for (int i = 0; i < dataLen; i++)
 		{
-			// test if it's ping command, direct send response when receive ping command
-			if (0 == callName.compare("ping"))
-			{
-				std::string pingResponse = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
-				pRemote->sendResponse(pingResponse.c_str(), pingResponse.size());
-			}
-			else // other command, call command handler
-			{
-				auto actionFn = (m_mpActions.find(callName) != m_mpActions.end()) ? m_mpActions[callName] : nullptr;
+			push(m_pRingBuffer, &pData[i]);
+		}
+		
+		while (getRingBufferSize(m_pRingBuffer) > 0)
+		{
+			memset(buffer, 0, sizeof(buffer));
+			int len = dumpBuffer(m_pRingBuffer, buffer);
 
-				if (nullptr != actionFn)
+			std::string str;// (pData, dataLen);
+			int idx = JsonUtil::getJsonStr(buffer, len, str);
+			if (idx <= 0)
+			{
+				// no valid json string
+				break;
+			}
+			// pop string from ring buffer
+			for (int i = 0; i <= idx; i++)
+			{
+				char ch;
+				pop(m_pRingBuffer, &ch);
+			}
+			//std::string str(pData, dataLen);
+			printf("received data:%s", str.c_str());
+
+			std::string callName;
+			uint64_t callId = 0;
+			std::string param = "";
+			std::string type = "";
+
+			std::string status, statusText, content;
+			int errCode = 0;
+
+			if (0 == CRpcJsonParser::getRequest(str, callName, callId, param, type))
+			{
+				// test if it's ping command, direct send response when receive ping command
+				if (0 == callName.compare("ping"))
 				{
-					m_thdPool->enqueue(actionFn, pRemote, param, callId, type);
+					std::string pingResponse = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
+					pRemote->sendResponse(pingResponse.c_str(), pingResponse.size());
+				}
+				else // other command, call command handler
+				{
+					auto actionFn = (m_mpActions.find(callName) != m_mpActions.end()) ? m_mpActions[callName] : nullptr;
+
+					if (nullptr != actionFn)
+					{
+						m_thdPool->enqueue(actionFn, pRemote, param, callId, type);
+					}
 				}
 			}
-		}
-		else if (0 == CRpcJsonParser::getResponse(str, status, statusText, errCode, callId, content))
-		{
-			// find which client send the response
-			if (m_Clients.end() != m_Clients.find(pRemote))
+			else if (0 == CRpcJsonParser::getResponse(str, status, statusText, errCode, callId, content))
 			{
-				std::lock_guard<std::mutex> lk(m_Clients[pRemote]->m_mtxRequest);
-
-				if (m_Clients[pRemote]->m_lstRequest.size() > 0)
+				// find which client send the response
+				if (m_Clients.end() != m_Clients.find(pRemote))
 				{
-					auto firstRequest = m_Clients[pRemote]->m_lstRequest.begin();
-					if (callId == (*firstRequest)->m_nCallId)
-					{
-						if (nullptr != (*firstRequest)->success)
-						{
-							(*firstRequest)->success(str.c_str(), (*firstRequest)->data);
-						}
-						delete *firstRequest;
-						m_Clients[pRemote]->m_lstRequest.pop_front();
+					std::lock_guard<std::mutex> lk(m_Clients[pRemote]->m_mtxRequest);
 
-						// send next command
-						for (auto i = m_Clients[pRemote]->m_lstRequest.begin();
-							i != m_Clients[pRemote]->m_lstRequest.end();)
+					if (m_Clients[pRemote]->m_lstRequest.size() > 0)
+					{
+						auto firstRequest = m_Clients[pRemote]->m_lstRequest.begin();
+						if (callId == (*firstRequest)->m_nCallId)
 						{
-							if ((*i)->m_bNeedResponse)
+							if (nullptr != (*firstRequest)->success)
 							{
-								pRemote->sendCommand((*i)->m_strRequest.c_str(), (*i)->m_strRequest.size());
-								break;		// wait response
+								(*firstRequest)->success(str.c_str(), (*firstRequest)->data);
 							}
-							else
+							delete *firstRequest;
+							m_Clients[pRemote]->m_lstRequest.pop_front();
+
+							// send next command
+							for (auto i = m_Clients[pRemote]->m_lstRequest.begin();
+								i != m_Clients[pRemote]->m_lstRequest.end();)
 							{
-								pRemote->sendCommand((*i)->m_strRequest.c_str(), (*i)->m_strRequest.size());
-								// don't wait response
-								delete (*i);
-								i = m_Clients[pRemote]->m_lstRequest.erase(i);
+								if ((*i)->m_bNeedResponse)
+								{
+									pRemote->sendCommand((*i)->m_strRequest.c_str(), (*i)->m_strRequest.size());
+									break;		// wait response
+								}
+								else
+								{
+									pRemote->sendCommand((*i)->m_strRequest.c_str(), (*i)->m_strRequest.size());
+									// don't wait response
+									delete (*i);
+									i = m_Clients[pRemote]->m_lstRequest.erase(i);
+								}
 							}
+							//if (m_Clients[pRemote]->m_lstRequest.size() > 0){
+							//	auto head = m_Clients[pRemote]->m_lstRequest.front();
+							//	pRemote->sendCommand(head->m_strRequest.c_str(), head->m_strRequest.size());
+							//}
 						}
-						//if (m_Clients[pRemote]->m_lstRequest.size() > 0){
-						//	auto head = m_Clients[pRemote]->m_lstRequest.front();
-						//	pRemote->sendCommand(head->m_strRequest.c_str(), head->m_strRequest.size());
-						//}
 					}
 				}
 			}

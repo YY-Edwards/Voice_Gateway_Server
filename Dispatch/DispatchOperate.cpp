@@ -289,6 +289,10 @@ void DispatchOperate::OnData(  int call, Respone data)
 {
 	ArgumentType args;
 	FieldValue Gps(FieldValue::TObject);
+	FieldValue Indoor(FieldValue::TObject);
+	std::map<std::string, RadioStatus>::iterator it;
+	//std::list<BconMajMinTimeReport>::iterator mBcon;
+	FieldValue bcons(FieldValue::TArray);
 	switch (call)
 	{
 	case MNIS_CONNECT:
@@ -397,6 +401,51 @@ void DispatchOperate::OnData(  int call, Respone data)
 		args["Gps"] = Gps;
 		dis.send2Client("sendGps", args);
 		break;
+	case RECV_LOCATION_INDOOR:
+		/*{
+			"callId": 4,
+			"call" : "locationIndoor",
+			"type" : "radio",
+			"param" : {
+			"source": 9,
+			"bcons" : [
+			{
+			"timestamp": 123,
+			"major" : 1,
+			"minor" : 1
+			}
+			]
+			}
+			}*/
+	{
+
+		
+	//	for (mBcon = data.becon.begin(); mBcon != data.becon.end(); mBcon++)
+		//{
+			FieldValue element(FieldValue::TObject);
+			FieldValue uuid(FieldValue::TArray);
+			for (int i = 0; i < 16; i++)
+			{
+				FieldValue temp(FieldValue::TInt);
+				//temp.setInt(mBcon->uuid[i]);
+				temp.setInt(data.bcon.uuid[i]);
+				//temp.setKeyVal(std::to_string(i).c_str(), FieldValue(mBcon->uuid[i]));
+				uuid.push(temp);
+			}
+			element.setKeyVal("uuid",FieldValue(uuid));
+			element.setKeyVal("txpower", FieldValue(data.bcon.TXPower));
+			element.setKeyVal("rssi", FieldValue(data.bcon.RSSI));
+			element.setKeyVal("timestamp", FieldValue(data.bcon.TimeStamp));
+			element.setKeyVal("major", FieldValue(data.bcon.Major));
+			element.setKeyVal("minor", FieldValue(data.bcon.Minor));
+			//bcons.push(element);
+	//	}
+		//args["bcons"] = bcons;
+		args["bcon"] = element;
+		args["source"] = data.source;
+		dis.send2Client("locationIndoor", args);
+	}
+		break;
 	case RADIO_ARS:
 		args["Target"] = FieldValue(data.source);
 		if (data.arsStatus == SUCESS)
@@ -410,7 +459,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 		dis.send2Client("sendArs", args);
 		break;
 	case RADIO_STATUS:
-		std::map<std::string,RadioStatus>::iterator it;
+	
 		args["getType"] = RADIO_STATUS;
 		FieldValue info(FieldValue::TArray);
 		for (it = data.rs.begin(); it != data.rs.end(); it++)
@@ -420,13 +469,25 @@ void DispatchOperate::OnData(  int call, Respone data)
 			bool isGps = false;
 			if (it->second.gpsQueryMode != 0)
 			{
-				isGps = true;
+				if (it->second.gpsQueryMode != 25 )
+				{
+					isGps = true;
+				}
+			}
+			bool isLocationIndoor = false;
+			if (it->second.gpsQueryMode != 0)
+			{
+				if (it->second.gpsQueryMode == 25 || it->second.gpsQueryMode == 26)
+				{
+					isLocationIndoor = true;
+				}
 			}
 			bool isArs = false;
 			if (it->second.status != 0)
 			{
 				isArs = true;
 			}
+			element.setKeyVal("IsInLocationIndoor", FieldValue(isLocationIndoor));
 			element.setKeyVal("IsInGps", FieldValue(isGps));
 			element.setKeyVal("IsOnline", FieldValue(isArs));
 			info.push(element);
@@ -435,6 +496,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 		dis.send2Client("status", args);
 		break;
 	}
+	
 }
 void DispatchOperate::OnTcpData(int call, TcpRespone data)
 {
@@ -624,4 +686,8 @@ void DispatchOperate::OnRadioUsb(bool isConnected)
 {
 	dis.isTcpConnect = isConnected;
 	dis.pTs->setUsb(isConnected);
+}
+void DispatchOperate::locationIndoorConfig(int Interval, int iBeaconNumber, bool isEmergency)
+{
+	pDs->locationIndoorConfig(Interval, iBeaconNumber, isEmergency);
 }

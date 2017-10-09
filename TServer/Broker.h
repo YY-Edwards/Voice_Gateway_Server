@@ -68,8 +68,8 @@ public:
 	SerialInformation getSerialInformation();
 	void setLicenseInformation(SerialInformation serialInformation);
 	SerialInformation getLicenseInformation();
-	void setLicenseStatus(bool status);
-	bool getLicenseStatus();
+	void setLicenseStatus(int status);
+	int getLicenseStatus();
 	void startRpcServer(std::map<std::string, ACTION> serverActions);
 	void startRadioClient(std::map<std::string, ACTION> clientActions);
 	void startWireLanClient(std::map<std::string, ACTION> clientActions);
@@ -79,6 +79,8 @@ public:
 	void startLogClient();
 	void startMonitorClient(std::map<std::string, ACTION> clientActions);
 	bool getLic(std::string license);
+	void sendLoactionIndoorConfig();
+	void sendLoactionIndoorConfigToWl();
 protected:
 	CBroker();
 	~CBroker();
@@ -96,7 +98,7 @@ private:
 	CRpcClient* m_monitorClient;
 	SerialInformation m_serialInformation;
 	SerialInformation m_licenseInformation;
-	bool licenseStatus;
+	int licenseStatus;
 	
 };
 

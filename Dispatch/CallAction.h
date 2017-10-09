@@ -35,7 +35,7 @@ void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 		{
 			int operate = -1;
 			int opterateType = -1;;
-			int id = -1;;
+			int id = -1;
 			if (d.HasMember("Operate") && d["Operate"].IsInt())
 			{
 				operate = d["Operate"].GetInt();

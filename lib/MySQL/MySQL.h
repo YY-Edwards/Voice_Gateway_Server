@@ -28,6 +28,7 @@ private:
 	bool						m_bIsConnected;
 	std::mutex					m_tcpChannelUseLocker;
 	std::thread					m_pingThread;
+	bool threadIsStart;
 
 public: 
 	bool open(const char* host, unsigned short port, const char* user, const char* pass, const char* db);

@@ -761,6 +761,11 @@ void CManager::handleRemoteTask()
 										   }
 			}
 				break;
+			case REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG:
+			{
+				m_pMnis->locationIndoorConfig(task.param.info.locationParam.internal,task.param.info.locationParam.ibconNum,task.param.info.locationParam.isEmergency);
+			}
+				break;
 			default:
 				break;
 			}
@@ -965,13 +970,58 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 						 for (auto i = response.rs.begin(); i != response.rs.end(); i++)
 						 {
 							 RadioStatus radioStatus = i->second;
-							 FieldValue element(FieldValue::TObject);
+							/* FieldValue element(FieldValue::TObject);
 							 element.setKeyVal("radioId", FieldValue(radioStatus.id));
 							 element.setKeyVal("IsOnline", FieldValue((1 == radioStatus.status)));
-							 element.setKeyVal("IsInGps", FieldValue((1 == radioStatus.gpsQueryMode)));
+							 element.setKeyVal("IsInGps", FieldValue((1 == radioStatus.gpsQueryMode)));*/
+							 FieldValue element(FieldValue::TObject);
+							 element.setKeyVal("radioId", FieldValue(radioStatus.id));
+							 bool isGps = false;
+							 if (radioStatus.gpsQueryMode != 0)
+							 {
+								 if (radioStatus.gpsQueryMode != 25)
+								 {
+									 isGps = true;
+								 }
+							 }
+							 bool isLocationIndoor = false;
+							 if (radioStatus.gpsQueryMode != 0)
+							 {
+								 if (radioStatus.gpsQueryMode == 25 || radioStatus.gpsQueryMode == 26)
+								 {
+									 isLocationIndoor = true;
+								 }
+							 }
+							 bool isArs = false;
+							 if (radioStatus.status != 0)
+							 {
+								 isArs = true;
+							 }
+							 element.setKeyVal("IsInLocationIndoor", FieldValue(isLocationIndoor));
+							 element.setKeyVal("IsInGps", FieldValue(isGps));
+							 element.setKeyVal("IsOnline", FieldValue(isArs));
 							 info.push(element);
 						 }
 						 g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, info);
+	}
+		break;
+	case GPS_TRIGG_COMM_INDOOR:
+	{
+			FieldValue element(FieldValue::TObject);
+			FieldValue uuid(FieldValue::TArray);
+			for (int i = 0; i < 17; i++)
+			{
+				FieldValue temp(FieldValue::TInt);
+				temp.setInt(response.bcon.uuid[i]);
+				uuid.push(temp);
+			}
+			element.setKeyVal("uuid", FieldValue(uuid));
+			element.setKeyVal("txpower", FieldValue(response.bcon.TXPower));
+			element.setKeyVal("rssi", FieldValue(response.bcon.RSSI));
+			element.setKeyVal("timestamp", FieldValue(response.bcon.TimeStamp));
+			element.setKeyVal("major", FieldValue(response.bcon.Major));
+			element.setKeyVal("minor", FieldValue(response.bcon.Minor));
+			g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, element);
 	}
 		break;
 	default:

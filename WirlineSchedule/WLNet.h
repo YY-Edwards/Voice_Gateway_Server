@@ -350,6 +350,8 @@ public:
 
 	/*接收到序列号后通知tserver*/
 	int wlSendSerial();
+	/*蓝牙室内定位*/
+	int wlMnisLoactionIndoor(int source, FieldValue info);
 protected:
 	/*
 	* Socket work thread

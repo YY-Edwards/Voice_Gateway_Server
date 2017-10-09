@@ -18,6 +18,7 @@ public:
 	void  setCallBackFunc(void(*callBackFunc)(int, Respone));
 	static DWORD WINAPI timeOutThread(LPVOID lpParam);
 	static DWORD WINAPI workThread(LPVOID lpParam);
+	void locationIndoorConfig(int Interval, int iBeaconNumber, bool isEmergency);
 	/************************************************************************/
 	/* 更新在线设备列表
 	/************************************************************************/

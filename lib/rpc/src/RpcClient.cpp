@@ -13,11 +13,17 @@ CRpcClient::CRpcClient()
 	, m_bQuit(false)
 	, m_nCallId(0)
 {
+	m_pRingBuffer = createRingBuffer(1024 * 100, 1);		// 100k buffer
 }
 
 
 CRpcClient::~CRpcClient()
 {
+	assert(NULL != m_pRingBuffer);
+	if (NULL != m_pRingBuffer)
+	{
+		freeRingBuffer(m_pRingBuffer);
+	}
 	stop();
 }
 
@@ -104,62 +110,87 @@ void CRpcClient::stop()
 
 int CRpcClient::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 {
+	char buffer[102400];
 	try{
-		std::string str(pData, dataLen);
-
-		std::map<std::string, std::string> args;
-		CRpcJsonParser parser;
-		std::string status, statusText;
-		int errCode = 0;
-		uint64_t callId = 0;
-		std::string content;
-		bool bHandled = false;
-
-		std::string callName, arguments, type;   // for handle request
-
-		if (0 == parser.getResponse(str, status, statusText, errCode, callId, content))
+		for (int i = 0; i < dataLen; i++)
 		{
-			// it's valid response
-			std::lock_guard<std::mutex> lock(m_mtxRequest);
-			// remove the front request in list, if the call id is match
-			for (auto itr = m_lstRequest.begin(); itr != m_lstRequest.end(); ++itr){
-				if (callId == (*itr)->m_nCallId)
+			push(m_pRingBuffer, &pData[i]);
+		}
+		int len = 0;
+		while (getRingBufferSize(m_pRingBuffer) > 0)
+		{
+			memset(buffer, 0, sizeof(buffer));
+			len = dumpBuffer(m_pRingBuffer, buffer);
+
+
+			std::string str;// (pData, dataLen);
+			int idx = JsonUtil::getJsonStr(buffer, len, str);
+			if (idx <= 0)
+			{
+				// no valid json
+				break;
+			}
+			// pop string from ring buffer
+			for (int i = 0; i <= idx; i++)
+			{
+				char ch;
+				pop(m_pRingBuffer, &ch);
+			}
+
+			std::map<std::string, std::string> args;
+			CRpcJsonParser parser;
+			std::string status, statusText;
+			int errCode = 0;
+			uint64_t callId = 0;
+			std::string content;
+			bool bHandled = false;
+
+			std::string callName, arguments, type;   // for handle request
+
+			if (0 == parser.getResponse(str, status, statusText, errCode, callId, content))
+			{
+				// it's valid response
+				std::lock_guard<std::mutex> lock(m_mtxRequest);
+				// remove the front request in list, if the call id is match
+				for (auto itr = m_lstRequest.begin(); itr != m_lstRequest.end(); ++itr){
+					if (callId == (*itr)->m_nCallId)
+					{
+						bHandled = true;
+						// handle response
+						if (nullptr != (*itr)->success)
+						{
+							(*itr)->success(str.c_str(), (*itr)->data);
+						}
+
+						delete *itr;
+						m_lstRequest.erase(itr);
+
+						// send next command
+						sendNextCommands();
+						break;
+					}
+				}
+
+			}
+			else if (0 == parser.getRequest(str, callName, callId, arguments, type))
+			{
+				auto actionFn = (m_mpActions.find(callName) != m_mpActions.end()) ? m_mpActions[callName] : nullptr;
+				if (nullptr != actionFn)
 				{
 					bHandled = true;
-					// handle response
-					if (nullptr != (*itr)->success)
-					{
-						(*itr)->success(str.c_str(), (*itr)->data);
-					}
-
-					delete *itr;
-					m_lstRequest.erase(itr);
-
-					// send next command
-					sendNextCommands();
-					break;
+					actionFn(pRemote, arguments, callId, type);
+					//m_thdPool->enqueue(actionFn, pRemote, param, callId, type);
 				}
 			}
 
-		}
-		else if (0 == parser.getRequest(str, callName, callId, arguments, type))
-		{
-			auto actionFn = (m_mpActions.find(callName) != m_mpActions.end()) ? m_mpActions[callName] : nullptr;
-			if (nullptr != actionFn)
+			if (!bHandled)
 			{
-				bHandled = true;
-				actionFn(pRemote, arguments, callId, type);
-				//m_thdPool->enqueue(actionFn, pRemote, param, callId, type);
+				if (nullptr != m_fnIncomeHandler)
+				{
+					m_fnIncomeHandler(m_pConnector, pData, dataLen);
+				}
 			}
-		}
-
-		if (!bHandled)
-		{
-			if (nullptr != m_fnIncomeHandler)
-			{
-				m_fnIncomeHandler(m_pConnector, pData, dataLen);
-			}
-		}
+		} // end while (getRingBufferSize(m_pRingBuffer) > 0)
 
 	}
 	catch (std::exception& e)

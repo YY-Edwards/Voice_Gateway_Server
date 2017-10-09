@@ -19,7 +19,7 @@ extern CWLNet* g_pNet;
 #define DB_USER				"root"
 #define DB_PWD				""
 #define DB_NAME				"tbx"
-#define SERVICE_CODDE TRUE
+#define SERVICE_CODDE FALSE
 
 HWND GetConsoleHwnd(void)
 {
@@ -164,6 +164,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		m_pRpcServer->addActionHandler("queryGps", wlMnisQueryGpsActionHandler);
 		m_pRpcServer->addActionHandler("message", wlMnisMessageHandler);
 		m_pRpcServer->addActionHandler("status", wlMnisStatusHandler);
+		m_pRpcServer->addActionHandler("locationIndoor", wlMnisLocationIndoorHandler);
 		m_pRpcServer->start(WL_SERVER_PORT);
 
 		/*初始化数据库*/
