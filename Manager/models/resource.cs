@@ -36,8 +36,6 @@ namespace Manager
 
 
         private Semaphore m_WaitReponse;
-       
-        private int m_Count = 0;
 
         [JsonIgnore]
         public bool IsNew = true;

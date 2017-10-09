@@ -77,7 +77,7 @@ namespace Manager
         public bool IsValid;
 
          [JsonProperty(PropertyName = "area")]
-        public string Area { set; get; }
+        public long Area { set; get; }
 
         [JsonIgnore]
         public double X { set; get; }
@@ -101,7 +101,7 @@ namespace Manager
             X = 0.0;
             Y = 0.0;
             IsValid = false;
-            Area = string.Empty;
+            Area = -1;
         }
         public CiBeacon Copy()
         {

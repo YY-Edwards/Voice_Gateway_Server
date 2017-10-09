@@ -49,9 +49,17 @@ namespace Manager
 
                 IsEnable = tserver.IsEnable;
                 Type = tserver.Type;
-                Svr = tserver.Svr;
-                Master = tserver.Master;
-                Mnis = tserver.Mnis;
+                Svr = tserver.Svr ?? new NetAddress() { Ip = "127.0.0.1", Port = 9002 };
+                Master = tserver.Master ?? new NetAddress() { Ip = "192.168.2.2", Port = 50000 };
+                Mnis = tserver.Mnis ?? new CMNISNet()
+                {
+                    Host = "192.168.11.2",
+                    ID = 50001,
+                    MessagePort = 4007,
+                    ArsPort = 4005,
+                    GpsPort = 4001,
+                    XnlPort = 8002,
+                };
                 DefaultGroupId = tserver.DefaultGroupId;
                 DefaultChannel = tserver.DefaultChannel;
                 MinHungTime = tserver.MinHungTime;
@@ -62,7 +70,7 @@ namespace Manager
                 LocalPeerId = tserver.LocalPeerId;
                 LocalRadioId = tserver.LocalRadioId;
 
-                Dongle = tserver.Dongle;
+                Dongle = tserver.Dongle ?? new DongleSetting() { Com = 1 };
 
                 return this;
             }

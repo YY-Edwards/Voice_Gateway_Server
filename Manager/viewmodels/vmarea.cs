@@ -97,7 +97,7 @@ namespace Manager
                 }
                 else
                 {
-                    return  (m_EditArea.Map == null ||  m_EditArea.Map ==string.Empty )? "" : ("TServer://" + m_EditArea.Map);
+                    return (m_EditArea.Map == null || m_EditArea.Map == string.Empty) ? "" : (CImgServer.Instance().Url + m_EditArea.Map);
                 }
             }
         }

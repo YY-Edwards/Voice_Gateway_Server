@@ -129,7 +129,9 @@ namespace Manager
         {
             m_Radio.IsEnable = enable;
             PropertyChanged(this, new PropertyChangedEventArgs("IsEnable"));
+            m_Radio.NeedSave();
         }
+
 
         //base interface
         public event PropertyChangedEventHandler PropertyChanged;

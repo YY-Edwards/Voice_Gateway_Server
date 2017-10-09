@@ -442,13 +442,40 @@
                                             <i:InvokeCommandAction Command="{Binding TreeSelectedChanged, Mode=OneWay, Source={StaticResource CVMLayout}}" CommandParameter="5" />
                                         </i:EventTrigger>
                                     </i:Interaction.Triggers>
-                                    <TreeViewItem Header="常规" Style="{DynamicResource TreeViewItemStyle2nd}" />
+                                    <TreeViewItem Header="常规" Style="{DynamicResource TreeViewItemStyle2nd}" >
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMLayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_LocatiopnInDoor"/>
+                                                            <Binding ElementName="Normal"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </TreeViewItem>
                                     <TreeViewItem Header="网络" Style="{DynamicResource TreeViewItemStyle2nd}" >
                                         <TreeViewItem.Visibility>
                                             <MultiBinding Converter="{StaticResource FalseHide}">
                                                 <Binding ElementName="chk_EnableLocalInDoor" Path="IsChecked"/>
                                             </MultiBinding>
                                         </TreeViewItem.Visibility>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMLayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_LocatiopnInDoor"/>
+                                                            <Binding ElementName="LocationInDoor_NetWork"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
                                     </TreeViewItem>
                                     <TreeViewItem Header="区域" Style="{DynamicResource TreeViewItemStyle2nd}" >
                                         <TreeViewItem.Visibility>
@@ -456,6 +483,19 @@
                                                 <Binding ElementName="chk_EnableLocalInDoor" Path="IsChecked"/>
                                             </MultiBinding>
                                         </TreeViewItem.Visibility>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMLayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_LocatiopnInDoor"/>
+                                                            <Binding ElementName="dck_LocationInDoor_Areas"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
                                     </TreeViewItem>
                                     <TreeViewItem Header="蓝牙信标（iBeacon）" Style="{DynamicResource TreeViewItemStyle2nd}" >
                                         <TreeViewItem.Visibility>
@@ -463,20 +503,47 @@
                                                 <Binding ElementName="chk_EnableLocalInDoor" Path="IsChecked"/>
                                             </MultiBinding>
                                         </TreeViewItem.Visibility>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMLayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_LocatiopnInDoor"/>
+                                                            <Binding ElementName="dck_LocationInDoor_iBeacons"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
                                     </TreeViewItem>
                                     <TreeViewItem Header="信标位置" Style="{DynamicResource TreeViewItemStyle2nd}" >
                                         <TreeViewItem.Visibility>
                                             <MultiBinding Converter="{StaticResource FalseHide}">
                                                 <Binding ElementName="chk_EnableLocalInDoor" Path="IsChecked"/>
                                             </MultiBinding>
+                                           
                                         </TreeViewItem.Visibility>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                                                <i:InvokeCommandAction Command="{Binding ScrollToItem, Mode=OneWay, Source={StaticResource CVMLayout}}" >
+                                                    <i:InvokeCommandAction.CommandParameter>
+                                                        <MultiBinding Converter="{StaticResource MultiParameter}">
+                                                            <Binding ElementName="bdr_Options"/>
+                                                            <Binding ElementName="scrview_LocatiopnInDoor"/>
+                                                            <Binding ElementName="dck_LocationInDoor_Binding"/>
+                                                        </MultiBinding>
+                                                    </i:InvokeCommandAction.CommandParameter>
+                                                </i:InvokeCommandAction>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
                                     </TreeViewItem>
                                 </TreeViewItem>
                                 <TreeViewItem Header="地图" Style="{DynamicResource TreeViewItemStyleRoot}" Visibility="Collapsed" >
                                     <i:Interaction.Triggers>
                                         <i:EventTrigger EventName="Selected">
                                             <i:InvokeCommandAction Command="{Binding TreeSelectedChanged, Mode=OneWay, Source={StaticResource CVMLayout}}" CommandParameter="6" />
-                                        </i:EventTrigger>
+                                        </i:EventTrigger> 
                                     </i:Interaction.Triggers>
                                     <TreeViewItem Header="常规" Style="{DynamicResource TreeViewItemStyle2nd}" />
                                     <TreeViewItem Header="BMP地图" Style="{DynamicResource TreeViewItemStyle2nd}" />
