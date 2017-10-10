@@ -22,7 +22,7 @@ void allCallEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 			{
 				ArgumentType args;
 				args["message"] = "allCall";
-				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
+				std::string strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", args);
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
 				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, ALL_CALL, "", "", "", 0, _T(""), 0, 0, callId);
 

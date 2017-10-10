@@ -86,8 +86,8 @@ std::string getServerName()
 }
 int _tmain(int argc, _TCHAR* argv[])
 {
-	//CSettings::instance()->getResponse("sucess", 1, 200, "", rapidjson::Value(NULL));
-	//std::string str =  CSettings::instance()->getResponse("sucess", 1, 200, "", "");
+	//CSettings::instance()->getResponse("success", 1, 200, "", rapidjson::Value(NULL));
+	//std::string str =  CSettings::instance()->getResponse("success", 1, 200, "", "");
 	//CSettings::instance()->setValue("tst", rapidjson::Value(NULL));
 
 	//std::string dsd = CRpcJsonParser::buildCall("dd", 3, ArgumentType(), "raio");

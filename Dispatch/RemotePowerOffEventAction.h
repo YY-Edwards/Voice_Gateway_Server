@@ -20,7 +20,7 @@ void remotePowerOffEventAction(CRemotePeer* pRemote, const std::string& param, u
 			{
 				ArgumentType args;
 				args["message"] = "remotePowerOff";
-				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
+				std::string strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", args);
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
 				int id = d["id"].GetInt();
 				//int result = m_dispatchOperate[pRemote]->remotePowerOff(pRemote, id, callId);

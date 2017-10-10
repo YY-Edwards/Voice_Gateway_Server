@@ -20,7 +20,7 @@ void getOverTurnGpsEventAction(CRemotePeer* pRemote, const std::string& param, u
 			{
 				ArgumentType args;
 				args["message"] = "getOverturnGps";
-				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
+				std::string strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", args);
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
 				string ip = d["ip"].GetString();
 				//int result = m_dispatchOperate[pRemote]->getOverturnGps(pRemote, ip.c_str(), callId);

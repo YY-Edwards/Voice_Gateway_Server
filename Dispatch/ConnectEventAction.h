@@ -61,7 +61,7 @@ void connectEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 
 				ArgumentType args;
 				args["message"] = "connect";
-				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "sucess", args);
+				std::string strResp = CRpcJsonParser::buildResponse("success", callId, 200, "success", args);
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
 
 				

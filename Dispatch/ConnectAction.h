@@ -12,7 +12,7 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 	std::lock_guard<std::mutex> locker(lock);
 	try{
 		g_sn = callId;
-		std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "sucess", ArgumentType());
+		std::string strResp = CRpcJsonParser::buildResponse("success", callId, 200, "success", ArgumentType());
 		pRemote->sendResponse(strResp.c_str(), strResp.size());
 
 		TcpClient * client = new TcpClient();

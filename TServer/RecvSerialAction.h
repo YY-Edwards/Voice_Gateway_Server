@@ -116,7 +116,7 @@ void readSerialAction(CRemotePeer* pRemote, const std::string& param, uint64_t c
 			}
 			
 		  
-			std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", ArgumentType());
+			std::string strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
 			
 		}

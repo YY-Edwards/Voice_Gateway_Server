@@ -21,7 +21,7 @@ void callEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t ca
 			{
 				ArgumentType args;
 				args["message"] = "call";
-				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
+				std::string strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", args);
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
 				int id = d["id"].GetInt();
 				m_dispatchOperate[pRemote]->AddAllCommand(pRemote, PRIVATE_CALL, "", "", "", id, _T(""), 0, 0, callId);

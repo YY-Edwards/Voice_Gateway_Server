@@ -1102,7 +1102,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 	//case XCMP_RMT_RADIO_CTRL_REPLY:              //Remote Radio Control Reply
 	//	switch (*((unsigned char*)(pBuf + sizeof(xnl_msg_hdr_t)+1)))
 	//	{
-	//	case 0x0:                                                         //sucess
+	//	case 0x0:                                                         //success
 	//		break;
 	//	case 0x01:                                                        //failure
 	//		break;

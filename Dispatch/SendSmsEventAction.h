@@ -21,7 +21,7 @@ void sendSmsEventAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 			{
 				ArgumentType args;
 				args["message"] = "sendSms";
-				std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "", args);
+				std::string strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", args);
 				pRemote->sendResponse(strResp.c_str(), strResp.size());
 				
 				int id = d["id"].GetInt();;
