@@ -11,7 +11,7 @@ void ConnectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 	static std::mutex lock;
 	std::lock_guard<std::mutex> locker(lock);
 	try{
-		std::string strResp = CRpcJsonParser::buildResponse("sucess", callId, 200, "sucess", ArgumentType());
+		std::string strResp = CRpcJsonParser::buildResponse("success", callId, 200, "success", ArgumentType());
 		pRemote->sendResponse(strResp.c_str(), strResp.size());
 		rapidjson::Document doc;
 		doc.Parse(param.c_str());
