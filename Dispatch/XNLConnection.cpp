@@ -775,6 +775,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 	unsigned char check_result = 0;       
 	unsigned char  rmt_type_code = 0;
 	unsigned long temp = 0; 
+	unsigned char condition = 1;   //ndicates that the Radio Feature is disabled on the Remote Radio.The Radio Feature command received over - the - air will be ignored by the Remote Radio.
 	int xnl_len = sizeof(xnl_msg_hdr_t);
 	xnl_opcode = ntohs(*((unsigned short *)(pBuf + 2)));  // add by lcc
 	xcmp_opcode = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t))));
@@ -783,6 +784,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 	if (XCMP_RMT_RADIO_CTRL_REPLY == xcmp_opcode)
 	{
 		check_result = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+1)));
+		condition = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+2)));
 		rmt_type_code = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+3)));
 		temp = ntohl(*((unsigned long *)(pBuf + sizeof(xnl_msg_hdr_t)+8)));
 		rmt_addr = temp >> 8;
@@ -823,7 +825,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					BOOL rmtflag = FALSE;
 					if (rmt_type_code == 0x00 && CHECK_RADIO_ONLINE == it->command )                                                   //在线检测
 					{
-						if (0x10 == check_result || 0x00  == check_result)
+						if ((0x10 == check_result || 0x00 == check_result) && condition == 1)
 						{
 							if (myTcpCallBackFunc != NULL)
 							{
@@ -903,7 +905,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					}
 					else if (rmt_type_code == 0x01 && REMOTE_CLOSE == it->command)
 					{
-						if (0x10 == check_result/* & 0x00FF)*/ || 0x00 == check_result)                                    //摇闭
+						if ((0x10 == check_result/* & 0x00FF)*/ || 0x00 == check_result) && condition == 1)                                    //摇闭
 						{
 
 							if (myTcpCallBackFunc != NULL)
@@ -964,7 +966,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					}
 					else if (rmt_type_code == 0x02 && REMOTE_OPEN == it->command)
 					{
-						if (0x10 == check_result/* & 0x00FF)*/ || 0x00 == check_result)                                     //摇开
+						if ((0x10 == check_result/* & 0x00FF)*/ || 0x00 == check_result) && condition == 1)                                     //摇开
 						{
 							rmtflag = true;                                  //成功
 							if (myTcpCallBackFunc != NULL)
@@ -1023,7 +1025,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					}
 					else if (rmt_type_code == 0x03 && REMOTE_MONITOR == it->command)
 					{
-						if (0x10 == check_result/* & 0x00FF)*/ || 0x00 == check_result)                                    //远程监听
+						if ((0x10 == check_result/* & 0x00FF)*/ || 0x00 == check_result) && condition == 1)                                    //远程监听
 						{
 							//rmtflag = true;                                   //成功
 							if (myTcpCallBackFunc != NULL)

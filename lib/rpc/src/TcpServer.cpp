@@ -117,6 +117,11 @@ DWORD CTcpServer::connectHandler()
 		fdRead = allSockets;
 		fdException = allSockets;
 
+
+		//SOCKADDR_IN tst_clientSocketAddr;
+		//memset(&tst_clientSocketAddr, 0, sizeof(tst_clientSocketAddr));
+		//accept(m_serverSocket, (struct sockaddr*)&tst_clientSocketAddr, &addrLen);
+
 		rv = select(0, &fdRead, NULL,&fdException, &t);
 		if (SOCKET_ERROR == rv)
 		{

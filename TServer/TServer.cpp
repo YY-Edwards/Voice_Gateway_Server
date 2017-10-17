@@ -327,7 +327,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	wlClientActions["wlCall"] = wlCallAction;
 	wlClientActions["wlCallStatus"] = wlCallStatusAction;
 	wlClientActions["wlInfo"] = wlInfoAction;
-	wlClientActions["wlPlayStatus"] = wlPlayStatusAction;
+	wlClientActions["wlPlayStatus"] = wlPlayStatusAction;;
 	wlClientActions["wlGetConfig"] = wlGetConfigAction;
 	wlClientActions["connectStatus"] = recvConnetResultAction;
 	wlClientActions["sendGpsStatus"] = recvSendGpsStatusAction;

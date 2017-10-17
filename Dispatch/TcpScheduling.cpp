@@ -49,7 +49,7 @@ int CTcpScheduling::privateCall( int id)
 	LOG(INFO) << "等網";
 #endif
 	unsigned long target_radio_id = id;
-	unsigned char call_type = 0x04;     //0x06 等網
+	unsigned char call_type = 0x04;     //0x04 等網
 
 
 	try

@@ -53,7 +53,7 @@ bool CRadioARS::InitARSSocket(DWORD dwAddress/*,CRemotePeer * pRemote*/)
 		//CloseARSSocket(s);
 		return FALSE;
 	}
-	m_RcvSocketOpened = true;
+	m_arsThread = true;
 	m_rWth = CreateThread(NULL, 0, ReceiveDataThread, this, THREAD_PRIORITY_NORMAL, NULL);
 
 	return TRUE;

@@ -61,6 +61,7 @@ bool CTextMsg::InitSocket(DWORD dwAddress/*, CRemotePeer * pRemote*/)
 		return FALSE;
 	}
 	m_RcvSocketOpened = true;
+	m_msgThread = true;
  	m_mWth = CreateThread(NULL, 0, ReceiveDataThread, this, THREAD_PRIORITY_NORMAL + 1, NULL);
 	//AfxBeginThread(ReceiveDataThread, (LPVOID)&m_ThreadMsg, THREAD_PRIORITY_NORMAL);
 	//AfxBeginThread(RecvThread,(LPVOID)&m_UDPThreadMsg,THREAD_PRIORITY_NORMAL);

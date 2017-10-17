@@ -65,7 +65,7 @@ bool CRadioGps::InitGPSSocket(DWORD dwAddress/*,  CRemotePeer * pRemote*/)
 		//CloseGPSSocket(s);
 		return FALSE;
 	}
-	m_RcvSocketOpened = true;
+	m_gpsThread = true;
 	m_gWth =  CreateThread(NULL,0, ReceiveDataThread, this, THREAD_PRIORITY_NORMAL, NULL);
 
 	return TRUE;
