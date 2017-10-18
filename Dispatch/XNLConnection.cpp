@@ -177,7 +177,7 @@ unsigned int CXNLConnection::run(void)
 
     while (1)
     {
-		Sleep(1000);
+		//Sleep(1000);
         /* Receive a Message first */
         
         /* Clear the read set before calling select */
@@ -806,11 +806,12 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 	{
 	case XCMP_DEVICE_INIT_STATUS_BRDCST:
 		decode_xcmp_dev_init_status(pBuf);
-		//send_xcmp_radio_status_request(0x08);             //read serial
-		//send_xcmp_radio_status_request(0x07);             //read radio mode
+		send_xcmp_radio_status_request(0x08);             //read serial
+		send_xcmp_radio_status_request(0x07);             //read radio mode
 		break;
 		//在线检测
-	case XCMP_RMT_RADIO_CTRL_REPLY:
+	case XCMP_RMT_RADIO_CTRL_REPLY:  //reply  control操作已收到
+		break;
 	
 	case XCMP_RMT_RADIO_CTRL_BRDCST:                         //  Remote Radio Control Broadcast
 	
@@ -825,7 +826,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					BOOL rmtflag = FALSE;
 					if (rmt_type_code == 0x00 && CHECK_RADIO_ONLINE == it->command )                                                   //在线检测
 					{
-						if ((0x10 == check_result || 0x00 == check_result) && condition == 1)
+						if ((0x10 == check_result /*|| 0x00 == check_result*/) /*&& condition == 1*/)
 						{
 							if (myTcpCallBackFunc != NULL)
 							{
@@ -905,7 +906,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					}
 					else if (rmt_type_code == 0x01 && REMOTE_CLOSE == it->command)
 					{
-						if ((0x10 == check_result/* & 0x00FF)*/ || 0x00 == check_result) && condition == 1)                                    //摇闭
+						if ((0x10 == check_result/* & 0x00FF)*/ /*|| 0x00 == check_result*/) /*&& condition == 1*/)                                    //摇闭
 						{
 
 							if (myTcpCallBackFunc != NULL)
@@ -966,7 +967,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					}
 					else if (rmt_type_code == 0x02 && REMOTE_OPEN == it->command)
 					{
-						if ((0x10 == check_result/* & 0x00FF)*/ || 0x00 == check_result) && condition == 1)                                     //摇开
+						if ((0x10 == check_result/* & 0x00FF)*/ /*|| 0x00 == check_result*/) /*&& condition == 1*/)                                     //摇开
 						{
 							rmtflag = true;                                  //成功
 							if (myTcpCallBackFunc != NULL)
@@ -1025,7 +1026,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 					}
 					else if (rmt_type_code == 0x03 && REMOTE_MONITOR == it->command)
 					{
-						if ((0x10 == check_result/* & 0x00FF)*/ || 0x00 == check_result) && condition == 1)                                    //远程监听
+						if ((0x10 == check_result/* & 0x00FF)*/ /*|| 0x00 == check_result*/)/* && condition == 1*/)                                    //远程监听
 						{
 							//rmtflag = true;                                   //成功
 							if (myTcpCallBackFunc != NULL)
