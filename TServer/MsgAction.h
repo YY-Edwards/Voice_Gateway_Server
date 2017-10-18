@@ -40,6 +40,7 @@ void addSmsLog(std::string param, int callId, CRemotePeer* pRemote)
 		int source = -1;
 		int destination = -1;
 		std::string pcGb2312 = "";
+		std::string utf8message = "";
 		if (d.HasMember("Target") && d["Target"].IsInt())
 		{
 			destination = d["Target"].GetInt();
@@ -50,17 +51,19 @@ void addSmsLog(std::string param, int callId, CRemotePeer* pRemote)
 		}
 		if (d.HasMember("Contents") && d["Contents"].IsString())
 		{
-			pcGb2312 = d["Contents"].GetString();
+			//pcGb2312 = d["Contents"].GetString();
+			utf8message = d["Contents"].GetString();
 		}
 		/*gb2312 to utf8*/
-		std::string message = G2U(pcGb2312.c_str());
+		//std::string message = G2U(pcGb2312.c_str());
 
 		ArgumentType args;
 		FieldValue f(FieldValue::TArray);
 		FieldValue element(FieldValue::TObject);
 		element.setKeyVal("source", FieldValue(source));
 		element.setKeyVal("destination", FieldValue(destination));
-		element.setKeyVal("message", FieldValue(message.c_str()));
+		//element.setKeyVal("message", FieldValue(message.c_str()));
+		element.setKeyVal("message", FieldValue(utf8message.c_str()));
 		f.push(element);
 		args["operation"] = FieldValue("add");
 		args["sms"] = FieldValue(f);

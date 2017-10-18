@@ -806,8 +806,8 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 	{
 	case XCMP_DEVICE_INIT_STATUS_BRDCST:
 		decode_xcmp_dev_init_status(pBuf);
-		send_xcmp_radio_status_request(0x08);             //read serial
-		send_xcmp_radio_status_request(0x07);             //read radio mode
+		//send_xcmp_radio_status_request(0x08);             //read serial
+		//send_xcmp_radio_status_request(0x07);             //read radio mode
 		break;
 		//ÔÚÏß¼ì²â
 	case XCMP_RMT_RADIO_CTRL_REPLY:
