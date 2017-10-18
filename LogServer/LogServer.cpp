@@ -22,6 +22,9 @@
 #define SERVICE_CODE FALSE
 int _tmain(int argc, _TCHAR* argv[])
 {
+	system("chcp 65001");
+	system("cls");
+
 #if SERVICE_CODE
 	CService::instance()->SetServiceNameAndDescription(_T("Trbox.Log"), _T("Trbox Log Server"));
 	CService::instance()->SetServiceCode([&](){

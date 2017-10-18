@@ -81,6 +81,10 @@ std::wstring getAppdataPath(){
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	//utf8œ‘ æ
+	system("chcp 65001");
+	system("cls");
+
 	/*log≥ı ºªØ*/
 	g_pWLlog = new WLSocketLog();
 	int createFileRlt = 0;

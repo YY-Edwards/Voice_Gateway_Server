@@ -77,6 +77,7 @@ std::string getServerName()
 		{
 			serverName = "Trbox.Dispatch";
 		}
+		else
 		{
 			serverName = "Trbox.Wirelan";
 		}
@@ -86,6 +87,9 @@ std::string getServerName()
 }
 int _tmain(int argc, _TCHAR* argv[])
 {
+	system("chcp 65001");
+	system("cls");
+
 	//CSettings::instance()->getResponse("success", 1, 200, "", rapidjson::Value(NULL));
 	//std::string str =  CSettings::instance()->getResponse("success", 1, 200, "", "");
 	//CSettings::instance()->setValue("tst", rapidjson::Value(NULL));

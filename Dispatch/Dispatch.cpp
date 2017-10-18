@@ -40,6 +40,9 @@ std::wstring getAppdataPath(){
 }
 int _tmain(int argc, _TCHAR* argv[])
 {
+	system("chcp 65001");
+	system("cls");
+
 	int createFileRlt = 0;
 	TCHAR szBuffer[MAX_PATH];
 	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
