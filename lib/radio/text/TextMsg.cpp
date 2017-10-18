@@ -151,7 +151,9 @@ std::string CTextMsg::ParseUserMsg(TextMsg* HandleMsg, int * len)
 	}
 
 
-	memcpy((char*)szMessage, &HandleMsg->TextPayload[MsgOffset+4], MsgSize - MsgOffset - 6);
+	//memcpy((char*)szMessage, &HandleMsg->TextPayload[MsgOffset+4], MsgSize - MsgOffset - 6);   //编辑和预留的text开头有\r\n ,转发的text开头没有\r\n
+	memcpy((char*)szMessage, &HandleMsg->TextPayload[MsgOffset], MsgSize - MsgOffset - 2);
+
 	//*len = MsgSize - MsgOffset - 2;
 	ParsedMsg = TCHAR2STRING(szMessage);
 	//	memcpy((char*)szMessage, &HandleMsg->TextPayload[MsgOffset], MsgSize - MsgOffset - 2);
