@@ -518,7 +518,8 @@ bool CDb::auth(const char* username, const char* password)
 
 int CDb::listUser(const char* condition, std::list<recordType>& records)
 {
-	std::string sql = "select staff.*, user.username as username, user.type as type, user.authority as authority from staff left join user on staff.user=user.id";
+	std::string sql = "select user.username as username, user.type as type, user.authority as authority  from user";
+	//std::string sql = "select staff.*, user.username as username, user.type as type, user.authority as authority from staff left join user on staff.user=user.id";
 	if (NULL != condition && strlen(condition) > 0)
 	{
 		sql += " ";
@@ -651,6 +652,7 @@ bool CDb::assignUser(int userId, int departmentId)
 	try{
 		recordType rec;
 		rec["staff"] = std::to_string(userId);
+		rec["radio"] = std::string("null");
 		rec["department"] = std::to_string(departmentId);
 		if (!m_pMySQLDb->recordExist("organize", rec))
 		{
@@ -712,6 +714,7 @@ bool CDb::assignDepartmentRadio(int radioId, int departmentId)
 	m_pMySQLDb->startTransaction();
 	try{
 		recordType rec;
+		rec["staff"] =std::string( "null");
 		rec["radio"] = std::to_string(radioId);
 		rec["department"] = std::to_string(departmentId);
 		if (!m_pMySQLDb->recordExist("radio_belong", rec))

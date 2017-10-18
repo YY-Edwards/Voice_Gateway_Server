@@ -1,0 +1,67 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar" 
+             xmlns:ctrl="clr-namespace:Dispatcher.Controls"
+             xmlns:ViewsModules="clr-namespace:Dispatcher.ViewsModules" x:Class="Dispatcher.Views.NewQuickTarget"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="600">
+ 
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="220"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="220"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock TextWrapping="Wrap" Text="所有联系人" HorizontalAlignment="Center" Foreground="#FFA8CBF0" FontSize="14" FontFamily="Hiragino Sans GB W3" VerticalAlignment="Center"/>
+        <TextBlock TextWrapping="Wrap" Text="常用联系人" DockPanel.Dock="Top" HorizontalAlignment="Center" Foreground="#FFA8CBF0" FontSize="14" FontFamily="Hiragino Sans GB W3" Grid.Column="2" VerticalAlignment="Center"/>
+        <ListView x:Name="listView" ItemsSource="{Binding AllTarget, Mode=OneWay}"  BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Auto" Background="#FF333335" Margin="0"  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Grid.Row="1" Style="{DynamicResource ListViewStyleNormal}">
+            <ListView.View>
+                <ctrl:ResourceView>
+                    <ctrl:ResourceView.ItemTemplate>
+                        <DataTemplate>
+                            <Border x:Name="Msg" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Padding="0" Height="32">
+                                <DockPanel Opacity="{Binding OnlineOpacity, Mode=OneWay}" >
+                                    <Image x:Name="Icon" Source="{Binding Icon, Mode=OneWay}" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="16,0,0,0" />
+                                    <TextBlock Text="{Binding FullName, Mode=OneWay}"  TextWrapping="NoWrap" Margin="5,0,17,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  Foreground="#FFD2DFF5" FontSize="13" FontFamily="Hiragino Sans GB W3"/>
+                                </DockPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ctrl:ResourceView.ItemTemplate>
+                </ctrl:ResourceView>
+            </ListView.View>
+        </ListView>
+        <ListView x:Name="listView1"  ItemsSource="{Binding QuickTargetList, Mode=OneWay}" BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="#FF333335" Margin="0"  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Width="218" Grid.Column="2" Grid.Row="1" Style="{DynamicResource ListViewStyleNormal}" >
+            <ListView.View>
+                <ctrl:ResourceView>
+                    <ctrl:ResourceView.ItemTemplate>
+                        <DataTemplate>
+                            <Border x:Name="Msg" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Padding="0" Height="32">
+                                <DockPanel  Opacity="{Binding ViewModule.OnlineOpacity}" >
+                                    <Image x:Name="Icon" Source="{Binding ViewModule.Icon}" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="16,0,0,0" />
+                                    <TextBlock Text="{Binding ViewModule.FullName}"  TextWrapping="NoWrap" Margin="5,0,17,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="#FFD2DFF5" FontSize="13" FontFamily="Hiragino Sans GB W3"/>
+                                </DockPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ctrl:ResourceView.ItemTemplate>
+                </ctrl:ResourceView>
+            </ListView.View>
+        </ListView>
+
+
+        <Grid Grid.ColumnSpan="3" Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="50*"/>
+                <RowDefinition Height="50*"/>
+            </Grid.RowDefinitions>
+            <Button Content="=&gt;" Command="{Binding Add, Mode=OneWay}"  VerticalAlignment="Bottom" Style="{DynamicResource ButtonStyleFastSend}" Width="90" Margin="0,9.5" CommandParameter="{Binding SelectedItem, ElementName=listView}"/>
+            <Button Content="&lt;="  Command="{Binding Remove, Mode=OneWay}" Grid.RowSpan="2" Grid.Row="1" VerticalAlignment="Top"  Style="{DynamicResource ButtonStyleUnSend}" Width="90" Height="32" Margin="0,9.5" CommandParameter="{Binding SelectedItem, ElementName=listView1}" />
+        </Grid>
+    </Grid>
+</UserControl>

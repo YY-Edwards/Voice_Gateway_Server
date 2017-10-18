@@ -1,0 +1,51 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar" 
+             xmlns:ctrl="clr-namespace:Dispatcher.Controls"
+             xmlns:ViewsModules="clr-namespace:Dispatcher.ViewsModules"
+             xmlns:Views="clr-namespace:Dispatcher.Views"
+             x:Class="Dispatcher.Views.QuickList" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+
+        <ctrl:QuickPanelView x:Key="PanelView">
+            <ctrl:QuickPanelView.ItemTemplate>
+                <DataTemplate>
+                    <Views:QuickPanel x:Name="quickpanel"  DataContext="{Binding}" Width="242" Height="326" Background="{DynamicResource TitleBackground}" >
+                        <Views:QuickPanel.ContextMenu >
+                            <ContextMenu Visibility="Hidden"/>
+                        </Views:QuickPanel.ContextMenu>
+                    </Views:QuickPanel>                  
+                </DataTemplate>
+            </ctrl:QuickPanelView.ItemTemplate>
+        </ctrl:QuickPanelView>
+
+        <ctrl:QuickPanelView x:Key="IconView">
+            <ctrl:QuickPanelView.ItemTemplate>
+                <DataTemplate>
+                    <Views:QuickIcon x:Name="quickicon" DataContext="{Binding}" Width="113" Height="157" Background="{DynamicResource TitleBackground}" >
+                        <Views:QuickIcon.ContextMenu>
+                            <ContextMenu Style="{DynamicResource ContextMenuStyleNormal}">
+                                <MenuItem  Header="删除" Command="{Binding Close, Mode=OneWay}" Style="{DynamicResource ContextMenuItemStyle}" />
+                            </ContextMenu>
+                        </Views:QuickIcon.ContextMenu>
+                    </Views:QuickIcon>
+                </DataTemplate>
+            </ctrl:QuickPanelView.ItemTemplate>
+        </ctrl:QuickPanelView>
+    </UserControl.Resources>
+    <Grid>
+        <ListView x:Name="list"  BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" VerticalContentAlignment="Top" Margin="10,6" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Style="{DynamicResource ListViewStyleNormal}" ItemsSource="{Binding QuickList}" PreviewMouseDoubleClick="list_PreviewMouseDoubleClick">
+            <ListView.ContextMenu>
+                <ContextMenu Style="{DynamicResource ContextMenuStyleNormal}">
+                    <MenuItem  Header="添加常用联系人" Command="{Binding ToolsFast, Mode=OneWay}" CommandParameter="Target" Style="{DynamicResource ContextMenuItemStyle}" />
+                    <MenuItem  Header="添加快速操作" Command="{Binding ToolsFast, Mode=OneWay}" CommandParameter="Operation" Style="{DynamicResource ContextMenuItemStyle}"/>
+                </ContextMenu>
+            </ListView.ContextMenu>
+        </ListView>
+    </Grid>
+</UserControl>

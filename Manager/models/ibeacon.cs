@@ -101,7 +101,7 @@ namespace Manager
             X = 0.0;
             Y = 0.0;
             IsValid = false;
-            Area = -1;
+            Area = -65535;
         }
         public CiBeacon Copy()
         {

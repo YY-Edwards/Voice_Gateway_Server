@@ -76,7 +76,7 @@ namespace Manager
                 if (s_Sender == null)
                 {
                     s_Sender = new CSender();
-                    s_Sender.OnTimeout += delegate { if (m_WaitReponse != null)m_WaitReponse.Release(); if (Timeout != null)Timeout(this, new EventArgs()); };
+                    s_Sender.OnTimeout += delegate { if (m_WaitReponse != null)try { m_WaitReponse.Release(); } catch { } if (Timeout != null)Timeout(this, new EventArgs()); };
                 }
             }
 
@@ -158,12 +158,12 @@ namespace Manager
 
         public string[] Request(RequestOpcode call, object param)
         {
-            //lock (m_RequestLockHelper)
+            lock (m_RequestLockHelper)
             {
                 try
                 {
 
-                    if (m_WaitReponse == null) m_WaitReponse = new Semaphore(0, 1);
+                    m_WaitReponse = new Semaphore(0, 1);
 
                     s_CallID += 1;
 

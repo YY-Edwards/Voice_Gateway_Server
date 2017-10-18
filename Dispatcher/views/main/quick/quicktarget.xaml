@@ -1,0 +1,60 @@
+﻿<UserControl x:Class="Dispatcher.Views.QuickTarget"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar" 
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" 
+             xmlns:svr="clr-namespace:Dispatcher.Service"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <svr:ShortMessageArgsConverter x:Key="ShortMessageArgsConverter"/>
+    </UserControl.Resources>
+    <Grid>
+        <DockPanel>
+            <Grid DockPanel.Dock="Bottom" Margin="0" Height="60">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <CheckBox Content="开始呼叫" Tag="结束呼叫" IsEnabled="{Binding EnableCallOrStop,Mode=OneWay}"  Visibility="{x:Static svr:FunctionConfigure.CheckBoxToCallVisible}" VerticalAlignment="Center"  Height="32" Margin="0,0,2.5,0" Style="{DynamicResource CheckBoxStylePTT}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Checked">
+                            <i:InvokeCommandAction Command="{Binding Call, Mode=OneWay}" CommandParameter="Start" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="Unchecked">
+                            <i:InvokeCommandAction Command="{Binding Call, Mode=OneWay}" CommandParameter="Stop" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </CheckBox>
+                <Button  Content="PTT" Margin="0,0,2.5,0" IsEnabled="{Binding EnableCallOrStop,Mode=OneWay}"  Visibility="{x:Static svr:FunctionConfigure.PTTToCallVisible}" ToolTip="呼叫" VerticalAlignment="Center" Height="32" Style="{DynamicResource ButtonStyleFastCall}">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                            <i:InvokeCommandAction Command="{Binding Call, Mode=OneWay}" CommandParameter="Start" />
+                        </i:EventTrigger>
+                        <i:EventTrigger EventName="PreviewMouseLeftButtonUp">
+                            <i:InvokeCommandAction Command="{Binding Call, Mode=OneWay}" CommandParameter="Stop" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Button>
+                <Button  Content="发送" IsEnabled="{Binding CanShortMessage,Mode=OneWay}" Command="{Binding SendShortMessage, Mode=OneWay}" Margin="2.5,0,0,0" ToolTip="发送短消息" Grid.Column="1" VerticalAlignment="Center" Height="32" Style="{DynamicResource ButtonStyleFastSend}">
+                    <Button.CommandParameter>
+                        <MultiBinding Converter="{StaticResource ShortMessageArgsConverter}">
+                            <Binding Path="Text" ElementName="textBox"/> 
+                        </MultiBinding>
+                    </Button.CommandParameter>
+                </Button>
+            </Grid>
+            <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Height="30" Margin="0,0,0,5">
+                <Controls:Icon  Margin="2.5,0" ToolTip="在线检测"  Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}" IsEnabled="{Binding CanCheckOnline,Mode=OneWay}" Command="{Binding Control,Mode=OneWay}" CommandParameter="Check" Height="22" Width="22" VerticalAlignment="Center" Image="/TrboX;component/resource/images/online_check_22_22_n.png" DisableImage="/TrboX;component/resource/images/online_check_22_22_d.png" HoverImage="/TrboX;component/resource/images/online_check_22_22_h.png" PressedImage="/TrboX;component/resource/images/online_check_22_22_p.png"/>
+                <Controls:Icon  Margin="2.5,0" ToolTip="远程监听"  Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}" IsEnabled="{Binding CanMonitor,Mode=OneWay}" Command="{Binding Control,Mode=OneWay}" CommandParameter="Monitor" Height="22" Width="22" VerticalAlignment="Center" Image="/TrboX;component/resource/images/minitor_22_22_n.png" DisableImage="/TrboX;component/resource/images/minitor_22_22_d.png" HoverImage="/TrboX;component/resource/images/minitor_22_22_h.png" PressedImage="/TrboX;component/resource/images/minitor_22_22_p.png"/>
+                <Controls:Icon  Margin="2.5,0" ToolTip="遥开"  Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}" IsEnabled="{Binding CanShartUp,Mode=OneWay}"  Command="{Binding Control,Mode=OneWay}" CommandParameter="StartUp" Height="22"  Width="22" VerticalAlignment="Center" Image="/TrboX;component/resource/images/power_up_22_22_n.png" DisableImage="/TrboX;component/resource/images/power_up_22_22_d.png" HoverImage="/TrboX;component/resource/images/power_up_22_22_h.png" PressedImage="/TrboX;component/resource/images/power_up_22_22_p.png"/>
+                <Controls:Icon  Margin="2.5,0" ToolTip="遥毙"  Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}" IsEnabled="{Binding CanShutDown,Mode=OneWay}"  Command="{Binding Control,Mode=OneWay}" CommandParameter="ShutDown" Height="22" Width="22" VerticalAlignment="Center" Image="/TrboX;component/resource/images/shutdown_22_22_n.png" HoverImage="/TrboX;component/resource/images/shutdown_22_22_h.png" DisableImage="/TrboX;component/resource/images/shutdown_22_22_d.png" PressedImage="/TrboX;component/resource/images/shutdown_22_22_p.png"/>
+                <Controls:Icon  Margin="2.5,2,2.5,0" ToolTip="更多操作" Command="{Binding OpenOperateWindow,Mode=OneWay}" CommandParameter="Schedule" Height="22" Width="22" VerticalAlignment="Center" Image="/TrboX;component/resource/images/more_22_22_n.png" DisableImage="/TrboX;component/resource/images/more_22_22_d.png" HoverImage="/TrboX;component/resource/images/more_22_22_h.png" PressedImage="/TrboX;component/resource/images/more_22_22_p.png"/>
+            </DockPanel>
+            <TextBox x:Name="textBox" ContextMenu ="{x:Null}"  TextWrapping="Wrap" Text="" Margin="0" DockPanel.Dock="Top"  Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFD2DFF5" CaretBrush="#FFD2DFF5">
+            </TextBox>
+        </DockPanel>
+    </Grid>
+</UserControl>

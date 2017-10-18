@@ -1,0 +1,49 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" 
+             xmlns:viewmodule="clr-namespace:Dispatcher.ViewsModules" 
+             xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar" 
+             xmlns:local="clr-namespace:Dispatcher.Views" x:Name="userControl" x:Class="Dispatcher.Views.Header" 
+             mc:Ignorable="d" 
+             d:DesignHeight="40" d:DesignWidth="800">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding Loaded, Mode=OneWay}" CommandParameter="{Binding State, ElementName=userControl}" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="SizeChanged">
+            <i:InvokeCommandAction Command="{Binding SizeChanged, Mode=OneWay}" CommandParameter="{Binding State, ElementName=userControl}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid Background="{DynamicResource PanelBackground}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="136"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="auto"/>
+        </Grid.ColumnDefinitions>
+        <Image Source="/TrboX;component/resource/images/main_title_136_40.png"/>
+        <TextBlock Text="{Binding CurrentUser,StringFormat='当前登录：{0}'}" VerticalAlignment="Center" Foreground="#FFABABAB" Margin="0,0,50,0" Grid.Column="2"/>
+
+        <Controls:IconButton  Background="#00000000" BorderThickness="0" Width="Auto" Height="Auto"  DisableBackground="{x:Null}" PressedBackground="#00000000" Grid.ColumnSpan="4" HoverBackground="#00000000">
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="PreviewMouseLeftButtonDown">
+                    <i:InvokeCommandAction Command="{Binding Move, Mode=OneWay}"/>
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+        </Controls:IconButton>
+        <local:Menu x:Name="menu" VerticalAlignment="Center" Grid.Column="1" HorizontalAlignment="Left" Width="Auto" DataContext="{Binding MenuViewModule}"/>
+
+        <StackPanel Orientation="Horizontal" Grid.Column="3">
+            <Controls:Icon  Command="{Binding Min, Mode=OneWay}" Height="18"  Width="18" Margin="8,0" Image="/TrboX;component/resource/images/min_18_18_n.png" HoverImage="/TrboX;component/resource/images/min_18_18_h.png" HorizontalAlignment="Center" PressedImage="/TrboX;component/resource/images/min_18_18_h.png" />
+            <Grid>
+                <Controls:Icon  Command="{Binding Max, Mode=OneWay}"  Height="18"  Width="18" Margin="8,0" Image="/TrboX;component/resource/images/max_18_18_n.png" HoverImage="/TrboX;component/resource/images/max_18_18_h.png" HorizontalAlignment="Center" PressedImage="/TrboX;component/resource/images/max_18_18_h.png"   Visibility="{Binding MaxButtonVisble, Mode=OneWay}"/>
+                <Controls:Icon  Command="{Binding Restore, Mode=OneWay}" Height="18"  Width="18" Margin="8,0,7,0" Image="/TrboX;component/resource/images/restore_18_18_n.png" HoverImage="/TrboX;component/resource/images/restore_18_18_h.png" HorizontalAlignment="Center" PressedImage="/TrboX;component/resource/images/restore_18_18_h.png"  Visibility="{Binding RestoreButtonVisble, Mode=OneWay}"/>
+            </Grid>
+            <Controls:Icon  Command="{Binding Close, Mode=OneWay}"  Height="18" Width="18" Margin="8,0,11,0" Image="/TrboX;component/resource/images/close_18_18_n.png" HoverImage="/TrboX;component/resource/images/close_18_18_h.png" HorizontalAlignment="Center" PressedImage="/TrboX;component/resource/images/close_18_18_h.png" />
+        </StackPanel>
+        
+    </Grid>
+</UserControl>

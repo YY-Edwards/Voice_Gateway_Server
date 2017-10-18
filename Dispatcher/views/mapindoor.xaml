@@ -1,0 +1,72 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar"
+             xmlns:ctrl="clr-namespace:Dispatcher.Controls"    
+     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"              
+             xmlns:Service="clr-namespace:Dispatcher.Service"
+             xmlns:ViewsModules="clr-namespace:Dispatcher.ViewsModules" 
+     xmlns:Views="clr-namespace:Dispatcher.Views" 
+    x:Class="Dispatcher.Views.MapInDoor"
+             mc:Ignorable="d" 
+             d:DesignHeight="480" d:DesignWidth="480">
+    <UserControl.Resources>
+        <Service:TabHeaderMaxWidth x:Key="TabHeaderMaxWidth"/>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Grid x:Name="header" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition MinWidth="30" Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <ListView x:Name="listView" BorderThickness="0,0,1,0" SelectedIndex="{Binding AreaIndex}" ItemsSource="{Binding AreaList, Mode=OneWay}" HorizontalAlignment="Left" Background="{x:Null}" Style="{DynamicResource ListViewStyleNormal}" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding SelectedChanged}" CommandParameter="{Binding ElementName=pos, Mode=OneWay}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <ListView.MaxWidth>
+                    <MultiBinding Converter="{StaticResource TabHeaderMaxWidth}">
+                        <Binding Path="ActualWidth" ElementName="UserControl"/>
+                        <Binding Path="ActualWidth"  ElementName="cmbmore"/>
+                    </MultiBinding>
+                </ListView.MaxWidth>
+                <!--MaxWidth="{Binding ActualWidth, Converter={StaticResource NotifyContentWidthValueConverter}, ElementName=UserControl, Mode=OneWay}"-->
+                <ListView.View>
+                    <ctrl:TitleView>
+                        <ctrl:TitleView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <!--<Control:Icon Command="{Binding DataContext.Remove, ElementName=UserControl}" HorizontalAlignment="Left" VerticalAlignment="Center" Image="/TrboX;component/resource/images/close_18_18_h.png" Width="18" Height="18" HoverImage="/TrboX;component/resource/images/close_18_18_n.png" Margin="10,0,5,2" CommandParameter="{Binding Mode=OneWay}"/>-->
+                                    <TextBlock Text="{Binding Name}" TextWrapping="NoWrap" Margin="15,0,15,0"  Foreground="#FFCDCDCD" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="14" FontFamily="Hiragino Sans GB W3" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ctrl:TitleView.ItemTemplate>
+                    </ctrl:TitleView>
+                </ListView.View>
+            </ListView>
+            <!--<Control:Icon Command="{Binding Add, Mode=OneWay}" Height="22" VerticalAlignment="Center" Margin="5,4,0,4" Width="22" Image="/TrboX;component/resource/images/new_22_22_n.png" HoverImage="/TrboX;component/resource/images/new_22_22_h.png" DisableImage="/TrboX;component/resource/images/new_22_22_d.png" PressedImage="/TrboX;component/resource/images/new_22_22_p.png" HorizontalAlignment="Left" Grid.Column="1"/>-->
+            <ComboBox  x:Name="cmbmore" VerticalAlignment="Bottom" Margin="0" SelectedIndex="{Binding AreaIndex}" Grid.Column="1" Style="{DynamicResource ComboBoxMoreTabStyle}" Foreground="#FFBFBFBF" FontSize="13" BorderThickness="0" HorizontalAlignment="Right" Background="{x:Null}" BorderBrush="{x:Null}" ItemsSource="{Binding AreaList}" ItemContainerStyle="{DynamicResource ComboBoxItemStyleNormal}" VerticalContentAlignment="Center" Padding="6,3,5,3">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="SelectionChanged">
+                        <i:InvokeCommandAction Command="{Binding SelectedChanged}" CommandParameter="{Binding ElementName=pos, Mode=OneWay}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>          
+        </Grid>
+        <Views:PositionInDoor x:Name="pos"   Margin="0,-1,0,0" Grid.Row="1" BorderThickness="1" BorderBrush="{DynamicResource PanelBorderBrush}" DataContext="{Binding SelectedItem, ElementName=listView}"/>
+    </Grid>
+</UserControl>

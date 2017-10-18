@@ -82,7 +82,7 @@ namespace Manager
         }
         private void InitializeValue()
         {
-            IsEnable = true;
+            IsEnable = false;
             IsOnlyRide = true;
 
             Svr = new NetAddress()

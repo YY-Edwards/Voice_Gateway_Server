@@ -52,11 +52,10 @@ namespace Manager
         {
             if (!m_IsNeedAssgin) return;
 
-            if ((m_AssignDept != null && m_AssignDept.Count > 0) || (m_AssignStaff != null && m_AssignStaff.Count > 0))
-            {
+            if (m_AssignDept != null && m_AssignDept.Count > 0)
                 foreach (var dic in m_AssignDept)
                 {
-                    
+
 
                     Dictionary<string, object> param = new Dictionary<string, object>();
                     param.Add("operation", OperateType.assignRadio.ToString());
@@ -72,9 +71,11 @@ namespace Manager
                     if (department == null) continue;
                     param.Add("department", department.ID);
 
-                    Request(RequestOpcode.department, OperateType.assignRadio, param); 
+                    Request(RequestOpcode.department, OperateType.assignRadio, param);
                 }
 
+
+            if (m_AssignStaff != null && m_AssignStaff.Count > 0)
                 foreach (var dic in m_AssignStaff)
                 {
                     Dictionary<string, object> param = new Dictionary<string, object>();
@@ -91,22 +92,23 @@ namespace Manager
                     param.Add("user", staff.ID);
 
                     Request(RequestOpcode.user, OperateType.assignRadio, param);
-                  
+
                 }
 
 
-                if (m_AssignDept.Count <= 0 && m_AssignStaff.Count <= 0)
-                {
-                    m_IsNeedAssgin = false;
-                    List.Clear();
-                }
-            }            
+            if (m_AssignDept != null && m_AssignDept.Count <= 0 && m_AssignStaff != null && m_AssignStaff.Count <= 0)
+            {
+                m_IsNeedAssgin = false;
+                List.Clear();
+            }
+                        
                      
         }
 
         public void AssignDetach(List<CRElement> departments, List<CRElement> staffs)
         {
-            if (m_DetachDept != null || m_DetachStaff !=null)
+
+            if (m_DetachDept != null)
             {
                 foreach (var dic in m_DetachDept)
                 {
@@ -118,7 +120,11 @@ namespace Manager
                     Request(RequestOpcode.department, OperateType.detachRadio, param);
                 }
                 m_DetachDept.Clear();
+            }
 
+
+            if (m_DetachStaff != null)
+            {
                 foreach (var dic in m_DetachStaff)
                 {
                     Dictionary<string, object> param = new Dictionary<string, object>();
@@ -130,6 +136,7 @@ namespace Manager
                 }
                 m_DetachStaff.Clear();
             }
+            
 
             if ((m_AssignDept != null && m_AssignDept.Count > 0) || (m_AssignStaff != null && m_AssignStaff.Count > 0))
             {

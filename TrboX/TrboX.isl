@@ -343,6 +343,9 @@
 		<row><td>CefSharp.dll</td><td>{80E66505-8661-4885-B167-D7DAF4589DDB}</td><td>BIN1</td><td>2</td><td/><td>cefsharp.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component</td><td>{F82D6DF2-BBE7-4EBB-8154-B90A094E3158}</td><td>TRBOX_</td><td>2</td><td/><td>File</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component1</td><td>{58F67789-11F7-45EA-B087-1004E83BEF2C}</td><td>TRBOX_MGR</td><td>2</td><td/><td>File1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Component10</td><td>{2134AF52-E637-4FA4-ADD7-D5783F449038}</td><td>SVR</td><td>2</td><td/><td>File3</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Component11</td><td>{A273BAFB-C5E7-4A68-A294-EDF16D80D5BA}</td><td>SVR</td><td>2</td><td/><td>File4</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Component12</td><td>{48E124B1-DF7D-4CB1-96C0-D6CA2C4A3CF8}</td><td>TRBOX_</td><td>2</td><td/><td>File6</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component2</td><td>{04C2A115-6796-46BF-9C8E-07DE4D1FE34D}</td><td>DEVICE</td><td>2</td><td/><td>File2</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component3</td><td>{7890224F-977E-4CF1-BAE2-5B96781449BF}</td><td>DEVICE</td><td>2</td><td/><td>File3</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component4</td><td>{46236873-5E7A-4B58-92FD-7B6353661882}</td><td>SVR</td><td>2</td><td/><td>File1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
@@ -350,6 +353,7 @@
 		<row><td>Component6</td><td>{32415470-17F7-4508-AB49-DFA7201E9C8A}</td><td>TRBOX_MGR</td><td>2</td><td/><td>File5</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component7</td><td>{2002CE1C-90A4-4C96-BB65-78FD7D4BD84C}</td><td>DEVICE</td><td>2</td><td/><td>File</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component8</td><td>{D10EFA7D-8E55-46B4-9F30-ACF8CC272A11}</td><td>DEVICE</td><td>2</td><td/><td>File1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Component9</td><td>{404C9EF6-EC78-4201-876E-604D077588DD}</td><td>SVR</td><td>2</td><td/><td>File2</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Controls.WPF.dll</td><td>{F991DE54-683C-4881-8DA5-5F470BA016AA}</td><td>BIN</td><td>2</td><td/><td>controls.wpf.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT</td><td>{F09857EB-8D31-477F-BAEE-A2014D16DCCC}</td><td>TRBOX_MGR</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>ISX_DEFAULTCOMPONENT1</td><td>{632073B0-6A63-479F-9F79-8EFD14609438}</td><td>TRBOX_</td><td>2</td><td/><td/><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
@@ -360,7 +364,6 @@
 		<row><td>Microsoft.Expression.Drawing.dll</td><td>{DB274607-3D49-48D7-8373-82A71DFB9E88}</td><td>BIN1</td><td>2</td><td/><td>microsoft.expression.drawing</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Microsoft.Expression.Interactions.dll</td><td>{7619959D-9F08-4247-831F-B5A8B1870EF9}</td><td>BIN1</td><td>2</td><td/><td>microsoft.expression.interac</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Microsoft.Expression.Interactions.dll1</td><td>{FE35D9D7-CBC0-49D9-A585-6C82F9B33545}</td><td>BIN</td><td>2</td><td/><td>microsoft.expression.interac1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
-		<row><td>Monitor.exe</td><td>{05D88984-6D49-4237-9051-0F40129701DF}</td><td>SVR</td><td>2</td><td/><td>monitor.exe</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Newtonsoft.Json.dll</td><td>{F8F6BFCA-AA96-4909-ADF5-650F08EDBE4E}</td><td>BIN1</td><td>2</td><td/><td>newtonsoft.json.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Newtonsoft.Json.dll1</td><td>{A6B775F7-2064-4894-BC48-797D34270F7B}</td><td>BIN</td><td>2</td><td/><td>newtonsoft.json.dll1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Sigmar.dll</td><td>{3CB59ABB-68DD-4B98-95B7-E6ABB6385048}</td><td>BIN1</td><td>2</td><td/><td>sigmar.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
@@ -1110,6 +1113,9 @@
 		<row><td>INSTALLDIR</td><td>CefSharp.dll</td></row>
 		<row><td>INSTALLDIR</td><td>Component</td></row>
 		<row><td>INSTALLDIR</td><td>Component1</td></row>
+		<row><td>INSTALLDIR</td><td>Component10</td></row>
+		<row><td>INSTALLDIR</td><td>Component11</td></row>
+		<row><td>INSTALLDIR</td><td>Component12</td></row>
 		<row><td>INSTALLDIR</td><td>Component2</td></row>
 		<row><td>INSTALLDIR</td><td>Component3</td></row>
 		<row><td>INSTALLDIR</td><td>Component4</td></row>
@@ -1117,6 +1123,7 @@
 		<row><td>INSTALLDIR</td><td>Component6</td></row>
 		<row><td>INSTALLDIR</td><td>Component7</td></row>
 		<row><td>INSTALLDIR</td><td>Component8</td></row>
+		<row><td>INSTALLDIR</td><td>Component9</td></row>
 		<row><td>INSTALLDIR</td><td>Controls.WPF.dll</td></row>
 		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT</td></row>
 		<row><td>INSTALLDIR</td><td>ISX_DEFAULTCOMPONENT1</td></row>
@@ -1127,7 +1134,6 @@
 		<row><td>INSTALLDIR</td><td>Microsoft.Expression.Drawing.dll</td></row>
 		<row><td>INSTALLDIR</td><td>Microsoft.Expression.Interactions.dll</td></row>
 		<row><td>INSTALLDIR</td><td>Microsoft.Expression.Interactions.dll1</td></row>
-		<row><td>INSTALLDIR</td><td>Monitor.exe</td></row>
 		<row><td>INSTALLDIR</td><td>Newtonsoft.Json.dll</td></row>
 		<row><td>INSTALLDIR</td><td>Newtonsoft.Json.dll1</td></row>
 		<row><td>INSTALLDIR</td><td>Sigmar.dll</td></row>
@@ -1142,13 +1148,16 @@
 		<row><td>INSTALLDIR</td><td>libglog.dll1</td></row>
 		<row><td>INSTALLDIR</td><td>libmysql.dll</td></row>
 		<row><td>INSTALLDIR</td><td>libmysql.dll1</td></row>
+		<row><td>SVR</td><td>Component10</td></row>
+		<row><td>SVR</td><td>Component11</td></row>
 		<row><td>SVR</td><td>Component4</td></row>
 		<row><td>SVR</td><td>Component5</td></row>
+		<row><td>SVR</td><td>Component9</td></row>
 		<row><td>SVR</td><td>ISX_DEFAULTCOMPONENT3</td></row>
-		<row><td>SVR</td><td>Monitor.exe</td></row>
 		<row><td>SVR</td><td>libglog.dll</td></row>
 		<row><td>SVR</td><td>libmysql.dll</td></row>
 		<row><td>TRBOX_</td><td>Component</td></row>
+		<row><td>TRBOX_</td><td>Component12</td></row>
 		<row><td>TRBOX_</td><td>ISX_DEFAULTCOMPONENT1</td></row>
 		<row><td>TRBOX_</td><td>icudt.dll</td></row>
 		<row><td>TRBOX_</td><td>libcef.dll</td></row>
@@ -1979,6 +1988,9 @@
 		<row><td>AlwaysInstall</td><td>CefSharp.dll</td></row>
 		<row><td>AlwaysInstall</td><td>Component</td></row>
 		<row><td>AlwaysInstall</td><td>Component1</td></row>
+		<row><td>AlwaysInstall</td><td>Component10</td></row>
+		<row><td>AlwaysInstall</td><td>Component11</td></row>
+		<row><td>AlwaysInstall</td><td>Component12</td></row>
 		<row><td>AlwaysInstall</td><td>Component2</td></row>
 		<row><td>AlwaysInstall</td><td>Component3</td></row>
 		<row><td>AlwaysInstall</td><td>Component4</td></row>
@@ -1986,6 +1998,7 @@
 		<row><td>AlwaysInstall</td><td>Component6</td></row>
 		<row><td>AlwaysInstall</td><td>Component7</td></row>
 		<row><td>AlwaysInstall</td><td>Component8</td></row>
+		<row><td>AlwaysInstall</td><td>Component9</td></row>
 		<row><td>AlwaysInstall</td><td>Controls.WPF.dll</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT</td></row>
 		<row><td>AlwaysInstall</td><td>ISX_DEFAULTCOMPONENT1</td></row>
@@ -1996,7 +2009,6 @@
 		<row><td>AlwaysInstall</td><td>Microsoft.Expression.Drawing.dll</td></row>
 		<row><td>AlwaysInstall</td><td>Microsoft.Expression.Interactions.dll</td></row>
 		<row><td>AlwaysInstall</td><td>Microsoft.Expression.Interactions.dll1</td></row>
-		<row><td>AlwaysInstall</td><td>Monitor.exe</td></row>
 		<row><td>AlwaysInstall</td><td>Newtonsoft.Json.dll</td></row>
 		<row><td>AlwaysInstall</td><td>Newtonsoft.Json.dll1</td></row>
 		<row><td>AlwaysInstall</td><td>Sigmar.dll</td></row>
@@ -2027,7 +2039,11 @@
 		<col def="S72">ISComponentSubFolder_</col>
 		<row><td>File</td><td>Component7</td><td>WirelineSchedule.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;WirelineSchedule&gt;|Built</td><td>3</td><td/></row>
 		<row><td>File1</td><td>Component8</td><td>Dispatch.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Dispatch&gt;|Built</td><td>3</td><td/></row>
+		<row><td>File2</td><td>Component9</td><td>TServer.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;TServer&gt;|Built</td><td>3</td><td/></row>
+		<row><td>File3</td><td>Component10</td><td>LogServer.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;LogServer&gt;|Built</td><td>3</td><td/></row>
+		<row><td>File4</td><td>Component11</td><td>Monitor.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Monitor&gt;|Built</td><td>3</td><td/></row>
 		<row><td>File5</td><td>Component6</td><td>Manager.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Manager&gt;|Built</td><td>3</td><td/></row>
+		<row><td>File6</td><td>Component12</td><td>Dispatcher.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Dispatcher&gt;|Built</td><td>3</td><td/></row>
 		<row><td>cefsharp.dll</td><td>CefSharp.dll</td><td>CefSharp.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Trbox\bin\CefSharp.dll</td><td>1</td><td/></row>
 		<row><td>cefsharp.wpf.dll</td><td>CefSharp.Wpf.dll</td><td>CEFSHA~1.DLL|CefSharp.Wpf.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Trbox\bin\CefSharp.Wpf.dll</td><td>1</td><td/></row>
 		<row><td>controls.wpf.dll</td><td>Controls.WPF.dll</td><td>CONTRO~1.DLL|Controls.WPF.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\TrboxMgr\Bin\Controls.WPF.dll</td><td>1</td><td/></row>
@@ -2042,7 +2058,6 @@
 		<row><td>microsoft.expression.drawing</td><td>Microsoft.Expression.Drawing.dll</td><td>MICROS~1.DLL|Microsoft.Expression.Drawing.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Trbox\bin\Microsoft.Expression.Drawing.dll</td><td>1</td><td/></row>
 		<row><td>microsoft.expression.interac</td><td>Microsoft.Expression.Interactions.dll</td><td>MICROS~1.DLL|Microsoft.Expression.Interactions.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Trbox\bin\Microsoft.Expression.Interactions.dll</td><td>1</td><td/></row>
 		<row><td>microsoft.expression.interac1</td><td>Microsoft.Expression.Interactions.dll1</td><td>MICROS~1.DLL|Microsoft.Expression.Interactions.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\TrboxMgr\Bin\Microsoft.Expression.Interactions.dll</td><td>1</td><td/></row>
-		<row><td>monitor.exe</td><td>Monitor.exe</td><td>Monitor.exe</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Svr\Monitor.exe</td><td>1</td><td/></row>
 		<row><td>newtonsoft.json.dll</td><td>Newtonsoft.Json.dll</td><td>NEWTON~1.DLL|Newtonsoft.Json.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Trbox\bin\Newtonsoft.Json.dll</td><td>1</td><td/></row>
 		<row><td>newtonsoft.json.dll1</td><td>Newtonsoft.Json.dll1</td><td>NEWTON~1.DLL|Newtonsoft.Json.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\TrboxMgr\Bin\Newtonsoft.Json.dll</td><td>1</td><td/></row>
 		<row><td>sigmar.dll</td><td>Sigmar.dll</td><td>Sigmar.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Trbox\bin\Sigmar.dll</td><td>1</td><td/></row>
@@ -2203,6 +2218,9 @@
 		<row><td>CefSharp.dll</td><td/><td/><td>_99E9143A_214B_4750_9193_32B8A8EED1C6_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component</td><td/><td/><td>_7D01C576_C1E8_4A32_BCB5_1E117F3D807C_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component1</td><td/><td/><td>_276EA5DC_9560_4F5C_91DC_84A16CA226EA_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Component10</td><td/><td/><td>_793CE145_28D8_4A38_A472_97DD93658DDE_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Component11</td><td/><td/><td>_A9083488_BA7B_44D8_8852_EF5989B68355_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Component12</td><td/><td/><td>_6071A81B_D805_4AED_9C7F_54AB9F5D6DE5_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component2</td><td/><td/><td>_DA9B56C7_6171_4210_BD9B_1BABB1753CE4_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component3</td><td/><td/><td>_D645E487_BC89_482E_9E97_DA6BB22E0F3E_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component4</td><td/><td/><td>_7E42CFF1_E342_4223_99C6_9041EB42389B_FILTER</td><td/><td/><td/><td/></row>
@@ -2210,6 +2228,7 @@
 		<row><td>Component6</td><td/><td/><td>_12B174E1_8580_44C3_97CA_6B7B1BA69768_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component7</td><td/><td/><td>_22C32C49_CD30_46F3_ACDC_81D170A75181_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component8</td><td/><td/><td>_C3F02CBE_9128_438D_B34E_86E027DB5715_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Component9</td><td/><td/><td>_79F42498_BC68_42CE_8F73_D4393578E7F2_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Controls.WPF.dll</td><td/><td/><td>_88419199_58C2_445E_81B8_ED3DBE68A052_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT</td><td/><td/><td>_A16784B3_47A6_4F79_AECA_DB2B2C47B561_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>ISX_DEFAULTCOMPONENT1</td><td/><td/><td>_9B2A7210_5F88_4798_9281_43815C2B9517_FILTER</td><td/><td/><td/><td/></row>
@@ -2220,7 +2239,6 @@
 		<row><td>Microsoft.Expression.Drawing.dll</td><td/><td/><td>_0C8BF6D9_5DF6_47D5_A8F6_B4D1F91B3ED6_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Microsoft.Expression.Interactions.dll</td><td/><td/><td>_F45AE0C6_9259_44A5_A105_D6063AE2E87C_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Microsoft.Expression.Interactions.dll1</td><td/><td/><td>_A6566DFB_77E0_45E4_BA78_4A0CD6C38264_FILTER</td><td/><td/><td/><td/></row>
-		<row><td>Monitor.exe</td><td/><td/><td>_765C8DA1_01AA_4AAF_98E5_9721DEA2D6C5_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Newtonsoft.Json.dll</td><td/><td/><td>_315A2566_060A_44FE_8A5B_064DE053EA6A_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Newtonsoft.Json.dll1</td><td/><td/><td>_958D1349_F2B7_4400_8877_23D0C010F856_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Sigmar.dll</td><td/><td/><td>_E35C1EF2_3908_4B36_9966_771D66B8F07F_FILTER</td><td/><td/><td/><td/></row>
@@ -2522,6 +2540,7 @@
 		<row><td>ISProjectFolder</td><td/><td/><td>1</td></row>
 		<row><td>LogServer</td><td>LogServer\LogServer.vcxproj</td><td/><td>2</td></row>
 		<row><td>Manager</td><td>Manager\Manager.csproj</td><td/><td>2</td></row>
+		<row><td>Monitor</td><td>Monitor\Monitor.vcxproj</td><td/><td>2</td></row>
 		<row><td>ProgramFilesFolder</td><td/><td/><td>1</td></row>
 		<row><td>SystemFolder</td><td/><td/><td>1</td></row>
 		<row><td>TServer</td><td>TServer\TServer.vcxproj</td><td/><td>2</td></row>
@@ -4741,7 +4760,7 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>_Built</td><td>trbox</td><td>##IDS_SHORTCUT_DISPLAY_NAME8##</td><td>Component6</td><td>AlwaysInstall</td><td/><td/><td/><td>_Built_FD483CD17840450A90BD1461C70E0F6C.exe</td><td>0</td><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
 		<row><td>_Built1</td><td>DesktopFolder</td><td>##IDS_SHORTCUT_DISPLAY_NAME8##</td><td>Component6</td><td>AlwaysInstall</td><td/><td/><td/><td>_Built1_0E9560EE3BD844AEBF4E4B08CA9B4D25.exe</td><td>0</td><td>1</td><td>TRBOX_MGR</td><td/><td/><td/><td/><td/><td/><td/></row>
 		<row><td>_Built3</td><td>trbox</td><td>##IDS_SHORTCUT_DISPLAY_NAME7##</td><td>Component</td><td>AlwaysInstall</td><td/><td/><td/><td>_Built3_CB688140699D4C458A89D8BC473EA9A8.exe</td><td>0</td><td>1</td><td/><td/><td/><td/><td/><td/><td/><td/></row>
-		<row><td>_Built31</td><td>DesktopFolder</td><td>##IDS_SHORTCUT_DISPLAY_NAME7##</td><td>Component</td><td>AlwaysInstall</td><td/><td/><td/><td>_Built31_D53A927EE9884461A67B8A74A680A8DC.exe</td><td>0</td><td>1</td><td>TRBOX</td><td/><td/><td/><td/><td/><td/><td/></row>
+		<row><td>_Built31</td><td>DesktopFolder</td><td>##IDS_SHORTCUT_DISPLAY_NAME7##</td><td>Component12</td><td>AlwaysInstall</td><td/><td/><td/><td>_Built31_D53A927EE9884461A67B8A74A680A8DC.exe</td><td>0</td><td>1</td><td>TRBOX</td><td/><td/><td/><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="Signature">

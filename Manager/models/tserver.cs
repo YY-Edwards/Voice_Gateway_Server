@@ -74,7 +74,7 @@ namespace Manager
                 if (s_Sender == null)
                 {
                     s_Sender = new CSender();
-                    s_Sender.OnTimeout += delegate { if (m_WaitReponse != null)m_WaitReponse.Release(); if (Timeout != null)Timeout(this, new EventArgs()); };
+                    s_Sender.OnTimeout += delegate { if (m_WaitReponse != null)try { m_WaitReponse.Release(); } catch { } if (Timeout != null)Timeout(this, new EventArgs()); };
                 }
             }
             
@@ -88,81 +88,94 @@ namespace Manager
 
         }
         private string _untreatedjson = string.Empty;
+
+        private readonly object m_OnReceiveBytesLockHelper = new object();
+
         private void OnReceiveBytes(object sender, byte[] bytes)
         {
-            try
+            //lock (m_OnReceiveBytesLockHelper)
             {
-                string str = _untreatedjson + Encoding.UTF8.GetString(bytes);
-                string[] Jsons = str.ToJsons();
-                if (Jsons.Length <= 0) return;
-
-                _untreatedjson = Jsons[Jsons.Length - 1];
-
-                for (int i = 0; i < Jsons.Length - 1; i++)
+                try
                 {
-                    string jsonstr = Jsons[i];
-                    try
+                    string str = _untreatedjson + Encoding.UTF8.GetString(bytes);
+                    string[] Jsons = str.ToJsons();
+                    if (Jsons.Length <= 0) return;
+
+                    _untreatedjson = Jsons[Jsons.Length - 1];
+
+                    for (int i = 0; i < Jsons.Length - 1; i++)
                     {
-
-                        JObject json = JsonConvert.DeserializeObject<JObject>(jsonstr);
-
-                        if (json.Property("call") == null || json.Property("call").ToString() == string.Empty)
+                        string jsonstr = Jsons[i];
+                        try
                         {
-                            //response
-                            s_Reponse = JsonConvert.DeserializeObject<TServerResponse>(jsonstr);
 
-                            if (s_Reponse != null) s_Sender.End(s_Reponse.callId);
+                            JObject json = JsonConvert.DeserializeObject<JObject>(jsonstr);
 
-                            if (m_WaitReponse != null)
+                            if (json.Property("call") == null || json.Property("call").ToString() == string.Empty)
                             {
-                                try
-                                {
-                                    m_WaitReponse.Release();
-                                }
-                                catch
-                                {
+                                //response
+                                s_Reponse = JsonConvert.DeserializeObject<TServerResponse>(jsonstr);
 
+
+                                if (s_Reponse.callId == 2)
+                                {
+                                    Console.WriteLine(jsonstr);
+                                }
+
+                                if (s_Reponse != null) s_Sender.End(s_Reponse.callId);
+
+                                if (m_WaitReponse != null)
+                                {
+                                    try
+                                    {
+                                        m_WaitReponse.Release();
+                                    }
+                                    catch
+                                    {
+
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                //request
+                                TServerRequest rxrequest = JsonConvert.DeserializeObject<TServerRequest>(jsonstr);
+
+                                if (rxrequest != null)
+                                {
+                                    if (rxrequest.CallId > s_CallID) s_CallID = rxrequest.CallId;
+                                    SendJson(JsonConvert.SerializeObject(new TServerResponse()
+                                    {
+                                        status = "success",
+                                        callId = rxrequest.CallId,
+                                    }));
+
+                                    if (OnReceiveRequest != null) OnReceiveRequest(rxrequest.Call, rxrequest.Type, rxrequest.Param);
                                 }
                             }
                         }
-                        else
+                        catch
                         {
-                            //request
-                            TServerRequest rxrequest = JsonConvert.DeserializeObject<TServerRequest>(jsonstr);
-
-                            if (rxrequest != null)
-                            {
-                                if (rxrequest.CallId > s_CallID) s_CallID = rxrequest.CallId;
-                                SendJson(JsonConvert.SerializeObject(new TServerResponse()
-                                {
-                                    status = "success",
-                                    callId = rxrequest.CallId,
-                                }));
-
-                                if (OnReceiveRequest != null) OnReceiveRequest(rxrequest.Call, rxrequest.Type, rxrequest.Param);
-                            }
+                            continue;
                         }
-                    }
-                    catch
-                    {
-                        continue;
                     }
                 }
-            }
-            catch
-            {
+                catch
+                {
+                }
             }
         }
+
 
         public string[] Request(RequestOpcode call, RequestType type, object param)
         {
 
-            //lock (m_RequestLockHelper)
+            lock (m_RequestLockHelper)
             {
                 try
                 {
 
-                    if (m_WaitReponse == null) m_WaitReponse = new Semaphore(0, 1);
+                    m_WaitReponse = new Semaphore(0, 1);
 
                     s_CallID += 1;
 
@@ -181,8 +194,9 @@ namespace Manager
                     string json = JsonConvert.SerializeObject(requset, Formatting.None, jsetting);
 
 
-                    s_Sender.Begin(s_CallID, 3000, 3, delegate { SendJson(json + "\r\n"); });
+                    s_Sender.Begin(s_CallID, 3000, 3, delegate { SendJson(json); });
                     if (m_WaitReponse != null) m_WaitReponse.WaitOne();
+
 
                     return new string[2] { 
                         s_Reponse.status,
@@ -191,7 +205,7 @@ namespace Manager
                 }
                 catch
                 {
-                    return new string[2] { "faliure", string.Empty };
+                    return new string[2] { "failure", string.Empty };
                 }
             }
         }
@@ -251,7 +265,7 @@ namespace Manager
         public string statusText;
         public int errCode;
         public long callId;
-        public object contents;
+        public JObject contents;
     }
 
     public enum RequestType

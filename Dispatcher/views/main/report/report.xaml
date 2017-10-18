@@ -1,0 +1,179 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Control="clr-namespace:Sigmar.Controls;assembly=Sigmar"
+             xmlns:ctrl="clr-namespace:Dispatcher.Controls"            
+             xmlns:Service="clr-namespace:Dispatcher.Service" xmlns:ViewsModules="clr-namespace:Dispatcher.ViewsModules" x:Name="UserControl" x:Class="Dispatcher.Views.Report"
+             mc:Ignorable="d" 
+             d:DesignHeight="600" d:DesignWidth="800">
+    <UserControl.Resources>
+        <Service:NotifyContentWidthValueConverter x:Key="NotifyContentWidthValueConverter"/>
+        <Service:CNVBoolVisible x:Key="CNVBoolVisible"/>
+        <Service:TabHeaderMaxWidth x:Key="TabHeaderMaxWidth"/>
+    </UserControl.Resources>
+    <UserControl.DataContext>
+        <ViewsModules:VMReportList/>
+    </UserControl.DataContext>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid x:Name="header" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition MinWidth="30" Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <ListView x:Name="listView" BorderThickness="0,0,1,0" SelectedIndex="{Binding ReportIndex}" ItemsSource="{Binding ReportList, Mode=OneWay}" HorizontalAlignment="Left" Background="{x:Null}" Style="{DynamicResource ListViewStyleNormal}" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                <ListView.MaxWidth>
+                    <MultiBinding Converter="{StaticResource TabHeaderMaxWidth}">
+                        <Binding Path="ActualWidth" ElementName="UserControl"/>
+                        <Binding Path="ActualWidth"  ElementName="cmbmore"/>
+                    </MultiBinding>                                 
+                </ListView.MaxWidth>
+                <!--MaxWidth="{Binding ActualWidth, Converter={StaticResource NotifyContentWidthValueConverter}, ElementName=UserControl, Mode=OneWay}"-->
+                <ListView.View>
+                    <ctrl:TitleView>
+                        <ctrl:TitleView.ItemTemplate>
+                            <DataTemplate>
+                                <StackPanel Orientation="Horizontal">
+                                    <Control:Icon Command="{Binding DataContext.Remove, ElementName=UserControl}" HorizontalAlignment="Left" VerticalAlignment="Center" Image="/TrboX;component/resource/images/close_18_18_h.png" Width="18" Height="18" HoverImage="/TrboX;component/resource/images/close_18_18_n.png" Margin="15,0,5,2" CommandParameter="{Binding Mode=OneWay}"/>
+                                    <TextBlock Text="{Binding Name}" TextWrapping="NoWrap" Margin="0,0,15,0"  Foreground="#FFCDCDCD" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="14" FontFamily="Hiragino Sans GB W3" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </DataTemplate>
+                        </ctrl:TitleView.ItemTemplate>
+                    </ctrl:TitleView>
+                </ListView.View>
+            </ListView>
+            <Control:Icon Command="{Binding Add, Mode=OneWay}" Height="22" VerticalAlignment="Center" Margin="5,4,0,4" Width="22" Image="/TrboX;component/resource/images/new_22_22_n.png" HoverImage="/TrboX;component/resource/images/new_22_22_h.png" DisableImage="/TrboX;component/resource/images/new_22_22_d.png" PressedImage="/TrboX;component/resource/images/new_22_22_p.png" HorizontalAlignment="Left" Grid.Column="1"/>
+            <ComboBox  x:Name="cmbmore" VerticalAlignment="Bottom" Margin="0" SelectedIndex="{Binding ReportIndex}" Grid.Column="1" Style="{DynamicResource ComboBoxMoreTabStyle}" Foreground="#FFBFBFBF" FontSize="13" BorderThickness="0" HorizontalAlignment="Right" Background="{x:Null}" BorderBrush="{x:Null}" ItemsSource="{Binding ReportList}" ItemContainerStyle="{DynamicResource ComboBoxItemStyleNormal}" VerticalContentAlignment="Center" Padding="6,3,5,3">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Name}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+
+        </Grid>
+        <Border x:Name="border" Margin="0,-1,0,0" Grid.Row="1" BorderThickness="1" BorderBrush="{DynamicResource PanelBorderBrush}" DataContext="{Binding SelectedItem, ElementName=listView}">
+            <DockPanel>
+                <DockPanel Margin="0,0,5,0" DataContext="{Binding Search}" Visibility="{Binding IsChecked, Converter={StaticResource CNVBoolVisible}, ElementName=check}">
+                    <Grid Width="250"  DockPanel.Dock="Top">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="20"/>
+                            <RowDefinition Height="36"/>
+                            <RowDefinition Height="36"/>
+                            <RowDefinition Height="36"/>
+                            <RowDefinition Height="36"/>
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="85"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="169*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Label Content="名称：" Margin="0,4.5" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="1" Height="27" Width="46" Foreground="#FFBFBFBF" FontSize="13"/>
+                        <Label Content="类型：" Margin="0,5.38" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="2" Height="25.24" Width="46" Foreground="#FFBFBFBF" FontSize="13"/>
+                        <Label Content="开始时间：" Margin="0,5.38" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="3" Height="25.24" Width="70" Foreground="#FFBFBFBF" FontSize="13"/>
+                        <Label Content="结束时间：" Margin="0,5.38" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="4" Height="25.24" Width="70" Foreground="#FFBFBFBF" FontSize="13"/>
+                        <ComboBox  VerticalAlignment="Center" Margin="0" SelectedIndex="{Binding TypeIndex}" Grid.Row="2" Height="31" Grid.Column="2" Style="{DynamicResource ComboBoxStyleNormal}" Foreground="#FFBFBFBF" FontSize="13">
+                            <ComboBoxItem  Content="报警信息" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE" Visibility="Collapsed"/>
+                            <ComboBoxItem x:Name="cbmIt_Call"   Content="通话" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE" Visibility="Collapsed"/>
+                            <ComboBoxItem Content="短消息" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE"/>
+                            <ComboBoxItem  Content="指令控制" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE" Visibility="Collapsed"/>
+                            <ComboBoxItem Content="位置信息" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE"/>
+                            <ComboBoxItem Content="室内定位" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE"/>
+                        </ComboBox>
+                        <TextBox Text="{Binding Name}" Height="31" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0,2.5" Grid.Column="2" Grid.Row="1" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF4889EB" VerticalContentAlignment="Center"/>
+
+                        <Border BorderBrush="#FF505053" BorderThickness="1" VerticalAlignment="Center" Height="31" Grid.Row="3" Grid.Column="2" Margin="0" Background="#FF3B3B3D">
+                            <Control:DateTimeSelector Value="{Binding FirstTime}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" Checked="True" Format="Custom" CustomFormat="yyyy-MM-dd HH:mm:ss" ShowCheckBox="False" ShowDropDown="False" FontSize="13" Foreground="#FFBFBFBF"/>
+                        </Border>
+                        <Border BorderBrush="#FF505053" BorderThickness="1" VerticalAlignment="Center" Height="31" Grid.Column="2" Grid.Row="4" Margin="0" Background="#FF3B3B3D">
+                            <Control:DateTimeSelector  Value="{Binding LastTime}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" Checked="True" Format="Custom" CustomFormat="yyyy-MM-dd HH:mm:ss" ShowCheckBox="False" ShowDropDown="False" FontSize="13" Foreground="#FFBFBFBF"/>
+                        </Border>
+                    </Grid>
+
+                    <Grid DockPanel.Dock="Top" Visibility="{Binding IsSelected, Converter={StaticResource CNVBoolVisible}, ElementName=cbmIt_Call}">
+                        <Grid.RowDefinitions>
+
+                            <RowDefinition Height="36"/>
+                            <RowDefinition Height="36"/>
+
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="85"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="169*"/>
+                        </Grid.ColumnDefinitions>
+                        <Label Content="工作模式：" Margin="0,4.5" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#FFBFBFBF" FontSize="13"/>
+                        <Label Content="通话类型：" Margin="0" HorizontalAlignment="Right" VerticalAlignment="Center" Grid.Row="2" Foreground="#FFBFBFBF" FontSize="13"/>
+                        <ComboBox x:Name="cmb_CallType" VerticalAlignment="Center" Margin="0,2.5" SelectedIndex="{Binding CallIndex}" Grid.Row="2" Height="31" Grid.Column="2" Style="{DynamicResource ComboBoxStyleNormal}" Foreground="#FFBFBFBF" FontSize="13">
+                            <ComboBoxItem Content="所用通话" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE" Tag="79"/>
+                            <ComboBoxItem Content="组呼" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE" Tag="79"/>
+                            <ComboBoxItem Content="个呼" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE" Tag="80"/>
+                            <ComboBoxItem Content="全呼" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE" Tag="83"/>
+                        </ComboBox>
+                        <ComboBox x:Name="cmb_RecordType" VerticalAlignment="Center" Margin="0,2.5" SelectedIndex="{Binding ModeIndex}" Height="31" Grid.Column="2" Style="{DynamicResource ComboBoxStyleNormal}" Foreground="#FFBFBFBF" FontSize="13">
+                            <ComboBoxItem Content="全部" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE"/>
+                            <ComboBoxItem Content="IPSC" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE"/>
+                            <ComboBoxItem Content="CPC" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE"/>
+                            <ComboBoxItem Content="LCP" Style="{DynamicResource ComboBoxItemStyleNormal}" Height="30" Foreground="#FFB6BABE"/>
+                        </ComboBox>
+                    </Grid>
+                    <Grid DockPanel.Dock="Top">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="36"/>
+                            <RowDefinition Height="70"/>
+
+                            <RowDefinition/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="85"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="169*"/>
+                        </Grid.ColumnDefinitions>
+                        <Button Command="{Binding DataContext.Generate, ElementName=border, Mode=OneWay}" Content="查  询" Margin="0" Grid.Row="1" Grid.Column="2" HorizontalAlignment="Left" VerticalAlignment="Center" Height="30" Width="120"  Style="{DynamicResource ButtonNormalStyle}" Tag="4,4,4,4" BorderThickness="0" Background="#FF4889EB" Foreground="White" FontSize="15" FontFamily="Hiragino Sans GB W6" CommandParameter="{Binding ElementName=dataGrid, Mode=OneWay}"/>
+                        <Label Content="对讲机/组：" Margin="0,4,4,4" HorizontalAlignment="Right" VerticalAlignment="Center" Foreground="#FFBFBFBF" FontSize="13" Width="77" Padding="5"/>
+                        <TextBox Text="{Binding TargetID}" Height="31" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0" Grid.Column="2" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" FontSize="13" CaretBrush="#FFBFBFBF" SelectionBrush="#FF4889EB" VerticalContentAlignment="Center" />
+                    </Grid>
+                </DockPanel>
+                <CheckBox x:Name="check"  Style="{DynamicResource CheckBoxToogleStyle}" Width="8" IsChecked="True" Background="Transparent" />
+                <Border BorderThickness="1,0,0,0" BorderBrush="{DynamicResource PopupBorderBrush}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="32"/>
+                        </Grid.RowDefinitions>
+                        <DataGrid x:Name="dataGrid" ItemsSource="{Binding Reports}"  Style="{DynamicResource DataGridReportStyle}"  AutoGenerateColumns = "false" />
+                        <Border BorderBrush="#FF1F1F1F" BorderThickness="1,0" Grid.Row="1">
+                            <DockPanel>
+                                <Border BorderBrush="Black" BorderThickness="0,1,0,0" Height="32" DockPanel.Dock="Bottom" Background="#FF2E2E2E">
+                                    <Grid>
+                                        <DockPanel HorizontalAlignment="Left" Height="31" LastChildFill="False" VerticalAlignment="Top">
+                                            <Label Content="第" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FFBFBFBF" FontFamily="Hiragino Sans GB W3" FontSize="13" Padding="5,5,0,5"/>
+                                            <TextBox  x:Name="txt_CurrentPage" Text="{Binding Page}"  HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"  VerticalAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF4889EB" Margin="5,4"/>
+                                            <TextBlock  HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#FFBFBFBF" FontFamily="Hiragino Sans GB W3" FontSize="13">
+                                                <TextBlock.Text>
+                                                    <MultiBinding StringFormat="页/共 {0} 页（共 {1} 条记录）">
+                                                        <Binding Path="PageCount" Mode="OneWay"/>
+                                                        <Binding Path="RecordCount" Mode="OneWay"  />
+                                                    </MultiBinding>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </DockPanel>
+                                    </Grid>
+                                </Border>
+                                <TabControl x:Name="tab_ReportContent" Background="#FF424244" BorderThickness="0" Style="{DynamicResource TabControlReportStyle}" Margin="0" IsSynchronizedWithCurrentItem="False" ItemsSource="{Binding Items, ElementName=tab_Report}" SelectedIndex="{Binding SelectedIndex, ElementName=tab_Report}" BorderBrush="#FF1F1F1F" Foreground="#FFBFBFBF"/>
+                            </DockPanel>
+                        </Border>
+                    </Grid>
+                </Border>
+            </DockPanel>
+        </Border>
+    </Grid>
+</UserControl>

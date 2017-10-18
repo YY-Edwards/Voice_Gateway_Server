@@ -1,0 +1,27 @@
+﻿<UserControl x:Name="UserControl" x:Class="Dispatcher.Controls.RadioPoint"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"             
+             mc:Ignorable="d" 
+             d:DesignHeight="64" d:DesignWidth="64">
+    <DockPanel LastChildFill="False">
+        <Grid Height="32" VerticalAlignment="Bottom" Width="32" DockPanel.Dock="Bottom" Margin="0,0,0,-1.5">
+            <Image Source="/TrboX;component/resource/images/radiopoint_grey.png" Margin="-4,0,25,-2" Width="11" Height="11" HorizontalAlignment="Center" VerticalAlignment="Bottom" RenderTransformOrigin="0.5,0.5" Opacity="0.7">
+                <Image.RenderTransform>
+                    <TransformGroup>
+                        <ScaleTransform/>
+                        <SkewTransform AngleX="-64.625"/>
+                        <RotateTransform Angle="8.201"/>
+                        <TranslateTransform X="25.392"/>
+                    </TransformGroup>
+                </Image.RenderTransform>
+            </Image>
+            <Image Source="/TrboX;component/resource/images/radiopoint_grey.png" Margin="0" Width="32" Height="32" HorizontalAlignment="Center" VerticalAlignment="Bottom"  MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave"/>
+            <Image Source="/TrboX;component/resource/images/radiopoint.png" Margin="2,0,2,2" Width="28" Height="28" HorizontalAlignment="Center" VerticalAlignment="Bottom"  MouseEnter="Image_MouseEnter" MouseLeave="Image_MouseLeave"/>
+        </Grid>
+        <Border x:Name="bdr_Content" BorderBrush="#FF837A7A" BorderThickness="1" Height="20" VerticalAlignment="Bottom" HorizontalAlignment="Center" CornerRadius="4" Background="#CCFFFFFF" Margin="0" DockPanel.Dock="Bottom" Visibility="Hidden">
+            <TextBlock TextWrapping="Wrap" Margin="10,0" VerticalAlignment="Center" FontSize="14" Text="{Binding Target.Name, ElementName=UserControl, Mode=OneWay}" />
+        </Border>
+    </DockPanel>
+</UserControl>

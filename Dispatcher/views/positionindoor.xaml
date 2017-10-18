@@ -1,0 +1,158 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar"
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"              
+             xmlns:ctrl="clr-namespace:Dispatcher.Controls"    
+             xmlns:Service="clr-namespace:Dispatcher.Service"
+             xmlns:local="clr-namespace:Dispatcher.Views" x:Name="pos" x:Class="Dispatcher.Views.PositionInDoor"
+             mc:Ignorable="d" 
+             d:DesignHeight="480" d:DesignWidth="600" Loaded="loaded" SizeChanged="sizechanged" DataContextChanged="datacontextchanged">
+    <UserControl.Resources>
+        <Service:PositionConverter x:Key="PositionConverter"/>
+        <Service:TargetPositionConverter x:Key="TargetPositionConverter"/>       
+    </UserControl.Resources>
+    <Grid>
+        <ScrollViewer x:Name="grd_MapPanel" ClipToBounds="True" VerticalScrollBarVisibility="Disabled" >
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="SizeChanged">
+                    <i:InvokeCommandAction Command="{Binding SizeUpdate}" CommandParameter="{Binding ElementName=pos, Mode=OneWay}" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            <Grid>
+                <Canvas>
+                    <Canvas.Background>
+                        <DrawingBrush Stretch="None" TileMode="Tile" Viewport="0,0,15,15" ViewportUnits="Absolute">
+                            <DrawingBrush.Drawing>
+                                <GeometryDrawing>
+                                    <GeometryDrawing.Geometry>
+                                        <RectangleGeometry Rect="0,0,15,15"/>
+                                    </GeometryDrawing.Geometry>
+                                    <GeometryDrawing.Pen>
+                                        <Pen Brush="White" Thickness="0.3"/>
+                                    </GeometryDrawing.Pen>
+                                </GeometryDrawing>
+                            </DrawingBrush.Drawing>
+                        </DrawingBrush>
+                    </Canvas.Background>
+                    <Grid x:Name="grid"    
+						RenderTransformOrigin="0,0" Margin="0" 
+						Width="{Binding MapRect.Width, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PositionInDoor}}}" 
+						Height="{Binding MapRect.Height, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PositionInDoor}}}" 
+						Canvas.Left="{Binding MapRect.X, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PositionInDoor}}}" 
+						Canvas.Top="{Binding MapRect.Y, RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type local:PositionInDoor}}}"
+                        PreviewMouseWheel ="Scale" 
+                        PreviewMouseDown ="StartMove"
+						PreviewMouseUp ="EndMove_Up"
+						MouseLeave ="EndMove_Leave"
+						PreviewMouseMove ="Move"
+                          >                     
+                        <Image  Source="{Binding MapImage, Mode=OneWay}"/>
+                        <!--<Grid Background="#B2FFFFFF" Visibility="{Binding MapErrVisibe}">
+                            <TextBlock HorizontalAlignment="Center" TextWrapping="Wrap" Text="地图加载失败" VerticalAlignment="Center" Foreground="#FF3E2020" FontSize="14" FontFamily="Hiragino Sans GB W6"/>
+                        </Grid>-->
+
+                        <ListView  ItemsSource="{Binding AllPoint, Mode=OneWay}"  Style="{DynamicResource ListViewStyleNormal}" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Background="{x:Null}">
+                            <ListView.View>
+                                <ctrl:PointView>
+                                    <ctrl:PointView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Canvas>                                            
+                                                <ctrl:BeaconPoint iBeacon="{Binding Beacon}" x:Name="ibeacon" />
+                                                <ctrl:RadioPoint Target="{Binding target.Member}"  x:Name="radiopoint"/>
+                                            </Canvas>
+                                            
+                                            <DataTemplate.Triggers>
+                                                <DataTrigger Binding="{Binding Type}" Value="iBeacon">
+                                                    <Setter TargetName="ibeacon" Property="Visibility" Value="Visible" />
+                                                    <Setter TargetName="radiopoint" Property="Visibility" Value="Hidden" />
+
+                                                    <Setter TargetName="ibeacon" Property="Canvas.Left">
+                                                        <Setter.Value>
+                                                            <MultiBinding Converter="{StaticResource PositionConverter}">
+                                                                <Binding Path="ActualWidth" ElementName="grid" />
+                                                                <Binding Path="X"/>
+                                                                <Binding Path="ActualWidth"  ElementName="ibeacon" />
+                                                            </MultiBinding>
+                                                        </Setter.Value>
+                                                    </Setter>
+
+                                                    <Setter TargetName="ibeacon" Property="Canvas.Top">
+                                                        <Setter.Value>
+                                                            <MultiBinding Converter="{StaticResource PositionConverter}" >
+                                                                <Binding Path="ActualHeight" ElementName="grid" />
+                                                                <Binding Path="Y"/>
+                                                                <Binding Path="ActualHeight"  ElementName="ibeacon" />
+                                                            </MultiBinding>
+                                                        </Setter.Value>
+                                                    </Setter>
+
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Type}" Value="LocationInDoorPoint">
+                                                    <Setter TargetName="ibeacon" Property="Visibility" Value="Hidden" />
+                                                    <Setter TargetName="radiopoint" Property="Visibility" Value="Visible" />
+
+                                                    <Setter TargetName="radiopoint" Property="Canvas.Left">
+                                                        <Setter.Value>
+                                                            <MultiBinding Converter="{StaticResource TargetPositionConverter}" ConverterParameter="x">
+                                                                <Binding Path="ActualWidth" ElementName="grid" />
+                                                                <Binding Path="X"/>
+                                                                <Binding Path="Z"/>
+                                                                <Binding Path="ActualWidth"  ElementName="radiopoint" />
+                                                            </MultiBinding>
+                                                        </Setter.Value>
+                                                    </Setter>
+
+                                                    <Setter TargetName="radiopoint" Property="Canvas.Top">
+                                                        <Setter.Value>
+                                                            <MultiBinding Converter="{StaticResource TargetPositionConverter}"  ConverterParameter="y">
+                                                                <Binding Path="ActualHeight" ElementName="grid" />
+                                                                <Binding Path="Y"/>
+                                                                <Binding Path="Z"/>
+                                                                <Binding Path="ActualHeight" ElementName="radiopoint" />
+                                                            </MultiBinding>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </DataTrigger>
+                                            </DataTemplate.Triggers>
+                                        </DataTemplate>
+                                    </ctrl:PointView.ItemTemplate>
+                                </ctrl:PointView>
+                            </ListView.View>
+                        </ListView>
+                        <!--<ListView  ItemsSource="{Binding Targets, Mode=OneWay}"  Style="{DynamicResource ListViewStyleNormal}" ScrollViewer.VerticalScrollBarVisibility="Disabled" ScrollViewer.HorizontalScrollBarVisibility="Disabled" BorderThickness="0" Background="{x:Null}">
+                            <ListView.View>
+                                <ctrl:PointView>
+                                    <ctrl:PointView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Canvas>
+                                                <ctrl:RadioPoint Target="{Binding target.Member}">
+                                                    <Canvas.Left>
+                                                        <MultiBinding Converter="{StaticResource PositionConverter}" ConverterParameter="x">
+                                                            <Binding Path="ActualWidth" ElementName="grid" />
+                                                            <Binding Path="X"/>
+                                                            <Binding Path="Z"/>                                                        
+                                                        </MultiBinding>
+                                                    </Canvas.Left>
+                                                    <Canvas.Top>
+                                                        <MultiBinding Converter="{StaticResource PositionConverter}"  ConverterParameter="y">
+                                                            <Binding Path="ActualHeight" ElementName="grid" />
+                                                            <Binding Path="Y"/>
+                                                            <Binding Path="Z"/>
+                                                        </MultiBinding>
+                                                    </Canvas.Top>
+                                                </ctrl:RadioPoint>
+                                            </Canvas>
+                                        </DataTemplate>
+                                    </ctrl:PointView.ItemTemplate>
+                                </ctrl:PointView>
+                            </ListView.View>
+                        </ListView>-->
+                    </Grid>
+                </Canvas>
+            </Grid>
+        </ScrollViewer>
+    </Grid>
+</UserControl>

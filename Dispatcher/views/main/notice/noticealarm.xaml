@@ -1,0 +1,60 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar" 
+             xmlns:ctrl="clr-namespace:Dispatcher.Controls"        
+             xmlns:Service="clr-namespace:Dispatcher.Service" x:Class="Dispatcher.Views.NoticeAlarm"        
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <UserControl.Resources>
+        <Service:NotifyContentWidthValueConverter x:Key="NotifyContentWidthValueConverter"/>
+    </UserControl.Resources>
+    <Grid>
+        <DockPanel>
+            <Path Data="M6.8333333,30 L178.16667,30" Height="1" Stretch="Fill" VerticalAlignment="Top" DockPanel.Dock="Top" Stroke="{DynamicResource CutOffRuleTop}" Margin="-0.5,0" Panel.ZIndex="1"/>
+            <Border  BorderBrush="#FF0F0F10" BorderThickness="0,0,0,1" Height="34" VerticalAlignment="Top"  DockPanel.Dock="Top" Background="{DynamicResource TitleBackground}">
+                <DockPanel>
+                    <!--<Image HorizontalAlignment="Left" Height="18" VerticalAlignment="Center" Width="18" Margin="5,0,0,0" Source="/TrboX;component/resource/images/alarm_18_18.png"/>-->
+                    <TextBlock Text="报警信息" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="13,0,0,0" Foreground="{DynamicResource NavForeground}" FontSize="14"/>
+                    <TextBlock Text="{Binding Items.Count, ElementName=list, Mode=OneWay, StringFormat='(共{0}条)'}" HorizontalAlignment="Left" VerticalAlignment="Center" Margin="5,0,0,0" Foreground="{DynamicResource NavForeground}" FontSize="14"/>
+                    <Controls:Icon Height="18" VerticalAlignment="Center" Margin="0,5.5,5,5.5" HorizontalAlignment="Right" Width="18" Image="/TrboX;component/resource/images/msg_close_18_18_n.png" Click="closenotify" DockPanel.Dock="Right" />
+                    <Controls:Icon Height="18" Command="{Binding Clear}" CommandParameter="Alarm" VerticalAlignment="Center" Margin="0,4,5,5.5" HorizontalAlignment="Right" Width="18" Image="/TrboX;component/resource/images/remove_22_22_d.png"  DockPanel.Dock="Right" />
+                </DockPanel>
+            </Border>
+
+            <Grid DockPanel.Dock="Top">
+                <ListView x:Name="list" ItemsSource="{Binding Alarm, Mode=OneWay}"  BorderThickness="0"  Style="{DynamicResource ListViewStyleNormal}" ScrollViewer.VerticalScrollBarVisibility="Auto" Background="{x:Null}" Margin="0,6" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" >
+                    <ListView.View>
+                        <ctrl:ResourceView>
+                            <ctrl:ResourceView.ItemTemplate>
+                                <DataTemplate>
+                                    <Border x:Name="Msg" Margin="0" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" MinHeight="40" >
+                                        <DockPanel >
+                                            <Image x:Name="Icon" Source="/TrboX;component/resource/images/alarm_18_18.png" Width="18" Height="18" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="16,11,8,0"/>
+                                            <Controls:Icon  Command="{Binding DataContext.Remove, ElementName=list,Mode=OneWay}"  CommandParameter="{Binding}" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="18" Width="18" Margin="0,11,5,0" Image="/TrboX;component/resource/images/msg_close_18_18_n.png"/>
+                                            <Controls:Icon  Command="{Binding DataContext.Open, ElementName=list,Mode=OneWay}"  CommandParameter="{Binding}" HorizontalAlignment="Right" VerticalAlignment="Top" DockPanel.Dock="Right" Height="18" Width="18" Margin="5,11,0,0" Image="/TrboX;component/resource/images/msg_ex_18_18_n.png" />
+
+                                            <DockPanel Width="{Binding ActualWidth, Converter={StaticResource NotifyContentWidthValueConverter}, ElementName=list, Mode=OneWay}"  Margin="0,7.5,0,7.5"  DockPanel.Dock="Left" HorizontalAlignment="Left" VerticalAlignment="Top" >
+                                                <TextBlock  TextWrapping="NoWrap" Margin="0,0,0,3"  Foreground="#FFcdcdcd" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="10" FontFamily="Arial" HorizontalAlignment="Left">
+                                                    <TextBlock.Text>
+                                                        <MultiBinding   StringFormat="{}{0:yyyy-MM-dd HH:mm:ss}({1})" >
+                                                            <Binding  Path="Time" />
+                                                            <Binding  Path="Remote.Name" />
+                                                        </MultiBinding>
+                                                    </TextBlock.Text>
+                                                </TextBlock>
+                                                <TextBlock Width="{Binding ActualWidth, Converter={StaticResource NotifyContentWidthValueConverter}, ElementName=list, Mode=OneWay}"  Text="{Binding ContentBiref}"  Foreground="#FFcdcdcd" TextWrapping="Wrap" Margin="0"  VerticalAlignment="Center" DockPanel.Dock="Top" />
+                                            </DockPanel>
+                                        </DockPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ctrl:ResourceView.ItemTemplate>
+                        </ctrl:ResourceView>
+                    </ListView.View>
+                </ListView>
+            </Grid>
+        </DockPanel>
+    </Grid>
+</UserControl>

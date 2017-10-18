@@ -1,0 +1,129 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:svr="clr-namespace:Dispatcher.Service"
+             xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar"
+             xmlns:ViewsModules="clr-namespace:Dispatcher.ViewsModules"
+             x:Class="Dispatcher.Views.Menu"
+             mc:Ignorable="d" 
+             d:DesignHeight="28" Width="760" >
+    <Grid>
+        <Menu Style="{DynamicResource MenuStyleNormal}" HorizontalAlignment="Left">
+            <MenuItem Header="文件(_F)" Margin="0,0,5,0" Style="{DynamicResource MenuItemStyleTilte}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" InputGestureText="F" Height="28">
+                <MenuItem Header="新建" Height="28" Margin="1,0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top">
+                    <MenuItem Header="语音调度"   Style="{DynamicResource MenuItemStyleSub}"  Command="{Binding NewOperate, Mode=OneWay}" CommandParameter="Schedule"  Visibility="{x:Static svr:FunctionConfigure.ScheduleVisible}"/>
+                    <!--InputGestureText="Ctrl+N"-->
+                    <MenuItem Header="短消息"   Style="{DynamicResource MenuItemStyleSub}"  Command="{Binding NewOperate, Mode=OneWay}" CommandParameter="ShortMessage" Visibility="{x:Static svr:FunctionConfigure.ShortMessageVisible}" />
+                    <MenuItem Header="指令控制"  Style="{DynamicResource MenuItemStyleSub}" Command="{Binding NewOperate, Mode=OneWay}" CommandParameter="Controler"  Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                    <MenuItem Header="位置查询"  Style="{DynamicResource MenuItemStyleSub}"  Command="{Binding NewOperate, Mode=OneWay}" CommandParameter="Location"  Visibility="{x:Static svr:FunctionConfigure.LocationVisible}"/>
+                    <MenuItem Header="室内定位"  Style="{DynamicResource MenuItemStyleSub}"  Command="{Binding NewOperate, Mode=OneWay}" CommandParameter="LocationInDoor"  Visibility="{x:Static svr:FunctionConfigure.LocationInDoorVisible}"/>
+                    <MenuItem Header="工单"  Style="{DynamicResource MenuItemStyleSub}" Command="{Binding NewOperate, Mode=OneWay}" CommandParameter="JobTicket"   Visibility="{x:Static svr:FunctionConfigure.JobTicketVisible}"/>
+                    <MenuItem Header="巡更任务"   Style="{DynamicResource MenuItemStyleSub}" Command="{Binding NewOperate, Mode=OneWay}" CommandParameter="Patrol"  Visibility="{x:Static svr:FunctionConfigure.PatrolVisible}"/>
+                </MenuItem>
+                <MenuItem  Header="保存" IsEnabled="{Binding Save.EnableSaveWorkSpace, Mode=OneWay}" Style="{DynamicResource MenuItemStyle1}" Command="{Binding SaveWorkspace, Mode=OneWay}"/>
+                <MenuItem  Header="导出" Style="{DynamicResource MenuItemStyleSub}" Command="{Binding ExportWorkspace, Mode=OneWay}" Visibility="{x:Static svr:FunctionConfigure.ExportVisible}"/>
+                <MenuItem  Header="打印" Style="{DynamicResource MenuItemStyleSub}" Command="{Binding Print, Mode=OneWay}" Visibility="{x:Static svr:FunctionConfigure.PrintVisible}"/>
+                <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
+                <MenuItem  Header="退出TrboX" Style="{DynamicResource MenuItemStyleSub}"  Command="{Binding Close, Mode=OneWay}"/>
+            </MenuItem>
+            <MenuItem Header="视图(_V)" Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" Height="28">
+                <MenuItem Header="工具栏" Style="{DynamicResource MenuItemStyle1}">
+                    <MenuItem Header="标准"       Style="{DynamicResource MenuItemStyle1}" IsChecked="True" IsEnabled="False"/>
+                    <MenuItem Header="基本操作"   Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewTools, Mode=OneWay}" CommandParameter="Base" IsChecked="{Binding EnableViewBaseTools}"/>
+                    <MenuItem Header="快速面板"   Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewTools, Mode=OneWay}" CommandParameter="Fast" IsChecked="{Binding EnableViewFastTools}" />
+                    <MenuItem Header="信令"       Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewTools, Mode=OneWay}" CommandParameter="Controler" IsChecked="{Binding EnableViewControlerTools}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                    <MenuItem Header="室内定位"   Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewTools, Mode=OneWay}" CommandParameter="LocationInDoor" IsChecked="{Binding EnableViewLocationInDoorTools}" Visibility="{x:Static svr:FunctionConfigure.LocationInDoorVisible}"/>
+                    <MenuItem Header="帮助"       Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewTools, Mode=OneWay}" CommandParameter="Help" IsChecked="{Binding EnableViewHelpTools}" />
+                </MenuItem>
+                <MenuItem Header="资源管理" Style="{DynamicResource MenuItemStyle1}" >
+                    <MenuItem  Header="组织" Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewRes, Mode=OneWay}" CommandParameter="Organization" IsChecked="{Binding EnableViewResOrganization}"/>
+                    <MenuItem  Header="组"   Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewRes, Mode=OneWay}" CommandParameter="Group" IsChecked="{Binding EnableViewResGroup}" />
+                    <MenuItem  Header="人员" Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewRes, Mode=OneWay}" CommandParameter="Staff" IsChecked="{Binding EnableViewResStaff}"/>
+                    <MenuItem  Header="车辆" Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewRes, Mode=OneWay}" CommandParameter="Vehicle" IsChecked="{Binding EnableViewResVehicle}"/>
+                    <MenuItem  Header="设备" Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewRes, Mode=OneWay}" CommandParameter="Device" IsChecked="{Binding EnableViewResDevice}"/>
+                    <MenuItem  Header="信标" Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewRes, Mode=OneWay}" CommandParameter="Beacon" IsChecked="{Binding EnableViewResBeacon}" Visibility="{x:Static svr:FunctionConfigure.LocationInDoorVisible}"/>
+                </MenuItem>
+                <MenuItem Header="导航窗口"     Style="{DynamicResource MenuItemStyle1}">
+                    <MenuItem Header="语音调度" Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewNavigation, Mode=OneWay}" CommandParameter="Schedule" IsChecked="{Binding EnableViewNavigationSchedule}" Visibility="{x:Static svr:FunctionConfigure.ScheduleVisible}"  IsEnabled="False"/>
+                    <MenuItem Header="地图"     Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewNavigation, Mode=OneWay}" CommandParameter="Location" IsChecked="{Binding EnableViewNavigationLocation}" Visibility="{x:Static svr:FunctionConfigure.LocationVisible}"/>
+                    <MenuItem Header="室内定位" Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewNavigation, Mode=OneWay}" CommandParameter="LocationInDoor" IsChecked="{Binding EnableViewNavigationLocationInDoor}" Visibility="{x:Static svr:FunctionConfigure.LocationInDoorVisible}"/>
+                    <MenuItem Header="录音"     Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewNavigation, Mode=OneWay}" CommandParameter="Record" IsChecked="{Binding EnableViewNavigationRecord}" Visibility="{x:Static svr:FunctionConfigure.RecordVisible}"/>
+                    <MenuItem Header="工单"     Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewNavigation, Mode=OneWay}" CommandParameter="JobTicket" IsChecked="{Binding EnableViewNavigationJobTicket}" Visibility="{x:Static svr:FunctionConfigure.JobTicketVisible}"/>
+                    <MenuItem Header="巡更"     Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewNavigation, Mode=OneWay}" CommandParameter="Patrol" IsChecked="{Binding EnableViewNavigationPatrol}" Visibility="{x:Static svr:FunctionConfigure.PatrolVisible}"/>
+                    <MenuItem Header="报表"     Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewNavigation, Mode=OneWay}" CommandParameter="Report" IsChecked="{Binding EnableViewNavigationReport}" Visibility="{x:Static svr:FunctionConfigure.ReportVisible}"/>
+                </MenuItem>
+                <MenuItem  Header="事件窗口" Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewEvent, Mode=OneWay}" IsChecked="{Binding EnableViewEvent}"/>
+
+                <MenuItem Header="消息窗口" Style="{DynamicResource MenuItemStyle1}">                    
+                    <MenuItem Header="报警"     Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewNotify, Mode=OneWay}" CommandParameter="Alarm" IsChecked="{Binding EnableViewNotifyAlarm}" Visibility="{x:Static svr:FunctionConfigure.AlarmVisible}"/>
+                    <MenuItem Header="被叫记录" Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewNotify, Mode=OneWay}" CommandParameter="Called" IsChecked="{Binding EnableViewNotifyCalled}" Visibility="{x:Static svr:FunctionConfigure.ScheduleVisible}"/>
+                    <MenuItem Header="短消息"   Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewNotify, Mode=OneWay}" CommandParameter="ShortMessage" IsChecked="{Binding EnableViewNotifyShortMessage}" Visibility="{x:Static svr:FunctionConfigure.ShortMessageVisible}"/>
+                    <MenuItem Header="工单"     Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewNotify, Mode=OneWay}" CommandParameter="JobTicket" IsChecked="{Binding EnableViewNotifyJobTicket}" Visibility="{x:Static svr:FunctionConfigure.JobTicketVisible}"/>
+                    <MenuItem Header="巡更"     Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewNotify, Mode=OneWay}" CommandParameter="Patrol" IsChecked="{Binding EnableViewNotifyPatrol}" Visibility="{x:Static svr:FunctionConfigure.PatrolVisible}"/>
+                </MenuItem>
+            </MenuItem>
+            <MenuItem  Header="目标(_O)" Visibility="{Binding TagretVisible, Mode=OneWay}"  Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" Height="28">
+                <MenuItem  Header="打开"  Command ="{Binding TargetViewModule.OpenOperateWindow, Mode=OneWay}"  CommandParameter = "Schedule" Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                <MenuItem  Header="添加到快速操作" Command ="{Binding TargetViewModule.AddFastPanel, Mode=OneWay}"  Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                <Separator Margin="1,0"      Style="{DynamicResource SeparatorStyleNormal}" Height="16" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                <MenuItem  Header="在线检测" IsEnabled="{Binding TargetViewModule.CanCheckOnline}" Command="{Binding TargetViewModule.Control, Mode=OneWay}" CommandParameter="Check" Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                <MenuItem  Header="远程监听" IsEnabled="{Binding TargetViewModule.CanMonitor}" Command="{Binding TargetViewModule.Control, Mode=OneWay}" CommandParameter="Monitor" Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                <Separator Margin="1,0"      Style="{DynamicResource SeparatorStyleNormal}" Height="16" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                <MenuItem  Header="呼叫"  IsEnabled="{Binding TargetViewModule.CanCall}"  Command="{Binding TargetViewModule.Call, Mode=OneWay}" CommandParameter="Start" Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.ScheduleVisible}"/>
+                <MenuItem  Header="结束呼叫"  IsEnabled="{Binding TargetViewModule.CanStopCall}"  Command="{Binding  TargetViewModule.Call, Mode=OneWay}"  CommandParameter="Stop" Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.ScheduleVisible}"/>
+                <MenuItem  Header="短消息" IsEnabled="{Binding TargetViewModule.CanShortMessage}"  Command="{Binding TargetViewModule.OpenOperateWindow, Mode=OneWay}"  CommandParameter = "ShortMessage" Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.ShortMessageVisible}"/>
+                <MenuItem Header="位置/轨迹" IsEnabled="{Binding TargetViewModule.EnableLocationFunc}" Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.LocationVisible}">
+                    <MenuItem  Header="查询"         Command="{Binding TargetViewModule.QueryLocation, Mode=OneWay}" CommandParameter="Query" Style="{DynamicResource MenuItemStyle1}" IsEnabled="{Binding TargetViewModule.CanLocation}"/>
+                    <MenuItem  Header="周期查询"     Command="{Binding TargetViewModule.QueryLocation, Mode=OneWay}" CommandParameter="Cycle" Style="{DynamicResource MenuItemStyle1}" IsEnabled="{Binding TargetViewModule.CanLocation}"/>
+                    <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
+                    <MenuItem  Header="CSBK查询"     Command="{Binding TargetViewModule.QueryLocation, Mode=OneWay}" CommandParameter="CsbkQuery" Style="{DynamicResource MenuItemStyle1}" IsEnabled="{Binding TargetViewModule.CanLocation}"/>
+                    <MenuItem  Header="CSBK周期查询" Command="{Binding TargetViewModule.QueryLocation, Mode=OneWay}" CommandParameter="CsbkCycle" Style="{DynamicResource MenuItemStyle1}" IsEnabled="{Binding TargetViewModule.CanLocation}"/>
+                    <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16" />
+                    <MenuItem  Header="CSBK增强型查询"     Command="{Binding TargetViewModule.QueryLocation, Mode=OneWay}" CommandParameter="EnhCsbkQuery" Style="{DynamicResource MenuItemStyle1}" IsEnabled="{Binding TargetViewModule.CanLocation}"/>
+                    <MenuItem  Header="CSBK增强型周期查询" Command="{Binding TargetViewModule.QueryLocation, Mode=OneWay}" CommandParameter="EnhCsbkCycle" Style="{DynamicResource MenuItemStyle1}" IsEnabled="{Binding TargetViewModule.CanLocation}"/>
+                    <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
+                    <MenuItem  Header="停止周期查询" Command="{Binding TargetViewModule.QueryLocation, Mode=OneWay}" CommandParameter="StopCycle" Style="{DynamicResource MenuItemStyle1}" IsEnabled="{Binding TargetViewModule.CanStopLocation}"/>
+                    <MenuItem  Header="轨迹回放" Command="{Binding TargetViewModule.QueryLocation, Mode=OneWay}" CommandParameter="Track" Style="{DynamicResource MenuItemStyle1}"/>
+                </MenuItem>
+                <MenuItem Header="室内定位"  IsEnabled="{Binding TargetViewModule.EnableLocationinDoorFunc}" Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.LocationInDoorVisible}">
+                    <MenuItem  Header="启动" Command="{Binding TargetViewModule.LocationInDoor, Mode=OneWay}" CommandParameter="Start" Style="{DynamicResource MenuItemStyle1}" IsEnabled="{Binding TargetViewModule.CanLocationInDoor}"/>
+                    <MenuItem  Header="停止" Command="{Binding TargetViewModule.LocationInDoor, Mode=OneWay}" CommandParameter="Stop" Style="{DynamicResource MenuItemStyle1}" IsEnabled="{Binding TargetViewModule.CanStopLocationInDoor}"/>
+                </MenuItem>
+                <MenuItem Header="指令控制"  IsEnabled="{Binding TargetViewModule.EnableControlFunc}" Style="{DynamicResource MenuItemStyle1}"  Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}" >
+                    <MenuItem  Header="遥开" Command="{Binding TargetViewModule.Control, Mode=OneWay}" CommandParameter="StartUp" Style="{DynamicResource MenuItemStyle1}" IsEnabled="{Binding TargetViewModule.CanShartUp}"/>
+                    <MenuItem  Header="遥毙" Command="{Binding TargetViewModule.Control, Mode=OneWay}" CommandParameter="ShutDown" Style="{DynamicResource MenuItemStyle1}" IsEnabled="{Binding TargetViewModule.CanShutDown}"/>
+                </MenuItem>
+                <Separator Margin="1,0"  Style="{DynamicResource SeparatorStyleNormal}" Height="16"  Visibility="{x:Static svr:FunctionConfigure.JobTicketVisible}" />
+                <MenuItem  Header="工单" Style="{DynamicResource MenuItemStyle1}"  Visibility="{x:Static svr:FunctionConfigure.JobTicketVisible}"/>
+            </MenuItem>
+            <MenuItem Header="录音(_R)" Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}"  HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" Height="28" Visibility="{x:Static svr:FunctionConfigure.RecordVisible}">
+                <MenuItem  Header="刷新" Style="{DynamicResource MenuItemStyle1}" />
+                <MenuItem  Header="回放" Style="{DynamicResource MenuItemStyle1}" />
+                <Separator Margin="1,0"  Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
+                <MenuItem  Header="导入" Style="{DynamicResource MenuItemStyle1}" />
+                <MenuItem  Header="导出" Style="{DynamicResource MenuItemStyle1}" />
+            </MenuItem>
+            <MenuItem Header="巡更(_P)" Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" Height="28" Visibility="{x:Static svr:FunctionConfigure.PatrolVisible}">
+                <MenuItem  Header="任务列表" Style="{DynamicResource MenuItemStyle1}"/>
+                <MenuItem  Header="新建常规任务" Style="{DynamicResource MenuItemStyle1}"/>
+                <MenuItem  Header="新建定时任务" Style="{DynamicResource MenuItemStyle1}"/>
+                <Separator Margin="1,0"  Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
+                <MenuItem   Header="跟踪" Style="{DynamicResource MenuItemStyle1}"/>
+            </MenuItem>
+            <MenuItem Header="工具(_T)" Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" Height="28">
+                <MenuItem  Header="新建常用联系人" Command="{Binding ToolsFast, Mode=OneWay}" CommandParameter="Target" Style="{DynamicResource MenuItemStyle1}"/>
+                <MenuItem  Header="新建快速操作"   Command="{Binding ToolsFast, Mode=OneWay}" CommandParameter="Operation" Style="{DynamicResource MenuItemStyle1}"/>
+                <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16" Visibility="{x:Static svr:FunctionConfigure.AdvanceToolsVisible}"/>
+                <MenuItem  Header="导出配置"  Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.AdvanceToolsVisible}"/>
+                <MenuItem  Header="导入配置"  Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.AdvanceToolsVisible}"/>
+                <MenuItem  Header="选项"  Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.AdvanceToolsVisible}"/>
+            </MenuItem>
+            <MenuItem Header="帮助(_H)" Style="{DynamicResource MenuItemStyleTilte}" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" Height="28">
+                <MenuItem Header="查看帮助" Command="{Binding Help, Mode=OneWay}" CommandParameter="Help" Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.HelpFileVisible}" />
+                <MenuItem Header="关于TrboX"  Command="{Binding Help, Mode=OneWay}" CommandParameter="About" Style="{DynamicResource MenuItemStyle1}"/>
+            </MenuItem>
+        </Menu>
+    </Grid>
+</UserControl>

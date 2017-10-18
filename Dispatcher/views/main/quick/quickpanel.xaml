@@ -1,0 +1,52 @@
+﻿<UserControl x:Class="Dispatcher.Views.QuickPanel"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar"
+             xmlns:Views="clr-namespace:Dispatcher.Views"
+             mc:Ignorable="d" 
+             d:DesignHeight="326" d:DesignWidth="242">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="51"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="21"/>
+            <RowDefinition Height="51"/>
+            <RowDefinition Height="30"/>
+            <RowDefinition Height="223*"/>
+        </Grid.RowDefinitions>
+        <!--<Border BorderThickness="0"  Height="21">
+                <DockPanel LastChildFill="False">
+                    -->
+        <!--Label Content="{Binding Type, Converter={StaticResource TypeToTitle}}" VerticalAlignment="Center"/-->
+        <!--
+                </DockPanel>
+            </Border>-->
+        <Controls:Icon Command="{Binding Close, Mode=OneWay}" VerticalAlignment="Top"  HorizontalAlignment="Right" Margin="0,5,5,0" Height="20" Width="20"  Image="/TrboX;component/resource/images/panel_close_ 20_20_n.png" RenderTransformOrigin="0.7,0.1" HoverImage="/TrboX;component/resource/images/panel_close_ 20_20_h.png" PressedImage="/TrboX;component/resource/images/panel_close_ 20_20_h.png" Grid.Column="2" Grid.RowSpan="2"/>
+        <Ellipse Margin="0" Stroke="Black" StrokeThickness="0" Fill="{Binding IconBackGround, Mode=OneWay}" Grid.Row="1" Grid.Column="1" />
+        <Image Source="{Binding Icon, Mode=OneWay}" Opacity="{Binding ViewModule.OnlineOpacity, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None" Grid.Row="1" Grid.Column="1">
+            <Image.LayoutTransform>
+                <TransformGroup>
+                    <ScaleTransform ScaleX="0.7" ScaleY="0.7"/>
+                    <SkewTransform/>
+                    <RotateTransform/>
+                    <TranslateTransform/>
+                </TransformGroup>
+            </Image.LayoutTransform>
+        </Image>
+
+        <TextBlock Text="{Binding ViewModule.Name, Mode=OneWay}"  HorizontalAlignment="Center" Foreground="#FFC9CDD2"  FontSize="14" VerticalAlignment="Center" Grid.Row="2" Grid.ColumnSpan="3"/>
+        <TabControl SelectedIndex="{Binding TypeIndex, Mode=OneWay}" Grid.RowSpan="3" Grid.Row="3" Grid.ColumnSpan="3" Margin="8,10" Style="{DynamicResource WorkTabControlStyle}" Background="{x:Null}" BorderThickness="0" BorderBrush="{x:Null}">
+            <TabItem Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}">
+                <Views:QuickTarget DataContext="{Binding ViewModule, Mode=OneWay}"/>
+            </TabItem>
+            <TabItem Header="TabItem" Background="{x:Null}" BorderBrush="{x:Null}">
+                <Views:QuickOperation DataContext="{Binding ViewModule, Mode=OneWay}"/>               
+            </TabItem>
+        </TabControl>
+    </Grid>
+</UserControl>

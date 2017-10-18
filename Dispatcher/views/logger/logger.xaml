@@ -1,0 +1,10 @@
+﻿<Windows:LogWindow x:Class="Dispatcher.Views.Logs"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Windows="clr-namespace:Sigmar.Windows;assembly=Sigmar"
+        xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar"
+        Title="TrboX 3.1 Runtime" Height="600" Width="800" WindowStartupLocation="CenterScreen">
+    <Grid>
+        <Controls:LogBox x:Name="__logBox" Height="Auto" Width="Auto" MaxLine="300" Controler="Bottom"/>
+    </Grid>
+</Windows:LogWindow>

@@ -194,7 +194,7 @@ void userAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			{
 				int id = d["users"][m].GetInt();
 				std::string condition = "where id=" + std::to_string(id);
-				CDb::instance()->del("staff", condition.c_str());
+				CDb::instance()->del("user", condition.c_str());
 			}
 			strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
 		}

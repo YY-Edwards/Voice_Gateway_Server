@@ -1,0 +1,320 @@
+﻿<UserControl
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:svr="clr-namespace:Dispatcher.Service"
+             xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar" 
+             xmlns:local="clr-namespace:Dispatcher.Views" 
+             xmlns:ctrl="clr-namespace:Dispatcher.Controls"
+             xmlns:ViewsModules="clr-namespace:Dispatcher.ViewsModules" 
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" 
+             x:Class="Dispatcher.Views.Resources" 
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Loaded">
+            <i:InvokeCommandAction Command="{Binding Loaded, Mode=OneWay}" CommandParameter="{Binding ElementName=tree}" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    <Grid>
+        <DockPanel>
+            <Border BorderBrush="#FF0F0F10" BorderThickness="0,0,0,1" Height="34" VerticalAlignment="Top" DockPanel.Dock="Top" Background="{DynamicResource TitleBackground}">
+                <TextBlock ContextMenu="{x:Null}" TextWrapping="Wrap"  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="13,0,0,0" Foreground="#FFC9CDD2" FontSize="14" Text="{Binding SelectedItem.Header, ElementName=tabControl}"/>
+            </Border>
+            <Border BorderBrush="Black" BorderThickness="0,0,0,1" Height="48" DockPanel.Dock="Top">
+                <Grid>
+                    <TextBox x:Name="textBox" Text="{Binding SerchKey}" Margin="8" VerticalContentAlignment="Center" Padding="8,0,25,0" BorderBrush="#FF48484A" Background="#FF272727" Foreground="#FF747679" Style="{DynamicResource TextBoxStyleSearch}"/>
+                    <Controls:Icon ToolTip="搜索"  Command="{Binding Search, Mode=OneWay}" CommandParameter="{Binding Text, ElementName=textBox}" Height="17" VerticalAlignment="Center" Image="/TrboX;component/resource/images/serach_21_21_n.png" Margin="0,0,15,0" VerticalContentAlignment="Center" HorizontalContentAlignment="Left" HorizontalAlignment="Right" Width="17" HoverImage="/TrboX;component/resource/images/serach_21_21_h.png" PressedImage="/TrboX;component/resource/images/serach_21_21_h.png"/>
+                </Grid>
+            </Border>
+            <Border BorderBrush="#FF0C0C0D" BorderThickness="0,1,0,0" DockPanel.Dock="Bottom" Height="32" Background="#FF333335">
+                <DockPanel LastChildFill="False">
+                    <RadioButton  Content="组织"  Command="{Binding ChangePage, Mode=OneWay}" CommandParameter="Organization" Style="{DynamicResource RadioButtonMgr}" GroupName="TragetList" IsChecked="True" BorderThickness="0,0,1,0"  Width="45" Height="Auto"/>
+                    <RadioButton  Content="组"    Command="{Binding ChangePage, Mode=OneWay}" CommandParameter="Group" Style="{DynamicResource RadioButtonMgr}"   GroupName="TragetList" BorderThickness="0,0,1,0"  Width="45" Height="Auto" />
+                    <RadioButton  Content="人员"  Command="{Binding ChangePage, Mode=OneWay}" CommandParameter="Staff" Style="{DynamicResource RadioButtonMgr}" GroupName="TragetList" BorderThickness="0,0,1,0" Width="45" Height="Auto"/>
+                    <RadioButton  Content="车辆"  Command="{Binding ChangePage, Mode=OneWay}" CommandParameter="Vehicle" Style="{DynamicResource RadioButtonMgr}" GroupName="TragetList" BorderThickness="0,0,1,0"  Width="45" Height="Auto"/>
+                    <RadioButton  Content="设备"  Command="{Binding ChangePage, Mode=OneWay}" CommandParameter="Device" Style="{DynamicResource RadioButtonMgr}" GroupName="TragetList" BorderThickness="0,0,1,0" Width="45" Height="Auto"/>
+                    <RadioButton  Content="蓝牙信标"  Command="{Binding ChangePage, Mode=OneWay}" CommandParameter="Beacon" Style="{DynamicResource RadioButtonMgr}" GroupName="TragetList" BorderThickness="0,0,1,0"  Width="65" Visibility="{x:Static svr:FunctionConfigure.LocationInDoorVisible}" Height="Auto"/>
+                </DockPanel>
+            </Border>
+            <Border  BorderBrush="Black" BorderThickness="0" DockPanel.Dock="Top" ClipToBounds="True">
+                <TabControl x:Name="tabControl"  BorderThickness="0" Style="{DynamicResource WorkTabControlStyle}" Background="{x:Null}" SelectedIndex="{Binding PageIndex, Mode=OneWay}" SelectionChanged="tabControl_SelectionChanged" >
+                    <TabItem  Header="组织">
+                        <local:Organization x:Name="organization" DataContext="{Binding OrganizationViewModule, Mode=OneWay}" Margin="0,6,0,1"/>
+                    </TabItem>
+                    <TabItem Header="组">
+                        <ListView x:Name="groups" BorderThickness="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="{x:Null}" Margin="0,6" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ScrollViewer.VerticalScrollBarVisibility="Auto" Style="{DynamicResource ListViewStyleNormal}" ItemsSource="{Binding Groups}" SelectionMode="Single" >
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding SelectionChanged, Mode=OneWay}" CommandParameter="{Binding SelectedItem, ElementName=groups}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <ListView.View>
+                                <ctrl:ResourceView>
+                                    <ctrl:ResourceView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border x:Name="Msg" ToolTip="{Binding NameInfo}" Margin="0" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Background="#00000000" Height="32">
+                                                <Border.ContextMenu>
+                                                    <ContextMenu Style="{DynamicResource ContextMenuStyleNormal}" Visibility="{Binding Header.ContextMenuVisible, RelativeSource={RelativeSource TemplatedParent}}" >
+                                                        <MenuItem  Header="打开"  Command="{Binding .OpenOperateWindow}"  CommandParameter = "Schedule" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <MenuItem  Header="添加到快速操作"   Command="{Binding .AddFastPanel}"  Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <Separator Margin="1,0"      Style="{DynamicResource SeparatorStyleNormal}" Height="16" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <MenuItem  Header="呼叫"   IsEnabled="{Binding CanCall}"  Command="{Binding Call}" CommandParameter = "Start" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ScheduleVisible}"/>
+                                                        <MenuItem  Header="结束呼叫"  IsEnabled="{Binding CanStopCall}" Command="{Binding Call}" CommandParameter = "Stop" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ScheduleVisible}"/>
+                                                        <MenuItem  Header="短消息"  IsEnabled="{Binding CanShortMessage}" Command="{Binding OpenOperateWindow}" CommandParameter = "ShortMessage" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ShortMessageVisible}"/>
+                                                        <MenuItem Header="位置/轨迹"   IsEnabled="{Binding EnableLocationFunc}" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.LocationVisible}">
+                                                            <MenuItem  Header="查询"         Command="{Binding QueryLocation}" CommandParameter="Query" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <MenuItem  Header="周期查询"     Command="{Binding QueryLocation}" CommandParameter="Cycle" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
+                                                            <MenuItem  Header="CSBK查询"     Command="{Binding QueryLocation}" CommandParameter="CsbkQuery" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <MenuItem  Header="CSBK周期查询" Command="{Binding QueryLocation}" CommandParameter="CsbkCycle" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16" />
+                                                            <MenuItem  Header="CSBK增强型查询"      Command="{Binding QueryLocation}" CommandParameter="EnhCsbkQuery" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <MenuItem  Header="CSBK增强型周期查询"  Command="{Binding QueryLocation}" CommandParameter="EnhCsbkCycle" Style="{DynamicResource ContextMenuItemStyle}" IsEnabled="{Binding CanLocation}"/>
+                                                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
+                                                            <MenuItem  Header="停止周期查询"   Command="{Binding QueryLocation}" CommandParameter="StopCycle" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanStopLocation}"/>
+                                                            <MenuItem  Header="轨迹回放" Command="{Binding QueryLocation}" CommandParameter="Track" Style="{DynamicResource ContextMenuItemStyle}"/>
+                                                        </MenuItem>
+                                                        <MenuItem Header="室内定位"  IsEnabled="{Binding EnableLocationInDoorFunc}" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.LocationInDoorVisible}">
+                                                            <MenuItem  Header="启动" Command="{Binding LocationInDoor}" CommandParameter="Start" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocationInDoor}"/>
+                                                            <MenuItem  Header="停止"  Command="{Binding LocationInDoor}" CommandParameter="Stop" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanStopLocationInDoor}"/>
+                                                        </MenuItem>
+                                                    </ContextMenu>
+                                                </Border.ContextMenu>
+                                                <DockPanel Opacity="{Binding OnlineOpacity}">
+                                                    <Image x:Name="Icon" Source="/TrboX;component/resource/images/group_18_18_on.png" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="34,0,0,0"/>                                                   
+                                                    <DockPanel x:Name="dck_Content" Margin="5,0" >
+                                                        <TextBlock Text="{Binding FullName}"  TextWrapping="NoWrap" Margin="0,0,10,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" />
+                                                        <Image Visibility="{Binding InCallStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"   DockPanel.Dock="Right" Source="/TrboX;component/resource/images/call_22_22_h.png"/>
+                                                    </DockPanel>
+                                                </DockPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ctrl:ResourceView.ItemTemplate>
+                                </ctrl:ResourceView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                    <TabItem  Header="人员">
+                        <ListView x:Name="staffs"  BorderThickness="0" SelectionMode="Single" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="{x:Null}" Margin="0,6" Style="{DynamicResource ListViewStyleNormal}" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemsSource="{Binding Staffs}" >
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding SelectionChanged, Mode=OneWay}" CommandParameter="{Binding SelectedItem, ElementName=staffs}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <ListView.View>
+                                <ctrl:ResourceView>
+                                    <ctrl:ResourceView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border x:Name="Msg" Background="#00000000" Margin="0" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Height="32" >
+                                                <Border.ContextMenu>
+                                                    <ContextMenu Style="{DynamicResource ContextMenuStyleNormal}" Visibility="{Binding ContextMenuVisible}" >
+                                                        <MenuItem  Header="打开"  Command="{Binding OpenOperateWindow}"  CommandParameter = "Schedule" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <MenuItem  Header="添加到快速操作"   Command="{Binding AddFastPanel}"  Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <Separator Margin="1,0"      Style="{DynamicResource SeparatorStyleNormal}" Height="16" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <MenuItem  Header="在线检测" IsEnabled="{Binding CanCheckOnline}" Command="{Binding Control}" CommandParameter="Check" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <MenuItem  Header="远程监听" IsEnabled="{Binding CanMonitor}" Command="{Binding Control}" CommandParameter="Monitor" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <Separator Margin="1,0"      Style="{DynamicResource SeparatorStyleNormal}" Height="16" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <MenuItem  Header="呼叫"   IsEnabled="{Binding CanCall}"   Command="{Binding Call}" CommandParameter = "Start" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ScheduleVisible}"/>
+                                                        <MenuItem  Header="结束呼叫"  IsEnabled="{Binding CanStopCall}" Command="{Binding Call}" CommandParameter = "Stop" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ScheduleVisible}"/>
+                                                        <MenuItem  Header="短消息"  IsEnabled="{Binding CanShortMessage}" Command="{Binding OpenOperateWindow}" CommandParameter = "ShortMessage" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ShortMessageVisible}"/>
+                                                        <MenuItem Header="位置/轨迹" IsEnabled="{Binding EnableLocationFunc}" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.LocationVisible}">
+                                                            <MenuItem  Header="查询"         Command="{Binding QueryLocation}" CommandParameter="Query" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <MenuItem  Header="周期查询"     Command="{Binding QueryLocation}" CommandParameter="Cycle" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
+                                                            <MenuItem  Header="CSBK查询"     Command="{Binding QueryLocation}" CommandParameter="CsbkQuery" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <MenuItem  Header="CSBK周期查询" Command="{Binding QueryLocation}" CommandParameter="CsbkCycle" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16" />
+                                                            <MenuItem  Header="CSBK增强型查询"      Command="{Binding QueryLocation}" CommandParameter="EnhCsbkQuery" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <MenuItem  Header="CSBK增强型周期查询"  Command="{Binding QueryLocation}" CommandParameter="EnhCsbkCycle" Style="{DynamicResource ContextMenuItemStyle}" IsEnabled="{Binding CanLocation}"/>
+                                                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
+                                                            <MenuItem  Header="停止周期查询"   Command="{Binding QueryLocation}" CommandParameter="StopCycle" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanStopLocation}"/>
+                                                            <MenuItem  Header="轨迹回放" Command="{Binding QueryLocation}" CommandParameter="Track" Style="{DynamicResource ContextMenuItemStyle}"/>
+                                                        </MenuItem>
+                                                        <MenuItem Header="室内定位"  IsEnabled="{Binding EnableLocationInDoorFunc}" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.LocationInDoorVisible}">
+                                                            <MenuItem  Header="启动" Command="{Binding LocationInDoor}" CommandParameter="Start" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocationInDoor}"/>
+                                                            <MenuItem  Header="停止"  Command="{Binding LocationInDoor}" CommandParameter="Stop" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanStopLocationInDoor}"/>
+                                                        </MenuItem>
+                                                        <MenuItem Header="指令控制"  IsEnabled="{Binding EnableControlFunc}" Style="{DynamicResource ContextMenuItemStyle}"  Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}" >
+                                                            <MenuItem  Header="遥开" IsEnabled="{Binding CanShartUp}"   Command="{Binding Control}" CommandParameter="StartUp" Style="{DynamicResource ContextMenuItemStyle}"/>
+                                                            <MenuItem  Header="遥毙" IsEnabled="{Binding CanShutDown}"  Command="{Binding Control}" CommandParameter="ShutDown" Style="{DynamicResource ContextMenuItemStyle}"/>
+                                                        </MenuItem>
+                                                        <Separator Margin="1,0"  Style="{DynamicResource SeparatorStyleNormal}" Height="16"  Visibility="{x:Static svr:FunctionConfigure.JobTicketVisible}" />
+                                                        <MenuItem  Header="工单" Style="{DynamicResource ContextMenuItemStyle}"  Visibility="{x:Static svr:FunctionConfigure.JobTicketVisible}"/>
+                                                    </ContextMenu>
+                                                </Border.ContextMenu>
+                                                <DockPanel>
+                                                    <Image  Opacity="{Binding OnlineOpacity}" x:Name="Icon" Source="{Binding Icon}" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="34,0,0,0"  />
+                                                    <DockPanel x:Name="dck_Content" Margin="5,0" >
+                                                        <TextBlock x:Name="txt" Text="{Binding FullName}"  Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" TextWrapping="NoWrap" Margin="5,0,10,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  />
+                                                        <Image Visibility="{Binding ShutDownStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/shutdown_22_22_h.png" />
+                                                        <Image Visibility="{Binding LocationInDoorStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="16" HorizontalAlignment="Left"   Margin="0,0,0,-2.5" Source="/TrboX;component/resource/images/start_locationindoor_22_h.png" />
+                                                        <Image Visibility="{Binding LocationStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"   Margin="0,0,0,-1" Source="/TrboX;component/resource/images/position_22_22_h.png"/>
+                                                        <Image Visibility="{Binding InCallStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/call_22_22_h.png"/>
+                                                    </DockPanel>
+                                                </DockPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ctrl:ResourceView.ItemTemplate>
+                                </ctrl:ResourceView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                    <TabItem  Header="车辆">
+                        <ListView x:Name="vehicles"  BorderThickness="0" SelectionMode="Single" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="{x:Null}" Margin="0,6" Style="{DynamicResource ListViewStyleNormal}" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemsSource="{Binding Vehicles}" >
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding SelectionChanged, Mode=OneWay}" CommandParameter="{Binding SelectedItem, ElementName=vehicles}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <ListView.View>
+                                <ctrl:ResourceView>
+                                    <ctrl:ResourceView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border x:Name="Msg"  Background="#00000000" ToolTip="{Binding NameInfo}" Margin="0"  VerticalAlignment="Stretch" Height="32">
+                                                <Border.ContextMenu>
+                                                    <ContextMenu Style="{DynamicResource ContextMenuStyleNormal}" Visibility="{Binding ContextMenuVisible}" >
+                                                        <MenuItem  Header="打开"  Command="{Binding OpenOperateWindow}"  CommandParameter = "Schedule" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <MenuItem  Header="添加到快速操作"   Command="{Binding AddFastPanel}"  Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <Separator Margin="1,0"      Style="{DynamicResource SeparatorStyleNormal}" Height="16" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <MenuItem  Header="在线检测" IsEnabled="{Binding CanCheckOnline}" Command="{Binding Control}" CommandParameter="Check" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <MenuItem  Header="远程监听" IsEnabled="{Binding CanMonitor}" Command="{Binding Control}" CommandParameter="Monitor" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <Separator Margin="1,0"      Style="{DynamicResource SeparatorStyleNormal}" Height="16" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <MenuItem  Header="呼叫"   IsEnabled="{Binding CanCall}"   Command="{Binding Call}" CommandParameter = "Start" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ScheduleVisible}"/>
+                                                        <MenuItem  Header="结束呼叫"  IsEnabled="{Binding CanStopCall}" Command="{Binding Call}" CommandParameter = "Stop" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ScheduleVisible}"/>
+                                                        <MenuItem  Header="短消息"  IsEnabled="{Binding CanShortMessage}" Command="{Binding OpenOperateWindow}" CommandParameter = "ShortMessage" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ShortMessageVisible}"/>
+                                                        <MenuItem Header="位置/轨迹" IsEnabled="{Binding EnableLocationFunc}" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.LocationVisible}">
+                                                            <MenuItem  Header="查询"         Command="{Binding QueryLocation}" CommandParameter="Query" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <MenuItem  Header="周期查询"     Command="{Binding QueryLocation}" CommandParameter="Cycle" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
+                                                            <MenuItem  Header="CSBK查询"     Command="{Binding QueryLocation}" CommandParameter="CsbkQuery" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <MenuItem  Header="CSBK周期查询" Command="{Binding QueryLocation}" CommandParameter="CsbkCycle" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16" />
+                                                            <MenuItem  Header="CSBK增强型查询"      Command="{Binding QueryLocation}" CommandParameter="EnhCsbkQuery" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <MenuItem  Header="CSBK增强型周期查询"  Command="{Binding QueryLocation}" CommandParameter="EnhCsbkCycle" Style="{DynamicResource ContextMenuItemStyle}" IsEnabled="{Binding CanLocation}"/>
+                                                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
+                                                            <MenuItem  Header="停止周期查询"   Command="{Binding QueryLocation}" CommandParameter="StopCycle" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanStopLocation}"/>
+                                                            <MenuItem  Header="轨迹回放" Command="{Binding QueryLocation}" CommandParameter="Track" Style="{DynamicResource ContextMenuItemStyle}"/>
+                                                        </MenuItem>
+                                                        <MenuItem Header="室内定位"  IsEnabled="{Binding EnableLocationInDoorFunc}" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.LocationInDoorVisible}">
+                                                            <MenuItem  Header="启动" Command="{Binding LocationInDoor}" CommandParameter="Start" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocationInDoor}"/>
+                                                            <MenuItem  Header="停止"  Command="{Binding LocationInDoor}" CommandParameter="Stop" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanStopLocationInDoor}"/>
+                                                        </MenuItem>
+                                                        <MenuItem Header="指令控制"  IsEnabled="{Binding EnableControlFunc}" Style="{DynamicResource ContextMenuItemStyle}"  Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}" >
+                                                            <MenuItem  Header="遥开" IsEnabled="{Binding CanShartUp}"   Command="{Binding Control}" CommandParameter="StartUp" Style="{DynamicResource ContextMenuItemStyle}"/>
+                                                            <MenuItem  Header="遥毙" IsEnabled="{Binding CanShutDown}"  Command="{Binding Control}" CommandParameter="ShutDown" Style="{DynamicResource ContextMenuItemStyle}"/>
+                                                        </MenuItem>
+                                                        <Separator Margin="1,0"  Style="{DynamicResource SeparatorStyleNormal}" Height="16"  Visibility="{x:Static svr:FunctionConfigure.JobTicketVisible}" />
+                                                        <MenuItem  Header="工单" Style="{DynamicResource ContextMenuItemStyle}"  Visibility="{x:Static svr:FunctionConfigure.JobTicketVisible}"/>
+                                                    </ContextMenu>
+                                                </Border.ContextMenu>
+                                                <DockPanel >
+                                                    <Image Opacity="{Binding OnlineOpacity}" x:Name="Icon" Source="{Binding Icon}" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="34,0,0,0" />
+                                                    <DockPanel x:Name="dck_Content" Margin="5,0" >
+                                                        <TextBlock Text="{Binding FullName}" ToolTip="{Binding target.HeaderWithoutKey}"  TextWrapping="NoWrap" Margin="5,0,10,0"  Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" />
+                                                        <Image Visibility="{Binding ShutDownStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/shutdown_22_22_h.png" />
+                                                        <Image Visibility="{Binding LocationInDoorStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="16" HorizontalAlignment="Left"   Margin="0,0,0,-2.5" Source="/TrboX;component/resource/images/start_locationindoor_22_h.png" />
+                                                        <Image Visibility="{Binding LocationStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"   Margin="0,0,0,-1" Source="/TrboX;component/resource/images/position_22_22_h.png"/>
+                                                        <Image Visibility="{Binding InCallStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/call_22_22_h.png"/>
+
+                                                    </DockPanel>
+                                                </DockPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ctrl:ResourceView.ItemTemplate>
+                                </ctrl:ResourceView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                    <TabItem Header="设备">
+                        <ListView x:Name="device" BorderThickness="0" SelectionMode="Single" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="{x:Null}" Margin="0,6" Style="{DynamicResource ListViewStyleNormal}" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemsSource="{Binding Devives}" >
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="SelectionChanged">
+                                    <i:InvokeCommandAction Command="{Binding SelectionChanged, Mode=OneWay}" CommandParameter="{Binding SelectedItem, ElementName=device}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                            <ListView.View>
+                                <ctrl:ResourceView>
+                                    <ctrl:ResourceView.ItemTemplate>
+                                        <DataTemplate>                                          
+                                            <Border x:Name="Msg"  Background="#00000000" ToolTip="{Binding NameInfo}" Margin="0" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Height="32">
+                                                <Border.ContextMenu>
+                                                    <ContextMenu Style="{DynamicResource ContextMenuStyleNormal}" Visibility="{Binding ContextMenuVisible}" >
+                                                        <MenuItem  Header="打开"  Command="{Binding OpenOperateWindow}"  CommandParameter = "Schedule" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <MenuItem  Header="添加到快速操作"   Command="{Binding AddFastPanel}"  Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <Separator Margin="1,0"      Style="{DynamicResource SeparatorStyleNormal}" Height="16" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <MenuItem  Header="在线检测" IsEnabled="{Binding CanCheckOnline}" Command="{Binding Control}" CommandParameter="Check" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <MenuItem  Header="远程监听" IsEnabled="{Binding CanMonitor}" Command="{Binding Control}" CommandParameter="Monitor" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <Separator Margin="1,0"      Style="{DynamicResource SeparatorStyleNormal}" Height="16" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
+                                                        <MenuItem  Header="呼叫"   IsEnabled="{Binding CanCall}"   Command="{Binding Call}" CommandParameter = "Start" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ScheduleVisible}"/>
+                                                        <MenuItem  Header="结束呼叫"  IsEnabled="{Binding CanStopCall}" Command="{Binding Call}" CommandParameter = "Stop" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ScheduleVisible}"/>
+                                                        <MenuItem  Header="短消息"  IsEnabled="{Binding CanShortMessage}" Command="{Binding OpenOperateWindow}" CommandParameter = "ShortMessage" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.ShortMessageVisible}"/>
+                                                        <MenuItem Header="位置/轨迹" IsEnabled="{Binding EnableLocationFunc}" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.LocationVisible}">
+                                                            <MenuItem  Header="查询"         Command="{Binding QueryLocation}" CommandParameter="Query" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <MenuItem  Header="周期查询"     Command="{Binding QueryLocation}" CommandParameter="Cycle" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
+                                                            <MenuItem  Header="CSBK查询"     Command="{Binding QueryLocation}" CommandParameter="CsbkQuery" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <MenuItem  Header="CSBK周期查询" Command="{Binding QueryLocation}" CommandParameter="CsbkCycle" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16" />
+                                                            <MenuItem  Header="CSBK增强型查询"      Command="{Binding QueryLocation}" CommandParameter="EnhCsbkQuery" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocation}"/>
+                                                            <MenuItem  Header="CSBK增强型周期查询"  Command="{Binding QueryLocation}" CommandParameter="EnhCsbkCycle" Style="{DynamicResource ContextMenuItemStyle}" IsEnabled="{Binding CanLocation}"/>
+                                                            <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
+                                                            <MenuItem  Header="停止周期查询"   Command="{Binding QueryLocation}" CommandParameter="StopCycle" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanStopLocation}"/>
+                                                            <MenuItem  Header="轨迹回放" Command="{Binding QueryLocation}" CommandParameter="Track" Style="{DynamicResource ContextMenuItemStyle}"/>
+                                                        </MenuItem>
+                                                        <MenuItem Header="室内定位"  IsEnabled="{Binding EnableLocationInDoorFunc}" Style="{DynamicResource ContextMenuItemStyle}" Visibility="{x:Static svr:FunctionConfigure.LocationInDoorVisible}">
+                                                            <MenuItem  Header="启动" Command="{Binding LocationInDoor}" CommandParameter="Start" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanLocationInDoor}"/>
+                                                            <MenuItem  Header="停止"  Command="{Binding LocationInDoor}" CommandParameter="Stop" Style="{DynamicResource ContextMenuItemStyle}"  IsEnabled="{Binding CanStopLocationInDoor}"/>
+                                                        </MenuItem>
+                                                        <MenuItem Header="指令控制"  IsEnabled="{Binding EnableControlFunc}" Style="{DynamicResource ContextMenuItemStyle}"  Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}" >
+                                                            <MenuItem  Header="遥开" IsEnabled="{Binding CanShartUp}"   Command="{Binding Control}" CommandParameter="StartUp" Style="{DynamicResource ContextMenuItemStyle}"/>
+                                                            <MenuItem  Header="遥毙" IsEnabled="{Binding CanShutDown}"  Command="{Binding Control}" CommandParameter="ShutDown" Style="{DynamicResource ContextMenuItemStyle}"/>
+                                                        </MenuItem>
+                                                        <Separator Margin="1,0"  Style="{DynamicResource SeparatorStyleNormal}" Height="16"  Visibility="{x:Static svr:FunctionConfigure.JobTicketVisible}" />
+                                                        <MenuItem  Header="工单" Style="{DynamicResource ContextMenuItemStyle}"  Visibility="{x:Static svr:FunctionConfigure.JobTicketVisible}"/>
+                                                    </ContextMenu>
+                                                </Border.ContextMenu>
+                                                <DockPanel>
+                                                    <Image  Opacity="{Binding OnlineOpacity}"  x:Name="Icon" Source="{Binding Icon}" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="34,0,0,0"  />
+                                                    <DockPanel x:Name="dck_Content" Margin="5,0" >
+                                                        <TextBlock Text="{Binding DeviceName}"  TextWrapping="NoWrap" Margin="5,0,10,0"  Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  />
+                                                        <Image Visibility="{Binding ShutDownStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/shutdown_22_22_h.png" />
+                                                        <Image Visibility="{Binding LocationInDoorStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="16" HorizontalAlignment="Left"   Margin="0,0,0,-2.5" Source="/TrboX;component/resource/images/start_locationindoor_22_h.png" />
+                                                        <Image Visibility="{Binding LocationStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"   Margin="0,0,0,-1" Source="/TrboX;component/resource/images/position_22_22_h.png"/>
+                                                        <Image Visibility="{Binding InCallStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/call_22_22_h.png"/>
+
+                                                    </DockPanel>
+                                                </DockPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ctrl:ResourceView.ItemTemplate>
+                                </ctrl:ResourceView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                    <TabItem Header="蓝牙信标">
+                        <ListView x:Name="ibeacons" BorderThickness="0" SelectionMode="Single" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Background="{x:Null}" Margin="0,6" Style="{DynamicResource ListViewStyleNormal}" ScrollViewer.HorizontalScrollBarVisibility="Hidden" ItemsSource="{Binding Beacons}" >
+                            <ListView.View>
+                                <ctrl:ResourceView>
+                                    <ctrl:ResourceView.ItemTemplate>
+                                        <DataTemplate>
+                                            <Border x:Name="Msg"  Background="#00000000" ToolTip="{Binding NameInfo}" Margin="0" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Height="32">
+                                                <DockPanel >
+                                                    <Image x:Name="Icon" Source="/TrboX;component/resource/images/ibeacon_18_18_on.png" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="34,0,0,0"  />
+                                                    <DockPanel x:Name="dck_Content" Margin="5,0" >
+                                                        <TextBlock Text="{Binding Name}"  TextWrapping="NoWrap" Margin="5,0,0,0"  Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  />
+                                                    </DockPanel>
+                                                </DockPanel>
+                                            </Border>
+                                        </DataTemplate>
+                                    </ctrl:ResourceView.ItemTemplate>
+                                </ctrl:ResourceView>
+                            </ListView.View>
+                        </ListView>
+                    </TabItem>
+                </TabControl>
+            </Border>
+        </DockPanel>
+    </Grid>
+</UserControl>
