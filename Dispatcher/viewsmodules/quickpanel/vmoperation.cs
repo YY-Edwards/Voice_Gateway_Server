@@ -158,7 +158,7 @@ namespace Dispatcher.ViewsModules
                 if (_operation != null && _operation.Type == TaskType_t.Schedule && _targets != null && _targets.Count >= 1)
                 {
                     if (_targets[0].IsInCall) return true;
-                    else return !SystemStatus.IsSystemInCall && _targets[0].IsOnline && !_targets[0].IsInCall ? true : false;
+                    else return !SystemStatus.IsSystemInCall && _targets[0].IsOnlineIfNeed && !_targets[0].IsInCall ? true : false;
                 }
                 else return false;               
             }

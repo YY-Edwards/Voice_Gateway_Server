@@ -24,7 +24,7 @@ namespace Dispatcher.ViewsModules
 
         private CGroup _group = null;
         private bool _iscurrentrx = false;
-        private List<BeaconReport> _lastbeacons;
+        //private List<BeaconReport> _lastbeacons;
         private CMember _member = null;
         private TargetType_t? _type = null;
         public VMTarget(CMember member)
@@ -88,7 +88,7 @@ namespace Dispatcher.ViewsModules
         {
             get
             {
-                return ServerStatus.Instance().VoiceBusiness.IsConnected && !SystemStatus.IsSystemInCall && IsOnline && !IsInCall ? true : false;
+                return ServerStatus.Instance().VoiceBusiness.IsConnected && !SystemStatus.IsSystemInCall && IsOnlineIfNeed && !IsInCall ? true : false;
             }
         }
 
@@ -98,7 +98,7 @@ namespace Dispatcher.ViewsModules
             get
             {
                 if (!ServerStatus.Instance().DataBusiness.IsConnected) return false;
-                if (_type == TargetType_t.Member) return _member != null && IsOnline && !IsInLocation && _member.HasLocation ? true : false;
+                if (_type == TargetType_t.Member) return _member != null && _member.HasDevice && IsOnlineIfNeed && !IsInLocation && _member.HasLocation ? true : false;
                 else if (_type == TargetType_t.Group) return _group != null ? true : false;
                 else return false;
             }
@@ -109,31 +109,31 @@ namespace Dispatcher.ViewsModules
             get
             {
                 if (!ServerStatus.Instance().DataBusiness.IsConnected) return false;
-                if (_type == TargetType_t.Member) return _member != null && IsOnline && !IsInLocationInDoor && _member.HasLocatinInDoor ? true : false;
+                if (_type == TargetType_t.Member) return _member != null && _member.HasDevice && IsOnlineIfNeed && !IsInLocationInDoor && _member.HasLocatinInDoor ? true : false;
                 else if (_type == TargetType_t.Group) return _group != null ? true : false;
                 else return false;
             }
         }
 
-        public bool CanMonitor { get { return ServerStatus.Instance().DataBusiness.IsConnected && _type == TargetType_t.Member && _member != null && IsOnline ? true : false; } }
-        public bool CanShartUp { get { return ServerStatus.Instance().DataBusiness.IsConnected && _type == TargetType_t.Member && _member != null && IsOnline && IsShutDown ? true : false; } }
+        public bool CanMonitor { get { return ServerStatus.Instance().DataBusiness.IsConnected && _type == TargetType_t.Member && _member != null && _member.HasDevice && IsOnlineIfNeed ? true : false; } }
+        public bool CanShartUp { get { return ServerStatus.Instance().DataBusiness.IsConnected && _type == TargetType_t.Member && _member != null && _member.HasDevice && IsOnlineIfNeed && IsShutDown ? true : false; } }
         public bool CanShortMessage
         {
             get
             {
                 if (!ServerStatus.Instance().DataBusiness.IsConnected) return false;
-                if (_type == TargetType_t.Member) return _member != null && IsOnline && _member.HasScreen ? true : false;
+                if (_type == TargetType_t.Member) return _member != null && _member.HasDevice && IsOnlineIfNeed && _member.HasScreen ? true : false;
                 else if (_type == TargetType_t.Group) return _group != null ? true : false;
                 else return false;
             }
         }
 
-        public bool CanShutDown { get { return ServerStatus.Instance().DataBusiness.IsConnected && _type == TargetType_t.Member && _member != null && IsOnline && !IsShutDown ? true : false; } }
+        public bool CanShutDown { get { return ServerStatus.Instance().DataBusiness.IsConnected && _type == TargetType_t.Member && _member != null && _member.HasDevice && IsOnlineIfNeed && !IsShutDown ? true : false; } }
         public bool CanStopCall
         {
             get
             {
-                return ServerStatus.Instance().VoiceBusiness.IsConnected && SystemStatus.IsSystemInCall && IsOnline && IsInCall ? true : false;
+                return ServerStatus.Instance().VoiceBusiness.IsConnected && SystemStatus.IsSystemInCall && IsOnlineIfNeed && IsInCall ? true : false;
             }
         }
 
@@ -142,7 +142,7 @@ namespace Dispatcher.ViewsModules
             get
             {
                 if (!ServerStatus.Instance().DataBusiness.IsConnected) return false;
-                if (_type == TargetType_t.Member) return IsOnline && IsInLocation ? true : false;
+                if (_type == TargetType_t.Member) return IsOnlineIfNeed && IsInLocation ? true : false;
                 else if (_type == TargetType_t.Group) return _group != null ? true : false;
                 else return false;
             }
@@ -153,7 +153,7 @@ namespace Dispatcher.ViewsModules
             get
             {
                 if (!ServerStatus.Instance().DataBusiness.IsConnected) return false;
-                if (_type == TargetType_t.Member) return IsOnline && IsInLocationInDoor ? true : false;
+                if (_type == TargetType_t.Member) return IsOnlineIfNeed && IsInLocationInDoor ? true : false;
                 else if (_type == TargetType_t.Group) return _group != null ? true : false;
                 else return false;
             }
@@ -169,7 +169,7 @@ namespace Dispatcher.ViewsModules
             get
             {
                 if (IsInCall) return true;
-                else return !SystemStatus.IsSystemInCall && IsOnline && !IsInCall ? true : false;
+                else return !SystemStatus.IsSystemInCall && IsOnlineIfNeed && !IsInCall ? true : false;
             }
         }
 
@@ -186,7 +186,7 @@ namespace Dispatcher.ViewsModules
         {
             get
             {
-                if (_type == TargetType_t.Member) return _member != null && _member.HasLocation ? true : false;
+                if (_type == TargetType_t.Member) return _member != null && IsOnlineIfNeed && _member.HasLocation ? true : false;
                 else if (_type == TargetType_t.Group) return _group != null ? true : false;
                 else return false;
             }
@@ -196,7 +196,7 @@ namespace Dispatcher.ViewsModules
         {
             get
             {
-                if (_type == TargetType_t.Member) return _member != null && IsOnline && _member.HasLocatinInDoor ? true : false;
+                if (_type == TargetType_t.Member) return _member != null && IsOnlineIfNeed && _member.HasLocatinInDoor ? true : false;
                 else if (_type == TargetType_t.Group) return _group != null ? true : false;
                 else return false;
             }
@@ -228,19 +228,19 @@ namespace Dispatcher.ViewsModules
                     switch (_member.MemberType)
                     {
                         case CMember.MemberType_t.Staff:
-                            return IsOnline
+                            return IsOnlineIfNeed
                                 ? new BitmapImage(new Uri("pack://application:,,,/resource/images/staff_18_18_on.png"))
                                 : new BitmapImage(new Uri("pack://application:,,,/resource/images/staff_18_18_off.png"));
                         case CMember.MemberType_t.Vehicle:
-                            return IsOnline
+                            return IsOnlineIfNeed
                                 ? new BitmapImage(new Uri("pack://application:,,,/resource/images/vehicle_18_18_on.png"))
                                 : new BitmapImage(new Uri("pack://application:,,,/resource/images/vehicle_18_18_off.png"));
                         case CMember.MemberType_t.Handset:
-                            return IsOnline
+                            return IsOnlineIfNeed
                                 ? new BitmapImage(new Uri("pack://application:,,,/resource/images/radio_18_18_on.png"))
                                 : new BitmapImage(new Uri("pack://application:,,,/resource/images/radio_18_18_off.png"));
                         case CMember.MemberType_t.VehicleStation:
-                            return IsOnline
+                            return IsOnlineIfNeed
                                 ? new BitmapImage(new Uri("pack://application:,,,/resource/images/ride_18_18_on.png"))
                                 : new BitmapImage(new Uri("pack://application:,,,/resource/images/ride_18_18_off.png"));
                         default:
@@ -262,7 +262,7 @@ namespace Dispatcher.ViewsModules
             }
         }
 
-        public Visibility InCallStatusVisible { get { return IsOnline && IsInCall ? Visibility.Visible : Visibility.Collapsed; } }
+        public Visibility InCallStatusVisible { get { return IsOnlineIfNeed && IsInCall ? Visibility.Visible : Visibility.Collapsed; } }
         public bool IsCurrentRx { get { return _iscurrentrx; } set { _iscurrentrx = value; NotifyPropertyChanged("IsCurrentRx"); } }
         public bool IsInCall
         {
@@ -276,6 +276,7 @@ namespace Dispatcher.ViewsModules
 
         public bool IsInLocation { get { return _type == TargetType_t.Member && _member != null && _member.LocationStatus != LocationStatus_t.Idle ? true : false; } }
         public bool IsInLocationInDoor { get { return _type == TargetType_t.Member && _member != null && _member.LocationInDoorStatus != LocationInDoorStatus_t.Idle ? true : false; } }
+
         public bool IsOnline
         {
             get
@@ -287,6 +288,17 @@ namespace Dispatcher.ViewsModules
             private set
             {
                 if (_type == TargetType_t.Member && _member != null) _member.IsOnline = value; NotifyPropertyChanged("IsOnline");
+            }
+        }
+        
+        public bool IsOnlineIfNeed
+        {
+            get
+            {
+                return true;
+
+                if (_type == TargetType_t.Member) return _member == null || !_member.HasDevice ? false : _member.IsOnline;
+                else return true;
             }
         }
 
@@ -776,9 +788,11 @@ namespace Dispatcher.ViewsModules
             if (IsInCall && e.Opcode == ExecType_t.Start)
             {
                 if (e.Status == OperationStatus_t.Success)
-                {
+                {                 
                     Log.Message("开始呼叫  " + FullName);
                     AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "开始呼叫" });
+
+                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Tx));
                 }
                 else
@@ -792,6 +806,7 @@ namespace Dispatcher.ViewsModules
             {
                 if (e.Status == OperationStatus_t.Success)
                 {
+                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Idle));
                 }
                 else
@@ -829,6 +844,10 @@ namespace Dispatcher.ViewsModules
                         Log.Message("远程监听失败  " + FullName);
                         AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "远程监听失败" });
                     }
+                    else
+                    {
+                        if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                    }
                     break;
                 case ControlerType_t.ShutDown:
                     if (!IsShutDown) return;
@@ -838,6 +857,10 @@ namespace Dispatcher.ViewsModules
                         Log.Message("遥毙失败  " + FullName);
                         AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "遥毙失败" });
                         ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.ShutDownStatus, false));
+                    }
+                    else
+                    {
+                        if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
                     }
                     break;
                 case ControlerType_t.StartUp:
@@ -849,7 +872,10 @@ namespace Dispatcher.ViewsModules
                         AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "遥开失败" });
                         ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.ShutDownStatus, true));
                     }
-
+                    else
+                    {
+                        if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                    }
                     break;
                 default:
                     return;
@@ -892,7 +918,10 @@ namespace Dispatcher.ViewsModules
                     AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "启动室内定位失败" });
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationInDoorStatus_t.Idle));
                 }
-
+                else
+                {
+                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                }
             }
             else if (!IsInLocationInDoor && e.Opcode == ExecType_t.Stop)
             {
@@ -901,9 +930,11 @@ namespace Dispatcher.ViewsModules
                     Log.Message("结束室内定位失败  " + FullName);
                     AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "结束室内定位失败" });
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationInDoorStatus_t.Cycle));
-
                 }
-
+                else
+                {
+                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                }
             }
         }
 
@@ -911,7 +942,7 @@ namespace Dispatcher.ViewsModules
         {
             if (e == null || !IsThis(e.Source)) return;
 
-            if (IsOnline != true)ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+            if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true)); 
             SystemStatus.DrawAmapPoint(new DrawLocationReportArgs(this, e.Report));
         }
 
@@ -926,7 +957,10 @@ namespace Dispatcher.ViewsModules
                     AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "位置查询失败" });
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.Idle));
                 }
-
+                else
+                {
+                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                }
             }
             else if (!IsInLocation && e.Opcode == ExecType_t.Stop)
             {
@@ -936,7 +970,10 @@ namespace Dispatcher.ViewsModules
                     AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "结束位置查询失败" });
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.Cycle));
                 }
-
+                else
+                {
+                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                }
             }
         }
 
@@ -945,7 +982,6 @@ namespace Dispatcher.ViewsModules
             if (e == null || !IsThis(e.Source)) return;
 
             if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
-
             Log.Message(FullName + "  发送短消息（内容：" + e.Contents + "）");
             AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.ShortMessage, Contents = e.Contents }, true);
         }
@@ -957,7 +993,7 @@ namespace Dispatcher.ViewsModules
             if (e.Status == OperationStatus_t.Success)
             {
                 Log.Message("发送短消息成功  " + FullName);
-                //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "发送成功" });
+                if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
             }
             else
             {
@@ -1048,20 +1084,32 @@ namespace Dispatcher.ViewsModules
             {
                 if (_type == TargetType_t.Group && Group.IsAllTarget)
                 {
-                    foreach (VMTarget member in ResourcesMgr.Instance().Members) if (member.Member.HasDevice && member.CanShortMessage) _dispatcher.SendShortMessage(member.Member.RadioID, args.Contents);
+                    List<VMTarget> UnBounded = ResourcesMgr.Instance().Members.FindAll(p=>true);
+                    foreach (VMTarget group in ResourcesMgr.Instance().Groups)
+                    {
+                        if (group.CanShortMessage) _dispatcher.SendGroupShortMessage(group._group.GroupID, args.Contents);
+                        UnBounded.RemoveAll(p => p._member.GroupID == group._group.GroupID);
+                    }
+
+                    foreach (VMTarget member in UnBounded)
+                    {
+                        if (member.Member.HasDevice && member.CanShortMessage) _dispatcher.SendPrivateShortMessage(member.Member.RadioID, args.Contents);
+                    }
                 }
                 else if (_type == TargetType_t.Group)
                 {
-                    List<VMTarget> members = ResourcesMgr.Instance().Members.FindAll(p => p.TargetType == TargetType_t.Member && p.Member.GroupID == Group.GroupID);
-                    if (members != null) foreach (VMTarget member in members) if (member.Member.HasDevice && member.CanShortMessage) _dispatcher.SendShortMessage(member.Member.RadioID, args.Contents);
+                    if (CanShortMessage) _dispatcher.SendGroupShortMessage(_group.GroupID, args.Contents);
                 }
-                else if (Member.HasDevice) _dispatcher.SendShortMessage(Member.RadioID, args.Contents);
+                else if (Member.HasDevice) _dispatcher.SendPrivateShortMessage(Member.RadioID, args.Contents);
             }
 
         }
 
         private void UpdateAllStatus()
         {
+            NotifyPropertyChanged("IsOnline");
+            NotifyPropertyChanged("IsOnlineIfNeed");
+
             NotifyPropertyChanged("EnableCallOrStop");
             NotifyPropertyChanged("CanCall");
             NotifyPropertyChanged("CanShortMessage");
