@@ -192,10 +192,10 @@ namespace Dispatcher.Service
 
         private void OnCallResponse(string parameter)
         {
-            if (CallResponse != null)
+            if (parameter != null)
             {
                 CallResponseArgs args = CreateCallResponse(parameter);
-                if(args != null)CallResponse(args);
+                if (CallResponse != null) CallResponse(args);
             }
         }
 
