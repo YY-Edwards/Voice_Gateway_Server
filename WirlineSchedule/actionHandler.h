@@ -699,6 +699,8 @@ inline void wlMnisStatusHandler(CRemotePeer* pRemote, const std::string& param, 
 		printf_s("call response send error");
 	}
 }
+
+/*未使用的方法*/
 inline void wlMnisLocationIndoorHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
 	if (!wlScheduleIsEnable())
