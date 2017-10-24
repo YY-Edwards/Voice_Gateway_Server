@@ -182,7 +182,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		serverActions["call"] = callAction;
 		serverActions["control"] = controlAction;
-		serverActions["queryGps"] = gpsAction;
+		serverActions["queryLocation"] = gpsAction;
 		serverActions["message"] = msgAction;
 		serverActions["status"] = statusAction;
 		serverActions["registerLicense"] = registerLicenseAction;
@@ -296,12 +296,16 @@ int _tmain(int argc, _TCHAR* argv[])
 	serverActions["getRadioSetting"] = getRadioAction;
 	serverActions["setRepeaterSetting"] = setRepeaterAction;
 	serverActions["getRepeaterSetting"] = getRepeaterAction;
+	serverActions["setMnisSetting"] = setMnisAction;
+	serverActions["getMnisSetting"] = getMnisAction;
+	serverActions["setLocationSetting"] = setLocationAction;
+	serverActions["getLocationSetting"] = getLocationAction;
 	serverActions["setLocationInDoorSetting"] = setLocationInDoorAction;
 	serverActions["getLocationInDoorSetting"] = getLocationInDoorAction;
 
 	serverActions["call"] = callAction;
 	serverActions["control"] = controlAction;
-	serverActions["queryGps"] = gpsAction;
+	serverActions["queryLocation"] = gpsAction;
 	serverActions["message"] = msgAction;
 	serverActions["status"] = statusAction;
 	serverActions["registerLicense"] = registerLicenseAction;

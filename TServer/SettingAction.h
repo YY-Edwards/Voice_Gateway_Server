@@ -67,7 +67,6 @@ void getBaseAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 	}
 }
 
-
 void setRadioAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
@@ -157,7 +156,92 @@ void getRepeaterAction(CRemotePeer* pRemote, const std::string& param, uint64_t 
 
 	}
 }
+void setMnisAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
+{
+	static std::mutex lock;
 
+	std::lock_guard<std::mutex> locker(lock);
+
+	try
+	{
+		Document d;
+		d.Parse(param.c_str());
+		CSettings::instance()->setValue("mnis", d.GetObject());
+		std::string strResp = CSettings::instance()->getResponse("success", callId, 200, "", "");
+		sendResponse(pRemote, strResp.c_str(), strResp.size());
+	}
+	catch (std::exception& e)
+	{
+
+	}
+	catch (...)
+	{
+
+	}
+}
+void getMnisAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
+{
+	static std::mutex lock;
+
+	std::lock_guard<std::mutex> locker(lock);
+
+	try
+	{
+		std::string strResp = CSettings::instance()->getResponse("success", callId, 200, "", CSettings::instance()->getValue("mnis"));
+		sendResponse(pRemote, strResp.c_str(), strResp.size());
+	}
+	catch (std::exception& e)
+	{
+
+	}
+	catch (...)
+	{
+
+	}
+}
+void setLocationAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
+{
+	static std::mutex lock;
+
+	std::lock_guard<std::mutex> locker(lock);
+
+	try
+	{
+		Document d;
+		d.Parse(param.c_str());
+		CSettings::instance()->setValue("location", d.GetObject());
+		std::string strResp = CSettings::instance()->getResponse("success", callId, 200, "", "");
+		sendResponse(pRemote, strResp.c_str(), strResp.size());
+	}
+	catch (std::exception& e)
+	{
+
+	}
+	catch (...)
+	{
+
+	}
+}
+void getLocationAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
+{
+	static std::mutex lock;
+
+	std::lock_guard<std::mutex> locker(lock);
+
+	try
+	{
+		std::string strResp = CSettings::instance()->getResponse("success", callId, 200, "", CSettings::instance()->getValue("location"));
+		sendResponse(pRemote, strResp.c_str(), strResp.size());
+	}
+	catch (std::exception& e)
+	{
+
+	}
+	catch (...)
+	{
+
+	}
+}
 void setLocationInDoorAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;
@@ -181,7 +265,6 @@ void setLocationInDoorAction(CRemotePeer* pRemote, const std::string& param, uin
 
 	}
 }
-
 void getLocationInDoorAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
 	static std::mutex lock;

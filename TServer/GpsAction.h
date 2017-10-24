@@ -11,7 +11,7 @@ void gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, 
 	std::lock_guard<std::mutex> locker(lock);
 
 	try{
-		std::string callCommand = CRpcJsonParser::mergeCommand("queryGps", callId, param.c_str());
+		std::string callCommand = CRpcJsonParser::mergeCommand("queryLocation", callId, param.c_str());
 		CRpcClient* pDstServer = NULL;
 		if ("wl" == type)
 		{
