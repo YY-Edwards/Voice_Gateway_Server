@@ -236,10 +236,17 @@ namespace Dispatcher.Service
         public event ShortMessageRequestHandler ShortMessageRequest;
         public event ShortMessageResponseHandler ShortMessageResponse;
 
-        public void SendShortMessage(int target, string contents)
+        public void SendPrivateShortMessage(int target, string contents)
         {
             RequestOpcode opcode = RequestOpcode.message;
-            var param = new ShortMessageParameter(target, contents);
+            var param = new ShortMessageParameter(target, TargetMode_t.Private, contents);
+            Request(opcode, param);
+        }
+
+        public void SendGroupShortMessage(int target, string contents)
+        {
+            RequestOpcode opcode = RequestOpcode.message;
+            var param = new ShortMessageParameter(target, TargetMode_t.Group, contents);
             Request(opcode, param);
         }
 
@@ -603,9 +610,9 @@ namespace Dispatcher.Service
         public int Source;
         public string Contents;
 
-        public ShortMessageParameter(int target, string contents)
+        public ShortMessageParameter(int target,TargetMode_t type, string contents)
         {
-            Type = TargetMode_t.Private;
+            Type = type;
             Source = 0;
 
             Target = target;
