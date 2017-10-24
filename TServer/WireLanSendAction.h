@@ -160,7 +160,7 @@ void wlGetConfigAction(CRemotePeer* pRemote, const std::string& param, uint64_t 
 
 	try{
 		CBroker::instance()->sendWirelanConfig();
-		CBroker::instance()->sendLoactionIndoorConfigToWl();
+		//CBroker::instance()->sendLoactionIndoorConfigToWl();
 	}
 	catch (std::exception e){
 

@@ -162,7 +162,17 @@ void CBroker::startWireLanClient(std::map<std::string, ACTION> clientActions)
 
 void CBroker::sendWirelanConfig()
 {
-	std::string strConnect = CSettings::instance()->getRequest("wlConnect", "wl", m_wirelanClient->getCallId(), CSettings::instance()->getValue("repeater"));
+	//std::string strConnect = CSettings::instance()->getRequest("wlConnect", "wl", m_wirelanClient->getCallId(), CSettings::instance()->getValue("repeater"));
+	//m_wirelanClient->send(strConnect.c_str(), strConnect.size());
+
+	std::string content = 
+		"{\"repeater\":" + CSettings::instance()->getValue("repeater") +
+		",\"mnis\":" + CSettings::instance()->getValue("mnis") +
+		",\"location\":" + CSettings::instance()->getValue("location") +
+		",\"locationIndoor\":" + CSettings::instance()->getValue("locationIndoor") + "}";
+	//std::string strConnect = CSettings::instance()->getRequest("connect", "radio", m_radioClient->getCallId(), content);
+	//m_radioClient->send(strConnect.c_str(), strConnect.size());
+	std::string strConnect = CSettings::instance()->getRequest("wlConnect", "wl", m_wirelanClient->getCallId(), content);
 	m_wirelanClient->send(strConnect.c_str(), strConnect.size());
 }
 void CBroker::sendRadioConfig()
@@ -351,8 +361,8 @@ void CBroker::sendLoactionIndoorConfig()
 	std::string strConnect = CSettings::instance()->getRequest("locationIndoor", "radio", m_radioClient->getCallId(), CSettings::instance()->getValue("locIndoor"));
 	m_radioClient->send(strConnect.c_str(), strConnect.size());
 }
-void CBroker::sendLoactionIndoorConfigToWl()
-{
-	std::string strConnect = CSettings::instance()->getRequest("locationIndoor", "radio", m_wirelanClient->getCallId(), CSettings::instance()->getValue("locIndoor"));
-	m_wirelanClient->send(strConnect.c_str(), strConnect.size());
-}
+//void CBroker::sendLoactionIndoorConfigToWl()
+//{
+	//std::string strConnect = CSettings::instance()->getRequest("locationIndoor", "radio", m_wirelanClient->getCallId(), CSettings::instance()->getValue("locIndoor"));
+	//m_wirelanClient->send(strConnect.c_str(), strConnect.size());
+//}
