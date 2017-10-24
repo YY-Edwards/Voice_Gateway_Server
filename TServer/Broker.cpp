@@ -167,7 +167,11 @@ void CBroker::sendWirelanConfig()
 }
 void CBroker::sendRadioConfig()
 {
-	std::string strConnect = CSettings::instance()->getRequest("connect", "radio", m_radioClient->getCallId(), CSettings::instance()->getValue("radio"));
+	std::string content = "{\"radio\":" + CSettings::instance()->getValue("radio") + ",\"mnis\":"+
+		CSettings::instance()->getValue("mnis") +",\"location\":"+
+		CSettings::instance()->getValue("location") +",\"locationIndoor\":"+
+		CSettings::instance()->getValue("locationIndoor")+"}";
+	std::string strConnect = CSettings::instance()->getRequest("connect", "radio", m_radioClient->getCallId(), content);
 	m_radioClient->send(strConnect.c_str(), strConnect.size());
 }
 void CBroker::sendSettingConfig()

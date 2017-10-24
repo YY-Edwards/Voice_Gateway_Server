@@ -11,9 +11,7 @@ void GetSettingAction(CRemotePeer* pRemote, const std::string& param, uint64_t c
 	std::lock_guard<std::mutex> locker(lock);
 
 	try{
-		CBroker::instance()->sendSettingConfig();
-		Sleep(1000);
-		CBroker::instance()->sendLoactionIndoorConfig();
+		CBroker::instance()->sendSettingConfig();   //send to monitor
 
 	}
 	catch (std::exception e){
