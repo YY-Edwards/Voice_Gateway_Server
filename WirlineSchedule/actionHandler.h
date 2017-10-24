@@ -103,6 +103,190 @@ inline bool wlScheduleIsEnable()
 	return CONFIG_SCHDULE_ISENABLE;
 }
 
+inline void parseRepeaterCfg(repeater_t &cfg, Value json)
+{
+	Value tempJson;
+	if (json.HasMember("IsEnable") && json["IsEnable"].IsBool())
+	{
+		cfg.IsEnable = json["IsEnable"].GetBool();
+	}
+	if (json.HasMember("TomeoutSeconds") && json["TomeoutSeconds"].IsInt())
+	{
+		cfg.TomeoutSeconds = json["TomeoutSeconds"].GetInt();
+	}
+	if (json.HasMember("Svr") && json["Svr"].IsObject())
+	{
+		tempJson = json["Svr"].GetObject();
+		if (tempJson.HasMember("Ip") && tempJson["Ip"].IsString())
+		{
+			strcpy_s(cfg.Svr.Ip, tempJson["Ip"].GetString());
+		}
+		if (tempJson.HasMember("Port") && tempJson["Port"].IsInt())
+		{
+			cfg.Svr.Port = tempJson["Port"].GetInt();
+		}
+	}
+	if (json.HasMember("DefaultGroupId") && json["DefaultGroupId"].IsInt())
+	{
+		cfg.DefaultGroupId = (unsigned long)json["DefaultGroupId"].GetInt();
+	}
+	if (json.HasMember("DefaultGroupId") && json["DefaultGroupId"].IsInt())
+	{
+		cfg.DefaultChannel = (SlotNumber_e)json["DefaultChannel"].GetInt();
+	}
+
+	if (json["Dongle"].IsObject())
+	{
+		tempJson = json["Dongle"].GetObject();
+		if (tempJson.HasMember("Com") && tempJson["Com"].IsInt())
+		{
+			cfg.Dongle.donglePort = tempJson["Com"].GetInt();
+		}
+	}
+
+	cfg.MinHungTime = json["MinHungTime"].GetInt() * 1000;
+	if (json.HasMember("LocalPeerId") && json["LocalPeerId"].IsInt())
+	{
+		cfg.LocalPeerId = (unsigned long)json["LocalPeerId"].GetInt();
+	}
+	if (json.HasMember("LocalRadioId") && json["LocalRadioId"].IsInt())
+	{
+		cfg.LocalRadioId = (unsigned long)json["LocalRadioId"].GetInt();
+	}
+	if (json.HasMember("MaxSiteAliveTime") && json["MaxSiteAliveTime"].IsInt())
+	{
+		cfg.MaxSiteAliveTime = json["MaxSiteAliveTime"].GetInt() * 1000;
+	}
+
+	if (json["Master"].IsObject())
+	{
+		tempJson = json["Master"].GetObject();
+		if (tempJson.HasMember("Ip") && tempJson["Ip"].IsString())
+		{
+			strcpy_s(cfg.Master.ip, tempJson["Ip"].GetString());
+		}
+		if (tempJson.HasMember("Port") && tempJson["Port"].IsInt())
+		{
+			cfg.Master.port = tempJson["Port"].GetInt();
+		}
+	}
+
+	if (json.HasMember("MaxPeerAliveTime") && json["MaxPeerAliveTime"].IsInt())
+	{
+		cfg.MaxPeerAliveTime = json["MaxPeerAliveTime"].GetInt() * 1000;
+	}
+	int recordType = 1;
+	if (json.HasMember("Type") && json["Type"].IsInt())
+	{
+		cfg.Type = json["Type"].GetInt();
+		recordType = cfg.Type;
+	}
+	_RECORD_TYPE_VALUE temp = LCP;
+	if (recordType == 0)
+	{
+		temp = IPSC;
+	}
+	else if (recordType == 1)
+	{
+		temp = CPC;
+	}
+	cfg.recordType = temp;
+	if (json.HasMember("AudioPath") && json["AudioPath"].IsString())
+	{
+		strcpy_s(cfg.AudioPath, json["AudioPath"].GetString());
+	}
+}
+inline void parseMnisCfg(mnis_t &cfg, Value json)
+{
+	if (json.HasMember("IsEnable") && json["IsEnable"].IsBool())
+	{
+		cfg.IsEnable = json["IsEnable"].GetBool();
+	}
+	if (json.HasMember("ID") && json["ID"].IsInt())
+	{
+		cfg.ID = json["ID"].GetInt();
+	}
+	if (json.HasMember("Host") && json["Host"].IsString())
+	{
+		strcpy_s(cfg.Host, json["Host"].GetString());
+	}
+	if (json.HasMember("MessagePort") && json["MessagePort"].IsInt())
+	{
+		cfg.MessagePort = json["MessagePort"].GetInt();
+	}
+	if (json.HasMember("ArsPort") && json["ArsPort"].IsInt())
+	{
+		cfg.ArsPort = json["ArsPort"].GetInt();
+	}
+	if (json.HasMember("GpsPort") && json["GpsPort"].IsInt())
+	{
+		cfg.GpsPort = json["GpsPort"].GetInt();
+	}
+	if (json.HasMember("XnlPort") && json["XnlPort"].IsInt())
+	{
+		cfg.XnlPort = json["XnlPort"].GetInt();
+	}
+	if (json.HasMember("CAI") && json["CAI"].IsInt())
+	{
+		cfg.CAI = json["CAI"].GetInt();
+	}
+	if (json.HasMember("GroupCAI") && json["GroupCAI"].IsInt())
+	{
+		cfg.GroupCAI = json["GroupCAI"].GetInt();
+	}
+	if (json.HasMember("LocationType") && json["LocationType"].IsInt())
+	{
+		cfg.LocationType = json["LocationType"].GetInt();
+	}
+}
+inline void parseLocationCfg(location_t &cfg, Value json)
+{
+	Value tempJson;
+	if (json.HasMember("IsEnable") && json["IsEnable"].IsBool())
+	{
+		cfg.IsEnable = json["IsEnable"].GetBool();
+	}
+	if (json.HasMember("Interval") && json["Interval"].IsDouble())
+	{
+		cfg.Interval = json["Interval"].GetDouble();
+	}
+	if (json.HasMember("IsEnableGpsC") && json["IsEnableGpsC"].IsBool())
+	{
+		cfg.IsEnableGpsC = json["IsEnableGpsC"].GetBool();
+	}
+	if (json["GpsC"].IsObject())
+	{
+		tempJson = json["GpsC"].GetObject();
+		if (tempJson.HasMember("Ip") && tempJson["Ip"].IsString())
+		{
+			strcpy_s(cfg.GpsC.Ip, tempJson["Ip"].GetString());
+		}
+		if (tempJson.HasMember("Port") && tempJson["Port"].IsInt())
+		{
+			cfg.GpsC.Port = tempJson["Port"].GetInt();
+		}
+	}
+}
+inline void parseLocationIndoorCfg(locationindoor_t &cfg, Value json)
+{
+	if (json.HasMember("IsEnable") && json["IsEnable"].IsBool())
+	{
+		cfg.IsEnable = json["IsEnable"].GetBool();
+	}
+	if (json.HasMember("Interval") && json["Interval"].IsDouble())
+	{
+		cfg.Interval = json["Interval"].GetDouble();
+	}
+	if (json.HasMember("iBeaconNumber") && json["iBeaconNumber"].IsInt())
+	{
+		cfg.iBeaconNumber = json["iBeaconNumber"].GetInt();
+	}
+	if (json.HasMember("IsEmergency") && json["IsEmergency"].IsBool())
+	{
+		cfg.IsEmergency = json["IsEmergency"].GetBool();
+	}
+}
+
 inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {
 	g_sn = sn;
@@ -123,111 +307,24 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 		{
 			d.Parse(param.c_str());
 			/*获取参数*/
-			//pNewTask->callId = sn;
-			//pNewTask->pRemote = pRemote;
 			pNewTask->cmd = REMOTE_CMD_CONFIG;
-			if (d.HasMember("IsEnable") && d["IsEnable"].IsBool())
-			{
-				pNewTask->param.info.configParam.IsEnable = d["IsEnable"].GetBool();
-			}
-			pNewTask->param.info.configParam.Type = d["Type"].GetInt();
-			if (d.HasMember("Svr") && d["Svr"].IsObject())
-			{
-				tempJson = d["Svr"].GetObject();
-				if (tempJson.HasMember("Ip") && tempJson["Ip"].IsString())
-				{
-					strcpy_s(pNewTask->param.info.configParam.Svr.Ip, tempJson["Ip"].GetString());
-				}
-				if (tempJson.HasMember("Port") && tempJson["Port"].IsInt())
-				{
-					pNewTask->param.info.configParam.Svr.Port = tempJson["Port"].GetInt();
-				}
-			}
-			if (d.HasMember("DefaultGroupId") && d["DefaultGroupId"].IsInt())
-			{
-				pNewTask->param.info.configParam.defaultGroup = (unsigned long)d["DefaultGroupId"].GetInt();
-			}
-			if (d.HasMember("DefaultGroupId") && d["DefaultGroupId"].IsInt())
-			{
-				pNewTask->param.info.configParam.defaultSlot = (_SlotNumber)d["DefaultChannel"].GetInt();
-			}
 
-			if (d["Dongle"].IsObject())
+			if (d.HasMember("repeater") && d["repeater"].IsObject())
 			{
-				tempJson = d["Dongle"].GetObject();
-				if (tempJson.HasMember("Com") && tempJson["Com"].IsInt())
-				{
-					pNewTask->param.info.configParam.dongle.donglePort = tempJson["Com"].GetInt();
-				}
+				parseRepeaterCfg(pNewTask->param.info.configParam.reapeater, d["repeater"].GetObject());
 			}
-
-			pNewTask->param.info.configParam.hangTime = d["MinHungTime"].GetInt() * 1000;
-			if (d.HasMember("LocalPeerId") && d["LocalPeerId"].IsInt())
+			if (d.HasMember("mnis") && d["mnis"].IsObject())
 			{
-				pNewTask->param.info.configParam.localPeerId = (unsigned long)d["LocalPeerId"].GetInt();
+				parseMnisCfg(pNewTask->param.info.configParam.mnis, d["mnis"].GetObject());
 			}
-			if (d.HasMember("LocalRadioId") && d["LocalRadioId"].IsInt())
+			if (d.HasMember("location") && d["location"].IsObject())
 			{
-				pNewTask->param.info.configParam.localRadioId = (unsigned long)d["LocalRadioId"].GetInt();
+				parseLocationCfg(pNewTask->param.info.configParam.location, d["location"].GetObject());
 			}
-			if (d.HasMember("MaxSiteAliveTime") && d["MaxSiteAliveTime"].IsInt())
+			if (d.HasMember("locationIndoor") && d["locationIndoor"].IsObject())
 			{
-				pNewTask->param.info.configParam.masterHeartTime = d["MaxSiteAliveTime"].GetInt() * 1000;
+				parseLocationIndoorCfg(pNewTask->param.info.configParam.locationindoor, d["repeater"].GetObject());
 			}
-
-			if (d["Master"].IsObject())
-			{
-				tempJson = d["Master"].GetObject();
-				if (tempJson.HasMember("Ip") && tempJson["Ip"].IsString())
-				{
-					strcpy_s(pNewTask->param.info.configParam.master.ip, tempJson["Ip"].GetString());
-				}
-				if (tempJson.HasMember("Port") && tempJson["Port"].IsInt())
-				{
-					pNewTask->param.info.configParam.master.port = tempJson["Port"].GetInt();
-				}
-			}
-
-			if (d["Mnis"].IsObject())
-			{
-				tempJson = d["Mnis"].GetObject();
-				if (tempJson.HasMember("Ip") && tempJson["Ip"].IsString())
-				{
-					strcpy_s(pNewTask->param.info.configParam.mnis.ip, tempJson["Ip"].GetString());
-				}
-				if (tempJson.HasMember("Port") && tempJson["Port"].IsInt())
-				{
-					pNewTask->param.info.configParam.mnis.port = tempJson["Port"].GetInt();
-				}
-			}
-			if (d.HasMember("MnisId") && d["MnisId"].IsInt())
-			{
-				pNewTask->param.info.configParam.MnisId = d["MnisId"].GetInt();
-			}
-			if (d.HasMember("MaxPeerAliveTime") && d["MaxPeerAliveTime"].IsInt())
-			{
-				pNewTask->param.info.configParam.peerHeartTime = d["MaxPeerAliveTime"].GetInt() * 1000;
-			}
-			int recordType = 1;
-			if (d.HasMember("Type") && d["Type"].IsInt())
-			{
-				recordType = d["Type"].GetInt();
-			}
-			_RECORD_TYPE_VALUE temp = LCP;
-			if (recordType == 0)
-			{
-				temp = IPSC;
-			}
-			else if (recordType == 1)
-			{
-				temp = CPC;
-			}
-			pNewTask->param.info.configParam.recordType = temp;
-			if (d.HasMember("AudioPath") && d["AudioPath"].IsString())
-			{
-				strcpy_s(pNewTask->param.info.configParam.audioPath, d["AudioPath"].GetString());
-			}
-			//sprintf_s(pNewTask->param.info.configParam.audioPath, "%s\\Voice", pNewTask->param.info.configParam.audioPath);
 			/*config配置优先级为最高*/
 			push_front_task(pNewTask);
 		}

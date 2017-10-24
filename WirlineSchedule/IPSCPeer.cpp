@@ -471,7 +471,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 										  {
 											  if (IPSC == recordType)
 											  {
-												  networkData.slotNumber = *((_SlotNumber*)(pParameter));
+												  networkData.slotNumber = *((SlotNumber_e*)(pParameter));
 											  }
 											  else
 											  {
@@ -492,7 +492,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 										  {
 										  case Channel_Control_Request_Status_Grant:
 										  {
-																					   m_useSlot = (_SlotNumber)p->slotNumber;
+																					   m_useSlot = (SlotNumber_e)p->slotNumber;
 																					   m_pWLNet->setCurrentSendVoicePeer(this);
 																					   m_pWLNet->CorrectingBuffer(p->callID);
 																					   m_pWLNet->releaseNewCallEvent();
@@ -1470,7 +1470,7 @@ void CIPSCPeer::setRemote3rdParty(bool value)
 	m_Remote3rdParty = value;
 }
 
-_SlotNumber CIPSCPeer::getUseSlot()
+SlotNumber_e CIPSCPeer::getUseSlot()
 {
 	return  m_useSlot;
 }
@@ -1759,7 +1759,7 @@ void CIPSCPeer::getCallRequestRltInfo(DECLINE_REASON_CODE_INFO &declineReasonCod
 
 void CIPSCPeer::setUseSlot(unsigned char value)
 {
-	m_useSlot = (_SlotNumber)value;
+	m_useSlot = (SlotNumber_e)value;
 }
 
 bool CIPSCPeer::isSame(CIPSCPeer *pPeer)

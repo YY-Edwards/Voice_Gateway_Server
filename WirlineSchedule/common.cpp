@@ -30,7 +30,7 @@ long CONFIG_HUNG_TIME = 4000;//session间隔时间
 long CONFIG_MASTER_HEART_TIME = 59000;//主中继心跳间隔
 long CONFIG_PEER_HEART_AND_REG_TIME = 59000;//非主中继心跳间隔和注册间隔
 long GO_BACK_DEFAULT_GROUP_TIME = 12 * 1000;
-_SlotNumber CONFIG_DEFAULT_SLOT = SLOT1;
+SlotNumber_e CONFIG_DEFAULT_SLOT = SLOT1;
 
 std::list<REMOTE_TASK*> g_remoteCommandTaskQueue;
 //REMOTE_TASK *g_pNewTask = NULL;
