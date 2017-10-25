@@ -13,6 +13,7 @@ CTextMsg::CTextMsg(CDataScheduling *pMnis)
 	m_ThreadMsg = new ThreadMsg;
 	m_pMnis = pMnis;
 	m_msgThread = true;
+	m_selfId = 0;
 }
 CTextMsg::~CTextMsg()
 {
@@ -22,9 +23,9 @@ CTextMsg::~CTextMsg()
 	}
 
 }
-bool CTextMsg::InitSocket(DWORD dwAddress/*, CRemotePeer * pRemote*/)
+bool CTextMsg::InitSocket(DWORD dwAddress,int port,int selfId)
 {
-
+	m_selfId = selfId;
 	/*pRemotePeer = pRemote;*/
 	//CString			 strError;
 	SOCKADDR_IN      addr;					//   The   local   interface   address   
@@ -50,7 +51,7 @@ bool CTextMsg::InitSocket(DWORD dwAddress/*, CRemotePeer * pRemote*/)
 
 
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(MSG_PORT);
+	addr.sin_port = htons(port);
 	addr.sin_addr.s_addr = dwAddress;
 	ret = ::bind(m_ThreadMsg->mySocket, (struct sockaddr *) &addr, sizeof(addr));
 	if (ret == SOCKET_ERROR)
@@ -325,7 +326,7 @@ bool CTextMsg::ReplyMsgACK(ThreadMsg* Msg, UINT8 SeqNumber)
 }
 
 
-bool CTextMsg::SendMsg(int callId, std::string text, DWORD dwRadioID, int CaiNet)
+bool CTextMsg::SendMsg(std::string  sessionId, std::string text, DWORD dwRadioID, int CaiNet)
 {
 	int maxlen = 256;
 	text = UTF8ToGBK(text);
@@ -399,7 +400,7 @@ bool CTextMsg::SendMsg(int callId, std::string text, DWORD dwRadioID, int CaiNet
 	std::list<Command>::iterator it;
 	for (it = timeOutList.begin(); it != timeOutList.end(); ++it)
 	{
-		if (it->callId == callId)
+		if (it->sessionId == sessionId)
 		{
 			it->ackNum = m_nSendSequenceNumber;
 		}
@@ -468,6 +469,7 @@ bool CTextMsg::SendMsg(int callId, std::string text, DWORD dwRadioID, int CaiNet
 			{
 				Respone r = { 0 };
 				r.target = m_ThreadMsg->radioID;
+				r.source = m_selfId;
 				r.msgStatus = SUCESS;
 				r.msg = "";
 				if (it->command == SEND_GROUP_MSG)
@@ -538,6 +540,7 @@ void CTextMsg::RecvMsg()
 					{
 						Respone r = { 0 };
 						r.target = m_ThreadMsg->radioID;
+						r.source = m_selfId;
 						r.msgStatus = SUCESS;
 						r.msg = "";
 						if (it->command == SEND_PRIVATE_MSG)
@@ -548,6 +551,7 @@ void CTextMsg::RecvMsg()
 						{
 							r.msgType = GROUP;
 						}
+						
 						onData(myCallBackFunc, it->command, r);
 						m_pMnis->updateOnLineRadioInfo(atoi(stringId.c_str()), RADIO_STATUS_ONLINE);
 						it = timeOutList.erase(it);
@@ -583,11 +587,10 @@ void CTextMsg::RecvMsg()
 				if (myCallBackFunc != NULL)
 				{
 					int len = 0;
-
-
 					std::string message = ParseUserMsg(&HandleMsg, &len);
 					message = GBKToUTF8(message);
 					Respone r = { 0 };
+					r.target = m_selfId;
 					r.source = m_ThreadMsg->radioID;
 					r.msgStatus = SUCESS;
 					r.msg = message;

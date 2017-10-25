@@ -20,7 +20,7 @@ CRadioARS::~CRadioARS()
 	}
 	
 }
-bool CRadioARS::InitARSSocket(DWORD dwAddress/*,CRemotePeer * pRemote*/)
+bool CRadioARS::InitARSSocket(DWORD dwAddress,int port)
 {
 
 	//pRemotePeer = pRemote;
@@ -44,7 +44,7 @@ bool CRadioARS::InitARSSocket(DWORD dwAddress/*,CRemotePeer * pRemote*/)
 	//   Fill   in   the   interface   information  
 
 	addr.sin_family = AF_INET;
-	addr.sin_port = htons(ARS_PORT);
+	addr.sin_port = htons(port);
 	addr.sin_addr.s_addr = dwAddress;
 	ret = ::bind(m_ThreadARS->mySocket, (struct sockaddr *) &addr, sizeof(addr));
 	if (ret == SOCKET_ERROR)

@@ -59,13 +59,13 @@ class CTextMsg
 public:
 	CTextMsg(CDataScheduling *pMnis);
 	~CTextMsg();
-	bool InitSocket(DWORD dwAddress/*, CRemotePeer * pRemote*/);
+	bool InitSocket(DWORD dwAddress,int port,int selfId);
 	bool CloseSocket();
 	static DWORD WINAPI ReceiveDataThread(LPVOID lpParam);
 	std::string ParseUserMsg(TextMsg* HandleMsg, int* len);
 	UINT8 GetSeqNumber(TextMsg* HandleMsg);
 	bool ReplyMsgACK(ThreadMsg* Msg, UINT8 SeqNumber);
-	bool SendMsg( int callId, std::string text, DWORD dwRadioID, int CaiNet);
+	bool SendMsg(std::string sessionId, std::string text, DWORD dwRadioID, int CaiNet);
 	void RecvMsg();
 	std::string WChar2Ansi(LPCWSTR pwszSrc);
 	std::string TCHAR2STRING(TCHAR * STR);
@@ -79,6 +79,7 @@ private:
 	CDataScheduling *m_pMnis;
 	bool m_msgThread;
 	HANDLE m_mWth;
+	int m_selfId;
 	
 };
 

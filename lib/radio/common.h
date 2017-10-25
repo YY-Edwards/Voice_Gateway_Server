@@ -31,22 +31,14 @@
 #define               GPS_TRIGG_CSBK_INDOOR  26
 #define               GPS_TRIGG_CSBK_EGPS_INDOOR 27
 #define               MNIS_DIS_CONNECT       30
-
-
-
 #define PRIVATE_MSG_FLG        12
 #define GROUP_MSG_FLG          225
 #define GROUP                  2
 #define PRIVATE                3
-
 #define  SUCESS               0
 #define  UNSUCESS              1
-
 #define START         0
 #define STOP          1
-
-
-
 #define RADIO_STATUS_OFFLINE   0
 #define RADIO_STATUS_ONLINE    1
 struct BconMajMinTimeReport
@@ -71,8 +63,8 @@ typedef struct tagCommand
 	std::string radioIP;
 	std::string gpsIP;
 	std::string text;
+	std::string sessionId;
 }Command;
-
 typedef struct tagRespone
 {
 	int connectStatus;
@@ -95,7 +87,43 @@ typedef struct tagRespone
 	std::map<std::string, RadioStatus> rs;
 	//std::list< BconMajMinTimeReport> becon;
 	BconMajMinTimeReport bcon;
+	std::string sessionId;
 }Respone;
+#define MAX_IP_SIZE 16
+
+typedef struct
+{
+	bool IsEnable;
+	int TomeoutSeconds;
+	int ID;
+	char Host[MAX_IP_SIZE];
+	int MessagePort;
+	int ArsPort;
+	int GpsPort;//disable
+	int XnlPort;//disable
+	int CAI;
+	int GroupCAI;
+	int LocationType;//General£¬ CSBK£¬ EnhCSBK
+}mnis_t;
+typedef struct
+{
+	char Ip[MAX_IP_SIZE];
+	unsigned short Port;
+}GpsC_t;
+typedef struct
+{
+	bool IsEnable;
+	double Interval;
+	bool IsEnableGpsC;
+	GpsC_t GpsC;
+}location_t;
+typedef struct
+{
+	bool IsEnable;
+	double Interval;
+	int iBeaconNumber;
+	bool IsEmergency;
+}locationindoor_t;
 extern void(*myCallBackFunc)(  int, Respone);
 void onData(void(*func)(int, Respone),  int call, Respone data);
 extern std::mutex m_timeOutListLocker;
