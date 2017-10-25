@@ -35,6 +35,7 @@ void  msgAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			int opterateType = -1;
 			int id = -1;
 			std::string msg = "";
+			std::string sessionId = "";
 			if (d.HasMember("Type") && d["Type"].IsInt())
 			{
 				opterateType = d["Type"].GetInt();
@@ -48,14 +49,18 @@ void  msgAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 				msg = d["Contents"].GetString();
 			}
 			//int msgSize = (int)(msg.length() + 1);
-			
-			if (!dis.sendMsg( msg, id,  opterateType))
+			if (d.HasMember("SessionId") && d["SessionId"].IsString())
+			{
+				sessionId = d["SessionId"].GetString();
+			}
+			if (!dis.sendMsg( msg, id,  opterateType,sessionId))
 			{
 				ArgumentType args;
 				args["Target"] = FieldValue(id);
 				args["contents"] = FieldValue(msg.c_str());
 				args["status"] = FieldValue(REMOTE_FAILED);
 				args["type"] = FieldValue(opterateType);
+				args["SessionId"] = FieldValue(sessionId.c_str());
 				std::string callJsonStr = CRpcJsonParser::buildCall("messageStatus", ++g_sn, args, "radio");
 				client->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
 			}

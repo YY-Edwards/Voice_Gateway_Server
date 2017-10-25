@@ -33,6 +33,7 @@ private:
 	int  wiretap( int id);
 
 	DWORD            dwip;
+	int port;
 	std::mutex   m_addCommandLocker;
 	std::list <TcpCommand>  workList;
 	CXNLConnection  *pXnlConnection;
@@ -45,11 +46,12 @@ private:
 	HANDLE m_uMt;
 	HANDLE m_cMt;
 	bool isTcpConnect;
+	radio_t m_radioCfg;
 public:
-	void addTcpCommand(int command, std::string radioIP, int id, int callType);
-	int  radioConnect( const char* ip);
-	void call(int type,int op, int id );
-	void control( int type,  int id);
+	void addTcpCommand(int command, std::string radioIP, int id, int callType,std::string sessionId);
+	int  radioConnect( radio_t radioCfg);
+	void call(int type,int op, int id,std::string sessionId );
+	void control(int type, int id, std::string sessionId);
 	void  setCallBackFunc(void(*callBackFunc)( int, TcpRespone));
 	void disConnect();
 	std::mutex m_workLocker;

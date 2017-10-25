@@ -15,6 +15,7 @@ CTcpScheduling::CTcpScheduling()
 {
 	pXnlConnection = NULL;
 	dwip = 0;
+	port = 0;
 	m_workThread = true;
 	m_timeThread = true;
 	m_usbThread = true;
@@ -29,16 +30,16 @@ CTcpScheduling::~CTcpScheduling()
 		delete pXnlConnection;
 	}
 }
-int CTcpScheduling::radioConnect(const char* ip)
+int CTcpScheduling::radioConnect(radio_t radioCfg)
 {
 	// Connection
-	dwip = inet_addr(ip);
+	dwip = inet_addr(radioCfg.Host);
 	unsigned char iptemp[4];
 	memcpy(iptemp, (void *)&dwip, 4);
 	iptemp[3] = 1;
 	dwip = *((DWORD *)iptemp);
+	port = radioCfg.XnlPort;
 	connect();
-	//addTcpCommand( RADIO_CONNECT,ip,0,0);
 	
 	return 0;
 
@@ -365,7 +366,7 @@ void CTcpScheduling::workThreadFunc()
 		Sleep(10);
 	}	
 }
-void CTcpScheduling::addTcpCommand( int command, std::string radioIP, int id, int callType)
+void CTcpScheduling::addTcpCommand( int command, std::string radioIP, int id, int callType,std::string sessionId)
 {
 	std::lock_guard<std::mutex> locker(m_addCommandLocker);
 	TcpCommand      m_allCommand;
@@ -374,6 +375,7 @@ void CTcpScheduling::addTcpCommand( int command, std::string radioIP, int id, in
 	m_allCommand.timeCount = 0;
 	m_allCommand.radioIP = radioIP;
 	m_allCommand.radioId = id;
+	m_allCommand.sessionId = sessionId;
 	//std::lock_guard <std::mutex> locker(m_allCommandListLocker);
 	tcpCommandTimeOutList.push_back(m_allCommand);
 	//std::lock_guard <std::mutex> wlocker(m_workLocker);
@@ -616,7 +618,7 @@ int CTcpScheduling::tcpConnect()
 	{
 		if (pXnlConnection == NULL || !isTcpConnect)
 		{
-			pXnlConnection = CXNLConnection::CreatConnection(dwip, 8002, "0x152C7E9D0x38BE41C70x71E96CA40x6CAC1AFC",
+			pXnlConnection = CXNLConnection::CreatConnection(dwip, port, "0x152C7E9D0x38BE41C70x71E96CA40x6CAC1AFC",
 				strtoul("0x9E3779B9", NULL, 16));
 
 			std::list<TcpCommand>::iterator it;
@@ -865,45 +867,43 @@ void CTcpScheduling::connect()
 	m_tMt = CreateThread(NULL, 0, timeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
 	m_uMt = CreateThread(NULL, 0, radioUsbStatusThread, this, THREAD_PRIORITY_NORMAL, NULL);
 }
-void CTcpScheduling::call( int type, int op, int id )
+void CTcpScheduling::call( int type, int op, int id ,std::string sessionId )
 {
 	if (START == op)
 	{
-
 		switch (type)
 		{
 		case PRIVATE:
-			addTcpCommand( PRIVATE_CALL, "", id, PRIVATE);
+			addTcpCommand( PRIVATE_CALL, "", id, PRIVATE,sessionId);
 			break;
 		case GROUP:
-			addTcpCommand( GROUP_CALL, "", id, GROUP);
+			addTcpCommand( GROUP_CALL, "", id, GROUP,sessionId);
 			break;
 		case ALL:
-			addTcpCommand( ALL_CALL, "", id, ALL);
+			addTcpCommand( ALL_CALL, "", id, ALL,sessionId);
 			break;
 		}
 	}
 	else
 	{
-		addTcpCommand(STOP_CALL,"",id,type);
+		addTcpCommand(STOP_CALL,"",id,type,sessionId);
 	}
-
 }
-void CTcpScheduling::control( int type, int id)
+void CTcpScheduling::control( int type, int id,std::string sessionId)
 {
 	switch (type)
 	{
 	case  RADIOCHECK :
-		addTcpCommand(CHECK_RADIO_ONLINE, "", id,0);
+		addTcpCommand(CHECK_RADIO_ONLINE, "", id,0,sessionId);
 		break;
 	case  MONITOR :
-		addTcpCommand( REMOTE_MONITOR, "", id,0);
+		addTcpCommand( REMOTE_MONITOR, "", id,0,sessionId);
 		break;
 	case  OFF :
-		addTcpCommand( REMOTE_CLOSE, "", id, 0);
+		addTcpCommand( REMOTE_CLOSE, "", id, 0,sessionId);
 		break;
 	case  ON :
-		addTcpCommand( REMOTE_OPEN, "", id, 0);
+		addTcpCommand( REMOTE_OPEN, "", id, 0,sessionId);
 		break;
 	default:
 		break;

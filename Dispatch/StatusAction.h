@@ -32,11 +32,19 @@ void  statusAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 		}
 		if (isHave && param != "")
 		{
+			int type = -1;
+			std::string sessionId = "";
 			if (d.HasMember("getType") && d["getType"].IsInt())
 			{
-				int type = d["getType"].GetInt();
-				dis.getStatus(type);
+				type = d["getType"].GetInt();
+				//dis.getStatus(type);
 			}
+			if (d.HasMember("SessionId") && d["SessionId"].IsString())
+			{
+				sessionId = d["SessionId"].GetString();
+			}
+			dis.getStatus(type,sessionId);
+
 		}
 		else
 		{

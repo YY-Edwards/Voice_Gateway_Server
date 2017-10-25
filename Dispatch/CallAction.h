@@ -34,8 +34,9 @@ void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 		if (isHave && param != "")
 		{
 			int operate = -1;
-			int opterateType = -1;;
+			int opterateType = -1;
 			int id = -1;
+			std::string sessionId = "";
 			if (d.HasMember("Operate") && d["Operate"].IsInt())
 			{
 				operate = d["Operate"].GetInt();
@@ -48,9 +49,13 @@ void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 			{
 				id = d["Target"].GetInt();
 			}
+			if (d.HasMember("SessionId") && d["SessionId"].IsString())
+			{
+				sessionId = d["SessionId"].GetString();
+			}
 			if (dis.isTcpConnect)
 			{
-				dis.call( opterateType, id, operate);
+				dis.call( opterateType, id, operate,sessionId);
 			}
 			else
 			{
@@ -61,6 +66,7 @@ void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 					args["Target"] = FieldValue(id);
 					args["Operate"] = FieldValue(operate);
 					args["Type"] = FieldValue(opterateType);
+					args["SessionId"] = FieldValue(sessionId.c_str());
 					std::string callJsonStr = CRpcJsonParser::buildCall("callStatus", ++num, args, "radio");
 					if (client != NULL)
 					{

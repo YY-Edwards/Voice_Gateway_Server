@@ -31,8 +31,9 @@ void  controlAction(CRemotePeer* pRemote, const std::string& param, uint64_t cal
 		}
 		if (isHave && param != "")
 		{
-			int  opterateType;
-			int id;
+			int  opterateType=-1;
+			int id=-1;
+			std::string sessionId = "";
 			if (d.HasMember("Type") && d["Type"].IsInt())
 			{
 				opterateType = d["Type"].GetInt();
@@ -41,10 +42,15 @@ void  controlAction(CRemotePeer* pRemote, const std::string& param, uint64_t cal
 			{
 				id = d["Target"].GetInt();
 			}
+			if (d.HasMember("SessionId") && d["SessionId"].IsString())
+			{
+				sessionId = d["SessionId"].GetString();
+			}
 			if (dis.isTcpConnect)
 			{
-				dis.control( opterateType, id);
+				dis.control( opterateType, id,sessionId);
 			}
+
 			else
 			{
 				try
