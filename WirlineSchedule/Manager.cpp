@@ -542,7 +542,8 @@ int CManager::config(REMOTE_TASK* pTask)
 			g_pWLlog->sendLog("sound initial success");
 		}
 		/*ÅäÖÃmnis*/
-		m_pMnis->radioConnect(CONFIG_MNIS_IP);
+		//m_pMnis->radioConnect(CONFIG_MNIS_IP);
+		m_pMnis->radioConnect(pConfig->mnis, pConfig->location, pConfig->locationindoor);
 
 		m_bIsHaveConfig = true;
 	}
@@ -610,7 +611,7 @@ int CManager::config(REMOTE_TASK* pTask)
 		if (bMnisChange)
 		{
 			/*ÅäÖÃmnis*/
-			m_pMnis->radioConnect(CONFIG_MNIS_IP);
+			m_pMnis->radioConnect(pConfig->mnis, pConfig->location, pConfig->locationindoor);
 		}
 	}
 	return rlt;
@@ -665,10 +666,6 @@ void CManager::handleRemoteTask()
 									  sprintf_s(m_reportMsg, "Handle REMOTE_CMD_CONFIG");
 									  sendLogToWindow();
 									  config(&task);
-									  //m_pMnis->locationIndoorConfig(task.param.info.locationParam.internal, task.param.info.locationParam.ibconNum, task.param.info.locationParam.isEmergency);
-									  locationindoor_t locationindoorCfg = task.param.info.configParam.locationindoor;
-									  m_pMnis->locationIndoorConfig(locationindoorCfg.Interval, locationindoorCfg.iBeaconNumber, locationindoorCfg.IsEmergency);
-									  location_t locationCfg = task.param.info.configParam.location;
 			}
 				break;
 			case REMOTE_CMD_CALL:

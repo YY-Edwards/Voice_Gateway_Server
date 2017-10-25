@@ -18,6 +18,7 @@
 #pragma comment(lib, "../lib//glog/lib/libglog.lib")
 
 #include "WLSocketLog.h"
+#include "../lib/radio/common.h"
 
 #ifdef _DEBUG
 #define DEBUG_CLIENTBLOCK new( _CLIENT_BLOCK, __FILE__, __LINE__)
@@ -235,38 +236,38 @@ typedef struct
 	DONGLE_t Dongle;
 	char AudioPath[PATH_FILE_MAXSIZE];
 }repeater_t;
-typedef struct
-{
-	bool IsEnable;
-	int ID;
-	char Host[MAX_IP_SIZE];
-	int MessagePort;
-	int ArsPort;
-	int GpsPort;//disable
-	int XnlPort;//disable
-	int CAI;
-	int GroupCAI;
-	int LocationType;//General£¬ CSBK£¬ EnhCSBK
-}mnis_t;
-typedef struct
-{
-	char Ip[MAX_IP_SIZE];
-	unsigned short Port;
-}GpsC_t;
-typedef struct
-{
-	bool IsEnable;
-	double Interval;
-	bool IsEnableGpsC;
-	GpsC_t GpsC;
-}location_t;
-typedef struct
-{
-	bool IsEnable;
-	double Interval;
-	int iBeaconNumber;
-	bool IsEmergency;
-}locationindoor_t;
+//typedef struct
+//{
+//	bool IsEnable;
+//	int ID;
+//	char Host[MAX_IP_SIZE];
+//	int MessagePort;
+//	int ArsPort;
+//	int GpsPort;//disable
+//	int XnlPort;//disable
+//	int CAI;
+//	int GroupCAI;
+//	int LocationType;//General£¬ CSBK£¬ EnhCSBK
+//}mnis_t;
+//typedef struct
+//{
+//	char Ip[MAX_IP_SIZE];
+//	unsigned short Port;
+//}GpsC_t;
+//typedef struct
+//{
+//	bool IsEnable;
+//	double Interval;
+//	bool IsEnableGpsC;
+//	GpsC_t GpsC;
+//}location_t;
+//typedef struct
+//{
+//	bool IsEnable;
+//	double Interval;
+//	int iBeaconNumber;
+//	bool IsEmergency;
+//}locationindoor_t;
 
 typedef struct
 {
