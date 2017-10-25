@@ -442,51 +442,51 @@ int CManager::config(REMOTE_TASK* pTask)
 	bool bMasterChange = false;
 	bool bDongleChange = false;
 	bool bMnisChange = false;
-	CONFIG_SCHDULE_ISENABLE = pConfig->IsEnable;
-	CONFIG_MNIS_ID = pConfig->MnisId;
-	g_pNet->setAudioPath(pConfig->audioPath);
-	if (0 != strcmp(CONFIG_MASTER_IP, pConfig->master.ip))
+	CONFIG_SCHDULE_ISENABLE = pConfig->reapeater.IsEnable;
+	CONFIG_MNIS_ID = pConfig->mnis.ID;
+	g_pNet->setAudioPath(pConfig->reapeater.AudioPath);
+	if (0 != strcmp(CONFIG_MASTER_IP, pConfig->reapeater.Master.ip))
 	{
-		strcpy_s(CONFIG_MASTER_IP, pConfig->master.ip);
+		strcpy_s(CONFIG_MASTER_IP, pConfig->reapeater.Master.ip);
 		bMasterChange = true;
 	}
-	if (0 != strcmp(CONFIG_MNIS_IP, pConfig->mnis.ip))
+	if (0 != strcmp(CONFIG_MNIS_IP, pConfig->mnis.Host))
 	{
-		strcpy_s(CONFIG_MNIS_IP, pConfig->mnis.ip);
+		strcpy_s(CONFIG_MNIS_IP, pConfig->mnis.Host);
 		bMnisChange = true;
 	}
-	if (CONFIG_MASTER_PORT != pConfig->master.port)
+	if (CONFIG_MASTER_PORT != pConfig->reapeater.Master.port)
 	{
-		CONFIG_MASTER_PORT = pConfig->master.port;
+		CONFIG_MASTER_PORT = pConfig->reapeater.Master.port;
 		bMasterChange = true;
 	}
-	if (CONFIG_LOCAL_PEER_ID != pConfig->localPeerId)
+	if (CONFIG_LOCAL_PEER_ID != pConfig->reapeater.LocalPeerId)
 	{
-		CONFIG_LOCAL_PEER_ID = pConfig->localPeerId;
+		CONFIG_LOCAL_PEER_ID = pConfig->reapeater.LocalPeerId;
 		if (!bMasterChange)
 		{
 			g_pNet->setWlStatus(STARTING);
 		}
 	}
-	CONFIG_LOCAL_RADIO_ID = pConfig->localRadioId;
-	if (CONFIG_RECORD_TYPE != pConfig->recordType)
+	CONFIG_LOCAL_RADIO_ID = pConfig->reapeater.LocalRadioId;
+	if (CONFIG_RECORD_TYPE != pConfig->reapeater.recordType)
 	{
-		CONFIG_RECORD_TYPE = pConfig->recordType;
+		CONFIG_RECORD_TYPE = pConfig->reapeater.recordType;
 		if (!bMasterChange)
 		{
 			g_pNet->setWlStatus(STARTING);
 		}
 	}
-	CONFIG_DEFAULT_GROUP = pConfig->defaultGroup;
-	if (CONFIG_DONGLE_PORT != pConfig->dongle.donglePort)
+	CONFIG_DEFAULT_GROUP = pConfig->reapeater.DefaultGroupId;
+	if (CONFIG_DONGLE_PORT != pConfig->reapeater.Dongle.donglePort)
 	{
-		CONFIG_DONGLE_PORT = pConfig->dongle.donglePort;
+		CONFIG_DONGLE_PORT = pConfig->reapeater.Dongle.donglePort;
 		bDongleChange = true;
 	}
-	CONFIG_HUNG_TIME = pConfig->hangTime;
-	CONFIG_MASTER_HEART_TIME = pConfig->masterHeartTime;
-	CONFIG_PEER_HEART_AND_REG_TIME = pConfig->peerHeartTime;
-	CONFIG_DEFAULT_SLOT = pConfig->defaultSlot;
+	CONFIG_HUNG_TIME = pConfig->reapeater.MinHungTime;
+	CONFIG_MASTER_HEART_TIME = pConfig->reapeater.MaxSiteAliveTime;
+	CONFIG_PEER_HEART_AND_REG_TIME = pConfig->reapeater.MaxPeerAliveTime;
+	CONFIG_DEFAULT_SLOT = pConfig->reapeater.DefaultChannel;
 
 	if (!m_bIsHaveConfig)
 	{
@@ -665,6 +665,10 @@ void CManager::handleRemoteTask()
 									  sprintf_s(m_reportMsg, "Handle REMOTE_CMD_CONFIG");
 									  sendLogToWindow();
 									  config(&task);
+									  //m_pMnis->locationIndoorConfig(task.param.info.locationParam.internal, task.param.info.locationParam.ibconNum, task.param.info.locationParam.isEmergency);
+									  locationindoor_t locationindoorCfg = task.param.info.configParam.locationindoor;
+									  m_pMnis->locationIndoorConfig(locationindoorCfg.Interval, locationindoorCfg.iBeaconNumber, locationindoorCfg.IsEmergency);
+									  location_t locationCfg = task.param.info.configParam.location;
 			}
 				break;
 			case REMOTE_CMD_CALL:

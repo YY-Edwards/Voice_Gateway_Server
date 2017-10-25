@@ -5521,7 +5521,7 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			m_sendVoices.push_back(m_pSendVoicePackage);
 			releaseReadySendVoicesLock();
 
-			_SlotNumber registSlotNumber = SLOT1;
+			SlotNumber_e registSlotNumber = SLOT1;
 			while (m_retryRequestCallCount)
 			{
 				// 				sprintf_s(m_reportMsg, "12");
@@ -6427,7 +6427,7 @@ int CWLNet::newCall()
 		m_pCurrentSendVoicePeer = GetPeer(m_ulMasterPeerID);//192.168.2.121：50000
 		if (m_pCurrentSendVoicePeer)
 		{
-			_SlotNumber registerSlot = CONFIG_DEFAULT_SLOT;
+			SlotNumber_e registerSlot = CONFIG_DEFAULT_SLOT;
 			while (m_retryRequestCallCount)
 			{
 				// 				sprintf_s(m_reportMsg, "18");
@@ -6676,7 +6676,7 @@ short CWLNet::Build_WL_VC_VOICE_END_BURST(CHAR* pPacket, T_WL_PROTOCOL_19* pData
 void CWLNet::CorrectingBuffer(DWORD callId)
 {
 	//m_startTalkTickcount = GetTickCount();
-	_SlotNumber slot = m_pCurrentSendVoicePeer->getUseSlot();
+	SlotNumber_e slot = m_pCurrentSendVoicePeer->getUseSlot();
 	/*核对语音记录信息*/
 	for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
 	{

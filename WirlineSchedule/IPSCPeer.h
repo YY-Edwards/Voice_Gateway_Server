@@ -62,7 +62,7 @@ public:
 	/*打印PEER的概要信息*/
 	void printInfo();
 	/*获取当前PEER正在使用SLOT 0表示未使用*/
-	_SlotNumber getUseSlot();
+	SlotNumber_e getUseSlot();
 	/*设置当前PEER使用的SLOT*/
 	void setUseSlot(unsigned char value);
 	/*关闭定时器*/
@@ -100,7 +100,7 @@ protected:
 	int SendToPeer(const SOCKADDR_IN* pAddr);
 
 private:
-	_SlotNumber m_useSlot;
+	SlotNumber_e m_useSlot;
 	bool m_Remote3rdParty;
 	PLogReport m_report;
 	char m_reportMsg[512];
