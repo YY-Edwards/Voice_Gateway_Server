@@ -41,6 +41,9 @@
 //#define TALK_TIME (20*1000)
 
 extern WLSocketLog *g_pWLlog;
+
+#define SESSION_SIZE 64
+
 /************************************************************************/
 /* MNIS
 /************************************************************************/
@@ -50,6 +53,7 @@ typedef struct
 	int Target;
 	int Type;
 	double Cycle;
+	char SessionId[SESSION_SIZE];
 }QUERY_GPS;
 
 typedef struct
@@ -66,11 +70,13 @@ typedef struct
 	int Target;
 	int Source;
 	char Contents[256];
+	char SessionId[SESSION_SIZE];
 }MNIS_MSG;
 
 typedef struct
 {
 	int getType;
+	char SessionId[SESSION_SIZE];
 	//FieldValue info;
 }ARS;
 
@@ -78,6 +84,7 @@ typedef struct
 #define REPEATER_CONNECT 0
 #define REPEATER_DISCONNECT 1
 #define PATH_FILE_MAXSIZE 1024
+
 
 enum CLIENT_CALL_TYPE
 {
@@ -288,7 +295,7 @@ typedef struct
 	unsigned long tartgetId;
 	unsigned char callType;
 	bool isCurrent;
-
+	char SessionId[SESSION_SIZE];
 }CALL_OPERATE_PARAM;
 typedef struct
 {
@@ -329,6 +336,7 @@ typedef struct
 {
 	int getType;
 	int info;
+	char SessionId[SESSION_SIZE];
 }GET_INFO_PARAM;
 typedef struct
 {

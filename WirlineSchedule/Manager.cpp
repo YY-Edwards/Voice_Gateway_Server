@@ -723,17 +723,17 @@ void CManager::handleRemoteTask()
 											   {
 												   info.setInt(REPEATER_DISCONNECT);
 											   }
-											   g_pNet->wlInfo(GET_TYPE_CONN, info);
+											   g_pNet->wlInfo(GET_TYPE_CONN, info, task.param.info.getInfoParam.getInfo.SessionId);
 			}
 				break;
 			case REMOTE_CMD_MNIS_QUERY_GPS:
 			{
-											  m_pMnis->radioGetGps(task.param.info.queryGpsParam.Target, task.param.info.queryGpsParam.Type, task.param.info.queryGpsParam.Cycle);
+											  m_pMnis->radioGetGps(task.param.info.queryGpsParam.Target, task.param.info.queryGpsParam.Type, task.param.info.queryGpsParam.Cycle,task.param.info.queryGpsParam.SessionId);
 			}
 				break;
 			case REMOTE_CMD_MNIS_MSG:
 			{
-										m_pMnis->radioSendMsg(task.param.info.msgParam.Contents, task.param.info.msgParam.Target, task.param.info.msgParam.Type);
+										m_pMnis->radioSendMsg(task.param.info.msgParam.Contents, task.param.info.msgParam.Target, task.param.info.msgParam.Type, task.param.info.msgParam.SessionId);
 			}
 				break;
 			case REMOTE_CMD_MNIS_STATUS:
@@ -751,17 +751,18 @@ void CManager::handleRemoteTask()
 																		 {
 																			 info.setInt(1);
 																		 }
-																		 g_pNet->wlMnisStatus(MNIS_GET_TYPE_CONNECT, info);
+																		 g_pNet->wlMnisStatus(MNIS_GET_TYPE_CONNECT, info, task.param.info.mnisStatusParam.SessionId);
 										   }
 											   break;
 										   default:
 										   {
-													  m_pMnis->getRadioStatus(task.param.info.mnisStatusParam.getType);
+													  m_pMnis->getRadioStatus(task.param.info.mnisStatusParam.getType, task.param.info.mnisStatusParam.SessionId);
 										   }
 											   break;
 										   }
 			}
 				break;
+				//case is no use
 			case REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG:
 			{
 				m_pMnis->locationIndoorConfig(task.param.info.locationParam.internal,task.param.info.locationParam.ibconNum,task.param.info.locationParam.isEmergency);
@@ -856,19 +857,19 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 	{
 
 							 printf_s("SEND_PRIVATE_MSG:%d\r\n", response.msgStatus);
-							 g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus);
+							 g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus,response.sessionId);
 	}
 		break;
 	case SEND_GROUP_MSG:
 	{
 						   printf_s("SEND_GROUP_MSG:%d\r\n", response.msgStatus);
-						   g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus);
+						   g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus, response.sessionId);
 	}
 		break;
 	case RECV_MSG:
 	{
 					 printf_s("RECV_MSG:%s\r\n", response.msg.c_str());
-					 g_pNet->wlMnisMessage(response.msgType, response.target, response.source, response.msg);
+					 g_pNet->wlMnisMessage(response.msgType, response.target, response.source, response.msg, response.sessionId);
 					 /************************************************************************/
 					 /* temp code
 					 /************************************************************************/
@@ -887,37 +888,37 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 	case GPS_IMME_COMM:
 	{
 						  printf_s("GPS_IMME_COMM:%d\r\n", response.gpsStatus);
-						  g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+						  g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus,response.sessionId);
 	}
 		break;
 	case GPS_TRIGG_COMM:
 	{
 						   printf_s("GPS_TRIGG_COMM:%d\r\n", response.gpsStatus);
-						   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+						   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
 	}
 		break;
 	case GPS_IMME_CSBK:
 	{
 						  printf_s("GPS_IMME_CSBK:%d\r\n", response.gpsStatus);
-						  g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+						  g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
 	}
 		break;
 	case GPS_TRIGG_CSBK:
 	{
 						   printf_s("GPS_TRIGG_CSBK:%d\r\n", response.gpsStatus);
-						   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+						   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
 	}
 		break;
 	case STOP_QUERY_GPS:
 	{
 						   printf_s("STOP_QUERY_GPS:%d\r\n", response.gpsStatus);
-						   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+						   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
 	}
 		break;
 	case RADIO_ARS:
 	{
 					  printf_s("RADIO_ARS:%d\r\n", response.arsStatus);
-					  g_pNet->wlMnisSendArs(response.source, (0 == response.arsStatus) ? ("True") : ("False"));
+					  g_pNet->wlMnisSendArs(response.source, (0 == response.arsStatus) ? ("True") : ("False"), response.sessionId);
 	}
 		break;
 		// do nothing
@@ -934,19 +935,19 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 					 gps.lon = response.lon;
 					 gps.speed = response.speed;
 					 gps.valid = response.valid;
-					 g_pNet->wlMnisSendGps(response.source, gps);
+					 g_pNet->wlMnisSendGps(response.source, gps, response.sessionId);
 	}
 		break;
 	case GPS_IMME_CSBK_EGPS:
 	{
 							   printf_s("GPS_IMME_CSBK_EGPS:%d\r\n", response.gpsStatus);
-							   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+							   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
 	}
 		break;
 	case GPS_TRIGG_CSBK_EGPS:
 	{
 								printf_s("GPS_TRIGG_CSBK_EGPS:%d\r\n", response.gpsStatus);
-								g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+								g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
 	}
 		break;
 	case CONNECT_STATUS:
@@ -1003,7 +1004,7 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 							 element.setKeyVal("IsOnline", FieldValue(isArs));
 							 info.push(element);
 						 }
-						 g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, info);
+						 g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, info, response.sessionId);
 	}
 		break;
 	case GPS_TRIGG_COMM_INDOOR:
@@ -1022,7 +1023,7 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 			element.setKeyVal("timestamp", FieldValue(response.bcon.TimeStamp));
 			element.setKeyVal("major", FieldValue(response.bcon.Major));
 			element.setKeyVal("minor", FieldValue(response.bcon.Minor));
-			g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, element);
+			g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, element, response.sessionId);
 	}
 		break;
 	default:

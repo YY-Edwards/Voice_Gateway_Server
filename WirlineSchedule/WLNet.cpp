@@ -7483,9 +7483,13 @@ int CWLNet::thereIsCallOfCare(CRecordFile *pCallRecord, bool isCurrent)
 	return 0;
 }
 
-int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status)
+int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status, std::string sessionid)
 {
 	REMOTE_TASK* pTask = m_pManager->getCurrentTask();
+	if (pTask && sessionid == "")
+	{
+		sessionid = pTask->param.info.callParam.operateInfo.SessionId;
+	}
 
 	int clientCallType = 0;
 	int stus = 0;
@@ -7576,6 +7580,7 @@ int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned l
 	args["source"] = (int)srcId;
 	args["target"] = (int)tgtId;
 	args["operate"] = operate;
+	args["SessionId"] = sessionid.c_str();
 	std::string strRequest = CRpcJsonParser::buildCall("wlCallStatus", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -7612,13 +7617,13 @@ void CWLNet::setWlStatus(WLStatus value)
 		if (ALIVE == m_WLStatus)
 		{
 			info.setInt(REPEATER_CONNECT);
-			wlInfo(GET_TYPE_CONN, info);
+			wlInfo(GET_TYPE_CONN, info, "");
 		}
 		/*断开连接*/
 		if (old == ALIVE)
 		{
 			info.setInt(REPEATER_DISCONNECT);
-			wlInfo(GET_TYPE_CONN, info);
+			wlInfo(GET_TYPE_CONN, info, "");
 		}
 	}
 }
@@ -7718,7 +7723,7 @@ int CWLNet::wlCall(unsigned char callType, unsigned long source, unsigned long t
 	return 0;
 }
 
-int CWLNet::wlInfo(int getType, FieldValue info)
+int CWLNet::wlInfo(int getType, FieldValue info,std::string sessionid)
 {
 	if (!wlScheduleIsEnable())
 	{
@@ -7728,6 +7733,7 @@ int CWLNet::wlInfo(int getType, FieldValue info)
 	ArgumentType args;
 	args["getType"] = getType;
 	args["info"] = info;
+	args["SessionId"] = sessionid.c_str();
 	std::string strRequest = CRpcJsonParser::buildCall("wlInfo", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -7964,7 +7970,7 @@ int CWLNet::wlMnisConnectStatus(int status)
 	return 0;
 }
 
-int CWLNet::wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle, int status)
+int CWLNet::wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle, int status, std::string sessionid)
 {
 	if (!wlScheduleIsEnable())
 	{
@@ -7977,6 +7983,7 @@ int CWLNet::wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle,
 	args["Type"] = Type;
 	args["Cycle"] = Cycle;
 	args["status"] = status;
+	args["SessionId"] = sessionid.c_str();
 	std::string strRequest = CRpcJsonParser::buildCall("sendGpsStatus", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -7999,7 +8006,7 @@ int CWLNet::wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle,
 	return 0;
 }
 
-int CWLNet::wlMnisSendGps(int Source, GPS gps)
+int CWLNet::wlMnisSendGps(int Source, GPS gps, std::string sessionid)
 {
 	if (!wlScheduleIsEnable())
 	{
@@ -8014,6 +8021,7 @@ int CWLNet::wlMnisSendGps(int Source, GPS gps)
 	Gps.setKeyVal("valid", FieldValue(gps.valid));
 	args["Source"] = Source;
 	args["Gps"] = Gps;
+	args["SessionId"] = sessionid.c_str();
 	std::string strRequest = CRpcJsonParser::buildCall("sendGps", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -8036,7 +8044,7 @@ int CWLNet::wlMnisSendGps(int Source, GPS gps)
 	return 0;
 }
 
-int CWLNet::wlMnisMessageStatus(int Type, int Target, int Source, std::string Contents, int status)
+int CWLNet::wlMnisMessageStatus(int Type, int Target, int Source, std::string Contents, int status, std::string sessionid)
 {
 	if (!wlScheduleIsEnable())
 	{
@@ -8049,6 +8057,7 @@ int CWLNet::wlMnisMessageStatus(int Type, int Target, int Source, std::string Co
 	args["Source"] = Source;
 	args["Contents"] = Contents.c_str();
 	args["status"] = status;
+	args["SessionId"] = sessionid.c_str();
 	std::string strRequest = CRpcJsonParser::buildCall("messageStatus", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -8071,7 +8080,7 @@ int CWLNet::wlMnisMessageStatus(int Type, int Target, int Source, std::string Co
 	return 0;
 }
 
-int CWLNet::wlMnisMessage(int Type, int Target, int Source, std::string Contents)
+int CWLNet::wlMnisMessage(int Type, int Target, int Source, std::string Contents, std::string sessionid)
 {
 	if (!wlScheduleIsEnable())
 	{
@@ -8083,6 +8092,7 @@ int CWLNet::wlMnisMessage(int Type, int Target, int Source, std::string Contents
 	args["Target"] = Target;
 	args["Source"] = Source;
 	args["Contents"] = Contents.c_str();
+	args["SessionId"] = sessionid.c_str();
 	std::string strRequest = CRpcJsonParser::buildCall("message", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -8105,7 +8115,7 @@ int CWLNet::wlMnisMessage(int Type, int Target, int Source, std::string Contents
 	return 0;
 }
 
-int CWLNet::wlMnisSendArs(int Target, std::string IsOnline)
+int CWLNet::wlMnisSendArs(int Target, std::string IsOnline, std::string sessionid)
 {
 	if (!wlScheduleIsEnable())
 	{
@@ -8115,6 +8125,7 @@ int CWLNet::wlMnisSendArs(int Target, std::string IsOnline)
 	ArgumentType args;
 	args["Target"] = Target;
 	args["IsOnline"] = IsOnline.c_str();
+	args["sessionid"] = sessionid.c_str();
 	std::string strRequest = CRpcJsonParser::buildCall("sendArs", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -8137,7 +8148,7 @@ int CWLNet::wlMnisSendArs(int Target, std::string IsOnline)
 	return 0;
 }
 
-int CWLNet::wlMnisStatus(int getType, FieldValue info)
+int CWLNet::wlMnisStatus(int getType, FieldValue info, std::string sessionid)
 {
 	if (!wlScheduleIsEnable())
 	{
@@ -8147,6 +8158,7 @@ int CWLNet::wlMnisStatus(int getType, FieldValue info)
 	ArgumentType args;
 	args["getType"] = getType;
 	args["info"] = info;
+	args["SessionId"] = sessionid.c_str();
 	std::string strRequest = CRpcJsonParser::buildCall("status", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
