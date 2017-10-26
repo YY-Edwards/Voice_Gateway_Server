@@ -379,6 +379,8 @@ inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, 
 							  pNewTask = new REMOTE_TASK;
 							  memset(pNewTask, 0, sizeof(REMOTE_TASK));
 							  pNewTask->cmd = REMOTE_CMD_CALL;
+							  pNewTask->timeOutTickCout = GetTickCount() + (CONFIG_TIMEOUT_SECONDS * 1000);
+							  pNewTask->param.info.callParam.operateInfo.source = CONFIG_LOCAL_RADIO_ID;//本机发起的呼叫则来源一定是本机的RadioId
 							  if (d.HasMember("SessionId") && d["SessionId"].IsString())
 							  {
 								  strcpy_s(pNewTask->param.info.callParam.operateInfo.SessionId, d["SessionId"].GetString());
@@ -412,6 +414,8 @@ inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, 
 							 pNewTask = new REMOTE_TASK;
 							 memset(pNewTask, 0, sizeof(REMOTE_TASK));
 							 pNewTask->cmd = REMOTE_CMD_STOP_CALL;
+							 pNewTask->timeOutTickCout = GetTickCount() + (CONFIG_TIMEOUT_SECONDS * 1000);
+							 pNewTask->param.info.callParam.operateInfo.source = CONFIG_LOCAL_RADIO_ID;//本机发起的呼叫则来源一定是本机的RadioId
 							 if (d.HasMember("SessionId") && d["SessionId"].IsString())
 							 {
 								 strcpy_s(pNewTask->param.info.callParam.operateInfo.SessionId, d["SessionId"].GetString());

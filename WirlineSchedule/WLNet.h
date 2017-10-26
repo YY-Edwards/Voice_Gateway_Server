@@ -317,6 +317,8 @@ public:
 	int thereIsCallOfCare(CRecordFile *pCallRecord,bool isCurrent);
 	/*告知界面当前请求通话的状态*/
 	int wlCallStatus(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status,std::string sessionid="");
+	/*告知界面当前请求通话的状态*/
+	int wlCallStatus(REMOTE_TASK *p,int status);
 	/*告知界面当前收到的通话的状态*/
 	int wlCall(unsigned char callType, unsigned long source, unsigned long target, int operate, bool isCurrent);
 	/*告知界面中继台的连接情况*/

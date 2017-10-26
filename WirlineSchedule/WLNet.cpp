@@ -7485,11 +7485,15 @@ int CWLNet::thereIsCallOfCare(CRecordFile *pCallRecord, bool isCurrent)
 
 int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status, std::string sessionid)
 {
+	int cmd = 0;
+	m_pManager->lockCurTask();
 	REMOTE_TASK* pTask = m_pManager->getCurrentTask();
-	if (pTask && sessionid == "")
+	if (pTask && sessionid == "" && srcId == CONFIG_LOCAL_RADIO_ID)
 	{
 		sessionid = pTask->param.info.callParam.operateInfo.SessionId;
+		cmd = pTask->cmd;
 	}
+	m_pManager->unLockCurTask();
 
 	int clientCallType = 0;
 	int stus = 0;
@@ -7504,9 +7508,9 @@ int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned l
 		stus = CMD_FAIL;
 	}
 
-	if (pTask)
+	if (cmd != 0)
 	{
-		switch (pTask->cmd)
+		switch (cmd)
 		{
 		case REMOTE_CMD_CALL:
 		{
@@ -7537,7 +7541,7 @@ int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned l
 		}
 			break;
 		}
-		m_pManager->freeCurrentTask();
+		//m_pManager->freeCurrentTask();
 	}
 	else
 	{
@@ -7572,6 +7576,106 @@ int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned l
 	//std::string operateMemo = (OPERATE_CALL_START == operate)?("CALL_START"):("CALL_END");
 	//sprintf_s(m_reportMsg, "tell ui %s", operateMemo.c_str());
 	//sendLogToWindow();
+
+	/*将参数打包成json格式*/
+	ArgumentType args;
+	args["status"] = stus;
+	args["type"] = clientCallType;
+	args["source"] = (int)srcId;
+	args["target"] = (int)tgtId;
+	args["operate"] = operate;
+	args["SessionId"] = sessionid.c_str();
+	std::string strRequest = CRpcJsonParser::buildCall("wlCallStatus", ++g_sn, args, "wl");
+	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
+	sendLogToWindow();
+
+	TcpClient *redayDelete = NULL;
+	/*发送到Client*/
+	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end(); i++)
+	{
+		TcpClient* p = *i;
+		try
+		{
+			p->sendResponse(strRequest.c_str(), strRequest.size());
+		}
+		catch (...)
+		{
+			redayDelete = p;
+			sprintf_s(m_reportMsg, "sendCallStatus fail, socket:%lu", p->s);
+			sendLogToWindow();
+		}
+	}
+	return 0;
+}
+
+int CWLNet::wlCallStatus(REMOTE_TASK *p,int status)
+{
+	if (p == NULL) return 1;
+	unsigned char callType = p->param.info.callParam.operateInfo.callType;
+	unsigned long srcId = p->param.info.callParam.operateInfo.source;
+	unsigned long tgtId = p->param.info.callParam.operateInfo.tartgetId;
+	std::string sessionid = p->param.info.callParam.operateInfo.SessionId;
+
+	int clientCallType = 0;
+	int stus = 0;
+	int operate = 0;
+
+	if (status & REMOTE_CMD_SUCCESS)
+	{
+		stus = CMD_SUCCESS;
+	}
+	else
+	{
+		stus = CMD_FAIL;
+	}
+
+
+	switch (p->cmd)
+	{
+	case REMOTE_CMD_CALL:
+	{
+							operate = OPERATE_CALL_START;
+
+	}
+		break;
+	case REMOTE_CMD_STOP_CALL:
+	{
+								 operate = OPERATE_CALL_END;
+	}
+		break;
+	default:
+	{
+			   if (status & STATUS_CALL_START)
+			   {
+				   operate = OPERATE_CALL_START;
+			   }
+			   else if ((status & STATUS_CALL_END)
+				   && stus == CMD_FAIL)
+			   {
+				   operate = OPERATE_CALL_START;
+			   }
+			   else
+			   {
+				   operate = OPERATE_CALL_END;
+			   }
+	}
+		break;
+	}
+
+	//m_pManager->freeCurrentTask();
+
+	if (callType == GROUP_CALL)
+	{
+		clientCallType = CLIENT_CALL_TYPE_Group;
+	}
+	else if (callType == ALL_CALL)
+	{
+		clientCallType = CLIENT_CALL_TYPE_All;
+	}
+	else
+	{
+		clientCallType = CLIENT_CALL_TYPE_Private;
+	}
 
 	/*将参数打包成json格式*/
 	ArgumentType args;
@@ -8218,14 +8322,15 @@ void CWLNet::handleCallTimeOut()
 	releaseRecordEndEvent();
 	SetCallStatus(CALL_IDLE);
 	Sleep(500);
-	REMOTE_TASK task = *(m_pManager->getCurrentTaskR());
-	wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
-	//if (g_pNet->canStopRecord())
-	//{
-		//g_pNet->requestRecordEndEvent();
-		//g_pSound->setbRecord(FALSE);
-		//g_bPTT = FALSE;
-	//}
+	m_pManager->lockCurTask();
+	REMOTE_TASK *task = m_pManager->getCurrentTask();
+	if (task)
+	{
+		//wlCallStatus(task->param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task->param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+		task->param.info.callParam.operateInfo.source = CONFIG_LOCAL_RADIO_ID;
+		wlCallStatus(task, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+	}
+	m_pManager->unLockCurTask();
 }
 
 //bool CWLNet::getIsFirstBurstA()

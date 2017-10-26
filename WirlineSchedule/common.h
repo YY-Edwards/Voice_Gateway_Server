@@ -43,6 +43,8 @@
 extern WLSocketLog *g_pWLlog;
 
 #define SESSION_SIZE 64
+#define FLAG_NHANDLE 0 //超时处理未执行
+#define FLAG_HANDLED 1 //超时处理已执行
 
 /************************************************************************/
 /* MNIS
@@ -171,6 +173,7 @@ extern long CONFIG_HUNG_TIME;//session间隔时间
 extern long CONFIG_MASTER_HEART_TIME;//主中继心跳间隔
 extern long CONFIG_PEER_HEART_AND_REG_TIME;//非主中继心跳间隔和注册间隔
 extern SlotNumber_e CONFIG_DEFAULT_SLOT;//默认信道
+extern long CONFIG_TIMEOUT_SECONDS;//通话请求、获取在线设备列表请求的超时响应时间
 
 //////////////////////////////////////////////////////////////////////////
 /*信号*/
@@ -371,6 +374,8 @@ typedef struct
 	//unsigned long long callId;
 	//CRemotePeer *pRemote;
 	int cmd;
+	unsigned long timeOutTickCout;
+	int flag;
 	JSON_PARAM param;
 }REMOTE_TASK;
 /*远程命令任务队列*/
