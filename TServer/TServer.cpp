@@ -202,7 +202,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		clientActions["connectStatus"] = recvConnetResultAction;
 		clientActions["status"] = recvStatusAction;
 		clientActions["callStatus"] = recvCallStatusAction;
-		clientActions["controlStatus"] = recvControlResultAction;
+		clientActions["controlStatus"] = recvControlStatusAction;
+		clientActions["controlResult"] = recvControlResultAction;
 		clientActions["sendGpsStatus"] = recvSendGpsStatusAction;
 		clientActions["getRadioConfig"] = recvGetConfigAction;
 		clientActions["readSerial"] = readSerialAction;
@@ -289,7 +290,6 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 
 	serverActions["start"] = startAction;
-
 	serverActions["setBaseSetting"] = setBaseAction;
 	serverActions["getBaseSetting"] = getBaseAction;
 	serverActions["setRadioSetting"] = setRadioAction;
@@ -326,7 +326,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	clientActions["connectStatus"] = recvConnetResultAction;
 	clientActions["status"] = recvStatusAction;
 	clientActions["callStatus"] = recvCallStatusAction;
-	clientActions["controlStatus"] = recvControlResultAction;
+	clientActions["controlStatus"] = recvControlStatusAction;
+	clientActions["controlResult"] = recvControlResultAction;
 	clientActions["sendGpsStatus"] = recvSendGpsStatusAction;
 	clientActions["getRadioConfig"] = recvGetConfigAction;
 	clientActions["readSerial"] = readSerialAction;

@@ -96,7 +96,7 @@ private:
 	CRpcClient* m_logClient;
 	CRpcServer* m_rpcServer;
 	CRpcClient* m_monitorClient;
-	SerialInformation m_serialInformation;
+	SerialInformation m_serialInformation ;
 	SerialInformation m_licenseInformation;
 	int licenseStatus;
 	

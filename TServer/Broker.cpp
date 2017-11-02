@@ -17,6 +17,19 @@ CBroker::CBroker()
 	, callId(1)
 {
 	licenseStatus = 2;
+	m_serialInformation.deviceType = 0;
+	memset(m_serialInformation.expiration, 0, 14);
+	m_serialInformation.isEver = false;
+	memset(m_serialInformation.funcList, 0, 16);
+	memset(m_serialInformation.licType, 0, 12);
+	memset(m_serialInformation.operate, 0, 16);
+	memset(m_serialInformation.pcMac, 0, 16);
+	memset(m_serialInformation.radioMode, 0, 13);
+	memset(m_serialInformation.radioSerial, 0, 16);
+	memset(m_serialInformation.repeaterMode, 0, 13);
+	memset(m_serialInformation.repeaterSerial, 0, 16);
+	memset(m_serialInformation.res, 0, 16);
+	memset(m_serialInformation.time, 0, 16);
 }
 
 
