@@ -1,5 +1,6 @@
 #include "stdafx.h"
 
+long CONFIG_TIMEOUT_SECONDS = 60;
 WLSocketLog *g_pWLlog = NULL;
 
 bool Env_DongleIsOk = false;

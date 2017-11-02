@@ -7483,9 +7483,17 @@ int CWLNet::thereIsCallOfCare(CRecordFile *pCallRecord, bool isCurrent)
 	return 0;
 }
 
-int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status)
+int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status, std::string sessionid)
 {
+	int cmd = 0;
+	m_pManager->lockCurTask();
 	REMOTE_TASK* pTask = m_pManager->getCurrentTask();
+	if (pTask && sessionid == "" && srcId == CONFIG_LOCAL_RADIO_ID)
+	{
+		sessionid = pTask->param.info.callParam.operateInfo.SessionId;
+		cmd = pTask->cmd;
+	}
+	m_pManager->unLockCurTask();
 
 	int clientCallType = 0;
 	int stus = 0;
@@ -7500,9 +7508,9 @@ int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned l
 		stus = CMD_FAIL;
 	}
 
-	if (pTask)
+	if (cmd != 0)
 	{
-		switch (pTask->cmd)
+		switch (cmd)
 		{
 		case REMOTE_CMD_CALL:
 		{
@@ -7533,7 +7541,7 @@ int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned l
 		}
 			break;
 		}
-		m_pManager->freeCurrentTask();
+		//m_pManager->freeCurrentTask();
 	}
 	else
 	{
@@ -7576,6 +7584,107 @@ int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned l
 	args["source"] = (int)srcId;
 	args["target"] = (int)tgtId;
 	args["operate"] = operate;
+	args["SessionId"] = sessionid.c_str();
+	std::string strRequest = CRpcJsonParser::buildCall("wlCallStatus", ++g_sn, args, "wl");
+	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
+	sendLogToWindow();
+
+	TcpClient *redayDelete = NULL;
+	/*发送到Client*/
+	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end(); i++)
+	{
+		TcpClient* p = *i;
+		try
+		{
+			p->sendResponse(strRequest.c_str(), strRequest.size());
+		}
+		catch (...)
+		{
+			redayDelete = p;
+			sprintf_s(m_reportMsg, "sendCallStatus fail, socket:%lu", p->s);
+			sendLogToWindow();
+		}
+	}
+	return 0;
+}
+
+int CWLNet::wlCallStatus(REMOTE_TASK *p,int status)
+{
+	if (p == NULL) return 1;
+	unsigned char callType = p->param.info.callParam.operateInfo.callType;
+	unsigned long srcId = p->param.info.callParam.operateInfo.source;
+	unsigned long tgtId = p->param.info.callParam.operateInfo.tartgetId;
+	std::string sessionid = p->param.info.callParam.operateInfo.SessionId;
+
+	int clientCallType = 0;
+	int stus = 0;
+	int operate = 0;
+
+	if (status & REMOTE_CMD_SUCCESS)
+	{
+		stus = CMD_SUCCESS;
+	}
+	else
+	{
+		stus = CMD_FAIL;
+	}
+
+
+	switch (p->cmd)
+	{
+	case REMOTE_CMD_CALL:
+	{
+							operate = OPERATE_CALL_START;
+
+	}
+		break;
+	case REMOTE_CMD_STOP_CALL:
+	{
+								 operate = OPERATE_CALL_END;
+	}
+		break;
+	default:
+	{
+			   if (status & STATUS_CALL_START)
+			   {
+				   operate = OPERATE_CALL_START;
+			   }
+			   else if ((status & STATUS_CALL_END)
+				   && stus == CMD_FAIL)
+			   {
+				   operate = OPERATE_CALL_START;
+			   }
+			   else
+			   {
+				   operate = OPERATE_CALL_END;
+			   }
+	}
+		break;
+	}
+
+	//m_pManager->freeCurrentTask();
+
+	if (callType == GROUP_CALL)
+	{
+		clientCallType = CLIENT_CALL_TYPE_Group;
+	}
+	else if (callType == ALL_CALL)
+	{
+		clientCallType = CLIENT_CALL_TYPE_All;
+	}
+	else
+	{
+		clientCallType = CLIENT_CALL_TYPE_Private;
+	}
+
+	/*将参数打包成json格式*/
+	ArgumentType args;
+	args["status"] = stus;
+	args["type"] = clientCallType;
+	args["source"] = (int)srcId;
+	args["target"] = (int)tgtId;
+	args["operate"] = operate;
+	args["SessionId"] = sessionid.c_str();
 	std::string strRequest = CRpcJsonParser::buildCall("wlCallStatus", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -7612,13 +7721,13 @@ void CWLNet::setWlStatus(WLStatus value)
 		if (ALIVE == m_WLStatus)
 		{
 			info.setInt(REPEATER_CONNECT);
-			wlInfo(GET_TYPE_CONN, info);
+			wlInfo(GET_TYPE_CONN, info, "");
 		}
 		/*断开连接*/
 		if (old == ALIVE)
 		{
 			info.setInt(REPEATER_DISCONNECT);
-			wlInfo(GET_TYPE_CONN, info);
+			wlInfo(GET_TYPE_CONN, info, "");
 		}
 	}
 }
@@ -7718,7 +7827,7 @@ int CWLNet::wlCall(unsigned char callType, unsigned long source, unsigned long t
 	return 0;
 }
 
-int CWLNet::wlInfo(int getType, FieldValue info)
+int CWLNet::wlInfo(int getType, FieldValue info,std::string sessionid)
 {
 	if (!wlScheduleIsEnable())
 	{
@@ -7728,6 +7837,7 @@ int CWLNet::wlInfo(int getType, FieldValue info)
 	ArgumentType args;
 	args["getType"] = getType;
 	args["info"] = info;
+	args["SessionId"] = sessionid.c_str();
 	std::string strRequest = CRpcJsonParser::buildCall("wlInfo", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -7964,7 +8074,7 @@ int CWLNet::wlMnisConnectStatus(int status)
 	return 0;
 }
 
-int CWLNet::wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle, int status)
+int CWLNet::wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle, int status, std::string sessionid)
 {
 	if (!wlScheduleIsEnable())
 	{
@@ -7977,6 +8087,7 @@ int CWLNet::wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle,
 	args["Type"] = Type;
 	args["Cycle"] = Cycle;
 	args["status"] = status;
+	args["SessionId"] = sessionid.c_str();
 	std::string strRequest = CRpcJsonParser::buildCall("sendGpsStatus", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -7999,7 +8110,7 @@ int CWLNet::wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle,
 	return 0;
 }
 
-int CWLNet::wlMnisSendGps(int Source, GPS gps)
+int CWLNet::wlMnisSendGps(int Source, GPS gps, std::string sessionid)
 {
 	if (!wlScheduleIsEnable())
 	{
@@ -8014,6 +8125,7 @@ int CWLNet::wlMnisSendGps(int Source, GPS gps)
 	Gps.setKeyVal("valid", FieldValue(gps.valid));
 	args["Source"] = Source;
 	args["Gps"] = Gps;
+	args["SessionId"] = sessionid.c_str();
 	std::string strRequest = CRpcJsonParser::buildCall("sendGps", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -8036,7 +8148,7 @@ int CWLNet::wlMnisSendGps(int Source, GPS gps)
 	return 0;
 }
 
-int CWLNet::wlMnisMessageStatus(int Type, int Target, int Source, std::string Contents, int status)
+int CWLNet::wlMnisMessageStatus(int Type, int Target, int Source, std::string Contents, int status, std::string sessionid)
 {
 	if (!wlScheduleIsEnable())
 	{
@@ -8049,6 +8161,7 @@ int CWLNet::wlMnisMessageStatus(int Type, int Target, int Source, std::string Co
 	args["Source"] = Source;
 	args["Contents"] = Contents.c_str();
 	args["status"] = status;
+	args["SessionId"] = sessionid.c_str();
 	std::string strRequest = CRpcJsonParser::buildCall("messageStatus", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -8071,7 +8184,7 @@ int CWLNet::wlMnisMessageStatus(int Type, int Target, int Source, std::string Co
 	return 0;
 }
 
-int CWLNet::wlMnisMessage(int Type, int Target, int Source, std::string Contents)
+int CWLNet::wlMnisMessage(int Type, int Target, int Source, std::string Contents, std::string sessionid)
 {
 	if (!wlScheduleIsEnable())
 	{
@@ -8083,6 +8196,7 @@ int CWLNet::wlMnisMessage(int Type, int Target, int Source, std::string Contents
 	args["Target"] = Target;
 	args["Source"] = Source;
 	args["Contents"] = Contents.c_str();
+	args["SessionId"] = sessionid.c_str();
 	std::string strRequest = CRpcJsonParser::buildCall("message", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -8105,7 +8219,7 @@ int CWLNet::wlMnisMessage(int Type, int Target, int Source, std::string Contents
 	return 0;
 }
 
-int CWLNet::wlMnisSendArs(int Target, std::string IsOnline)
+int CWLNet::wlMnisSendArs(int Target, std::string IsOnline, std::string sessionid)
 {
 	if (!wlScheduleIsEnable())
 	{
@@ -8115,6 +8229,7 @@ int CWLNet::wlMnisSendArs(int Target, std::string IsOnline)
 	ArgumentType args;
 	args["Target"] = Target;
 	args["IsOnline"] = IsOnline.c_str();
+	args["sessionid"] = sessionid.c_str();
 	std::string strRequest = CRpcJsonParser::buildCall("sendArs", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -8137,7 +8252,7 @@ int CWLNet::wlMnisSendArs(int Target, std::string IsOnline)
 	return 0;
 }
 
-int CWLNet::wlMnisStatus(int getType, FieldValue info)
+int CWLNet::wlMnisStatus(int getType, FieldValue info, std::string sessionid)
 {
 	if (!wlScheduleIsEnable())
 	{
@@ -8147,6 +8262,7 @@ int CWLNet::wlMnisStatus(int getType, FieldValue info)
 	ArgumentType args;
 	args["getType"] = getType;
 	args["info"] = info;
+	args["SessionId"] = sessionid.c_str();
 	std::string strRequest = CRpcJsonParser::buildCall("status", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -8206,14 +8322,15 @@ void CWLNet::handleCallTimeOut()
 	releaseRecordEndEvent();
 	SetCallStatus(CALL_IDLE);
 	Sleep(500);
-	REMOTE_TASK task = *(m_pManager->getCurrentTaskR());
-	wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
-	//if (g_pNet->canStopRecord())
-	//{
-		//g_pNet->requestRecordEndEvent();
-		//g_pSound->setbRecord(FALSE);
-		//g_bPTT = FALSE;
-	//}
+	m_pManager->lockCurTask();
+	REMOTE_TASK *task = m_pManager->getCurrentTask();
+	if (task)
+	{
+		//wlCallStatus(task->param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task->param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+		task->param.info.callParam.operateInfo.source = CONFIG_LOCAL_RADIO_ID;
+		wlCallStatus(task, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+	}
+	m_pManager->unLockCurTask();
 }
 
 //bool CWLNet::getIsFirstBurstA()

@@ -316,11 +316,13 @@ public:
 	/*存在一个需要告知界面的通话*/
 	int thereIsCallOfCare(CRecordFile *pCallRecord,bool isCurrent);
 	/*告知界面当前请求通话的状态*/
-	int wlCallStatus(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status);
+	int wlCallStatus(unsigned char callType, unsigned long srcId, unsigned long tgtId, int status,std::string sessionid="");
+	/*告知界面当前请求通话的状态*/
+	int wlCallStatus(REMOTE_TASK *p,int status);
 	/*告知界面当前收到的通话的状态*/
 	int wlCall(unsigned char callType, unsigned long source, unsigned long target, int operate, bool isCurrent);
 	/*告知界面中继台的连接情况*/
-	int wlInfo(int getType, FieldValue info);
+	int wlInfo(int getType, FieldValue info, std::string sessionid);
 	/*告知界面设置播放通话的操作情况*/
 	int wlPlayStatus(int status, int target);
 	/*向TServer请求配置信息*/
@@ -330,17 +332,17 @@ public:
 	/*告知界面mnis设备连接状态*/
 	int wlMnisConnectStatus(int status);
 	/*告知界面Gps查询执行状态*/
-	int wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle, int status);
+	int wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle, int status, std::string sessionid);
 	/*告知界面Gps数据*/
-	int wlMnisSendGps(int Source, GPS gps);
+	int wlMnisSendGps(int Source, GPS gps, std::string sessionid);
 	/*告知界面短信发送执行状态*/
-	int wlMnisMessageStatus(int Type, int Target, int Source, std::string Contents,int status);
+	int wlMnisMessageStatus(int Type, int Target, int Source, std::string Contents, int status, std::string sessionid);
 	/*告知界面收到短信*/
-	int wlMnisMessage(int Type, int Target, int Source, std::string Contents);
+	int wlMnisMessage(int Type, int Target, int Source, std::string Contents, std::string sessionid);
 	/*告知界面ARS相关*/
-	int wlMnisSendArs(int Target, std::string IsOnline);
+	int wlMnisSendArs(int Target, std::string IsOnline,std::string sessionid);
 	/*告知界面相关信息*/
-	int wlMnisStatus(int getType, FieldValue info);
+	int wlMnisStatus(int getType, FieldValue info, std::string sessionid);
 	/*更新设备在线信息*/
 	int updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode = -1);
 	/*设置语音文件存放位置*/

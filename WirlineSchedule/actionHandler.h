@@ -202,6 +202,10 @@ inline void parseMnisCfg(mnis_t &cfg, Value json)
 	{
 		cfg.IsEnable = json["IsEnable"].GetBool();
 	}
+	if (json.HasMember("TomeoutSeconds") && json["TomeoutSeconds"].IsInt())
+	{
+		cfg.TomeoutSeconds = json["TomeoutSeconds"].GetInt();
+	}
 	if (json.HasMember("ID") && json["ID"].IsInt())
 	{
 		cfg.ID = json["ID"].GetInt();
@@ -375,8 +379,12 @@ inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, 
 							  pNewTask = new REMOTE_TASK;
 							  memset(pNewTask, 0, sizeof(REMOTE_TASK));
 							  pNewTask->cmd = REMOTE_CMD_CALL;
-							  //pNewTask->pRemote = pRemote;
-							  //pNewTask->callId = sn;
+							  pNewTask->timeOutTickCout = GetTickCount() + (CONFIG_TIMEOUT_SECONDS * 1000);
+							  pNewTask->param.info.callParam.operateInfo.source = CONFIG_LOCAL_RADIO_ID;//本机发起的呼叫则来源一定是本机的RadioId
+							  if (d.HasMember("SessionId") && d["SessionId"].IsString())
+							  {
+								  strcpy_s(pNewTask->param.info.callParam.operateInfo.SessionId, d["SessionId"].GetString());
+							  }
 							  pNewTask->param.info.callParam.operateInfo.operate = StartCall;
 
 							  int callType = d["type"].GetInt();
@@ -406,8 +414,12 @@ inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, 
 							 pNewTask = new REMOTE_TASK;
 							 memset(pNewTask, 0, sizeof(REMOTE_TASK));
 							 pNewTask->cmd = REMOTE_CMD_STOP_CALL;
-// 							 pNewTask->pRemote = pRemote;
-// 							 pNewTask->callId = sn;
+							 pNewTask->timeOutTickCout = GetTickCount() + (CONFIG_TIMEOUT_SECONDS * 1000);
+							 pNewTask->param.info.callParam.operateInfo.source = CONFIG_LOCAL_RADIO_ID;//本机发起的呼叫则来源一定是本机的RadioId
+							 if (d.HasMember("SessionId") && d["SessionId"].IsString())
+							 {
+								 strcpy_s(pNewTask->param.info.callParam.operateInfo.SessionId, d["SessionId"].GetString());
+							 }
 							 pNewTask->param.info.callParam.operateInfo.operate = StopCall;
 
 							 int callType = d["type"].GetInt();
@@ -578,9 +590,13 @@ inline void wlInfoActionHandler(CRemotePeer* pRemote, const std::string& param, 
 	try
 	{
 		try{
+			int getType = -1;
 			d.Parse(param.c_str());
-			int getType = d["getType"].GetInt();
 			/*处理参数*/
+			if (d.HasMember("getType") && d["getType"].IsInt())
+			{
+				getType = d["getType"].GetInt();
+			}
 			switch (getType)
 			{
 			case GET_TYPE_CONN:
@@ -588,6 +604,10 @@ inline void wlInfoActionHandler(CRemotePeer* pRemote, const std::string& param, 
 								  pNewTask = new REMOTE_TASK;
 								  memset(pNewTask, 0, sizeof(REMOTE_TASK));
 								  pNewTask->cmd = REMOTE_CMD_GET_CONN_STATUS;
+								  if (d.HasMember("SessionId") && d["SessionId"].IsString())
+								  {
+									  strcpy_s(pNewTask->param.info.getInfoParam.getInfo.SessionId, d["SessionId"].GetString());
+								  }
 			}
 				break;
 			case GET_TYPE_ONLINE_DEVICES:
@@ -596,6 +616,10 @@ inline void wlInfoActionHandler(CRemotePeer* pRemote, const std::string& param, 
 											memset(pNewTask, 0, sizeof(REMOTE_TASK));
 											pNewTask->cmd = REMOTE_CMD_MNIS_STATUS;
 											pNewTask->param.info.mnisStatusParam.getType = getType;
+											if (d.HasMember("SessionId") && d["SessionId"].IsString())
+											{
+												strcpy_s(pNewTask->param.info.mnisStatusParam.SessionId, d["SessionId"].GetString());
+											}
 			}
 				break;
 			default:
@@ -657,6 +681,10 @@ inline void wlMnisQueryGpsActionHandler(CRemotePeer* pRemote, const std::string&
 			pNewTask->param.info.queryGpsParam.Operate = d["Operate"].GetInt();
 			pNewTask->param.info.queryGpsParam.Target = d["Target"].GetInt();
 			pNewTask->param.info.queryGpsParam.Type = d["Type"].GetInt();
+			if (d.HasMember("SessionId") && d["SessionId"].IsString())
+			{
+				strcpy_s(pNewTask->param.info.queryGpsParam.SessionId, d["SessionId"].GetString());
+			}
 			if (pNewTask)
 			{
 
@@ -707,11 +735,11 @@ inline void wlMnisMessageHandler(CRemotePeer* pRemote, const std::string& param,
 			pNewTask = new REMOTE_TASK;
 			memset(pNewTask, 0, sizeof(REMOTE_TASK));
 			d.Parse(param.c_str());
-			//pNewTask->callId = sn;
 			pNewTask->cmd = REMOTE_CMD_MNIS_MSG;
-			//pNewTask->pRemote = pRemote;
-			//swprintf_s(pNewTask->param.info.msgParam.Contents, L"%s", d["Contents"].GetString());
-			//MultiByteToWideChar(CP_ACP, 0, d["Contents"].GetString(), -1, pNewTask->param.info.msgParam.Contents, 256);
+			if (d.HasMember("SessionId") && d["SessionId"].IsString())
+			{
+				strcpy_s(pNewTask->param.info.msgParam.SessionId, d["SessionId"].GetString());
+			}
 			strcpy_s(pNewTask->param.info.msgParam.Contents, d["Contents"].GetString());
 			pNewTask->param.info.msgParam.Source = d["Source"].GetInt();
 			pNewTask->param.info.msgParam.Target = d["Target"].GetInt();
@@ -766,9 +794,11 @@ inline void wlMnisStatusHandler(CRemotePeer* pRemote, const std::string& param, 
 			pNewTask = new REMOTE_TASK;
 			memset(pNewTask, 0, sizeof(REMOTE_TASK));
 			d.Parse(param.c_str());
-			//pNewTask->callId = sn;
 			pNewTask->cmd = REMOTE_CMD_MNIS_STATUS;
-			//pNewTask->pRemote = pRemote;
+			if (d.HasMember("SessionId") && d["SessionId"].IsString())
+			{
+				strcpy_s(pNewTask->param.info.mnisStatusParam.SessionId, d["SessionId"].GetString());
+			}
 			pNewTask->param.info.mnisStatusParam.getType = d["getType"].GetInt();
 			if (pNewTask)
 			{
