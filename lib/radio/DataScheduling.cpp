@@ -246,7 +246,7 @@ void CDataScheduling::addUdpCommand(int command, std::string radioIP, std::strin
 	Command      m_command;
 	m_command.command = command;
 	m_command.ackNum = 0;
-	m_command.timeOut = m_mnisCfg.TomeoutSeconds;     //ms
+	m_command.timeOut = m_mnisCfg.TomeoutSeconds * 1000;     //ms
 	m_command.timeCount = 0;
 	m_command.radioIP = radioIP;
 	m_command.radioId = id;
@@ -452,19 +452,19 @@ void CDataScheduling::sendConnectStatusToClient()
 void CDataScheduling::sendRadioStatusToClient()
 {
 	std::list<Command>::iterator it;
-	m_timeOutListLocker.lock();
+	std::lock_guard <std::mutex> locker(m_timeOutListLocker);
 	for (it = timeOutList.begin(); it != timeOutList.end(); it++)
 	{
 		if (RADIO_STATUS == it->command)
 		{
 			Respone r = { 0 };
 			r.rs = g_radioStatus;
+			r.sessionId = it->sessionId;
 			onData(myCallBackFunc, it->command, r);
 			it = timeOutList.erase(it);
 			break;
 		}
 	}
-	m_timeOutListLocker.unlock();
 }
 
 void CDataScheduling::updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode)

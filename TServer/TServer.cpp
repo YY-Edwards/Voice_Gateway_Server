@@ -123,7 +123,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	int createFileRlt = 0;
 	TCHAR szBuffer[MAX_PATH];
 	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
-	std::wstring appFolder = getAppdataPath() + ConmpanyName;
+	std::wstring appFolder = getAppdataPath() + _T("\\")+ ConmpanyName;
 	if (!PathFileExists(appFolder.c_str()))
 	{
 		createFileRlt = _wmkdir(appFolder.c_str());

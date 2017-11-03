@@ -23,14 +23,14 @@ private:
 	int  tcpConnect();
 	void radioUsbStatus();
 	void connect();
-	int  privateCall( int id);
-	int  groupCall( int id);
-	int  allCall( );
-	int  stopCall();
-	int  remotePowerOn( int id);
-	int  remotePowerOff( int id);
-	int  radioCheck( int id);
-	int  wiretap( int id);
+	int  privateCall(std::string sessionId, int id);
+	int  groupCall(std::string sessionId, int id);
+	int  allCall(std::string sessionId);
+	int  stopCall(std::string sessionId);
+	int  remotePowerOn(std::string sessionId, int id);
+	int  remotePowerOff(std::string sessionId, int id);
+	int  radioCheck(std::string sessionId, int id);
+	int  wiretap(std::string sessionId, int id);
 
 	DWORD            dwip;
 	int port;

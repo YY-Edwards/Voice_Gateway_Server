@@ -17,6 +17,7 @@
 #define REMOTE_OPEN            6
 #define CHECK_RADIO_ONLINE     7
 #define REMOTE_MONITOR         8
+#define CONTTROLBROADCAST      9
 #define RADIO_ARS              17					 //sendArs
 #define STOP_CALL              19
 #define REMOTE_REPLY           21
@@ -72,6 +73,7 @@ typedef struct tagTcpRespone
 	int result;
 	int arsStatus;
 	std::string radioSerial;
+	std::string sessionId;
 }TcpRespone;
 typedef struct
 {
@@ -86,6 +88,7 @@ typedef struct
 	int CAI;
 	int GroupCAI;
 	int LocationType;//General£¬ CSBK£¬ EnhCSBK
+	int Mode;
 }radio_t;
 extern void(*myTcpCallBackFunc)(int, TcpRespone);
 void onTcpData(void(*func)( int, TcpRespone), int call, TcpRespone data);
@@ -98,6 +101,8 @@ typedef struct tagTcpCommand
 	int timeCount;
 	int command;
 	int radioId;
+	unsigned char transactionIdBase;
+	unsigned char txXcmpCount;
 	std::string radioIP;
 	std::string sessionId;
 	//SOCKET s;

@@ -62,6 +62,7 @@ void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 				try
 				{
 					ArgumentType args;
+					args["CallStatus"] = 4;  // 0: idle,1: tx, 2:rx, 4:fatal
 					args["Status"] = FieldValue(REMOTE_FAILED);
 					args["Target"] = FieldValue(id);
 					args["Operate"] = FieldValue(operate);

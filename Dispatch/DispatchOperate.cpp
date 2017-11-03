@@ -466,6 +466,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 			info.push(element);
 		}
 		args["info"] = info;
+		args["SessionId"] = FieldValue((data.sessionId).c_str());
 		dis.send2Client("status", args);
 		break;
 	}
@@ -505,17 +506,27 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 	case PRIVATE_CALL:
 	case GROUP_CALL:
 	case ALL_CALL:
+		args["CallStatus"] = 1;  // 0: idle,1: tx, 2:rx, 4:fatal
 		args["Status"] = FieldValue(data.result);
 		args["Target"] = FieldValue(data.id);
 		args["Operate"] = FieldValue(START);
 		args["Type"] = FieldValue(data.callType);
+		if (data.sessionId != "")
+		{
+			args["SessionId"] = FieldValue((data.sessionId).c_str());
+		}
 		dis.send2Client("callStatus", args);
 		break;
 	case STOP_CALL:
+		args["CallStatus"] = 1;  // 0: idle,1: tx, 2:rx, 4:fatal
 		args["Status"] = FieldValue(data.result);
 		args["Target"] = FieldValue(data.id);
 		args["Operate"] = FieldValue(STOP);
 		args["Type"] = FieldValue(data.callType);
+		if (data.sessionId != "")
+		{
+			args["SessionId"] = FieldValue((data.sessionId).c_str());
+		}
 		dis.send2Client("callStatus",args);
 		break;
 	case  REMOTE_CLOSE :
@@ -525,7 +536,14 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 		args["Status"] = FieldValue(data.result);
 		args["Target"] = FieldValue(data.id);
 		args["Type"] = FieldValue(data.controlType);
+		args["SessionId"] = FieldValue((data.sessionId).c_str());
 		dis.send2Client("controlStatus", args);
+		break;
+	case CONTTROLBROADCAST:
+		args["Status"] = FieldValue(data.result);
+		args["Target"] = FieldValue(data.id);
+		args["Type"] = FieldValue(data.controlType);
+		dis.send2Client("controlResult", args);
 		break;
 	case RADIO_ARS:
 		break;

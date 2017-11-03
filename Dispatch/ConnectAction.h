@@ -28,7 +28,7 @@ void parseRadioCfg(radio_t &cfg,Value json)
 			}
 			if (objRide.HasMember("Host") && objRide["Host"].IsString())
 			{
-				strcpy_s(cfg.Host, json["Host"].GetString());
+				strcpy_s(cfg.Host, objRide["Host"].GetString());
 			}
 			if (objRide.HasMember("MessagePort") && objRide["MessagePort"].IsInt())
 			{
@@ -45,6 +45,10 @@ void parseRadioCfg(radio_t &cfg,Value json)
 			if (objRide.HasMember("XnlPort") && objRide["XnlPort"].IsInt())
 			{
 				cfg.XnlPort = objRide["XnlPort"].GetInt();
+			}
+			if (objRide.HasMember("Mode") && objRide["Mode"].IsInt())
+			{
+				cfg.Mode = objRide["Mode"].GetInt();
 			}
 		}
 	if (json.HasMember("CAI") && json["CAI"].IsInt())
@@ -65,6 +69,10 @@ void parseMnisCfg(mnis_t &cfg, Value json)
 	if (json.HasMember("IsEnable") && json["IsEnable"].IsBool())
 	{
 		cfg.IsEnable = json["IsEnable"].GetBool();
+	}
+	if (json.HasMember("TomeoutSeconds") && json["TomeoutSeconds"].IsInt())
+	{
+		cfg.TomeoutSeconds = json["TomeoutSeconds"].GetInt();
 	}
 	if (json.HasMember("ID") && json["ID"].IsInt())
 	{
@@ -198,7 +206,7 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 			}
 			if (radioCfg.IsEnable)
 			{
-				
+				dis.connect(radioCfg, mnisCfg, locationCfg, locationIndoorCfg);
 			}
 			else
 			{

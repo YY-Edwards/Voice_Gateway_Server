@@ -43,23 +43,23 @@ std::wstring getAppdataPath(){
 }
 int _tmain(int argc, _TCHAR* argv[])
 {
-	system("chcp 65001");
-	system("cls");
+	/*system("chcp 65001");
+	system("cls");*/
 
 	int createFileRlt = 0;
 	TCHAR szBuffer[MAX_PATH];
 	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
-	std::wstring appFolder = getAppdataPath() + ConmpanyName;
+	std::wstring appFolder = getAppdataPath() + _T("\\") + ConmpanyName;
 	if (!PathFileExists(appFolder.c_str()))
 	{
 		createFileRlt = _wmkdir(appFolder.c_str());
 	}
-	appFolder = appFolder + AppName;
+	appFolder = appFolder + _T("\\") + AppName;
 	if (!PathFileExists(appFolder.c_str()))
 	{
 		createFileRlt = _wmkdir(appFolder.c_str());
 	}
-	appFolder = appFolder + AppVersion;
+	appFolder = appFolder + _T("\\") + AppVersion;
 	if (!PathFileExists(appFolder.c_str()))
 	{
 		createFileRlt = _wmkdir(appFolder.c_str());
