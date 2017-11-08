@@ -163,7 +163,8 @@ namespace Manager.ViewModels
         public ICommand Query{get{return new Command(()=>
         {
             RegisterResultVisible = Visibility.Collapsed;
-            if(!_isTimeout && _register != null)_register.QueryLicense();  
+           // if(!_isTimeout && _register != null)_register.QueryLicense();
+            if (_register != null) _register.QueryLicense();  
         });}}
 
         public ICommand SetLicense{get{return new Command((object parameter)=>
@@ -171,7 +172,8 @@ namespace Manager.ViewModels
             RegisterResultVisible = Visibility.Visible;
             RegisterResult = "正在认证...";
            
-            if (_isTimeout || _register == null || !_register.SetLicense(parameter as string))
+            //if (_isTimeout || _register == null || !_register.SetLicense(parameter as string))
+            if ( _register == null || !_register.SetLicense(parameter as string))
             {
                 RegisterResult = "认证失败";
             }

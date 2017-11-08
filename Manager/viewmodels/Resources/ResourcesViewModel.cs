@@ -99,7 +99,8 @@ namespace Manager.ViewModels
 
         public override void Read()
         {
-            if (!_isTimeout && _resources != null) _resources.Read<T>();
+            //if (!_isTimeout && _resources != null) _resources.Read<T>();
+            if (_resources != null) _resources.Read<T>();
         }
 
         public override SaveStatus Save()
@@ -107,7 +108,8 @@ namespace Manager.ViewModels
             SaveStatus status = SaveStatus.Failure;
 
             if (!IsChanged) status = SaveStatus.Skip;
-            else if (!_isTimeout && _resources != null)
+            //else if (!_isTimeout && _resources != null)
+            else if (_resources != null)
             {
                 IsChanged = false;
                 status = _resources.Save() ? SaveStatus.Success : SaveStatus.Failure;

@@ -53,14 +53,16 @@ namespace Manager.ViewModels
      
         public override void Read()
         {
-            if (!_isTimeout && _configure != null) _configure.Read<T>();
+            //if (!_isTimeout && _configure != null)_configure.Read<T>();
+            if (_configure != null)_configure.Read<T>();
         }
         public override SaveStatus Save()
         {
              SaveStatus status = SaveStatus.Failure;
 
             if (!IsChanged) status = SaveStatus.Skip;
-            else if (!_isTimeout && _configure != null)
+            //else if (!_isTimeout && _configure != null)
+            else if (_configure != null)
             {
                 IsChanged = false;
                 status = _configure.Save(_configuration) ? SaveStatus.Success : SaveStatus.Failure;

@@ -117,7 +117,7 @@ namespace Manager.Models
         private long _CallId;
         private Dictionary<long, Request> _RequestList = new Dictionary<long, Request>();
 
-        public Server():base(0,3000,1)
+        public Server()//:base(0,3000,1)
         {
             IsInitialized = false;
 
