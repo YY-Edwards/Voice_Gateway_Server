@@ -56,7 +56,6 @@ namespace Manager.Views
             MainViewModels.ConnectServer.Execute(null);
         }
 
-
         private void WindowClosed(object sender, EventArgs e)
         {
             Environment.Exit(0);
@@ -108,7 +107,8 @@ namespace Manager.Views
 
         public event Action LogToggled;
 
-        public ICommand ToggleLogger { get { return new Command(() => { if (LogToggled != null)LogToggled(); }); } }
+        public ICommand ToggleLogger { get { return new Command(() => { 
+            if (LogToggled != null)LogToggled(); }); } }
 
         #endregion LogToggle
     }

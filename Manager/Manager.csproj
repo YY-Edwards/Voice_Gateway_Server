@@ -55,10 +55,6 @@
       <HintPath>..\packages\Newtonsoft.Json.9.0.1\lib\net40\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Sigmar, Version=1.2.4.23564, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sigmar.1.2.4\lib\net40\Sigmar.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.SQLite, Version=1.0.66.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
@@ -408,6 +404,12 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Views\LocationInDoor\MapControl\Cursors\hand-open.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\PrivateProject\Sigmer\Sigmar\Sigmar.csproj">
+      <Project>{5e124b65-76f0-446a-b62c-b13039e8371c}</Project>
+      <Name>Sigmar</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

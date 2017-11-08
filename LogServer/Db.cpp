@@ -54,7 +54,7 @@ void createStaff(CMySQL* pMySQL)
 						`phone` VARCHAR(45) NULL, \
 						`user` BIGINT, \
 						`valid` INT NOT NULL DEFAULT 1 COMMENT 'staff is valid?', \
-						PRIMARY KEY(`id`) \
+						PRIMARY KEY(`id`)) \
 						ENGINE = InnoDB;"
 						);
 }
@@ -150,7 +150,7 @@ void createBeacons(CMySQL* pMySQL)
 						`rssi` INT NOT NULL DEFAULT 0, \
 						`time_stamp` INT NOT NULL DEFAULT 0, \
 						`valid` INT NOT NULL DEFAULT 0, \
-						`area` INT NOT NULL DEFAULT 0, \
+						`area` BIGINT NOT NULL DEFAULT 0, \
 						`pointx` VARCHAR(210) NOT NULL,\
 						`pointy` VARCHAR(210) NOT NULL,\
 						PRIMARY KEY(`id`))\

@@ -29,8 +29,8 @@ namespace Manager.ViewModels
             LogServer.Instance().StatusChanged += new Action<object, bool>(OnLogServerStatusChanged);
 
             if (ManageListViewModel == null) ManageListViewModel = new ManageListViewModel();
-
         }
+
 
         public string ServerStatus { get { return !_logServerConnected || !_tServerConnected ? "服务未连接" : "已连接服务"; } }
         public Visibility ReconnectBtnVisable { get { return !_logServerConnected || !_tServerConnected ? Visibility.Visible : Visibility.Collapsed; } }
@@ -53,7 +53,7 @@ namespace Manager.ViewModels
             {
                 return new Command(() =>
                 {
-                    if (_tServerConnected && _logServerConnected) ManageListViewModel.SaveManagement.Execute(null);                    
+                    if (ManageListViewModel != null && _tServerConnected && _logServerConnected) ManageListViewModel.SaveManagement.Execute(null);                    
                 });
             }
         }
@@ -74,7 +74,7 @@ namespace Manager.ViewModels
                 NotifyPropertyChanged(new string[] { "ServerStatus", "ReconnectBtnVisable" });
                 if (_tServerConnected && _logServerConnected)
                 {
-                    ManageListViewModel.ReadManagement.Execute(null);
+                    if (ManageListViewModel != null) ManageListViewModel.ReadManagement.Execute(null);
                 }
             }  
         }
@@ -94,7 +94,7 @@ namespace Manager.ViewModels
 
                 if (_tServerConnected && _logServerConnected)
                 {
-                    ManageListViewModel.ReadManagement.Execute(null);
+                    if (ManageListViewModel != null) ManageListViewModel.ReadManagement.Execute(null);
                 }
             }  
         }

@@ -64,20 +64,7 @@ namespace Manager.ViewModels
             DispatchResourcesViewModel = new DispatchResourcesViewModel();
 
             RegisterViewModel = new RegisterViewModel();
-            //_BaseSetting = new BaseSettingView();
-
-            //_RadioSetting = new RadioSettingView();
-            //_RadioSetting.EnableChanged += new Action<object, bool>(OnRadioSettingEnableChanged);
-            //_RadioSetting.QueryTypChanged += new Action<object, LocationQueryType_t>(OnRadioSettingQueryTypChanged);
-
-            //_RepeaterSetting = new RepeaterSettingView();
-            //_RepeaterSetting.EnableChanged += new Action<object, bool>(OnRepeaterSettingEnableChanged);
-
-            //_MnisSetting = new MnisSettingView();
-            //_MnisSetting.QueryTypChanged += new Action<object, LocationQueryType_t>(OnMnisSettingQueryTypChanged);
-
-            //_LocationSetting = new LocationSettingView();
-            //_LocationInDoorSetting = new LocationInDoorSettingView();
+            
 
             InitializeElements(this.GetType());
           
@@ -181,7 +168,7 @@ namespace Manager.ViewModels
             {
                 return new Command(() =>
                 {
-                    RegisterViewModel.Query.Execute(null);
+                    if (RegisterViewModel!=null) RegisterViewModel.Query.Execute(null);
                     Read();  
                 });
             }
