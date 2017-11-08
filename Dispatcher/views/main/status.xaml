@@ -4,29 +4,31 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar" 
+            xmlns:ctrl="clr-namespace:Dispatcher.Controls"
              xmlns:ViewsModules="clr-namespace:Dispatcher.ViewsModules" 
              xmlns:svr="clr-namespace:Dispatcher.Service"
              x:Class="Dispatcher.Views.Status" 
              mc:Ignorable="d" 
-             d:DesignHeight="30" d:DesignWidth="600">
+             d:DesignHeight="30" d:DesignWidth="600">    
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="200"/>
             <ColumnDefinition Width="auto"/>
         </Grid.ColumnDefinitions>
-        
+
         <StackPanel  Orientation="Horizontal" VerticalAlignment="Center">
             <Image Height="15" VerticalAlignment="Center" Width="19" Source="/TrboX;component/resource/images/notice_19_15_n.png" Margin="15,0,8,0"/>
-            <TextBlock  Text="{Binding StatusContent, Mode=OneWay}" VerticalAlignment="Center" Foreground="#FFABABAB"/>
-            <Button Content="重新连接" Height="24" VerticalAlignment="Center" Width="90" HorizontalAlignment="Right" Style="{DynamicResource ButtonNormalStyle}" Tag="4" Foreground="#FFCFCFCF" FontSize="14" FontFamily="Hiragino Sans GB W3" BorderBrush="#FF5C5C5D" Background="#FF3B3B3D"  Margin="10,0,0,0" Visibility="{Binding ReconnectedVisible, Mode=OneWay}" Command="{Binding Reconnect, Mode=OneWay}" />
+            <ctrl:LoadIcon Visibility="{Binding WaitVisible, Mode=OneWay}" Width="16" Height="16" Margin="0,0,8,0" Opacity="0.6" />
+            <TextBlock  Text="{Binding StatusContent, Mode=OneWay}" VerticalAlignment="Center" Foreground="#FFABABAB"/>           
+            <Button Content="重新连接" Height="24" VerticalAlignment="Center" Width="90" HorizontalAlignment="Right" Style="{DynamicResource ButtonNormalStyle}" Tag="4" Foreground="#FFCFCFCF" FontSize="14" FontFamily="Hiragino Sans GB W3" BorderBrush="#FF5C5C5D" Background="#FF3B3B3D"  Margin="10,0,0,0" Visibility="{Binding ReconnectedVisible, Mode=OneWay}" Command="{Binding Reconnect, Mode=OneWay}" />           
         </StackPanel>
 
         <StackPanel  Visibility="{x:Static svr:FunctionConfigure.ExportVisible}" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
             <Label x:Name="lab_PrcessName" Content="正在导出：" VerticalAlignment="Center" VerticalContentAlignment="Center" Foreground="#FFABABAB"/>
             <ProgressBar x:Name="pg_StstauPg" Height="11" Width="120" VerticalAlignment="Center" Margin="-2,1,0,0" Style="{DynamicResource ProgressBarStatusStyle}"/>
         </StackPanel>
-      
+
         <TextBlock  Text="{Binding SystemTime,StringFormat='yyyy-MM-dd HH:mm:ss'}" VerticalAlignment="Center"  Margin="0,2,5,2" Foreground="#FFABABAB" HorizontalAlignment="Right" Grid.Column="2" Width="128"/>
     </Grid>
 </UserControl>

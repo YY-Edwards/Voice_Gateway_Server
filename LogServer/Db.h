@@ -47,27 +47,28 @@ public:
 	int checkDbVersion();
 	const char* getLastError() const;
 	bool auth(const char* username, const char* password);
-	bool insertUser(const char* name, const char* phone, const char* username, const char* password, const char* authority, const char* type);
+	bool insertUser(long long id,  const char* username, const char* password, const char* authority, const char* type);
 	bool updateRadio(const char* condition, recordType& val);
 	bool updateStaff(const char* condition, recordType& val);
 	bool updateUser(const char* condition, recordType& val);
-	bool insertDepartment(const char* name, int gid);
-	bool updateDepartment(int id, const char* name, int gid);
+	bool insertDepartment(long long id, const char* name, int gid);
+	bool updateDepartment(long long id, const char* name, int gid);
 	int listUser(const char* condition, std::list<recordType>& records);
 	int listStaff(const char* condition, std::list<recordType>& records);
 	int listRadio(const char* condition, std::list<recordType>& records);
-	int getUserIdByStaffId(int staffId);
-	bool detachUser(int userId, int departmentId);
-	bool assignUser(int userId, int departmentId);
-	bool assignDepartmentRadio(int radioId, int departmentId);
-	bool detachDepartmentRadio(int radioId, int departmentId);
-	bool listDepartmentStaff(int departmentId, std::list<recordType>& records);
-	bool listStaffRadio(int staffId, std::list<recordType>& records);
-	bool listDepartmentRadio(int departmentId, std::list<recordType>& records);
-	bool assignStaffRadio(int staffId, int radioId);
-	bool detachStaffRadio(int staffId, int radioId);
-	bool insertRadio(const char* radioId, int type, const char* sn, int screen = 0, int gps = 0, int keyboard=0 );
-	bool insertStaff(const char* name, const char* phone, bool isStaff = true);
+	int getUserIdByStaffId(long long staffId);
+	bool detachUser(long long userId, long long departmentId);
+	bool assignUser(long long userId, long long departmentId);
+	bool assignDepartmentRadio(long long radioId, long long departmentId);
+	bool detachDepartmentRadio(long long radioId, long long departmentId);
+	bool listDepartmentStaff(long long departmentId, std::list<recordType>& records);
+	bool listStaffRadio(long long staffId, std::list<recordType>& records);
+	bool listDepartmentRadio(long long departmentId, std::list<recordType>& records);
+	bool assignStaffRadio(long long staffId, long long radioId);
+	bool detachStaffRadio(long long staffId, long long radioId);
+	bool insertRadio(long long id, const char* radioId, int type, const char* sn, int screen = 0, int gps = 0, int keyboard = 0);
+	bool insertStaff(long long id, const char* name, const char* phone, bool isStaff = true);
+
 	bool insertSmsLog(int source, int destination, const char* message, int is_ticket = 0);
 	bool insertGpsLog(int radio, float latitude, float longitude, float velocity, float altitude = 0.0f);
 
@@ -75,10 +76,11 @@ public:
 	int count(const char* table, const char* condition);
 	bool del(const char* table, const char* condition);
 
-	bool insertArea(const char* name, const char* map, const char* width, const char* height);
+	bool insertArea(long long id, const char* name, const char* map, const char* width, const char* height);
 	bool updateArea(const char* condition, recordType& val);
 
 	bool insertIBeacon(
+		long long id,
 		const char* name,
 		const char* uuid,
 		int major,
@@ -91,6 +93,7 @@ public:
 		const char* pointx,
 		const char* pointy
 		);
+
 	bool updateIBeacon(const char* condition, recordType& val);
 	bool insertLocationIndoor(int source, int major, int minor, int timestamp, int rssi, int txpower, std::string uuid);
 	int listLocation(const char* condition, std::list<recordType>& records);

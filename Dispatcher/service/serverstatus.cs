@@ -14,6 +14,7 @@ namespace Dispatcher.Service
         private static readonly object lockHelper = new object();
 
         public event EventHandler StatusChanged;
+        public event Action<object ,bool> WaitStatusChanged;
 
         public static ServerStatus Instance()
         {
@@ -34,7 +35,7 @@ namespace Dispatcher.Service
         public ServerStatus_t VehicleStation { get; set; }
         public ServerStatus_t Mnis { get; set; }
 
-        public ServerStatus()
+        private ServerStatus()
         {
             TServer = new ServerStatus_t();
             LogServer = new ServerStatus_t();
@@ -44,19 +45,23 @@ namespace Dispatcher.Service
         }
 
 
+        public void SetWaitStatus(bool iswait)
+        {
+            if(WaitStatusChanged !=null) WaitStatusChanged(this, iswait);           
+        }
+
         public ServerStatus_t VoiceBusiness
         {
             get
             {
-                switch (RunAccess.Mode)
+                switch (FunctionConfigure.WorkMode)
                 {
-                    case RunAccess.Mode_t.LCP:
-                    case RunAccess.Mode_t.CPC:
-                    case RunAccess.Mode_t.IPSC:
+                    case FunctionConfigure.Mode_t.Repeater:
+                    case FunctionConfigure.Mode_t.RepeaterWithMnis:
                         if (!TServer.IsConnected) return new ServerStatus_t(Repeater.Host, Repeater.Port,false);
-                        else return Repeater;                      
-                    case RunAccess.Mode_t.VehicleStation:
-                    case RunAccess.Mode_t.VehicleStationWithMnis:
+                        else return Repeater;
+                    case FunctionConfigure.Mode_t.VehicleStation:
+                    case FunctionConfigure.Mode_t.VehicleStationWithMnis:
                         if (!TServer.IsConnected) return new ServerStatus_t(VehicleStation.Host, VehicleStation.Port, false);
                         else return VehicleStation;   
                     default:
@@ -69,17 +74,17 @@ namespace Dispatcher.Service
         {
             get
             {
-                switch (RunAccess.Mode)
+                switch (FunctionConfigure.WorkMode)
                 {
-                    case RunAccess.Mode_t.LCP:
-                    case RunAccess.Mode_t.CPC:
-                    case RunAccess.Mode_t.IPSC:
-                    case RunAccess.Mode_t.VehicleStationWithMnis:
+
+                    case FunctionConfigure.Mode_t.RepeaterWithMnis:
+                    case FunctionConfigure.Mode_t.VehicleStationWithMnis:
                         if (!TServer.IsConnected) return new ServerStatus_t(Mnis.Host, Mnis.Port, false);
-                        else return Mnis;   
-                    case RunAccess.Mode_t.VehicleStation:
+                        else return Mnis;
+                    case FunctionConfigure.Mode_t.VehicleStation:
                         if (!TServer.IsConnected) return new ServerStatus_t(VehicleStation.Host, VehicleStation.Port, false);
                         else return VehicleStation;
+                    case FunctionConfigure.Mode_t.Repeater:
                     default:
                         return new ServerStatus_t("", 0, false);
                 }

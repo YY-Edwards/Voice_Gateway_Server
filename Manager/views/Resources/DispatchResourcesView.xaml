@@ -1,0 +1,24 @@
+﻿<Views:ManageView
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:Views="clr-namespace:Manager.Views" 
+             xmlns:ViewModels="clr-namespace:Manager.ViewModels" x:Class="Manager.Views.DispatchResourcesView" 
+             mc:Ignorable="d" 
+             d:DesignHeight="900" d:DesignWidth="650" Title="资源管理">
+    <Views:ManageView.DataContext>
+        <ViewModels:DispatchResourcesViewModel/>
+    </Views:ManageView.DataContext>
+    <DockPanel>
+        <DockPanel DockPanel.Dock="Top"  Margin="0,20">
+            <Views:GroupManagerView DataContext="{Binding GroupListViewModel, Mode=OneWay}" DockPanel.Dock="Top"></Views:GroupManagerView>
+        </DockPanel>
+        <DockPanel  DockPanel.Dock="Top"  Margin="0,20">
+            <Views:StaffManagerView DataContext="{Binding StaffsViewModel, Mode=OneWay}" DockPanel.Dock="Top"></Views:StaffManagerView>
+        </DockPanel>
+        <DockPanel  DockPanel.Dock="Top"  Margin="0,20">
+            <Views:RadioManagerView DataContext="{Binding RadiosViewModel, Mode=OneWay}" DockPanel.Dock="Top"></Views:RadioManagerView>
+        </DockPanel>
+    </DockPanel>
+</Views:ManageView>

@@ -11,6 +11,7 @@ using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
+using Manager.Models;
 
 namespace Manager
 {
@@ -195,11 +196,11 @@ namespace Manager
             try
             {
                 long id = (long)value[0];
-                List<CRElement> list = new List<CRElement>(((ObservableCollection<CRElement>)value[1]).ToList());
+                //List<RElement> list = new List<RElement>(((ObservableCollection<RElement>)value[1]).ToList());
 
-                int index = list.FindIndex(p => p.ID == id);
+                //int index = list.FindIndex(p => p.ID == id);
 
-                return index;
+                return -1;
             }
             catch
             {
@@ -219,7 +220,7 @@ namespace Manager
         {
             try
             {
-                CArea area = value as CArea;
+                Area area = value as Area;
                 if(System.IO.File.Exists(area.LocalPath))
                 {
                     return area.LocalPath;

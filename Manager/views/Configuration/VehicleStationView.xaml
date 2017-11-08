@@ -1,0 +1,175 @@
+﻿<Views:ManageView
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"             
+             xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+             xmlns:Local="clr-namespace:Manager"
+             xmlns:ViewModels="clr-namespace:Manager.ViewModels"
+             xmlns:Views="clr-namespace:Manager.Views" 
+             x:Class="Manager.Views.VehicleStationView"
+             mc:Ignorable="d" 
+             d:DesignHeight="1000" d:DesignWidth="600"
+             Title="车载台">
+    <DockPanel >
+        <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,20">
+            <DockPanel Height="24"  DockPanel.Dock="Top">
+                <Image Height="10" VerticalAlignment="Center" Width="13" Source="../images/double_arrow_13_10.png"/>
+                <Label Content="常规" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+            </DockPanel>
+            <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+            <TextBlock TextWrapping="Wrap" Text="使能/禁用车载台调度功能，使能该功能将禁用中继台功能" Margin="20,6,0,6" Width="551.087" DockPanel.Dock="Top" HorizontalAlignment="Left" Foreground="#FFBFBFBF" FontSize="13"/>
+            <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Height="36">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="134"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <CheckBox x:Name="checkRadioEnable" Content="　车载台调度"  HorizontalAlignment="Left" VerticalAlignment="Center"  Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" Grid.Column="1" IsChecked="{Binding IsEnable}" />
+            </Grid>
+
+            <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0" Height="36">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="134"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="车载台ID :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" VerticalContentAlignment="Center" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" Foreground="#FFBFBFBF" Text="{Binding RideID}"/>
+            </Grid>
+            <TextBlock TextWrapping="Wrap" Text="选择车载台工作方式" DockPanel.Dock="Top" Margin="20,6,0,6" Foreground="#FFBFBFBF" FontSize="13"/>
+
+            <Grid x:Name="WorkModeContainer" VerticalAlignment="Top"  DockPanel.Dock="Top" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="134"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <RadioButton x:Name="GeneralMode"  Content="常规模式" Tag="General" HorizontalAlignment="Left" VerticalAlignment="Center"  Foreground="#FFBFBFBF" FontSize="13" Grid.Column="1" Style="{DynamicResource RadioButtonStylenORMAL}" BorderThickness="0" GroupName="RadioWorkMode" IsChecked="{Binding GeneralMode, Mode=OneWay}"/>
+                <RadioButton x:Name="ClusterMode"  Content="集群模式" Tag="Cluster" VerticalAlignment="Center" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Grid.Row="1" Style="{DynamicResource RadioButtonStylenORMAL}" HorizontalAlignment="Left" Width="150" BorderThickness="0"  GroupName="RadioWorkMode" IsChecked="{Binding CSBKQuery, Mode=OneWay}" />
+            </Grid>
+
+            <TextBlock TextWrapping="Wrap" Text="车载台服调度服务地址" DockPanel.Dock="Top" Margin="20,6,0,6" Foreground="#FFBFBFBF" FontSize="13"/>
+            <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0" Height="36">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="134"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="IP地址 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263"  IsEnabled="False" Height="30" Style="{DynamicResource TextBoxStyleNormal}" VerticalContentAlignment="Center" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" Foreground="#FFBFBFBF" Text="{Binding SvrIp}"/>
+            </Grid>
+
+            <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0" Height="36">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="134"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                <TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0,1" VerticalAlignment="Center" Grid.Column="1" Width="263"  IsEnabled="False" Grid.ColumnSpan="2" Height="30" Style="{DynamicResource TextBoxStyleNormal}" VerticalContentAlignment="Center" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" Foreground="#FFBFBFBF" Text="{Binding SvrPort}"/>
+            </Grid>
+        </DockPanel>
+
+
+        <DockPanel LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,20"  >
+            <DockPanel Height="24"  DockPanel.Dock="Top">
+                <Image Height="10" VerticalAlignment="Center" Width="13" Source="../images/double_arrow_13_10.png"/>
+                <Label Content="网络" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+            </DockPanel>
+            <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
+            <TextBlock TextWrapping="Wrap" Text="该时间用于车载台指令超时判断，当指令响应时间大于改值时表示车载台超时，单位为秒（s）" DockPanel.Dock="Top" Margin="20,6,0,6" Foreground="#FFBFBFBF" FontSize="13"/>
+            <Grid DockPanel.Dock="Top" VerticalAlignment="Top"  Height="36">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="134"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="指令超时阈值 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13" Text="{Binding TomeoutSeconds}" />
+            </Grid>
+
+            <TextBlock TextWrapping="Wrap" Text="该地址用于设备（车载台）连接" DockPanel.Dock="Top" Margin="20,6,0,6" Foreground="#FFBFBFBF" FontSize="13"/>
+            <Grid DockPanel.Dock="Top" VerticalAlignment="Top"  Height="36">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="134"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="IP地址 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13" Text="{Binding RideIHost}" />
+            </Grid>
+
+            <Grid DockPanel.Dock="Top" VerticalAlignment="Top"  Height="36">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="134"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="ARS端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
+                <TextBox TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263"  Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13" Text="{Binding RideArsPort}"/>
+            </Grid>
+            <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Height="36">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="134"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="短信端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13" />
+                <TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13" Text="{Binding RideMessagePort}"/>
+            </Grid>
+            <Grid DockPanel.Dock="Top" VerticalAlignment="Top"  Height="36" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="134"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="GPS端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13" />
+                <TextBox IsEnabled="False"  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263"  Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13" Text="{Binding RideGpsPort}"/>
+            </Grid>
+            <Grid DockPanel.Dock="Top" VerticalAlignment="Top"  Height="36">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="134"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="XCMP端口 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13" />
+                <TextBox IsEnabled="False"  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" VerticalContentAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF1D1D1F" FontSize="13" Text="{Binding RideXnlPort}"/>
+            </Grid>
+        </DockPanel>
+
+        <DockPanel  LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,20" >
+            <DockPanel Height="24" DockPanel.Dock="Top" >
+                <Image Height="10" VerticalAlignment="Center" Width="13" Source="../images/double_arrow_13_10.png"/>
+                <Label Content="对讲机网络" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+            </DockPanel>
+            <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E" Width="618.762"/>
+            <Grid DockPanel.Dock="Top" VerticalAlignment="Top"  Height="36">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="134"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="CAI网络 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF"/>
+                <TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" SelectionBrush="#FF1D1D1F" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" FontSize="13" Text="{Binding CAI}" />
+            </Grid>
+            <Grid DockPanel.Dock="Top" VerticalAlignment="Top"  Height="36">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="134"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Label Content="CAI组网络 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF"/>
+                <TextBox  TextWrapping="Wrap" HorizontalAlignment="Left" Padding="0,2.5" Margin="0" VerticalAlignment="Center" Grid.Column="1" Width="263" Height="30" Style="{DynamicResource TextBoxStyleNormal}" SelectionBrush="#FF1D1D1F" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" FontSize="13" Text="{Binding GroupCAI}" />
+            </Grid>
+            <TextBlock TextWrapping="Wrap" Text="选择位置查询方式" DockPanel.Dock="Top" Margin="20,6,0,6" Foreground="#FFBFBFBF" FontSize="13"/>
+
+            <Grid x:Name="QueryTypeContainer" VerticalAlignment="Top"  DockPanel.Dock="Top" >
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                    <RowDefinition Height="30"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="134"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <RadioButton x:Name="GeneralQuery"  Content="普通查询" Tag="General" HorizontalAlignment="Left" VerticalAlignment="Center"  Foreground="#FFBFBFBF" FontSize="13" Grid.Column="1" Style="{DynamicResource RadioButtonStylenORMAL}" BorderThickness="0" GroupName="RadioQueryType" IsChecked="{Binding GeneralQuery, Mode=OneWay}"/>
+                <RadioButton x:Name="CSBKQuery"  Content="CSBK查询" Tag="CSBK" VerticalAlignment="Center" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Grid.Row="1" Style="{DynamicResource RadioButtonStylenORMAL}" HorizontalAlignment="Left" Width="150" BorderThickness="0"  GroupName="RadioQueryType" IsChecked="{Binding CSBKQuery, Mode=OneWay}" />
+                <RadioButton x:Name="EnhCSBKQuery"  Content="CSBK增强型查询" Tag="EnhCSBK" VerticalAlignment="Center" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Grid.Row="2" Style="{DynamicResource RadioButtonStylenORMAL}" HorizontalAlignment="Left" Width="150" BorderThickness="0"  GroupName="RadioQueryType" IsChecked="{Binding EnhCSBKQuery, Mode=OneWay}" />
+            </Grid>
+        </DockPanel>
+    </DockPanel>
+</Views:ManageView>

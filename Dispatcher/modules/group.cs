@@ -13,7 +13,7 @@ namespace Dispatcher.Modules
     {
         public CallStatus_t CallStatus { get; set; }
 
-        public int ID { get; set; }
+        public long ID { get; set; }
         public int GroupID { get; set; }
         public string Name { get; set; }       
         public string ByName { get; set; }//for all target

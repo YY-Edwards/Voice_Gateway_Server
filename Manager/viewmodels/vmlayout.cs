@@ -8,17 +8,19 @@ using System.Windows.Media;
 using System.Windows.Interop;
 using System.Collections.Generic;
 
+using Sigmar;
+
 namespace Manager
 {
     public class CVMLayout : INotifyPropertyChanged
     {
+
+
+
         //Command
         #region
         public ICommand Load { get { return new CDelegateCommand(LoadWin); } }
-        public ICommand Move { get { return new CDelegateCommand(MoveWin); } }
-        public ICommand Minimize { get { return new CDelegateCommand(MinWin); } }
-        public ICommand Close { get { return new CDelegateCommand(CloseWin); } }
-        public ICommand Exit { get { return new CDelegateCommand(ExitApp); } }
+       
         public ICommand Save { get { return new CDelegateCommand(SaveData); } }
 
         public ICommand ConnectServer { get { return new CDelegateCommand(ReConnectServer); } }
@@ -42,12 +44,6 @@ namespace Manager
         public int TabIndex { get { return m_TabIndex; } }
 
 
-        private Visibility m_MaskVisible = Visibility.Hidden;
-        public Visibility MaskVisible { get { return m_MaskVisible; } }
-
-        private string m_MaskText = string.Empty;
-        public string MaskText { get { return m_MaskText; } }
-
         #endregion
         public event PropertyChangedEventHandler PropertyChanged;
 
@@ -64,40 +60,40 @@ namespace Manager
         #region
 
         //configuration
-        private CVMBaseSetting m_BaseSettingDataContext = new CVMBaseSetting();
-        public CVMBaseSetting BaseSettingDataContext { get { return m_BaseSettingDataContext; } }
+        //private CVMBaseSetting m_BaseSettingDataContext = new CVMBaseSetting();
+        //public CVMBaseSetting BaseSettingDataContext { get { return m_BaseSettingDataContext; } }
 
-        private CVMRadioSetting m_RadioSettingDataContext = new CVMRadioSetting();
-        public CVMRadioSetting RadioSettingDataContext { get { return m_RadioSettingDataContext; } }
+        //private CVMRadioSetting m_RadioSettingDataContext = new CVMRadioSetting();
+        //public CVMRadioSetting RadioSettingDataContext { get { return m_RadioSettingDataContext; } }
 
-        private CVMRepeaterSetting m_RepeaterSettingDataContext = new CVMRepeaterSetting();
-        public CVMRepeaterSetting RepeaterSettingDataContext { get { return m_RepeaterSettingDataContext; } }
+        //private CVMRepeaterSetting m_RepeaterSettingDataContext = new CVMRepeaterSetting();
+        //public CVMRepeaterSetting RepeaterSettingDataContext { get { return m_RepeaterSettingDataContext; } }
 
 
-        private CVMRegister m_RegisterDataContext = new CVMRegister();
-        public CVMRegister RegisterDataContext { get { return m_RegisterDataContext; } }
+        //private CVMRegister m_RegisterDataContext = new CVMRegister();
+        //public CVMRegister RegisterDataContext { get { return m_RegisterDataContext; } }
 
-        private CVMLocationInDoorSetting m_LocationInDoorDataContext = new CVMLocationInDoorSetting();
-        public CVMLocationInDoorSetting LocationInDoorDataContext { get { return m_LocationInDoorDataContext; } }
+        //private CVMLocationInDoorSetting m_LocationInDoorDataContext = new CVMLocationInDoorSetting();
+        //public CVMLocationInDoorSetting LocationInDoorDataContext { get { return m_LocationInDoorDataContext; } }
       
         //resource
-        private CVMUser m_UserDataContext = new CVMUser();
-        public CVMUser UserDataContext { get { return m_UserDataContext; } }
+        //private CVMUser m_UserDataContext = new CVMUser();
+        //public CVMUser UserDataContext { get { return m_UserDataContext; } }
 
-        private CVMDepartment m_DepartmentDataContext = new CVMDepartment();
-        public CVMDepartment DepartmentDataContext { get { return m_DepartmentDataContext; } }
+        //private CVMDepartment m_DepartmentDataContext = new CVMDepartment();
+        //public CVMDepartment DepartmentDataContext { get { return m_DepartmentDataContext; } }
 
-        private CVMStaff m_StaffDataContext = new CVMStaff();
-        public CVMStaff StaffDataContext { get { return m_StaffDataContext; } }
+        //private CVMStaff m_StaffDataContext = new CVMStaff();
+        //public CVMStaff StaffDataContext { get { return m_StaffDataContext; } }
 
-        private CVMRadio m_RadioDataContext = new CVMRadio();
-        public CVMRadio RadioDataContext { get { return m_RadioDataContext; } }
+        //private CVMRadio m_RadioDataContext = new CVMRadio();
+        //public CVMRadio RadioDataContext { get { return m_RadioDataContext; } }
 
-        private CVMArea m_AreaDataContext = new CVMArea();
-        public CVMArea AreaDataContext { get { return m_AreaDataContext; } }
+        //private CVMArea m_AreaDataContext = new CVMArea();
+        //public CVMArea AreaDataContext { get { return m_AreaDataContext; } }
 
-        private CVMiBeacon m_iBeaconDataContext = new CVMiBeacon();
-        public CVMiBeacon iBeaconDataContext { get { return m_iBeaconDataContext; } }
+        //private CVMiBeacon m_iBeaconDataContext = new CVMiBeacon();
+        //public CVMiBeacon iBeaconDataContext { get { return m_iBeaconDataContext; } }
 
         private void LoadWin(object parameter)
         {
@@ -117,8 +113,8 @@ namespace Manager
                 PropertyChanged(this, new PropertyChangedEventArgs("iBeaconDataContext"));
             }
 
-            InitializeTServer();
-            InitializeLogServer();
+            //InitializeTServer();
+            //InitializeLogServer();
 
             if (parameter == null) return;
 
@@ -141,7 +137,7 @@ namespace Manager
                     break;
                 case 0x8023:
                   
-                    m_iBeaconDataContext.UpdateiBeacon();
+                    //m_iBeaconDataContext.UpdateiBeacon();
                     break;
                 default: break;
             }
@@ -150,29 +146,29 @@ namespace Manager
 
 
 
-        private void InitializeTServer()
-        {
-            if (!CTServer.Instance().IsInitialized)
-            {
-                CTServer.Instance().OnReceiveRequest += delegate { };
-                CTServer.Instance().OnStatusChanged += OnTServerChanged;
-                CTServer.Instance().Timeout += OnTimeout;
-            }
-            CTServer.Instance().Initialize();  
+        //private void InitializeTServer()
+        //{
+        //    if (!CTServer.Instance().IsInitialized)
+        //    {
+        //        CTServer.Instance().OnReceiveRequest += delegate { };
+                //CTServer.Instance().OnStatusChanged += OnTServerChanged;
+        //        CTServer.Instance().Timeout += OnTimeout;
+        //    }
+        //    CTServer.Instance().Initialize();  
 
-        }
+        //}
 
-        private void InitializeLogServer()
-        {
-            if (!CLogServer.Instance().IsInitialized)
-            {
-                CLogServer.Instance().OnReceiveRequest += delegate { };
-                CLogServer.Instance().OnStatusChanged += OnLogServerChanged;
-                CLogServer.Instance().Timeout += OnTimeout;
-            }
+        //private void InitializeLogServer()
+        //{
+        //    if (!CLogServer.Instance().IsInitialized)
+        //    {
+        //        CLogServer.Instance().OnReceiveRequest += delegate { };
+        //        CLogServer.Instance().OnStatusChanged += OnLogServerChanged;
+        //        CLogServer.Instance().Timeout += OnTimeout;
+        //    }
 
-            CLogServer.Instance().Initialize();
-        }
+        //    CLogServer.Instance().Initialize();
+        //}
 
         private bool istimeout = false;
         private void  OnTimeout(object sender, EventArgs e)
@@ -180,217 +176,186 @@ namespace Manager
             istimeout = true;
         }
 
-        private void MoveWin(object parameter)
-        {
-            if (parameter == null || !(parameter is Main)) return;
-            Main mainWindows = parameter as Main;
-            mainWindows.DragMove();
-        }
-
-        private void MinWin(object parameter)
-        {
-            if (parameter == null || !(parameter is Main)) return;
-            Main mainWindows = parameter as Main;
-            mainWindows.WindowState = System.Windows.WindowState.Minimized;
-        }
-
-        private void CloseWin(object parameter)
-        {
-            if (parameter == null || !(parameter is Main)) return;
-            Main mainWindows = parameter as Main;
-            mainWindows.Close();
-        }
-
-        private void ExitApp()
-        {
-            Environment.Exit(0);
-        }
 
         private void SaveData(object parameter)
         {
             try
             {
-                if (parameter == null || !(parameter is Main)) return;
-                Main mainwin = parameter as Main;
+                //if (parameter == null || !(parameter is Main)) return;
+                //Main mainwin = parameter as Main;
 
-                Notify notify = new Notify();
-                notify.Owner = mainwin;
+                //Notify notify = new Notify();
+                //notify.Owner = mainwin;
 
                 new Thread(new ThreadStart(delegate()
                 {
 
-                    mainwin.Dispatcher.BeginInvoke((Action)delegate()
-                    {
-                        CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
-                        if (cmvnotify != null) 
-                        {
-                            cmvnotify.SetEnterEnable(false);
-                            cmvnotify.AppendNotify("保存基本配置...");
-                        }
-                    });
+                    //mainwin.Dispatcher.BeginInvoke((Action)delegate()
+                    //{
+                    //    CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
+                    //    if (cmvnotify != null) 
+                    //    {
+                    //        cmvnotify.SetEnterEnable(false);
+                    //        cmvnotify.AppendNotify("保存基本配置...");
+                    //    }
+                    //});
 
                     //save basesetting
-                    m_BaseSettingDataContext.Set();
+                    //m_BaseSettingDataContext.Set();
                     //System.Threading.Thread.Sleep(100);
 
-                    mainwin.Dispatcher.BeginInvoke((Action)delegate()
-                    {
-                        CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
-                        if (cmvnotify != null)
-                        {
-                            cmvnotify.AppendNotify("完成");
-                            cmvnotify.AppendNotify("保存Radio调度配置...");
-                        }
-                    });
+                    //mainwin.Dispatcher.BeginInvoke((Action)delegate()
+                    //{
+                    //    CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
+                    //    if (cmvnotify != null)
+                    //    {
+                    //        cmvnotify.AppendNotify("完成");
+                    //        cmvnotify.AppendNotify("保存Radio调度配置...");
+                    //    }
+                    //});
 
                     //save radiosetting
-                    m_RadioSettingDataContext.Set();
+                    //m_RadioSettingDataContext.Set();
                     //System.Threading.Thread.Sleep(100);
 
-                    mainwin.Dispatcher.BeginInvoke((Action)delegate()
-                    {
-                        CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
-                        if (cmvnotify != null)
-                        {
-                            cmvnotify.AppendNotify("完成");
-                            cmvnotify.AppendNotify("保存WireLan调度配置...");
-                        }
-                    });
+                    //mainwin.Dispatcher.BeginInvoke((Action)delegate()
+                    //{
+                    //    CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
+                    //    if (cmvnotify != null)
+                    //    {
+                    //        cmvnotify.AppendNotify("完成");
+                    //        cmvnotify.AppendNotify("保存WireLan调度配置...");
+                    //    }
+                    //});
 
                     //save repeatersetting
-                    m_RepeaterSettingDataContext.Set();
+                    //m_RepeaterSettingDataContext.Set();
                     //System.Threading.Thread.Sleep(100);
 
-                    mainwin.Dispatcher.BeginInvoke((Action)delegate()
-                    {
-                        CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
-                        if (cmvnotify != null)
-                        {
-                            cmvnotify.AppendNotify("完成");
-                            cmvnotify.AppendNotify("保存室内定位配置...");
-                        }
-                    });
+                    //mainwin.Dispatcher.BeginInvoke((Action)delegate()
+                    //{
+                    //    CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
+                    //    if (cmvnotify != null)
+                    //    {
+                    //        cmvnotify.AppendNotify("完成");
+                    //        cmvnotify.AppendNotify("保存室内定位配置...");
+                    //    }
+                    //});
 
                     //save locationinddoorsetting
-                    m_LocationInDoorDataContext.Set();
+                    //m_LocationInDoorDataContext.Set();
                     //System.Threading.Thread.Sleep(100);
 
-                    mainwin.Dispatcher.BeginInvoke((Action)delegate()
-                    {
-                        CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
-                        if (cmvnotify != null)
-                        {
-                            cmvnotify.AppendNotify("完成");
-                            cmvnotify.AppendNotify("保存用户信息...");
-                        }
-                    });
+                    //mainwin.Dispatcher.BeginInvoke((Action)delegate()
+                    //{
+                    //    CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
+                    //    if (cmvnotify != null)
+                    //    {
+                    //        cmvnotify.AppendNotify("完成");
+                    //        cmvnotify.AppendNotify("保存用户信息...");
+                    //    }
+                    //});
 
                     //save user
-                    m_UserDataContext.Set();
+                    //m_UserDataContext.Set();
                     //Thread.Sleep(100);
-                    m_UserDataContext.Get();
+                    //m_UserDataContext.Get();
                     //System.Threading.Thread.Sleep(100);
 
-                    mainwin.Dispatcher.BeginInvoke((Action)delegate()
-                    {
-                        CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
-                        if (cmvnotify != null)
-                        {
-                            cmvnotify.AppendNotify("完成");
-                            cmvnotify.AppendNotify("保存组信息...");
-                        }
-                    });
+                    //mainwin.Dispatcher.BeginInvoke((Action)delegate()
+                    //{
+                    //    CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
+                    //    if (cmvnotify != null)
+                    //    {
+                    //        cmvnotify.AppendNotify("完成");
+                    //        cmvnotify.AppendNotify("保存组信息...");
+                    //    }
+                    //});
 
                     //save department
-                    m_DepartmentDataContext.Set();
+                    //m_DepartmentDataContext.Set();
                     //Thread.Sleep(100);                
-                    m_DepartmentDataContext.Get();
+                    //m_DepartmentDataContext.Get();
                     //System.Threading.Thread.Sleep(100);
 
-                    mainwin.Dispatcher.BeginInvoke((Action)delegate()
-                    {
-                        CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
-                        if (cmvnotify != null)
-                        {
-                            cmvnotify.AppendNotify("完成");
-                            cmvnotify.AppendNotify("保存员工信息...");
-                        }
-                    });
+                    //mainwin.Dispatcher.BeginInvoke((Action)delegate()
+                    //{
+                    //    CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
+                    //    if (cmvnotify != null)
+                    //    {
+                    //        cmvnotify.AppendNotify("完成");
+                    //        cmvnotify.AppendNotify("保存员工信息...");
+                    //    }
+                    //});
 
                     //save staff
-                    m_StaffDataContext.Set();
+                    //m_StaffDataContext.Set();
                     //Thread.Sleep(100);
-                    m_StaffDataContext.AssignDetach(m_DepartmentDataContext.DepartmentList);
-                    m_StaffDataContext.Get();
+                    //m_StaffDataContext.AssignDetach(m_DepartmentDataContext.DepartmentList);
+                    //m_StaffDataContext.Get();
                     //System.Threading.Thread.Sleep(100);
 
-                    mainwin.Dispatcher.BeginInvoke((Action)delegate()
-                    {
-                        CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
-                        if (cmvnotify != null)
-                        {
-                            cmvnotify.AppendNotify("完成");
-                            cmvnotify.AppendNotify("保存终端信息...");
-                        }
-                    });
+                    //mainwin.Dispatcher.BeginInvoke((Action)delegate()
+                    //{
+                    //    CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
+                    //    if (cmvnotify != null)
+                    //    {
+                    //        cmvnotify.AppendNotify("完成");
+                    //        cmvnotify.AppendNotify("保存终端信息...");
+                    //    }
+                    //});
 
                     //save radio
-                    m_RadioDataContext.Set();
+                    //m_RadioDataContext.Set();
                     //Thread.Sleep(100);
-                    m_RadioDataContext.AssignDetach(m_DepartmentDataContext.DepartmentList, m_StaffDataContext.StaffList);
-                    m_RadioDataContext.Get();
+                    //m_RadioDataContext.AssignDetach(m_DepartmentDataContext.DepartmentList, m_StaffDataContext.StaffList);
+                    //m_RadioDataContext.Get();
                     //System.Threading.Thread.Sleep(100);
 
-                    mainwin.Dispatcher.BeginInvoke((Action)delegate()
-                    {
-                        CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
-                        if (cmvnotify != null)
-                        {
-                            cmvnotify.AppendNotify("完成");
-                            cmvnotify.AppendNotify("保存室内定位区域信息...");
-                        }
-                    });
+                    //mainwin.Dispatcher.BeginInvoke((Action)delegate()
+                    //{
+                    //    CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
+                    //    if (cmvnotify != null)
+                    //    {
+                    //        cmvnotify.AppendNotify("完成");
+                    //        cmvnotify.AppendNotify("保存室内定位区域信息...");
+                    //    }
+                    //});
 
                     //save area
-                    m_AreaDataContext.Set();
+                    //m_AreaDataContext.Set();
                     //Thread.Sleep(100);
-                    m_AreaDataContext.Get();
+                    //m_AreaDataContext.Get();
                     //System.Threading.Thread.Sleep(100);
 
-                    mainwin.Dispatcher.BeginInvoke((Action)delegate()
-                    {
-                        CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
-                        if (cmvnotify != null)
-                        {
-                            cmvnotify.AppendNotify("完成");
-                            cmvnotify.AppendNotify("保存信标（iBeacons）信息...");
-                        }
-                    });
+                    //mainwin.Dispatcher.BeginInvoke((Action)delegate()
+                    //{
+                    //    CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
+                    //    if (cmvnotify != null)
+                    //    {
+                    //        cmvnotify.AppendNotify("完成");
+                    //        cmvnotify.AppendNotify("保存信标（iBeacons）信息...");
+                    //    }
+                    //});
 
                     //save ibeacon
-                    m_iBeaconDataContext.Set();
+                    //m_iBeaconDataContext.Set();
                     //Thread.Sleep(100);
-                    m_iBeaconDataContext.Get();
+                    //m_iBeaconDataContext.Get();
                    
                     //System.Threading.Thread.Sleep(100);
 
-                    mainwin.Dispatcher.BeginInvoke((Action)delegate()
-                    {
-                        CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
-                        if (cmvnotify != null)
-                        {
-                            cmvnotify.AppendNotify("完成");
-                            cmvnotify.AppendNotify("保存成功.");
-                            cmvnotify.SetEnterEnable(true);
-                        }
-                    });
+                    //mainwin.Dispatcher.BeginInvoke((Action)delegate()
+                    //{
+                    //    CVMNotify cmvnotify = (CVMNotify)notify.win_Main.DataContext;
+                    //    if (cmvnotify != null)
+                    //    {
+                    //        cmvnotify.AppendNotify("完成");
+                    //        cmvnotify.AppendNotify("保存成功.");
+                    //        cmvnotify.SetEnterEnable(true);
+                    //    }
+                    //});
                 })).Start();
-
-                m_MaskVisible = Visibility.Visible;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("MaskVisible"));
-                notify.ShowDialog();
-                m_MaskVisible = Visibility.Hidden;
-                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("MaskVisible"));
             }
             catch
             {
@@ -399,8 +364,8 @@ namespace Manager
 
         private void ReConnectServer()
         {
-            if(!m_TServerConnected)InitializeTServer();
-            if(!m_LogServerConnected) InitializeLogServer();
+            //if(!m_TServerConnected)InitializeTServer();
+            //if(!m_LogServerConnected) InitializeLogServer();
         }
 
 
@@ -443,16 +408,9 @@ namespace Manager
             }
 
             if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("TabIndex"));
-        }   
-
-        private double PosInScrView(Visual visual, ScrollViewer scr, FrameworkElement element)
-        {
-            GeneralTransform transform = element.TransformToVisual(visual);
-            double pos = transform.Transform(new Point(element.Margin.Left, element.Margin.Top)).Y;
-            return scr.ContentVerticalOffset + pos - 22.5;
         }
 
-        private void ScrollToItemOffset(object parameter)
+        public static void ScrollToOffset(object parameter)
         {
             try
             {
@@ -471,6 +429,18 @@ namespace Manager
             {
             }
         }
+
+        public static double PosInScrView(Visual visual, ScrollViewer scr, FrameworkElement element)
+        {
+            GeneralTransform transform = element.TransformToVisual(visual);
+            double pos = transform.Transform(new Point(element.Margin.Left, element.Margin.Top)).Y;
+            return scr.ContentVerticalOffset + pos - 22.5;
+        }
+
+        private void ScrollToItemOffset(object parameter)
+        {
+            ScrollToOffset(parameter);           
+        }
         #endregion
 
         private void OnTServerChanged(bool isinit)
@@ -480,17 +450,17 @@ namespace Manager
 
             if (isinit)
             {
-                m_BaseSettingDataContext.Get();
-                Thread.Sleep(100);
-                m_RadioSettingDataContext.Get();
-                Thread.Sleep(100);
-                m_RepeaterSettingDataContext.Get();
-                Thread.Sleep(100);
-                m_LocationInDoorDataContext.Get();
-                Thread.Sleep(100);
+                //m_BaseSettingDataContext.Get();
+                //Thread.Sleep(100);
+                //m_RadioSettingDataContext.Get();
+                //Thread.Sleep(100);
+                //m_RepeaterSettingDataContext.Get();
+                //Thread.Sleep(100);
+                //m_LocationInDoorDataContext.Get();
+                //Thread.Sleep(100);
 
-                m_RegisterDataContext.Get();
-                Thread.Sleep(100);
+                //m_RegisterDataContext.Get();
+                //Thread.Sleep(100);
             }
         }
 
@@ -501,19 +471,19 @@ namespace Manager
 
             if (isinit)
             {
-                m_UserDataContext.Get();
-                Thread.Sleep(100);
-                m_DepartmentDataContext.Get();
-                Thread.Sleep(100);
-                m_StaffDataContext.Get();
-                Thread.Sleep(100);
-                m_RadioDataContext.Get();
-                Thread.Sleep(100);
+                //m_UserDataContext.Get();
+                //Thread.Sleep(100);
+                //m_DepartmentDataContext.Get();
+                //Thread.Sleep(100);
+                //m_StaffDataContext.Get();
+                //Thread.Sleep(100);
+                //m_RadioDataContext.Get();
+                //Thread.Sleep(100);
 
-                m_AreaDataContext.Get();
-                Thread.Sleep(100);
-                m_iBeaconDataContext.Get();
-                Thread.Sleep(100);
+                //m_AreaDataContext.Get();
+                //Thread.Sleep(100);
+                //m_iBeaconDataContext.Get();
+                //Thread.Sleep(100);
             }
         }
     }

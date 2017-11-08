@@ -107,9 +107,10 @@ void groupAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 			for (size_t i = 0; i < itemCount; i++)
 			{
+				long long id = d["departments"][i]["id"].GetInt64();
 				std::string name = d["departments"][i]["name"].GetString();
 				int gid = d["departments"][i]["gid"].GetInt();
-				bool ret = CDb::instance()->insertDepartment(name.c_str(), gid);
+				bool ret = CDb::instance()->insertDepartment(id, name.c_str(), gid);
 				if (!ret)
 				{
 					std::string errMsg = "add department failed.";
@@ -129,16 +130,15 @@ void groupAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 			for (size_t i = 0; i < itemCount; i++)
 			{
-				std::string id = (rapidjson::kNumberType == d["departments"][i]["id"].GetType()) ?
-					std::to_string(d["departments"][i]["id"].GetInt())
-					: d["departments"][i]["id"].GetString();
+				long long id = d["departments"][i]["id"].GetInt64();
+				
 
 				rapidjson::Value& val = d["departments"][i]["department"];
 
 				std::string name = val.HasMember("name") ? val["name"].GetString() : "";
 				int gid = val.HasMember("gid") ? val["gid"].GetInt() : -1;
 
-				bool ret = CDb::instance()->updateDepartment(std::atoi(id.c_str()), name.c_str(), gid);
+				bool ret = CDb::instance()->updateDepartment(id, name.c_str(), gid);
 				if (!ret)
 				{
 					throw std::exception("update department failed");
@@ -155,7 +155,7 @@ void groupAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 			for (int m = 0; m < d["departments"].Size(); m++)
 			{
-				int id = d["departments"][m].GetInt();
+				long long id = d["departments"][m].GetInt64();
 				std::string condition = "where id=" + std::to_string(id);
 				CDb::instance()->del("department", condition.c_str());
 			}
@@ -163,14 +163,14 @@ void groupAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 		}
 		else if (0 == operation.compare("assignUser"))
 		{
-			if (!d.HasMember("department") || !d["department"].IsInt() 
-				|| !d.HasMember("user") || !d["user"].IsInt())
+			if (!d.HasMember("department") || !d["department"].IsInt64() 
+				|| !d.HasMember("user") || !d["user"].IsInt64())
 			{
 				throw std::exception("call parameter error");
 			}
 
-			int userId = d["user"].GetInt();
-			int departmentId = d["department"].GetInt();
+			long long userId = d["user"].GetInt64();
+			long long departmentId = d["department"].GetInt64();
 
 			if (CDb::instance()->assignUser(userId, departmentId))
 			{
@@ -183,14 +183,14 @@ void groupAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 		}
 		else if (0 == operation.compare("detachUser"))
 		{
-			if (!d.HasMember("department") || !d["department"].IsInt()
-				|| !d.HasMember("user") || !d["user"].IsInt())
+			if (!d.HasMember("department") || !d["department"].IsInt64()
+				|| !d.HasMember("user") || !d["user"].IsInt64())
 			{
 				throw std::exception("call parameter error");
 			}
 
-			int userId = d["user"].GetInt();
-			int departmentId = d["department"].GetInt();
+			long long userId = d["user"].GetInt64();
+			long long departmentId = d["department"].GetInt64();
 
 			if (CDb::instance()->detachUser(userId, departmentId))
 			{
@@ -203,14 +203,14 @@ void groupAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 		}
 		else if (0 == operation.compare("assignRadio"))
 		{
-			if (!d.HasMember("department") || !d["department"].IsInt()
-				|| !d.HasMember("radio") || !d["radio"].IsInt())
+			if (!d.HasMember("department") || !d["department"].IsInt64()
+				|| !d.HasMember("radio") || !d["radio"].IsInt64())
 			{
 				throw std::exception("call parameter error");
 			}
 
-			int radioId = d["radio"].GetInt();
-			int departmentId = d["department"].GetInt();
+			long long radioId = d["radio"].GetInt64();
+			long long departmentId = d["department"].GetInt64();
 
 			if (CDb::instance()->assignDepartmentRadio(radioId, departmentId))
 			{
@@ -223,14 +223,14 @@ void groupAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 		}
 		else if (0 == operation.compare("detachRadio"))
 		{
-			if (!d.HasMember("department") || !d["department"].IsInt()
-				|| !d.HasMember("radio") || !d["radio"].IsInt())
+			if (!d.HasMember("department") || !d["department"].IsInt64()
+				|| !d.HasMember("radio") || !d["radio"].IsInt64())
 			{
 				throw std::exception("call parameter error");
 			}
 
-			int radioId = d["radio"].GetInt();
-			int departmentId = d["department"].GetInt();
+			long long radioId = d["radio"].GetInt64();
+			long long departmentId = d["department"].GetInt64();
 
 			if (CDb::instance()->detachDepartmentRadio(radioId, departmentId))
 			{
@@ -245,11 +245,11 @@ void groupAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 		{
 			ArgumentType args;
 			std::list<recordType> records;
-			if (!d.HasMember("department") || !d["department"].IsInt())
+			if (!d.HasMember("department") || !d["department"].IsInt64())
 			{
 				throw std::exception("call parameter error");
 			}
-			int departmentId = d["department"].GetInt();
+			long long departmentId = d["department"].GetInt64();
 			CDb::instance()->listDepartmentStaff(departmentId, records);
 
 			FieldValue fvRecords(FieldValue::TArray);
@@ -269,11 +269,11 @@ void groupAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 		{
 			ArgumentType args;
 			std::list<recordType> records;
-			if (!d.HasMember("department") || !d["department"].IsInt())
+			if (!d.HasMember("department") || !d["department"].IsInt64())
 			{
 				throw std::exception("call parameter error");
 			}
-			int departmentId = d["department"].GetInt();
+			long long departmentId = d["department"].GetInt64();
 			CDb::instance()->listDepartmentRadio(departmentId, records);
 
 			FieldValue fvRecords(FieldValue::TArray);

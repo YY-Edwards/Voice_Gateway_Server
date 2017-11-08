@@ -118,8 +118,18 @@ namespace Dispatcher.ViewsModules
                 QuickList = new ListCollectionView(quicklist);
             }
             else if (parameter is List<VMQuickItem>)foreach (VMQuickItem quick in parameter as List<VMQuickItem>) AddQuickExec(quick);
-            else if (parameter is VMTarget)AddQuickExec(new VMQuickItem(parameter as VMTarget));
-            else if (parameter is VMOperation) AddQuickExec(new VMQuickItem(parameter as VMOperation));
+            else if (parameter is VMTarget)
+            {
+                VMQuickItem quick = new VMQuickItem(parameter as VMTarget);
+                quick.Closed += new EventHandler(OnClosed);
+                AddQuickExec(quick);                
+            }
+            else if (parameter is VMOperation)
+            {
+                VMQuickItem quick = new VMQuickItem(parameter as VMOperation);
+                quick.Closed += new EventHandler(OnClosed);
+                AddQuickExec(quick);
+            }
             else return;
         }
 

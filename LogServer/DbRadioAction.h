@@ -109,13 +109,14 @@ void radioAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 			for (size_t i = 0; i < itemCount; i++)
 			{
+				long long id = d["radios"][i]["id"].GetInt64();
 				std::string radioId = std::to_string(d["radios"][i]["radio_id"].GetInt());
 				std::string sn = d["radios"][i]["sn"].GetString();
 				int type = d["radios"][i]["type"].GetInt();
 				int screen = d["radios"][i]["screen"].GetInt();
 				int gps = d["radios"][i]["gps"].GetInt();
 				int keyboard = d["radios"][i]["keyboard"].GetInt();
-				bool ret = CDb::instance()->insertRadio(radioId.c_str(), type, sn.c_str(), screen, gps, keyboard);
+				bool ret = CDb::instance()->insertRadio(id, radioId.c_str(), type, sn.c_str(), screen, gps, keyboard);
 				if (!ret)
 				{
 					std::string errMsg = "add radio failed.";
@@ -134,7 +135,7 @@ void radioAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 			for (int m = 0; m < d["radios"].Size(); m++)
 			{
-				int id = d["radios"][m].GetInt();
+				long long id = d["radios"][m].GetInt64();
 				std::string condition = "where id=" + std::to_string(id);
 				CDb::instance()->del("radios", condition.c_str());
 			}
@@ -150,9 +151,7 @@ void radioAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 			for (size_t i = 0; i < itemCount; i++)
 			{
-				int id = (rapidjson::kNumberType == d["radios"][i]["id"].GetType()) ?
-					d["radios"][i]["id"].GetInt()
-					: std::atoi(d["radios"][i]["id"].GetString());
+				long long id = d["radios"][i]["id"].GetInt64();
 
 				rapidjson::Value& val = d["radios"][i]["radio"];
 

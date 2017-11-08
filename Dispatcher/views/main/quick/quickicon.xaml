@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar" 
+             xmlns:ctrl="clr-namespace:Dispatcher.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="320" d:DesignWidth="240">
     <Grid>        
@@ -21,6 +22,11 @@
         <Ellipse Margin="0" Stroke="Black" StrokeThickness="0" Fill="{Binding IconBackGround, Mode=OneWay}" Grid.Row="1" Grid.Column="1" />
         <Image Source="{Binding Icon, Mode=OneWay}" Opacity="{Binding ViewModule.OnlineOpacity, Mode=OneWay}" HorizontalAlignment="Center" VerticalAlignment="Center" Stretch="None" Grid.Row="1" Grid.Column="1" />
         <TextBlock Text="{Binding Name, Mode=OneWay}"  HorizontalAlignment="Center" Foreground="#FFC9CDD2"  FontSize="14" VerticalAlignment="Center" Grid.Row="2" Grid.ColumnSpan="3"/>
+        
+        <ctrl:LoadIcon Visibility="{Binding WaitIconVisible, Mode=OneWay}"  Opacity="0.2" DockPanel.Dock="Left" Grid.Row="1" Grid.Column="1"/>
+        <Image Visibility="{Binding FailureIconVisible, Mode=OneWay}" Height="20" Width="20"  Source="/TrboX;component/resource/images/warning.png" Grid.Row="1" Grid.Column="1" HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
 
+
+        
     </Grid>
 </UserControl>

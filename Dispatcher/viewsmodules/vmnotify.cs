@@ -133,11 +133,12 @@ namespace Dispatcher.ViewsModules
 
         public class VMNotice
         {
-            
+            public string OperateSessionId { get; set;}
+
             private VMTarget _remote;
             private CNotice _notice;
             private bool _istx;
-            public VMNotice(VMTarget remote, CNotice notice, bool istx = true)
+            public VMNotice(VMTarget remote, CNotice notice, bool istx = true, CDispatcher.Status status = CDispatcher.Status.Completed)
             {
                 _remote = remote;
                 _notice = notice;
@@ -152,6 +153,24 @@ namespace Dispatcher.ViewsModules
             public string ContentBiref { get { return _notice.Contents.ToString(); } }
 
 
+            private CDispatcher.Status _dispatcherStatus = CDispatcher.Status.Completed;
+            public CDispatcher.Status DispatcherStatus{get{return _dispatcherStatus;} set{_dispatcherStatus = value; NotifyPropertyChanged("WaitIconVisible");NotifyPropertyChanged("FailureIconVisible");}}
+
+            public Visibility WaitIconVisible 
+            {
+                get
+                {
+                    if (IsTx) return Visibility.Collapsed;
+                    return _dispatcherStatus == CDispatcher.Status.Begin ? Visibility.Visible : Visibility.Collapsed; 
+                } 
+            }
+            public Visibility FailureIconVisible 
+            {
+                get {
+                    if (IsTx) return Visibility.Collapsed;
+                    return _dispatcherStatus != CDispatcher.Status.Begin && _dispatcherStatus != CDispatcher.Status.Completed ? Visibility.Visible : Visibility.Collapsed; 
+                } 
+            }
             public ImageSource Icon
             {
                 get

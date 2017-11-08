@@ -23,78 +23,59 @@ namespace Dispatcher.ViewsModules
 
         public DateTime SystemTime { get { return DateTime.Now; } }
 
+        public bool _isWait = false;
+        public Visibility WaitVisible { get{return _isWait ? Visibility.Visible:Visibility.Collapsed;}  }
+
+        public void SetStatusWait(bool iswait)
+        {
+            _isWait = iswait;
+            NotifyPropertyChanged("WaitVisible");
+        }
         public string StatusContent
         {
             get 
             {
-                if (_status == null || _status.TServer == null || !_status.TServer.IsConnected || _status.LogServer == null || !_status.LogServer.IsConnected) return "服务未连接";
+                if (_status == null || _status.TServer == null || !_status.TServer.IsConnected || _status.LogServer == null || !_status.LogServer.IsConnected) 
+                    return "服务未连接";
                 else
                 {
                     string status = "";
-                    switch (RunAccess.Mode)
+                    switch (FunctionConfigure.WorkMode)
                     {
 
-                        case RunAccess.Mode_t.All:
+                        case FunctionConfigure.Mode_t.Debug:
                             if (!_status.Repeater.IsConnected || !_status.VehicleStation.IsConnected || !_status.Mnis.IsConnected) return "设备未连接";
                             else return "设备已连接";
-                        case RunAccess.Mode_t.LCP:
-                        case RunAccess.Mode_t.CPC:
-                        case RunAccess.Mode_t.IPSC:
-                            status = "";
-                            if(_status.Repeater.IsConnected)
-                            {
-                                status += "中继台已连接："+_status.Repeater.Host + ":" + _status.Repeater.Port.ToString();
-                            }
-                            else
-                            {
-                                status += "中继台未连接";
-                            }
+                        case FunctionConfigure.Mode_t.Repeater:
+                            return string.Format(
+                                "中继台{0}连接{1}", 
+                                _status.Repeater.IsConnected ? "已" : "未",
+                                _status.Repeater.IsConnected ?  string.Format("：{0}：{1}",_status.Repeater.Host, _status.Repeater.Port) : "");
 
-                            if(_status.Mnis.IsConnected)
-                            {
-                                status += "\tMNIS已连接："+_status.Mnis.Host;
-                            }
-                            else
-                            {
-                                status += "\tMNIS未连接";
-                            }
+                        case FunctionConfigure.Mode_t.RepeaterWithMnis:
+                            return string.Format(
+                                "中继台{0}连接{1}\tMNIS{2}连接{3}",
+                                _status.Repeater.IsConnected ? "已" : "未",
+                                _status.Mnis.IsConnected ?string.Format("{0}：{1}", _status.Repeater.Host, _status.Repeater.Port) : "",
+                                _status.Mnis.IsConnected ? "已" : "未",
+                                _status.Mnis.IsConnected ? string.Format("{0}", _status.Mnis.Host) : ""  );
 
-                            return status;
-                        case RunAccess.Mode_t.VehicleStation:
-                            status = "";
-                            if(_status.VehicleStation.IsConnected)
-                            {
-                                status += "车载台已连接：" + _status.VehicleStation.Host;
-                            }
-                            else
-                            {
-                                status += "车载台未连接";
-                            }
-                            return status;
+                        case FunctionConfigure.Mode_t.VehicleStation:
+                            return string.Format(
+                                "车载台{0}连接{1}",
+                                _status.VehicleStation.IsConnected ? "已" : "未",
+                                _status.VehicleStation.IsConnected ? string.Format("：{0}", _status.VehicleStation.Host) : "");
 
-                        case RunAccess.Mode_t.VehicleStationWithMnis:
-                            status = "";
-                            if (_status.VehicleStation.IsConnected)
-                            {
-                                status += "车载台已连接：" + _status.VehicleStation.Host;
-                            }
-                            else
-                            {
-                                status += "车载台未连接";
-                            }
+                        case FunctionConfigure.Mode_t.VehicleStationWithMnis:
 
-                            if(_status.Mnis.IsConnected)
-                            {
-                                status += "\tMNIS已连接："+_status.Mnis.Host;
-                            }
-                            else
-                            {
-                                status += "\tMNIS未连接";
-                            }
-
-                            return status;
+                            return string.Format(
+                               "车载台{0}连接{1}\tMNIS{2}连接{3}",
+                               _status.VehicleStation.IsConnected ? "已" : "未",
+                               _status.VehicleStation.IsConnected ? string.Format("{0}", _status.Repeater.Host) : "",
+                               _status.Mnis.IsConnected ? "已" : "未",
+                               _status.Mnis.IsConnected ? string.Format("{0}", _status.Mnis.Host) : "");                          
                         default:
-                            return "不支持的工作模式";
+                            return "离线模式";
                     }
                 }
             }
@@ -115,6 +96,7 @@ namespace Dispatcher.ViewsModules
             {
                 _status = ServerStatus.Instance();
                 _status.StatusChanged += delegate { NotifyPropertyChanged("StatusContent"); };
+                _status.WaitStatusChanged += delegate(object sender, bool iswait) { SetStatusWait(iswait); };
             }
 
             StartUpdateSystemTime();

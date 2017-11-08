@@ -181,7 +181,7 @@ namespace Dispatcher.Modules
         }
 
         [JsonProperty(PropertyName = "department")]
-        public int DepartmentID{get;set;}
+        public long DepartmentID{get;set;}
 
 
         public CStaff()

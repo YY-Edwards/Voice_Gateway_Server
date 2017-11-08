@@ -108,12 +108,13 @@ void areaAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 
 			for (size_t i = 0; i < itemCount; i++)
 			{
+				long long id = d["areas"][i]["id"].GetInt64();
 				std::string name = d["areas"][i]["name"].GetString();
 				std::string map = d["areas"][i]["map"].GetString();
 				std::string width = d["areas"][i]["width"].GetString();
 				std::string height = d["areas"][i]["height"].GetString();
 
-				bool ret = CDb::instance()->insertArea(name.c_str(), map.c_str(), width.c_str(), height.c_str());
+				bool ret = CDb::instance()->insertArea(id, name.c_str(), map.c_str(), width.c_str(), height.c_str());
 				if (!ret)
 				{
 					std::string errMsg = "add area failed.";
@@ -132,7 +133,7 @@ void areaAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 
 			for (int m = 0; m < d["areas"].Size(); m++)
 			{
-				int id = d["areas"][m].GetInt();
+				long long id = d["areas"][m].GetInt64();
 				std::string condition = "where id=" + std::to_string(id);
 				CDb::instance()->del("areas", condition.c_str());
 			}
@@ -148,9 +149,7 @@ void areaAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 
 			for (size_t i = 0; i < itemCount; i++)
 			{
-				int id = (rapidjson::kNumberType == d["areas"][i]["id"].GetType()) ?
-					d["areas"][i]["id"].GetInt()
-					: std::atoi(d["areas"][i]["id"].GetString());
+				long long id = d["areas"][i]["id"].GetInt64();
 
 				rapidjson::Value& val = d["areas"][i]["area"];
 

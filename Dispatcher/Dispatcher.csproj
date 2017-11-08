@@ -103,6 +103,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="controls\beaconpoint.cs" />
+    <Compile Include="controls\LoadIcon.cs" />
     <Compile Include="controls\quickpanelview.cs" />
     <Compile Include="controls\pointview.cs" />
     <Compile Include="controls\radiopoint.xaml.cs">
@@ -147,6 +148,8 @@
     <Compile Include="modules\mancar.cs" />
     <Compile Include="service\savework.cs" />
     <Compile Include="service\sender.cs" />
+    <Compile Include="service\tserver\mnissetting.cs" />
+    <Compile Include="service\tserver\locationsetting.cs" />
     <Compile Include="service\tserver\basesetting.cs" />
     <Compile Include="service\tserver\configuration.cs" />
     <Compile Include="service\tserver\dispatcher.cs" />
@@ -920,6 +923,8 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="resource\amap\index.html" />
+    <Resource Include="resource\images\warning.png" />
+    <Resource Include="resource\images\loadicon.png" />
     <Resource Include="resource\images\Abnormal.png" />
     <Resource Include="resource\images\Abnormal_h.png" />
     <Resource Include="TrboX.ico" />

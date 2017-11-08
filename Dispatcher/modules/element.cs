@@ -12,7 +12,7 @@ namespace Dispatcher.Modules
 {
     public class CElement
     {
-        [DefaultValue((int)0), JsonProperty(PropertyName = "id")]
-        public int ID;
+        [DefaultValue((long)0), JsonProperty(PropertyName = "id")]
+        public long ID;
     }
 }

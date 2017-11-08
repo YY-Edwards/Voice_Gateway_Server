@@ -42,8 +42,13 @@ namespace Dispatcher.ViewsModules
         private CUserMgr _user ;
         private CRegister _register;
 
-        private CRepeaterSetting _repeater;
+        private CBaseSetting _base;
         private CRadioSetting _vehiclestation;
+        private CRepeaterSetting _repeater;
+
+        private CMnisSetting _mnis;
+        private CLocationSetting _location;
+        private CLocationInDoorSetting _locationInDoor;
        
 
 
@@ -62,18 +67,48 @@ namespace Dispatcher.ViewsModules
                 _register.Timeout += new EventHandler(OnTimeout);
             }
 
-            if (_repeater == null)
+           
+
+            if (_base == null)
             {
-                _repeater = new CRepeaterSetting();
-                _repeater.OnConfigurationChanged += new CConfiguration.ConfigurationChangedHandle(OnConfigurationChanged);
-                _repeater.Timeout += new EventHandler(OnTimeout);
+                _base = new CBaseSetting();
+                _base.OnConfigurationChanged += new CConfiguration.ConfigurationChangedHandle(OnConfigurationChanged);
+                _base.Timeout += new EventHandler(OnTimeout);
             }
 
             if (_vehiclestation == null)
             {
                 _vehiclestation = new CRadioSetting();
                 _vehiclestation.OnConfigurationChanged += new CConfiguration.ConfigurationChangedHandle(OnConfigurationChanged);
+                _vehiclestation.Timeout += new EventHandler(OnTimeout);
+            }
+
+             if (_repeater == null)
+            {
+                _repeater = new CRepeaterSetting();
+                _repeater.OnConfigurationChanged += new CConfiguration.ConfigurationChangedHandle(OnConfigurationChanged);
                 _repeater.Timeout += new EventHandler(OnTimeout);
+            }
+
+             if (_mnis == null)
+            {
+                _mnis = new CMnisSetting();
+                _mnis.OnConfigurationChanged += new CConfiguration.ConfigurationChangedHandle(OnConfigurationChanged);
+                _mnis.Timeout += new EventHandler(OnTimeout);
+            }
+
+             if (_location == null)
+            {
+                _location = new CLocationSetting();
+                _location.OnConfigurationChanged += new CConfiguration.ConfigurationChangedHandle(OnConfigurationChanged);
+                _location.Timeout += new EventHandler(OnTimeout);
+            }
+
+             if (_locationInDoor == null)
+            {
+                _locationInDoor = new CLocationInDoorSetting();
+                _locationInDoor.OnConfigurationChanged += new CConfiguration.ConfigurationChangedHandle(OnConfigurationChanged);
+                _locationInDoor.Timeout += new EventHandler(OnTimeout);
             }
            
             StartMonitorServer();
@@ -144,35 +179,51 @@ namespace Dispatcher.ViewsModules
 
         private void OnConfigurationChanged(SettingType type, object config)
         {
-            if(type == SettingType.Repeater)
+            if (type == SettingType.Base)
             {
-                CRepeaterSetting repeatercfg = config as CRepeaterSetting;
-                if (repeatercfg != null && repeatercfg.IsEnable)
+                CBaseSetting setting = config as CBaseSetting;
+                if (setting != null)
                 {
-                    switch( repeatercfg.Type)
-                    {
-                        case WireLanType.IPSC:RunAccess.Mode = RunAccess.Mode_t.IPSC;break;
-                        case WireLanType.CPC: RunAccess.Mode = RunAccess.Mode_t.CPC; break;
-                        case WireLanType.LCP: RunAccess.Mode = RunAccess.Mode_t.LCP; break;
-                    }
-
-                    ServerStatus.Instance().Repeater = new ServerStatus.ServerStatus_t(repeatercfg.Master.Ip, repeatercfg.Master.Port,false);
-                    ServerStatus.Instance().Mnis = new ServerStatus.ServerStatus_t(repeatercfg.Mnis.Host, repeatercfg.Mnis.MessagePort,false);
+                    FunctionConfigure.SetBaseSetting(setting);
                 }
             }
             else if(type == SettingType.Radio)
             {
-                CRadioSetting radiocfg = config as CRadioSetting;
-                if (radiocfg != null && radiocfg.IsEnable)
+                CRadioSetting setting = config as CRadioSetting;
+                if (setting != null)
                 {
-                    if (radiocfg.IsOnlyRide) RunAccess.Mode = RunAccess.Mode_t.VehicleStation;
-                    else RunAccess.Mode = RunAccess.Mode_t.VehicleStationWithMnis;
-
-                    ServerStatus.Instance().VehicleStation = new ServerStatus.ServerStatus_t(radiocfg.Ride.Host, radiocfg.Ride.MessagePort,false);
-                    ServerStatus.Instance().Mnis = new ServerStatus.ServerStatus_t(radiocfg.Mnis.Host, radiocfg.Mnis.MessagePort,false);                  
+                    FunctionConfigure.SetRadioSetting(setting);
+                    ServerStatus.Instance().VehicleStation = new ServerStatus.ServerStatus_t(setting.Ride.Host, setting.Ride.MessagePort, false);                
                 }
             }
-
+            else if(type == SettingType.Repeater)
+            {
+                CRepeaterSetting setting = config as CRepeaterSetting;
+                if (setting != null)
+                {
+                    FunctionConfigure.SetRepeaterSetting(setting);
+                    ServerStatus.Instance().Repeater = new ServerStatus.ServerStatus_t(setting.Master.Ip, setting.Master.Port, false);
+                }
+            }
+            else if(type == SettingType.Mnis)
+            {
+                CMnisSetting setting = config as CMnisSetting;
+                if (setting != null)
+                {
+                    FunctionConfigure.SetMnisSetting(setting);
+                    ServerStatus.Instance().Mnis = new ServerStatus.ServerStatus_t(setting.Host, setting.MessagePort, false);
+                }
+            }
+            else if(type == SettingType.Location)
+            {
+                CLocationSetting setting = config as CLocationSetting;
+                if (setting != null) FunctionConfigure.SetLocationSetting(setting);              
+            }
+            else if (type == SettingType.LocationInDoor)
+            {
+                CLocationInDoorSetting setting = config as CLocationInDoorSetting;
+                if (setting != null) FunctionConfigure.SetLocationInDoorSetting(setting);
+            }
 
 
             _waitlogin.Release();
@@ -202,17 +253,12 @@ namespace Dispatcher.ViewsModules
                 //_waitlogin.WaitOne();
                 //if (!_issuccess) return;
 
+                if (!ReadSetting()) return;
 
-                RunAccess.Mode = RunAccess.Mode_t.None;
-                _repeater.Get();
-                _waitlogin.WaitOne();
-                if (!_issuccess) return;
-                _vehiclestation.Get();
-                _waitlogin.WaitOne();
-                if (!_issuccess) return;
+                FunctionConfigure.InitilizeSystemConfiguration();
 
                 Log.Info("Login Success.");
-                Log.Info(String.Format("Work Mode:{0}.", RunAccess.Mode.ToString()));
+                Log.Info(String.Format("Work Mode:{0}.", FunctionConfigure.WorkMode.ToString()));
 
                 CTServer.Instance().OnStatusChanged -= OnTServerChanged;
                 CLogServer.Instance().OnStatusChanged -= OnLogServerChanged;
@@ -222,6 +268,35 @@ namespace Dispatcher.ViewsModules
             })).Start();
         }
 
+
+        private bool ReadSetting()
+        {
+            _base.Get();
+            _waitlogin.WaitOne();
+            if (!_issuccess) return false;
+
+            _vehiclestation.Get();
+            _waitlogin.WaitOne();
+            if (!_issuccess) return false;
+
+            _repeater.Get();
+            _waitlogin.WaitOne();
+            if (!_issuccess) return false;
+
+            _mnis.Get();
+            _waitlogin.WaitOne();
+            if (!_issuccess) return false;
+
+            _location.Get();
+            _waitlogin.WaitOne();
+            if (!_issuccess) return false;
+
+            _locationInDoor.Get();
+            _waitlogin.WaitOne();
+            if (!_issuccess) return false;
+
+            return true;
+        }
 
         private bool m_LogServerConnected = false;
         private bool m_TServerConnected = false;

@@ -110,6 +110,7 @@ void ibeaconAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 			{
 				rapidjson::Value& val = d["ibeacons"][i];
 
+				long long id = val.HasMember("id") ? val["id"].GetInt64() : -1;
 				std::string name = val.HasMember("name") ? val["name"].GetString() : "";
 				std::string uuid = val.HasMember("uuid") ? val["uuid"].GetString() : "";
 				int major = val.HasMember("major") ? val["major"].GetInt() : -1;
@@ -118,12 +119,13 @@ void ibeaconAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 				int rssi = val.HasMember("rssi") ? val["rssi"].GetInt() : -1;
 				int time_stamp = val.HasMember("time_stamp") ? val["time_stamp"].GetInt() : -1;
 				int valid = val.HasMember("valid") ? val["valid"].GetInt() : -1;
-				int area = val.HasMember("area") ? val["area"].GetInt() : -1;
+				long long area = val.HasMember("area") ? val["area"].GetInt64() : -1;
 
 				std::string pointx = val.HasMember("pointx") ? val["pointx"].GetString() : "";
 				std::string pointy = val.HasMember("pointy") ? val["pointy"].GetString() : "";
 
 				bool ret = CDb::instance()->insertIBeacon(
+					id,
 					name.c_str(),
 					uuid.c_str(),
 					major, minor, tx_power, rssi, time_stamp, valid, area,
@@ -148,7 +150,7 @@ void ibeaconAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 
 			for (int m = 0; m < d["ibeacons"].Size(); m++)
 			{
-				int id = d["ibeacons"][m].GetInt();
+				long long id = d["ibeacons"][m].GetInt64();
 				std::string condition = "where id=" + std::to_string(id);
 				CDb::instance()->del("ibeacons", condition.c_str());
 			}
@@ -164,11 +166,12 @@ void ibeaconAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 
 			for (size_t i = 0; i < itemCount; i++)
 			{
-				int id = (rapidjson::kNumberType == d["ibeacons"][i]["id"].GetType()) ?
-					d["ibeacons"][i]["id"].GetInt()
-					: std::atoi(d["ibeacons"][i]["id"].GetString());
+				
+				long long id = d["ibeacons"][i]["id"].GetInt64();
 
 				rapidjson::Value& val = d["ibeacons"][i]["ibeacon"];
+
+
 
 				std::string name = val.HasMember("name") ? val["name"].GetString() : "";
 				std::string uuid = val.HasMember("uuid") ? val["uuid"].GetString() : "";
@@ -178,7 +181,7 @@ void ibeaconAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 				int rssi = val.HasMember("rssi") ? val["rssi"].GetInt() : -1;
 				int time_stamp = val.HasMember("time_stamp") ? val["time_stamp"].GetInt() : -1;
 				int valid = val.HasMember("valid") ? val["valid"].GetInt() : -1;
-				int area = val.HasMember("area") ? val["area"].GetInt() : -1;
+				long long area = val.HasMember("area") ? val["area"].GetInt64() : -1;
 
 				std::string pointx = val.HasMember("pointx") ? val["pointx"].GetString() : "";
 				std::string pointy = val.HasMember("pointy") ? val["pointy"].GetString() : "";

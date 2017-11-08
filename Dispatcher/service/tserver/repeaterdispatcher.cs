@@ -64,7 +64,7 @@ namespace Dispatcher.Service
                         Type = res.type,
                         Target = res.target,
                         Source = res.source,
-                        IsCurrent = res.isCurrent
+                        IsCurrent = res.isCurrent,
                     };
 
                     OnCallRequest(args);
@@ -77,13 +77,16 @@ namespace Dispatcher.Service
             }
         }
 
-        public override object GetCallParameter(ExecType_t exec, TargetMode_t type, int target)
+        public override Session GetCallParameter(ExecType_t exec, TargetMode_t type, int target)
         {
             return new RepeaterCallParameter()
             {
                 operate = exec,
                 type = type,
-                target = target
+                target = target,
+
+                TargetMode = type,
+                TargetId = target
             };
         }
 
@@ -116,7 +119,14 @@ namespace Dispatcher.Service
         public override void PlayVoice(int target)
         {
             RequestOpcode opcode = RequestOpcode.wlPlay;
-            var param = new WirelanPlayParameter() { target = target };
+            var param = new WirelanPlayParameter() { 
+                target = target,
+
+                //-1表示播放个呼，-2表示表示播放全呼，其余为组ID
+
+                TargetMode = target == -1 ? TargetMode_t.Private : (target == -2 ? TargetMode_t.All : TargetMode_t.Group),
+                TargetId = target,
+            };
             Request(opcode, param);  
         }
 
@@ -126,7 +136,7 @@ namespace Dispatcher.Service
         }
 
     }
-    public class RepeaterCallParameter
+    public class RepeaterCallParameter:Session
     {
         public ExecType_t operate;
         public TargetMode_t type;
@@ -145,7 +155,7 @@ namespace Dispatcher.Service
         public bool isCurrent;
     }
 
-    public class WirelanPlayParameter
+    public class WirelanPlayParameter : Session
     {
         public int target;
     }

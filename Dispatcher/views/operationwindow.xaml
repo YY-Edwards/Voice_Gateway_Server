@@ -85,7 +85,11 @@
                                                         </Grid>
 
                                                         <Border x:Name="brd_Content" Background="#FF55AEBE" BorderBrush="#FF97C5F7" BorderThickness="0" CornerRadius="4" Padding="15,10" HorizontalAlignment="Left" VerticalAlignment="Top"  MinHeight="40">
-                                                            <TextBlock Text="{Binding ContentBiref}" TextWrapping="Wrap" MaxWidth="{Binding ActualWidth, Converter={StaticResource NotifyInOperationWidthValueConverter}, ElementName=Msg, Mode=OneWay}"  Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" />
+                                                            <StackPanel Orientation="Horizontal">
+                                                                <ctrl:LoadIcon Visibility="{Binding WaitIconVisible}" Width="16" Height="16" Margin="0,0,8,0" Opacity="0.6" DockPanel.Dock="Left"/>
+                                                                <Image Visibility="{Binding FailureIconVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="16" MaxHeight="16" DockPanel.Dock="Left" Source="/TrboX;component/resource/images/warning.png"/>
+                                                                <TextBlock Text="{Binding ContentBiref}" TextWrapping="Wrap" MaxWidth="{Binding ActualWidth, Converter={StaticResource NotifyInOperationWidthValueConverter}, ElementName=Msg, Mode=OneWay}"  Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" />
+                                                            </StackPanel>
                                                         </Border>
                                                     </DockPanel>
 

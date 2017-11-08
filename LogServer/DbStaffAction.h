@@ -109,10 +109,11 @@ void staffAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 			for (size_t i = 0; i < itemCount; i++)
 			{
+				long long id = d["staffs"][i]["id"].GetInt64();
 				std::string name = d["staffs"][i]["name"].GetString();
 				std::string phone = d["staffs"][i]["phone"].GetString();
 				int type = d["staffs"][i]["type"].GetInt();
-				bool ret = CDb::instance()->insertStaff(name.c_str(), phone.c_str(), type == 1? false : true);
+				bool ret = CDb::instance()->insertStaff(id, name.c_str(), phone.c_str(), type == 1 ? false : true);
 				if (!ret)
 				{
 					std::string errMsg = "add staff failed.";
@@ -131,7 +132,7 @@ void staffAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 			for (int m = 0; m < d["staffs"].Size(); m++)
 			{
-				int id = d["staffs"][m].GetInt();
+				long long id = d["staffs"][m].GetInt64();
 				std::string condition = "where id=" + std::to_string(id);
 				CDb::instance()->del("staff", condition.c_str());
 			}
@@ -147,9 +148,7 @@ void staffAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 			for (size_t i = 0; i < itemCount; i++)
 			{
-				int id = (rapidjson::kNumberType == d["staffs"][i]["id"].GetType()) ?
-					d["staffs"][i]["id"].GetInt()
-					: std::atoi(d["staffs"][i]["id"].GetString());
+				long long id = d["staffs"][i]["id"].GetInt64();
 
 				rapidjson::Value& val = d["staffs"][i]["staff"];
 
@@ -165,7 +164,7 @@ void staffAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 				{
 					updateVal["phone"] = phone;
 				}
-				std::string updCond = " where `id`=" + std::to_string(CDb::instance()->getUserIdByStaffId(id));
+				std::string updCond = " where `id`='" + std::to_string(id) + "'";
 				bool ret = CDb::instance()->updateStaff(updCond.c_str(), updateVal);
 				if (!ret)
 				{
