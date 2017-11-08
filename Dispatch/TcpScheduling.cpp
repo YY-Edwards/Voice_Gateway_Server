@@ -15,6 +15,7 @@ CTcpScheduling::CTcpScheduling()
 {
 	pXnlConnection = NULL;
 	dwip = 0;
+	port = 0;
 	m_workThread = true;
 	m_timeThread = true;
 	m_usbThread = true;
@@ -29,21 +30,22 @@ CTcpScheduling::~CTcpScheduling()
 		delete pXnlConnection;
 	}
 }
-int CTcpScheduling::radioConnect(const char* ip)
+int CTcpScheduling::radioConnect(radio_t radioCfg)
 {
 	// Connection
-	dwip = inet_addr(ip);
+	dwip = inet_addr(radioCfg.Host);
 	unsigned char iptemp[4];
 	memcpy(iptemp, (void *)&dwip, 4);
 	iptemp[3] = 1;
 	dwip = *((DWORD *)iptemp);
+	port = radioCfg.XnlPort;
+	m_radioCfg = radioCfg;
 	connect();
-	//addTcpCommand( RADIO_CONNECT,ip,0,0);
 	
 	return 0;
 
 }
-int CTcpScheduling::privateCall( int id)
+int CTcpScheduling::privateCall(std::string sessionId, int id)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "单呼";
@@ -59,7 +61,7 @@ int CTcpScheduling::privateCall( int id)
 			if (target_radio_id != 0)
 			{
 				
-				pXnlConnection->send_xcmp_call_ctrl_request(0x01, call_type, 0x01, target_radio_id, 0);
+				pXnlConnection->send_xcmp_call_ctrl_request(sessionId, 0x01, call_type, 0x01, target_radio_id, 0);
 				pXnlConnection->send_xcmp_tx_ctrl_request(0x01, 0x00);
 
 
@@ -81,7 +83,7 @@ int CTcpScheduling::privateCall( int id)
 
 	return 1;
 }
-int CTcpScheduling::groupCall(int id)
+int CTcpScheduling::groupCall(std::string sessionId, int id)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "组呼";
@@ -97,7 +99,7 @@ int CTcpScheduling::groupCall(int id)
 			if (target_radio_id != 0)
 			{
 				//pXnlConnection->setRemotePeer(pRemote);
-				pXnlConnection->send_xcmp_call_ctrl_request(0x01, call_type, 0x01, 0, target_radio_id);
+				pXnlConnection->send_xcmp_call_ctrl_request(sessionId, 0x01, call_type, 0x01, 0, target_radio_id);
 				pXnlConnection->send_xcmp_tx_ctrl_request(0x01, 0x00);
 
 				return 0;
@@ -118,22 +120,30 @@ int CTcpScheduling::groupCall(int id)
 
 	return 1;
 }
-int CTcpScheduling::allCall()
+int CTcpScheduling::allCall(std::string sessionId )
 {
 #if DEBUG_LOG
 	LOG(INFO) << "全呼";
 #endif
-	unsigned long target_radio_id = 255;   //全呼
+	unsigned long target_radio_id = 0;   
 	unsigned char call_type = 0x06;
-
+	
 	try
 	{
 		if ((pXnlConnection != NULL) && (pXnlConnection->m_bConnected == TRUE))
 		{
+			
+			if (m_radioCfg.Mode == 0)
+			{
+				target_radio_id = 16777215;    //常规
+			}
+			else if (m_radioCfg.Mode == 1)    
+			{
+				target_radio_id = 255;         //集群
+			}
 			if (target_radio_id != 0)
 			{
-			
-				pXnlConnection->send_xcmp_call_ctrl_request(0x01, call_type, 0x01, 0, target_radio_id);
+				pXnlConnection->send_xcmp_call_ctrl_request(sessionId, 0x01, call_type, 0x01, 0, target_radio_id);
 				pXnlConnection->send_xcmp_tx_ctrl_request(0x01, 0x00);
 
 				return 0;
@@ -154,7 +164,7 @@ int CTcpScheduling::allCall()
 	return 1;
 
 }
-int CTcpScheduling::stopCall()
+int CTcpScheduling::stopCall(std::string sessionId)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "停止呼叫";
@@ -180,7 +190,7 @@ int CTcpScheduling::stopCall()
 
 	return 1;
 }
-int CTcpScheduling::remotePowerOn(int id)
+int CTcpScheduling::remotePowerOn(std::string sessionId, int id)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "遥开";
@@ -194,7 +204,7 @@ int CTcpScheduling::remotePowerOn(int id)
 		{
 			if (target_radio_id != 0)
 			{
-				pXnlConnection->send_xcmp_rmt_radio_ctrl_request(0x02, 0x01, 0x01, target_radio_id);
+				pXnlConnection->send_xcmp_rmt_radio_ctrl_request(sessionId,0x02, 0x01, 0x01, target_radio_id);
 
 				return 0;
 			}
@@ -214,7 +224,7 @@ int CTcpScheduling::remotePowerOn(int id)
 
 	return 1;
 }
-int CTcpScheduling::remotePowerOff( int id)
+int CTcpScheduling::remotePowerOff(std::string sessionId, int id)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "遥闭";
@@ -228,7 +238,7 @@ int CTcpScheduling::remotePowerOff( int id)
 
 			if (target_radio_id != 0)
 			{
-				pXnlConnection->send_xcmp_rmt_radio_ctrl_request(0x01, 0x01, 0x01, target_radio_id);
+				pXnlConnection->send_xcmp_rmt_radio_ctrl_request(sessionId,0x01, 0x01, 0x01, target_radio_id);
 
 			}
 			else
@@ -246,7 +256,7 @@ int CTcpScheduling::remotePowerOff( int id)
 	}
 	return 1;
 }
-int CTcpScheduling::radioCheck( int id)
+int CTcpScheduling::radioCheck(std::string sessionId ,int id)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "在线检测";
@@ -261,7 +271,7 @@ int CTcpScheduling::radioCheck( int id)
 
 			if (target_radio_id != 0)
 			{
-				pXnlConnection->send_xcmp_rmt_radio_ctrl_request(0x00, 0x01, 0x01, target_radio_id);
+				pXnlConnection->send_xcmp_rmt_radio_ctrl_request(sessionId,0x00, 0x01, 0x01, target_radio_id);
 
 				return 0;
 			}
@@ -281,7 +291,7 @@ int CTcpScheduling::radioCheck( int id)
 	return 1;
 
 }
-int CTcpScheduling::wiretap( int id)
+int CTcpScheduling::wiretap(std::string sessionId ,int id)
 {
 #if DEBUG_LOG
 	LOG(INFO) << "远程监听";
@@ -297,7 +307,7 @@ int CTcpScheduling::wiretap( int id)
 			if (target_radio_id != 0)
 			{
 				
-				pXnlConnection->send_xcmp_rmt_radio_ctrl_request(0x03, 0x01, 0x01, target_radio_id);
+				pXnlConnection->send_xcmp_rmt_radio_ctrl_request(sessionId,0x03, 0x01, 0x01, target_radio_id);
 
 				return 0;
 			}
@@ -333,28 +343,28 @@ void CTcpScheduling::workThreadFunc()
 				}*/
 				break;
 			case PRIVATE_CALL:
-				privateCall(it->radioId);
+				privateCall(it->sessionId,it->radioId);
 				break;
 			case GROUP_CALL:
-				groupCall(it->radioId);
+				groupCall(it->sessionId,it->radioId);
 				break;
 			case ALL_CALL:
-				allCall();
+				allCall(it->sessionId);
 				break;
 			case STOP_CALL:
-				stopCall();
+				stopCall(it->sessionId);
 				break;
 			case REMOTE_CLOSE:
-				remotePowerOff(it->radioId);
+				remotePowerOff(it->sessionId,it->radioId);
 				break;
 			case REMOTE_OPEN:
-				remotePowerOn(it->radioId);
+				remotePowerOn(it->sessionId,it->radioId);
 				break;
 			case CHECK_RADIO_ONLINE:
-				radioCheck(it->radioId);
+				radioCheck(it->sessionId,it->radioId);
 				break;
 			case REMOTE_MONITOR:
-				wiretap(it->radioId);
+				wiretap(it->sessionId,it->radioId);
 				break;
 			default:
 				break;
@@ -365,7 +375,7 @@ void CTcpScheduling::workThreadFunc()
 		Sleep(10);
 	}	
 }
-void CTcpScheduling::addTcpCommand( int command, std::string radioIP, int id, int callType)
+void CTcpScheduling::addTcpCommand( int command, std::string radioIP, int id, int callType,std::string sessionId)
 {
 	std::lock_guard<std::mutex> locker(m_addCommandLocker);
 	TcpCommand      m_allCommand;
@@ -374,6 +384,9 @@ void CTcpScheduling::addTcpCommand( int command, std::string radioIP, int id, in
 	m_allCommand.timeCount = 0;
 	m_allCommand.radioIP = radioIP;
 	m_allCommand.radioId = id;
+	m_allCommand.sessionId = sessionId;
+	m_allCommand.transactionIdBase = 0;
+	m_allCommand.txXcmpCount = 0;
 	//std::lock_guard <std::mutex> locker(m_allCommandListLocker);
 	tcpCommandTimeOutList.push_back(m_allCommand);
 	//std::lock_guard <std::mutex> wlocker(m_workLocker);
@@ -616,7 +629,7 @@ int CTcpScheduling::tcpConnect()
 	{
 		if (pXnlConnection == NULL || !isTcpConnect)
 		{
-			pXnlConnection = CXNLConnection::CreatConnection(dwip, 8002, "0x152C7E9D0x38BE41C70x71E96CA40x6CAC1AFC",
+			pXnlConnection = CXNLConnection::CreatConnection(dwip, port, "0x152C7E9D0x38BE41C70x71E96CA40x6CAC1AFC",
 				strtoul("0x9E3779B9", NULL, 16));
 
 			std::list<TcpCommand>::iterator it;
@@ -865,45 +878,43 @@ void CTcpScheduling::connect()
 	m_tMt = CreateThread(NULL, 0, timeOutThread, this, THREAD_PRIORITY_NORMAL, NULL);
 	m_uMt = CreateThread(NULL, 0, radioUsbStatusThread, this, THREAD_PRIORITY_NORMAL, NULL);
 }
-void CTcpScheduling::call( int type, int op, int id )
+void CTcpScheduling::call( int type, int op, int id ,std::string sessionId )
 {
 	if (START == op)
 	{
-
 		switch (type)
 		{
 		case PRIVATE:
-			addTcpCommand( PRIVATE_CALL, "", id, PRIVATE);
+			addTcpCommand( PRIVATE_CALL, "", id, PRIVATE,sessionId);
 			break;
 		case GROUP:
-			addTcpCommand( GROUP_CALL, "", id, GROUP);
+			addTcpCommand( GROUP_CALL, "", id, GROUP,sessionId);
 			break;
 		case ALL:
-			addTcpCommand( ALL_CALL, "", id, ALL);
+			addTcpCommand( ALL_CALL, "", id, ALL,sessionId);
 			break;
 		}
 	}
 	else
 	{
-		addTcpCommand(STOP_CALL,"",id,type);
+		addTcpCommand(STOP_CALL,"",id,type,sessionId);
 	}
-
 }
-void CTcpScheduling::control( int type, int id)
+void CTcpScheduling::control( int type, int id,std::string sessionId)
 {
 	switch (type)
 	{
 	case  RADIOCHECK :
-		addTcpCommand(CHECK_RADIO_ONLINE, "", id,0);
+		addTcpCommand(CHECK_RADIO_ONLINE, "", id,0,sessionId);
 		break;
 	case  MONITOR :
-		addTcpCommand( REMOTE_MONITOR, "", id,0);
+		addTcpCommand( REMOTE_MONITOR, "", id,0,sessionId);
 		break;
 	case  OFF :
-		addTcpCommand( REMOTE_CLOSE, "", id, 0);
+		addTcpCommand( REMOTE_CLOSE, "", id, 0,sessionId);
 		break;
 	case  ON :
-		addTcpCommand( REMOTE_OPEN, "", id, 0);
+		addTcpCommand( REMOTE_OPEN, "", id, 0,sessionId);
 		break;
 	default:
 		break;

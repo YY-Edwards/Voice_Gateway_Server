@@ -17,6 +17,19 @@ CBroker::CBroker()
 	, callId(1)
 {
 	licenseStatus = 2;
+	m_serialInformation.deviceType = 0;
+	memset(m_serialInformation.expiration, 0, 14);
+	m_serialInformation.isEver = false;
+	memset(m_serialInformation.funcList, 0, 16);
+	memset(m_serialInformation.licType, 0, 12);
+	memset(m_serialInformation.operate, 0, 16);
+	memset(m_serialInformation.pcMac, 0, 16);
+	memset(m_serialInformation.radioMode, 0, 13);
+	memset(m_serialInformation.radioSerial, 0, 16);
+	memset(m_serialInformation.repeaterMode, 0, 13);
+	memset(m_serialInformation.repeaterSerial, 0, 16);
+	memset(m_serialInformation.res, 0, 16);
+	memset(m_serialInformation.time, 0, 16);
 }
 
 
@@ -162,12 +175,26 @@ void CBroker::startWireLanClient(std::map<std::string, ACTION> clientActions)
 
 void CBroker::sendWirelanConfig()
 {
-	std::string strConnect = CSettings::instance()->getRequest("wlConnect", "wl", m_wirelanClient->getCallId(), CSettings::instance()->getValue("repeater"));
+	//std::string strConnect = CSettings::instance()->getRequest("wlConnect", "wl", m_wirelanClient->getCallId(), CSettings::instance()->getValue("repeater"));
+	//m_wirelanClient->send(strConnect.c_str(), strConnect.size());
+
+	std::string content = 
+		"{\"repeater\":" + CSettings::instance()->getValue("repeater") +
+		",\"mnis\":" + CSettings::instance()->getValue("mnis") +
+		",\"location\":" + CSettings::instance()->getValue("location") +
+		",\"locationIndoor\":" + CSettings::instance()->getValue("locationIndoor") + "}";
+	//std::string strConnect = CSettings::instance()->getRequest("connect", "radio", m_radioClient->getCallId(), content);
+	//m_radioClient->send(strConnect.c_str(), strConnect.size());
+	std::string strConnect = CSettings::instance()->getRequest("wlConnect", "wl", m_wirelanClient->getCallId(), content);
 	m_wirelanClient->send(strConnect.c_str(), strConnect.size());
 }
 void CBroker::sendRadioConfig()
 {
-	std::string strConnect = CSettings::instance()->getRequest("connect", "radio", m_radioClient->getCallId(), CSettings::instance()->getValue("radio"));
+	std::string content = "{\"radio\":" + CSettings::instance()->getValue("radio") + ",\"mnis\":"+
+		CSettings::instance()->getValue("mnis") +",\"location\":"+
+		CSettings::instance()->getValue("location") +",\"locationIndoor\":"+
+		CSettings::instance()->getValue("locationIndoor")+"}";
+	std::string strConnect = CSettings::instance()->getRequest("connect", "radio", m_radioClient->getCallId(), content);
 	m_radioClient->send(strConnect.c_str(), strConnect.size());
 }
 void CBroker::sendSettingConfig()
@@ -347,8 +374,8 @@ void CBroker::sendLoactionIndoorConfig()
 	std::string strConnect = CSettings::instance()->getRequest("locationIndoor", "radio", m_radioClient->getCallId(), CSettings::instance()->getValue("locIndoor"));
 	m_radioClient->send(strConnect.c_str(), strConnect.size());
 }
-void CBroker::sendLoactionIndoorConfigToWl()
-{
-	std::string strConnect = CSettings::instance()->getRequest("locationIndoor", "radio", m_wirelanClient->getCallId(), CSettings::instance()->getValue("locIndoor"));
-	m_wirelanClient->send(strConnect.c_str(), strConnect.size());
-}
+//void CBroker::sendLoactionIndoorConfigToWl()
+//{
+	//std::string strConnect = CSettings::instance()->getRequest("locationIndoor", "radio", m_wirelanClient->getCallId(), CSettings::instance()->getValue("locIndoor"));
+	//m_wirelanClient->send(strConnect.c_str(), strConnect.size());
+//}

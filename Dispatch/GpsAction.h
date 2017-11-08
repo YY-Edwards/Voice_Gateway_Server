@@ -37,6 +37,7 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			int  querymode = -1;
 			int id = -1;;
 			double cycle = -1;
+			std::string sessionId = "";
 			if (d.HasMember("Operate") && d["Operate"].IsInt())
 			{
 				operate = d["Operate"].GetInt();
@@ -53,9 +54,13 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			{
 				cycle = d["Cycle"].GetDouble();
 			}
+			if (d.HasMember("SessionId") && d["SessionId"].IsString())
+			{
+				sessionId = d["SessionId"].GetString();
+			}
 			if (operate == START)
 			{
-				if (!dis.getGps(id, querymode, cycle))
+				if (!dis.getGps(id, querymode, cycle,sessionId))
 				{
 					ArgumentType args;
 					args["Target"] = FieldValue(id);
@@ -63,6 +68,7 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 					args["Cycle"] = FieldValue(cycle);
 					args["Operate"] = FieldValue(operate);
 					args["Status"] = FieldValue(UNSUCESS);
+					args["SessionId"] = FieldValue(sessionId.c_str());
 					std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGpsStatus", callId, args, "radio");
 					if (client != NULL)
 					{
@@ -78,7 +84,7 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 				{
 					querymode = g_radioStatus[buf].gpsQueryMode;
 				}
-				if(!dis.stopGps( id, querymode))
+				if(!dis.stopGps( id, querymode,sessionId))
 				{
 					ArgumentType args;
 					args["Target"] = FieldValue(id);
@@ -86,6 +92,7 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 					args["Cycle"] = FieldValue(cycle);
 					args["Operate"] = FieldValue(operate);
 					args["Status"] = FieldValue(UNSUCESS);
+					args["SessionId"] = FieldValue(sessionId.c_str());
 					std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGpsStatus", callId, args, "radio");
 					if (client != NULL)
 					{

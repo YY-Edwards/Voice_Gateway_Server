@@ -17,6 +17,7 @@
 #define REMOTE_OPEN            6
 #define CHECK_RADIO_ONLINE     7
 #define REMOTE_MONITOR         8
+#define CONTTROLBROADCAST      9
 #define RADIO_ARS              17					 //sendArs
 #define STOP_CALL              19
 #define REMOTE_REPLY           21
@@ -56,7 +57,7 @@
 
 #define RADIO_STATUS_OFFLINE   0
 #define RADIO_STATUS_ONLINE    1
-
+#define MAX_IP_SIZE 16
 #define  RADIOCHECK    0
 #define  MONITOR  1
 #define  OFF      2
@@ -72,7 +73,23 @@ typedef struct tagTcpRespone
 	int result;
 	int arsStatus;
 	std::string radioSerial;
+	std::string sessionId;
 }TcpRespone;
+typedef struct
+{
+	bool IsEnable;
+	int TomeoutSeconds;
+	int ID;
+	char Host[MAX_IP_SIZE];
+	int MessagePort;
+	int ArsPort;
+	int GpsPort;//disable
+	int XnlPort;//disable
+	int CAI;
+	int GroupCAI;
+	int LocationType;//General£¬ CSBK£¬ EnhCSBK
+	int Mode;
+}radio_t;
 extern void(*myTcpCallBackFunc)(int, TcpRespone);
 void onTcpData(void(*func)( int, TcpRespone), int call, TcpRespone data);
 extern std::string m_radioIP;
@@ -84,7 +101,10 @@ typedef struct tagTcpCommand
 	int timeCount;
 	int command;
 	int radioId;
+	unsigned char transactionIdBase;
+	unsigned char txXcmpCount;
 	std::string radioIP;
+	std::string sessionId;
 	//SOCKET s;
 }TcpCommand;
 extern std::list <TcpCommand> tcpCommandTimeOutList;

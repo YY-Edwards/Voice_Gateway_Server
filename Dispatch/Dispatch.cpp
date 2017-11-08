@@ -32,6 +32,9 @@ static SERVICE_STATUS g_ServiceStatus = { 0 };
 static HANDLE g_ServiceStopEvent = INVALID_HANDLE_VALUE;
 static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
 #define SERVER_CODE  FALSE
+#define			ConmpanyName			L"JiHua Information"
+#define			AppName					L"Trbox"
+#define			AppVersion				L"3.0"
 std::wstring getAppdataPath(){
 	TCHAR szBuffer[MAX_PATH];
 	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
@@ -40,23 +43,23 @@ std::wstring getAppdataPath(){
 }
 int _tmain(int argc, _TCHAR* argv[])
 {
-	system("chcp 65001");
-	system("cls");
+	/*system("chcp 65001");
+	system("cls");*/
 
 	int createFileRlt = 0;
 	TCHAR szBuffer[MAX_PATH];
 	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
-	std::wstring appFolder = getAppdataPath() + _T("\\Jihua Information");
+	std::wstring appFolder = getAppdataPath() + _T("\\") + ConmpanyName;
 	if (!PathFileExists(appFolder.c_str()))
 	{
 		createFileRlt = _wmkdir(appFolder.c_str());
 	}
-	appFolder = appFolder + _T("\\Trbox");
+	appFolder = appFolder + _T("\\") + AppName;
 	if (!PathFileExists(appFolder.c_str()))
 	{
 		createFileRlt = _wmkdir(appFolder.c_str());
 	}
-	appFolder = appFolder + _T("\\3.0");
+	appFolder = appFolder + _T("\\") + AppVersion;
 	if (!PathFileExists(appFolder.c_str()))
 	{
 		createFileRlt = _wmkdir(appFolder.c_str());
@@ -106,7 +109,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		rpcServer.addActionHandler("connect", connectAction);
 		rpcServer.addActionHandler("call", callAction);
 		rpcServer.addActionHandler("control", controlAction);
-		rpcServer.addActionHandler("queryGps", gpsAction);
+		rpcServer.addActionHandler("queryLocation", gpsAction);
 		rpcServer.addActionHandler("message", msgAction);
 		rpcServer.addActionHandler("status", statusAction);
 		rpcServer.addActionHandler("locationIndoor", locationIndoorAction);

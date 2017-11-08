@@ -253,13 +253,9 @@ void DispatchOperate::OnConnect(CRemotePeer* pRemotePeer)
 	
 	if (pRemotePeer)
 	{
-
-	
-
 		dis.addPeer(pRemotePeer);
 		std::string strRequest = CRpcJsonParser::buildCall("getRadioConfig", ++g_sn, ArgumentType(), "radio");
 		pRemotePeer->sendResponse((const char *)strRequest.c_str(), strRequest.size());
-
 		////∑¢ÀÕ–Ú¡–∫≈µΩtserver
 		//ArgumentType args;
 		//FieldValue fSerial(FieldValue::TString);
@@ -402,34 +398,13 @@ void DispatchOperate::OnData(  int call, Respone data)
 		dis.send2Client("sendGps", args);
 		break;
 	case RECV_LOCATION_INDOOR:
-		/*{
-			"callId": 4,
-			"call" : "locationIndoor",
-			"type" : "radio",
-			"param" : {
-			"source": 9,
-			"bcons" : [
-			{
-			"timestamp": 123,
-			"major" : 1,
-			"minor" : 1
-			}
-			]
-			}
-			}*/
 	{
-
-		
-	//	for (mBcon = data.becon.begin(); mBcon != data.becon.end(); mBcon++)
-		//{
 			FieldValue element(FieldValue::TObject);
 			FieldValue uuid(FieldValue::TArray);
 			for (int i = 0; i < 16; i++)
 			{
 				FieldValue temp(FieldValue::TInt);
-				//temp.setInt(mBcon->uuid[i]);
 				temp.setInt(data.bcon.uuid[i]);
-				//temp.setKeyVal(std::to_string(i).c_str(), FieldValue(mBcon->uuid[i]));
 				uuid.push(temp);
 			}
 			element.setKeyVal("uuid",FieldValue(uuid));
@@ -438,9 +413,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 			element.setKeyVal("timestamp", FieldValue(data.bcon.TimeStamp));
 			element.setKeyVal("major", FieldValue(data.bcon.Major));
 			element.setKeyVal("minor", FieldValue(data.bcon.Minor));
-			//bcons.push(element);
-	//	}
-		//args["bcons"] = bcons;
+	
 		args["bcon"] = element;
 		args["source"] = data.source;
 		dis.send2Client("locationIndoor", args);
@@ -493,6 +466,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 			info.push(element);
 		}
 		args["info"] = info;
+		args["SessionId"] = FieldValue((data.sessionId).c_str());
 		dis.send2Client("status", args);
 		break;
 	}
@@ -532,17 +506,27 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 	case PRIVATE_CALL:
 	case GROUP_CALL:
 	case ALL_CALL:
+		args["CallStatus"] = 1;  // 0: idle,1: tx, 2:rx, 4:fatal
 		args["Status"] = FieldValue(data.result);
 		args["Target"] = FieldValue(data.id);
 		args["Operate"] = FieldValue(START);
 		args["Type"] = FieldValue(data.callType);
+		if (data.sessionId != "")
+		{
+			args["SessionId"] = FieldValue((data.sessionId).c_str());
+		}
 		dis.send2Client("callStatus", args);
 		break;
 	case STOP_CALL:
+		args["CallStatus"] = 1;  // 0: idle,1: tx, 2:rx, 4:fatal
 		args["Status"] = FieldValue(data.result);
 		args["Target"] = FieldValue(data.id);
 		args["Operate"] = FieldValue(STOP);
 		args["Type"] = FieldValue(data.callType);
+		if (data.sessionId != "")
+		{
+			args["SessionId"] = FieldValue((data.sessionId).c_str());
+		}
 		dis.send2Client("callStatus",args);
 		break;
 	case  REMOTE_CLOSE :
@@ -552,7 +536,14 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 		args["Status"] = FieldValue(data.result);
 		args["Target"] = FieldValue(data.id);
 		args["Type"] = FieldValue(data.controlType);
+		args["SessionId"] = FieldValue((data.sessionId).c_str());
 		dis.send2Client("controlStatus", args);
+		break;
+	case CONTTROLBROADCAST:
+		args["Status"] = FieldValue(data.result);
+		args["Target"] = FieldValue(data.id);
+		args["Type"] = FieldValue(data.controlType);
+		dis.send2Client("controlResult", args);
 		break;
 	case RADIO_ARS:
 		break;
@@ -591,33 +582,41 @@ void DispatchOperate::send2Client( char* name, ArgumentType args)
 
 
 
-void DispatchOperate::connect(const char * ip ,const char* mIp,const char* gpsIP )
+void DispatchOperate::connect(radio_t radioCfg, mnis_t mnisCfg, location_t locationCfg, locationindoor_t locationIndoorCfg)
 {
-	if (INADDR_NONE != inet_addr(mIp))
+	if (!mnisCfg.IsEnable)
 	{
-		mnisIP = mIp;
-		pDs->radioConnect(mIp);
-		pTs->radioConnect(ip);
+		mnisCfg.ID = radioCfg.ID;
+		mnisCfg.ArsPort = radioCfg.ArsPort;
+		mnisCfg.CAI = radioCfg.CAI;
+		mnisCfg.GpsPort = radioCfg.GpsPort;
+		mnisCfg.GroupCAI = radioCfg.GroupCAI;
+		memcpy(mnisCfg.Host, radioCfg.Host, MAX_IP_SIZE);
+		mnisCfg.LocationType = radioCfg.LocationType;
+		mnisCfg.MessagePort = radioCfg.MessagePort;
+		mnisCfg.TomeoutSeconds = radioCfg.TomeoutSeconds;
+		pDs->radioConnect(mnisCfg,locationCfg,locationIndoorCfg);
+		pTs->radioConnect(radioCfg);
 	}
 	else
-	{
-		if (INADDR_NONE != inet_addr(gpsIP))
+	{	
+		if (!locationCfg.IsEnableGpsC)
 		{
-			pDs->InitGPSOverturnSocket(inet_addr(gpsIP));
+			pDs->InitGPSOverturnSocket(inet_addr(locationCfg.GpsC.Ip),locationCfg.GpsC.Port);
 		}
-		pDs->radioConnect(ip);
-		pTs->radioConnect(ip);
+		pDs->radioConnect(mnisCfg, locationCfg, locationIndoorCfg);
+		pTs->radioConnect(radioCfg);	
 	}
 	
 	
 }
-void DispatchOperate::call( int type,int op, int id)
+void DispatchOperate::call( int type,int op, int id,std::string sessionId)
 {
-	pTs->call(type, id, op);
+	pTs->call(type, id, op,sessionId);
 }
-void DispatchOperate::control( int type,  int id)
+void DispatchOperate::control( int type,  int id,std::string sessionId)
 {
-	pTs->control(type, id);
+	pTs->control(type, id,sessionId);
 }
 
 void DispatchOperate::setCallBack()
@@ -625,19 +624,19 @@ void DispatchOperate::setCallBack()
 	pDs->setCallBackFunc(DispatchOperate::OnData);
 	pTs->setCallBackFunc(DispatchOperate::OnTcpData);
 }
-bool DispatchOperate::getGps( int id, int querymode, double cycle)
+bool DispatchOperate::getGps( int id, int querymode, double cycle,std::string sessionId)
 {
-	return pDs->radioGetGps(id, querymode, cycle);
+	return pDs->radioGetGps(id, querymode, cycle, sessionId);
 }
-bool DispatchOperate::stopGps( int id, int querymode)
+bool DispatchOperate::stopGps( int id, int querymode,std::string sessionId)
 {
-	return pDs->radioStopGps(id, querymode);
+	return pDs->radioStopGps(id, querymode,sessionId);
 }
-bool DispatchOperate::sendMsg(std::string text, int id,  int opterateType)
+bool DispatchOperate::sendMsg(std::string text, int id,  int opterateType,std::string sessionId)
 {
-	return pDs->radioSendMsg(text, id, opterateType);
+	return pDs->radioSendMsg(text, id, opterateType,sessionId);
 }
-void DispatchOperate::getStatus( int type)
+void DispatchOperate::getStatus( int type,std::string sessionId)
 {
 	ArgumentType args;
 	switch (type)
@@ -648,29 +647,33 @@ void DispatchOperate::getStatus( int type)
 		{
 			args["getType"] = CONNECT_STATUS;
 			args["info"] = FieldValue(DATA_SUCESS_DISPATCH_SUCESS);
+			args["SessionId"] = FieldValue(sessionId.c_str());
 			dis.send2Client("status", args);
 		}
 		else if (isUdpConnect && !isTcpConnect)
 		{
 			args["getType"] = CONNECT_STATUS;
 			args["info"] = FieldValue(DATA_SUCESS_DISPATCH_FAILED);
+			args["SessionId"] = FieldValue(sessionId.c_str());
 			dis.send2Client("status", args);
 		}
 		else if (!isUdpConnect && isTcpConnect)
 		{
 			args["getType"] = CONNECT_STATUS;
 			args["info"] = FieldValue(DATA_FAILED_DISPATCH_SUCESS);
+			args["SessionId"] = FieldValue(sessionId.c_str());
 			dis.send2Client("status", args);
 		}
 		else if (!isUdpConnect && !isTcpConnect)
 		{
 			args["getType"] = CONNECT_STATUS;
 			args["info"] = FieldValue(DATA_FAILED_DISPATCH_FAILED);
+			args["SessionId"] = FieldValue(sessionId.c_str());
 			dis.send2Client("status", args);
 		}
 		break;
 	case RADIO_STATUS:
-		pDs->getRadioStatus(type);
+		pDs->getRadioStatus(type,sessionId);
 		break;
 	}
 }

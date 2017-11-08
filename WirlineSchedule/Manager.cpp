@@ -17,7 +17,8 @@ BOOL g_bTX;       //Set or cleared by dongle.
 CSerialDongle* g_pDongle;
 BOOL g_dongleIsUsing;
 
-CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis,std::wstring& defaultAudioPath)
+CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis, std::wstring& defaultAudioPath) :
+m_idTaskOnTimerProc(0)
 {
 	g_pNet = new CWLNet(pDb, this, defaultAudioPath);
 	g_pDongle = new CSerialDongle();
@@ -46,7 +47,7 @@ CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis,std::wstring& defaultAudi
 	m_pCurrentTask = NULL;
 	m_pMnis = pMnis;
 	m_hWaitDecodeEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-	memset(&m_currentTask, 0, sizeof(REMOTE_TASK));
+	//memset(&m_currentTask, 0, sizeof(REMOTE_TASK));
 }
 
 CManager::~CManager()
@@ -55,6 +56,11 @@ CManager::~CManager()
 	if (m_theTimeCaps.wPeriodMin != 0)
 	{
 		timeEndPeriod(m_theTimeCaps.wPeriodMin);//清除最小定时器精度
+	}
+	if (m_idTaskOnTimerProc != 0)
+	{
+		timeKillEvent(m_idTaskOnTimerProc);
+		m_idTaskOnTimerProc = 0;
 	}
 	stop();
 }
@@ -442,51 +448,51 @@ int CManager::config(REMOTE_TASK* pTask)
 	bool bMasterChange = false;
 	bool bDongleChange = false;
 	bool bMnisChange = false;
-	CONFIG_SCHDULE_ISENABLE = pConfig->IsEnable;
-	CONFIG_MNIS_ID = pConfig->MnisId;
-	g_pNet->setAudioPath(pConfig->audioPath);
-	if (0 != strcmp(CONFIG_MASTER_IP, pConfig->master.ip))
+	CONFIG_SCHDULE_ISENABLE = pConfig->reapeater.IsEnable;
+	CONFIG_MNIS_ID = pConfig->mnis.ID;
+	g_pNet->setAudioPath(pConfig->reapeater.AudioPath);
+	if (0 != strcmp(CONFIG_MASTER_IP, pConfig->reapeater.Master.ip))
 	{
-		strcpy_s(CONFIG_MASTER_IP, pConfig->master.ip);
+		strcpy_s(CONFIG_MASTER_IP, pConfig->reapeater.Master.ip);
 		bMasterChange = true;
 	}
-	if (0 != strcmp(CONFIG_MNIS_IP, pConfig->mnis.ip))
+	if (0 != strcmp(CONFIG_MNIS_IP, pConfig->mnis.Host))
 	{
-		strcpy_s(CONFIG_MNIS_IP, pConfig->mnis.ip);
+		strcpy_s(CONFIG_MNIS_IP, pConfig->mnis.Host);
 		bMnisChange = true;
 	}
-	if (CONFIG_MASTER_PORT != pConfig->master.port)
+	if (CONFIG_MASTER_PORT != pConfig->reapeater.Master.port)
 	{
-		CONFIG_MASTER_PORT = pConfig->master.port;
+		CONFIG_MASTER_PORT = pConfig->reapeater.Master.port;
 		bMasterChange = true;
 	}
-	if (CONFIG_LOCAL_PEER_ID != pConfig->localPeerId)
+	if (CONFIG_LOCAL_PEER_ID != pConfig->reapeater.LocalPeerId)
 	{
-		CONFIG_LOCAL_PEER_ID = pConfig->localPeerId;
+		CONFIG_LOCAL_PEER_ID = pConfig->reapeater.LocalPeerId;
 		if (!bMasterChange)
 		{
 			g_pNet->setWlStatus(STARTING);
 		}
 	}
-	CONFIG_LOCAL_RADIO_ID = pConfig->localRadioId;
-	if (CONFIG_RECORD_TYPE != pConfig->recordType)
+	CONFIG_LOCAL_RADIO_ID = pConfig->reapeater.LocalRadioId;
+	if (CONFIG_RECORD_TYPE != pConfig->reapeater.recordType)
 	{
-		CONFIG_RECORD_TYPE = pConfig->recordType;
+		CONFIG_RECORD_TYPE = pConfig->reapeater.recordType;
 		if (!bMasterChange)
 		{
 			g_pNet->setWlStatus(STARTING);
 		}
 	}
-	CONFIG_DEFAULT_GROUP = pConfig->defaultGroup;
-	if (CONFIG_DONGLE_PORT != pConfig->dongle.donglePort)
+	CONFIG_DEFAULT_GROUP = pConfig->reapeater.DefaultGroupId;
+	if (CONFIG_DONGLE_PORT != pConfig->reapeater.Dongle.donglePort)
 	{
-		CONFIG_DONGLE_PORT = pConfig->dongle.donglePort;
+		CONFIG_DONGLE_PORT = pConfig->reapeater.Dongle.donglePort;
 		bDongleChange = true;
 	}
-	CONFIG_HUNG_TIME = pConfig->hangTime;
-	CONFIG_MASTER_HEART_TIME = pConfig->masterHeartTime;
-	CONFIG_PEER_HEART_AND_REG_TIME = pConfig->peerHeartTime;
-	CONFIG_DEFAULT_SLOT = pConfig->defaultSlot;
+	CONFIG_HUNG_TIME = pConfig->reapeater.MinHungTime;
+	CONFIG_MASTER_HEART_TIME = pConfig->reapeater.MaxSiteAliveTime;
+	CONFIG_PEER_HEART_AND_REG_TIME = pConfig->reapeater.MaxPeerAliveTime;
+	CONFIG_DEFAULT_SLOT = pConfig->reapeater.DefaultChannel;
 
 	if (!m_bIsHaveConfig)
 	{
@@ -542,7 +548,8 @@ int CManager::config(REMOTE_TASK* pTask)
 			g_pWLlog->sendLog("sound initial success");
 		}
 		/*配置mnis*/
-		m_pMnis->radioConnect(CONFIG_MNIS_IP);
+		//m_pMnis->radioConnect(CONFIG_MNIS_IP);
+		m_pMnis->radioConnect(pConfig->mnis, pConfig->location, pConfig->locationindoor);
 
 		m_bIsHaveConfig = true;
 	}
@@ -610,7 +617,7 @@ int CManager::config(REMOTE_TASK* pTask)
 		if (bMnisChange)
 		{
 			/*配置mnis*/
-			m_pMnis->radioConnect(CONFIG_MNIS_IP);
+			m_pMnis->radioConnect(pConfig->mnis, pConfig->location, pConfig->locationindoor);
 		}
 	}
 	return rlt;
@@ -670,7 +677,9 @@ void CManager::handleRemoteTask()
 			case REMOTE_CMD_CALL:
 			{
 									//memcpy(&m_pCurrentTask, &task, sizeof(REMOTE_TASK));
+									lockCurTask();
 									setCurrentTask(&task);
+									unLockCurTask();
 									if (g_pNet->getWlStatus() == ALIVE)
 									{
 										initialCall(task.param.info.callParam.operateInfo.tartgetId, task.param.info.callParam.operateInfo.callType);
@@ -699,7 +708,9 @@ void CManager::handleRemoteTask()
 			case REMOTE_CMD_STOP_CALL:
 			{
 										 //memcpy(&m_pCurrentTask, &task, sizeof(REMOTE_TASK));
+										 lockCurTask();
 										 setCurrentTask(&task);
+										 unLockCurTask();
 										 g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
 										 if (CALL_ONGOING == g_pNet->GetCallStatus())
 										 {
@@ -707,7 +718,7 @@ void CManager::handleRemoteTask()
 										 }
 										 //else
 										 //{
-											 //g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+										 //g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
 										 //}
 			}
 				break;
@@ -722,17 +733,17 @@ void CManager::handleRemoteTask()
 											   {
 												   info.setInt(REPEATER_DISCONNECT);
 											   }
-											   g_pNet->wlInfo(GET_TYPE_CONN, info);
+											   g_pNet->wlInfo(GET_TYPE_CONN, info, task.param.info.getInfoParam.getInfo.SessionId);
 			}
 				break;
 			case REMOTE_CMD_MNIS_QUERY_GPS:
 			{
-											  m_pMnis->radioGetGps(task.param.info.queryGpsParam.Target, task.param.info.queryGpsParam.Type, task.param.info.queryGpsParam.Cycle);
+											  m_pMnis->radioGetGps(task.param.info.queryGpsParam.Target, task.param.info.queryGpsParam.Type, task.param.info.queryGpsParam.Cycle, task.param.info.queryGpsParam.SessionId);
 			}
 				break;
 			case REMOTE_CMD_MNIS_MSG:
 			{
-										m_pMnis->radioSendMsg(task.param.info.msgParam.Contents, task.param.info.msgParam.Target, task.param.info.msgParam.Type);
+										m_pMnis->radioSendMsg(task.param.info.msgParam.Contents, task.param.info.msgParam.Target, task.param.info.msgParam.Type, task.param.info.msgParam.SessionId);
 			}
 				break;
 			case REMOTE_CMD_MNIS_STATUS:
@@ -750,20 +761,21 @@ void CManager::handleRemoteTask()
 																		 {
 																			 info.setInt(1);
 																		 }
-																		 g_pNet->wlMnisStatus(MNIS_GET_TYPE_CONNECT, info);
+																		 g_pNet->wlMnisStatus(MNIS_GET_TYPE_CONNECT, info, task.param.info.mnisStatusParam.SessionId);
 										   }
 											   break;
 										   default:
 										   {
-													  m_pMnis->getRadioStatus(task.param.info.mnisStatusParam.getType);
+													  m_pMnis->getRadioStatus(task.param.info.mnisStatusParam.getType, task.param.info.mnisStatusParam.SessionId);
 										   }
 											   break;
 										   }
 			}
 				break;
+				//case is no use
 			case REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG:
 			{
-				m_pMnis->locationIndoorConfig(task.param.info.locationParam.internal,task.param.info.locationParam.ibconNum,task.param.info.locationParam.isEmergency);
+														   m_pMnis->locationIndoorConfig(task.param.info.locationParam.internal, task.param.info.locationParam.ibconNum, task.param.info.locationParam.isEmergency);
 			}
 				break;
 			default:
@@ -810,7 +822,6 @@ void CManager::setCurrentTask(REMOTE_TASK* value)
 	freeCurrentTask();
 	applayCurrentTask();
 	memcpy(m_pCurrentTask, value, sizeof(REMOTE_TASK));
-	memcpy(&m_currentTask, value, sizeof(REMOTE_TASK));
 }
 
 void CManager::OnConnect(CRemotePeer* pRemotePeer)
@@ -855,19 +866,19 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 	{
 
 							 printf_s("SEND_PRIVATE_MSG:%d\r\n", response.msgStatus);
-							 g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus);
+							 g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus, response.sessionId);
 	}
 		break;
 	case SEND_GROUP_MSG:
 	{
 						   printf_s("SEND_GROUP_MSG:%d\r\n", response.msgStatus);
-						   g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus);
+						   g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus, response.sessionId);
 	}
 		break;
 	case RECV_MSG:
 	{
 					 printf_s("RECV_MSG:%s\r\n", response.msg.c_str());
-					 g_pNet->wlMnisMessage(response.msgType, response.target, response.source, response.msg);
+					 g_pNet->wlMnisMessage(response.msgType, response.target, response.source, response.msg, response.sessionId);
 					 /************************************************************************/
 					 /* temp code
 					 /************************************************************************/
@@ -886,37 +897,37 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 	case GPS_IMME_COMM:
 	{
 						  printf_s("GPS_IMME_COMM:%d\r\n", response.gpsStatus);
-						  g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+						  g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
 	}
 		break;
 	case GPS_TRIGG_COMM:
 	{
 						   printf_s("GPS_TRIGG_COMM:%d\r\n", response.gpsStatus);
-						   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+						   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
 	}
 		break;
 	case GPS_IMME_CSBK:
 	{
 						  printf_s("GPS_IMME_CSBK:%d\r\n", response.gpsStatus);
-						  g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+						  g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
 	}
 		break;
 	case GPS_TRIGG_CSBK:
 	{
 						   printf_s("GPS_TRIGG_CSBK:%d\r\n", response.gpsStatus);
-						   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+						   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
 	}
 		break;
 	case STOP_QUERY_GPS:
 	{
 						   printf_s("STOP_QUERY_GPS:%d\r\n", response.gpsStatus);
-						   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+						   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
 	}
 		break;
 	case RADIO_ARS:
 	{
 					  printf_s("RADIO_ARS:%d\r\n", response.arsStatus);
-					  g_pNet->wlMnisSendArs(response.source, (0 == response.arsStatus) ? ("True") : ("False"));
+					  g_pNet->wlMnisSendArs(response.source, (0 == response.arsStatus) ? ("True") : ("False"), response.sessionId);
 	}
 		break;
 		// do nothing
@@ -933,19 +944,19 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 					 gps.lon = response.lon;
 					 gps.speed = response.speed;
 					 gps.valid = response.valid;
-					 g_pNet->wlMnisSendGps(response.source, gps);
+					 g_pNet->wlMnisSendGps(response.source, gps, response.sessionId);
 	}
 		break;
 	case GPS_IMME_CSBK_EGPS:
 	{
 							   printf_s("GPS_IMME_CSBK_EGPS:%d\r\n", response.gpsStatus);
-							   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+							   g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
 	}
 		break;
 	case GPS_TRIGG_CSBK_EGPS:
 	{
 								printf_s("GPS_TRIGG_CSBK_EGPS:%d\r\n", response.gpsStatus);
-								g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus);
+								g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
 	}
 		break;
 	case CONNECT_STATUS:
@@ -970,10 +981,10 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 						 for (auto i = response.rs.begin(); i != response.rs.end(); i++)
 						 {
 							 RadioStatus radioStatus = i->second;
-							/* FieldValue element(FieldValue::TObject);
-							 element.setKeyVal("radioId", FieldValue(radioStatus.id));
-							 element.setKeyVal("IsOnline", FieldValue((1 == radioStatus.status)));
-							 element.setKeyVal("IsInGps", FieldValue((1 == radioStatus.gpsQueryMode)));*/
+							 /* FieldValue element(FieldValue::TObject);
+							  element.setKeyVal("radioId", FieldValue(radioStatus.id));
+							  element.setKeyVal("IsOnline", FieldValue((1 == radioStatus.status)));
+							  element.setKeyVal("IsInGps", FieldValue((1 == radioStatus.gpsQueryMode)));*/
 							 FieldValue element(FieldValue::TObject);
 							 element.setKeyVal("radioId", FieldValue(radioStatus.id));
 							 bool isGps = false;
@@ -1002,26 +1013,26 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 							 element.setKeyVal("IsOnline", FieldValue(isArs));
 							 info.push(element);
 						 }
-						 g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, info);
+						 g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, info, response.sessionId);
 	}
 		break;
 	case GPS_TRIGG_COMM_INDOOR:
 	{
-			FieldValue element(FieldValue::TObject);
-			FieldValue uuid(FieldValue::TArray);
-			for (int i = 0; i < 17; i++)
-			{
-				FieldValue temp(FieldValue::TInt);
-				temp.setInt(response.bcon.uuid[i]);
-				uuid.push(temp);
-			}
-			element.setKeyVal("uuid", FieldValue(uuid));
-			element.setKeyVal("txpower", FieldValue(response.bcon.TXPower));
-			element.setKeyVal("rssi", FieldValue(response.bcon.RSSI));
-			element.setKeyVal("timestamp", FieldValue(response.bcon.TimeStamp));
-			element.setKeyVal("major", FieldValue(response.bcon.Major));
-			element.setKeyVal("minor", FieldValue(response.bcon.Minor));
-			g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, element);
+								  FieldValue element(FieldValue::TObject);
+								  FieldValue uuid(FieldValue::TArray);
+								  for (int i = 0; i < 17; i++)
+								  {
+									  FieldValue temp(FieldValue::TInt);
+									  temp.setInt(response.bcon.uuid[i]);
+									  uuid.push(temp);
+								  }
+								  element.setKeyVal("uuid", FieldValue(uuid));
+								  element.setKeyVal("txpower", FieldValue(response.bcon.TXPower));
+								  element.setKeyVal("rssi", FieldValue(response.bcon.RSSI));
+								  element.setKeyVal("timestamp", FieldValue(response.bcon.TimeStamp));
+								  element.setKeyVal("major", FieldValue(response.bcon.Major));
+								  element.setKeyVal("minor", FieldValue(response.bcon.Minor));
+								  g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, element, response.sessionId);
 	}
 		break;
 	default:
@@ -1035,8 +1046,88 @@ int CManager::updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode)
 	return 0;
 }
 
-REMOTE_TASK* CManager::getCurrentTaskR()
+//REMOTE_TASK* CManager::getCurrentTaskR()
+//{
+//	return &m_currentTask;
+//}
+
+void CManager::handleTaskOnTimerProc()
 {
-	return &m_currentTask;
+	lockCurTask();
+	/*验证当前任务是否超时*/
+	REMOTE_TASK* p = getCurrentTask();
+	if (p)
+	{
+		if (p->timeOutTickCout != 0 && p->flag == FLAG_NHANDLE)
+		{
+			if (p->timeOutTickCout > GetTickCount())
+			{
+				p->flag = FLAG_HANDLED;
+				switch (p->cmd)
+				{
+				case StartCall:
+				case StopCall:
+					g_pNet->wlCallStatus(p, STATUS_CALL_END | REMOTE_CMD_FAIL);
+					break;
+				default:
+					break;
+				}
+			}
+		}
+	}
+	unLockCurTask();
+	/*验证队列任务是否超时*/
+	WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	std::list<REMOTE_TASK*>::iterator it = g_remoteCommandTaskQueue.begin();
+	while (it != g_remoteCommandTaskQueue.end())
+	{
+		REMOTE_TASK* p = *it;
+		if (p->timeOutTickCout != 0 && p->flag == FLAG_NHANDLE)
+		{
+			if (p->timeOutTickCout > GetTickCount())
+			{
+				p->flag = FLAG_HANDLED;
+				switch (p->cmd)
+				{
+				case StartCall:
+				case StopCall:
+				{
+								 g_pNet->wlCallStatus(p, STATUS_CALL_END | REMOTE_CMD_FAIL);
+								 g_remoteCommandTaskQueue.erase(it);
+								 delete p;
+								 p = NULL;
+				}
+					break;
+				default:
+					break;
+				}
+			}
+		}
+		it++;
+	}
+	SetEvent(g_taskLockerEvent);
+}
+
+void PASCAL CManager::TaskOnTimerProc(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2)
+{
+	CManager* p = (CManager*)dwUser;
+	if (p)
+	{
+		p->handleTaskOnTimerProc();
+	}
+}
+
+void CManager::lockCurTask()
+{
+	m_curTaskLocker.lock();
+	sprintf_s(m_reportMsg, "lockCurTask");
+	sendLogToWindow();
+}
+
+void CManager::unLockCurTask()
+{
+	m_curTaskLocker.unlock();
+	sprintf_s(m_reportMsg, "unLockCurTask");
+	sendLogToWindow();
 }
 

@@ -18,6 +18,7 @@
 #pragma comment(lib, "../lib//glog/lib/libglog.lib")
 
 #include "WLSocketLog.h"
+#include "../lib/radio/common.h"
 
 #ifdef _DEBUG
 #define DEBUG_CLIENTBLOCK new( _CLIENT_BLOCK, __FILE__, __LINE__)
@@ -40,6 +41,11 @@
 //#define TALK_TIME (20*1000)
 
 extern WLSocketLog *g_pWLlog;
+
+#define SESSION_SIZE 64
+#define FLAG_NHANDLE 0 //超时处理未执行
+#define FLAG_HANDLED 1 //超时处理已执行
+
 /************************************************************************/
 /* MNIS
 /************************************************************************/
@@ -49,6 +55,7 @@ typedef struct
 	int Target;
 	int Type;
 	double Cycle;
+	char SessionId[SESSION_SIZE];
 }QUERY_GPS;
 
 typedef struct
@@ -59,17 +66,19 @@ typedef struct
 	double speed;
 }GPS;
 
-typedef struct 
+typedef struct
 {
 	int Type;
 	int Target;
 	int Source;
 	char Contents[256];
+	char SessionId[SESSION_SIZE];
 }MNIS_MSG;
 
 typedef struct
 {
 	int getType;
+	char SessionId[SESSION_SIZE];
 	//FieldValue info;
 }ARS;
 
@@ -77,6 +86,7 @@ typedef struct
 #define REPEATER_CONNECT 0
 #define REPEATER_DISCONNECT 1
 #define PATH_FILE_MAXSIZE 1024
+
 
 enum CLIENT_CALL_TYPE
 {
@@ -140,7 +150,7 @@ enum _RECORD_TYPE_VALUE
 };
 #define MAX_IP_SIZE 16
 
-enum _SlotNumber
+enum SlotNumber_e
 {
 	NULL_SLOT = 0x00,
 	SLOT1,
@@ -162,7 +172,8 @@ extern unsigned short CONFIG_DONGLE_PORT;//dongle端口
 extern long CONFIG_HUNG_TIME;//session间隔时间
 extern long CONFIG_MASTER_HEART_TIME;//主中继心跳间隔
 extern long CONFIG_PEER_HEART_AND_REG_TIME;//非主中继心跳间隔和注册间隔
-extern _SlotNumber CONFIG_DEFAULT_SLOT;//默认信道
+extern SlotNumber_e CONFIG_DEFAULT_SLOT;//默认信道
+extern long CONFIG_TIMEOUT_SECONDS;//通话请求、获取在线设备列表请求的超时响应时间
 
 //////////////////////////////////////////////////////////////////////////
 /*信号*/
@@ -193,11 +204,11 @@ typedef struct
 {
 	char ip[MAX_IP_SIZE];
 	unsigned short port;
-}MASTER;
+}Master_t;
 typedef struct
 {
 	unsigned short donglePort;
-}DONGLE;
+}DONGLE_t;
 typedef struct
 {
 	char ip[MAX_IP_SIZE];
@@ -207,25 +218,75 @@ typedef struct
 {
 	char Ip[MAX_IP_SIZE];
 	unsigned short Port;
-}SVR;
+}Svr_t;
+
+typedef struct
+{
+}base_t;
+typedef struct
+{
+}radio_t;
 typedef struct
 {
 	bool IsEnable;
+	int TomeoutSeconds;
 	int Type;
-	SVR Svr;
-	MNIS mnis;
-	int MnisId;
-	MASTER master;
-	unsigned long defaultGroup;
-	unsigned long localRadioId;
-	unsigned long localPeerId;
+	Svr_t Svr;
+	//MNIS mnis;
+	//int MnisId;
+	Master_t Master;
+	unsigned long DefaultGroupId;
+	unsigned long LocalRadioId;
+	unsigned long LocalPeerId;
 	_RECORD_TYPE_VALUE recordType;
-	long hangTime;
-	long masterHeartTime;
-	long peerHeartTime;
-	_SlotNumber defaultSlot;
-	DONGLE dongle;
-	char audioPath[PATH_FILE_MAXSIZE];
+	long MinHungTime;
+	long MaxSiteAliveTime;
+	long MaxPeerAliveTime;
+	SlotNumber_e DefaultChannel;
+	DONGLE_t Dongle;
+	char AudioPath[PATH_FILE_MAXSIZE];
+}repeater_t;
+//typedef struct
+//{
+//	bool IsEnable;
+//	int ID;
+//	char Host[MAX_IP_SIZE];
+//	int MessagePort;
+//	int ArsPort;
+//	int GpsPort;//disable
+//	int XnlPort;//disable
+//	int CAI;
+//	int GroupCAI;
+//	int LocationType;//General， CSBK， EnhCSBK
+//}mnis_t;
+//typedef struct
+//{
+//	char Ip[MAX_IP_SIZE];
+//	unsigned short Port;
+//}GpsC_t;
+//typedef struct
+//{
+//	bool IsEnable;
+//	double Interval;
+//	bool IsEnableGpsC;
+//	GpsC_t GpsC;
+//}location_t;
+//typedef struct
+//{
+//	bool IsEnable;
+//	double Interval;
+//	int iBeaconNumber;
+//	bool IsEmergency;
+//}locationindoor_t;
+
+typedef struct
+{
+	base_t base;
+	radio_t radio;
+	repeater_t reapeater;
+	mnis_t mnis;
+	location_t location;
+	locationindoor_t locationindoor;
 }CONFIG;
 /************************************************************************/
 /* 通话命令参数定义
@@ -237,7 +298,7 @@ typedef struct
 	unsigned long tartgetId;
 	unsigned char callType;
 	bool isCurrent;
-
+	char SessionId[SESSION_SIZE];
 }CALL_OPERATE_PARAM;
 typedef struct
 {
@@ -278,6 +339,7 @@ typedef struct
 {
 	int getType;
 	int info;
+	char SessionId[SESSION_SIZE];
 }GET_INFO_PARAM;
 typedef struct
 {
@@ -289,7 +351,7 @@ typedef struct
 	int internal;
 	int ibconNum;
 	bool isEmergency;
-	int queryType ;
+	int queryType;
 }LOCATION_INDOOR_CONFIG;
 typedef struct
 {
@@ -312,6 +374,8 @@ typedef struct
 	//unsigned long long callId;
 	//CRemotePeer *pRemote;
 	int cmd;
+	unsigned long timeOutTickCout;
+	int flag;
 	JSON_PARAM param;
 }REMOTE_TASK;
 /*远程命令任务队列*/

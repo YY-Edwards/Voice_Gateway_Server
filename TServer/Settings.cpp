@@ -130,7 +130,6 @@ std::string CSettings::getValue(const char* type)
 	return "";
 }
 
-
 std::string replace(std::string str, const std::string & strsrc, const std::string &strdst)
 {
 	std::string::size_type pos = 0;//Œª÷√ 

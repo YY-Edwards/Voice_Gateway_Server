@@ -29,7 +29,7 @@ CRadioGps::~CRadioGps()
 		delete m_ThreadGpsOverturn;
 	}
 }
-bool CRadioGps::InitGPSSocket(DWORD dwAddress/*,  CRemotePeer * pRemote*/)
+bool CRadioGps::InitGPSSocket(DWORD dwAddress,int port)
 {
 	//pRemotePeer = pRemote;
 	//CString			 strError;
@@ -126,7 +126,7 @@ bool CRadioGps::CloseGPSSocket()
 	return TRUE;
 }
 
-bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,double cycle)
+bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,double cycle,int cai)
 {
 	int gpsCycle = static_cast<int>(cycle);
 	int gpsMode = queryMode;
@@ -359,7 +359,7 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,double cycle)
 	memset((void *)&m_ThreadGps->remote_addr, 0, sizeof(struct sockaddr_in));
 	m_ThreadGps->remote_addr.sin_family = AF_INET;
 	m_ThreadGps->remote_addr.sin_port = htons(4001);
-	unsigned long radio_ip = ((12 << 24) + dwRadioID) & 0xffffffff;
+	unsigned long radio_ip = ((cai << 24) + dwRadioID) & 0xffffffff;
 	m_ThreadGps->remote_addr.sin_addr.S_un.S_un_b.s_b1 = (unsigned char)((radio_ip >> 24) & 0xff);
 	m_ThreadGps->remote_addr.sin_addr.S_un.S_un_b.s_b2 = (unsigned char)((radio_ip >> 16) & 0xff);
 	m_ThreadGps->remote_addr.sin_addr.S_un.S_un_b.s_b3 = (unsigned char)((radio_ip >> 8) & 0xff);
@@ -372,7 +372,7 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,double cycle)
 	}
 	return true;
 }
-bool CRadioGps::StopQueryTriggeredGPS(DWORD dwRadioID, int	queryMode)
+bool CRadioGps::StopQueryTriggeredGPS(DWORD dwRadioID, int	queryMode,int cai)
 {
 	if (queryMode == GPS_TRIGG_COMM_INDOOR || queryMode == GPS_TRIGG_CSBK_INDOOR)
 	{
@@ -403,7 +403,7 @@ bool CRadioGps::StopQueryTriggeredGPS(DWORD dwRadioID, int	queryMode)
 	memset((void *)&m_ThreadGps->remote_addr, 0, sizeof(struct sockaddr_in));
 	m_ThreadGps->remote_addr.sin_family = AF_INET;
 	m_ThreadGps->remote_addr.sin_port = htons(4001);
-	unsigned long radio_ip = ((12 << 24) + dwRadioID) & 0xffffffff;
+	unsigned long radio_ip = ((cai << 24) + dwRadioID) & 0xffffffff;
 	m_ThreadGps->remote_addr.sin_addr.S_un.S_un_b.s_b1 = (unsigned char)((radio_ip >> 24) & 0xff);
 	m_ThreadGps->remote_addr.sin_addr.S_un.S_un_b.s_b2 = (unsigned char)((radio_ip >> 16) & 0xff);
 	m_ThreadGps->remote_addr.sin_addr.S_un.S_un_b.s_b3 = (unsigned char)((radio_ip >> 8) & 0xff);

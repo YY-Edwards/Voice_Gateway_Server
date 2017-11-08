@@ -60,9 +60,6 @@ public:
 	//void handleVoiceLog(const VOICE_LOG& param);
 	void stop();
 	REMOTE_TASK* getCurrentTask();
-	REMOTE_TASK* getCurrentTaskR();
-	void freeCurrentTask();
-	void applayCurrentTask();
 	/*设置延时的需要返回操作结果的任务*/
 	void setCurrentTask(REMOTE_TASK* value);
 	/*client接入*/
@@ -73,6 +70,10 @@ public:
 	static void OnMnisCallBack(int callFuncId, Respone response);
 	/*更新在线设备信息*/
 	int updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode = -1);
+	/*请求对当前任务操作*/
+	void lockCurTask();
+	/*完成对当前任务的操作*/
+	void unLockCurTask();
 private:
 	PLogReport m_report;
 	//HWND m_hwnd;
@@ -93,12 +94,21 @@ private:
 	// 	void LoadVoiceData(LPCWSTR filePath);
 
 	REMOTE_TASK *m_pCurrentTask;
-	REMOTE_TASK m_currentTask;
+	//REMOTE_TASK m_currentTask;
 
 	CDataScheduling* m_pMnis;
+	std::mutex m_curTaskLocker;
+	UINT m_idTaskOnTimerProc;
 
 	static unsigned __stdcall HandleRemoteTaskProc(void * pThis);
-
+	/*判断当前任务超时线程*/
+	static void PASCAL TaskOnTimerProc(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2);
+	/*处理超时任务*/
+	void handleTaskOnTimerProc();
+	/*applay current task*/
+	void applayCurrentTask();
+	/*free current task*/
+	void freeCurrentTask();
 };
 
 

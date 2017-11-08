@@ -80,7 +80,7 @@ public:
 	void startMonitorClient(std::map<std::string, ACTION> clientActions);
 	bool getLic(std::string license);
 	void sendLoactionIndoorConfig();
-	void sendLoactionIndoorConfigToWl();
+	//void sendLoactionIndoorConfigToWl();
 protected:
 	CBroker();
 	~CBroker();
@@ -96,7 +96,7 @@ private:
 	CRpcClient* m_logClient;
 	CRpcServer* m_rpcServer;
 	CRpcClient* m_monitorClient;
-	SerialInformation m_serialInformation;
+	SerialInformation m_serialInformation ;
 	SerialInformation m_licenseInformation;
 	int licenseStatus;
 	

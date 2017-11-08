@@ -22,7 +22,7 @@ class CRadioARS
 public:
 	CRadioARS(CDataScheduling *pMnis);
 	~CRadioARS();
-	bool InitARSSocket(DWORD dwAddress/*,CRemotePeer * pRemote*/);
+	bool InitARSSocket(DWORD dwAddress,int port);
 	bool CloseARSSocket();
 	static DWORD WINAPI ReceiveDataThread(LPVOID lpParam);
 	bool sendArsAck(DWORD dwRadioID, int CaiNet);

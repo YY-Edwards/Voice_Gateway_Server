@@ -222,7 +222,20 @@ unsigned int CXNLConnection::run(void)
                 ((xnl_msg_hdr_t *)p_send_msg)->xnl_flag = m_tx_xnl_flag;
                 *((char *)(&((xnl_msg_hdr_t *)p_send_msg)->trans_id)) = m_trans_id_base;
                 *((char *)(&((xnl_msg_hdr_t *)p_send_msg)->trans_id) + 1) = m_TxXCMPCount;
-
+				//add by wx
+				std::list<TcpCommand>::iterator it;
+				m_allCommandListLocker.lock();
+				for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); ++it)
+				{
+					if (it->sessionId.compare(p_send_msg_node->sessionId))
+					if (it->transactionIdBase<=0 && it->txXcmpCount<=0)
+					{
+						it->transactionIdBase = m_trans_id_base;
+						it->txXcmpCount = m_TxXCMPCount;
+						break;
+					}
+				}
+				m_allCommandListLocker.unlock();
                 bSocketErr = send_xnl_message(p_send_msg);
 
                 /* check whether there are errors occurred during the message sending */
@@ -776,12 +789,16 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 	unsigned char  rmt_type_code = 0;
 	unsigned long temp = 0; 
 	unsigned char condition = 1;   //ndicates that the Radio Feature is disabled on the Remote Radio.The Radio Feature command received over - the - air will be ignored by the Remote Radio.
+	unsigned char  transactionIdBase = 0;
+	unsigned char  txXcmpCount = 0;
 	int xnl_len = sizeof(xnl_msg_hdr_t);
 	xnl_opcode = ntohs(*((unsigned short *)(pBuf + 2)));  // add by lcc
 	xcmp_opcode = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t))));
+	transactionIdBase = ntohs(*((unsigned short *)(pBuf + 9)));
+	txXcmpCount = ntohs(*((unsigned short *)(pBuf + 10)));
 	char s[12];
 	std::string stringId;
-	if (XCMP_RMT_RADIO_CTRL_REPLY == xcmp_opcode)
+	if (XCMP_RMT_RADIO_CTRL_REPLY == xcmp_opcode || XCMP_CALL_CTRL_REPLY == xcmp_opcode || XCMP_TX_CTRL_REPLY == xcmp_opcode)
 	{
 		check_result = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+1)));
 		condition = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+2)));
@@ -791,7 +808,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 		sprintf_s(s, "%d", rmt_addr);
 		stringId = s;
 	}
-	else if (XCMP_RMT_RADIO_CTRL_BRDCST == xcmp_opcode)
+	else if (XCMP_RMT_RADIO_CTRL_BRDCST == xcmp_opcode || XCMP_CALL_CTRL_BRDCST == xcmp_opcode)
 	{
 		// control broadcast   0xb41c
 		check_result = ntohs(*((unsigned short *)(pBuf + sizeof(xnl_msg_hdr_t)+2)));
@@ -801,7 +818,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 		sprintf_s(s, "%d", rmt_addr);
 		stringId = s;
 	}
-	std::list<TcpCommand>::iterator it;
+	
 	switch (xcmp_opcode)
 	{
 	case XCMP_DEVICE_INIT_STATUS_BRDCST:
@@ -810,454 +827,242 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 		send_xcmp_radio_status_request(0x07);             //read radio mode
 		break;
 		//在线检测
+	
 	case XCMP_RMT_RADIO_CTRL_REPLY:  //reply  control操作已收到
+		controlReply(check_result, transactionIdBase, txXcmpCount, stringId);
 		break;
-	
 	case XCMP_RMT_RADIO_CTRL_BRDCST:                         //  Remote Radio Control Broadcast
-	
-		try
- 		{
-			m_allCommandListLocker.lock();
-			for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); ++it)
-			{
-				if (0x000B == xnl_opcode && (0xB41C == xcmp_opcode || 0x841c == xcmp_opcode))
-				{
-
-					BOOL rmtflag = FALSE;
-					if (rmt_type_code == 0x00 && CHECK_RADIO_ONLINE == it->command )                                                   //在线检测
-					{
-						if ((0x10 == check_result /*|| 0x00 == check_result*/) /*&& condition == 1*/)
-						{
-							if (myTcpCallBackFunc != NULL)
-							{
-								TcpRespone tr = {0};
-								tr.id = rmt_addr;
-								tr.controlType = RADIOCHECK;
-								tr.result = REMOTE_SUCESS;
-								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
-								if (CHECK_RADIO_ONLINE == it->command)
-								{
-									it = tcpCommandTimeOutList.erase(it);
-								}
-								
-								
-								////查看状态，状态发生改变时，通知特Tserver
-								if (g_radioStatus.find(stringId) == g_radioStatus.end())
-								{
-									RadioStatus st;
-									st.id = rmt_addr;
-									st.status = RADIO_STATUS_ONLINE;
-									g_radioStatus[stringId] = st;
-									tr.arsStatus = SUCESS;
-									onTcpData(myTcpCallBackFunc,  RADIO_ARS, tr);
-								}
-								else if (g_radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
-								{
-									g_radioStatus[stringId].status = RADIO_STATUS_ONLINE;
-									tr.arsStatus = SUCESS;
-									onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
-								}
-			
-								
-#if DEBUG_LOG
-								LOG(INFO) << "在线";
-#endif
-								break;
-							}
-						}
-						else
-						{
-							rmtflag = false;
-							//0:不在线
-							if (myTcpCallBackFunc != NULL)
-							{
-								TcpRespone tr = { 0 };
-								tr.id = rmt_addr;
-								tr.controlType = RADIOCHECK;
-								tr.result = REMOTE_FAILED;
-								onTcpData(myTcpCallBackFunc, CHECK_RADIO_ONLINE, tr);
-								if (CHECK_RADIO_ONLINE == it->command)
-								{
-									it = tcpCommandTimeOutList.erase(it);
-								}
-								////查看状态，状态发生改变时，通知特Tserver
-								if (g_radioStatus.find(stringId) == g_radioStatus.end())
-								{
-									RadioStatus st;
-									st.id = rmt_addr;
-									st.status = RADIO_STATUS_ONLINE;
-									g_radioStatus[stringId] = st;
-									tr.arsStatus = SUCESS;
-									onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
-								}
-								else if (g_radioStatus[stringId].status == RADIO_STATUS_ONLINE)
-								{
-									g_radioStatus[stringId].status = RADIO_STATUS_OFFLINE;
-									tr.arsStatus = SUCESS;
-									onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
-								}
-#if DEBUG_LOG
-								LOG(INFO) << "离线";
-#endif
-								break;
-							}
-
-						}
-					}
-					else if (rmt_type_code == 0x01 && REMOTE_CLOSE == it->command)
-					{
-						if ((0x10 == check_result/* & 0x00FF)*/ /*|| 0x00 == check_result*/) /*&& condition == 1*/)                                    //摇闭
-						{
-
-							if (myTcpCallBackFunc != NULL)
-							{
-								rmtflag = true;
-								TcpRespone tr = {0};
-								tr.id = rmt_addr;
-								tr.controlType = OFF;
-								tr.result = REMOTE_SUCESS;
-								onTcpData(myTcpCallBackFunc, CHECK_RADIO_ONLINE, tr);
-								if (REMOTE_CLOSE == it->command)
-								{
-									it = tcpCommandTimeOutList.erase(it);
-								}
-								////查看状态，状态发生改变时，通知特Tserver
-								if (g_radioStatus.find(stringId) == g_radioStatus.end())
-								{
-									RadioStatus st;
-									st.id = rmt_addr;
-									st.status = RADIO_STATUS_ONLINE;
-									g_radioStatus[stringId] = st;
-									tr.arsStatus = SUCESS;
-									onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
-								}
-								else if (g_radioStatus[stringId].status == RADIO_STATUS_ONLINE)
-								{
-									g_radioStatus[stringId].status = RADIO_STATUS_OFFLINE;
-									tr.arsStatus = SUCESS;
-									onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
-								}
-#if DEBUG_LOG
-								LOG(INFO) << "遥闭成功";
-#endif
-								break;
-							}
-						}
-						else /*if (0x0111 == check_result)*/
-						{
-							//rmtflag = false;                               //失败
-							if (myTcpCallBackFunc != NULL)
-							{
-								TcpRespone tr;
-								tr.id = rmt_addr;
-								tr.controlType = OFF;
-								tr.result = REMOTE_SUCESS;
-								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
-								if (REMOTE_CLOSE == it->command)
-								{
-									it = tcpCommandTimeOutList.erase(it);
-								}
-#if DEBUG_LOG
-								LOG(INFO) << "遥闭失败";
-#endif
-								break;
-							}
-
-						}
-					}
-					else if (rmt_type_code == 0x02 && REMOTE_OPEN == it->command)
-					{
-						if ((0x10 == check_result/* & 0x00FF)*/ /*|| 0x00 == check_result*/) /*&& condition == 1*/)                                     //摇开
-						{
-							rmtflag = true;                                  //成功
-							if (myTcpCallBackFunc != NULL)
-							{
-								TcpRespone tr = {0};
-								tr.id = rmt_addr;
-								tr.controlType = ON;
-								tr.result = REMOTE_SUCESS;
-								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
-								if (REMOTE_OPEN == it->command)
-								{
-									it = tcpCommandTimeOutList.erase(it);
-								}
-								////查看状态，状态发生改变时，通知特Tserver
-								if (g_radioStatus.find(stringId) == g_radioStatus.end())
-								{
-									RadioStatus st;
-									st.id = rmt_addr;
-									st.status = RADIO_STATUS_ONLINE;
-									g_radioStatus[stringId] = st;
-									tr.arsStatus = SUCESS;
-									onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
-								}
-								else if (g_radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
-								{
-									g_radioStatus[stringId].status = RADIO_STATUS_ONLINE;
-									tr.arsStatus = SUCESS;
-									onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
-								}
-#if DEBUG_LOG
-								LOG(INFO) << "遥开成功";
-#endif
-								break;
-							}
-						}
-						else
-						{
-							if (myTcpCallBackFunc != NULL)
-							{
-								TcpRespone tr = {0};
-								tr.id = rmt_addr;
-								tr.controlType = OFF;
-								tr.result = REMOTE_FAILED;
-								onTcpData(myTcpCallBackFunc, CHECK_RADIO_ONLINE, tr);
-								if (REMOTE_OPEN == it->command)
-								{
-									it = tcpCommandTimeOutList.erase(it);
-								}
-#if DEBUG_LOG
-								LOG(INFO) << "遥开失败";
-#endif
-								break;
-							}
-
-						}
-					}
-					else if (rmt_type_code == 0x03 && REMOTE_MONITOR == it->command)
-					{
-						if ((0x10 == check_result/* & 0x00FF)*/ /*|| 0x00 == check_result*/)/* && condition == 1*/)                                    //远程监听
-						{
-							//rmtflag = true;                                   //成功
-							if (myTcpCallBackFunc != NULL)
-							{
-								TcpRespone tr = {0};
-								tr.id = rmt_addr;
-								tr.controlType = MONITOR;
-								tr.result = REMOTE_SUCESS;
-								onTcpData(myTcpCallBackFunc,  CHECK_RADIO_ONLINE, tr);
-								if (REMOTE_MONITOR == it->command)
-								{
-									it = tcpCommandTimeOutList.erase(it);
-								}
-								////查看状态，状态发生改变时，通知特Tserver
-								if (g_radioStatus.find(stringId) == g_radioStatus.end())
-								{
-									RadioStatus st;
-									st.id = rmt_addr;
-									st.status = RADIO_STATUS_ONLINE;
-									g_radioStatus[stringId] = st;
-									tr.arsStatus = SUCESS;
-									onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
-								}
-								else if (g_radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
-								{
-									g_radioStatus[stringId].status = RADIO_STATUS_ONLINE;
-									tr.arsStatus = SUCESS;
-									onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
-								}
-#if DEBUG_LOG
-								LOG(INFO) << "远程监听成功";
-#endif
-								break;
-							}
-						}
-						else
-						{
-
-							//rmtflag = false;
-							if (myTcpCallBackFunc != NULL)
-							{
-								TcpRespone tr = {0};
-								tr.id = rmt_addr;
-								tr.controlType = MONITOR;
-								tr.result = REMOTE_FAILED;
-								onTcpData(myTcpCallBackFunc, CHECK_RADIO_ONLINE, tr);
-								if (REMOTE_MONITOR == it->command)
-								{
-									it = tcpCommandTimeOutList.erase(it);
-								}
-#if DEBUG_LOG
-								LOG(INFO) << "远程监听失败";
-#endif
-								break;
-						}
-						
-					}
-						
-					}
-				}	
-			}
-			m_allCommandListLocker.unlock();
-			break;
-
-		}
-		catch (std::exception e)
-		{
-
-		}
+		controlBroadcast(check_result,stringId,rmt_type_code);
+		break;
 	case 0XB413:                 //紧急报警
 		if (0x000B == xnl_opcode && 0xB413 == xcmp_opcode)
 		{
 			
 		}
 		break;
-	//case XCMP_RMT_RADIO_CTRL_REPLY:              //Remote Radio Control Reply
-	//	switch (*((unsigned char*)(pBuf + sizeof(xnl_msg_hdr_t)+1)))
-	//	{
-	//	case 0x0:                                                         //success
-	//		break;
-	//	case 0x01:                                                        //failure
-	//		break;
-	//	case 0x02:                                                        //The radio is not in the mode required（信道被占）
-	//		break;
-	//	}
-	//	break;
+	
 	case XCMP_RADIO_STATUS_REPLY:
 		{
 			decode_xcmp_radio_status_reply(pBuf);
 		}
 		break;
+	case XCMP_TX_CTRL_REPLY:
+	case XCMP_CALL_CTRL_REPLY:
+		callReply(check_result, transactionIdBase, txXcmpCount, stringId);
+		break;
 	case XCMP_CALL_CTRL_BRDCST:             //XCMP_CALL_CTRL_REPLY 
-		switch (*((char*)(pBuf + sizeof(xnl_msg_hdr_t)+3)))
+	{
+		unsigned char callState = *((char*)(pBuf + sizeof(xnl_msg_hdr_t)+3));
+		switch (callState)
 		{
-		case 0x04:
-			//1：呼叫开始
-#if DEBUG_LOG
-			LOG(INFO) << "呼叫开始  ";
-#endif
-			try
-			{
-				m_allCommandListLocker.lock();
-				for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); ++it)
-				{
-					if (myTcpCallBackFunc != NULL)
-					{
-						TcpRespone tr = {0};
-						tr.id = it->radioId;
-						/*ArgumentType args;
-						args["Status"] = FieldValue(REMOTE_SUCESS);
-						args["Target"] = FieldValue(rmt_addr);
-						args["Operate"] = FieldValue(START);*/
-						if (it->command == GROUP_CALL)
-						{
-							tr.callType = GROUP;
-
-						}
-						else if (it->command == PRIVATE_CALL)
-						{
-							tr.callType = PRIVATE;
-						}
-						else if (it->command == ALL_CALL)
-						{
-							tr.callType = ALL;
-
-						}
-						tr.result = REMOTE_SUCESS;
-						onTcpData(myTcpCallBackFunc, it->command, tr);
-						it = tcpCommandTimeOutList.erase(it);
-						////查看状态，状态发生改变时，通知特Tserver
-						if (g_radioStatus.find(stringId) == g_radioStatus.end())
-						{
-							RadioStatus st;
-							st.id = rmt_addr;
-							st.status = RADIO_STATUS_ONLINE;
-							g_radioStatus[stringId] = st;
-							tr.arsStatus = SUCESS;
-							onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
-						}
-						else if (g_radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
-						{
-							g_radioStatus[stringId].status = RADIO_STATUS_ONLINE;
-							tr.arsStatus = SUCESS;
-							onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
-						}
-						break;
-					}
-					
-					//std::string callJsonStrRes = CRpcJsonParser::buildCall("callStatus", it->callId, args, "radio");
-					//if (pRemotePeer != NULL&& pRemotePeer == it->pRemote && it->radioId == rmt_addr)
-					//{
-					//	pRemotePeer->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
-					//	it = tcpCommandTimeOutList.erase(it);
-					//	//查看状态，状态发生改变时，通知特Tserver
-					//	/*if (radioStatus.find(stringId) == radioStatus.end())
-					//	{
-					//		status st;
-					//		st.id = rmt_addr;
-					//		st.status = RADIO_STATUS_ONLINE;
-					//		radioStatus[stringId] = st;
-					//	}
-					//	else if (radioStatus[stringId].status == RADIO_STATUS_OFFLINE)
-					//	{
-					//		radioStatus[stringId].status = RADIO_STATUS_ONLINE;
-					//		ArgumentType arg;
-					//		arg["Target"] = FieldValue(stringId.c_str());
-					//		arg["IsOnline"] = FieldValue("True");
-					//		std::string callJsonStr = CRpcJsonParser::buildCall("sendArs", it->callId, arg, "radio");
-					//		pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-					//	}*/
-					//	break;
-					//}
-					
-				}
-				m_allCommandListLocker.unlock();
-				break;
-			}
-			catch (std::exception e)
-			{
-
-			}
-		case 0x03:
-			 //2:呼叫结束
-#if DEBUG_LOG
-			LOG(INFO) << "呼叫结束  ";
-#endif
-			try
-			{
-				m_allCommandListLocker.lock();
-				for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); ++it)
-				{
-					if (myTcpCallBackFunc != NULL)
-					{
-						TcpRespone tr = {0};
-						tr.id = it->radioId;
-						tr.callType = STOP;
-						tr.result = REMOTE_SUCESS;
-						onTcpData(myTcpCallBackFunc,  it->command, tr);
-						it = tcpCommandTimeOutList.erase(it);
-						break;
-					}
-				
-					//ArgumentType args;
-					//args["Status"] = FieldValue(REMOTE_SUCESS);
-					//args["Target"] = FieldValue(it->radioId);
-					//args["Operate"] = FieldValue(STOP);
-					////args["Type"] = FieldValue(it->querymode);
-					//std::string callJsonStr = CRpcJsonParser::buildCall("callStatus", it->callId, args, "radio");
-					//if (pRemotePeer != NULL&& pRemotePeer == it->pRemote)
-					//{
-					//	pRemotePeer->sendResponse((const char *)callJsonStr.c_str(), callJsonStr.size());
-					//	it = tcpCommandTimeOutList.erase(it);
-					//	break;
-					//}
-				}
-				m_allCommandListLocker.unlock();
-				break;
-			}
-			catch (std::exception e)
-			{
-
-			}
+		case 0x01:
+		case 0x04:    //group call Enhanced Private Call  
+			callBroadcast(0x04, stringId);
+			break;
+		case 0x03:    //call end
+			callBroadcast(0x03, stringId);
+			break;
 		}
-
+}
+		
 	     default: /* just forward the xcmp message to the application */
 		/* The XCMP message has already forwarded to the Main process, so do nothing here. */
 		break;
 	}
 }
+void CXNLConnection::controlReply(unsigned char result, unsigned char transactionIdBase, unsigned char txXcmpCount,std::string radioId)
+{
+	try
+	{
+		std::list<TcpCommand>::iterator it;
+		m_allCommandListLocker.lock();
+		for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); ++it)
+		{
+			BOOL rmtflag = FALSE;
+			if (it->transactionIdBase == transactionIdBase && it->txXcmpCount == txXcmpCount)                                                   //在线检测
+			{
+				TcpRespone tr = { 0 };
+				tr.sessionId = it->sessionId;
+				tr.id = it->radioId;
+				tr.controlType = it->command;
+				if (0x00 == result)
+				{
+					tr.result = REMOTE_SUCESS;
+				}
+				else
+				{
+					tr.result = REMOTE_FAILED;
+				}
 
+				if (myTcpCallBackFunc != NULL)
+				{
+					onTcpData(myTcpCallBackFunc, CHECK_RADIO_ONLINE, tr);
+					it = tcpCommandTimeOutList.erase(it);
+					break;
+				}
+			}
+		}
+		m_allCommandListLocker.unlock();
+	}
+	catch (std::exception e)
+	{
 
+	}
+}
+void CXNLConnection::controlBroadcast(unsigned char result,std::string  radioId,int type)
+{
+	try
+	{
+		TcpRespone tr = { 0 };
+		tr.id = atoi(radioId.c_str());
+		if (tr.id != 0)
+		{
+			if (0x10 == result)
+			{
+				tr.result = REMOTE_SUCESS;
+			}
+			else
+			{
+				tr.result = REMOTE_FAILED;
+			}
+			switch (type)
+			{
+			case 0x00:
+				tr.controlType = RADIOCHECK;
+				if (myTcpCallBackFunc != NULL)
+				{
+					onTcpData(myTcpCallBackFunc, CONTTROLBROADCAST, tr);
+				}
+				radioStatusChange(radioId);
+				break;
+			case 0x01:
+				tr.controlType = OFF;
+				if (myTcpCallBackFunc != NULL)
+				{
+					onTcpData(myTcpCallBackFunc, CONTTROLBROADCAST, tr);
+				}
+				radioStatusChange(radioId);
+				break;
+			case 0x02:
+				tr.controlType = ON;
+				if (myTcpCallBackFunc != NULL)
+				{
+					onTcpData(myTcpCallBackFunc, CONTTROLBROADCAST, tr);
+				}
+				radioStatusChange(radioId);
+				break;
+			case 0x03:
+				tr.controlType = MONITOR;
+				if (myTcpCallBackFunc != NULL)
+				{
+					onTcpData(myTcpCallBackFunc, CONTTROLBROADCAST, tr);
+				}
+				radioStatusChange(radioId);
+				break;
+			default:
+				break;
+			}
+		}
+		
+	}
+	catch (std::exception e)
+	{
+
+	}
+}
+void CXNLConnection::callReply(unsigned char result, unsigned char transactionIdBase, unsigned char txXcmpCount, std::string radioId)
+{
+	try
+	{
+		std::list<TcpCommand>::iterator it;
+		m_allCommandListLocker.lock();
+		for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); ++it)
+		{
+			if (myTcpCallBackFunc != NULL && it->transactionIdBase == transactionIdBase && it->txXcmpCount == txXcmpCount)
+			{
+				TcpRespone tr = { 0 };
+				tr.sessionId = it->sessionId;
+				tr.id = it->radioId;
+				if (it->command == GROUP_CALL)
+				{
+					tr.callType = GROUP;
+				}
+				else if (it->command == PRIVATE_CALL)
+				{
+					tr.callType = PRIVATE;
+				}
+				else if (it->command == ALL_CALL)
+				{
+					tr.callType = ALL;
+				}
+				if (result == 0)
+				{
+					tr.result = REMOTE_SUCESS;
+				}
+				else
+				{
+					tr.result = REMOTE_FAILED;
+				}
+				onTcpData(myTcpCallBackFunc, it->command, tr);
+				it = tcpCommandTimeOutList.erase(it);
+				break;
+			}
+
+		}
+		m_allCommandListLocker.unlock();
+		
+	}
+	catch (std::exception e)
+	{
+
+	}
+}
+void CXNLConnection::callBroadcast(unsigned char flag, std::string radioId)
+{
+	try
+	{
+		if (myTcpCallBackFunc != NULL )
+		{
+			TcpRespone tr = { 0 };
+			tr.id = atoi(radioId.c_str());
+			if (flag == 0x04)
+			{
+				tr.callType = START;
+				tr.result = REMOTE_SUCESS;
+				onTcpData(myTcpCallBackFunc, ALL_CALL, tr);
+			}
+			else if (flag == 0x03)
+			{
+				tr.callType = STOP;
+				tr.result = REMOTE_SUCESS;
+				onTcpData(myTcpCallBackFunc,STOP_CALL , tr);
+			}		
+		}
+	}
+	catch (std::exception e)
+	{
+
+	}
+}
+void CXNLConnection::radioStatusChange(std::string  radioId)
+{
+	TcpRespone tr = { 0 };
+	if (g_radioStatus.find(radioId) == g_radioStatus.end())
+	{
+		RadioStatus st;
+		st.id = atoi(radioId.c_str());
+		st.status = RADIO_STATUS_ONLINE;
+		g_radioStatus[radioId] = st;
+		tr.arsStatus = SUCESS;
+		onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
+	}
+	else if (g_radioStatus[radioId].status == RADIO_STATUS_ONLINE)
+	{
+		g_radioStatus[radioId].status = RADIO_STATUS_OFFLINE;
+		tr.arsStatus = SUCESS;
+		onTcpData(myTcpCallBackFunc, RADIO_ARS, tr);
+	}
+}
 void CXNLConnection::decode_xcmp_dev_init_status(char * p_msg_buf)
 {
     xcmp_dev_init_status_t *p_msg = (xcmp_dev_init_status_t *)p_msg_buf;
@@ -1371,7 +1176,7 @@ void CXNLConnection::send_xcmp_dev_init_status()
     
     init_xnl_header_of_xcmp_msg((char *)p_xcmp_msg, payload_len);
     /* Add the message to the sending queue */
-    enqueue_msg((char *)p_xcmp_msg);
+    enqueue_msg((char *)p_xcmp_msg,"");
 
 }
 
@@ -1409,7 +1214,7 @@ BOOL CXNLConnection::send_xcmp_brightness_msg(unsigned char function, unsigned c
 
     init_xnl_header_of_xcmp_msg((char *)p_msg, payload_len);
     /* Add the message to the sending queue */
-    enqueue_msg((char *)p_msg);
+    enqueue_msg((char *)p_msg,"");
     
     return (TRUE);
 }
@@ -1437,12 +1242,13 @@ BOOL CXNLConnection::send_xcmp_pui_brdcst(unsigned char pui_type,
 
     init_xnl_header_of_xcmp_msg((char *)p_msg, 9);
     /* Add the message to the sending queue */
-    enqueue_msg((char *)p_msg);
+    enqueue_msg((char *)p_msg,"");
     
     return (TRUE);
 }
 
-BOOL CXNLConnection::send_xcmp_call_ctrl_request(unsigned char function,
+BOOL CXNLConnection::send_xcmp_call_ctrl_request(std::string sessionId,
+												 unsigned char function,
                                                  unsigned char call_type,
                                                  unsigned char addr_type,
                                                  unsigned long rmt_addr,
@@ -1517,12 +1323,13 @@ BOOL CXNLConnection::send_xcmp_call_ctrl_request(unsigned char function,
 
     init_xnl_header_of_xcmp_msg((char *)p_msg, msg_size - sizeof(xnl_msg_hdr_t));
     /* Add the message to the sending queue */
-    enqueue_msg((char *)p_msg);
+    enqueue_msg((char *)p_msg, sessionId);
 
     return (TRUE);
 }
 
-BOOL CXNLConnection::send_xcmp_rmt_radio_ctrl_request(unsigned char feature,
+BOOL CXNLConnection::send_xcmp_rmt_radio_ctrl_request(std::string sessionId, 
+												 unsigned char feature,
                                                  unsigned char operation,
                                                  unsigned char addr_type,
                                                  unsigned long rmt_addr)
@@ -1582,7 +1389,7 @@ BOOL CXNLConnection::send_xcmp_rmt_radio_ctrl_request(unsigned char feature,
 
     init_xnl_header_of_xcmp_msg((char *)p_msg, msg_size - sizeof(xnl_msg_hdr_t));
     /* Add the message to the sending queue */
-    enqueue_msg((char *)p_msg);
+    enqueue_msg((char *)p_msg,sessionId);
 
 
 	//list<AllCommand>::iterator it;
@@ -1633,7 +1440,7 @@ BOOL CXNLConnection::send_xcmp_menu_navigation_request(unsigned char function,
     init_xnl_header_of_xcmp_msg((char *)p_msg, payload_len);
 
     /* Add the message to the sending queue */
-    enqueue_msg((char *)p_msg/*, TRUE*/);
+    enqueue_msg((char *)p_msg/*, TRUE*/,"");
     
     return (TRUE);       
 }
@@ -1666,7 +1473,7 @@ BOOL CXNLConnection::send_xcmp_chan_zone_selection_request(unsigned char functio
  
     init_xnl_header_of_xcmp_msg((char *)p_msg, payload_len);
     /* Add the message to the sending queue */
-    enqueue_msg((char *)p_msg);
+    enqueue_msg((char *)p_msg,"");
     
     return (TRUE);
 
@@ -1701,7 +1508,7 @@ BOOL CXNLConnection::send_xcmp_tx_ctrl_request(unsigned char function, unsigned 
 
     init_xnl_header_of_xcmp_msg((char *)p_msg, payload_len);
     /* Add the message to the sending queue */
-    enqueue_msg((char *)p_msg);
+    enqueue_msg((char *)p_msg,"");
     
     return (TRUE);
 
@@ -1722,7 +1529,7 @@ BOOL CXNLConnection::send_xcmp_radio_status_request(unsigned char condition)
 
     init_xnl_header_of_xcmp_msg((char *)p_msg, payload_len);
     /* Add the message to the sending queue */
-    enqueue_msg((char *)p_msg);
+    enqueue_msg((char *)p_msg,"");
     
     return (TRUE);
 }
@@ -1805,7 +1612,7 @@ BOOL CXNLConnection::send_xnl_message(char *p_msg_buf)
 }
 
 /* Add the message to the list tail. */
-void CXNLConnection::enqueue_msg(char * p_msg)
+void CXNLConnection::enqueue_msg(char * p_msg,std::string sessionId)
 {
     MSG_QUEUE_T *p_new_node = NULL;
     
@@ -1813,7 +1620,6 @@ void CXNLConnection::enqueue_msg(char * p_msg)
     {
         /* Create a node for the message */
         p_new_node = (MSG_QUEUE_T *)malloc(sizeof(MSG_QUEUE_T));
-
         if (p_new_node == NULL)
         {
             return;
@@ -1821,7 +1627,9 @@ void CXNLConnection::enqueue_msg(char * p_msg)
 
         p_new_node->p_msg = p_msg;
         p_new_node->next = NULL;
-        
+		p_new_node->sessionId =(char *) sessionId.data();
+	
+
         WaitForSingleObject(m_hEvent, INFINITE);
         if (m_pSendQueHdr == NULL)
         {

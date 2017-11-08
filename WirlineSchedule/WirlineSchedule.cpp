@@ -19,7 +19,17 @@ extern CWLNet* g_pNet;
 #define DB_USER				"root"
 #define DB_PWD				""
 #define DB_NAME				"tbx"
-#define SERVICE_CODDE FALSE
+#define SERVICE_CODDE		FALSE
+
+#define			ConmpanyName	L"JiHua Information"
+#define			AppName			L"Trbox"
+#define			AppVersion		L"3.0"
+#define			AppNameSub		L"WirelineSchedule"
+
+#define Log_log L"log"
+#define Log_info L"info_"
+#define Log_error L"error_"
+#define Log_warning L"warning_"
 
 HWND GetConsoleHwnd(void)
 {
@@ -88,38 +98,38 @@ int _tmain(int argc, _TCHAR* argv[])
 	/*log初始化*/
 	g_pWLlog = new WLSocketLog();
 	int createFileRlt = 0;
-	std::wstring appFolder = getAppdataPath() + _T("\\Jihua Information");
+	std::wstring appFolder = getAppdataPath() + L"\\" + ConmpanyName;
 	if (!PathFileExists(appFolder.c_str()))
 	{
 		createFileRlt = _wmkdir(appFolder.c_str());
 	}
-	appFolder = appFolder + _T("\\Trbox");
+	appFolder = appFolder + L"\\" + AppName;
 	if (!PathFileExists(appFolder.c_str()))
 	{
 		createFileRlt = _wmkdir(appFolder.c_str());
 	}
-	appFolder = appFolder + _T("\\3.0");
+	appFolder = appFolder + L"\\" + AppVersion;
 	if (!PathFileExists(appFolder.c_str()))
 	{
 		createFileRlt = _wmkdir(appFolder.c_str());
 	}
 	std::wstring defaultAudioPath = appFolder;
 	//defaultAudioPath += L"\\Voice";
-	appFolder = appFolder + _T("\\WirelineSchedule");
+	appFolder = appFolder + L"\\" + AppNameSub;
 	if (!PathFileExists(appFolder.c_str()))
 	{
 		createFileRlt = _wmkdir(appFolder.c_str());
 	}
 
-	std::wstring logFolder = appFolder + _T("\\log");
+	std::wstring logFolder = appFolder + L"\\" + Log_log;
 	if (!PathFileExists(logFolder.c_str()))
 	{
 		createFileRlt = _wmkdir(logFolder.c_str());
 	}
 
-	std::wstring pathLogInfo = logFolder + _T("/info_");
-	std::wstring pathLogError = logFolder + _T("/error_");
-	std::wstring pathLogWarning = logFolder + _T("/warning_");
+	std::wstring pathLogInfo = logFolder + L"\\" + Log_info;
+	std::wstring pathLogError = logFolder + L"\\" + Log_error;
+	std::wstring pathLogWarning = logFolder + L"\\" + Log_warning;
 
 	//FLAGS_log_dir = "./";
 	google::InitGoogleLogging("");
@@ -168,7 +178,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		m_pRpcServer->addActionHandler("queryGps", wlMnisQueryGpsActionHandler);
 		m_pRpcServer->addActionHandler("message", wlMnisMessageHandler);
 		m_pRpcServer->addActionHandler("status", wlMnisStatusHandler);
-		m_pRpcServer->addActionHandler("locationIndoor", wlMnisLocationIndoorHandler);
+		//m_pRpcServer->addActionHandler("locationIndoor", wlMnisLocationIndoorHandler);
 		m_pRpcServer->start(WL_SERVER_PORT);
 
 		/*初始化数据库*/

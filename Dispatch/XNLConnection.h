@@ -26,6 +26,7 @@ typedef enum
 typedef struct msg_queue{
     char * p_msg;
     struct msg_queue *next;
+	char * sessionId;
 }MSG_QUEUE_T;
 
 typedef enum{
@@ -58,12 +59,14 @@ public:
                                      char           pui_state,
                                      char           pui_state_min,
                                      char           pui_state_max);
-    BOOL send_xcmp_call_ctrl_request(unsigned char function,
+	BOOL send_xcmp_call_ctrl_request(std::string sessionId, 
+									 unsigned char function,
                                      unsigned char call_type,
                                      unsigned char addr_type,
                                      unsigned long rmt_addr,
                                      unsigned long group_id);
-   BOOL send_xcmp_rmt_radio_ctrl_request(unsigned char feature,
+   BOOL send_xcmp_rmt_radio_ctrl_request(std::string sessionId,
+												 unsigned char feature,
                                                  unsigned char operation,
                                                  unsigned char addr_type,
                                                  unsigned long rmt_addr);
@@ -108,7 +111,7 @@ private:
     void decipher(unsigned long *const v,
           unsigned long *const w,
           const unsigned long *const k);
-    void enqueue_msg(char *p_msg);
+    void enqueue_msg(char *p_msg,std::string sessionId);
     MSG_QUEUE_T * dequeue_msg();
 	void decode_xcmp_radio_status_reply(char *p_msg);
 public:
@@ -138,5 +141,10 @@ private:
     MSG_QUEUE_T*   m_pSendQueHdr;
     MSG_QUEUE_T*   m_pSendQueTail;
     char *m_pLastSendMsg;
+	void controlReply(unsigned char result, unsigned char transactionIdBase, unsigned char txXcmpCount,std::string radioId);
+	void controlBroadcast(unsigned char result,std::string radioId,int type);
+	void radioStatusChange(std::string radioId);
+	void callReply( unsigned char result, unsigned char transactionIdBase, unsigned char txXcmpCount, std::string radioId);
+	void callBroadcast(unsigned char flag, std::string radioId);
 	
 };

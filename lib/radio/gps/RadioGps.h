@@ -74,12 +74,12 @@ class CRadioGps
 public:
 	CRadioGps(CDataScheduling *pMnis);
 	~CRadioGps();
-	bool InitGPSSocket(DWORD dwAddress/*, CRemotePeer * pRemote*/);
+	bool InitGPSSocket(DWORD dwAddress,int port);
 	bool InitGPSOverturnSocket(DWORD dwAddress);
 	bool CloseGPSSocket();
 	static DWORD WINAPI ReceiveDataThread(LPVOID lpParam);
-	bool SendQueryGPS(DWORD dwRadioID,int queryMode,double cycle);
-	bool StopQueryTriggeredGPS(DWORD dwRadioID,int queryMode);
+	bool SendQueryGPS(DWORD dwRadioID,int queryMode,double cycle,int cai);
+	bool StopQueryTriggeredGPS(DWORD dwRadioID,int queryMode,int cai);
 	void RecvData();
 	void locationIndoorConfig(int Interval, int iBeaconNumber, bool isEmergency);
 private:

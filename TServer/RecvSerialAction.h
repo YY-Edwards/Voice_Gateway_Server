@@ -38,7 +38,7 @@ void readSerial()
 	int createFileRlt = 0;
 	TCHAR szBuffer[MAX_PATH];
 	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
-	std::wstring appFolder = getAppdataPath1() + _T("\\Jihua Information\\Trbox\\3.0\\TServer");
+	std::wstring appFolder = getAppdataPath1() + _T("\\") + ConmpanyName + _T("\\") + AppName + _T("\\") + AppVersion + _T("\\TServer");
 	std::wstring logFolder = appFolder + _T("\\license");
 	if (!PathFileExists(logFolder.c_str()))
 	{

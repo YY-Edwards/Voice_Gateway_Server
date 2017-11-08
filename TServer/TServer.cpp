@@ -123,7 +123,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	int createFileRlt = 0;
 	TCHAR szBuffer[MAX_PATH];
 	SHGetSpecialFolderPath(NULL, szBuffer, CSIDL_APPDATA, FALSE);
-	std::wstring appFolder = getAppdataPath() + _T("\\Jihua Information");
+	std::wstring appFolder = getAppdataPath() + _T("\\")+ ConmpanyName;
 	if (!PathFileExists(appFolder.c_str()))
 	{
 		createFileRlt = _wmkdir(appFolder.c_str());
@@ -182,7 +182,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		serverActions["call"] = callAction;
 		serverActions["control"] = controlAction;
-		serverActions["queryGps"] = gpsAction;
+		serverActions["queryLocation"] = gpsAction;
 		serverActions["message"] = msgAction;
 		serverActions["status"] = statusAction;
 		serverActions["registerLicense"] = registerLicenseAction;
@@ -202,7 +202,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		clientActions["connectStatus"] = recvConnetResultAction;
 		clientActions["status"] = recvStatusAction;
 		clientActions["callStatus"] = recvCallStatusAction;
-		clientActions["controlStatus"] = recvControlResultAction;
+		clientActions["controlStatus"] = recvControlStatusAction;
+		clientActions["controlResult"] = recvControlResultAction;
 		clientActions["sendGpsStatus"] = recvSendGpsStatusAction;
 		clientActions["getRadioConfig"] = recvGetConfigAction;
 		clientActions["readSerial"] = readSerialAction;
@@ -289,19 +290,22 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 
 	serverActions["start"] = startAction;
-
 	serverActions["setBaseSetting"] = setBaseAction;
 	serverActions["getBaseSetting"] = getBaseAction;
 	serverActions["setRadioSetting"] = setRadioAction;
 	serverActions["getRadioSetting"] = getRadioAction;
 	serverActions["setRepeaterSetting"] = setRepeaterAction;
 	serverActions["getRepeaterSetting"] = getRepeaterAction;
+	serverActions["setMnisSetting"] = setMnisAction;
+	serverActions["getMnisSetting"] = getMnisAction;
+	serverActions["setLocationSetting"] = setLocationAction;
+	serverActions["getLocationSetting"] = getLocationAction;
 	serverActions["setLocationInDoorSetting"] = setLocationInDoorAction;
 	serverActions["getLocationInDoorSetting"] = getLocationInDoorAction;
 
 	serverActions["call"] = callAction;
 	serverActions["control"] = controlAction;
-	serverActions["queryGps"] = gpsAction;
+	serverActions["queryLocation"] = gpsAction;
 	serverActions["message"] = msgAction;
 	serverActions["status"] = statusAction;
 	serverActions["registerLicense"] = registerLicenseAction;
@@ -322,7 +326,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	clientActions["connectStatus"] = recvConnetResultAction;
 	clientActions["status"] = recvStatusAction;
 	clientActions["callStatus"] = recvCallStatusAction;
-	clientActions["controlStatus"] = recvControlResultAction;
+	clientActions["controlStatus"] = recvControlStatusAction;
+	clientActions["controlResult"] = recvControlResultAction;
 	clientActions["sendGpsStatus"] = recvSendGpsStatusAction;
 	clientActions["getRadioConfig"] = recvGetConfigAction;
 	clientActions["readSerial"] = readSerialAction;
