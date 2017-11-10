@@ -182,7 +182,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		serverActions["call"] = callAction;
 		serverActions["control"] = controlAction;
-		serverActions["queryLocation"] = gpsAction;
+		serverActions["location"] = gpsAction;
 		serverActions["message"] = msgAction;
 		serverActions["status"] = statusAction;
 		serverActions["registerLicense"] = registerLicenseAction;
@@ -204,7 +204,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		clientActions["callStatus"] = recvCallStatusAction;
 		clientActions["controlStatus"] = recvControlStatusAction;
 		clientActions["controlResult"] = recvControlResultAction;
-		clientActions["sendGpsStatus"] = recvSendGpsStatusAction;
+		clientActions["locationStatus"] = recvSendGpsStatusAction;
 		clientActions["getRadioConfig"] = recvGetConfigAction;
 		clientActions["readSerial"] = readSerialAction;
 		clientActions["locationIndoor"] = recvLocationIndoorAction;
@@ -305,7 +305,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	serverActions["call"] = callAction;
 	serverActions["control"] = controlAction;
-	serverActions["queryLocation"] = gpsAction;
+	serverActions["location"] = gpsAction;
 	serverActions["message"] = msgAction;
 	serverActions["status"] = statusAction;
 	serverActions["registerLicense"] = registerLicenseAction;
@@ -328,7 +328,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	clientActions["callStatus"] = recvCallStatusAction;
 	clientActions["controlStatus"] = recvControlStatusAction;
 	clientActions["controlResult"] = recvControlResultAction;
-	clientActions["sendGpsStatus"] = recvSendGpsStatusAction;
+	clientActions["locationStatus"] = recvSendGpsStatusAction;
 	clientActions["getRadioConfig"] = recvGetConfigAction;
 	clientActions["readSerial"] = readSerialAction;
 	clientActions["locationIndoor"] = recvLocationIndoorAction;

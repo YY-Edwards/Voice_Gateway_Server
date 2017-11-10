@@ -12,7 +12,7 @@ void recvSendGpsStatusAction(CRemotePeer* pRemote, const std::string& param, uin
 
 	try{
 
-		std::string callCommand = CRpcJsonParser::mergeCommand("sendGpsStatus", callId, param.c_str(), type.c_str());
+		std::string callCommand = CRpcJsonParser::mergeCommand("locationStatus", callId, param.c_str(), type.c_str());
 		int ret = CBroker::instance()->getRpcServer()->sendRequest(callCommand.c_str(),
 			callId,
 			pRemote,
