@@ -44,12 +44,20 @@ namespace Dispatcher.ViewsModules
         public int TypeIndex { get { return _type == QuickPanelType_t.Target ? 0 : 1; } }
         public object ViewModule { get { return _type == QuickPanelType_t.Target ? _target as object : _operation as object; } }
 
-        
+        public Visibility WaitIconVisible { get { return _type == QuickPanelType_t.Target ? _target.WaitIconVisible : Visibility.Collapsed; } }
+        public Visibility FailureIconVisible { get { return _type == QuickPanelType_t.Target ? _target.FailureIconVisible : Visibility.Collapsed; } }
+
+
+
+
         public QuickPanelType_t Type { get { return _type; } }
 
         private void OnTargetPropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             NotifyPropertyChanged("IconBackGround");
+
+            if (e.PropertyName == "WaitIconVisible") NotifyPropertyChanged("WaitIconVisible");
+            else if (e.PropertyName == "FailureIconVisible") NotifyPropertyChanged("FailureIconVisible");
             //NotifyPropertyChanged("Icon");
         }
 

@@ -23,7 +23,7 @@ namespace Dispatcher.Modules
             }
         }
 
-        public int ID
+        public long ID
         {
             get
             {

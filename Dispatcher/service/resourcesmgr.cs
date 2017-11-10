@@ -29,9 +29,9 @@ namespace Dispatcher.Service
             return _instance;
         }
 
-        private static int DeviceMask = 0x00000000;
-        private static int ManCarMask = 0x10000000;
-        private static int GroupMask = 0x20000000;
+        private static long DeviceMask = 0x0000000000000000;
+        private static long ManCarMask = 0x1000000000000000;
+        private static long GroupMask = 0x2000000000000000;
 
 
         public event EventHandler OnResourcesLoaded;
@@ -133,8 +133,6 @@ namespace Dispatcher.Service
                         _staffmgr.Query();
                         _waitloadedresources.WaitOne();
                         // CDepartmentMgr
-
-
 
                         Groups.Clear();
                         if(_groupmgr.List != null)

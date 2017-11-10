@@ -1,0 +1,8 @@
+﻿<Windows:LogWindow x:Class="Manager.Views.Logs"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Windows="clr-namespace:Sigmar.Windows;assembly=Sigmar"
+        Title="Logs" Height="480" Width="640">
+    <Grid>
+    </Grid>
+</Windows:LogWindow>

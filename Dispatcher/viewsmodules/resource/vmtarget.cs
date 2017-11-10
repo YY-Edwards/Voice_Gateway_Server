@@ -20,7 +20,10 @@ namespace Dispatcher.ViewsModules
 {
     public class VMTarget : INotifyPropertyChanged
     {
-        private CDispatcher _dispatcher;
+        private string _messageBeginFormat = "{0}  {1}。";
+        private string _messageFailureFormat = "{0}失败  {1}。";
+
+        private CDispatcher _dispatcher; 
 
         private CGroup _group = null;
         private bool _iscurrentrx = false;
@@ -252,7 +255,7 @@ namespace Dispatcher.ViewsModules
             }
         }
 
-        public int ID
+        public long ID
         {
             get
             {
@@ -343,6 +346,20 @@ namespace Dispatcher.ViewsModules
             get { return IsOnline ? 1 : 0.5; }
         }
 
+        private bool _hasFailure = false;
+
+        public void ClearFailure()
+        {
+            _hasFailure = false;
+            NotifyPropertyChanged("FailureIconVisible");
+        }
+
+        private CDispatcher.Status _dispatcherStatus = CDispatcher.Status.Completed;
+
+        public Visibility WaitIconVisible { get { return _dispatcherStatus == CDispatcher.Status.Begin ? Visibility.Visible : Visibility.Collapsed; } }
+        public Visibility FailureIconVisible {get{return _hasFailure ? Visibility.Visible : Visibility.Collapsed;}}
+       
+
         public ICommand Abnormal { get {return  new Command(AbnormalExec); } }
         private void AbnormalExec()
         {
@@ -369,16 +386,28 @@ namespace Dispatcher.ViewsModules
         {
             if (_dispatcher == null)
             {
-                if (RunAccess.Mode == RunAccess.Mode_t.CPC || RunAccess.Mode == RunAccess.Mode_t.IPSC || RunAccess.Mode == RunAccess.Mode_t.LCP)
+                if (FunctionConfigure.WorkMode == FunctionConfigure.Mode_t.Repeater || FunctionConfigure.WorkMode == FunctionConfigure.Mode_t.RepeaterWithMnis)
                 {
                     _dispatcher = RepeaterDispatcher.Instance();
                 }
-                else if (RunAccess.Mode == RunAccess.Mode_t.VehicleStation || RunAccess.Mode == RunAccess.Mode_t.VehicleStationWithMnis)
+                else if (FunctionConfigure.WorkMode == FunctionConfigure.Mode_t.VehicleStation || FunctionConfigure.WorkMode == FunctionConfigure.Mode_t.VehicleStationWithMnis)
                 {
                     _dispatcher = VehicleStationDispatcher.Instance();
                 }
+                else
+                {
+                    //for test
+                    _dispatcher = VehicleStationDispatcher.Instance();
+                }
+           
 
                 if (_dispatcher == null) return;
+
+                _dispatcher.DispatcherBegin += new Action<CDispatcher.OperateContent_t>(OnDispatcherBegin);
+                _dispatcher.DispatcherCompleted += new Action<CDispatcher.OperateContent_t>(OnDispatcherCompleted);
+                _dispatcher.DispatcherFailure += new Action<CDispatcher.OperateContent_t, CDispatcher.Status>(OnDispatcherFailure);
+
+
                 _dispatcher.CallResponse += new CallResponseHandler(OnCallResponse);
                 _dispatcher.CallRequest += new CallRequestHandler(OnCallRequest);
 
@@ -398,6 +427,89 @@ namespace Dispatcher.ViewsModules
 
             ServerStatus.Instance().StatusChanged += delegate { UpdateAllStatus(); };
         }
+
+
+        private void OnDispatcherBegin(CDispatcher.OperateContent_t operate)
+        {
+            if (operate == null || operate.Parameter == null || !IsThis(operate.Parameter.TargetMode, operate.Parameter.TargetId)) return;
+
+            _dispatcherStatus = CDispatcher.Status.Begin;
+            NotifyPropertyChanged("WaitIconVisible");
+            NotifyPropertyChanged("FailureIconVisible");
+
+            if (operate.OperationName == null || operate.OperationName == string.Empty) return;
+
+            Log.Message(string.Format(_messageBeginFormat, operate.OperationName, FullName));
+
+
+            NotifyKey_t notifyType = NotifyKey_t.Alarm;
+
+            switch (operate.Opcode)
+            {
+                case RequestOpcode.call: notifyType = NotifyKey_t.Called; break;
+                case RequestOpcode.message: notifyType = NotifyKey_t.ShortMessage; break;
+                case RequestOpcode.queryGps:
+                    LocationParameter param = operate.Parameter as LocationParameter;
+                    if (param == null) return;
+                    if (param.Type == QueryLocationType_t.LocationInDoor) notifyType = NotifyKey_t.LocationInDoor;
+                    else notifyType = NotifyKey_t.Location;
+                    break;
+                case RequestOpcode.control: notifyType = NotifyKey_t.Control; break;
+                case RequestOpcode.wlCall: notifyType = NotifyKey_t.Called; break;
+                default: return;
+
+            };
+
+            CNotice notice = new CNotice()
+            {
+                Time = DateTime.Now,
+                Contents = operate.OperationName,
+                Type = notifyType,
+            };
+
+            lock (_notices)
+            {
+                if (!_notices.Contains(p => p.OperateSessionId == operate.Parameter.guid)) _notices.Add(new VMNotify.VMNotice(this, notice,true, CDispatcher.Status.Begin));
+            }
+        }
+        private void OnDispatcherCompleted(CDispatcher.OperateContent_t operate)
+        {
+            if (operate == null || operate.Parameter == null || !IsThis(operate.Parameter.TargetMode, operate.Parameter.TargetId)) return;
+            _dispatcherStatus = CDispatcher.Status.Completed;
+            NotifyPropertyChanged("WaitIconVisible");
+            NotifyPropertyChanged("FailureIconVisible");
+
+            lock (_notices)
+            {
+                int index = _notices.FindIndex(p => p.OperateSessionId == operate.Parameter.guid);
+
+                if (index >= 0 && index < _notices.Count)
+                {
+                    _notices[index].DispatcherStatus = CDispatcher.Status.Completed;
+                }
+            }
+        }
+        private void OnDispatcherFailure(CDispatcher.OperateContent_t operate, CDispatcher.Status status)
+        {
+            if (operate == null || operate.Parameter == null || !IsThis(operate.Parameter.TargetMode, operate.Parameter.TargetId)) return;
+            _dispatcherStatus = status;
+            _hasFailure = true;
+            NotifyPropertyChanged("WaitIconVisible");
+            NotifyPropertyChanged("FailureIconVisible");
+
+            Log.Message(string.Format(_messageFailureFormat, operate.OperationName, FullName));
+
+            lock (_notices)
+            {
+                int index = _notices.FindIndex(p => p.OperateSessionId == operate.Parameter.guid);
+
+                if (index >= 0 && index < _notices.Count)
+                {
+                    _notices[index].DispatcherStatus = status;
+                }
+            }
+        }
+
         private void AddFastPanelExec()
         {
             if (OnOperated != null) OnOperated(new OperatedEventArgs(OperateType_t.NewFast, this));
@@ -434,8 +546,8 @@ namespace Dispatcher.ViewsModules
                         else if (_type == TargetType_t.Group) _dispatcher.GroupCall(Group.GroupID);
                         else if (Member.HasDevice) _dispatcher.PrivateCall(Member.RadioID);
                         else return;
-                        Log.Message("发起呼叫  " + FullName);
-                        AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "发起呼叫" });
+                        //Log.Message("发起呼叫  " + FullName);
+                        //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "发起呼叫" });
                         ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Tx));
                     }
                     break;
@@ -446,8 +558,8 @@ namespace Dispatcher.ViewsModules
                         else if (_type == TargetType_t.Group) _dispatcher.StopCall(Group.GroupID);
                         else if (Member.HasDevice) _dispatcher.StopCall(Member.RadioID);
                         else return;
-                        Log.Message("结束呼叫  " + FullName);
-                        AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "结束呼叫" });
+                        //Log.Message("结束呼叫  " + FullName);
+                        //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "结束呼叫" });
                         ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Idle));
                     }
                     break;
@@ -541,22 +653,22 @@ namespace Dispatcher.ViewsModules
             switch (args.Type)
             {
                 case ControlerType_t.Check:
-                    Log.Message("在线检测  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "在线检测" });
+                    //Log.Message("在线检测  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "在线检测" });
                     break;
                 case ControlerType_t.Monitor:
-                    Log.Message("远程监听  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "远程监听" });
+                    //Log.Message("远程监听  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "远程监听" });
                     break;
                 case ControlerType_t.ShutDown:
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.ShutDownStatus, true));
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "遥毙" });
-                    Log.Message("遥毙  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "遥毙" });
+                    //Log.Message("遥毙  " + FullName);
                     break;
                 case ControlerType_t.StartUp:
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.ShutDownStatus, false));
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "遥开" });
-                    Log.Message("遥开  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "遥开" });
+                    //Log.Message("遥开  " + FullName);
                     break;
                 default:
                     return;
@@ -640,38 +752,38 @@ namespace Dispatcher.ViewsModules
             switch (args.Type)
             {
                 case LocationType_t.Query:
-                    Log.Message("单次查询  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "单次查询" });
+                    //Log.Message("单次查询  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "单次查询" });
                     break;
                 case LocationType_t.CsbkQuery:
-                    Log.Message("CSBK单次查询  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "CSBK单次查询" });
+                    //Log.Message("CSBK单次查询  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "CSBK单次查询" });
                     break;
                 case LocationType_t.EnhCsbkQuery:
-                    Log.Message("增强型CSBK单次查询  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "增强型CSBK单次查询" });
+                    //Log.Message("增强型CSBK单次查询  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "增强型CSBK单次查询" });
                     break;
                 case LocationType_t.StopCycle:
-                    Log.Message("停止周期查询  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "停止周期查询" });
+                    //Log.Message("停止周期查询  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "停止周期查询" });
                     break;
                 case LocationType_t.Track:
                     Log.Message("轨迹回放  " + Name);
                     return;
                 case LocationType_t.Cycle:
-                    Log.Message("周期查询（周期：" + args.Cycle.ToString() + "）  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "周期查询（周期：" + args.Cycle.ToString() + "）" });
+                    //Log.Message("周期查询（周期：" + args.Cycle.ToString() + "）  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "周期查询（周期：" + args.Cycle.ToString() + "）" });
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.Cycle));
 
                     break;
                 case LocationType_t.CsbkCycle:
-                    Log.Message("CSBK周期查询（周期：" + args.Cycle.ToString() + "）  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "CSBK周期查询（周期：" + args.Cycle.ToString() + "）" });
+                    //Log.Message("CSBK周期查询（周期：" + args.Cycle.ToString() + "）  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "CSBK周期查询（周期：" + args.Cycle.ToString() + "）" });
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.CsbkCycle));
                     break;
                 case LocationType_t.EnhCsbkCycle:
-                    Log.Message("增强型CSBK周期查询（周期：" + args.Cycle.ToString() + "）  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "增强型CSBK周期查询（周期：" + args.Cycle.ToString() + "）" });
+                    //Log.Message("增强型CSBK周期查询（周期：" + args.Cycle.ToString() + "）  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "增强型CSBK周期查询（周期：" + args.Cycle.ToString() + "）" });
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.EnhCsbkCycle));
 
                     break;
@@ -717,14 +829,14 @@ namespace Dispatcher.ViewsModules
             switch (args.Type)
             {
                 case LocationInDoorType_t.Start:
-                    Log.Message("启动室内定位  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "启动室内定位" });
+                    //Log.Message("启动室内定位  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "启动室内定位" });
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationInDoorStatus_t.Cycle));
 
                     break;
                 case LocationInDoorType_t.Stop:
-                    Log.Message("停止室内定位  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "停止室内定位" });
+                    //Log.Message("停止室内定位  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "停止室内定位" });
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationInDoorStatus_t.Idle));
                     break;
             }
@@ -789,16 +901,16 @@ namespace Dispatcher.ViewsModules
             {
                 if (e.Status == OperationStatus_t.Success)
                 {                 
-                    Log.Message("开始呼叫  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "开始呼叫" });
+                    //Log.Message("开始呼叫  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "开始呼叫" });
 
                     if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Tx));
                 }
                 else
                 {
-                    Log.Message("呼叫失败  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "呼叫失败" });
+                    //Log.Message("呼叫失败  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "呼叫失败" });
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Idle));
                 }
             }
@@ -811,8 +923,8 @@ namespace Dispatcher.ViewsModules
                 }
                 else
                 {
-                    Log.Message("结束呼叫失败  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "结束呼叫失败" });
+                    //Log.Message("结束呼叫失败  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "结束呼叫失败" });
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Tx));
                 }
             }
@@ -827,13 +939,13 @@ namespace Dispatcher.ViewsModules
                 case ControlerType_t.Check:
                     if (e.Status == ControlResponsetatus_t.Failure)
                     {
-                        Log.Message("在线检测失败  " + FullName);
-                        AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "在线检测失败" });
+                        //Log.Message("在线检测失败  " + FullName);
+                        //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "在线检测失败" });
                     }
                     else
                     {
                         Log.Message(FullName + "  在线检测：" + (e.Status == ControlResponsetatus_t.Online ? "在线" : "离线"));
-                        AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "在线检测:" + (e.Status == ControlResponsetatus_t.Online ? "在线" : "离线") }, true);
+                        //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "在线检测:" + (e.Status == ControlResponsetatus_t.Online ? "在线" : "离线") }, true);
                         ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, (e.Status == ControlResponsetatus_t.Online ? true : false)));
                     }
                     break;
@@ -841,8 +953,8 @@ namespace Dispatcher.ViewsModules
                     OperationStatus_t monitorstate = (OperationStatus_t)(int)e.Status;
                     if (monitorstate == OperationStatus_t.Failure)
                     {
-                        Log.Message("远程监听失败  " + FullName);
-                        AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "远程监听失败" });
+                        //Log.Message("远程监听失败  " + FullName);
+                        //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "远程监听失败" });
                     }
                     else
                     {
@@ -854,8 +966,8 @@ namespace Dispatcher.ViewsModules
                     OperationStatus_t shutstate = (OperationStatus_t)(int)e.Status;
                     if (shutstate == OperationStatus_t.Failure)
                     {
-                        Log.Message("遥毙失败  " + FullName);
-                        AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "遥毙失败" });
+                        //Log.Message("遥毙失败  " + FullName);
+                        //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "遥毙失败" });
                         ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.ShutDownStatus, false));
                     }
                     else
@@ -868,8 +980,8 @@ namespace Dispatcher.ViewsModules
                     OperationStatus_t startstate = (OperationStatus_t)(int)e.Status;
                     if (startstate == OperationStatus_t.Failure)
                     {
-                        Log.Message("遥开失败  " + FullName);
-                        AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "遥开失败" });
+                        //Log.Message("遥开失败  " + FullName);
+                        //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "遥开失败" });
                         ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.ShutDownStatus, true));
                     }
                     else
@@ -897,8 +1009,8 @@ namespace Dispatcher.ViewsModules
             {
                 beacon.AddPos.Execute(this);
 
-                Log.Message(FullName + "  室内定位信息(信标：" + beacon.Beacon.Major.ToString() + "," + beacon.Beacon.Minor.ToString() + ")");
-                AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "室内位置信息(" + beacon.Beacon.Major.ToString() + "," + beacon.Beacon.Minor.ToString() + ")" }, true);
+                //Log.Message(FullName + "  室内定位信息(信标：" + beacon.Beacon.Major.ToString() + "," + beacon.Beacon.Minor.ToString() + ")");
+                //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "室内位置信息(" + beacon.Beacon.Major.ToString() + "," + beacon.Beacon.Minor.ToString() + ")" }, true);
 
                 //removeorginpoint
                 VMBeacon orginbeacon = ResourcesMgr.Instance().Beacons.Find(p => p.TargetList.Contains(this));
@@ -914,8 +1026,8 @@ namespace Dispatcher.ViewsModules
             {
                 if (e.Status != OperationStatus_t.Success)
                 {
-                    Log.Message("启动室内定位失败  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "启动室内定位失败" });
+                    //Log.Message("启动室内定位失败  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "启动室内定位失败" });
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationInDoorStatus_t.Idle));
                 }
                 else
@@ -927,8 +1039,8 @@ namespace Dispatcher.ViewsModules
             {
                 if (e.Status != OperationStatus_t.Success)
                 {
-                    Log.Message("结束室内定位失败  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "结束室内定位失败" });
+                    //Log.Message("结束室内定位失败  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "结束室内定位失败" });
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationInDoorStatus_t.Cycle));
                 }
                 else
@@ -953,8 +1065,8 @@ namespace Dispatcher.ViewsModules
             {
                 if (e.Status != OperationStatus_t.Success)
                 {
-                    Log.Message("位置查询失败  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "位置查询失败" });
+                    //Log.Message("位置查询失败  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "位置查询失败" });
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.Idle));
                 }
                 else
@@ -966,8 +1078,8 @@ namespace Dispatcher.ViewsModules
             {
                 if (e.Status != OperationStatus_t.Success)
                 {
-                    Log.Message("结束位置查询失败  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "结束位置查询失败" });
+                    //Log.Message("结束位置查询失败  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "结束位置查询失败" });
                     ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.Cycle));
                 }
                 else
@@ -992,13 +1104,13 @@ namespace Dispatcher.ViewsModules
 
             if (e.Status == OperationStatus_t.Success)
             {
-                Log.Message("发送短消息成功  " + FullName);
+                //Log.Message("发送短消息成功  " + FullName);
                 if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
             }
             else
             {
-                Log.Message("发送短消息失败  " + FullName);
-                AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.ShortMessage, Contents = "发送短消息失败" });
+                //Log.Message("发送短消息失败  " + FullName);
+                //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.ShortMessage, Contents = "发送短消息失败" });
             }
         }
 
@@ -1008,6 +1120,7 @@ namespace Dispatcher.ViewsModules
             {
                 TaskType_t key = ((string)parameter).ToEnum<TaskType_t>();
                 if (OnOperated != null) OnOperated(new OperatedEventArgs(OperateType_t.OpenOperateWindow, new TargetOperateArgs(key, this)));
+                ClearFailure();
             }
         }
 
@@ -1077,8 +1190,8 @@ namespace Dispatcher.ViewsModules
         {
             if (parameter == null && parameter is ShortMessageArgs) return;
             ShortMessageArgs args = parameter as ShortMessageArgs;
-            Log.Message("发送短消息（内容：" + args.Contents + "）  " + FullName);
-            AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.ShortMessage, Contents = args.Contents });
+            //Log.Message("发送短消息（内容：" + args.Contents + "）  " + FullName);
+            //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.ShortMessage, Contents = args.Contents });
 
             if (_dispatcher != null)
             {

@@ -16,19 +16,115 @@ namespace Dispatcher.Service
 {
     public class CDispatcher
     {
+        public event Action<OperateContent_t> DispatcherBegin;
+        public event Action<OperateContent_t> DispatcherCompleted;
+        public event Action<OperateContent_t, Status> DispatcherFailure;
 
         private RequestType _type = RequestType.radio;
+        private List<OperateContent_t> _operateList = new List<OperateContent_t>();
+        //private Dictionary<OperateContent_t> _operateList = new List<OperateContent_t>();
 
         public CDispatcher(RequestType type)
         {
             _type = type;
             CTServer.Instance().OnReceiveRequest += new CTServer.ReceiveRequestHandele(ReceiveRequest);
-            CTServer.Instance().Timeout += new EventHandler(Timeout);
+            CTServer.Instance().SendTimeout += new Action<object,string>(OnTimeout);
+            CTServer.Instance().SendFailure += new Action<object, string>(OnSendFailure);
+
+            this.DispatcherBegin += new Action<CDispatcher.OperateContent_t>(OnDispatcherBegin);
+            this.DispatcherCompleted += new Action<CDispatcher.OperateContent_t>(OnDispatcherCompleted);
+            this.DispatcherFailure += new Action<CDispatcher.OperateContent_t, CDispatcher.Status>(OnDispatcherFailure);
+
+            new Task(DispatchProcess).Start();
         }
+
+
+        private void OnDispatcherBegin(CDispatcher.OperateContent_t operate)
+        {
+           if(operate.Opcode ==  RequestOpcode.radio || operate.Opcode ==  RequestOpcode.wlInfo)
+           {
+               StatusParameter statusParameter = operate.Parameter as StatusParameter;
+               if(statusParameter.getType == (long)StatusType_t.ConnectStatus)
+               {
+                   ServerStatus.Instance().SetWaitStatus(true);
+               }             
+           }
+        }
+        private void OnDispatcherCompleted(CDispatcher.OperateContent_t operate)
+        {
+            if (operate.Opcode == RequestOpcode.radio || operate.Opcode == RequestOpcode.wlInfo)
+            {
+                StatusParameter statusParameter = operate.Parameter as StatusParameter;
+                if (statusParameter.getType == (long)StatusType_t.ConnectStatus)
+                {
+                    ServerStatus.Instance().SetWaitStatus(false);
+                }
+            }
+        }
+        private void OnDispatcherFailure(CDispatcher.OperateContent_t operate, CDispatcher.Status status)
+        {
+            if (operate.Opcode == RequestOpcode.radio || operate.Opcode == RequestOpcode.wlInfo)
+            {
+                StatusParameter statusParameter = operate.Parameter as StatusParameter;
+                if (statusParameter.getType == (long)StatusType_t.ConnectStatus)
+                {
+                    ServerStatus.Instance().SetWaitStatus(false);
+                }
+            }
+        }
+
+
+        private void DispatchProcess()
+        {
+            while (true)
+            {
+                lock (_operateList)
+                {
+                    for (int i = _operateList.Count - 1; i >= 0; i-- )
+                    {
+                        OperateContent_t operate = _operateList[i];
+                        if (DateTime.Now.AddMinutes(-1).Ticks - operate.SendTime > 0)//1 minute
+                        {
+                            //Log.Info(string.Format("操作超时：{0},TIME{1}", operate.Dept, DateTime.Now.ToString()));
+                            _operateList.RemoveAt(i);
+
+                            if (DispatcherFailure != null) DispatcherFailure(operate, Status.Timeout);
+                        }
+                    }                      
+                }
+
+
+                Thread.Sleep(100);
+            }
+        }
+
+
+        private void OperateComplete(string sessionId)
+        {
+            lock (_operateList)
+            {
+                List<OperateContent_t> completed = _operateList.FindAll(p => p.SessionId == sessionId);
+                foreach (var content in completed)
+                {
+                    if (DispatcherCompleted != null) DispatcherCompleted(content);
+                }
+
+                _operateList.RemoveAll(p => p.SessionId == sessionId);
+            }
+        }
+
+
 
         private void ReceiveRequest(RequestOpcode call, RequestType type, object param)
         {
             string parameter = param == null ? null : JsonConvert.SerializeObject(param);
+
+            if (parameter != null)
+            {
+                Session session = JsonConvert.DeserializeObject<Session>(parameter);
+                if (session != null) OperateComplete(session.guid);
+            }
+
             switch (call)
             {
                 case RequestOpcode.status:
@@ -68,10 +164,32 @@ namespace Dispatcher.Service
             }
         }
 
-        private void Timeout(object sender, EventArgs e)
+        private void OnTimeout(object sender, string e)
         {
-
+             lock (_operateList)
+             {
+                 List<OperateContent_t> completed = _operateList.FindAll(p => p.SessionId == e);
+                 foreach (var content in completed)
+                 {
+                     if (DispatcherFailure != null) DispatcherFailure(content, Status.Timeout);
+                 }
+                 _operateList.RemoveAll(p => p.SessionId == e);
+             }
         }
+
+        private void OnSendFailure(object sender, string e)
+        {
+             lock (_operateList)
+             {
+                 List<OperateContent_t> completed = _operateList.FindAll(p => p.SessionId == e);
+                 foreach (var content in completed)
+                 {
+                     if (DispatcherFailure != null) DispatcherFailure(content, Status.RequestFailure);
+                 }
+                 _operateList.RemoveAll(p => p.SessionId == e);
+             }
+        }
+
         
         public void GetStatus()
         {
@@ -117,12 +235,14 @@ namespace Dispatcher.Service
 
         private void OnConnectStatus(long statusvalue)
         {
-            if (RunAccess.Mode == RunAccess.Mode_t.CPC || RunAccess.Mode == RunAccess.Mode_t.IPSC || RunAccess.Mode == RunAccess.Mode_t.LCP)
+            ServerStatus.Instance().SetWaitStatus(false);
+
+            if (FunctionConfigure.WorkMode == FunctionConfigure.Mode_t.Repeater || FunctionConfigure.WorkMode == FunctionConfigure.Mode_t.RepeaterWithMnis)
             {
                 ServerStatus.Instance().Repeater.SetStatus((statusvalue & 1) == 0);
                 ServerStatus.Instance().Mnis.SetStatus((statusvalue & 2) == 0);
             }
-            else if (RunAccess.Mode == RunAccess.Mode_t.VehicleStation || RunAccess.Mode == RunAccess.Mode_t.VehicleStationWithMnis)
+            else if (FunctionConfigure.WorkMode == FunctionConfigure.Mode_t.VehicleStation || FunctionConfigure.WorkMode == FunctionConfigure.Mode_t.VehicleStationWithMnis)
             {
                 ServerStatus.Instance().Mnis.SetStatus((statusvalue & 1) == 0);
                 ServerStatus.Instance().VehicleStation.SetStatus((statusvalue & 2) == 0);
@@ -182,7 +302,7 @@ namespace Dispatcher.Service
 
         public virtual void PlayVoice(int target)
         {
-
+           
         }
 
         public void OnCallRequest(CallRequestArgs e)
@@ -192,20 +312,24 @@ namespace Dispatcher.Service
 
         private void OnCallResponse(string parameter)
         {
-            if (CallResponse != null)
+            if (parameter != null)
             {
                 CallResponseArgs args = CreateCallResponse(parameter);
-                if(args != null)CallResponse(args);
+                if (CallResponse != null) CallResponse(args);
             }
         }
 
-        public virtual object GetCallParameter(ExecType_t exec, TargetMode_t type, int target)
+        public virtual Session GetCallParameter(ExecType_t exec, TargetMode_t type, int target)
         {
             return new CallParameter()
             {
                 Operate = exec,
                 Type = type,
-                Target = target
+                Target = target,
+
+
+                TargetMode = type,
+                TargetId = target
             };
         }
 
@@ -410,7 +534,10 @@ namespace Dispatcher.Service
                 Operate = ExecType_t.Start,
                 Type = querytype,
                 Target = target,
-                Cycle = args.Cycle
+                Cycle = args.Cycle,
+
+                TargetMode= TargetMode_t.Private,
+                TargetId = target
             };
 
             Request(opcode, param);
@@ -424,7 +551,10 @@ namespace Dispatcher.Service
                 Operate = ExecType_t.Stop,
                 Type = QueryLocationType_t.GenericCycle,
                 Target = target,
-                Cycle = 0
+                Cycle = 0,
+
+                TargetMode= TargetMode_t.Private,
+                TargetId = target
             };
 
             Request(opcode, param);
@@ -503,29 +633,55 @@ namespace Dispatcher.Service
                 Operate = args.Type == LocationInDoorType_t.Start ? ExecType_t.Start : ExecType_t.Stop,
                 Type = QueryLocationType_t.LocationInDoor,
                 Target = target,
-                Cycle = 0
+                Cycle = 0,
+
+                TargetMode = TargetMode_t.Private,
+                TargetId = target
             };
 
             Request(opcode, param);
         }
      
-        public void Request(RequestOpcode opcode, object parameter)
+        public void Request(RequestOpcode opcode, Session parameter)
         {
             if (!CTServer.Instance().IsInitialized) return;
+            
             new Thread(new ThreadStart(delegate()
             {
+                parameter.guid = Guid.NewGuid().ToString("N");
+
+                OperateContent_t operateContent = new OperateContent_t()
+                {
+                    SessionId = parameter.guid,
+                    Opcode = opcode,
+                    Parameter = parameter,
+                    SendTime = DateTime.Now.Ticks
+                };
+
                 try
                 {
+                    if (DispatcherBegin != null) DispatcherBegin(operateContent);
+
+                    //Console.WriteLine(operateContent.Dept);
+
+                    lock (_operateList)
+                    {
+                        _operateList.Add(operateContent);
+                    }
+
                     string[] reply = CTServer.Instance().Request(opcode, _type, parameter);
 
                     if (reply != null && reply.Length >=2)
                     {
                         if (reply[0] == "success")
                         {
-
+                           
                         }
                         else
                         {
+                            OnSendFailure(this, operateContent.Parameter.guid);
+                           
+
                             Log.Message("发起操作失败.");
                         }
 
@@ -534,8 +690,10 @@ namespace Dispatcher.Service
                 }
                 catch
                 {
-
+                    OnSendFailure(this, operateContent.Parameter.guid);
                 }
+
+                
             })).Start();
         }
     
@@ -548,9 +706,98 @@ namespace Dispatcher.Service
         {
 
         }
+
+        public class OperateContent_t
+        {
+            public string  SessionId;
+            public RequestOpcode Opcode;
+            public Session Parameter;
+            public long SendTime;
+
+            private string GetOperationName()
+            {
+                switch(Opcode)
+                {
+                    case RequestOpcode.call:
+                    case RequestOpcode.wlInfo:
+                        CallParameter callParam  = Parameter as CallParameter;
+                        if(callParam != null)return callParam.Operate == ExecType_t.Start ? "呼叫":"结束呼叫";
+                        break;
+                    case RequestOpcode.message:
+                         ShortMessageParameter shortMessageParam = Parameter as ShortMessageParameter;
+                         if(shortMessageParam != null)return string.Format("发送短消息（内容：{0}）",shortMessageParam.Contents );
+                         break;
+                    case RequestOpcode.queryGps:
+                        LocationParameter locationParam = Parameter as LocationParameter;
+                         if(locationParam != null)
+                         {
+                             switch(locationParam.Type)
+                             {
+                                 case QueryLocationType_t.Generic:
+                                     return string.Format("{0}单次查询", locationParam.Operate== ExecType_t.Start ? "开始":"结束");
+                                 case QueryLocationType_t.GenericCycle:
+                                     return string.Format("{0}周期查询(周期：{1})", locationParam.Operate == ExecType_t.Start ? "开始" : "结束", locationParam.Cycle);
+                                 case QueryLocationType_t.CSBK:
+                                     return string.Format("{0}CSBK单次查询", locationParam.Operate== ExecType_t.Start ? "开始":"结束");
+                                 case QueryLocationType_t.CSBKCycle:
+                                     return string.Format("{0}CSBK周期查询(周期：{1})", locationParam.Operate== ExecType_t.Start ? "开始":"结束",locationParam.Cycle);
+                                 case QueryLocationType_t.Enh:
+                                     return string.Format("{0}增强型CSBK单次查询", locationParam.Operate== ExecType_t.Start ? "开始":"结束");
+                                 case QueryLocationType_t.EnhCycle:
+                                     return string.Format("{0}增强型CSBK周期查询(周期：{1})", locationParam.Operate== ExecType_t.Start ? "开始":"结束", locationParam.Cycle);
+                                 case QueryLocationType_t.LocationInDoor:
+                                     return string.Format("{0}室内位置查询", locationParam.Operate== ExecType_t.Start ? "启动":"结束");
+                             }
+                         }
+                         break;
+                    case RequestOpcode.control:
+                        ControlParameter controlParam = Parameter as ControlParameter;
+                         if(controlParam != null)
+                         {
+                             switch(controlParam.Type)
+                             {
+                                 case ControlerType_t.Check:
+                                return "在线检测";
+                                case ControlerType_t.Monitor:
+                                return "远程监听";
+                                case ControlerType_t.ShutDown:
+                                return "遥毙";
+                                case ControlerType_t.StartUp: 
+                                return "遥开";
+                             }
+                         }
+                         break;
+                }
+
+                return string.Empty;
+            }
+
+            public string OperationName { get { return GetOperationName(); } }
+            
+        }
+
+        public enum Status
+        {
+            Begin,
+            Completed,
+            Timeout,
+            RequestFailure,
+            ResponseFailure,
+        }
     }
 
-    public class StatusParameter
+
+   
+    public class Session
+    {
+        [JsonProperty(PropertyName = "SessionId")]
+        public string guid { get; set; }
+
+        [JsonIgnore]
+        public TargetMode_t TargetMode { get; set; }
+        public int TargetId { get; set; }
+    }
+    public class StatusParameter : Session
     {
         public long getType;
         public object info;
@@ -569,7 +816,7 @@ namespace Dispatcher.Service
         public bool IsOnline;
     }
 
-    public class CallParameter
+    public class CallParameter : Session
     {
         public ExecType_t Operate;
         public TargetMode_t Type;
@@ -603,7 +850,7 @@ namespace Dispatcher.Service
         Failure = 1,
     }
 
-    public class ShortMessageParameter
+    public class ShortMessageParameter : Session
     {
         public TargetMode_t Type;
         public int Target;
@@ -617,6 +864,9 @@ namespace Dispatcher.Service
 
             Target = target;
             Contents = contents;
+
+            TargetMode = type;
+            TargetId = target;
         }
 
         public ShortMessageParameter()
@@ -640,7 +890,7 @@ namespace Dispatcher.Service
         public bool ISOnline;
     }
 
-    public class ControlParameter
+    public class ControlParameter : Session
     {
         public ControlerType_t Type;
         public int Target;
@@ -654,6 +904,9 @@ namespace Dispatcher.Service
         {
             Type = type;
             Target = target;
+
+            TargetMode = TargetMode_t.Private;
+            TargetId = target;
         }
     }
 
@@ -682,7 +935,7 @@ namespace Dispatcher.Service
         LocationInDoor = 25,
     }
 
-    public class LocationParameter
+    public class LocationParameter : Session
     {
         public ExecType_t Operate;
         public QueryLocationType_t Type;

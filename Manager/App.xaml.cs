@@ -12,6 +12,10 @@ using System.Diagnostics;
 using System.Reflection;
 
 using Newtonsoft.Json;
+using Sigmar.Logger;
+
+using Manager.Views;
+
 
 namespace Manager
 {
@@ -24,8 +28,13 @@ namespace Manager
             base.OnStartup(e);
 
             CheckAdministrator();
-            //如果不是管理员，程序会直接退出，并使用管理员身份重新运行。  
-            StartupUri = new Uri("views/Main.xaml", UriKind.RelativeOrAbsolute);
+
+            Logs.SetStartUpWindow(typeof(Main));
+            Log.Initialize(runTimeDirectory, Name + Version);
+            StartupUri = new Uri("Views/Logger/Logs.xaml", UriKind.RelativeOrAbsolute);
+            Log.Info("Startup application in Administrator.");
+            
+
         }  
         private void CheckAdministrator()
         {
@@ -87,6 +96,19 @@ namespace Manager
                     Directory.CreateDirectory(TmpDirectory + "runtime\\");
                 }
                 return TmpDirectory + "runtime\\";
+
+            }
+        }
+
+        public static string AudioDirectory
+        {
+            get
+            {
+                if (!Directory.Exists(TmpDirectory + "voice\\"))
+                {
+                    Directory.CreateDirectory(TmpDirectory + "voice\\");
+                }
+                return TmpDirectory + "voice\\";
 
             }
         }

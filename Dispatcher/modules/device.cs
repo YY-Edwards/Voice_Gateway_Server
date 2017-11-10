@@ -21,9 +21,9 @@ namespace Dispatcher.Modules
 
         public DeviceType_t DeviceType { get; set; }
 
-        public int DeviceID { get; set; }
+        public long DeviceID { get; set; }
         public int RadioID { get; set; }
-        public int GroupID { get; set; }
+        public long GroupID { get; set; }
                 //parts
         public bool HasScreen { get; set; }
         public bool HasKeyBoard { get; set; }

@@ -85,7 +85,7 @@ namespace Dispatcher.ViewsModules
                 }
                 else
                 {
-                    return new BitmapImage(new Uri(CTServer.Instance().ImageUrl + _area.Map));
+                    return new BitmapImage(new Uri(_area.Map));
                 }
             }
             catch(Exception ex)

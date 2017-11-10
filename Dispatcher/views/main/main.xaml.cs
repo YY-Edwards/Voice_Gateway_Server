@@ -104,6 +104,11 @@ namespace Dispatcher.Views
         {
             left.MaxWidth = grid.ActualWidth - right.ActualWidth - work.MinWidth - 10;
             right.MaxWidth = grid.ActualWidth - left.ActualWidth - work.MinWidth - 10;
+
+            leftbottom.MinHeight = FunctionConfigure.NavigationHeight > 0 ? 41 : 0;
+            leftbottom.MaxHeight = FunctionConfigure.NavigationHeight;
+            leftbottom.Height = new GridLength(FunctionConfigure.NavigationHeight);
+
         }
  
         private double? _leftWidth, _leftMinWidth, _rightWidth, _rightMinWidth;

@@ -5,6 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar"
              xmlns:Views="clr-namespace:Dispatcher.Views"
+             xmlns:ctrl="clr-namespace:Dispatcher.Controls"
              mc:Ignorable="d" 
              d:DesignHeight="326" d:DesignWidth="242">
     <Grid>
@@ -38,6 +39,9 @@
                 </TransformGroup>
             </Image.LayoutTransform>
         </Image>
+
+        <ctrl:LoadIcon Visibility="{Binding WaitIconVisible, Mode=OneWay}"  Opacity="0.25" DockPanel.Dock="Left" Grid.Row="1" Grid.Column="1"/>
+        <Image Visibility="{Binding FailureIconVisible, Mode=OneWay}" Height="16" Width="16" MaxWidth="24" MaxHeight="24" Source="/TrboX;component/resource/images/warning.png" HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="1" Grid.Column="1"/>
 
         <TextBlock Text="{Binding ViewModule.Name, Mode=OneWay}"  HorizontalAlignment="Center" Foreground="#FFC9CDD2"  FontSize="14" VerticalAlignment="Center" Grid.Row="2" Grid.ColumnSpan="3"/>
         <TabControl SelectedIndex="{Binding TypeIndex, Mode=OneWay}" Grid.RowSpan="3" Grid.Row="3" Grid.ColumnSpan="3" Margin="8,10" Style="{DynamicResource WorkTabControlStyle}" Background="{x:Null}" BorderThickness="0" BorderBrush="{x:Null}">

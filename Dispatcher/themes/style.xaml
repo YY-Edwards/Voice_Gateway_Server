@@ -3,6 +3,7 @@
                     xmlns:Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero" 
                     xmlns:Windows="clr-namespace:Sigmar.Windows;assembly=Sigmar"
                     xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar"
+                    xmlns:ctrl="clr-namespace:Dispatcher.Controls"
                     xmlns:svr="clr-namespace:Dispatcher.Service">
 
     <!--windows style-->
@@ -1381,7 +1382,9 @@
                         <Border  Grid.ColumnSpan="3" x:Name="Selection_Border" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}" VerticalAlignment="Stretch" BorderThickness="0,1"/>
                         <Border x:Name="border" Grid.Column="1" BorderBrush="{x:Null}" BorderThickness="0" HorizontalAlignment="Stretch" Height="Auto" Grid.RowSpan="1" VerticalAlignment="Stretch" Width="Auto" Margin="0" Background="{x:Null}">
                             <DockPanel HorizontalAlignment="Stretch" LastChildFill="False" Width="Auto">
-                                <Image Visibility="{Binding Header.InCallStatusVisible, RelativeSource={RelativeSource TemplatedParent}}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"   DockPanel.Dock="Right" Source="/TrboX;component/resource/images/call_22_22_h.png"/>
+                                <Image Visibility="{Binding Header.InCallStatusVisible, RelativeSource={RelativeSource TemplatedParent}}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  DockPanel.Dock="Right" Source="/TrboX;component/resource/images/call_22_22_h.png"/>
+                                <Image Visibility="{Binding Header.FailureIconVisible, RelativeSource={RelativeSource TemplatedParent}}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="16" MaxHeight="16" HorizontalAlignment="Left"  DockPanel.Dock="Right" Source="/TrboX;component/resource/images/warning.png"/>
+                                <ctrl:LoadIcon Visibility="{Binding Header.WaitIconVisible, Mode=OneWay,RelativeSource={RelativeSource TemplatedParent}}" Width="16" Height="16" Margin="0,0,8,0" Opacity="0.6" HorizontalAlignment="Left"   DockPanel.Dock="Right"/>
                                 <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="{Binding Header.ByName, RelativeSource={RelativeSource TemplatedParent}}" Foreground="#FFBEC3C7" FontSize="13" Margin="0,7.745,10,7.745" VerticalAlignment="Center" Width="Auto"/>
                             </DockPanel>
                         </Border>
@@ -1486,6 +1489,8 @@
                             <DockPanel HorizontalAlignment="Stretch" LastChildFill="False" Width="Auto">
                                 <!--<Controls:Icon Command="{Binding Header.Abnormal, RelativeSource={RelativeSource TemplatedParent}}" Height="12" VerticalAlignment="Center" Width="12" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  DockPanel.Dock="Right" Image="/TrboX;component/resource/images/Abnormal.png" HoverImage="/TrboX;component/resource/images/Abnormal_h.png" Margin="0"  />-->
                                 <Image Visibility="{Binding Header.InCallStatusVisible, RelativeSource={RelativeSource TemplatedParent}}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"   DockPanel.Dock="Right" Source="/TrboX;component/resource/images/call_22_22_h.png"/>
+                                <Image Visibility="{Binding Header.FailureIconVisible, RelativeSource={RelativeSource TemplatedParent}}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="16" MaxHeight="16" HorizontalAlignment="Left"  DockPanel.Dock="Right" Source="/TrboX;component/resource/images/warning.png"/>
+                                <ctrl:LoadIcon Visibility="{Binding Header.WaitIconVisible, Mode=OneWay,RelativeSource={RelativeSource TemplatedParent}}" Width="16" Height="16" Margin="0,0,8,0" Opacity="0.6" HorizontalAlignment="Left"   DockPanel.Dock="Right"/>
                                 <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="{Binding Header.FullName, RelativeSource={RelativeSource TemplatedParent}}" Foreground="#FFBEC3C7" FontSize="13" Margin="0,7.745,10,7.745" VerticalAlignment="Center" Width="Auto"/>
                             </DockPanel>
                         </Border>
@@ -1596,11 +1601,12 @@
                             <DockPanel HorizontalAlignment="Stretch" LastChildFill="False" Width="Auto"  >
                                 <Image Height="Auto" Opacity="{Binding Header.OnlineOpacity, RelativeSource={RelativeSource TemplatedParent}}" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="{Binding Header.Icon, RelativeSource={RelativeSource TemplatedParent}}" Margin="0,0,5,0" />
                                 <!--<Controls:Icon Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  DockPanel.Dock="Right" Image="/TrboX;component/resource/images/bluetooth.png"  />-->
-
                                 <Image Visibility="{Binding Header.ShutDownStatusVisible, RelativeSource={RelativeSource TemplatedParent}}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  DockPanel.Dock="Right" Source="/TrboX;component/resource/images/shutdown_22_22_h.png" />
                                 <Image Visibility="{Binding Header.LocationInDoorStatusVisible, RelativeSource={RelativeSource TemplatedParent}}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="16" HorizontalAlignment="Left"   Margin="0,0,0,-2.5" DockPanel.Dock="Right" Source="/TrboX;component/resource/images/start_locationindoor_22_h.png" />
                                 <Image Visibility="{Binding Header.LocationStatusVisible, RelativeSource={RelativeSource TemplatedParent}}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"   Margin="0,0,0,-1" DockPanel.Dock="Right" Source="/TrboX;component/resource/images/position_22_22_h.png"/>
                                 <Image Visibility="{Binding Header.InCallStatusVisible, RelativeSource={RelativeSource TemplatedParent}}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"   DockPanel.Dock="Right" Source="/TrboX;component/resource/images/call_22_22_h.png"/>
+                                <Image Visibility="{Binding Header.FailureIconVisible, RelativeSource={RelativeSource TemplatedParent}}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="16" MaxHeight="16" HorizontalAlignment="Left"  DockPanel.Dock="Right" Source="/TrboX;component/resource/images/warning.png"/>
+                                <ctrl:LoadIcon Visibility="{Binding Header.WaitIconVisible, Mode=OneWay,RelativeSource={RelativeSource TemplatedParent}}" Width="16" Height="16" Margin="0,0,8,0" Opacity="0.6" HorizontalAlignment="Left"   DockPanel.Dock="Right" />
                                 <TextBlock x:Name="textBlock" TextWrapping="Wrap" Text="{Binding Header.FullName, RelativeSource={RelativeSource TemplatedParent}}" Foreground="#FFBEC3C7" FontSize="13" Margin="0,7.745,10,7.745" VerticalAlignment="Center" Width="Auto" />                                
                             </DockPanel>
                         </Border>

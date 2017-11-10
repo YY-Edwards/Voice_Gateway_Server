@@ -8,190 +8,228 @@ using System.Windows;
 using Sigmar.Extension;
 
 namespace Dispatcher.Service
-{
-    public class RunAccess
+{    
+    public class FunctionConfigure
     {
-        public static string[] Enable;
-        public static Mode_t Mode = Mode_t.None;
         public enum Mode_t
         {
-            None,
-            All,
-            LCP,
-            CPC,
-            IPSC,
+            UnKnown,
+            Repeater,
+            RepeaterWithMnis,
             VehicleStation,
             VehicleStationWithMnis,
+            Debug,
         }
 
         public enum FeaturesType_t
         {
+            UnKnown,
             Schedule,
             ShortMessage,
             Controler,
             Location,
-            JobTicket,
-            Patrol,
             LocationInDoor,
-            Record,
         }
-    }
-    public class FunctionConfigure
-    {       
-        static FunctionConfigure()
-        {
-            InitilizeExtras();           
 
-            switch (RunAccess.Mode)
+
+        private static bool IsDebug = false;
+
+        private static CBaseSetting BaseSetting;
+        private static CRadioSetting RadioSetting;
+        private static CRepeaterSetting RepeaterSetting;
+        private static CMnisSetting MnisSetting;
+        private static CLocationSetting LocationSetting;
+        private static CLocationInDoorSetting LocationInDoorSetting;
+
+        private static string[] FuncationList;
+
+
+        public static void SetBaseSetting(CBaseSetting setting)
+        {
+            BaseSetting = setting;
+        }
+
+        public static void SetRadioSetting(CRadioSetting setting)
+        {
+            RadioSetting = setting;
+        }
+
+
+        public static void SetRepeaterSetting(CRepeaterSetting setting)
+        {
+            RepeaterSetting = setting;
+        }
+
+
+        public static void SetMnisSetting(CMnisSetting setting)
+        {
+            MnisSetting = setting;            
+        }
+
+
+        public static void SetLocationSetting(CLocationSetting setting)
+        {
+            LocationSetting = setting;
+        }
+
+
+        public static void SetLocationInDoorSetting(CLocationInDoorSetting setting)
+        {
+            LocationInDoorSetting = setting;
+        }
+
+
+        public static void SetFunctions(string[] funcs)
+        {
+            FuncationList = funcs;
+        }
+
+
+        private static void InitilizeWorkMode()
+        { 
+            if (IsDebug) WorkMode = Mode_t.Debug;
+
+            if (RadioSetting != null && RadioSetting.IsEnable)
             {
-                case RunAccess.Mode_t.None:
-                    DisableAll();
-                    break;
-                case RunAccess.Mode_t.All:
-                    EnableAll();
-                    break;
-                case RunAccess.Mode_t.LCP:
-                case RunAccess.Mode_t.CPC:
-                case RunAccess.Mode_t.IPSC:
-                    EnableRepeater();
-                    break;
-                case RunAccess.Mode_t.VehicleStation:
-                case RunAccess.Mode_t.VehicleStationWithMnis:
-                    VehicleStation();
-                    break;
-                default:
-                    break;
+                if (MnisSetting != null && MnisSetting.IsEnable) WorkMode = Mode_t.VehicleStationWithMnis;
+                else WorkMode = Mode_t.VehicleStation;
+            }
+            else if (RepeaterSetting != null && RepeaterSetting.IsEnable) 
+            {
+                if (MnisSetting != null && MnisSetting.IsEnable) WorkMode = Mode_t.RepeaterWithMnis;
+                else WorkMode = Mode_t.Repeater;
+            }
+            else WorkMode = Mode_t.UnKnown;
+        }
+
+
+        public static Mode_t WorkMode { get; private set; }
+
+
+        private static void InitilizeSystemEnable()
+        {
+            if(WorkMode == Mode_t.UnKnown)
+            {
+                DisableAllFunc();
+            }
+            else if (WorkMode == Mode_t.Debug || WorkMode == Mode_t.VehicleStation || WorkMode == Mode_t.VehicleStationWithMnis)
+            {
+                EnableAllFunc();
+            }
+            else if(WorkMode == Mode_t.Repeater)
+            {
+                _enableSchedule = true;
+                _enableShortMessage = false;
+                _enableControler = false;
+                _enableLocation = false;
+                _enableLocationInDoor = false;
+            }
+            else if (WorkMode == Mode_t.RepeaterWithMnis)
+            {
+                _enableSchedule = true;
+                _enableShortMessage = true;
+                _enableControler = false;
+                _enableLocation = true;
+                _enableLocationInDoor = true;
+            }
+        }
+
+        private static void InitilizeUserEnable()
+        {
+            if (FuncationList == null || FuncationList.Length <= 0)
+            {
+                DisableAllFunc();
+                return;
             }
 
-            //SelectFunc(RunAccess.Enable);
-            InitilizeViews();
+            List<FeaturesType_t> FuncList = new List<FeaturesType_t>();
+            foreach (string str in FuncationList)
+            {
+                FeaturesType_t type = str.ToEnum<FeaturesType_t>();
+                if (type != FeaturesType_t.UnKnown)FuncList.Add(type);
+            }
 
+            if (!FuncList.Contains(FeaturesType_t.Schedule)) _enableSchedule = false;
+            if (!FuncList.Contains(FeaturesType_t.ShortMessage)) _enableShortMessage = false;
+            if (!FuncList.Contains(FeaturesType_t.Controler)) _enableControler = false;
+            if (!FuncList.Contains(FeaturesType_t.Location)) _enableLocation = false;
+            if (!FuncList.Contains(FeaturesType_t.LocationInDoor)) _enableLocationInDoor = false;            
         }
 
-
-        private static void InitilizeExtras()
+        public static void InitilizeSystemConfiguration()
         {
-#if false // debug
-            _enableReport = true;
-            _enableAlarm = true;
-            _enableExport = true;
-            _enablePrint = true;
+            InitilizeWorkMode();
+            InitilizeSystemEnable();
+            //InitilizeUserEnable();
 
-            _enableAdvanceTools = true;
-            _enableHelpFile = true;
-
-            _enableDeviceSleep = true;
-            _enableDebug = true;
-#else
-            _enableReport = true;
-            _enableAlarm = true;
-            _enableExport = false;
-            _enablePrint = false;
-
-            _enableAdvanceTools = false;
-            _enableHelpFile = false;
-            _usePttToCall = true;
-            _enableDebug = true;
-#endif
+            InitilizeViews();
         }
-        private static void DisableAll()
+
+
+        private static void EnableAllFunc()
+        {
+            _enableSchedule = true;
+            _enableShortMessage = true;
+            _enableControler = true;
+            _enableLocation = true;
+            _enableLocationInDoor = true;
+        }
+        private static void DisableAllFunc()
         {
             _enableSchedule = false;
             _enableShortMessage = false;
             _enableControler = false;
             _enableLocation = false;
-            _enableJobTicket = false;
-            _enablePatrol = false;
             _enableLocationInDoor = false;
-            _enableRecord = false;
         }
 
-        private static void EnableAll()
-        {
-            _enableSchedule = true;
-            _enableShortMessage = true;
-            _enableControler = true;
-            _enableLocation = true;
-            _enableJobTicket = true;
-            _enablePatrol = true;
-            _enableLocationInDoor = true;
-            _enableRecord = true;
-        }
+
        
-        private static void EnableRepeater()
-        {
-            _enableSchedule = true;
-            _enableShortMessage = true;
-            _enableControler = false;
-            _enableLocation = true;
-            _enableJobTicket = false;
-            _enablePatrol = false;
-            _enableLocationInDoor = true;
-            _enableRecord = false;
-        }
 
-        private static void VehicleStation()
-        {
-            _enableSchedule = true;
-            _enableShortMessage = true;
-            _enableControler = true;
-            _enableLocation = true;
-            _enableJobTicket = false;
-            _enablePatrol = false;
-            _enableLocationInDoor = true;
-            _enableRecord = false;
-        }
-
-        private static void SelectFunc(string[] access)
-        {
-            if (access == null || access.Length <=0)
-            {
-                DisableAll();
-                return;
-            }
-
-            List<RunAccess.FeaturesType_t> FuncList = new List<RunAccess.FeaturesType_t>();
-            foreach(string str in access)
-            {
-                RunAccess.FeaturesType_t type = str.ToEnum<RunAccess.FeaturesType_t>();
-                FuncList.Add(type);                
-            }
-
-            if (!FuncList.Contains(RunAccess.FeaturesType_t.Schedule)) _enableSchedule = false;
-            if (!FuncList.Contains(RunAccess.FeaturesType_t.ShortMessage)) _enableShortMessage = false;
-            if (!FuncList.Contains(RunAccess.FeaturesType_t.Controler)) _enableControler = false;
-            if (!FuncList.Contains(RunAccess.FeaturesType_t.Location )) _enableLocation = false;
-            if (!FuncList.Contains(RunAccess.FeaturesType_t.JobTicket)) _enableJobTicket = false;
-            if (!FuncList.Contains(RunAccess.FeaturesType_t.Patrol)) _enablePatrol = false;
-            if (!FuncList.Contains(RunAccess.FeaturesType_t.LocationInDoor)) _enableLocationInDoor = false;
-            if (!FuncList.Contains(RunAccess.FeaturesType_t.Record)) _enableRecord = false;           
-        }
-
-        public static string DebugHost = "192.168.2.140";
-        public static bool ConnectReomote = true;
-
+       
 
         public static bool _enableSchedule;
         public static bool _enableShortMessage;
         public static bool _enableControler;
         public static bool _enableLocation;
-        public static bool _enableJobTicket;
-        public static bool _enablePatrol;
         public static bool _enableLocationInDoor;
-        public static bool _enableRecord;
+       
+        public static Visibility ScheduleVisible{get{return _enableSchedule ? Visibility.Visible : Visibility.Collapsed;}}
+        public static Visibility ShortMessageVisible { get { return _enableShortMessage ? Visibility.Visible : Visibility.Collapsed; } }
+        public static Visibility ControlerVisible { get { return _enableControler ? Visibility.Visible : Visibility.Collapsed; } }
+        public static Visibility LocationVisible { get { return _enableLocation ? Visibility.Visible : Visibility.Collapsed; } }
+        public static Visibility LocationInDoorVisible { get { return _enableLocationInDoor ? Visibility.Visible : Visibility.Collapsed; } }
 
 
-        public static bool _enableReport;
-        public static bool _enableAlarm;
-        public static bool _enableExport;
-        public static bool _enablePrint;
+        public static bool _enableJobTicket = false;
+        public static bool _enablePatrol = false;
+        public static bool _enableRecord = false;
+        public static Visibility JobTicketVisible { get { return _enableJobTicket ? Visibility.Visible : Visibility.Collapsed; } }
+        public static Visibility PatrolVisible { get { return _enablePatrol ? Visibility.Visible : Visibility.Collapsed; } }      
+        public static Visibility RecordVisible { get { return _enableRecord ? Visibility.Visible : Visibility.Collapsed; } }
 
-        private static bool _enableAdvanceTools;
-        private static bool _enableHelpFile;
 
-        private static bool _usePttToCall;
 
-        public static bool _enableDebug;
+        public static bool _enableReport = true;
+        public static bool _enableAlarm = false;
+        public static bool _enableExport = false;
+        public static bool _enablePrint = false;
+        public static Visibility ReportVisible { get { return _enableReport ? Visibility.Visible : Visibility.Collapsed; } }
+        public static Visibility AlarmVisible { get { return _enableAlarm ? Visibility.Visible : Visibility.Collapsed; } }
+        public static Visibility ExportVisible { get { return _enableExport ? Visibility.Visible : Visibility.Collapsed; } }
+        public static Visibility PrintVisible { get { return _enablePrint ? Visibility.Visible : Visibility.Collapsed; } }
+
+       
+        private static bool _enableAdvanceTools = false;
+        private static bool _enableHelpFile = false;
+        private static bool _usePttToCall = true;
+        public static Visibility AdvanceToolsVisible { get { return _enableAdvanceTools ? Visibility.Visible : Visibility.Collapsed; } }
+        public static Visibility HelpFileVisible { get { return _enableHelpFile ? Visibility.Visible : Visibility.Collapsed; } }
+        public static Visibility PTTToCallVisible { get { return _usePttToCall ? Visibility.Visible : Visibility.Collapsed; } }
+        public static Visibility CheckBoxToCallVisible { get { return !_usePttToCall ? Visibility.Visible : Visibility.Collapsed; } }
+
+
+
 
         private static void InitilizeViews()
         {
@@ -200,11 +238,11 @@ namespace Dispatcher.Service
                 EnableViewNavigationSchedule = false;
                 EnableViewNotifyCalled = false;
             }
-            if(!_enableShortMessage)
+            if (!_enableShortMessage)
             {
                 EnableViewNotifyShortMessage = false;
             }
-            if(!_enableControler)
+            if (!_enableControler)
             {
                 EnableViewControlerTools = false;
             }
@@ -234,7 +272,7 @@ namespace Dispatcher.Service
                 EnableViewNavigationRecord = false;
             }
         }
-        //initilize views
+
         public static bool EnableViewBaseTools = true;
         public static bool EnableViewFastTools = true;
 
@@ -243,10 +281,10 @@ namespace Dispatcher.Service
 
         public static bool EnableViewHelpTools = true;
 
-        public static bool EnableViewResOrganization  = true;
-        public static bool EnableViewResGroup  = true; 
-        public static bool EnableViewResStaff   = true;  
-        public static bool EnableViewResVehicle  = true;
+        public static bool EnableViewResOrganization = true;
+        public static bool EnableViewResGroup = true;
+        public static bool EnableViewResStaff = true;
+        public static bool EnableViewResVehicle = true;
         public static bool EnableViewResDevice = true;
         public static bool EnableViewResBeacon = true;
 
@@ -255,7 +293,7 @@ namespace Dispatcher.Service
         public static bool EnableViewNavigationLocationInDoor = true;
         public static bool EnableViewNavigationRecord = true;
         public static bool EnableViewNavigationJobTicket = true;
-        public static bool EnableViewNavigationPatrol = true;        
+        public static bool EnableViewNavigationPatrol = true;
         public static bool EnableViewNavigationReport = true;
 
         public static bool EnableViewEvent = true;
@@ -265,28 +303,26 @@ namespace Dispatcher.Service
         public static bool EnableViewNotifyShortMessage = true;
         public static bool EnableViewNotifyJobTicket = true;
         public static bool EnableViewNotifyPatrol = true;
-        
 
-        public static Visibility ScheduleVisible{get{return _enableSchedule ? Visibility.Visible : Visibility.Collapsed;}}
-        public static Visibility ShortMessageVisible { get { return _enableShortMessage ? Visibility.Visible : Visibility.Collapsed; } }
-        public static Visibility ControlerVisible { get { return _enableControler ? Visibility.Visible : Visibility.Collapsed; } }
-        public static Visibility LocationVisible { get { return _enableLocation ? Visibility.Visible : Visibility.Collapsed; } }
-        public static Visibility JobTicketVisible { get { return _enableJobTicket ? Visibility.Visible : Visibility.Collapsed; } }
-        public static Visibility PatrolVisible { get { return _enablePatrol ? Visibility.Visible : Visibility.Collapsed; } }
-        public static Visibility LocationInDoorVisible { get { return _enableLocationInDoor ? Visibility.Visible : Visibility.Collapsed; } }
-        public static Visibility RecordVisible { get { return _enableRecord ? Visibility.Visible : Visibility.Collapsed; } }
-        public static Visibility ReportVisible { get { return _enableReport ? Visibility.Visible : Visibility.Collapsed; } }
-        public static Visibility AlarmVisible { get { return _enableAlarm ? Visibility.Visible : Visibility.Collapsed; } }
+        public static double NavigationHeight
+        {
+            get{
+
+                int count = 0;
+
+                if (_enableSchedule) count++;                
+                if (_enableLocation) count++;
+                if (_enableLocationInDoor) count++;
+                if (_enableJobTicket) count++;
+                if (_enablePatrol) count++;
+                if (_enableRecord) count++;
+                if (_enableReport) count++;
 
 
-        public static Visibility ExportVisible { get { return _enableExport ? Visibility.Visible : Visibility.Collapsed; } }
-        public static Visibility PrintVisible { get { return _enablePrint ? Visibility.Visible : Visibility.Collapsed; } }
-        public static Visibility AdvanceToolsVisible { get { return _enableAdvanceTools ? Visibility.Visible : Visibility.Collapsed; } }
-
-        public static Visibility HelpFileVisible { get { return _enableHelpFile ? Visibility.Visible : Visibility.Collapsed; } }
-
-        public static Visibility PTTToCallVisible { get { return _usePttToCall ? Visibility.Visible : Visibility.Collapsed; } }
-        public static Visibility CheckBoxToCallVisible { get { return !_usePttToCall ? Visibility.Visible : Visibility.Collapsed; } }
+                if (count > 0) return (count-1) * 40 + 42;
+                else return 0; 
+            }
+        }
       
     }
 }

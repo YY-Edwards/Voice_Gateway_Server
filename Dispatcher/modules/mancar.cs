@@ -18,7 +18,7 @@ namespace Dispatcher.Modules
         }
         public ManCarType_t ManCarType;
 
-        public int ManCarID { get; set; }
+        public long ManCarID { get; set; }
         public string ManCarName { set; get; }
         public Mancar SetMancarType(ManCarType_t type, bool hasdevice = true)
         {

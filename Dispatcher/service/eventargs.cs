@@ -9,6 +9,15 @@ using Dispatcher.ViewsModules;
 
 namespace Dispatcher.Service
 {
+    public static class Extension
+    {
+        public static bool Contains<T>(this List<T> list, Predicate<T> match)
+        {
+            return list.Find(match) != null;
+        }
+
+    }
+
 
     public delegate void OperatedEventHandler(OperatedEventArgs e);
     public class OperatedEventArgs

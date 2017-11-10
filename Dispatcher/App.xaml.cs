@@ -72,7 +72,7 @@ namespace Dispatcher
         private static string Company = "JiHua Information";
 
         private static string ProjectName = "TrboX";
-        private static string Version = "v3.1";
+        private static string Version = "3.0";
         private static string Name = "";
 
         private static string RuntimeFolder = "runtime";

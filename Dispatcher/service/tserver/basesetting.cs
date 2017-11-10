@@ -14,16 +14,16 @@ namespace Dispatcher.Service
 {
    public class CBaseSetting:CConfiguration
    {
-        public NetAddress Svr { get; set; }
-        public NetAddress LogSvr{ get; set; }
-        public bool IsSaveCallLog { get; set; }
-        public bool IsSaveMsgLog { get; set; }
-        public bool IsSavePositionLog { get; set; }
-        public bool IsSaveControlLog { get; set; }
-        public bool IsSaveJobLog { get; set; }
-        public bool IsSaveTrackerLog { get; set; }
-        public bool IsSaveLocationInDoorLog { get; set; }
-        public string LogPath { get; set; }
+       public NetAddress TSvr { get; set; }
+       public NetAddress LogSvr { get; set; }
+       public bool IsSaveCallLog { get; set; }
+       public bool IsSaveMsgLog { get; set; }
+       public bool IsSavePositionLog { get; set; }
+       public bool IsSaveControlLog { get; set; }
+       public bool IsSaveJobLog { get; set; }
+       public bool IsSaveTrackerLog { get; set; }
+       public bool IsSaveLocationInDoorLog { get; set; }
+       public string LogPath { get; set; }
 
         public CBaseSetting()
             : base(
@@ -39,7 +39,7 @@ namespace Dispatcher.Service
             try
             {
                 CBaseSetting tserver  = JsonConvert.DeserializeObject<CBaseSetting>(json);
-                Svr = tserver.Svr ?? new NetAddress()
+                TSvr = tserver.TSvr ?? new NetAddress()
                 {
                     Ip = "127.0.0.1",
                     Port = 9000
@@ -72,28 +72,28 @@ namespace Dispatcher.Service
 
        private void InitializeValue()
        {
-                Svr = new NetAddress()
-                {
-                    Ip = "127.0.0.1",
-                    Port = 9000
-                };
+           TSvr = new NetAddress()
+           {
+               //Ip = Utility.TServerHost,
+               //Port = Utility.TServerPort,
+           };
 
-                LogSvr = new NetAddress()
-                {
-                    Ip = "127.0.0.1",
-                    Port = 9003
-                };
+           LogSvr = new NetAddress()
+           {
+               //Ip = Utility.LogServerHost,
+               //Port = Utility.LogServerPort,
+           };
 
-                IsSaveCallLog = true;
-                IsSaveMsgLog = true;
-                IsSavePositionLog = true;
+           IsSaveCallLog = true;
+           IsSaveMsgLog = true;
+           IsSavePositionLog = true;
 
-                IsSaveControlLog = false;
-                IsSaveJobLog = false;
-                IsSaveTrackerLog = false;
-                IsSaveLocationInDoorLog = true;
+           IsSaveControlLog = false;
+           IsSaveJobLog = false;
+           IsSaveTrackerLog = false;
+           IsSaveLocationInDoorLog = true;
 
-                LogPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\Trbox3.0\\Log\\";
+           LogPath = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + "\\Trbox3.0\\Log\\";
        }
     }
 }

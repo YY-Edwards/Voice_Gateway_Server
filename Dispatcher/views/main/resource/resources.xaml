@@ -85,8 +85,10 @@
                                                 <DockPanel Opacity="{Binding OnlineOpacity}">
                                                     <Image x:Name="Icon" Source="/TrboX;component/resource/images/group_18_18_on.png" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="34,0,0,0"/>                                                   
                                                     <DockPanel x:Name="dck_Content" Margin="5,0" >
-                                                        <TextBlock Text="{Binding FullName}"  TextWrapping="NoWrap" Margin="0,0,10,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" />
-                                                        <Image Visibility="{Binding InCallStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"   DockPanel.Dock="Right" Source="/TrboX;component/resource/images/call_22_22_h.png"/>
+                                                        <TextBlock Text="{Binding FullName}"  TextWrapping="NoWrap" Margin="0,0,10,0" VerticalAlignment="Center"  Height="Auto" Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" />
+                                                        <ctrl:LoadIcon Visibility="{Binding WaitIconVisible}" Width="16" Height="16" Margin="0,0,8,0" Opacity="0.6" DockPanel.Dock="Left"/>
+                                                        <Image Visibility="{Binding FailureIconVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="16" MaxHeight="16" DockPanel.Dock="Left" Source="/TrboX;component/resource/images/warning.png"/>
+                                                        <Image Visibility="{Binding InCallStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" DockPanel.Dock="Left" Source="/TrboX;component/resource/images/call_22_22_h.png"/>
                                                     </DockPanel>
                                                 </DockPanel>
                                             </Border>
@@ -148,10 +150,13 @@
                                                     <Image  Opacity="{Binding OnlineOpacity}" x:Name="Icon" Source="{Binding Icon}" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="34,0,0,0"  />
                                                     <DockPanel x:Name="dck_Content" Margin="5,0" >
                                                         <TextBlock x:Name="txt" Text="{Binding FullName}"  Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" TextWrapping="NoWrap" Margin="5,0,10,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  />
-                                                        <Image Visibility="{Binding ShutDownStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/shutdown_22_22_h.png" />
-                                                        <Image Visibility="{Binding LocationInDoorStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="16" HorizontalAlignment="Left"   Margin="0,0,0,-2.5" Source="/TrboX;component/resource/images/start_locationindoor_22_h.png" />
-                                                        <Image Visibility="{Binding LocationStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"   Margin="0,0,0,-1" Source="/TrboX;component/resource/images/position_22_22_h.png"/>
+                                                        <ctrl:LoadIcon Visibility="{Binding WaitIconVisible}" Width="16" Height="16" Margin="0,0,8,0" Opacity="0.6" DockPanel.Dock="Left"/>
+                                                        <Image Visibility="{Binding FailureIconVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="16" MaxHeight="16" DockPanel.Dock="Left" Source="/TrboX;component/resource/images/warning.png"/>
                                                         <Image Visibility="{Binding InCallStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/call_22_22_h.png"/>
+                                                        <Image Visibility="{Binding LocationStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"   Margin="0,0,0,-1" Source="/TrboX;component/resource/images/position_22_22_h.png"/>
+                                                        <Image Visibility="{Binding LocationInDoorStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="16" HorizontalAlignment="Left"   Margin="0,0,0,-2.5" Source="/TrboX;component/resource/images/start_locationindoor_22_h.png" />
+
+                                                        <Image Visibility="{Binding ShutDownStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/shutdown_22_22_h.png" />
                                                     </DockPanel>
                                                 </DockPanel>
                                             </Border>
@@ -213,10 +218,13 @@
                                                     <Image Opacity="{Binding OnlineOpacity}" x:Name="Icon" Source="{Binding Icon}" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="34,0,0,0" />
                                                     <DockPanel x:Name="dck_Content" Margin="5,0" >
                                                         <TextBlock Text="{Binding FullName}" ToolTip="{Binding target.HeaderWithoutKey}"  TextWrapping="NoWrap" Margin="5,0,10,0"  Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" />
-                                                        <Image Visibility="{Binding ShutDownStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/shutdown_22_22_h.png" />
-                                                        <Image Visibility="{Binding LocationInDoorStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="16" HorizontalAlignment="Left"   Margin="0,0,0,-2.5" Source="/TrboX;component/resource/images/start_locationindoor_22_h.png" />
-                                                        <Image Visibility="{Binding LocationStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"   Margin="0,0,0,-1" Source="/TrboX;component/resource/images/position_22_22_h.png"/>
+                                                        <ctrl:LoadIcon Visibility="{Binding WaitIconVisible}" Width="16" Height="16" Margin="0,0,8,0" Opacity="0.6" DockPanel.Dock="Left"/>
+                                                        <Image Visibility="{Binding FailureIconVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="16" MaxHeight="16" DockPanel.Dock="Left" Source="/TrboX;component/resource/images/warning.png"/>
                                                         <Image Visibility="{Binding InCallStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/call_22_22_h.png"/>
+                                                        <Image Visibility="{Binding LocationStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"   Margin="0,0,0,-1" Source="/TrboX;component/resource/images/position_22_22_h.png"/>
+                                                        <Image Visibility="{Binding LocationInDoorStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="16" HorizontalAlignment="Left"   Margin="0,0,0,-2.5" Source="/TrboX;component/resource/images/start_locationindoor_22_h.png" />
+
+                                                        <Image Visibility="{Binding ShutDownStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/shutdown_22_22_h.png" />
 
                                                     </DockPanel>
                                                 </DockPanel>
@@ -279,10 +287,13 @@
                                                     <Image  Opacity="{Binding OnlineOpacity}"  x:Name="Icon" Source="{Binding Icon}" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="34,0,0,0"  />
                                                     <DockPanel x:Name="dck_Content" Margin="5,0" >
                                                         <TextBlock Text="{Binding DeviceName}"  TextWrapping="NoWrap" Margin="5,0,10,0"  Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  />
-                                                        <Image Visibility="{Binding ShutDownStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/shutdown_22_22_h.png" />
-                                                        <Image Visibility="{Binding LocationInDoorStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="16" HorizontalAlignment="Left"   Margin="0,0,0,-2.5" Source="/TrboX;component/resource/images/start_locationindoor_22_h.png" />
-                                                        <Image Visibility="{Binding LocationStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"   Margin="0,0,0,-1" Source="/TrboX;component/resource/images/position_22_22_h.png"/>
+                                                        <ctrl:LoadIcon Visibility="{Binding WaitIconVisible}" Width="16" Height="16" Margin="0,0,8,0" Opacity="0.6" DockPanel.Dock="Left"/>
+                                                        <Image Visibility="{Binding FailureIconVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="16" MaxHeight="16" DockPanel.Dock="Left" Source="/TrboX;component/resource/images/warning.png"/>
                                                         <Image Visibility="{Binding InCallStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/call_22_22_h.png"/>
+                                                        <Image Visibility="{Binding LocationStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"   Margin="0,0,0,-1" Source="/TrboX;component/resource/images/position_22_22_h.png"/>
+                                                        <Image Visibility="{Binding LocationInDoorStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="16" HorizontalAlignment="Left"   Margin="0,0,0,-2.5" Source="/TrboX;component/resource/images/start_locationindoor_22_h.png" />
+
+                                                        <Image Visibility="{Binding ShutDownStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/shutdown_22_22_h.png" />
 
                                                     </DockPanel>
                                                 </DockPanel>

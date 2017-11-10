@@ -46,7 +46,8 @@ namespace Dispatcher.Service
         public event StatusHandel OnStatusChanged;
         public event ReceiveRequestHandele OnReceiveRequest;
 
-        public event EventHandler Timeout;
+        public event Action<object, string> SendTimeout;
+        public event Action<object, string> SendFailure;
 
         private readonly object m_RequestLockHelper = new object();
 
@@ -82,11 +83,20 @@ namespace Dispatcher.Service
                 }
                
                 base.WaitResponseTimeout += delegate(long seq) {
-                    if (Timeout != null) Timeout(this, new EventArgs());
+                    if(_requestList.ContainsKey(seq))
+                    {
+                        if (SendTimeout != null) SendTimeout(this, _requestList[seq]);
+                        _requestList.Remove(seq);
+                    }
+
                     Log.Error(string.Format("Request:{0} Response Timeout!", seq));
                 };
                 base.WaitReplyTimeout += delegate(long seq) {
-                    if (Timeout != null) Timeout(this, new EventArgs());
+                    if (_requestList.ContainsKey(seq))
+                    {
+                        if (SendTimeout != null) SendTimeout(this, _requestList[seq]);
+                        _requestList.Remove(seq);
+                    }
                     Log.Error(string.Format("Request:{0} Reply Timeout!", seq));
                 };                           
             }
@@ -190,19 +200,27 @@ namespace Dispatcher.Service
             return json;
         }
 
+
+        private Dictionary<long, string> _requestList = new Dictionary<long, string>();
+
         public string[] Request(RequestOpcode call, RequestType type, object param)
         {
+            Session session = param as Session;
+
             try
             {
                 string json = BuildJson(call, type, param);
 
                 if (json != string.Empty)
                 {
+                    if (session != null && !_requestList.ContainsKey(s_CallID)) _requestList.Add(s_CallID, session.guid);
                     TServerResponse res = RequestWithoutReply<TServerResponse>(s_CallID, Encoding.UTF8.GetBytes(json));
-
+                    
                     if (res == null) return null;
                     return new string[2] { res.status, JsonConvert.SerializeObject(res.contents, Formatting.None) };
                 }
+
+                if (session != null && SendFailure != null) SendFailure(this, session.guid);
 
                 Log.Warning("Request Failure.");
                 return null; 
@@ -210,6 +228,7 @@ namespace Dispatcher.Service
             }
             catch (Exception ex)
             {
+                if (session != null && SendFailure != null) SendFailure(this, session.guid);
                 Log.Warning("Request Failure.", ex);
                 return null;
             }
@@ -324,6 +343,8 @@ namespace Dispatcher.Service
         public object contents;
     }
 
+
+
     public enum RequestType
     {
         wl,
@@ -340,6 +361,12 @@ namespace Dispatcher.Service
         getRadioSetting,
         setRepeaterSetting,
         getRepeaterSetting,
+
+        setMnisSetting,
+        getMnisSetting,
+
+        setLocationSetting,
+        getLocationSetting,
 
         queryLicense,
         registerLicense,
@@ -386,6 +413,7 @@ namespace Dispatcher.Service
         area,
         ibeacon,
         locationIndoor,
+
         locatioindoorlog,
         locationLog,
 

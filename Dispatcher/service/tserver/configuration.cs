@@ -34,12 +34,12 @@ namespace Dispatcher.Service
             m_SetOpcode = set;
             m_GetOpcode = get;
 
-            CTServer.Instance().Timeout += new EventHandler(OnTimeout);
+            CTServer.Instance().SendTimeout += new Action<object, string>(OnTimeout);
         }
 
-        private void OnTimeout(object sender, EventArgs e)
+        private void OnTimeout(object sender, string e)
         {
-            if (Timeout != null) Timeout(sender, e);
+            if (Timeout != null) Timeout(sender, new EventArgs());
         }
 
         public void Request(RequestOpcode opcode, object parameter, bool isget = false)
@@ -128,8 +128,17 @@ namespace Dispatcher.Service
         QueryRegister,
         Register,
         LocationInDoor,
+        Mnis,
+        Location
     };
 
+
+    public enum LocationQueryType_t
+    {
+        General = 0,
+        CSBK = 1,
+        EnhCSBK = 2
+    }
     //public enum Device
     //{
     //    Radio = 1,

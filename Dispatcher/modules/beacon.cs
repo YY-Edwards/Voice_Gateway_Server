@@ -45,7 +45,7 @@ namespace Dispatcher.Modules
         public bool IsValid;
 
         [JsonProperty(PropertyName = "area")]
-        public int Area { set; get; }
+        public long Area { set; get; }
 
 
         [JsonIgnore]
