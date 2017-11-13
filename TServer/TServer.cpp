@@ -215,7 +215,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		wlClientActions["wlPlayStatus"] = wlPlayStatusAction;
 		wlClientActions["wlGetConfig"] = wlGetConfigAction;
 		wlClientActions["connectStatus"] = recvConnetResultAction;
-		wlClientActions["sendGpsStatus"] = recvSendGpsStatusAction;
+		//wlClientActions["sendGpsStatus"] = recvSendGpsStatusAction;
+		wlClientActions["locationStatus"] = recvSendGpsStatusAction;
 		wlClientActions["sendGps"] = recvGpsAction;
 		wlClientActions["messageStatus"] = recvMessageResultAction;
 		wlClientActions["message"] = recvMsgAction;
@@ -339,7 +340,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	wlClientActions["wlPlayStatus"] = wlPlayStatusAction;;
 	wlClientActions["wlGetConfig"] = wlGetConfigAction;
 	wlClientActions["connectStatus"] = recvConnetResultAction;
-	wlClientActions["sendGpsStatus"] = recvSendGpsStatusAction;
+	//wlClientActions["sendGpsStatus"] = recvSendGpsStatusAction;
+	wlClientActions["locationStatus"] = recvSendGpsStatusAction;
 	wlClientActions["sendGps"] = recvGpsAction;
 	wlClientActions["messageStatus"] = recvMessageResultAction;
 	wlClientActions["message"] = recvMsgAction;

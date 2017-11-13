@@ -175,7 +175,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		m_pRpcServer->addActionHandler("wlCallStatus", wlCallStatusActionHandler);
 		m_pRpcServer->addActionHandler("wlPlay", wlPlayActionHandler);
 		m_pRpcServer->addActionHandler("wlInfo", wlInfoActionHandler);
-		m_pRpcServer->addActionHandler("queryGps", wlMnisQueryGpsActionHandler);
+		//m_pRpcServer->addActionHandler("queryGps", wlMnisQueryGpsActionHandler);
+		m_pRpcServer->addActionHandler("location", wlMnisQueryGpsActionHandler);
 		m_pRpcServer->addActionHandler("message", wlMnisMessageHandler);
 		m_pRpcServer->addActionHandler("status", wlMnisStatusHandler);
 		//m_pRpcServer->addActionHandler("locationIndoor", wlMnisLocationIndoorHandler);

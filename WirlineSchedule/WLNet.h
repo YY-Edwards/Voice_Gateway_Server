@@ -332,9 +332,11 @@ public:
 	/*告知界面mnis设备连接状态*/
 	int wlMnisConnectStatus(int status);
 	/*告知界面Gps查询执行状态*/
-	int wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle, int status, std::string sessionid);
+	//int wlMnisSendGpsStatus(int Operate, int Target, int Type, double Cycle, int status, std::string sessionid);
+	int wlMnisSendGpsStatus(Respone data);
 	/*告知界面Gps数据*/
-	int wlMnisSendGps(int Source, GPS gps, std::string sessionid);
+	//int wlMnisSendGps(int Source, GPS gps, std::string sessionid);
+	int wlMnisSendGps(Respone data);
 	/*告知界面短信发送执行状态*/
 	int wlMnisMessageStatus(int Type, int Target, int Source, std::string Contents, int status, std::string sessionid);
 	/*告知界面收到短信*/
@@ -352,8 +354,10 @@ public:
 
 	/*接收到序列号后通知tserver*/
 	int wlSendSerial();
-	/*蓝牙室内定位*/
-	int wlMnisLoactionIndoor(int source, FieldValue info);
+	///*蓝牙室内定位*/
+	//int wlMnisLoactionIndoor(int source, FieldValue info);
+	/*发送相关数据*/
+	void send2Client(char* actionName, ArgumentType args);
 protected:
 	/*
 	* Socket work thread
