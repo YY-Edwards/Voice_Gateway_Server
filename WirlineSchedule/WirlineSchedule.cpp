@@ -159,7 +159,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		CRpcServer *m_pRpcServer = new CRpcServer();
 
 		/*ÉèÖÃ»Øµ÷*/
-		m_pMnis->setCallBackFunc(CManager::OnMnisCallBack);
+		m_pMnis->setCallBackFunc(CManager::OnData);
 		m_pRpcServer->setOnConnectHandler(CManager::OnConnect);
 		m_pRpcServer->setOnDisconnectHandler(CManager::OnDisConnect);
 

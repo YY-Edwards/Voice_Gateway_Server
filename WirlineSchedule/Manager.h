@@ -67,7 +67,7 @@ public:
 	/*client断开*/
 	static void OnDisConnect(CRemotePeer* pRemotePeer);
 	/*MNIS回调方法*/
-	static void OnMnisCallBack(int callFuncId, Respone response);
+	static void OnData(int callFuncId, Respone response);
 	/*更新在线设备信息*/
 	int updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode = -1);
 	/*请求对当前任务操作*/

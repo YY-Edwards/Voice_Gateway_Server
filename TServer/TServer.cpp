@@ -223,6 +223,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		wlClientActions["status"] = recvStatusAction;
 		wlClientActions["sendArs"] = recvArsAction;
 		wlClientActions["wlReadSerial"] = wlReadSerialAction;
+		wlClientActions["sendBeacons"] = recvLocationIndoorAction;
 		mclientActions["getSettingConfig"] = GetSettingAction;
 		CBroker::instance()->startLogClient();
 
@@ -348,6 +349,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	wlClientActions["status"] = recvStatusAction;
 	wlClientActions["sendArs"] = recvArsAction;
 	wlClientActions["wlReadSerial"] = wlReadSerialAction;
+	wlClientActions["sendBeacons"] = recvLocationIndoorAction;
 
 	mclientActions["getSettingConfig"] = GetSettingAction;
 	CBroker::instance()->startLogClient();

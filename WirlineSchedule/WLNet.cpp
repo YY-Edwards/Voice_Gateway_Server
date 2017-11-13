@@ -8364,6 +8364,7 @@ void CWLNet::handleCallTimeOut()
 
 void CWLNet::send2Client(char* actionName, ArgumentType args)
 {
+	std::lock_guard<std::mutex> locker(m_lockerSend2Client);
 	std::string strRequest = CRpcJsonParser::buildCall(actionName, ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();

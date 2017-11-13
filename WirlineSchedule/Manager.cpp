@@ -846,9 +846,17 @@ void CManager::OnDisConnect(CRemotePeer* pRemotePeer)
 	}
 }
 
-void CManager::OnMnisCallBack(int callFuncId, Respone response)
+void CManager::OnData(int callFuncId, Respone response)
 {
-	switch (callFuncId)
+	int call = callFuncId;
+	Respone data = response;
+	ArgumentType args;
+	FieldValue Gps(FieldValue::TObject);
+	FieldValue Indoor(FieldValue::TObject);
+	std::map<std::string, RadioStatus>::iterator it;
+	//std::list<BconMajMinTimeReport>::iterator mBcon;
+	FieldValue bcons(FieldValue::TArray);
+	switch (call)
 	{
 	case MNIS_CONNECT:
 	{
@@ -864,209 +872,153 @@ void CManager::OnMnisCallBack(int callFuncId, Respone response)
 	}
 		break;
 	case SEND_PRIVATE_MSG:
-	{
+		args["type"] = FieldValue(PRIVATE);
+		try
+		{
+			args["SessionId"] = FieldValue(data.sessionId.c_str());
+			args["Source"] = FieldValue(NULL);
+			args["Target"] = FieldValue(data.target);
+			args["Contents"] = FieldValue("");
+			args["Status"] = FieldValue(data.msgStatus);
+			args["Type"] = FieldValue(data.msgType);
+			g_pNet->send2Client("messageStatus", args);
+		}
+		catch (std::exception e)
+		{
 
-							 printf_s("SEND_PRIVATE_MSG:%d\r\n", response.msgStatus);
-							 g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus, response.sessionId);
-	}
+		}
 		break;
 	case SEND_GROUP_MSG:
-	{
-						   printf_s("SEND_GROUP_MSG:%d\r\n", response.msgStatus);
-						   g_pNet->wlMnisMessageStatus(response.msgType, response.target, response.source, response.msg, response.msgStatus, response.sessionId);
-	}
+		args["type"] = FieldValue(GROUP);
+		try
+		{
+			args["SessionId"] = FieldValue(data.sessionId.c_str());
+			args["Source"] = FieldValue(NULL);
+			args["Target"] = FieldValue(data.target);
+			args["Contents"] = FieldValue("");
+			args["Status"] = FieldValue(data.msgStatus);
+			args["Type"] = FieldValue(data.msgType);
+			g_pNet->send2Client("messageStatus", args);
+		}
+		catch (std::exception e)
+		{
+
+		}
 		break;
 	case RECV_MSG:
-	{
-					 printf_s("RECV_MSG:%s\r\n", response.msg.c_str());
-					 g_pNet->wlMnisMessage(response.msgType, response.target, response.source, response.msg, response.sessionId);
-					 /************************************************************************/
-					 /* temp code
-					 /************************************************************************/
-					 //REMOTE_TASK *pTask = new REMOTE_TASK;
-					 //memset(pTask, 0, sizeof(REMOTE_TASK));
-					 //pTask->cmd = REMOTE_CMD_MNIS_MSG;
-					 ////pTask->pRemote = (CRemotePeer*)g_onLineClients.front();
-					 //swprintf_s(pTask->param.info.msgParam.Contents, L"¶º±È");
-					 //pTask->param.info.msgParam.Source = 1118;
-					 //pTask->param.info.msgParam.Target = 10750;
-					 //pTask->param.info.msgParam.Type = PRIVATE;
-					 //push_back_task(pTask);
-
-	}
+		args["Target"] = FieldValue(data.target);
+		args["Source"] = FieldValue(data.source);
+		args["Contents"] = FieldValue(data.msg.c_str());
+		args["Type"] = FieldValue(PRIVATE);
+		g_pNet->send2Client("message", args);
 		break;
-	case GPS_IMME_COMM:
-	{
-						  printf_s("GPS_IMME_COMM:%d\r\n", response.gpsStatus);
-						  //g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
-						  g_pNet->wlMnisSendGpsStatus(response);
-	}
-		break;
+	case  GPS_IMME_COMM:
 	case GPS_TRIGG_COMM:
-	{
-						   printf_s("GPS_TRIGG_COMM:%d\r\n", response.gpsStatus);
-						   //g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
-						   g_pNet->wlMnisSendGpsStatus(response);
-	}
-		break;
 	case GPS_IMME_CSBK:
-	{
-						  printf_s("GPS_IMME_CSBK:%d\r\n", response.gpsStatus);
-						  //g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
-						  g_pNet->wlMnisSendGpsStatus(response);
-	}
-		break;
 	case GPS_TRIGG_CSBK:
-	{
-						   printf_s("GPS_TRIGG_CSBK:%d\r\n", response.gpsStatus);
-						   //g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
-						   g_pNet->wlMnisSendGpsStatus(response);
-	}
-		break;
+	case GPS_IMME_CSBK_EGPS:
+	case GPS_TRIGG_CSBK_EGPS:
 	case STOP_QUERY_GPS:
 	{
-						   printf_s("STOP_QUERY_GPS:%d\r\n", response.gpsStatus);
-						   //g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
-						   g_pNet->wlMnisSendGpsStatus(response);
-	}
-		break;
-	case RADIO_ARS:
-	{
-					  printf_s("RADIO_ARS:%d\r\n", response.arsStatus);
-					  g_pNet->wlMnisSendArs(response.source, (0 == response.arsStatus) ? ("True") : ("False"), response.sessionId);
-	}
-		break;
-		// do nothing
-	case RADIO_GPS:
-	{
-					  printf_s("RADIO_GPS:%d\r\n", response.gpsStatus);
+						   FieldValue element(FieldValue::TObject);
+						   element.setKeyVal("Lat", FieldValue(data.lat));
+						   element.setKeyVal("Lon", FieldValue(data.lon));
+						   element.setKeyVal("Alt", FieldValue(data.altitude));
+						   element.setKeyVal("Speed", FieldValue(data.speed));
+						   element.setKeyVal("Valid", FieldValue(data.valid));
+						   args["SessionId"] = FieldValue(data.sessionId.c_str());
+						   args["Target"] = FieldValue(data.target);
+						   args["Type"] = 0;   //0:gps 
+						   args["Cycle"] = FieldValue(data.cycle);
+						   args["Operate"] = FieldValue(data.operate);
+						   args["Status"] = FieldValue(data.gpsStatus);
+						   args["Report"] = element;
+						   g_pNet->send2Client("locationStatus", args);
 	}
 		break;
 	case RECV_GPS:
 	{
-					 printf_s("RECV_GPS:%d\r\n", response.gpsStatus);
-					 //GPS gps = { 0 };
-					 //gps.lat = response.lat;
-					 //gps.lon = response.lon;
-					 //gps.speed = response.speed;
-					 //gps.valid = response.valid;
-					 //g_pNet->wlMnisSendGps(response.source, gps, response.sessionId);
-					 g_pNet->wlMnisSendGps(response);
+					 FieldValue element(FieldValue::TObject);
+					 element.setKeyVal("Lat", FieldValue(data.lat));
+					 element.setKeyVal("Lon", FieldValue(data.lon));
+					 element.setKeyVal("Alt", FieldValue(data.altitude));
+					 element.setKeyVal("Speed", FieldValue(data.speed));
+					 element.setKeyVal("Valid", FieldValue(data.valid));
+					 args["Source"] = FieldValue(data.source);
+					 args["Report"] = element;
+					 g_pNet->send2Client("sendGps", args);
 	}
 		break;
-	case GPS_IMME_CSBK_EGPS:
+	case RECV_LOCATION_INDOOR:
 	{
-							   printf_s("GPS_IMME_CSBK_EGPS:%d\r\n", response.gpsStatus);
-							   //g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
-							   g_pNet->wlMnisSendGpsStatus(response);
+								 FieldValue element(FieldValue::TObject);
+								 FieldValue uuid(FieldValue::TArray);
+								 for (int i = 0; i < 16; i++)
+								 {
+									 FieldValue temp(FieldValue::TInt);
+									 temp.setInt(data.bcon.uuid[i]);
+									 uuid.push(temp);
+								 }
+								 element.setKeyVal("uuid", FieldValue(uuid));
+								 element.setKeyVal("txpower", FieldValue(data.bcon.TXPower));
+								 element.setKeyVal("rssi", FieldValue(data.bcon.RSSI));
+								 element.setKeyVal("timestamp", FieldValue(data.bcon.TimeStamp));
+								 element.setKeyVal("major", FieldValue(data.bcon.Major));
+								 element.setKeyVal("minor", FieldValue(data.bcon.Minor));
+
+								 args["Report"] = element;
+								 args["source"] = data.source;
+								 g_pNet->send2Client("sendBeacons", args);
 	}
 		break;
-	case GPS_TRIGG_CSBK_EGPS:
-	{
-								printf_s("GPS_TRIGG_CSBK_EGPS:%d\r\n", response.gpsStatus);
-								//g_pNet->wlMnisSendGpsStatus(response.operate, response.target, response.gpsType, response.cycle, response.gpsStatus, response.sessionId);
-								g_pNet->wlMnisSendGpsStatus(response);
-	}
-		break;
-	case CONNECT_STATUS:
-	{
-						   printf_s("CONNECT_STATUS:%d\r\n", response.connectStatus);
-						   //FieldValue info(FieldValue::TInt);
-						   //if (Env_MnisIsOk)
-						   //{
-						   // info.setInt(0);
-						   //}
-						   //else
-						   //{
-						   // info.setInt(1);
-						   //}
-						   //g_pNet->wlMnisStatus(MNIS_GET_TYPE_CONNECT, info);
-	}
+	case RADIO_ARS:
+		args["Target"] = FieldValue(data.source);
+		if (data.arsStatus == SUCESS)
+		{
+			args["IsOnline"] = FieldValue("True");
+		}
+		else
+		{
+			args["IsOnline"] = FieldValue("False");
+		}
+		g_pNet->send2Client("sendArs", args);
 		break;
 	case RADIO_STATUS:
-	{
-						 printf_s("RADIO_STATUS list size:%d\r\n", response.rs.size());
-						 FieldValue info(FieldValue::TArray);
-						 for (auto i = response.rs.begin(); i != response.rs.end(); i++)
-						 {
-							 RadioStatus radioStatus = i->second;
-							 /* FieldValue element(FieldValue::TObject);
-							  element.setKeyVal("radioId", FieldValue(radioStatus.id));
-							  element.setKeyVal("IsOnline", FieldValue((1 == radioStatus.status)));
-							  element.setKeyVal("IsInGps", FieldValue((1 == radioStatus.gpsQueryMode)));*/
-							 FieldValue element(FieldValue::TObject);
-							 element.setKeyVal("radioId", FieldValue(radioStatus.id));
-							 bool isGps = false;
-							 if (radioStatus.gpsQueryMode != 0)
-							 {
-								 if (radioStatus.gpsQueryMode != 25)
-								 {
-									 isGps = true;
-								 }
-							 }
-							 bool isLocationIndoor = false;
-							 if (radioStatus.gpsQueryMode != 0)
-							 {
-								 if (radioStatus.gpsQueryMode == 25 || radioStatus.gpsQueryMode == 26)
-								 {
-									 isLocationIndoor = true;
-								 }
-							 }
-							 bool isArs = false;
-							 if (radioStatus.status != 0)
-							 {
-								 isArs = true;
-							 }
-							 element.setKeyVal("IsInLocationIndoor", FieldValue(isLocationIndoor));
-							 element.setKeyVal("IsInGps", FieldValue(isGps));
-							 element.setKeyVal("IsOnline", FieldValue(isArs));
-							 info.push(element);
-						 }
-						 g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, info, response.sessionId);
-	}
-		break;
-	case GPS_TRIGG_COMM_INDOOR:
-	{
-								  //FieldValue element(FieldValue::TObject);
-								  //FieldValue uuid(FieldValue::TArray);
-								  //for (int i = 0; i < 17; i++)
-								  //{
-									  //FieldValue temp(FieldValue::TInt);
-									  //temp.setInt(response.bcon.uuid[i]);
-									  //uuid.push(temp);
-								  //}
-								  //element.setKeyVal("uuid", FieldValue(uuid));
-								  //element.setKeyVal("txpower", FieldValue(response.bcon.TXPower));
-								  //element.setKeyVal("rssi", FieldValue(response.bcon.RSSI));
-								  //element.setKeyVal("timestamp", FieldValue(response.bcon.TimeStamp));
-								  //element.setKeyVal("major", FieldValue(response.bcon.Major));
-								  //element.setKeyVal("minor", FieldValue(response.bcon.Minor));
-								  //g_pNet->wlInfo(MNIS_GET_TYPE_RADIO, element, response.sessionId);
-
-								  ArgumentType args;
-								  Respone data = response;
-								  FieldValue element(FieldValue::TObject);
-								  FieldValue uuid(FieldValue::TArray);
-								  for (int i = 0; i < 16; i++)
-								  {
-									  FieldValue temp(FieldValue::TInt);
-									  temp.setInt(data.bcon.uuid[i]);
-									  uuid.push(temp);
-								  }
-								  element.setKeyVal("uuid", FieldValue(uuid));
-								  element.setKeyVal("txpower", FieldValue(data.bcon.TXPower));
-								  element.setKeyVal("rssi", FieldValue(data.bcon.RSSI));
-								  element.setKeyVal("timestamp", FieldValue(data.bcon.TimeStamp));
-								  element.setKeyVal("major", FieldValue(data.bcon.Major));
-								  element.setKeyVal("minor", FieldValue(data.bcon.Minor));
-
-								  args["Report"] = element;
-								  args["source"] = data.source;
-								  g_pNet->send2Client("sendGps", args);
-
-	}
-		break;
-	default:
+		args["getType"] = RADIO_STATUS;
+		FieldValue info(FieldValue::TArray);
+		for (it = data.rs.begin(); it != data.rs.end(); it++)
+		{
+			FieldValue element(FieldValue::TObject);
+			element.setKeyVal("radioId", FieldValue(it->second.id));
+			bool isGps = false;
+			if (it->second.gpsQueryMode > 0)
+			{
+				if (it->second.gpsQueryMode != 25)
+				{
+					isGps = true;
+				}
+			}
+			bool isLocationIndoor = false;
+			if (it->second.gpsQueryMode > 0)
+			{
+				if (it->second.gpsQueryMode == 25 || it->second.gpsQueryMode == 26)
+				{
+					isLocationIndoor = true;
+				}
+			}
+			bool isArs = false;
+			if (it->second.status != 0)
+			{
+				isArs = true;
+			}
+			element.setKeyVal("IsInLocationIndoor", FieldValue(isLocationIndoor));
+			element.setKeyVal("IsInGps", FieldValue(isGps));
+			element.setKeyVal("IsOnline", FieldValue(isArs));
+			info.push(element);
+		}
+		args["info"] = info;
+		args["SessionId"] = FieldValue((data.sessionId).c_str());
+		g_pNet->send2Client("wlInfo", args);
 		break;
 	}
 }

@@ -738,6 +738,7 @@ public:
 private:
 	bool isLicense;
 	//DWORD m_startTalkTickcount;
+	std::mutex m_lockerSend2Client;
 
 	void handleCallTimeOut();
 public:
