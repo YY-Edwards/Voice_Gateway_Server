@@ -365,7 +365,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 		args["Target"] = FieldValue(data.target);
 		args["Source"] = FieldValue(data.source);
 		args["Contents"] = FieldValue(data.msg.c_str());
-		args["type"] = FieldValue(PRIVATE);
+		args["Type"] = FieldValue(PRIVATE);
 		dis.send2Client("message", args);
 		break;
 	case  GPS_IMME_COMM:	
@@ -424,7 +424,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 	
 		args["Report"] = element;
 		args["source"] = data.source;
-		dis.send2Client("sendGps", args);
+		dis.send2Client("sendBeacons", args);
 	}
 		break;
 	case RADIO_ARS:

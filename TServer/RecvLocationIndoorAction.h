@@ -12,7 +12,7 @@ void recvLocationIndoorAction(CRemotePeer* pRemote, const std::string& param, ui
 
 	try{
 
-		std::string callCommand = CRpcJsonParser::mergeCommand("locationIndoor", callId, param.c_str(), type.c_str());
+		std::string callCommand = CRpcJsonParser::mergeCommand("sendBeacons", callId, param.c_str(), type.c_str());
 		int ret = CBroker::instance()->getRpcServer()->sendRequest(callCommand.c_str(),
 			callId,
 			pRemote,
