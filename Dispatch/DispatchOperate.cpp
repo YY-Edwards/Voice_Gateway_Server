@@ -424,7 +424,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 	
 		args["Report"] = element;
 		args["source"] = data.source;
-		dis.send2Client("sendBeacons", args);
+		dis.send2Client("sendGps", args);
 	}
 		break;
 	case RADIO_ARS:
