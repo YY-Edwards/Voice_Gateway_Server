@@ -14,8 +14,8 @@ namespace Dispatcher.Modules
         public bool HasDevice { get; set; }
 
         public bool IsOnline { get; set; }
-        public LocationStatus_t LocationStatus { get; set; }
-        public LocationInDoorStatus_t LocationInDoorStatus { get; set; }
+        public LocationStatus_t LocationGpsStatus { get; set; }
+        public LocationStatus_t LocationInDoorStatus { get; set; }
         public bool IsShutDown { get; set; }
         public CallStatus_t CallStatus { get; set; }
 
@@ -33,8 +33,8 @@ namespace Dispatcher.Modules
         public Device()
         {
             IsOnline = false;
-            LocationStatus  = LocationStatus_t.Idle;
-            LocationInDoorStatus = LocationInDoorStatus_t.Idle;
+            LocationGpsStatus = LocationStatus_t.Idle;
+            LocationInDoorStatus = LocationStatus_t.Idle;
             IsShutDown = false;
             CallStatus = CallStatus_t.Idle;
             DeviceType = DeviceType_t.Handset;
@@ -80,10 +80,10 @@ namespace Dispatcher.Modules
                     IsOnline = (bool)value;
                     break;
                 case ChangedKey_t.LocationStatus:
-                    LocationStatus = (LocationStatus_t)value;
+                    LocationGpsStatus = (LocationStatus_t)value;
                     break;
                 case ChangedKey_t.LocationInDoorStatus:
-                    LocationInDoorStatus = (LocationInDoorStatus_t)value;
+                    LocationInDoorStatus = (LocationStatus_t)value;
                     break;
                 case ChangedKey_t.ShutDownStatus:
                     IsShutDown = (bool)value;

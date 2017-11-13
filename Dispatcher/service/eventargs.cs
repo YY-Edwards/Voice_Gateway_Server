@@ -189,10 +189,10 @@ namespace Dispatcher.Service
 
     public class LocationInDoorArgs : OperationAgrs
     {
-        public LocationInDoorType_t Type;
+        public LocationType_t Type;
      
         public LocationInDoorArgs() { }
-        public LocationInDoorArgs(LocationInDoorType_t type)
+        public LocationInDoorArgs(LocationType_t type)
         {
             Type = type;
         }
@@ -341,40 +341,30 @@ namespace Dispatcher.Service
         }
     }
 
+    public delegate void ControlResultHandler(ControlResponseArgs e);
+   
+
     public delegate void LocationResponseHandler(LocationResponseArgs e);
     public class LocationResponseArgs
     {
-        public ExecType_t Opcode;
-        public LocationType_t Type;
+        public LocationType_t Opcode;
         public int Target;
         public double Cycle;
         public OperationStatus_t Status;
 
-        public LocationResponseArgs(ExecType_t opcode, QueryLocationType_t type, OperationStatus_t status)
+        public GpsReport Report;
+
+        public LocationResponseArgs(LocationType_t opcode, OperationStatus_t status, GpsReport report)
         {
-            Type = PraseType(type);
             Opcode = opcode;
             Status = status;
+            Report = report;
         }
-        public LocationResponseArgs(ExecType_t opcode, QueryLocationType_t type, int status)
+        public LocationResponseArgs(LocationType_t opcode, int status, GpsReport report)
         {
-            Type = PraseType(type);
             Opcode = opcode;
             Status = (OperationStatus_t)status;
-        }
-
-        private LocationType_t PraseType(QueryLocationType_t type)
-        {
-            switch (type)
-            {
-                case QueryLocationType_t.Generic:return LocationType_t.Query;
-                case QueryLocationType_t.GenericCycle:return LocationType_t.Cycle;
-                case QueryLocationType_t.CSBK:return LocationType_t.CsbkQuery;
-                case QueryLocationType_t.CSBKCycle: return LocationType_t.CsbkCycle;
-                case QueryLocationType_t.Enh: return LocationType_t.EnhCsbkQuery;
-                case QueryLocationType_t.EnhCycle: return LocationType_t.EnhCsbkCycle;             
-            }
-            return  LocationType_t.StopCycle;
+            Report = report;
         }
     }
 
@@ -409,21 +399,24 @@ namespace Dispatcher.Service
     public delegate void LocationInDoorResponseHandler(LocationInDoorResponseArgs e);
     public class LocationInDoorResponseArgs
     {
-        public ExecType_t Opcode;
+        public LocationType_t Opcode;
         public int Target;
         public OperationStatus_t Status;
+        public BeaconReport Report;
 
-        public LocationInDoorResponseArgs(ExecType_t opcode, int target, OperationStatus_t status)
+        public LocationInDoorResponseArgs(LocationType_t opcode, int target, OperationStatus_t status, BeaconReport report)
         {
             Target = target;
             Opcode = opcode;
             Status = status;
+            Report = report;
         }
-        public LocationInDoorResponseArgs(ExecType_t opcode, int target, int status)
+        public LocationInDoorResponseArgs(LocationType_t opcode, int target, int status, BeaconReport report)
         {
             Target = target;
             Opcode = opcode;
             Status = (OperationStatus_t)status;
+            Report = report;
         }
     }
 

@@ -2816,7 +2816,6 @@
 		<col def="I2">ISSetupLocation</col>
 		<col def="S255">ISReleaseFlags</col>
 		<row><td>_19ACA1DB_445A_4ACC_A1F8_CD8B40593184_</td><td>Microsoft .NET Framework 4.5 Full.prq</td><td/><td>1</td><td/></row>
-		<row><td>_DF49AE17_BE60_4BE7_A04E_57E354F06C68_</td><td>Microsoft Visual C++ 2012 Update 4 Redistributable Package (x86).prq</td><td/><td>1</td><td/></row>
 		<row><td>_E931E6E5_D446_4291_8C16_EBB6459AAD89_</td><td>Microsoft Visual C++ 2012 Redistributable Package (x86).prq</td><td/><td>1</td><td/></row>
 	</table>
 

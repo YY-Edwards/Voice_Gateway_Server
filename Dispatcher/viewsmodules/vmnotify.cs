@@ -138,11 +138,13 @@ namespace Dispatcher.ViewsModules
             private VMTarget _remote;
             private CNotice _notice;
             private bool _istx;
-            public VMNotice(VMTarget remote, CNotice notice, bool istx = true, CDispatcher.Status status = CDispatcher.Status.Completed)
+            public VMNotice(string sessionid ,VMTarget remote, CNotice notice, bool istx = true, CDispatcher.Status status = CDispatcher.Status.Completed)
             {
+                OperateSessionId = sessionid;
                 _remote = remote;
                 _notice = notice;
                 _istx = istx;
+                _dispatcherStatus = status;
             }
 
 
@@ -160,14 +162,14 @@ namespace Dispatcher.ViewsModules
             {
                 get
                 {
-                    if (IsTx) return Visibility.Collapsed;
+                    if (!IsTx) return Visibility.Collapsed;
                     return _dispatcherStatus == CDispatcher.Status.Begin ? Visibility.Visible : Visibility.Collapsed; 
                 } 
             }
             public Visibility FailureIconVisible 
             {
                 get {
-                    if (IsTx) return Visibility.Collapsed;
+                    if (!IsTx) return Visibility.Collapsed;
                     return _dispatcherStatus != CDispatcher.Status.Begin && _dispatcherStatus != CDispatcher.Status.Completed ? Visibility.Visible : Visibility.Collapsed; 
                 } 
             }

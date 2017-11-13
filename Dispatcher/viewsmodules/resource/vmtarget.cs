@@ -277,8 +277,8 @@ namespace Dispatcher.ViewsModules
             }
         }
 
-        public bool IsInLocation { get { return _type == TargetType_t.Member && _member != null && _member.LocationStatus != LocationStatus_t.Idle ? true : false; } }
-        public bool IsInLocationInDoor { get { return _type == TargetType_t.Member && _member != null && _member.LocationInDoorStatus != LocationInDoorStatus_t.Idle ? true : false; } }
+        public bool IsInLocation { get { return _type == TargetType_t.Member && _member != null && _member.LocationGpsStatus != LocationStatus_t.Idle ? true : false; } }
+        public bool IsInLocationInDoor { get { return _type == TargetType_t.Member && _member != null && _member.LocationInDoorStatus != LocationStatus_t.Idle ? true : false; } }
 
         public bool IsOnline
         {
@@ -356,7 +356,7 @@ namespace Dispatcher.ViewsModules
 
         private CDispatcher.Status _dispatcherStatus = CDispatcher.Status.Completed;
 
-        public Visibility WaitIconVisible { get { return _dispatcherStatus == CDispatcher.Status.Begin ? Visibility.Visible : Visibility.Collapsed; } }
+        public Visibility WaitIconVisible { get { return _notices.Contains(p=>p.DispatcherStatus == CDispatcher.Status.Begin) ? Visibility.Visible : Visibility.Collapsed; } }
         public Visibility FailureIconVisible {get{return _hasFailure ? Visibility.Visible : Visibility.Collapsed;}}
        
 
@@ -417,6 +417,7 @@ namespace Dispatcher.ViewsModules
                 _dispatcher.ArsRequest += new ArsRequestHandler(OnArsRequest);
 
                 _dispatcher.ControlResponse += new ControlResponseHandler(OnControlResponse);
+                _dispatcher.ControlResult += new ControlResultHandler(OnControlResult);
 
                 _dispatcher.LocationResponse += new LocationResponseHandler(OnLocationResponse);
                 _dispatcher.LocationReport += new LocationReportHandler(OnLocationReport);
@@ -434,9 +435,7 @@ namespace Dispatcher.ViewsModules
             if (operate == null || operate.Parameter == null || !IsThis(operate.Parameter.TargetMode, operate.Parameter.TargetId)) return;
 
             _dispatcherStatus = CDispatcher.Status.Begin;
-            NotifyPropertyChanged("WaitIconVisible");
-            NotifyPropertyChanged("FailureIconVisible");
-
+           
             if (operate.OperationName == null || operate.OperationName == string.Empty) return;
 
             Log.Message(string.Format(_messageBeginFormat, operate.OperationName, FullName));
@@ -448,7 +447,7 @@ namespace Dispatcher.ViewsModules
             {
                 case RequestOpcode.call: notifyType = NotifyKey_t.Called; break;
                 case RequestOpcode.message: notifyType = NotifyKey_t.ShortMessage; break;
-                case RequestOpcode.queryGps:
+                case RequestOpcode.location:
                     LocationParameter param = operate.Parameter as LocationParameter;
                     if (param == null) return;
                     if (param.Type == QueryLocationType_t.LocationInDoor) notifyType = NotifyKey_t.LocationInDoor;
@@ -469,15 +468,22 @@ namespace Dispatcher.ViewsModules
 
             lock (_notices)
             {
-                if (!_notices.Contains(p => p.OperateSessionId == operate.Parameter.guid)) _notices.Add(new VMNotify.VMNotice(this, notice,true, CDispatcher.Status.Begin));
+                if (!_notices.Contains(p => p.OperateSessionId == operate.Parameter.guid))
+                {
+                    _notices.Add(new VMNotify.VMNotice(operate.Parameter.guid, this, notice, true, CDispatcher.Status.Begin));
+                    NotifyPropertyChanged("INotices");
+                }
+
             }
+
+            NotifyPropertyChanged("WaitIconVisible");
+            NotifyPropertyChanged("FailureIconVisible");
         }
         private void OnDispatcherCompleted(CDispatcher.OperateContent_t operate)
         {
             if (operate == null || operate.Parameter == null || !IsThis(operate.Parameter.TargetMode, operate.Parameter.TargetId)) return;
             _dispatcherStatus = CDispatcher.Status.Completed;
-            NotifyPropertyChanged("WaitIconVisible");
-            NotifyPropertyChanged("FailureIconVisible");
+           
 
             lock (_notices)
             {
@@ -486,16 +492,18 @@ namespace Dispatcher.ViewsModules
                 if (index >= 0 && index < _notices.Count)
                 {
                     _notices[index].DispatcherStatus = CDispatcher.Status.Completed;
+                    NotifyPropertyChanged("INotices");
                 }
             }
+
+            NotifyPropertyChanged("WaitIconVisible");
+            NotifyPropertyChanged("FailureIconVisible");
         }
         private void OnDispatcherFailure(CDispatcher.OperateContent_t operate, CDispatcher.Status status)
         {
             if (operate == null || operate.Parameter == null || !IsThis(operate.Parameter.TargetMode, operate.Parameter.TargetId)) return;
             _dispatcherStatus = status;
             _hasFailure = true;
-            NotifyPropertyChanged("WaitIconVisible");
-            NotifyPropertyChanged("FailureIconVisible");
 
             Log.Message(string.Format(_messageFailureFormat, operate.OperationName, FullName));
 
@@ -506,9 +514,76 @@ namespace Dispatcher.ViewsModules
                 if (index >= 0 && index < _notices.Count)
                 {
                     _notices[index].DispatcherStatus = status;
+                    NotifyPropertyChanged("INotices");
+                }
+            }
+
+            NotifyPropertyChanged("WaitIconVisible");
+            NotifyPropertyChanged("FailureIconVisible");
+        }
+
+        private void ChangeValueExec(object parameter)
+        {
+            if (parameter != null && parameter is TargetStatusChangedEventArgs)
+            {
+                TargetStatusChangedEventArgs e = parameter as TargetStatusChangedEventArgs;
+                switch (e.Key)
+                {
+                    case ChangedKey_t.OnlineStatus:
+                        if (_type == TargetType_t.Member && _member != null)
+                        {
+                            IsOnline = (bool)e.NewValue;
+                            UpdateAllStatus();
+                        }
+
+                        break;
+                    case ChangedKey_t.LocationStatus:
+                        if (_type == TargetType_t.Member && _member != null)
+                        {
+                            _member.LocationGpsStatus = (LocationStatus_t)e.NewValue;
+                            NotifyPropertyChanged("IsInLocation");
+                            NotifyPropertyChanged("LocationStatusVisible");
+                            NotifyPropertyChanged("CanLocation");
+                            NotifyPropertyChanged("CanStopLocation");
+                        }
+                        break;
+                    case ChangedKey_t.LocationInDoorStatus:
+                        if (_type == TargetType_t.Member && _member != null)
+                        {
+                            _member.LocationInDoorStatus = (LocationStatus_t)e.NewValue;
+                            NotifyPropertyChanged("IsInLocationInDoor");
+                            NotifyPropertyChanged("LocationInDoorStatusVisible");
+                            NotifyPropertyChanged("CanLocationInDoor");
+                            NotifyPropertyChanged("CanStopLocationInDoor");
+                        }
+                        break;
+                    case ChangedKey_t.ShutDownStatus:
+                        IsShutDown = (bool)e.NewValue;
+                        break;
+                    case ChangedKey_t.CallStatus:
+                        if (_type == TargetType_t.Member && _member != null)
+                        {
+                            _member.CallStatus = (CallStatus_t)e.NewValue;
+                        }
+                        else if (_type == TargetType_t.Group && _group != null)
+                        {
+                            _group.CallStatus = (CallStatus_t)e.NewValue;
+                        }
+
+                        SystemStatus.SystemCallStatus = (CallStatus_t)e.NewValue;
+                        NotifyPropertyChanged("EnableCallOrStop");
+                        NotifyPropertyChanged("IsInCall");
+                        NotifyPropertyChanged("InCallStatusVisible");
+                        NotifyPropertyChanged("CanCall");
+                        NotifyPropertyChanged("CanStopCall");
+                        break;
+                    default:
+                        break;
+
                 }
             }
         }
+
 
         private void AddFastPanelExec()
         {
@@ -566,68 +641,131 @@ namespace Dispatcher.ViewsModules
             }
         }
 
-        private void ChangeValueExec(object parameter)
+
+        private void OnCallResponse(CallResponseArgs e)
         {
-            if (parameter != null && parameter is TargetStatusChangedEventArgs)
+            if (e == null || !IsThis(e.Type, e.Target)) return;
+            if (IsInCall && e.Opcode == ExecType_t.Start)
             {
-                TargetStatusChangedEventArgs e = parameter as TargetStatusChangedEventArgs;
-                switch (e.Key)
+                if (e.Status == OperationStatus_t.Success)
                 {
-                    case ChangedKey_t.OnlineStatus:
-                        if (_type == TargetType_t.Member && _member != null)
-                        {
-                            IsOnline = (bool)e.NewValue;
-                            UpdateAllStatus();
-                        }
+                    //Log.Message("开始呼叫  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "开始呼叫" });
 
-                        break;
-                    case ChangedKey_t.LocationStatus:
-                        if (_type == TargetType_t.Member && _member != null)
-                        {
-                            _member.LocationStatus = (LocationStatus_t)e.NewValue;
-                            NotifyPropertyChanged("IsInLocation");
-                            NotifyPropertyChanged("LocationStatusVisible");
-                            NotifyPropertyChanged("CanLocation");
-                            NotifyPropertyChanged("CanStopLocation");
-                        }
-                        break;
-                    case ChangedKey_t.LocationInDoorStatus:
-                        if (_type == TargetType_t.Member && _member != null)
-                        {
-                            _member.LocationInDoorStatus = (LocationInDoorStatus_t)e.NewValue;
-                            NotifyPropertyChanged("IsInLocationInDoor");
-                            NotifyPropertyChanged("LocationInDoorStatusVisible");
-                            NotifyPropertyChanged("CanLocationInDoor");
-                            NotifyPropertyChanged("CanStopLocationInDoor");
-                        }
-                        break;
-                    case ChangedKey_t.ShutDownStatus:
-                        IsShutDown = (bool)e.NewValue;
-                        break;
-                    case ChangedKey_t.CallStatus:
-                        if (_type == TargetType_t.Member && _member != null)
-                        {
-                            _member.CallStatus = (CallStatus_t)e.NewValue;
-                        }
-                        else if (_type == TargetType_t.Group && _group != null)
-                        {
-                            _group.CallStatus = (CallStatus_t)e.NewValue;
-                        }
-
-                        SystemStatus.SystemCallStatus = (CallStatus_t)e.NewValue;
-                        NotifyPropertyChanged("EnableCallOrStop");
-                        NotifyPropertyChanged("IsInCall");
-                        NotifyPropertyChanged("InCallStatusVisible");
-                        NotifyPropertyChanged("CanCall");
-                        NotifyPropertyChanged("CanStopCall");
-                        break;
-                    default:
-                        break;
-
+                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Tx));
+                }
+                else
+                {
+                    //Log.Message("呼叫失败  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "呼叫失败" });
+                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Idle));
+                }
+            }
+            else if (!IsInCall && e.Opcode == ExecType_t.Stop)
+            {
+                if (e.Status == OperationStatus_t.Success)
+                {
+                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Idle));
+                }
+                else
+                {
+                    //Log.Message("结束呼叫失败  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "结束呼叫失败" });
+                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Tx));
                 }
             }
         }
 
+        private void OnCallRequest(CallRequestArgs e)
+        {
+            if (e == null) return;
+            if (_type == TargetType_t.Group && !IsThis(e.Type, e.Target)) return;
+            if (_type == TargetType_t.Member && !IsThis(e.Type, e.Source)) return;
+
+            if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+
+
+            IsCurrentRx = e.IsCurrent;
+
+            if (e.Opcode == ExecType_t.Start)
+            {
+                Log.Message(FullName + "  开始呼叫");
+                AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "开始呼叫" }, true);
+                ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Rx));
+                SystemStatus.Add(this);
+            }
+            else if (e.Opcode == ExecType_t.Stop)
+            {
+                Log.Message(FullName + "  结束呼叫");
+                AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "结束呼叫" }, true);
+                ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Idle));
+                SystemStatus.Remove(this);
+            }
+        }
+
+
+        private void SendShortMessageExec(object parameter)
+        {
+            if (parameter == null && parameter is ShortMessageArgs) return;
+            ShortMessageArgs args = parameter as ShortMessageArgs;
+            //Log.Message("发送短消息（内容：" + args.Contents + "）  " + FullName);
+            //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.ShortMessage, Contents = args.Contents });
+
+            if (_dispatcher != null)
+            {
+                if (_type == TargetType_t.Group && Group.IsAllTarget)
+                {
+                    List<VMTarget> UnBounded = ResourcesMgr.Instance().Members.FindAll(p => true);
+                    foreach (VMTarget group in ResourcesMgr.Instance().Groups)
+                    {
+                        if (group.CanShortMessage) _dispatcher.SendGroupShortMessage(group._group.GroupID, args.Contents);
+                        UnBounded.RemoveAll(p => p._member.GroupID == group._group.GroupID);
+                    }
+
+                    foreach (VMTarget member in UnBounded)
+                    {
+                        if (member.Member.HasDevice && member.CanShortMessage) _dispatcher.SendPrivateShortMessage(member.Member.RadioID, args.Contents);
+                    }
+                }
+                else if (_type == TargetType_t.Group)
+                {
+                    if (CanShortMessage) _dispatcher.SendGroupShortMessage(_group.GroupID, args.Contents);
+                }
+                else if (Member.HasDevice) _dispatcher.SendPrivateShortMessage(Member.RadioID, args.Contents);
+            }
+
+        }
+
+
+        private void OnShortMessageResponse(ShortMessageResponseArgs e)
+        {
+            if (e == null || !IsThis(e.Target)) return;
+
+            if (e.Status == OperationStatus_t.Success)
+            {
+                //Log.Message("发送短消息成功  " + FullName);
+                if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+            }
+            else
+            {
+                //Log.Message("发送短消息失败  " + FullName);
+                //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.ShortMessage, Contents = "发送短消息失败" });
+            }
+        }
+
+
+        private void OnShortMessageRequest(ShortMessageRequestArgs e)
+        {
+            if (e == null || !IsThis(e.Source)) return;
+
+            if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+            Log.Message(FullName + "  发送短消息（内容：" + e.Contents + "）");
+            AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.ShortMessage, Contents = e.Contents }, true);
+        }
+
+      
         private void ControlExec(object parameter)
         {
             if (parameter == null) return;
@@ -692,243 +830,6 @@ namespace Dispatcher.ViewsModules
             Log.Debug("Control " + parameter.ToString() + " " + FullName);
         }
 
-        private BeaconReport FilterLocationInDoorReport(List<BeaconReport> Report)
-        {
-            if (Report != null && Report.Count > 0) return Report[0];
-            else return null;
-
-
-
-            //BeaconReport maxpower = Report.OrderByDescending(n => n.txpower).Take(1).ToList()[0];
-            //if (_lastbeacons == null || _lastbeacons.Count <= 0 || _lastbeacons.Contains(maxpower))
-            //{
-            //    _lastbeacons = Report;
-            //    return maxpower;
-            //}
-            //else
-            //{
-            //    _lastbeacons = Report;
-            //    return null;
-            //}
-        }
-
-        private bool IsThis(TargetMode_t type, int id)
-        {
-            if (type == TargetMode_t.All)
-            {
-                return this._type == TargetType_t.Group && Group.IsAllTarget;
-            }
-            else if (type == TargetMode_t.Group)
-            {
-                return this._type == TargetType_t.Group && Group.GroupID == id;
-            }
-            else if (type == TargetMode_t.Private)
-            {
-                return this._type == TargetType_t.Member && Member.HasDevice && Member.RadioID == id;
-            }
-            else return false;
-        }
-
-        private bool IsThis(int id)
-        {
-            return IsThis(TargetMode_t.Private, id);
-        }
-
-        private void LocationExec(object parameter)
-        {
-            if (parameter == null || !(parameter is LocationArgs)) return;
-            LocationArgs args = parameter as LocationArgs;
-
-            if (args.Type == LocationType_t.Cycle || args.Type == LocationType_t.CsbkCycle || args.Type == LocationType_t.EnhCsbkCycle)
-            {
-                if (args.Cycle <= 0)
-                {
-                    Log.Message("位置查询错误，周期不能为零  " + FullName);
-                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "位置查询错误，周期不能为零" });
-                    return;
-                }
-            }
-
-            switch (args.Type)
-            {
-                case LocationType_t.Query:
-                    //Log.Message("单次查询  " + FullName);
-                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "单次查询" });
-                    break;
-                case LocationType_t.CsbkQuery:
-                    //Log.Message("CSBK单次查询  " + FullName);
-                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "CSBK单次查询" });
-                    break;
-                case LocationType_t.EnhCsbkQuery:
-                    //Log.Message("增强型CSBK单次查询  " + FullName);
-                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "增强型CSBK单次查询" });
-                    break;
-                case LocationType_t.StopCycle:
-                    //Log.Message("停止周期查询  " + FullName);
-                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "停止周期查询" });
-                    break;
-                case LocationType_t.Track:
-                    Log.Message("轨迹回放  " + Name);
-                    return;
-                case LocationType_t.Cycle:
-                    //Log.Message("周期查询（周期：" + args.Cycle.ToString() + "）  " + FullName);
-                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "周期查询（周期：" + args.Cycle.ToString() + "）" });
-                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.Cycle));
-
-                    break;
-                case LocationType_t.CsbkCycle:
-                    //Log.Message("CSBK周期查询（周期：" + args.Cycle.ToString() + "）  " + FullName);
-                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "CSBK周期查询（周期：" + args.Cycle.ToString() + "）" });
-                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.CsbkCycle));
-                    break;
-                case LocationType_t.EnhCsbkCycle:
-                    //Log.Message("增强型CSBK周期查询（周期：" + args.Cycle.ToString() + "）  " + FullName);
-                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Location, Contents = "增强型CSBK周期查询（周期：" + args.Cycle.ToString() + "）" });
-                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.EnhCsbkCycle));
-
-                    break;
-                default: return;
-            }
-
-            if (_dispatcher != null)
-            {
-                if (_type == TargetType_t.Group && Group.IsAllTarget)
-                {
-                    foreach (VMTarget member in ResourcesMgr.Instance().Members) if (member.Member.HasDevice) _dispatcher.Location(member.Member.RadioID, args);
-                }
-                else if (_type == TargetType_t.Group)
-                {
-                    List<VMTarget> members = ResourcesMgr.Instance().Members.FindAll(p => p.TargetType == TargetType_t.Member && p.Member.GroupID == Group.GroupID);
-                    foreach (VMTarget member in members) if (member.Member.HasDevice) _dispatcher.Location(member.Member.RadioID, args);
-                }
-                else if (Member.HasDevice) _dispatcher.Location(Member.RadioID, args);
-            }
-        }
-
-        private void LocationInDoorExec(object parameter)
-        {
-            if (parameter == null) return;
-            LocationInDoorArgs args = null;
-
-            if (parameter is LocationInDoorArgs)
-            {
-                args = parameter as LocationInDoorArgs;
-            }
-            else
-            {
-                LocationInDoorType_t? _type = null;
-                if (parameter is string) _type = (parameter as string).ToEnum<LocationInDoorType_t>();
-                else if (parameter is LocationInDoorType_t) _type = (LocationInDoorType_t)parameter;
-
-                if (_type == null) return;
-
-                args = new LocationInDoorArgs((LocationInDoorType_t)_type);
-            }
-
-            if (args == null) return;
-            switch (args.Type)
-            {
-                case LocationInDoorType_t.Start:
-                    //Log.Message("启动室内定位  " + FullName);
-                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "启动室内定位" });
-                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationInDoorStatus_t.Cycle));
-
-                    break;
-                case LocationInDoorType_t.Stop:
-                    //Log.Message("停止室内定位  " + FullName);
-                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "停止室内定位" });
-                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationInDoorStatus_t.Idle));
-                    break;
-            }
-
-
-            if (_dispatcher != null)
-            {
-                if (_type == TargetType_t.Group && Group.IsAllTarget)
-                {
-                    foreach (VMTarget member in ResourcesMgr.Instance().Members) if (member.Member.HasDevice) _dispatcher.LocationInDoor(member.Member.RadioID, args);
-                }
-                else if (_type == TargetType_t.Group)
-                {
-                    List<VMTarget> members = ResourcesMgr.Instance().Members.FindAll(p => p.TargetType == TargetType_t.Member && p.Member.GroupID == Group.GroupID);
-                    foreach (VMTarget member in members) if (member.Member.HasDevice) _dispatcher.LocationInDoor(member.Member.RadioID, args);
-                }
-                else if (Member.HasDevice) _dispatcher.LocationInDoor(Member.RadioID, args);
-            }
-        }
-
-        private void OnArsRequest(ArsRequestArgs e)
-        {
-            if (e == null || !IsThis(e.Source)) return;
-
-            if (IsOnline != e.IsOnline)ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, e.IsOnline));
-
-            Log.Message(FullName + (e.IsOnline ? "  上线" : "  下线"));
-            AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.ShortMessage, Contents = e.IsOnline ? "上线" : "下线" }, true);
-        }
-
-        private void OnCallRequest(CallRequestArgs e)
-        {
-            if (e == null) return;
-            if (_type == TargetType_t.Group && !IsThis(e.Type, e.Target)) return;
-            if (_type == TargetType_t.Member && !IsThis(e.Type, e.Source)) return;
-
-            if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
-
-
-            IsCurrentRx = e.IsCurrent;
-
-            if (e.Opcode == ExecType_t.Start)
-            {
-                Log.Message(FullName + "  开始呼叫");
-                AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "开始呼叫" }, true);
-                ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Rx));
-                SystemStatus.Add(this);
-            }
-            else if (e.Opcode == ExecType_t.Stop)
-            {
-                Log.Message(FullName + "  结束呼叫");
-                AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "结束呼叫" }, true);
-                ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Idle));
-                SystemStatus.Remove(this);
-            }
-        }
-
-        private void OnCallResponse(CallResponseArgs e)
-        {
-            if (e == null || !IsThis(e.Type, e.Target)) return;
-            if (IsInCall && e.Opcode == ExecType_t.Start)
-            {
-                if (e.Status == OperationStatus_t.Success)
-                {                 
-                    //Log.Message("开始呼叫  " + FullName);
-                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "开始呼叫" });
-
-                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
-                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Tx));
-                }
-                else
-                {
-                    //Log.Message("呼叫失败  " + FullName);
-                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "呼叫失败" });
-                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Idle));
-                }
-            }
-            else if (!IsInCall &&  e.Opcode == ExecType_t.Stop)
-            {
-                if (e.Status == OperationStatus_t.Success)
-                {
-                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
-                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Idle));
-                }
-                else
-                {
-                    //Log.Message("结束呼叫失败  " + FullName);
-                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "结束呼叫失败" });
-                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Tx));
-                }
-            }
-        }
 
         private void OnControlResponse(ControlResponseArgs e)
         {
@@ -945,7 +846,7 @@ namespace Dispatcher.ViewsModules
                     else
                     {
                         Log.Message(FullName + "  在线检测：" + (e.Status == ControlResponsetatus_t.Online ? "在线" : "离线"));
-                        //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "在线检测:" + (e.Status == ControlResponsetatus_t.Online ? "在线" : "离线") }, true);
+                        AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "在线检测:" + (e.Status == ControlResponsetatus_t.Online ? "在线" : "离线") }, true);
                         ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, (e.Status == ControlResponsetatus_t.Online ? true : false)));
                     }
                     break;
@@ -994,6 +895,170 @@ namespace Dispatcher.ViewsModules
             }
         }
 
+        private void OnControlResult(ControlResponseArgs e)
+        {
+            if (e == null || !IsThis(e.Target)) return;
+
+            switch (e.Type)
+            {
+                case ControlerType_t.Check:
+                    if (e.Status == ControlResponsetatus_t.Failure)
+                    {
+                        Log.Message("在线检测失败  " + FullName);
+                        AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "在线检测失败" });
+                    }
+                    else
+                    {
+                        Log.Message(FullName + "  在线检测：" + (e.Status == ControlResponsetatus_t.Online ? "在线" : "离线"));
+                        AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "在线检测:" + (e.Status == ControlResponsetatus_t.Online ? "在线" : "离线") }, true);
+                        ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, (e.Status == ControlResponsetatus_t.Online ? true : false)));
+                    }
+                    break;
+                case ControlerType_t.Monitor:
+                    OperationStatus_t monitorstate = (OperationStatus_t)(int)e.Status;
+                    if (monitorstate == OperationStatus_t.Failure)
+                    {
+                        Log.Message("远程监听失败  " + FullName);
+                        AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "远程监听失败" });
+                    }
+                    else
+                    {
+                        if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                    }
+                    break;
+                case ControlerType_t.ShutDown:
+                    if (!IsShutDown) return;
+                    OperationStatus_t shutstate = (OperationStatus_t)(int)e.Status;
+                    if (shutstate == OperationStatus_t.Failure)
+                    {
+                        Log.Message("遥毙失败  " + FullName);
+                        AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "遥毙失败" });
+                        ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.ShutDownStatus, false));
+                    }
+                    else
+                    {
+                        if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                    }
+                    break;
+                case ControlerType_t.StartUp:
+                    if (IsShutDown) return;
+                    OperationStatus_t startstate = (OperationStatus_t)(int)e.Status;
+                    if (startstate == OperationStatus_t.Failure)
+                    {
+                        Log.Message("遥开失败  " + FullName);
+                        AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Control, Contents = "遥开失败" });
+                        ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.ShutDownStatus, true));
+                    }
+                    else
+                    {
+                        if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                    }
+                    break;
+                default:
+                    return;
+            }
+        }
+
+
+        private void LocationRequest(QueryLocationType_t query, LocationType_t type)
+        {
+
+            double cycle = 30;
+            if (query == QueryLocationType_t.LocationInDoor) if (FunctionConfigure.LocationInDoorSetting != null) cycle = FunctionConfigure.LocationInDoorSetting.Interval;
+                else if (FunctionConfigure.LocationSetting != null) cycle = FunctionConfigure.LocationSetting.Interval;
+
+            if (_dispatcher != null)
+            {
+                if (_type == TargetType_t.Group && Group.IsAllTarget)
+                {
+                    foreach (VMTarget member in ResourcesMgr.Instance().Members) if (member.Member.HasDevice) _dispatcher.Location(type, member.Member.RadioID, query, type == LocationType_t.StartTriggered ? cycle : 0);
+                }
+                else if (_type == TargetType_t.Group)
+                {
+                    List<VMTarget> members = ResourcesMgr.Instance().Members.FindAll(p => p.TargetType == TargetType_t.Member && p.Member.GroupID == Group.GroupID);
+                    foreach (VMTarget member in members) if (member.Member.HasDevice) _dispatcher.Location(type, member.Member.RadioID, query, type == LocationType_t.StartTriggered ? cycle : 0);
+                }
+                else if (Member.HasDevice) _dispatcher.Location(type, Member.RadioID, query, type == LocationType_t.StartTriggered ? cycle : 0);
+            }
+        }
+        private void LocationExec(object parameter)
+        {
+            LocationRequest(QueryLocationType_t.LocationGps, (parameter as string).ToEnum<LocationType_t>());
+        }
+
+        private void OnLocationReport(LocationReportArgs e)
+        {
+            if (e == null || !IsThis(e.Source)) return;
+
+            if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+            SystemStatus.DrawAmapPoint(new DrawLocationReportArgs(this, e.Report));
+        }
+
+        private void OnLocationResponse(LocationResponseArgs e)
+        {
+            if (e == null || !IsThis(e.Target)) return;
+            if (e.Opcode == LocationType_t.Immediate)
+            {
+                if (e.Status == OperationStatus_t.Success)
+                {
+                    OnLocationReport(new LocationReportArgs(e.Target, e.Report as GpsReport));
+                }
+            }
+            else if (!IsInLocation && e.Opcode == LocationType_t.StartTriggered)
+            {
+                if (e.Status != OperationStatus_t.Success)
+                {
+                    //Log.Message("结束位置查询失败  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "结束位置查询失败" });
+                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.Idle));
+                }
+                else
+                {
+                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                }
+            }
+            else if (!IsInLocation && e.Opcode == LocationType_t.StopTriggered)
+            {
+                if (e.Status != OperationStatus_t.Success)
+                {
+                    //Log.Message("结束位置查询失败  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "结束位置查询失败" });
+                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.Cycle));
+                }
+                else
+                {
+                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                }
+            }
+        }
+
+
+
+        private void LocationInDoorExec(object parameter)
+        {
+            LocationRequest(QueryLocationType_t.LocationInDoor, (parameter as string).ToEnum<LocationType_t>());
+        }
+
+        private BeaconReport FilterLocationInDoorReport(List<BeaconReport> Report)
+        {
+            if (Report != null && Report.Count > 0) return Report[0];
+            else return null;
+
+
+
+            //BeaconReport maxpower = Report.OrderByDescending(n => n.txpower).Take(1).ToList()[0];
+            //if (_lastbeacons == null || _lastbeacons.Count <= 0 || _lastbeacons.Contains(maxpower))
+            //{
+            //    _lastbeacons = Report;
+            //    return maxpower;
+            //}
+            //else
+            //{
+            //    _lastbeacons = Report;
+            //    return null;
+            //}
+        }
+
         private void OnLocationInDoorReport(LocationInDoorReportArgs e)
         {
             if (e == null || !IsThis(e.Source)) return;
@@ -1021,98 +1086,81 @@ namespace Dispatcher.ViewsModules
         private void OnLocationInDoorResponse(LocationInDoorResponseArgs e)
         {
             if (e == null || !IsThis(e.Target)) return;
-
-            if (IsInLocationInDoor &&  e.Opcode == ExecType_t.Start)
+            if (e.Opcode == LocationType_t.Immediate)
             {
-                if (e.Status != OperationStatus_t.Success)
+                if (e.Status == OperationStatus_t.Success)
                 {
-                    //Log.Message("启动室内定位失败  " + FullName);
-                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "启动室内定位失败" });
-                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationInDoorStatus_t.Idle));
-                }
-                else
-                {
-                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                    OnLocationInDoorReport(new LocationInDoorReportArgs(e.Target, new List<BeaconReport>() { e.Report }));
                 }
             }
-            else if (!IsInLocationInDoor && e.Opcode == ExecType_t.Stop)
-            {
-                if (e.Status != OperationStatus_t.Success)
-                {
-                    //Log.Message("结束室内定位失败  " + FullName);
-                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "结束室内定位失败" });
-                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationInDoorStatus_t.Cycle));
-                }
-                else
-                {
-                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
-                }
-            }
-        }
-
-        private void OnLocationReport(LocationReportArgs e)
-        {
-            if (e == null || !IsThis(e.Source)) return;
-
-            if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true)); 
-            SystemStatus.DrawAmapPoint(new DrawLocationReportArgs(this, e.Report));
-        }
-
-        private void OnLocationResponse(LocationResponseArgs e)
-        {
-            if (e == null || !IsThis(e.Target)) return;
-            if (e.Opcode == ExecType_t.Start)
-            {
-                if (e.Status != OperationStatus_t.Success)
-                {
-                    //Log.Message("位置查询失败  " + FullName);
-                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "位置查询失败" });
-                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.Idle));
-                }
-                else
-                {
-                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
-                }
-            }
-            else if (!IsInLocation && e.Opcode == ExecType_t.Stop)
+            else if (!IsInLocation && e.Opcode == LocationType_t.StartTriggered)
             {
                 if (e.Status != OperationStatus_t.Success)
                 {
                     //Log.Message("结束位置查询失败  " + FullName);
                     //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "结束位置查询失败" });
-                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.Cycle));
+                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationStatus_t.Idle));
                 }
                 else
                 {
                     if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
                 }
             }
+            else if (!IsInLocation && e.Opcode == LocationType_t.StopTriggered)
+            {
+                if (e.Status != OperationStatus_t.Success)
+                {
+                    //Log.Message("结束位置查询失败  " + FullName);
+                    //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "结束位置查询失败" });
+                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationStatus_t.Cycle));
+                }
+                else
+                {
+                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                }
+            }
+
         }
 
-        private void OnShortMessageRequest(ShortMessageRequestArgs e)
+
+
+        private bool IsThis(TargetMode_t type, int id)
+        {
+            if (type == TargetMode_t.All)
+            {
+                return this._type == TargetType_t.Group && Group.IsAllTarget;
+            }
+            else if (type == TargetMode_t.Group)
+            {
+                return this._type == TargetType_t.Group && Group.GroupID == id;
+            }
+            else if (type == TargetMode_t.Private)
+            {
+                return this._type == TargetType_t.Member && Member.HasDevice && Member.RadioID == id;
+            }
+            else return false;
+        }
+
+        private bool IsThis(int id)
+        {
+            return IsThis(TargetMode_t.Private, id);
+        }
+
+
+        
+
+
+        private void OnArsRequest(ArsRequestArgs e)
         {
             if (e == null || !IsThis(e.Source)) return;
 
-            if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
-            Log.Message(FullName + "  发送短消息（内容：" + e.Contents + "）");
-            AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.ShortMessage, Contents = e.Contents }, true);
+            if (IsOnline != e.IsOnline)ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, e.IsOnline));
+
+            Log.Message(FullName + (e.IsOnline ? "  上线" : "  下线"));
+            AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.ShortMessage, Contents = e.IsOnline ? "上线" : "下线" }, true);
         }
 
-        private void OnShortMessageResponse(ShortMessageResponseArgs e)
-        {
-            if (e == null || !IsThis(e.Target)) return;
-
-            if (e.Status == OperationStatus_t.Success)
-            {
-                //Log.Message("发送短消息成功  " + FullName);
-                if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
-            }
-            else
-            {
-                //Log.Message("发送短消息失败  " + FullName);
-                //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.ShortMessage, Contents = "发送短消息失败" });
-            }
-        }
+       
 
         private void OpenOperateWindowExec(object parameter)
         {
@@ -1142,82 +1190,10 @@ namespace Dispatcher.ViewsModules
 
         private void QueryLocationExec(object parameter)
         {
-            if (parameter == null) return;
-
-            LocationArgs args = null;
-            if (parameter is LocationArgs)
-            {
-                args = parameter as LocationArgs;
-                if (args != null) LocationExec(args);
-            }
-            else
-            {
-                LocationType_t? _type = null;
-                if (parameter is string) _type = (parameter as string).ToEnum<LocationType_t>();
-                else if (parameter is LocationType_t) _type = (LocationType_t)parameter;
-
-                if (_type == null) return;
-
-                args = new LocationArgs((LocationType_t)_type);
-
-
-                if (args == null) return;
-
-                switch (args.Type)
-                {
-                    case LocationType_t.Query:
-                    case LocationType_t.CsbkQuery:
-                    case LocationType_t.EnhCsbkQuery:
-                    case LocationType_t.StopCycle:
-                    case LocationType_t.Track:
-                        LocationExec(args);
-                        break;
-                    case LocationType_t.Cycle:
-                    case LocationType_t.CsbkCycle:
-                    case LocationType_t.EnhCsbkCycle:
-                        args.Cycle = 30;
-                        LocationExec(args);
-                        //if (OnOperated != null) OnOperated(new OperatedEventArgs(OperateType_t.OpenOperateWindow, new TargetOperateArgs(TaskType_t.Location, this, args)));
-                        break;
-                    default: break;
-                }
-            }
-
-
+            LocationExec(parameter);
         }
 
-        private void SendShortMessageExec(object parameter)
-        {
-            if (parameter == null && parameter is ShortMessageArgs) return;
-            ShortMessageArgs args = parameter as ShortMessageArgs;
-            //Log.Message("发送短消息（内容：" + args.Contents + "）  " + FullName);
-            //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.ShortMessage, Contents = args.Contents });
-
-            if (_dispatcher != null)
-            {
-                if (_type == TargetType_t.Group && Group.IsAllTarget)
-                {
-                    List<VMTarget> UnBounded = ResourcesMgr.Instance().Members.FindAll(p=>true);
-                    foreach (VMTarget group in ResourcesMgr.Instance().Groups)
-                    {
-                        if (group.CanShortMessage) _dispatcher.SendGroupShortMessage(group._group.GroupID, args.Contents);
-                        UnBounded.RemoveAll(p => p._member.GroupID == group._group.GroupID);
-                    }
-
-                    foreach (VMTarget member in UnBounded)
-                    {
-                        if (member.Member.HasDevice && member.CanShortMessage) _dispatcher.SendPrivateShortMessage(member.Member.RadioID, args.Contents);
-                    }
-                }
-                else if (_type == TargetType_t.Group)
-                {
-                    if (CanShortMessage) _dispatcher.SendGroupShortMessage(_group.GroupID, args.Contents);
-                }
-                else if (Member.HasDevice) _dispatcher.SendPrivateShortMessage(Member.RadioID, args.Contents);
-            }
-
-        }
-
+       
         private void UpdateAllStatus()
         {
             NotifyPropertyChanged("IsOnline");
@@ -1295,7 +1271,7 @@ namespace Dispatcher.ViewsModules
                 if (UnReadNotifyIndex > 0) UnReadNotifyIndex -= 1;
             }
 
-            VMNotify.VMNotice notiveviewmodule = new VMNotify.VMNotice(this, notice, !isrx);
+            VMNotify.VMNotice notiveviewmodule = new VMNotify.VMNotice("", this, notice, !isrx);
             _notices.Add(notiveviewmodule);
   
             NotifyPropertyChanged("INotices");

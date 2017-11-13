@@ -34,12 +34,12 @@ namespace Dispatcher.Service
 
         private static bool IsDebug = false;
 
-        private static CBaseSetting BaseSetting;
-        private static CRadioSetting RadioSetting;
-        private static CRepeaterSetting RepeaterSetting;
-        private static CMnisSetting MnisSetting;
-        private static CLocationSetting LocationSetting;
-        private static CLocationInDoorSetting LocationInDoorSetting;
+        public static CBaseSetting BaseSetting;
+        public static CRadioSetting RadioSetting;
+        public static CRepeaterSetting RepeaterSetting;
+        public static CMnisSetting MnisSetting;
+        public static CLocationSetting LocationSetting;
+        public static CLocationInDoorSetting LocationInDoorSetting;
 
         private static string[] FuncationList;
 
@@ -101,6 +101,24 @@ namespace Dispatcher.Service
             }
             else WorkMode = Mode_t.UnKnown;
         }
+
+        public static int TimeoutSeconds 
+        {
+            get
+            {
+                if (WorkMode == Mode_t.UnKnown || WorkMode == Mode_t.Debug)return 10;
+                else if (WorkMode == Mode_t.VehicleStation || WorkMode == Mode_t.VehicleStationWithMnis)
+                {
+                    if(RadioSetting != null)return RadioSetting.TomeoutSeconds;
+                }
+                else if (WorkMode == Mode_t.Repeater || WorkMode == Mode_t.RepeaterWithMnis)
+                {
+                   if(RepeaterSetting != null)return RepeaterSetting.TomeoutSeconds;
+                }
+             
+                return 60;
+            }
+        } 
 
 
         public static Mode_t WorkMode { get; private set; }
@@ -214,10 +232,12 @@ namespace Dispatcher.Service
         public static bool _enableAlarm = false;
         public static bool _enableExport = false;
         public static bool _enablePrint = false;
+        public static bool _enableTrack = false;
         public static Visibility ReportVisible { get { return _enableReport ? Visibility.Visible : Visibility.Collapsed; } }
         public static Visibility AlarmVisible { get { return _enableAlarm ? Visibility.Visible : Visibility.Collapsed; } }
         public static Visibility ExportVisible { get { return _enableExport ? Visibility.Visible : Visibility.Collapsed; } }
         public static Visibility PrintVisible { get { return _enablePrint ? Visibility.Visible : Visibility.Collapsed; } }
+        public static Visibility TrackVisible { get { return _enableTrack ? Visibility.Visible : Visibility.Collapsed; } }
 
        
         private static bool _enableAdvanceTools = false;
