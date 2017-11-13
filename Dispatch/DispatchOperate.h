@@ -24,7 +24,7 @@ public:
 	void locationIndoorConfig(int Interval, int iBeaconNumber, bool isEmergency);
 	void call( int type, int op, int id,std::string sessionId);
 	void control(int type, int id, std::string sessionId);
-	bool getGps(int id, int querymode, double cycle, std::string sessionId);
+	bool getGps(int id, int querymode, double cycle, std::string sessionId,int operate);
 	bool stopGps( int id, int querymode,std::string sessionId);
 	bool sendMsg(std::string text, int id, int opterateType, std::string sessionId);
 	void getStatus( int type,std::string sessionId);

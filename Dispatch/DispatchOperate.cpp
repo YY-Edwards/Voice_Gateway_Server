@@ -331,11 +331,12 @@ void DispatchOperate::OnData(  int call, Respone data)
 		args["type"] = FieldValue(PRIVATE);
 		try
 		{
+			args["SessionId"] = FieldValue(data.sessionId.c_str());
 			args["Source"] = FieldValue(NULL);
 			args["Target"] = FieldValue(data.target);
-			args["contents"] = FieldValue("");
-			args["status"] = FieldValue(data.msgStatus); 
-			args["type"] = FieldValue(data.msgType);
+			args["Contents"] = FieldValue("");
+			args["Status"] = FieldValue(data.msgStatus); 
+			args["Type"] = FieldValue(data.msgType);
 			dis.send2Client("messageStatus", args);
 		}
 		catch (std::exception e)
@@ -347,11 +348,12 @@ void DispatchOperate::OnData(  int call, Respone data)
 		args["type"] = FieldValue(GROUP);
 		try
 		{
+			args["SessionId"] = FieldValue(data.sessionId.c_str());
 			args["Source"] = FieldValue(NULL);
 			args["Target"] = FieldValue(data.target);
-			args["contents"] = FieldValue("");
-			args["status"] = FieldValue(data.msgStatus);
-			args["type"] = FieldValue(data.msgType);
+			args["Contents"] = FieldValue("");
+			args["Status"] = FieldValue(data.msgStatus);
+			args["Type"] = FieldValue(data.msgType);
 			dis.send2Client("messageStatus", args);
 		}
 		catch (std::exception e)
@@ -373,30 +375,36 @@ void DispatchOperate::OnData(  int call, Respone data)
 	case GPS_IMME_CSBK_EGPS:
 	case GPS_TRIGG_CSBK_EGPS:
 	case STOP_QUERY_GPS:
+	{
+		FieldValue element(FieldValue::TObject);
+		element.setKeyVal("Lat", FieldValue(data.lat));
+		element.setKeyVal("Lon", FieldValue(data.lon));
+		element.setKeyVal("Alt", FieldValue(data.altitude));
+		element.setKeyVal("Speed", FieldValue(data.speed));
+		element.setKeyVal("Valid", FieldValue(data.valid));
+		args["SessionId"] = FieldValue(data.sessionId.c_str());
 		args["Target"] = FieldValue(data.target);
-		args["Type"] = FieldValue(data.querymode);
+		args["Type"] = 0;   //0:gps 
 		args["Cycle"] = FieldValue(data.cycle);
 		args["Operate"] = FieldValue(data.operate);
 		args["Status"] = FieldValue(data.gpsStatus);
-		args["Operate"] = FieldValue(data.gpsType);
-		dis.send2Client("sendGpsStatus", args);
+		args["Report"] = element;
+		dis.send2Client("locationStatus", args);
+	}
 		break;
 	case RECV_GPS:
-		
-		Gps.setKeyVal("Lon", FieldValue(data.lon));
-		Gps.setKeyVal("Lat", FieldValue(data.lat));
-		Gps.setKeyVal("Valid", FieldValue(data.valid));
-		Gps.setKeyVal("Speed", FieldValue(data.speed));
-		//gps.setKeyVal("date", FieldValue(strTime.c_str()));
-		//FieldValue result(FieldValue::TObject);
-		//result.setKeyVal("Source", FieldValue(radioID));
-		//result.setKeyVal("Gps",Gps);
-		args["Target"] = FieldValue(data.target);
+	{
+		FieldValue element(FieldValue::TObject);
+		element.setKeyVal("Lat", FieldValue(data.lat));
+		element.setKeyVal("Lon", FieldValue(data.lon));
+		element.setKeyVal("Alt", FieldValue(data.altitude));
+		element.setKeyVal("Speed", FieldValue(data.speed));
+		element.setKeyVal("Valid", FieldValue(data.valid));
 		args["Source"] = FieldValue(data.source);
-		args["Altutude"] = FieldValue(data.altitude);
-		args["Gps"] = Gps;
+		args["Report"] = element;
 		dis.send2Client("sendGps", args);
-		break;
+	}
+	break;
 	case RECV_LOCATION_INDOOR:
 	{
 			FieldValue element(FieldValue::TObject);
@@ -414,9 +422,9 @@ void DispatchOperate::OnData(  int call, Respone data)
 			element.setKeyVal("major", FieldValue(data.bcon.Major));
 			element.setKeyVal("minor", FieldValue(data.bcon.Minor));
 	
-		args["bcon"] = element;
+		args["Report"] = element;
 		args["source"] = data.source;
-		dis.send2Client("locationIndoor", args);
+		dis.send2Client("sendBeacons", args);
 	}
 		break;
 	case RADIO_ARS:
@@ -432,7 +440,6 @@ void DispatchOperate::OnData(  int call, Respone data)
 		dis.send2Client("sendArs", args);
 		break;
 	case RADIO_STATUS:
-	
 		args["getType"] = RADIO_STATUS;
 		FieldValue info(FieldValue::TArray);
 		for (it = data.rs.begin(); it != data.rs.end(); it++)
@@ -440,7 +447,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 			FieldValue element(FieldValue::TObject);
 			element.setKeyVal("radioId", FieldValue(it->second.id));
 			bool isGps = false;
-			if (it->second.gpsQueryMode != 0)
+			if (it->second.gpsQueryMode > 0)
 			{
 				if (it->second.gpsQueryMode != 25 )
 				{
@@ -448,7 +455,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 				}
 			}
 			bool isLocationIndoor = false;
-			if (it->second.gpsQueryMode != 0)
+			if (it->second.gpsQueryMode > 0)
 			{
 				if (it->second.gpsQueryMode == 25 || it->second.gpsQueryMode == 26)
 				{
@@ -624,9 +631,9 @@ void DispatchOperate::setCallBack()
 	pDs->setCallBackFunc(DispatchOperate::OnData);
 	pTs->setCallBackFunc(DispatchOperate::OnTcpData);
 }
-bool DispatchOperate::getGps( int id, int querymode, double cycle,std::string sessionId)
+bool DispatchOperate::getGps( int id, int querymode, double cycle,std::string sessionId ,int operate)
 {
-	return pDs->radioGetGps(id, querymode, cycle, sessionId);
+	return pDs->radioGetGps(id, querymode, cycle, sessionId, operate);
 }
 bool DispatchOperate::stopGps( int id, int querymode,std::string sessionId)
 {

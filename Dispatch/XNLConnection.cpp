@@ -856,7 +856,7 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 		switch (callState)
 		{
 		case 0x01:
-		case 0x04:    //group call Enhanced Private Call  
+		case 0x02:    //group call Enhanced Private Call  
 			callBroadcast(0x04, stringId);
 			break;
 		case 0x03:    //call end

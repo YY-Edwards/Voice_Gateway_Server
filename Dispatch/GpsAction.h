@@ -34,7 +34,7 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 		if (isHave && param != "")
 		{
 			int operate = -1;
-			int  querymode = -1;
+			int  type = -1;
 			int id = -1;;
 			double cycle = -1;
 			std::string sessionId = "";
@@ -44,7 +44,7 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			}
 			if (d.HasMember("Type") && d["Type"].IsInt())
 			{
-				querymode = d["Type"].GetInt();
+				type = d["Type"].GetInt();
 			}
 			if (d.HasMember("Target") && d["Target"].IsInt())
 			{
@@ -58,42 +58,42 @@ void  gpsAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId,
 			{
 				sessionId = d["SessionId"].GetString();
 			}
-			if (operate == START)
+			if (operate ==START || operate == START+1)
 			{
-				if (!dis.getGps(id, querymode, cycle,sessionId))
+				if (!dis.getGps(id, type, cycle, sessionId, operate))
 				{
 					ArgumentType args;
 					args["Target"] = FieldValue(id);
-					args["Type"] = FieldValue(querymode);
+					args["Type"] = FieldValue(type);
 					args["Cycle"] = FieldValue(cycle);
 					args["Operate"] = FieldValue(operate);
 					args["Status"] = FieldValue(UNSUCESS);
 					args["SessionId"] = FieldValue(sessionId.c_str());
-					std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGpsStatus", callId, args, "radio");
+					std::string callJsonStrRes = CRpcJsonParser::buildCall("locationStatus", callId, args, "radio");
 					if (client != NULL)
 					{
 						client->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());
 					}
 				}
 			}
-			else  if (operate == STOP)
+			else  if (operate == STOP+1)
 			{
 				char *buf = new char();
 				itoa(id, buf, 10);
 				if (g_radioStatus.find(buf) != g_radioStatus.end())
 				{
-					querymode = g_radioStatus[buf].gpsQueryMode;
+					type = g_radioStatus[buf].gpsQueryMode;
 				}
-				if(!dis.stopGps( id, querymode,sessionId))
+				if (!dis.stopGps(id, type, sessionId))
 				{
 					ArgumentType args;
 					args["Target"] = FieldValue(id);
-					args["Type"] = FieldValue(querymode);
+					args["Type"] = FieldValue(type);
 					args["Cycle"] = FieldValue(cycle);
 					args["Operate"] = FieldValue(operate);
 					args["Status"] = FieldValue(UNSUCESS);
 					args["SessionId"] = FieldValue(sessionId.c_str());
-					std::string callJsonStrRes = CRpcJsonParser::buildCall("sendGpsStatus", callId, args, "radio");
+					std::string callJsonStrRes = CRpcJsonParser::buildCall("locationStatus", callId, args, "radio");
 					if (client != NULL)
 					{
 						client->sendResponse((const char *)callJsonStrRes.c_str(), callJsonStrRes.size());

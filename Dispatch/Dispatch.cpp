@@ -109,7 +109,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		rpcServer.addActionHandler("connect", connectAction);
 		rpcServer.addActionHandler("call", callAction);
 		rpcServer.addActionHandler("control", controlAction);
-		rpcServer.addActionHandler("queryLocation", gpsAction);
+		rpcServer.addActionHandler("location", gpsAction);
 		rpcServer.addActionHandler("message", msgAction);
 		rpcServer.addActionHandler("status", statusAction);
 		rpcServer.addActionHandler("locationIndoor", locationIndoorAction);
