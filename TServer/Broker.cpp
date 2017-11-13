@@ -190,10 +190,47 @@ void CBroker::sendWirelanConfig()
 }
 void CBroker::sendRadioConfig()
 {
-	std::string content = "{\"radio\":" + CSettings::instance()->getValue("radio") + ",\"mnis\":"+
+	std::string radio = CSettings::instance()->getValue("radio");
+	std::string mnis = CSettings::instance()->getValue("mnis");
+	std::string location = CSettings::instance()->getValue("location");
+	std::string locationIndoor = CSettings::instance()->getValue("locationIndoor");
+	if (radio != "")
+	{
+		radio = "{\"radio\":" + radio + ",";
+	}
+	else
+	{
+		radio = "\"radio\":null ,";
+	}
+	if (mnis != "")
+	{
+		mnis = "\"mnis\":" + mnis + ",\"";
+	}
+	else
+	{
+		mnis = "\"mnis\":null ,";
+	}
+	if (location != "")
+	{
+		location = "\"location\":" + location + ",";
+	}
+	else
+	{
+		location = "\"location\":null ,";
+	}
+	if (locationIndoor != "")
+	{
+		locationIndoor = "\"locationIndoor\":" + locationIndoor + "}";
+	}
+	else
+	{
+		locationIndoor = "\"locationIndoor\":null }";
+	}
+	std::string content1 = "{\"radio\":" + CSettings::instance()->getValue("radio") + ",\"mnis\":"+
 		CSettings::instance()->getValue("mnis") +",\"location\":"+
 		CSettings::instance()->getValue("location") +",\"locationIndoor\":"+
 		CSettings::instance()->getValue("locationIndoor")+"}";
+	std::string content = radio + mnis + location + locationIndoor;
 	std::string strConnect = CSettings::instance()->getRequest("connect", "radio", m_radioClient->getCallId(), content);
 	m_radioClient->send(strConnect.c_str(), strConnect.size());
 }
