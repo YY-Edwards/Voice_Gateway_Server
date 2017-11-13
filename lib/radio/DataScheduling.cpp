@@ -48,16 +48,55 @@ void CDataScheduling::radioDisConnect()
 	disConnect();
 
 }
-bool CDataScheduling::radioGetGps(DWORD dwRadioID, int queryMode, double cycle,std::string sessionId)
+bool CDataScheduling::radioGetGps(DWORD dwRadioID, int type, double cycle,std::string sessionId,int operate)
 {
 
 	if (myCallBackFunc != NULL)
 	{
 	
-		switch (queryMode)
+		if (type == 0)
+		{
+			if (m_mnisCfg.LocationType == 0 && operate == 0)
+			{
+				addUdpCommand(GPS_IMME_COMM, "", "", int(dwRadioID), "", cycle, type, sessionId);
+			}
+			else if (m_mnisCfg.LocationType == 1 && operate == 0)
+			{
+				addUdpCommand(GPS_IMME_CSBK, "", "", int(dwRadioID), "", cycle, type, sessionId);
+			}
+			else if (m_mnisCfg.LocationType == 2 && operate == 0)
+			{
+				addUdpCommand(GPS_IMME_CSBK_EGPS, "", "", int(dwRadioID), "", cycle, type, sessionId);
+			}
+			else if (m_mnisCfg.LocationType == 0 && operate == 1)
+			{
+				addUdpCommand(GPS_TRIGG_COMM, "", "", int(dwRadioID), "", cycle, type, sessionId);
+			}
+			else if (m_mnisCfg.LocationType == 1 && operate == 1)
+			{
+				addUdpCommand(GPS_TRIGG_CSBK, "", "", int(dwRadioID), "", cycle, type, sessionId);
+			}
+			else if (m_mnisCfg.LocationType == 2 && operate == 1)
+			{
+				addUdpCommand(GPS_TRIGG_CSBK_EGPS, "", "", int(dwRadioID), "", cycle, type, sessionId);
+			}
+		}
+		else if (type == 1)
+		{
+			if (m_mnisCfg.LocationType == 0)
+			{
+				addUdpCommand(GPS_TRIGG_COMM_INDOOR, "", "", int(dwRadioID), "", cycle, type, sessionId);
+			}
+			else if (m_mnisCfg.LocationType == 1)
+			{
+				addUdpCommand(GPS_TRIGG_CSBK_INDOOR, "", "", int(dwRadioID), "", cycle, type, sessionId);
+			}
+		}
+		
+	/*	switch (m_mnisCfg.LocationType)
 		{
 		case GPS_IMME_COMM:
-			addUdpCommand( GPS_IMME_COMM, "", "", int(dwRadioID), "", cycle, queryMode ,sessionId);
+			addUdpCommand(GPS_IMME_COMM, "", "", int(dwRadioID), "", cycle, queryMode, sessionId);
 			break;
 		case GPS_TRIGG_COMM:
 			addUdpCommand( GPS_TRIGG_COMM, "", "", int(dwRadioID), "", cycle, queryMode,sessionId);
@@ -82,17 +121,25 @@ bool CDataScheduling::radioGetGps(DWORD dwRadioID, int queryMode, double cycle,s
 			break;
 		default:
 			break;
-		}
+		}*/
 		return true;
 	}
 	return false;
 }
-bool CDataScheduling::radioStopGps(DWORD dwRadioID, int	queryMode,std::string sessionId)
+bool CDataScheduling::radioStopGps(DWORD dwRadioID, int	type,std::string sessionId)
 {
 
 	if (myCallBackFunc != NULL)
 	{
-		addUdpCommand( STOP_QUERY_GPS, "", "", int(dwRadioID), "", 0, queryMode,sessionId);
+		if (type = 1)
+		{
+			int querymode = GPS_TRIGG_COMM_INDOOR;
+			addUdpCommand(STOP_QUERY_GPS, "", "", int(dwRadioID), "", 0, querymode, sessionId);
+		}
+		else
+		{
+			addUdpCommand(STOP_QUERY_GPS, "", "", int(dwRadioID), "", 0, type, sessionId);
+		}
 		return true;
 	}
 	return false;
@@ -315,28 +362,28 @@ void CDataScheduling::workThreadFunc()
 				sendMsg(it->sessionId, it->text, it->radioId, m_mnisCfg.GroupCAI);
 				break;
 			case  GPS_IMME_COMM:
-				getGps(it->radioId, it->querymode, it->cycle,m_mnisCfg.CAI);
+				getGps(it->radioId, it->command, it->cycle,m_mnisCfg.CAI);
 				break;
 			case GPS_TRIGG_COMM:
-				getGps(it->radioId, it->querymode, it->cycle, m_mnisCfg.CAI);
+				getGps(it->radioId, it->command, it->cycle, m_mnisCfg.CAI);
 				break;
 			case GPS_IMME_CSBK:
-				getGps(it->radioId, it->querymode, it->cycle, m_mnisCfg.CAI);
+				getGps(it->radioId, it->command, it->cycle, m_mnisCfg.CAI);
 				break;
 			case GPS_TRIGG_CSBK:
-				getGps(it->radioId, it->querymode, it->cycle, m_mnisCfg.CAI);
+				getGps(it->radioId, it->command, it->cycle, m_mnisCfg.CAI);
 				break;
 			case GPS_IMME_CSBK_EGPS:
-				getGps(it->radioId, it->querymode, it->cycle, m_mnisCfg.CAI);
+				getGps(it->radioId, it->command, it->cycle, m_mnisCfg.CAI);
 				break;
 			case GPS_TRIGG_CSBK_EGPS:
-				getGps(it->radioId, it->querymode, it->cycle, m_mnisCfg.CAI);
+				getGps(it->radioId, it->command, it->cycle, m_mnisCfg.CAI);
 				break;
 			case GPS_TRIGG_CSBK_INDOOR:
-				getGps(it->radioId, it->querymode, it->cycle, m_mnisCfg.CAI);
+				getGps(it->radioId, it->command, it->cycle, m_mnisCfg.CAI);
 				break;
 			case GPS_TRIGG_COMM_INDOOR:
-				getGps(it->radioId, it->querymode, it->cycle, m_mnisCfg.CAI);
+				getGps(it->radioId, it->command, it->cycle, m_mnisCfg.CAI);
 				break;
 			case STOP_QUERY_GPS:
 				stopGps(it->radioId, it->querymode, m_mnisCfg.CAI);
@@ -375,6 +422,7 @@ void CDataScheduling::timeOut()
 					case  MNIS_CONNECT:
 						break;
 					case SEND_PRIVATE_MSG:
+						r.sessionId = it->sessionId;
 						r.target = it->radioId;
 						r.msgStatus = UNSUCESS;
 						r.msg = "";
@@ -382,6 +430,7 @@ void CDataScheduling::timeOut()
 						onData(myCallBackFunc, it->command, r);
 						break;
 					case SEND_GROUP_MSG:
+						r.sessionId = it->sessionId;
 						r.target = it->radioId;
 						r.msgStatus = UNSUCESS;
 						r.msg = "";
@@ -394,6 +443,7 @@ void CDataScheduling::timeOut()
 					case GPS_TRIGG_CSBK:
 					case GPS_IMME_CSBK_EGPS:
 					case GPS_TRIGG_CSBK_EGPS:
+						r.sessionId = it->sessionId;
 						r.target = it->radioId;
 						r.gpsStatus = UNSUCESS;
 						r.cycle = it->cycle;
@@ -402,6 +452,7 @@ void CDataScheduling::timeOut()
 						onData(myCallBackFunc, it->command, r);
 						break;
 					case STOP_QUERY_GPS:
+						r.sessionId = it->sessionId;
 						r.target = it->radioId;
 						r.gpsStatus = UNSUCESS;
 						r.cycle = it->cycle;

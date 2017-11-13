@@ -9,7 +9,7 @@ public:
 	CDataScheduling();
 	~CDataScheduling();
 	void radioConnect(mnis_t mnisCfg, location_t locationCfg, locationindoor_t locationIndoorCfg);
-	bool radioGetGps( DWORD dwRadioID, int queryMode, double cycle,std::string sessionId);
+	bool radioGetGps( DWORD dwRadioID, int queryMode, double cycle,std::string sessionId,int operate);
 	bool radioStopGps( DWORD dwRadioID, int	queryMode ,std::string sessionId);
 	bool radioSendMsg( std::string message, DWORD dwRadioID,  int type,std::string sessionId);
 	void getRadioStatus( int type,std::string sessionId);
@@ -35,8 +35,8 @@ private:
 	void addUdpCommand( int command, std::string radioIP, std::string gpsIP, int id, std::string text, double cycle, int querymode,std::string sessionId);
 	void connect();
 	void disConnect();
-	void getGps(DWORD dwRadioID, int queryMode, double cycle,int cai);
-	void stopGps(DWORD dwRadioID, int	queryMode,int cai);
+	void getGps(DWORD dwRadioID, int type, double cycle,int cai);
+	void stopGps(DWORD dwRadioID, int	type,int cai);
 	void sendMsg(std::string sessionId , std::string message, DWORD dwRadioID, int CaiNet);
 	void initGPSOverturnSocket(DWORD dwAddress);
 	void sendAck(int call, int callId, int id);
@@ -51,5 +51,6 @@ private:
 	mnis_t m_mnisCfg;
 	location_t m_locationCfg;
 	locationindoor_t m_locationIndoorCfg;
+	
 };
 

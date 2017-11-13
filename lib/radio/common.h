@@ -41,6 +41,15 @@
 #define STOP          1
 #define RADIO_STATUS_OFFLINE   0
 #define RADIO_STATUS_ONLINE    1
+struct GPSReporFormat
+{
+
+	int Valid;   //0¡¢1//1:valid, 0; inValid
+	double Lon;
+	double Lat;
+	double Alt;
+	double Speed;
+};
 struct BconMajMinTimeReport
 {
 	unsigned short Major;
@@ -74,19 +83,21 @@ typedef struct tagRespone
 	int gpsType;
 	std::string msg;
 	int msgStatus;
+	int arsStatus;
+	int gpsStatus;
+	int querymode;
+	int type;
+	int operate;
+	double altitude;
 	double lat;
 	double lon;
 	double speed;
-	int arsStatus;
-	int gpsStatus;
 	int valid;
-	double cycle;
-	int querymode;
-	int operate;
-	double altitude;
 	std::map<std::string, RadioStatus> rs;
 	//std::list< BconMajMinTimeReport> becon;
 	BconMajMinTimeReport bcon;
+	//GPSReporFormat  gps;
+	double cycle;
 	std::string sessionId;
 }Respone;
 #define MAX_IP_SIZE 16

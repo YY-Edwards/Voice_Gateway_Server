@@ -472,6 +472,7 @@ bool CTextMsg::SendMsg(std::string  sessionId, std::string text, DWORD dwRadioID
 				r.source = m_selfId;
 				r.msgStatus = SUCESS;
 				r.msg = "";
+				r.sessionId = it->sessionId;
 				if (it->command == SEND_GROUP_MSG)
 				{
 					r.msgType = GROUP;
@@ -543,6 +544,7 @@ void CTextMsg::RecvMsg()
 						r.source = m_selfId;
 						r.msgStatus = SUCESS;
 						r.msg = "";
+						r.sessionId = it->sessionId;
 						if (it->command == SEND_PRIVATE_MSG)
 						{
 							r.msgType = PRIVATE;
@@ -551,7 +553,6 @@ void CTextMsg::RecvMsg()
 						{
 							r.msgType = GROUP;
 						}
-						
 						onData(myCallBackFunc, it->command, r);
 						m_pMnis->updateOnLineRadioInfo(atoi(stringId.c_str()), RADIO_STATUS_ONLINE);
 						it = timeOutList.erase(it);
@@ -589,6 +590,11 @@ void CTextMsg::RecvMsg()
 					int len = 0;
 					std::string message = ParseUserMsg(&HandleMsg, &len);
 					message = GBKToUTF8(message);
+					int n = message.find_first_not_of("\r\n");     //去掉开头的\r\n
+					if (n != 0)
+					{
+						message = message.substr(n, strlen(message.c_str()));
+					}
 					Respone r = { 0 };
 					r.target = m_selfId;
 					r.source = m_ThreadMsg->radioID;

@@ -294,7 +294,8 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,double cycle,int cai
 			m_ThreadGps->SendBuffer[10] = iBconNum & 0xff;  //becon number
 			m_ThreadGps->SendBuffer[11] = Start_Trigger_Element;
 			m_ThreadGps->SendBuffer[12] = Start_Interval_Element_uint;
-			m_ThreadGps->SendBuffer[13] = 0xff & interval;
+			//m_ThreadGps->SendBuffer[13] = 0xff & interval;
+			m_ThreadGps->SendBuffer[13] = 0xff & gpsCycle;
 			m_ThreadGps->gpsLength = SEND_IMM_QUERY_LENTH+4;
 		}
 		else
@@ -346,7 +347,8 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,double cycle,int cai
 		{
 			m_ThreadGps->SendBuffer[1] = CSBK_Triggered_Location_Request_Tokens_Length_uint+1;
 			m_ThreadGps->SendBuffer[15] = Start_Interval_Element_uint;
-			m_ThreadGps->SendBuffer[16] = 0xff & interval;
+			//m_ThreadGps->SendBuffer[16] = 0xff & interval;
+			m_ThreadGps->SendBuffer[16] = 0xff & gpsCycle;
 			m_ThreadGps->gpsLength = SEND_TRG_CSBK_QUERY_LENTH +3;
 		}
 		break;
@@ -484,9 +486,11 @@ void CRadioGps::RecvData()
 		unsigned long a = 0, b = 0;
 		float speed = -1;
 		int valid = 1;
-		int queryMode = -1;
+		//int queryMode = -1;
 		int operate = -1;
 		double lat = -1, lon = -1;
+		bool isImme = false;
+		int queryMode = -1;
 		if (ret != SOCKET_ERROR || bytes != SOCKET_ERROR)
 		{
 			m_ThreadGps->radioID = (m_ThreadGps->remote_addr.sin_addr.S_un.S_un_b.s_b2 << 16) + (m_ThreadGps->remote_addr.sin_addr.S_un.S_un_b.s_b3 << 8) + m_ThreadGps->remote_addr.sin_addr.S_un.S_un_b.s_b4;
@@ -504,12 +508,12 @@ void CRadioGps::RecvData()
 						{
 							if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Stop_Answer)
 							{
-								operate = STOP;
+								operate = STOP+1;  //stop:2
 
 							}
 							else  if (m_ThreadGps->RcvBuffer[0] == Triggered_location_Start_Answer)
 							{
-								operate = START;
+								operate = START+1;  //start:1
 							}
 							if (myCallBackFunc != NULL)
 							{
@@ -517,23 +521,27 @@ void CRadioGps::RecvData()
 								if (m_ThreadGps->RcvBuffer[len+1] == Location_Operate_Sucess)
 								{
 									Respone r = { 0 };
+									r.sessionId = it->sessionId;
 									r.target = m_ThreadGps->radioID;
 									r.gpsStatus = SUCESS;
 									r.querymode = it->querymode;
 									r.cycle = it->cycle;
 									r.operate = operate;
+									r.type = 0;
 									onData(myCallBackFunc, it->command, r);
 									it = timeOutList.erase(it);
 									break;
 								}
 								else
 								{
-									Respone  r = { 0 };;
+									Respone  r = { 0 };
+									r.sessionId = it->sessionId;
 									r.target = m_ThreadGps->radioID;
 									r.gpsStatus = UNSUCESS;
 									r.querymode = it->querymode;
 									r.cycle = it->cycle;
 									r.operate = operate;
+									r.type = 0;
 									onData(myCallBackFunc, it->command, r);
 									it = timeOutList.erase(it);
 									break;
@@ -579,6 +587,8 @@ void CRadioGps::RecvData()
 					a = ((unsigned long)m_ThreadGps->RcvBuffer[26]) & 0xff;
 					b = ((unsigned long)m_ThreadGps->RcvBuffer[27]) & 0xff;
 					speed = (((float)a) + ((float)b) / 128.0f)*3.6f;
+					isImme = true;
+					queryMode = GPS_IMME_COMM;
 				}
 				else if ((ret == RECV_TRG_LENTH || bytes == RECV_TRG_LENTH) && m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report && m_ThreadGps->RcvBuffer[1] == 0x0F)
 				{
@@ -781,20 +791,44 @@ void CRadioGps::RecvData()
 						for (it = timeOutList.begin(); it != timeOutList.end(); it++)
 						{
 							if (it->radioId == atoi(radioID))
-								/*if (it->command == GPS_IMME_COMM || it->command == GPS_IMME_CSBK || it->command == GPS_IMME_CSBK_EGPS
-									|| it->command== GPS_TRIGG_COMM || it->command == GPS_TRIGG_CSBK || it->command ==GPS_TRIGG_CSBK_EGPS)*/
 							{
-								if (myCallBackFunc != NULL)
+								if (isImme)
 								{
-									Respone r = { 0 };
-									r.source = m_ThreadGps->radioID;
-									r.lat = lat;
-									r.lon = lon;
-									r.speed = speed;
-									r.valid = valid;
-									onData(myCallBackFunc, RECV_GPS, r);
-									count++;
-									break;
+									if (myCallBackFunc != NULL)
+									{
+										Respone r = { 0 };
+										r.sessionId = it->sessionId;
+										r.type = 0;   // 0:gps 
+										r.target = m_ThreadGps->radioID;
+										r.altitude = 0;
+										r.lat = lat;
+										r.lon = lon;
+										r.speed = speed;
+										r.valid = 1;
+										r.cycle = it->cycle;
+										r.operate = 0;
+										r.querymode = queryMode;
+										onData(myCallBackFunc, it->command, r);
+										count++;
+										break;
+									}
+								}
+								else
+								{
+									if (myCallBackFunc != NULL)
+									{
+										Respone r = { 0 };
+										r.source = m_ThreadGps->radioID;
+										r.altitude = 0;
+										r.lat = lat;
+										r.lon = lon;
+										r.speed = speed;
+										r.valid = 1;
+										r.querymode = queryMode;
+										onData(myCallBackFunc, RECV_GPS, r);
+										count++;
+										break;
+									}
 								}
 							}
 						}
@@ -809,6 +843,7 @@ void CRadioGps::RecvData()
 								r.lon = lon;
 								r.speed = speed;
 								r.valid = valid;
+								r.querymode = queryMode;
 								onData(myCallBackFunc, RECV_GPS, r);
 							}
 
