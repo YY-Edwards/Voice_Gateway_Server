@@ -207,7 +207,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		clientActions["locationStatus"] = recvSendGpsStatusAction;
 		clientActions["getRadioConfig"] = recvGetConfigAction;
 		clientActions["readSerial"] = readSerialAction;
-		clientActions["locationIndoor"] = recvLocationIndoorAction;
+		//clientActions["locationIndoor"] = recvLocationIndoorAction;
+		clientActions["sendBeacons"] = recvLocationIndoorAction;
 		/*wire lan send*/
 		wlClientActions["wlCall"] = wlCallAction;
 		wlClientActions["wlCallStatus"] = wlCallStatusAction;
