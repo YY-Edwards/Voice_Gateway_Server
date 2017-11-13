@@ -16,7 +16,7 @@ namespace Manager.Models
         //private static string Host = "192.168.2.122";
         private static string Host = "127.0.0.1";
 
-        public static string TServerHost{get{return Host;}}
+        public static string TServerHost{get{return Host;} }
         public static string LogServerHost { get { return Host; } }
         public static string HttpServerHost { get { return Host; } }
 
