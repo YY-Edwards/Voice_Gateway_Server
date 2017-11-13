@@ -19,8 +19,8 @@ namespace Dispatcher.Service
     {
         private CTcpClient s_Tcp;
 
-        private string m_Host = "127.0.0.1";
-        //private string m_Host = "192.168.2.133";
+        //private string m_Host = "127.0.0.1";
+        private string m_Host = "192.168.2.122";
         private int m_Port = 9000;
         private int m_ImagePort = 8001;
         private string m_ImageFolder = "images";
@@ -389,16 +389,18 @@ namespace Dispatcher.Service
         call,
         callStatus,
 
+
         message,
         messageStatus,
 
-        queryGps,
-        queryGpsStatus,
-        sendGpsStatus,
+        location,
+        locationStatus,
+        sendBeacons,
         sendGps,
 
         control,
         controlStatus,
+        controlResult,
 
 
         wlInfo,

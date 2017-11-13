@@ -83,7 +83,8 @@ namespace Dispatcher.Service
                     for (int i = _operateList.Count - 1; i >= 0; i-- )
                     {
                         OperateContent_t operate = _operateList[i];
-                        if (DateTime.Now.AddMinutes(-1).Ticks - operate.SendTime > 0)//1 minute
+                        if (DateTime.Now.AddSeconds(-FunctionConfigure.TimeoutSeconds).Ticks - operate.SendTime > 0)//1 minute
+                        //if (DateTime.Now.AddSeconds(-10).Ticks - operate.SendTime > 0)//1 minute
                         {
                             //Log.Info(string.Format("操作超时：{0},TIME{1}", operate.Dept, DateTime.Now.ToString()));
                             _operateList.RemoveAt(i);
@@ -99,7 +100,7 @@ namespace Dispatcher.Service
         }
 
 
-        private void OperateComplete(string sessionId)
+        private void OperateCompleted(string sessionId)
         {
             lock (_operateList)
             {
@@ -121,8 +122,34 @@ namespace Dispatcher.Service
 
             if (parameter != null)
             {
-                Session session = JsonConvert.DeserializeObject<Session>(parameter);
-                if (session != null) OperateComplete(session.guid);
+                Dictionary<string, object> replyparam = JsonConvert.DeserializeObject<Dictionary<string, object>>(parameter);
+                if (replyparam != null)
+                {
+                    if(replyparam.ContainsKey("SessionId"))
+                    {
+                        if(replyparam.ContainsKey("Status"))
+                        {
+                            try
+                            {
+                                //Console.WriteLine(replyparam["Status"].GetType().FullName);
+                                Int64 status = (Int64)replyparam["Status"];
+
+                                if (status == 0)//success
+                                {
+                                    OperateCompleted(replyparam["SessionId"] as string);
+                                }
+                                else
+                                {
+                                    OperateFailure(replyparam["SessionId"] as string, Status.ResponseFailure);
+                                }
+                            }
+                            catch
+                            {
+                                OperateFailure(replyparam["SessionId"] as string, Status.ResponseFailure);
+                            }
+                        }
+                    }
+                }              
             }
 
             switch (call)
@@ -147,14 +174,16 @@ namespace Dispatcher.Service
                 case RequestOpcode.controlStatus:
                     OnControlResponse(parameter);
                     break;
-                case RequestOpcode.queryGpsStatus:
-                case RequestOpcode.sendGpsStatus:
+                case RequestOpcode.controlResult:
+                    OnControlResult(parameter);
+                    break;
+                case RequestOpcode.locationStatus:
                     OnLocationQueryResponse(parameter);
                     break;
                 case RequestOpcode.sendGps:
                     OnLocationReport(parameter);
                     break;
-                case RequestOpcode.locationIndoor:
+                case RequestOpcode.sendBeacons:
                     OnLocationInDoorReport(parameter);
                     break;
                 default:
@@ -164,17 +193,21 @@ namespace Dispatcher.Service
             }
         }
 
+        private void OperateFailure(string sessionId, Status status)
+        {
+            lock (_operateList)
+            {
+                List<OperateContent_t> completed = _operateList.FindAll(p => p.SessionId == sessionId);
+                foreach (var content in completed)
+                {
+                    if (DispatcherFailure != null) DispatcherFailure(content, status);
+                }
+                _operateList.RemoveAll(p => p.SessionId == sessionId);
+            }
+        }
         private void OnTimeout(object sender, string e)
         {
-             lock (_operateList)
-             {
-                 List<OperateContent_t> completed = _operateList.FindAll(p => p.SessionId == e);
-                 foreach (var content in completed)
-                 {
-                     if (DispatcherFailure != null) DispatcherFailure(content, Status.Timeout);
-                 }
-                 _operateList.RemoveAll(p => p.SessionId == e);
-             }
+            OperateFailure(e, Status.Timeout);
         }
 
         private void OnSendFailure(object sender, string e)
@@ -266,7 +299,7 @@ namespace Dispatcher.Service
                 
                 Target.ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, rad.IsOnline));
                 Target.ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, rad.IsInGps ? LocationStatus_t.Cycle : LocationStatus_t.Idle));
-                Target.ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, rad.IsInLocationIndoor ? LocationInDoorStatus_t.Cycle : LocationInDoorStatus_t.Idle));
+                Target.ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, rad.IsInLocationIndoor ? LocationStatus_t.Cycle : LocationStatus_t.Idle));
             }
         }
 
@@ -438,6 +471,7 @@ namespace Dispatcher.Service
 
 
         public event ControlResponseHandler ControlResponse;
+        public event ControlResultHandler ControlResult;
         public virtual void Control(int target, ControlerType_t type)
         { 
             RequestOpcode opcode = RequestOpcode.control;
@@ -445,6 +479,26 @@ namespace Dispatcher.Service
             Request(opcode, param);       
         }
 
+
+        private void OnControlResult(string parameter)
+        {
+            if (parameter == null || parameter == "") return;
+            ControlResponse _response = null;
+
+            try
+            {
+                _response = JsonConvert.DeserializeObject<ControlResponse>(parameter);
+            }
+            catch
+            {
+                //WARNING("Parse  ControlResponse Error");
+                return;
+            }
+
+            if (_response == null) return;
+
+            if (ControlResult != null) ControlResult(new ControlResponseArgs(_response.Type, _response.Target, _response.Status));
+        }
         private void OnControlResponse(string parameter)
         {
             if (parameter == null || parameter == "") return;
@@ -464,6 +518,29 @@ namespace Dispatcher.Service
 
             if (ControlResponse != null) ControlResponse(new ControlResponseArgs(_response.Type, _response.Target, _response.Status));
         }
+
+
+       
+        public void Location( LocationType_t type, int target, QueryLocationType_t query,double cycle)
+        {
+            RequestOpcode opcode = RequestOpcode.location;
+            var param = new LocationParameter()
+            {
+                Operate = type,
+                Type = query,
+                Target = target,
+                Cycle = cycle,
+
+                TargetMode = TargetMode_t.Private,
+                TargetId = target
+            };
+
+            Request(opcode, param);
+        }
+       
+
+        public event LocationResponseHandler LocationResponse;
+        public event LocationReportHandler LocationReport;
 
 
         private void OnLocationQueryResponse(string parameter)
@@ -493,73 +570,18 @@ namespace Dispatcher.Service
             }
         }
 
-
-        public event LocationResponseHandler LocationResponse;
-        public event LocationReportHandler LocationReport;
-       
-        public void Location(int target, LocationArgs args)
+        private void OnLocationResponse(LocationResponse res)
         {
-            if (args == null) return;
-            QueryLocationType_t querytype = QueryLocationType_t.Generic;
-            switch (args.Type)
+            if (LocationResponse != null)
             {
-                case LocationType_t.Query:
-                    querytype = QueryLocationType_t.Generic;
-                    break;
-                case LocationType_t.Cycle:
-                    querytype = QueryLocationType_t.GenericCycle;
-                    break;
-                case LocationType_t.CsbkQuery:
-                    querytype = QueryLocationType_t.CSBK;
-                    break;
-                case LocationType_t.CsbkCycle:
-                    querytype = QueryLocationType_t.CSBKCycle;
-                    break;
-                case LocationType_t.EnhCsbkQuery:
-                    querytype = QueryLocationType_t.Enh;
-                    break;
-                case LocationType_t.EnhCsbkCycle:
-                    querytype = QueryLocationType_t.EnhCycle;
-                    break;
-                case  LocationType_t.StopCycle:
-                    StopCycle(target);
-                    return;
-                default:
-                    return;
+                LocationResponseArgs args = new LocationResponseArgs(res.Operate, res.Status, res.Report as GpsReport)
+                {
+                    Target = res.Target,
+                    Cycle = res.Cycle
+                };
+                LocationResponse(args);
             }
-            
-           
-            RequestOpcode opcode = RequestOpcode.queryGps;
-            var param = new LocationParameter(){ 
-                Operate = ExecType_t.Start,
-                Type = querytype,
-                Target = target,
-                Cycle = args.Cycle,
-
-                TargetMode= TargetMode_t.Private,
-                TargetId = target
-            };
-
-            Request(opcode, param);
         }
-
-        private void StopCycle(int target)
-        {          
-            RequestOpcode opcode = RequestOpcode.queryGps;
-            var param = new LocationParameter()
-            {
-                Operate = ExecType_t.Stop,
-                Type = QueryLocationType_t.GenericCycle,
-                Target = target,
-                Cycle = 0,
-
-                TargetMode= TargetMode_t.Private,
-                TargetId = target
-            };
-
-            Request(opcode, param);
-        }
-
 
         private void OnLocationReport(string parameter)
         {
@@ -577,15 +599,14 @@ namespace Dispatcher.Service
             }
 
             if (_report == null) return;
-            if (LocationReport != null) LocationReport(new LocationReportArgs(_report.Source, _report.Gps));
+            if (LocationReport != null) LocationReport(new LocationReportArgs(_report.Source, _report.Report));
         }
-
 
         private void OnLocationInDoorResponse(LocationResponse res)
         {
             if (LocationInDoorResponse != null)
             {
-                LocationInDoorResponse(new LocationInDoorResponseArgs(res.Operate, res.Target, res.Status));
+                LocationInDoorResponse(new LocationInDoorResponseArgs(res.Operate, res.Target, res.Status, res.Report as BeaconReport));
             }
         }
 
@@ -610,37 +631,10 @@ namespace Dispatcher.Service
             }
 
             if (_report == null) return;
-            if (LocationInDoorReport != null) LocationInDoorReport(new LocationInDoorReportArgs(_report.source, new List<BeaconReport>(){_report.bcon}));
+            if (LocationInDoorReport != null) LocationInDoorReport(new LocationInDoorReportArgs(_report.Source, new List<BeaconReport>(){_report.Report}));
         }
-        private void OnLocationResponse(LocationResponse res)
-        {
-            if(LocationResponse != null)
-            {
-                LocationResponseArgs args = new LocationResponseArgs(res.Operate, res.Type, res.Status)
-                {
-                    Target = res.Target,
-                    Cycle = res.Cycle
-                };
-                LocationResponse(args);
-            }
-        }
-
-        public void LocationInDoor(int target, LocationInDoorArgs args)
-        {
-            RequestOpcode opcode = RequestOpcode.queryGps;
-            var param = new LocationParameter()
-            {
-                Operate = args.Type == LocationInDoorType_t.Start ? ExecType_t.Start : ExecType_t.Stop,
-                Type = QueryLocationType_t.LocationInDoor,
-                Target = target,
-                Cycle = 0,
-
-                TargetMode = TargetMode_t.Private,
-                TargetId = target
-            };
-
-            Request(opcode, param);
-        }
+       
+       
      
         public void Request(RequestOpcode opcode, Session parameter)
         {
@@ -727,26 +721,31 @@ namespace Dispatcher.Service
                          ShortMessageParameter shortMessageParam = Parameter as ShortMessageParameter;
                          if(shortMessageParam != null)return string.Format("发送短消息（内容：{0}）",shortMessageParam.Contents );
                          break;
-                    case RequestOpcode.queryGps:
+                    case RequestOpcode.location:
                         LocationParameter locationParam = Parameter as LocationParameter;
                          if(locationParam != null)
                          {
                              switch(locationParam.Type)
                              {
-                                 case QueryLocationType_t.Generic:
-                                     return string.Format("{0}单次查询", locationParam.Operate== ExecType_t.Start ? "开始":"结束");
-                                 case QueryLocationType_t.GenericCycle:
-                                     return string.Format("{0}周期查询(周期：{1})", locationParam.Operate == ExecType_t.Start ? "开始" : "结束", locationParam.Cycle);
-                                 case QueryLocationType_t.CSBK:
-                                     return string.Format("{0}CSBK单次查询", locationParam.Operate== ExecType_t.Start ? "开始":"结束");
-                                 case QueryLocationType_t.CSBKCycle:
-                                     return string.Format("{0}CSBK周期查询(周期：{1})", locationParam.Operate== ExecType_t.Start ? "开始":"结束",locationParam.Cycle);
-                                 case QueryLocationType_t.Enh:
-                                     return string.Format("{0}增强型CSBK单次查询", locationParam.Operate== ExecType_t.Start ? "开始":"结束");
-                                 case QueryLocationType_t.EnhCycle:
-                                     return string.Format("{0}增强型CSBK周期查询(周期：{1})", locationParam.Operate== ExecType_t.Start ? "开始":"结束", locationParam.Cycle);
+                                 case QueryLocationType_t.LocationGps:
+                                     if (locationParam.Operate == LocationType_t.Immediate)
+                                     {
+                                         return string.Format("GPS位置查询");
+                                     }
+                                     else
+                                     {
+                                         return string.Format("{0}GPS位置周期查询(周期：{1})", locationParam.Operate == LocationType_t.StartTriggered ? "开始" : "结束", locationParam.Cycle);
+                                     }
+                                                                     
                                  case QueryLocationType_t.LocationInDoor:
-                                     return string.Format("{0}室内位置查询", locationParam.Operate== ExecType_t.Start ? "启动":"结束");
+                                     if (locationParam.Operate == LocationType_t.Immediate)
+                                     {
+                                         return string.Format("室内位置查询");
+                                     }
+                                     else
+                                     {
+                                         return string.Format("{0}GPS室内位置周期查询(周期：{1})", locationParam.Operate == LocationType_t.StartTriggered ? "开始" : "结束", locationParam.Cycle);
+                                     }                                   
                              }
                          }
                          break;
@@ -926,18 +925,13 @@ namespace Dispatcher.Service
 
     public enum QueryLocationType_t
     {
-        Generic = 12,
-        GenericCycle = 13,
-        CSBK = 14,
-        CSBKCycle = 15,
-        Enh = 23,
-        EnhCycle = 24,
-        LocationInDoor = 25,
+        LocationGps = 0,
+        LocationInDoor = 1,
     }
 
     public class LocationParameter : Session
     {
-        public ExecType_t Operate;
+        public LocationType_t Operate;
         public QueryLocationType_t Type;
         public int Target;
         public double Cycle;
@@ -945,11 +939,12 @@ namespace Dispatcher.Service
 
     public class LocationResponse
     {
-        public ExecType_t Operate;
+        public LocationType_t Operate;
         public QueryLocationType_t Type;
         public int Target;
         public double Cycle;
         public int Status;
+        public object Report;
     }
 
     public class GpsReport
@@ -964,7 +959,7 @@ namespace Dispatcher.Service
     public class LocationReport
     {
         public int Source;
-        public GpsReport Gps;
+        public GpsReport Report;
     }
 
     public class BeaconReport
@@ -979,7 +974,7 @@ namespace Dispatcher.Service
 
     public class LocationInDoorReport_t
     {
-        public int source;
-        public BeaconReport bcon;
+        public int Source;
+        public BeaconReport Report;
     }
 }

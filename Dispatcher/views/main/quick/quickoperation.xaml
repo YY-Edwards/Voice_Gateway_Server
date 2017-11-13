@@ -68,33 +68,31 @@
                 </Grid>               
             </TabItem>
 
-            <TabItem Header="位置查询">
+            <TabItem Header="室内位置">
                 <Grid>
-                    <StackPanel>
+                    <StackPanel >
                         <Label Content="查询方式："  Foreground="#FFB6BABE" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Height="35" Padding="0" VerticalContentAlignment="Center" Margin="5,0,0,0"/>
                         <ComboBox x:Name="comboBox" VerticalAlignment="Center"  SelectedIndex="{Binding LocationTypeIndex}"  Foreground="#FFB6BABE" FontSize="13" Style="{DynamicResource ComboBoxStyleNormal}" Grid.Row="2" Grid.Column="1" Height="30">
-                            <ComboBoxItem Content="查询" Tag="Query" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
-                            <ComboBoxItem Content="周期查询" Tag="Cycle" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
-                            <ComboBoxItem Content="CSBK查询" Tag="CsbkQuery" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
-                            <ComboBoxItem Content="CSBK周期查询" Tag="CsbkCycle" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
-                            <ComboBoxItem Content="增强型CSBK查询" Tag="EnhCsbkQuery" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
-                            <ComboBoxItem Content="增强型CSBK周期查询" Tag="EnhCsbkCycle" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
-                            <ComboBoxItem Content="停止周期查询" Tag="StopCycle" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
-                            <ComboBoxItem Content="轨迹查询" Tag="Track" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
+                            <ComboBoxItem Content="查询" Tag="Immediate" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
+                            <ComboBoxItem Content="周期查询" Tag="StartTriggered" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
+                            <ComboBoxItem Content="停止周期查询" Tag="StopTriggered" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
+                            <ComboBoxItem Content="轨迹查询" Tag="Track" Visibility="{x:Static svr:FunctionConfigure.TrackVisible}" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
                         </ComboBox>
-                        <Label Content="查询周期："  Grid.Row="2"  Foreground="#FFB6BABE" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Height="35" Padding="0" VerticalContentAlignment="Center" Margin="5,0,0,0" Visibility="{Binding SelectedIndex, Converter={StaticResource LocationCycleVisibleConverter}, ElementName=comboBox}"/>
-                        <TextBox Height="30" TextWrapping="Wrap" Text="{Binding LocationCycle}" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFB6BABE" CaretBrush="#FFB6BABE" Visibility="{Binding SelectedIndex, Converter={StaticResource LocationCycleVisibleConverter}, ElementName=comboBox}"/>
+                        <Label Content="查询周期："  Grid.Row="2"  Foreground="#FFB6BABE" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Height="35" Padding="0" VerticalContentAlignment="Center" Margin="5,0,0,0" Visibility="Hidden"/>
+                        <TextBox Height="30" TextWrapping="Wrap" Text="{Binding LocationCycle}" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFB6BABE" CaretBrush="#FFB6BABE" Visibility="Hidden"/>
                         </StackPanel>
                     <Button  Content="发送" IsEnabled="{Binding IsEnable,Mode=OneWay}" Command="{Binding Execute, Mode=OneWay}" Margin="0" ToolTip="发送短消息" Grid.Column="1" VerticalAlignment="Bottom" Height="32" Style="{DynamicResource ButtonStyleFastSend}" />
                 </Grid>               
             </TabItem>
-            <TabItem Header="室内定位">
+            <TabItem Header="室内位置">
                 <Grid>
                     <StackPanel>
-                        <Label Content="启动/停止："  Foreground="#FFB6BABE" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Height="35" Padding="0" VerticalContentAlignment="Center" Margin="5,0,0,0"/>
+                        <Label Content="查询方式："  Foreground="#FFB6BABE" FontSize="13" HorizontalAlignment="Left" VerticalAlignment="Top" Height="35" Padding="0" VerticalContentAlignment="Center" Margin="5,0,0,0"/>
                         <ComboBox VerticalAlignment="Center"  SelectedIndex="{Binding LocationInDoorTypeIndex}"   Foreground="#FFB6BABE" FontSize="13" Style="{DynamicResource ComboBoxStyleNormal}" Grid.Row="2" Grid.Column="1" Height="30">
-                            <ComboBoxItem Content="启动" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
-                            <ComboBoxItem Content="停止" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
+                            <ComboBoxItem Content="查询" Tag="Immediate" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
+                            <ComboBoxItem Content="周期查询" Tag="StartTriggered" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
+                            <ComboBoxItem Content="停止周期查询" Tag="StopTriggered" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
+                            <ComboBoxItem Content="轨迹查询" Tag="Track" Visibility="{x:Static svr:FunctionConfigure.TrackVisible}" Foreground="#FFD2DFF5" Height="32" Style="{DynamicResource ComboBoxItemStyleNormal}" FontSize="13"/>
                         </ComboBox>
                     </StackPanel>
                     <Button  Content="发送" IsEnabled="{Binding IsEnable,Mode=OneWay}" Command="{Binding Execute, Mode=OneWay}" Margin="0" ToolTip="发送短消息" Grid.Column="1" VerticalAlignment="Bottom" Height="32" Style="{DynamicResource ButtonStyleFastSend}" />

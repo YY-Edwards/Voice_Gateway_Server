@@ -13,11 +13,17 @@ namespace Manager.Models
 {
     public class Utility
     {
-        public static string TServerHost = "127.0.0.1";
-        public static int TServerPort = 9000;
-        public static string LogServerHost = "127.0.0.1";
-        public static int LogServerPort = 9003;
-        public static string HttpServerHost = "127.0.0.1";
+        //private static string Host = "192.168.2.122";
+        private static string Host = "127.0.0.1";
+
+        public static string TServerHost{get{return Host;}}
+        public static string LogServerHost { get { return Host; } }
+        public static string HttpServerHost { get { return Host; } }
+
+
+       
+        public static int TServerPort = 9000;       
+        public static int LogServerPort = 9003;     
         public static int HttpServerPort = 8001;
 
 

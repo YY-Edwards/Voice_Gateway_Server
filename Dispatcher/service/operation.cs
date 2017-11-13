@@ -41,8 +41,8 @@ namespace Dispatcher.Service
                     case TaskType_t.Schedule: Args = new CallArgs(CallOperatedType_t.Start); break;
                     case TaskType_t.ShortMessage: Args = new ShortMessageArgs(null); break;
                     case TaskType_t.Controler: Args = new ControlArgs(ControlerType_t.Check); break;
-                    case TaskType_t.Location: Args = new LocationArgs(LocationType_t.Query); break;
-                    case TaskType_t.LocationInDoor: Args = new  LocationInDoorArgs(LocationInDoorType_t.Start); break;
+                    case TaskType_t.Location: Args = new LocationArgs(LocationType_t.Immediate); break;
+                    case TaskType_t.LocationInDoor: Args = new  LocationInDoorArgs(LocationType_t.Immediate); break;
                     default: Args = null;
                         break;
                 }

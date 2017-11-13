@@ -177,23 +177,12 @@ namespace Dispatcher.Service
     }
     public enum LocationType_t
     {
-        Query,
-        Cycle,
-
-        CsbkQuery,
-        CsbkCycle,
-        EnhCsbkQuery,
-        EnhCsbkCycle,
-
-        StopCycle,
+        Immediate = 0,
+        StartTriggered = 1,
+        StopTriggered = 2,
         Track,
     }
 
-    public enum LocationInDoorType_t
-    {
-        Start,
-        Stop,
-    }
     public enum QuickPanelType_t
     {
         Operation,
@@ -207,14 +196,6 @@ namespace Dispatcher.Service
         Rx,
     }
     public enum LocationStatus_t
-    {
-        Idle,
-        Cycle,
-        CsbkCycle,
-        EnhCsbkCycle
-    }
-
-    public enum LocationInDoorStatus_t
     {
         Idle,
         Cycle,

@@ -219,15 +219,11 @@ namespace Dispatcher.ViewsModules
             if (_operation.Args == null) return false;
             switch ((_operation.Args as LocationArgs).Type)
             {
-                case LocationType_t.Query:
-                case LocationType_t.Cycle:
-                case LocationType_t.CsbkQuery:
-                case LocationType_t.CsbkCycle:
-                case LocationType_t.EnhCsbkQuery:
-                case LocationType_t.EnhCsbkCycle:
+                case LocationType_t.Immediate:
+                case LocationType_t.StartTriggered:
                     if (_targets != null && _targets.Find(p => p.CanLocation) != null) return true;
                     else break;
-                case LocationType_t.StopCycle:
+                case LocationType_t.StopTriggered:
                     if (_targets != null && _targets.Find(p => p.CanStopLocation) != null) return true;
                     else break;
                 case LocationType_t.Track:
@@ -241,10 +237,10 @@ namespace Dispatcher.ViewsModules
             if (_operation.Args == null) return false;
             switch ((_operation.Args as LocationInDoorArgs).Type)
             {
-                case LocationInDoorType_t.Start:
+                case LocationType_t.StartTriggered:
                      if (_targets != null && _targets.Find(p => p.CanLocationInDoor) != null) return true;
                     else break;
-                case LocationInDoorType_t.Stop:
+                case LocationType_t.StopTriggered:
                      if (_targets != null && _targets.Find(p => p.CanStopLocationInDoor) != null) return true;
                     else break;
             }
@@ -318,7 +314,7 @@ namespace Dispatcher.ViewsModules
             }
             set
             {
-                if (_operation != null && _operation.Args != null) (_operation.Args as LocationInDoorArgs).Type = (LocationInDoorType_t)value;
+                if (_operation != null && _operation.Args != null) (_operation.Args as LocationInDoorArgs).Type = (LocationType_t)value;
                 NotifyPropertyChanged("EnableCallOrStop");
                 NotifyPropertyChanged("IsEnable");
                 NotifyPropertyChanged("OnlineOpacity");
@@ -359,15 +355,11 @@ namespace Dispatcher.ViewsModules
                     case TaskType_t.Location:
                         switch ((_operation.Args as LocationArgs).Type)
                         {
-                            case LocationType_t.Query:
-                            case LocationType_t.Cycle:
-                            case LocationType_t.CsbkQuery:
-                            case LocationType_t.CsbkCycle:
-                            case LocationType_t.EnhCsbkQuery:
-                            case LocationType_t.EnhCsbkCycle:
+                            case LocationType_t.Immediate:
+                            case LocationType_t.StartTriggered:
                                 foreach (VMTarget target in _targets) if (target.CanLocation) target.Location.Execute(_operation.Args);                                
                                 break;
-                            case LocationType_t.StopCycle:
+                            case LocationType_t.StopTriggered:
                                 foreach (VMTarget target in _targets) if (target.CanStopLocation) target.Location.Execute(_operation.Args);      
                                 break;
                         }
@@ -375,10 +367,10 @@ namespace Dispatcher.ViewsModules
                     case TaskType_t.LocationInDoor:
                         switch ((_operation.Args as LocationInDoorArgs).Type)
                         {
-                            case LocationInDoorType_t.Start:
+                            case LocationType_t.StartTriggered:
                                 foreach (VMTarget target in _targets) if (target.CanLocationInDoor) target.LocationInDoor.Execute(_operation.Args);    
                                 break;
-                            case LocationInDoorType_t.Stop:
+                            case LocationType_t.StopTriggered:
                                 foreach (VMTarget target in _targets) if (target.CanStopLocationInDoor) target.LocationInDoor.Execute(_operation.Args);    
                                 break;
                         }                       
