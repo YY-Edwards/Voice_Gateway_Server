@@ -55,7 +55,7 @@ void  callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 			}
 			if (dis.isTcpConnect)
 			{
-				dis.call( opterateType, id, operate,sessionId);
+				dis.call( opterateType, operate, id,sessionId);
 			}
 			else
 			{
