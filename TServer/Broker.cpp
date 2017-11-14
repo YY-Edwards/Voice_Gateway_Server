@@ -204,7 +204,7 @@ void CBroker::sendRadioConfig()
 	}
 	if (mnis != "")
 	{
-		mnis = "\"mnis\":" + mnis + ",\"";
+		mnis = "\"mnis\":" + mnis + ",";
 	}
 	else
 	{
