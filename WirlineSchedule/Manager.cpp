@@ -449,6 +449,12 @@ int CManager::config(REMOTE_TASK* pTask)
 	bool bDongleChange = false;
 	bool bMnisChange = false;
 	CONFIG_SCHDULE_ISENABLE = pConfig->reapeater.IsEnable;
+	if (!wlScheduleIsEnable())
+	{
+		sprintf_s(m_reportMsg, "wlScheduleIsEnable is false");
+		sendLogToWindow();
+		return 0;
+	}
 	CONFIG_MNIS_ID = pConfig->mnis.ID;
 	g_pNet->setAudioPath(pConfig->reapeater.AudioPath);
 	if (0 != strcmp(CONFIG_MASTER_IP, pConfig->reapeater.Master.ip))

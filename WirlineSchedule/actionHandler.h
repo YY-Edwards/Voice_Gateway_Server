@@ -317,18 +317,38 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 			{
 				parseRepeaterCfg(pNewTask->param.info.configParam.reapeater, d["repeater"].GetObject());
 			}
+			else
+			{
+				pNewTask->param.info.configParam.reapeater.IsEnable = false;
+			}
+
 			if (d.HasMember("mnis") && d["mnis"].IsObject())
 			{
 				parseMnisCfg(pNewTask->param.info.configParam.mnis, d["mnis"].GetObject());
 			}
+			else
+			{
+				pNewTask->param.info.configParam.mnis.IsEnable = false;
+			}
+
 			if (d.HasMember("location") && d["location"].IsObject())
 			{
 				parseLocationCfg(pNewTask->param.info.configParam.location, d["location"].GetObject());
 			}
+			else
+			{
+				pNewTask->param.info.configParam.location.IsEnable = false;
+			}
+
 			if (d.HasMember("locationIndoor") && d["locationIndoor"].IsObject())
 			{
 				parseLocationIndoorCfg(pNewTask->param.info.configParam.locationindoor, d["repeater"].GetObject());
 			}
+			else
+			{
+				pNewTask->param.info.configParam.locationindoor.IsEnable = false;
+			}
+
 			/*config配置优先级为最高*/
 			push_front_task(pNewTask);
 		}

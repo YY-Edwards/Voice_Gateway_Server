@@ -523,6 +523,10 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 			args["SessionId"] = FieldValue((data.sessionId).c_str());
 		}
 		dis.send2Client("callStatus", args);
+		if (data.result == STOP)
+		{
+			dis.call(0,STOP,0,""); // ¹Ø±Õptt
+		}
 		break;
 	case STOP_CALL:
 		args["CallStatus"] = 1;  // 0: idle,1: tx, 2:rx, 4:fatal
@@ -619,7 +623,7 @@ void DispatchOperate::connect(radio_t radioCfg, mnis_t mnisCfg, location_t locat
 }
 void DispatchOperate::call( int type,int op, int id,std::string sessionId)
 {
-	pTs->call(type, id, op,sessionId);
+	pTs->call(type, op, id,sessionId);
 }
 void DispatchOperate::control( int type,  int id,std::string sessionId)
 {

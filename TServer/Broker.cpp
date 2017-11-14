@@ -178,15 +178,57 @@ void CBroker::sendWirelanConfig()
 	//std::string strConnect = CSettings::instance()->getRequest("wlConnect", "wl", m_wirelanClient->getCallId(), CSettings::instance()->getValue("repeater"));
 	//m_wirelanClient->send(strConnect.c_str(), strConnect.size());
 
-	std::string content = 
-		"{\"repeater\":" + CSettings::instance()->getValue("repeater") +
-		",\"mnis\":" + CSettings::instance()->getValue("mnis") +
-		",\"location\":" + CSettings::instance()->getValue("location") +
-		",\"locationIndoor\":" + CSettings::instance()->getValue("locationIndoor") + "}";
+	//std::string content = 
+		//"{\"repeater\":" + CSettings::instance()->getValue("repeater") +
+		//",\"mnis\":" + CSettings::instance()->getValue("mnis") +
+		//",\"location\":" + CSettings::instance()->getValue("location") +
+		//",\"locationIndoor\":" + CSettings::instance()->getValue("locationIndoor") + "}";
 	//std::string strConnect = CSettings::instance()->getRequest("connect", "radio", m_radioClient->getCallId(), content);
 	//m_radioClient->send(strConnect.c_str(), strConnect.size());
+	//std::string strConnect = CSettings::instance()->getRequest("wlConnect", "wl", m_wirelanClient->getCallId(), content);
+	//m_wirelanClient->send(strConnect.c_str(), strConnect.size());
+
+
+	std::string repeater = CSettings::instance()->getValue("repeater");
+	std::string mnis = CSettings::instance()->getValue("mnis");
+	std::string location = CSettings::instance()->getValue("location");
+	std::string locationIndoor = CSettings::instance()->getValue("locationIndoor");
+	if (repeater != "")
+	{
+		repeater = "{\"repeater\":" + repeater + ",";
+	}
+	else
+	{
+		repeater = "\"repeater\":null ,";
+	}
+	if (mnis != "")
+	{
+		mnis = "\"mnis\":" + mnis + ",";
+	}
+	else
+	{
+		mnis = "\"mnis\":null ,";
+	}
+	if (location != "")
+	{
+		location = "\"location\":" + location + ",";
+	}
+	else
+	{
+		location = "\"location\":null ,";
+	}
+	if (locationIndoor != "")
+	{
+		locationIndoor = "\"locationIndoor\":" + locationIndoor + "}";
+	}
+	else
+	{
+		locationIndoor = "\"locationIndoor\":null }";
+	}
+	std::string content = repeater + mnis + location + locationIndoor;
 	std::string strConnect = CSettings::instance()->getRequest("wlConnect", "wl", m_wirelanClient->getCallId(), content);
 	m_wirelanClient->send(strConnect.c_str(), strConnect.size());
+
 }
 void CBroker::sendRadioConfig()
 {
@@ -204,7 +246,7 @@ void CBroker::sendRadioConfig()
 	}
 	if (mnis != "")
 	{
-		mnis = "\"mnis\":" + mnis + ",\"";
+		mnis = "\"mnis\":" + mnis + ",";
 	}
 	else
 	{
