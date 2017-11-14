@@ -239,11 +239,13 @@ namespace Dispatcher.ViewsModules
                 Log.Fatal("Login Failure.Should Connect TServer and LogServer Begin Login.");
                 return;
             }
+            FunctionConfigure.CurrentUser = uid;
 
             new Thread(new ThreadStart(delegate()
             {
 
                 _waitlogin = new Semaphore(0, 1);
+
 
                 _user.Auth(uid, psd);
                 _waitlogin.WaitOne();

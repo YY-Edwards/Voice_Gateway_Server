@@ -24,7 +24,7 @@ namespace Dispatcher.ViewsModules
             }
         }
 
-        public string CurrentUser { get { return "JHDEV8"; } }
+        public string CurrentUser { get { return FunctionConfigure.CurrentUser; } }
 
         private Visibility _restorevisible = Visibility.Hidden;
         public Visibility RestoreButtonVisble { get { return _restorevisible; } }

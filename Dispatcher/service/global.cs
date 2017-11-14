@@ -122,6 +122,7 @@ namespace Dispatcher.Service
 
 
         public static Mode_t WorkMode { get; private set; }
+        public static string CurrentUser { get; set; }
 
 
         private static void InitilizeSystemEnable()
