@@ -257,7 +257,7 @@ namespace Dispatcher.Service
 
             try
             {
-                if ((_status.getType & (long)StatusType_t.ConnectStatus) != 0) OnConnectStatus((_status.info as string).ToLong());
+                if ((_status.getType & (long)StatusType_t.ConnectStatus) != 0) OnConnectStatus((_status.info.ToString()).ToLong());
                 if ((_status.getType & (long)StatusType_t.OnLineList) != 0) OnOnLineList(JsonConvert.DeserializeObject<List<OnLineStatus_t>>(JsonConvert.SerializeObject(_status.info)));
             }
             catch(Exception ex)
