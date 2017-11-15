@@ -759,7 +759,7 @@ void CRadioGps::RecvData()
 				{
 					//return;
 				}
-				if (lat != -1 && lon != -1)
+				if (lat >0 && lon >0 )
 				{
 
 					try
