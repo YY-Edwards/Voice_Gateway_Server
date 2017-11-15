@@ -9,7 +9,7 @@
 #define SEND_TRG_CSBK_EGPD_QUERY_LENTH   16
 #define SEND_STOP_LENTH   8
 #define RECV_IMME_LENTH   28
-#define RECV_TRG_LENTH   17
+#define RECV_TRG_LENTH   16
 #define RECV_CSBK_LENTH   19
 #define RECV_CSBK_EGPS_LENTH   32
 #define MAX_RECV_LENGTH     512
