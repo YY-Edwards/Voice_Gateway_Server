@@ -536,8 +536,6 @@ void CDataScheduling::updateOnLineRadioInfo(int radioId, int status, int gpsQuer
 		{
 			itor->second.gpsQueryMode = gpsQueryMode;
 		}
-		itor->second.status = status;
-		itor->second.id = radioId;
 		/*当前列表存在*/
 		if (status != itor->second.status)
 		{
@@ -545,6 +543,9 @@ void CDataScheduling::updateOnLineRadioInfo(int radioId, int status, int gpsQuer
 			//通知界面
 			sendToClient(RADIO_ARS, response);
 		}
+		itor->second.status = status;
+		itor->second.id = radioId;
+		
 	}
 	else
 	{
