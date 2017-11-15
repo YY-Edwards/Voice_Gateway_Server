@@ -85,6 +85,7 @@ namespace Manager.ViewModels
         {
             get
             {
+                if (_deviceInfo == null) return "设备连接异常";
                 switch(DeviceType)
                 {
                     case Register.Device_t.VehicleStation:
