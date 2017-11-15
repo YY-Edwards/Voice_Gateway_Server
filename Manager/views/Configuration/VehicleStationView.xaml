@@ -48,7 +48,7 @@
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
                 <RadioButton x:Name="GeneralMode"  Content="常规模式" Tag="General" HorizontalAlignment="Left" VerticalAlignment="Center"  Foreground="#FFBFBFBF" FontSize="13" Grid.Column="1" Style="{DynamicResource RadioButtonStylenORMAL}" BorderThickness="0" GroupName="RadioWorkMode" IsChecked="{Binding GeneralMode, Mode=OneWay}"/>
-                <RadioButton x:Name="ClusterMode"  Content="集群模式" Tag="Cluster" VerticalAlignment="Center" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Grid.Row="1" Style="{DynamicResource RadioButtonStylenORMAL}" HorizontalAlignment="Left" Width="150" BorderThickness="0"  GroupName="RadioWorkMode" IsChecked="{Binding CSBKQuery, Mode=OneWay}" />
+                <RadioButton x:Name="ClusterMode"  Content="集群模式" Tag="Cluster" VerticalAlignment="Center" Grid.Column="1" Foreground="#FFBFBFBF" FontSize="13" Grid.Row="1" Style="{DynamicResource RadioButtonStylenORMAL}" HorizontalAlignment="Left" Width="150" BorderThickness="0"  GroupName="RadioWorkMode" IsChecked="{Binding ClusterMode, Mode=OneWay}" />
             </Grid>
 
             <TextBlock TextWrapping="Wrap" Text="车载台服调度服务地址" DockPanel.Dock="Top" Margin="20,6,0,6" Foreground="#FFBFBFBF" FontSize="13"/>

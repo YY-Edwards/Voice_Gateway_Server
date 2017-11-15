@@ -8,6 +8,8 @@ using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows.Data;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 
 using Sigmar;
 
@@ -227,9 +229,26 @@ namespace Dispatcher.ViewsModules
             CTServer.Instance().OnStatusChanged += OnTServerChanged;
             CLogServer.Instance().OnStatusChanged += OnLogServerChanged;
 
-            InitializeTServer();
-            InitializeLogServer();
+            new Task(ConnectServer).Start();          
         }
+
+        private void ConnectServer()
+        {
+            while(true)
+            {
+                if(!m_TServerConnected)
+                {
+                    InitializeTServer();
+                }
+                if(!m_LogServerConnected)
+                {
+                    InitializeLogServer();
+                }
+
+                Thread.Sleep(20000);
+            }
+        }
+
 
         private CDispatcher _dispatcher;
 
@@ -249,7 +268,6 @@ namespace Dispatcher.ViewsModules
             }
 
             CTServer.Instance().Initialize();
-
         }
 
         private void InitializeLogServer()
