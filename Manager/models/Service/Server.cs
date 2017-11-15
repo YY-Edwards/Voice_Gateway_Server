@@ -288,6 +288,7 @@ namespace Manager.Models
         setLocationSetting,
         getLocationSetting,
 
+        queryDevice,
         queryLicense,
         registerLicense,
 

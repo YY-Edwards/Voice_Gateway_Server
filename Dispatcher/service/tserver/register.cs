@@ -14,11 +14,11 @@ namespace Dispatcher.Service
 {
    public class CRegister:CConfiguration
    {
-       public DeviceType_t DeviceType;
-       public string RadioMode;
-       public string RadioSerial;
-       public string RepeaterMode;
-       public string RepeaterSerial;
+       //public DeviceType_t DeviceType;
+       //public string RadioMode;
+       //public string RadioSerial;
+       //public string RepeaterMode;
+       //public string RepeaterSerial;
 
        [JsonProperty(PropertyName = "Time")]
        public string time;
@@ -71,11 +71,11 @@ namespace Dispatcher.Service
             {
                 CRegister tserver = JsonConvert.DeserializeObject<CRegister>(json);
 
-                DeviceType = tserver.DeviceType;
-                RadioMode = tserver.RadioMode;
-                RadioSerial = tserver.RadioSerial;
-                RepeaterMode = tserver.RepeaterMode;
-                RepeaterSerial = tserver.RepeaterSerial;
+                //DeviceType = tserver.DeviceType;
+                //RadioMode = tserver.RadioMode;
+                //RadioSerial = tserver.RadioSerial;
+                //RepeaterMode = tserver.RepeaterMode;
+                //RepeaterSerial = tserver.RepeaterSerial;
      
                 time = tserver.time;
                 IsEver = tserver.IsEver;
@@ -108,11 +108,11 @@ namespace Dispatcher.Service
 
        private void InitializeValue()
        {
-           DeviceType = DeviceType_t.Radio;
-           RadioMode = string.Empty;
-           RadioSerial = string.Empty;
-           RepeaterMode = string.Empty;
-           RepeaterSerial = string.Empty;
+           //DeviceType = DeviceType_t.Radio;
+           //RadioMode = string.Empty;
+           //RadioSerial = string.Empty;
+           //RepeaterMode = string.Empty;
+           //RepeaterSerial = string.Empty;
 
            time = DateTime.Now.ToString("yyyyMMddHHmmss");
            IsEver = 0;

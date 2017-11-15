@@ -123,44 +123,7 @@ namespace Manager.ViewModels
             }
         }
 
-        //public BaseSettingView BaseSetting { get { return _BaseSetting; } private set { _BaseSetting = value; } }
-        //public RadioSettingView RadioSetting{get{return _RadioSetting;} private set{_RadioSetting = value;}}
-        //public RepeaterSettingView RepeaterSetting { get { return _RepeaterSetting; } private set { _RepeaterSetting = value; } }
-        //public MnisSettingView MnisSetting { get { return _MnisSetting; } private set { _MnisSetting = value; } }
-        //public LocationSettingView LocationSetting { get { return _LocationSetting; } private set { _LocationSetting = value; } }
-        //public LocationInDoorSettingView LocationInDoorSetting { get { return _LocationInDoorSetting; } private set { _LocationInDoorSetting = value; } }
-
-        //private void OnRadioSettingEnableChanged(object sender, bool enable)
-        //{
-        //    if(enable)
-        //    {
-        //        RepeaterSetting.Disable();
-        //    }
-        //}
-
-        //private void OnRadioSettingQueryTypChanged(object sender, LocationQueryType_t type)
-        //{
-        //    if (!MnisSetting.Enable)
-        //    {
-        //        _LocationSetting.SetQueryType(type);
-        //        _LocationInDoorSetting.SetQueryType(type);
-        //    }
-        //}
-
-        //private void OnRepeaterSettingEnableChanged(object sender, bool enable)
-        //{
-        //    if (enable)
-        //    {
-        //        RadioSetting.Disable();
-        //    }
-        //}
-
-
-        //private void OnMnisSettingQueryTypChanged(object sender, LocationQueryType_t type)
-        //{
-        //    _LocationSetting.SetQueryType(type);
-        //    _LocationInDoorSetting.SetQueryType(type);
-        //}
+       
       
         public ICommand ReadManagement
         {
@@ -168,7 +131,7 @@ namespace Manager.ViewModels
             {
                 return new Command(() =>
                 {
-                    if (RegisterViewModel!=null) RegisterViewModel.Query.Execute(null);
+                    if (RegisterViewModel != null) RegisterViewModel.Query.Execute(null);
                     Read();  
                 });
             }
