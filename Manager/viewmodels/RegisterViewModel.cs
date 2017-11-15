@@ -20,6 +20,7 @@ namespace Manager.ViewModels
     public class RegisterViewModel :  INotifyPropertyChanged
     {
         private Register.License_t _licenseStatus;
+        private Register.DeviceInfor _deviceInfo;
         private Register _register;
         private bool _isTimeout;
 
@@ -35,9 +36,9 @@ namespace Manager.ViewModels
 
             if(_register == null)
             {
-                _register = new Register(); 
-                _register.ReceivedLicenseMessage += new Action<object, bool, Register.License_t>(OnReceivedLicenseMessage);
-                _register.ReceivedRegisterReply += new Action<object, bool, Register.License_t>(OnReceivedRegisterReply);
+                _register = new Register();
+                _register.ReceivedDeviceInfo += new Action<object, bool, Register.DeviceInfor>(OnReceivedDeviceInfo);
+                _register.ReceivedRegisterStatus += new Action<object, bool, Register.License_t>(OnReceivedRegisterStatus);
                 _register.Timeout += new Action<object>(OnRegisterTimeout);
             }
 
@@ -71,8 +72,8 @@ namespace Manager.ViewModels
         {
             get
             {
-                if (_licenseStatus == null) return _deviceType;
-                else return _licenseStatus.RegisterDeviceType; 
+                if (_deviceInfo == null) return _deviceType;
+                else return _deviceInfo.RegisterDeviceType; 
             }
             set
             {
@@ -103,67 +104,45 @@ namespace Manager.ViewModels
         {
             get
             {
-                if (_licenseStatus == null) return "未知";
-                switch(DeviceType)
-                {
-                    case Register.Device_t.VehicleStation:
-                        return _licenseStatus.RadioSerial;
-                    case Register.Device_t.Repeater:
-                        return _licenseStatus.RepeaterSerial;
-                    
-                    case Register.Device_t.Portable:
-                    case Register.Device_t.PC:
-                    default:return "未知";
-                }
-
+                if (_deviceInfo == null) return "未知";
+                return _deviceInfo.DeviceSerial;                
             }
         }
 
 
         public string RegisterResult { get{return _registerResult;} private set{_registerResult = value; NotifyPropertyChanged("RegisterResult");} }
         public Visibility RegisterResultVisible { get{return _registerResultVisible;} private set{_registerResultVisible = value; NotifyPropertyChanged("RegisterResultVisible");} }
-       
 
-        private void OnReceivedLicenseMessage(object sender,bool status, Register.License_t license)
+
+        private void OnReceivedDeviceInfo(object sender, bool status, Register.DeviceInfor device)
         {
-            _licenseStatus = license;
-            if (status && license != null)
-            {
-                _isRegiser = true;  
-            }
-
-            NotifyPropertyChanged(new string[] { "RegisterStatus", "DeviceTypeDept", "DeviceSN" });
+            _deviceInfo = device;
+            NotifyPropertyChanged(new string[] { "DeviceTypeDept", "DeviceSN" });           
         }
 
-        private void OnReceivedRegisterReply(object sender,bool status, Register.License_t license)
+        private void OnReceivedRegisterStatus(object sender, bool status, Register.License_t license)
         {
-            if (license != null)
+            if (status &&  license != null)
             {
-                _licenseStatus.RegisterTime = license.RegisterTime;
-                _licenseStatus.IsEver = license.IsEver;
-                _licenseStatus.ExpirationTime = license.ExpirationTime;
-            }
-
-            if (status)
-            {
+                _licenseStatus = license;
                 _isRegiser = true;
                 RegisterResult = "认证成功";
-                NotifyPropertyChanged(new string[] { "RegisterStatus", "DeviceTypeDept", "DeviceSN" });
             }
             else
             {
                 _isRegiser = false;
                 RegisterResult = "认证失败";
-                NotifyPropertyChanged(new string[] { "RegisterStatus"});
             }
-        }
 
+            NotifyPropertyChanged("RegisterStatus");
+        }
 
 
         public ICommand Query{get{return new Command(()=>
         {
             RegisterResultVisible = Visibility.Collapsed;
            // if(!_isTimeout && _register != null)_register.QueryLicense();
+            if (_register != null) _register.QueryDevice();  
             if (_register != null) _register.QueryLicense();  
         });}}
 

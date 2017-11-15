@@ -14,9 +14,9 @@ namespace Manager.Models
 {
    public class Register
    {
-       public event Action<object, bool, License_t> ReceivedLicenseMessage;
-        public event Action<object,bool, License_t> ReceivedRegisterReply;
-        public event Action<object> Timeout;
+       public event Action<object, bool, DeviceInfor> ReceivedDeviceInfo;
+       public event Action<object, bool, License_t> ReceivedRegisterStatus;
+       public event Action<object> Timeout;
 
         private TServer _TServer{get{return TServer.Instance();}}
 
@@ -28,6 +28,32 @@ namespace Manager.Models
         private void OnTServerTimeout(object sender, Server.Request request)
         {
             if (Timeout != null) Timeout(this);
+        }
+
+
+        public DeviceInfor QueryDevice()
+        {
+            if (_TServer == null) return null;
+
+            Server.Response reponse = _TServer.SendRequest<Server.Response>(RequestOpcode.queryDevice, RequestType.radio);
+            if (reponse != null)
+            {
+                try
+                {
+                    string contents = JsonConvert.SerializeObject(reponse.contents);
+                    DeviceInfor deviceInfo = JsonConvert.DeserializeObject<DeviceInfor>(contents);
+
+                    if (ReceivedDeviceInfo != null) ReceivedDeviceInfo(this, reponse.status.ToLower() == "success", deviceInfo);
+
+                    return deviceInfo;
+                }
+                catch
+                {
+
+                }
+            }
+
+            return null;
         }
 
         public License_t QueryLicense()
@@ -42,7 +68,7 @@ namespace Manager.Models
                     string contents = JsonConvert.SerializeObject(reponse.contents);
                     License_t license = JsonConvert.DeserializeObject<License_t>(contents);
 
-                    if (ReceivedLicenseMessage != null) ReceivedLicenseMessage(this, reponse.status.ToLower() == "success",  license);
+                    if (ReceivedRegisterStatus != null) ReceivedRegisterStatus(this, reponse.status.ToLower() == "success", license);
 
                     return license;
                 }
@@ -78,7 +104,7 @@ namespace Manager.Models
                     string contents = JsonConvert.SerializeObject(reponse.contents);
                     License_t license = JsonConvert.DeserializeObject<License_t>(contents);
 
-                    if (ReceivedRegisterReply != null) ReceivedRegisterReply(this, reponse.status.ToLower() == "success", license);
+                    if (ReceivedRegisterStatus != null) ReceivedRegisterStatus(this, reponse.status.ToLower() == "success", license);
 
                     return reponse.status.ToLower() == "success";
                 }
@@ -100,18 +126,15 @@ namespace Manager.Models
            Portable = 3,
            PC = 4,
        }
-       public class License_t
+
+       public class DeviceInfor
        {
            public int DeviceType;
-           public string RadioMode;
-           public string RadioSerial;
-           public string RepeaterMode;
-           public string RepeaterSerial;
-           public string Time;
-           public int IsEver;
-           public string Expiration;
+           public string DeviceMode;
+           public string DeviceSerial;
 
-            [JsonIgnore]
+
+           [JsonIgnore]
            public Device_t RegisterDeviceType
            {
                get
@@ -130,6 +153,14 @@ namespace Manager.Models
                    DeviceType = (int)value;
                }
            }
+       }
+
+
+       public class License_t
+       {
+           public string Time;
+           public int IsEver;
+           public string Expiration;
 
 
            [JsonIgnore]
@@ -170,55 +201,6 @@ namespace Manager.Models
                    Expiration = value.ToString("yyyyMMddHHmmss");
                }
            }
-       }
-
-       //public event Action<RequestOpcode, bool> RegisterStatusChanged;
-       //public CRegister()
-       //    : base(
-       //    SettingType.Register)
-       //{
-
-       //}
-
-       //public override void CustomParse(RequestOpcode opcode,bool success, string reply)
-       //{          
-       //    QueryResponse response =  null;
-       //    try
-       //    {
-       //        response = JsonConvert.DeserializeObject<QueryResponse>(reply);
-       //    }
-       //    catch
-       //    {
-       //    }
-
-       //    OnResponse(opcode,success, response);        
-       //}
-
-
-       //private void OnResponse(RequestOpcode opcode,bool success, QueryResponse response)
-       //{
-       //    if (RegisterStatusChanged != null) RegisterStatusChanged(opcode, success);           
-       //}
-      
-
-       //public void Query()
-       //{
-       //    Request(RequestOpcode.queryLicense, null);
-       //}
-
-       //public bool Register(string key)
-       //{
-       //    string[] licArray = key.Split(new char[2] { ' ', '-' });
-       //    if (licArray.Length <= 2 || licArray[2] == null)
-       //    {             
-       //        return false;
-       //    }
-
-       //    Dictionary<string, string> pa = new Dictionary<string, string>();
-       //    pa.Add("license", licArray[2]);
-
-       //    Request(RequestOpcode.registerLicense, Build(pa));
-       //    return true;
-       //}
+       }   
     }
 }
