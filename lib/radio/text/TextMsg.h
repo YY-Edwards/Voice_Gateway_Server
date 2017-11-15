@@ -71,6 +71,7 @@ public:
 	std::string TCHAR2STRING(TCHAR * STR);
 	std::string UTF8ToGBK(const std::string& strUTF8);
 	std::string  GBKToUTF8(const std::string& strGBK);
+	time_t getTimeStamp();
 private:
 	int m_nSendSequenceNumber;
 	bool m_RcvSocketOpened;
@@ -80,6 +81,7 @@ private:
 	bool m_msgThread;
 	HANDLE m_mWth;
 	int m_selfId;
+	time_t   lastTimestamp;
 	
 };
 
