@@ -19,7 +19,7 @@
                     <DataTemplate>
                         <Border x:Name="Msg"  Margin="0" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Background="#00000000" Height="32">
                             <DockPanel >
-                                <Image x:Name="Icon"  Source="/Manager;component/Views/images/ride_18_18_on.png" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0"/>
+                                <Image x:Name="Icon"  Source="/Manager;component/Views/images/staff_18_18_on.png" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="20,0,0,0"/>
                                 <Image x:Name="Iconx" Source="/Manager;component/Views/images/vehicle_18_18_on.png" Width="18" Height="18" Visibility="Collapsed"  HorizontalAlignment="Left" Margin="20,0,0,0"/>
                                 <DockPanel x:Name="dck_Content" Margin="5,0" >
                                     <TextBlock Text="{Binding Name}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" />

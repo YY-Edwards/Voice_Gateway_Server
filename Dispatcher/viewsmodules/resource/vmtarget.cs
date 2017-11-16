@@ -409,6 +409,7 @@ namespace Dispatcher.ViewsModules
 
 
                 _dispatcher.CallResponse += new CallResponseHandler(OnCallResponse);
+                _dispatcher.CallStatusChanged += new CallResponseHandler(OnCallStatusChanged);
                 _dispatcher.CallRequest += new CallRequestHandler(OnCallRequest);
 
                 _dispatcher.ShortMessageResponse += new ShortMessageResponseHandler(OnShortMessageResponse);
@@ -640,7 +641,33 @@ namespace Dispatcher.ViewsModules
                     break;
             }
         }
+        private void OnCallStatusChanged(CallResponseArgs e)
+        {
+            if (e == null || !IsThis(e.Type, e.Target)) return;
 
+            if (e.Opcode == ExecType_t.Start)
+            {
+                if (!IsInCall && e.Status == OperationStatus_t.Success)
+                {
+                    Log.Message("开始呼叫  " + FullName);
+                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "开始呼叫" });
+
+                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Tx));
+                }             
+            }
+            else if (e.Opcode == ExecType_t.Stop)
+            {
+                if (IsInCall && e.Status == OperationStatus_t.Success)
+                {
+                    Log.Message("结束呼叫  " + FullName);
+                    AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "结束呼叫" });
+
+                    if (IsOnline != true) ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, true));
+                    ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Idle));
+                }            
+            }
+        }
 
         private void OnCallResponse(CallResponseArgs e)
         {
@@ -678,6 +705,8 @@ namespace Dispatcher.ViewsModules
             }
         }
 
+
+       
         private void OnCallRequest(CallRequestArgs e)
         {
             if (e == null) return;

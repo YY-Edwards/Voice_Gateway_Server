@@ -154,6 +154,7 @@ void staffAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 
 				std::string name = val.HasMember("name") ? val["name"].GetString() : "";
 				std::string phone = val.HasMember("phone") ? val["phone"].GetString() : "";
+				int typevalid = val.HasMember("type") ? val["type"].GetInt() : 0;
 
 				recordType updateVal;
 				if (name.size() > 0)
@@ -164,6 +165,9 @@ void staffAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId
 				{
 					updateVal["phone"] = phone;
 				}
+				
+				updateVal["valid"] = typevalid == 0 ? "1" : "0";//isstaff//
+
 				std::string updCond = " where `id`='" + std::to_string(id) + "'";
 				bool ret = CDb::instance()->updateStaff(updCond.c_str(), updateVal);
 				if (!ret)

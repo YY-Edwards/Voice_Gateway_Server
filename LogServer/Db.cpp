@@ -21,7 +21,7 @@ void createUser(CMySQL* pMySQL)
 {
 	pMySQL->createTable("CREATE TABLE IF NOT EXISTS `user` ( \
 						`id` BIGINT NOT NULL, \
-						`username` VARCHAR(64) NOT NULL, \
+						`username` VARCHAR(64) BINARY NOT NULL, \
 						`password` VARCHAR(300) NOT NULL, \
 						`type` VARCHAR(64) NOT NULL DEFAULT 'radio', \
 						`authority` TinyText NOT NULL, \
