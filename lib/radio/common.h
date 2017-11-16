@@ -30,6 +30,8 @@
 #define               GPS_TRIGG_COMM_INDOOR  25
 #define               GPS_TRIGG_CSBK_INDOOR  26
 #define               GPS_TRIGG_CSBK_EGPS_INDOOR 27
+#define               GPS_IMME_COMM_INDOOR    28
+#define               GPS_IMME_CSBK_INDOOR    29
 #define               MNIS_DIS_CONNECT       30
 #define PRIVATE_MSG_FLG        12
 #define GROUP_MSG_FLG          225

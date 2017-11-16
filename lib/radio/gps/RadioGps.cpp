@@ -278,6 +278,24 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,double cycle,int cai
 			
 	}
 		break;
+	case GPS_IMME_COMM_INDOOR:
+	{
+		memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
+		m_ThreadGps->SendBuffer[0] = Immediate_Location_Request;
+		m_ThreadGps->SendBuffer[1] = Immediate_Location_Request_Tokens_Length;
+		m_ThreadGps->SendBuffer[2] = Location_RequestID_Start;
+		m_ThreadGps->SendBuffer[3] = 0x04;
+		m_ThreadGps->SendBuffer[4] = 0x24;
+		m_ThreadGps->SendBuffer[5] = 0x68;
+		m_ThreadGps->SendBuffer[6] = 0xAC;
+		m_ThreadGps->SendBuffer[7] = 0xE0;
+		m_ThreadGps->SendBuffer[8] = 0x6c;   //becon only
+		m_ThreadGps->SendBuffer[9] = 0x7c;  //request-bcon-maj-min-time
+		m_ThreadGps->SendBuffer[10] = iBconNum & 0xff;  //becon number
+		m_ThreadGps->SendBuffer[11] = Start_Trigger_Element;
+		m_ThreadGps->gpsLength = SEND_IMM_QUERY_LENTH+2;
+	}
+		break;
 	case GPS_TRIGG_COMM_INDOOR:
 		if (!isEme)
 		{
@@ -316,6 +334,27 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,double cycle,int cai
 			m_ThreadGps->gpsLength = SEND_IMM_QUERY_LENTH+3;
 		}
 		
+		break;
+	case GPS_IMME_CSBK_INDOOR:
+	{
+		memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
+		m_ThreadGps->SendBuffer[0] = Immediate_Location_Request;
+		m_ThreadGps->SendBuffer[1] = Immediate_Location_Request_Tokens_Length;
+		m_ThreadGps->SendBuffer[2] = Location_RequestID_Start;
+		m_ThreadGps->SendBuffer[3] = 0x04;
+		m_ThreadGps->SendBuffer[4] = 0x24;
+		m_ThreadGps->SendBuffer[5] = 0x68;
+		m_ThreadGps->SendBuffer[6] = 0xAC;
+		m_ThreadGps->SendBuffer[7] = 0xE0;
+		m_ThreadGps->SendBuffer[8] = CSBK_Start_Require_Data;
+		m_ThreadGps->SendBuffer[9] = CSBK_Require_Data_Length;
+		m_ThreadGps->SendBuffer[10] = Request_LRRP_CSBK;
+		m_ThreadGps->SendBuffer[11] = 0x6c;   //becon only
+		m_ThreadGps->SendBuffer[12] = 0x7c;  //request-bcon-maj-min-time
+		m_ThreadGps->SendBuffer[13] = iBconNum & 0xff;  //becon number
+		m_ThreadGps->SendBuffer[14] = Start_Trigger_Element;
+		m_ThreadGps->gpsLength = SEND_IMM_CSBK_QUERY_LENTH + 5;
+	}
 		break;
 	case GPS_TRIGG_CSBK_INDOOR:
 		memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
