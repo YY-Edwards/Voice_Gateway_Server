@@ -247,13 +247,13 @@ namespace Dispatcher.ViewsModules
                 _waitlogin = new Semaphore(0, 1);
 
 
-                _user.Auth(uid, psd);
-                _waitlogin.WaitOne();
-                if (!_issuccess) return;
+                //_user.Auth(uid, psd);
+                //_waitlogin.WaitOne();
+                //if (!_issuccess) return;
 
-                _register.Get();
-                _waitlogin.WaitOne();
-                if (!_issuccess) return;
+                //_register.Get();
+                //_waitlogin.WaitOne();
+                //if (!_issuccess) return;
 
                 if (!ReadSetting()) return;
 

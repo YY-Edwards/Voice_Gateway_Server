@@ -85,7 +85,7 @@ namespace Dispatcher.ViewsModules
 
         private void ExportFile(string name, string filecontents)
         {
-            ExportFile(name, Encoding.Default.GetBytes(filecontents));
+            ExportFile(name, Encoding.UTF8.GetBytes(filecontents));
         }
 
         #region INotifyPropertyChanged Members

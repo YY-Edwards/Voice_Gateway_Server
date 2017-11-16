@@ -1012,6 +1012,16 @@ namespace Dispatcher.ViewsModules
         }
         private void LocationExec(object parameter)
         {
+            LocationType_t type = (parameter as string).ToEnum<LocationType_t>();
+            if(type == LocationType_t.StartTriggered)
+            {
+                ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.Cycle));
+            }
+            else if(type == LocationType_t.StopTriggered)
+            {
+                ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.Idle));
+            }
+
             LocationRequest(QueryLocationType_t.LocationGps, (parameter as string).ToEnum<LocationType_t>());
         }
 
@@ -1065,6 +1075,17 @@ namespace Dispatcher.ViewsModules
 
         private void LocationInDoorExec(object parameter)
         {
+            LocationType_t type = (parameter as string).ToEnum<LocationType_t>();
+            if (type == LocationType_t.StartTriggered)
+            {
+                ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationStatus_t.Cycle));
+            }
+            else if (type == LocationType_t.StopTriggered)
+            {
+                ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationStatus_t.Idle));
+            }
+
+
             LocationRequest(QueryLocationType_t.LocationInDoor, (parameter as string).ToEnum<LocationType_t>());
         }
 
