@@ -149,5 +149,6 @@ private:
 	int callRadioId;
 	int callType;
 	std::string callSessionId;
+	bool isPTTDown;
 	
 };

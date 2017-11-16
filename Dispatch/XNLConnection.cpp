@@ -71,6 +71,7 @@ CXNLConnection::CXNLConnection(SOCKET s, std::string auth_key, unsigned long del
 	callRadioId = 0;
 	callType = 0;
 	callSessionId = "";
+	isPTTDown = false;
 }
 
 CXNLConnection::~CXNLConnection(void)
@@ -887,7 +888,6 @@ void CXNLConnection::controlReply(unsigned char result, unsigned char transactio
 				TcpRespone tr = { 0 };
 				tr.sessionId = it->sessionId;
 				tr.id = it->radioId;
-			
 				tr.controlType = it->command;
 				if (0x00 == result)
 				{
@@ -986,9 +986,8 @@ void CXNLConnection::callReply(unsigned char result, unsigned char transactionId
 			{
 				TcpRespone tr = { 0 };
 				tr.sessionId = it->sessionId;
-				callSessionId = tr.sessionId;
 				tr.id = it->radioId;
-				callRadioId = it->radioId;
+				
 				if (it->command == GROUP_CALL)
 				{
 					tr.callType = GROUP;
@@ -1001,7 +1000,6 @@ void CXNLConnection::callReply(unsigned char result, unsigned char transactionId
 				{
 					tr.callType = ALL;
 				}
-				callType = tr.callType;
 				if (result == 0)
 				{
 					tr.result = REMOTE_SUCESS;
@@ -1034,7 +1032,7 @@ void CXNLConnection::callBroadcast(unsigned char flag, std::string radioId)
 			//tr.id = atoi(radioId.c_str());
 			tr.id = callRadioId;
 			tr.callType = callType;
-			tr.sessionId = callSessionId;
+			//tr.sessionId = callSessionId;
 			if (flag == 0x04)
 			{
 				tr.result = REMOTE_SUCESS;
@@ -1264,6 +1262,18 @@ BOOL CXNLConnection::send_xcmp_call_ctrl_request(std::string sessionId,
                                                  unsigned long group_id)
 {
 
+	if (call_type == 0x04)
+	{
+		callRadioId = rmt_addr;
+		callType = PRIVATE;
+	}
+	else if (call_type == 0x06)
+	{
+		callRadioId = group_id;
+		callType = GROUP;
+	}
+
+
     xcmp_call_ctrl_request_t *p_msg = NULL;
     unsigned short            msg_size = sizeof(xcmp_call_ctrl_request_t);
     unsigned char *p_addr = (unsigned char *)&rmt_addr;
@@ -1490,18 +1500,7 @@ BOOL CXNLConnection::send_xcmp_chan_zone_selection_request(unsigned char functio
 
 BOOL CXNLConnection::send_xcmp_tx_ctrl_request(unsigned char function, unsigned char mode)
 {
-	if (function == 0x01 && mode == 0x00)
-	{
-#if DEBUG_LOG
-		LOG(INFO) << "打开ptt(开始呼叫) ";                      
-#endif
-	}
-	else if (function == 0x02 && mode == 0x00)
-	{
-#if DEBUG_LOG
-		LOG(INFO) << "打开ptt(结束呼叫) ";
-#endif
-	}
+	
     xcmp_tx_ctrl_request_t *p_msg = (xcmp_tx_ctrl_request_t *)malloc(sizeof(xcmp_tx_ctrl_request_t));
     int payload_len = sizeof(xcmp_tx_ctrl_request_t) - sizeof(xnl_msg_hdr_t);
 
@@ -1517,8 +1516,28 @@ BOOL CXNLConnection::send_xcmp_tx_ctrl_request(unsigned char function, unsigned 
 
     init_xnl_header_of_xcmp_msg((char *)p_msg, payload_len);
     /* Add the message to the sending queue */
-    enqueue_msg((char *)p_msg,"");
-    
+	if (function == 0x02 && mode == 0x00 && isPTTDown)
+	{
+		enqueue_msg((char *)p_msg, "");
+	}
+	else if (function == 0x01 && mode == 0x00 && !isPTTDown)
+	{
+		enqueue_msg((char *)p_msg, "");
+	}
+	if (function == 0x01 && mode == 0x00 && !isPTTDown)
+	{
+		isPTTDown = true;
+#if DEBUG_LOG
+		LOG(INFO) << "打开ptt(开始呼叫) ";
+#endif
+	}
+	else if (function == 0x02 && mode == 0x00 && isPTTDown)
+	{
+		isPTTDown = false;
+#if DEBUG_LOG
+		LOG(INFO) << "打开ptt(结束呼叫) ";
+#endif
+	}
     return (TRUE);
 
 }
