@@ -547,6 +547,11 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 			dis.call(0,STOP,0,""); // 关闭ptt
 		}
 		break;
+	case CLOSE_PTT:
+		if (data.result == 0)  //结束呼叫   1min的保护机制下，关掉ptt
+		{
+			dis.call(0, STOP, 0, ""); // 关闭ptt
+		}
 	case STOP_CALL:
 		args["CallStatus"] = 1;  // 0: idle,1: tx, 2:rx, 4:fatal
 		args["Status"] = FieldValue(data.result);
@@ -557,12 +562,7 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 		{
 			args["SessionId"] = FieldValue((data.sessionId).c_str());
 		}
-		
 		dis.send2Client("callStatus",args);
-		//if (data.result == 0)  //结束呼叫   1min的保护机制下，关掉ptt
-		//{
-		//	dis.call(0, STOP, 0, ""); // 关闭ptt
-		//}
 		break;
 	case  REMOTE_CLOSE :
 	case REMOTE_OPEN  :
