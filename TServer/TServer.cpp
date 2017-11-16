@@ -40,6 +40,7 @@
 #include "StatusAction.h"
 #include "RegisterLicenseAction.h"
 #include "QueryLicenseAction.h"
+#include "QueryDeviceAction.h"
 
 #include "RecvMessageAction.h"
 #include "RecvMessageResultAction.h"
@@ -187,7 +188,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		serverActions["status"] = statusAction;
 		serverActions["registerLicense"] = registerLicenseAction;
 		serverActions["queryLicense"] = queryLicenseAction;
-	
+		serverActions["queryDevice"] = queryDeviceAction;
 
 		/*wire lan recive*/
 		serverActions["wlCall"] = wlCallActionHandler;
@@ -313,7 +314,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	serverActions["status"] = statusAction;
 	serverActions["registerLicense"] = registerLicenseAction;
 	serverActions["queryLicense"] = queryLicenseAction;
-
+	serverActions["queryDevice"] = queryDeviceAction;
 
 
 	/*wire lan recive*/

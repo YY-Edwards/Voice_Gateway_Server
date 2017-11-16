@@ -14,6 +14,7 @@ CTextMsg::CTextMsg(CDataScheduling *pMnis)
 	m_pMnis = pMnis;
 	m_msgThread = true;
 	m_selfId = 0;
+	lastTimestamp = 0;
 }
 CTextMsg::~CTextMsg()
 {
@@ -328,6 +329,11 @@ bool CTextMsg::ReplyMsgACK(ThreadMsg* Msg, UINT8 SeqNumber)
 
 bool CTextMsg::SendMsg(std::string  sessionId, std::string text, DWORD dwRadioID, int CaiNet)
 {
+	time_t  currentTimestamp = getTimeStamp();
+	if (lastTimestamp != 0 && (currentTimestamp - lastTimestamp) < 3 * 1000)
+	{
+		Sleep(5000);
+	}
 	int maxlen = 256;
 	text = UTF8ToGBK(text);
 	wchar_t* message = new wchar_t[maxlen];
@@ -419,6 +425,7 @@ bool CTextMsg::SendMsg(std::string  sessionId, std::string text, DWORD dwRadioID
 	m_ThreadMsg->remote_addr.sin_addr.S_un.S_un_b.s_b3 = (unsigned char)((radio_ip >> 8) & 0xff);
 	m_ThreadMsg->remote_addr.sin_addr.S_un.S_un_b.s_b4 = (unsigned char)(radio_ip & 0xff);
 	int bytesSend = sendto(m_ThreadMsg->mySocket, (const char*)m_ThreadMsg->SendBuffer, m_ThreadMsg->MsgLength, 0, (struct sockaddr*)&m_ThreadMsg->remote_addr, sizeof(m_ThreadMsg->remote_addr));
+	lastTimestamp = currentTimestamp;
 	if (-1 == bytesSend)
 	{
 		int a = GetLastError();
@@ -661,4 +668,10 @@ std::string  CTextMsg::GBKToUTF8(const std::string& strGBK)
     str2 = NULL;  
     return strOutUTF8;  
 }  
-
+time_t CTextMsg::getTimeStamp()
+{
+	std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds> tp = std::chrono::time_point_cast<std::chrono::milliseconds>(std::chrono::system_clock::now());
+	auto tmp = std::chrono::duration_cast<std::chrono::milliseconds>(tp.time_since_epoch());
+	time_t timestamp = tmp.count();
+	return timestamp;
+}

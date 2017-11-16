@@ -590,22 +590,22 @@ void CRadioGps::RecvData()
 					isImme = true;
 					queryMode = GPS_IMME_COMM;
 				}
-				else if ((ret == RECV_TRG_LENTH || bytes == RECV_TRG_LENTH) && m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report && m_ThreadGps->RcvBuffer[1] == 0x0F)
+				else if ((ret == RECV_TRG_LENTH || bytes == RECV_TRG_LENTH) && m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report && m_ThreadGps->RcvBuffer[1] == 0x0e)
 				{
 					unsigned long llat = 0, llon = 0;
 					unsigned long a = 0, b = 0, c = 0, d = 0;
 					//解析纬度
-					a = ((unsigned long)m_ThreadGps->RcvBuffer[9]) & 0xff;
-					b = ((unsigned long)m_ThreadGps->RcvBuffer[10]) & 0xff;
-					c = ((unsigned long)m_ThreadGps->RcvBuffer[11]) & 0xff;
-					d = ((unsigned long)m_ThreadGps->RcvBuffer[12]) & 0xff;
+					a = ((unsigned long)m_ThreadGps->RcvBuffer[8]) & 0xff;
+					b = ((unsigned long)m_ThreadGps->RcvBuffer[9]) & 0xff;
+					c = ((unsigned long)m_ThreadGps->RcvBuffer[10]) & 0xff;
+					d = ((unsigned long)m_ThreadGps->RcvBuffer[11]) & 0xff;
 					llat = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
 					//解析经度
 					a = b = c = d = 0;
-					a = ((unsigned long)m_ThreadGps->RcvBuffer[13]) & 0xff;
-					b = ((unsigned long)m_ThreadGps->RcvBuffer[14]) & 0xff;
-					c = ((unsigned long)m_ThreadGps->RcvBuffer[15]) & 0xff;
-					d = ((unsigned long)m_ThreadGps->RcvBuffer[16]) & 0xff;
+					a = ((unsigned long)m_ThreadGps->RcvBuffer[12]) & 0xff;
+					b = ((unsigned long)m_ThreadGps->RcvBuffer[13]) & 0xff;
+					c = ((unsigned long)m_ThreadGps->RcvBuffer[14]) & 0xff;
+					d = ((unsigned long)m_ThreadGps->RcvBuffer[15]) & 0xff;
 					llon = ((a << 24) | (b << 16) | (c << 8) | d) & 0xffffffff;
 
 					lat = ((double)llat) / 2147483648 * 90;
@@ -637,7 +637,7 @@ void CRadioGps::RecvData()
 					lat = ((double)llat) / 2147483648 * 90;
 					lon = ((double)llon) / 2147483648 * 180;
 					speed = -1;
-					queryMode = GPS_TRIGG_CSBK;
+					queryMode = GPS_TRIGG_CSBK;																										
 				}
 				else if (/*(ret == RECV_CSBK_EGPS_LENTH || bytes == RECV_CSBK_EGPS_LENTH) &&*/ (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report || m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report) && (m_ThreadGps->RcvBuffer[1] == 0x1e || m_ThreadGps->RcvBuffer[1] == 0x1c))
 				{
@@ -665,7 +665,7 @@ void CRadioGps::RecvData()
 					speed = (((float)a) + ((float)b) / 128.0f)*3.6f;
 					queryMode = GPS_TRIGG_CSBK_EGPS;
 				}
-				else if (ret >= RECV_TRG_INDOOR_LENTH || bytes == RECV_TRG_INDOOR_LENTH /*&& m_ThreadGps->RcvBuffer[8] == beacon_data && m_ThreadGps->RcvBuffer[9] == start_bcon_uuid_maj_min_txpwr_rssi_time*/)
+				else if (ret >= RECV_TRG_INDOOR_LENTH || bytes >= RECV_TRG_INDOOR_LENTH /*&& m_ThreadGps->RcvBuffer[8] == beacon_data && m_ThreadGps->RcvBuffer[9] == start_bcon_uuid_maj_min_txpwr_rssi_time*/)
 				{
 					queryMode = GPS_TRIGG_COMM_INDOOR;
 					int n = 0,index =-1;
@@ -759,7 +759,7 @@ void CRadioGps::RecvData()
 				{
 					//return;
 				}
-				if (lat != -1 && lon != -1)
+				if (lat >0 && lon >0 )
 				{
 
 					try

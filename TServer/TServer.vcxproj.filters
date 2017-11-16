@@ -222,6 +222,9 @@
     <ClInclude Include="..\lib\rpc\include\ringbuffer.h">
       <Filter>lib\rpc\include</Filter>
     </ClInclude>
+    <ClInclude Include="QueryDeviceAction.h">
+      <Filter>serverAction</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

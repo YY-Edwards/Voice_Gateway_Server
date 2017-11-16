@@ -392,6 +392,25 @@ void DispatchOperate::OnData(  int call, Respone data)
 		dis.send2Client("locationStatus", args);
 	}
 		break;
+	case GPS_TRIGG_COMM_INDOOR:
+	case GPS_TRIGG_CSBK_INDOOR:
+	{
+		FieldValue element(FieldValue::TObject);
+		element.setKeyVal("txpower", FieldValue(data.bcon.TXPower));
+		element.setKeyVal("rssi", FieldValue(data.bcon.RSSI));
+		element.setKeyVal("timestamp", FieldValue(data.bcon.TimeStamp));
+		element.setKeyVal("major", FieldValue(data.bcon.Major));
+		element.setKeyVal("minor", FieldValue(data.bcon.Minor));
+		args["SessionId"] = FieldValue(data.sessionId.c_str());
+		args["Target"] = FieldValue(data.target);
+		args["Type"] = 0;   //1:becons 
+		args["Cycle"] = FieldValue(data.cycle);
+		args["Operate"] = FieldValue(data.operate);
+		args["Status"] = FieldValue(data.gpsStatus);
+		args["Report"] = element;
+		dis.send2Client("locationStatus", args);
+	}
+		break;
 	case RECV_GPS:
 	{
 		FieldValue element(FieldValue::TObject);
@@ -523,7 +542,7 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 			args["SessionId"] = FieldValue((data.sessionId).c_str());
 		}
 		dis.send2Client("callStatus", args);
-		if (data.result == STOP)
+		if (data.result == STOP)   //呼叫失败
 		{
 			dis.call(0,STOP,0,""); // 关闭ptt
 		}
@@ -538,7 +557,12 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 		{
 			args["SessionId"] = FieldValue((data.sessionId).c_str());
 		}
+		
 		dis.send2Client("callStatus",args);
+		//if (data.result == 0)  //结束呼叫   1min的保护机制下，关掉ptt
+		//{
+		//	dis.call(0, STOP, 0, ""); // 关闭ptt
+		//}
 		break;
 	case  REMOTE_CLOSE :
 	case REMOTE_OPEN  :

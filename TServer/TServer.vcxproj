@@ -148,6 +148,7 @@
     <ClInclude Include="WireLanRecvAction.h" />
     <ClInclude Include="WireLanSendAction.h" />
     <ClInclude Include="WiretapAction.h" />
+    <ClInclude Include="QueryDeviceAction.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\lib\AES\Aes.cpp" />

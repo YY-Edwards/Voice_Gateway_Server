@@ -131,7 +131,7 @@ bool CDataScheduling::radioStopGps(DWORD dwRadioID, int	type,std::string session
 
 	if (myCallBackFunc != NULL)
 	{
-		if (type = 1)
+		if (type == 1)
 		{
 			int querymode = GPS_TRIGG_COMM_INDOOR;
 			addUdpCommand(STOP_QUERY_GPS, "", "", int(dwRadioID), "", 0, querymode, sessionId);
