@@ -559,10 +559,10 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 		}
 		
 		dis.send2Client("callStatus",args);
-		if (data.result == 0)  //结束呼叫   1min的保护机制下，关掉ptt
-		{
-			dis.call(0, STOP, 0, ""); // 关闭ptt
-		}
+		//if (data.result == 0)  //结束呼叫   1min的保护机制下，关掉ptt
+		//{
+		//	dis.call(0, STOP, 0, ""); // 关闭ptt
+		//}
 		break;
 	case  REMOTE_CLOSE :
 	case REMOTE_OPEN  :
