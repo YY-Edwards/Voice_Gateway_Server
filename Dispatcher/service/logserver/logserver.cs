@@ -60,6 +60,10 @@ namespace Dispatcher.Service
             return _instance;
         }
 
+        private CLogServer() :base(0,3000,3)
+        {
+
+        }
         public void Initialize()
         {
             if (!s_IsInitialized)
