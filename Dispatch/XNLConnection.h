@@ -146,5 +146,8 @@ private:
 	void radioStatusChange(std::string radioId);
 	void callReply( unsigned char result, unsigned char transactionIdBase, unsigned char txXcmpCount, std::string radioId);
 	void callBroadcast(unsigned char flag, std::string radioId);
+	int callRadioId;
+	int callType;
+	std::string callSessionId;
 	
 };

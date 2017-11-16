@@ -68,6 +68,9 @@ CXNLConnection::CXNLConnection(SOCKET s, std::string auth_key, unsigned long del
 	m_XCMP_ver = 0;
 	m_hEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 	memset(readmac, 0, 11);
+	callRadioId = 0;
+	callType = 0;
+	callSessionId = "";
 }
 
 CXNLConnection::~CXNLConnection(void)
@@ -884,6 +887,7 @@ void CXNLConnection::controlReply(unsigned char result, unsigned char transactio
 				TcpRespone tr = { 0 };
 				tr.sessionId = it->sessionId;
 				tr.id = it->radioId;
+			
 				tr.controlType = it->command;
 				if (0x00 == result)
 				{
@@ -982,7 +986,9 @@ void CXNLConnection::callReply(unsigned char result, unsigned char transactionId
 			{
 				TcpRespone tr = { 0 };
 				tr.sessionId = it->sessionId;
+				callSessionId = tr.sessionId;
 				tr.id = it->radioId;
+				callRadioId = it->radioId;
 				if (it->command == GROUP_CALL)
 				{
 					tr.callType = GROUP;
@@ -995,6 +1001,7 @@ void CXNLConnection::callReply(unsigned char result, unsigned char transactionId
 				{
 					tr.callType = ALL;
 				}
+				callType = tr.callType;
 				if (result == 0)
 				{
 					tr.result = REMOTE_SUCESS;
@@ -1024,16 +1031,18 @@ void CXNLConnection::callBroadcast(unsigned char flag, std::string radioId)
 		if (myTcpCallBackFunc != NULL )
 		{
 			TcpRespone tr = { 0 };
-			tr.id = atoi(radioId.c_str());
+			//tr.id = atoi(radioId.c_str());
+			tr.id = callRadioId;
+			tr.callType = callType;
+			tr.sessionId = callSessionId;
 			if (flag == 0x04)
 			{
-				tr.callType = START;
 				tr.result = REMOTE_SUCESS;
 				onTcpData(myTcpCallBackFunc, ALL_CALL, tr);
 			}
 			else if (flag == 0x03)
 			{
-				tr.callType = STOP;
+				
 				tr.result = REMOTE_SUCESS;
 				onTcpData(myTcpCallBackFunc,STOP_CALL , tr);
 			}		
