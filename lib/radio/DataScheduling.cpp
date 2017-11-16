@@ -83,14 +83,29 @@ bool CDataScheduling::radioGetGps(DWORD dwRadioID, int type, double cycle,std::s
 		}
 		else if (type == 1)
 		{
-			if (m_mnisCfg.LocationType == 0)
+			if (operate == 0)
 			{
-				addUdpCommand(GPS_TRIGG_COMM_INDOOR, "", "", int(dwRadioID), "", cycle, type, sessionId);
+				if (m_mnisCfg.LocationType == 0)
+				{
+					addUdpCommand(GPS_IMME_COMM_INDOOR, "", "", int(dwRadioID), "", cycle, type, sessionId);
+				}
+				else if (m_mnisCfg.LocationType == 1)
+				{
+					addUdpCommand(GPS_IMME_CSBK_INDOOR, "", "", int(dwRadioID), "", cycle, type, sessionId);
+				}
 			}
-			else if (m_mnisCfg.LocationType == 1)
+			else if (operate ==1)
 			{
-				addUdpCommand(GPS_TRIGG_CSBK_INDOOR, "", "", int(dwRadioID), "", cycle, type, sessionId);
+				if (m_mnisCfg.LocationType == 0)
+				{
+					addUdpCommand(GPS_TRIGG_COMM_INDOOR, "", "", int(dwRadioID), "", cycle, type, sessionId);
+				}
+				else if (m_mnisCfg.LocationType == 1)
+				{
+					addUdpCommand(GPS_TRIGG_CSBK_INDOOR, "", "", int(dwRadioID), "", cycle, type, sessionId);
+				}
 			}
+			
 		}
 		
 	/*	switch (m_mnisCfg.LocationType)
@@ -383,6 +398,10 @@ void CDataScheduling::workThreadFunc()
 				getGps(it->radioId, it->command, it->cycle, m_mnisCfg.CAI);
 				break;
 			case GPS_TRIGG_COMM_INDOOR:
+				getGps(it->radioId, it->command, it->cycle, m_mnisCfg.CAI);
+				break;
+			case GPS_IMME_COMM_INDOOR:
+			case GPS_IMME_CSBK_INDOOR:
 				getGps(it->radioId, it->command, it->cycle, m_mnisCfg.CAI);
 				break;
 			case STOP_QUERY_GPS:
