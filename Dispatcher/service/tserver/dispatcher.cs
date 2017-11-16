@@ -120,37 +120,37 @@ namespace Dispatcher.Service
         {
             string parameter = param == null ? null : JsonConvert.SerializeObject(param);
 
-            if (parameter != null)
-            {
-                Dictionary<string, object> replyparam = JsonConvert.DeserializeObject<Dictionary<string, object>>(parameter);
-                if (replyparam != null)
-                {
-                    if(replyparam.ContainsKey("SessionId"))
-                    {
-                        if(replyparam.ContainsKey("Status"))
-                        {
-                            try
-                            {
-                                //Console.WriteLine(replyparam["Status"].GetType().FullName);
-                                Int64 status = (Int64)replyparam["Status"];
+            if (parameter == null)return;
 
-                                if (status == 0)//success
-                                {
-                                    OperateCompleted(replyparam["SessionId"] as string);
-                                }
-                                else
-                                {
-                                    OperateFailure(replyparam["SessionId"] as string, Status.ResponseFailure);
-                                }
+            Dictionary<string, object> replyparam = JsonConvert.DeserializeObject<Dictionary<string, object>>(parameter);
+            if (replyparam != null)
+            {
+                if (replyparam.ContainsKey("SessionId"))
+                {
+                    if (replyparam.ContainsKey("Status"))
+                    {
+                        try
+                        {
+                            //Console.WriteLine(replyparam["Status"].GetType().FullName);
+                            Int64 status = (Int64)replyparam["Status"];
+
+                            if (status == 0)//success
+                            {
+                                OperateCompleted(replyparam["SessionId"] as string);
                             }
-                            catch
+                            else
                             {
                                 OperateFailure(replyparam["SessionId"] as string, Status.ResponseFailure);
                             }
                         }
+                        catch
+                        {
+                            OperateFailure(replyparam["SessionId"] as string, Status.ResponseFailure);
+                        }
                     }
-                }              
-            }
+                }
+            }              
+
 
             switch (call)
             {
@@ -160,7 +160,7 @@ namespace Dispatcher.Service
                     break;
                 case RequestOpcode.callStatus:
                 case RequestOpcode.wlCallStatus:
-                    OnCallResponse(parameter);
+                    OnCallResponse(parameter, !replyparam.ContainsKey("SessionId"));
                     break;
                 case RequestOpcode.messageStatus:
                     OnShortMessageResponse(parameter);
@@ -305,6 +305,7 @@ namespace Dispatcher.Service
 
         public event CallRequestHandler CallRequest;
         public event CallResponseHandler CallResponse;
+        public event CallResponseHandler CallStatusChanged;
         public void AllCall()
         {
             RequestOpcode opcode = _type == RequestType.radio ? RequestOpcode.status : RequestOpcode.wlInfo;
@@ -343,12 +344,13 @@ namespace Dispatcher.Service
             if (CallRequest != null) CallRequest(e);
         }
 
-        private void OnCallResponse(string parameter)
+        private void OnCallResponse(string parameter, bool isbroadcast = false)
         {
             if (parameter != null)
             {
                 CallResponseArgs args = CreateCallResponse(parameter);
-                if (CallResponse != null) CallResponse(args);
+                if (!isbroadcast && CallResponse != null) CallResponse(args);
+                if (isbroadcast && CallStatusChanged != null) CallStatusChanged(args);
             }
         }
 
