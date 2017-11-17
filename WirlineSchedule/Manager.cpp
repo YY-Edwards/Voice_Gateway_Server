@@ -1120,3 +1120,75 @@ void CManager::unLockCurTask()
 	sendLogToWindow();
 }
 
+bool CManager::isRepeat(std::string sessionId)
+{
+	bool rlt = false;
+	lockCurTask();
+	REMOTE_TASK* p = getCurrentTask();
+	if (p)
+	{
+		rlt = isSameSessionId(sessionId, p);
+	}
+	unLockCurTask();
+	if (rlt) return rlt;
+	WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	std::list<REMOTE_TASK*>::iterator it = g_remoteCommandTaskQueue.begin();
+	while (it != g_remoteCommandTaskQueue.end())
+	{
+		p = *it;
+		rlt = isSameSessionId(sessionId, p);
+		if (rlt) break;
+		it++;
+	}
+	SetEvent(g_taskLockerEvent);
+	return rlt;
+}
+
+bool CManager::isSameSessionId(std::string sessionId, REMOTE_TASK* p)
+{
+	bool rlt = false;
+	int cmd = p->cmd;
+	switch (cmd)
+	{
+	case REMOTE_CMD_CONFIG:
+	case REMOTE_CMD_SET_PLAY_CALL:
+	case REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG:
+		break;
+	case REMOTE_CMD_STOP_CALL:
+	case REMOTE_CMD_CALL:
+	{
+							CALL_OPERATE_PARAM info = p->param.info.callParam.operateInfo;
+							return 0 == strcmp(sessionId.c_str(), info.SessionId);
+	}
+		break;
+	case REMOTE_CMD_GET_CONN_STATUS:
+	{
+									   GET_INFO_PARAM info = p->param.info.getInfoParam.getInfo;
+									   return 0 == strcmp(sessionId.c_str(), info.SessionId);
+	}
+		break;
+	case REMOTE_CMD_MNIS_QUERY_GPS:
+	{
+									  QUERY_GPS info = p->param.info.queryGpsParam;
+									  return 0 == strcmp(sessionId.c_str(), info.SessionId);
+	}
+		break;
+	case REMOTE_CMD_MNIS_MSG:
+	{
+								MNIS_MSG info = p->param.info.msgParam;
+								return 0 == strcmp(sessionId.c_str(), info.SessionId);
+	}
+		break;
+	case REMOTE_CMD_MNIS_STATUS:
+	{
+								   ARS info = p->param.info.mnisStatusParam;
+								   return 0 == strcmp(sessionId.c_str(), info.SessionId);
+
+	}
+		break;
+	default:
+		break;
+	}
+	return rlt;
+}
+

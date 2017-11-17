@@ -151,6 +151,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		CMySQL *m_pDb = new CMySQL();
 		CDataScheduling *m_pMnis = new CDataScheduling();
 		CManager *m_pManager = new CManager(m_pDb, m_pMnis,defaultAudioPath);
+		g_manager = m_pManager;
 		BOOL m_ret = FALSE;
 		PLogReport m_report = NULL;
 		HWND m_hwnd = NULL;
