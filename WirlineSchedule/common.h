@@ -1072,4 +1072,6 @@ extern std::string repeaterMode;
 
 #pragma endregion
 
+class CManager;
+extern CManager* g_manager;
 #endif

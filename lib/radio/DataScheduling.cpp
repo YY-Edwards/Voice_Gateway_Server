@@ -317,10 +317,26 @@ void CDataScheduling::addUdpCommand(int command, std::string radioIP, std::strin
 	m_command.gpsIP = gpsIP;
 	m_command.text = text;
 	m_command.sessionId = sessionId;
+
+	//过滤掉客户端的超时重发
+	std::list<Command>::iterator it;
 	std::lock_guard <std::mutex> locker(m_timeOutListLocker);
-	timeOutList.push_back(m_command);
-	std::lock_guard <std::mutex> wlocker(m_workListLocker);
-	workList.push_back(m_command);
+	int count = 0;
+	for (it = timeOutList.begin(); it != timeOutList.end(); ++it)
+	{
+		if (it->sessionId == sessionId)
+		{
+			++count;
+			break;
+		}
+	}
+	if (count == 0)
+	{
+		timeOutList.push_back(m_command);
+		std::lock_guard <std::mutex> wlocker(m_workListLocker);
+		workList.push_back(m_command);
+	}
+
 
 }
 DWORD WINAPI CDataScheduling::timeOutThread(LPVOID lpParam)

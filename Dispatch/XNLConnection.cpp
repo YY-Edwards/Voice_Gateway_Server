@@ -863,8 +863,8 @@ void CXNLConnection::OnXCMPMessageProcess(char * pBuf)
 		case 0x02:    //group call Enhanced Private Call  
 			callBroadcast(0x04, stringId);
 			break;
-		case 0x03:    //call end
-			callBroadcast(0x03, stringId);
+		case 0x07:    //0x03: call end   0x07 hangtime
+			callBroadcast(0x07, stringId);
 			break;
 		}
 }
@@ -1038,11 +1038,11 @@ void CXNLConnection::callBroadcast(unsigned char flag, std::string radioId)
 				tr.result = REMOTE_SUCESS;
 				onTcpData(myTcpCallBackFunc, ALL_CALL, tr);
 			}
-			else if (flag == 0x03)
+			else if (flag == 0x07)
 			{
 				
 				tr.result = REMOTE_SUCESS;
-				onTcpData(myTcpCallBackFunc,STOP_CALL , tr);
+				onTcpData(myTcpCallBackFunc,CLOSE_PTT , tr);
 			}		
 		}
 	}

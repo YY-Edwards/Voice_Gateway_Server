@@ -387,11 +387,25 @@ void CTcpScheduling::addTcpCommand( int command, std::string radioIP, int id, in
 	m_allCommand.sessionId = sessionId;
 	m_allCommand.transactionIdBase = 0;
 	m_allCommand.txXcmpCount = 0;
-	//std::lock_guard <std::mutex> locker(m_allCommandListLocker);
-	tcpCommandTimeOutList.push_back(m_allCommand);
-	//std::lock_guard <std::mutex> wlocker(m_workLocker);
-	workList.push_back(m_allCommand);
-	//seq = callId +1;
+	//过滤掉客户端的超时重发
+	std::list<TcpCommand>::iterator it;
+	std::lock_guard <std::mutex> lockerTimeout(m_allCommandListLocker);
+	int count = 0;
+	for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); ++it)
+	{
+		if (it->sessionId == sessionId)
+		{
+			++count;
+			break;
+		}
+	}
+	if (count == 0)
+	{
+		tcpCommandTimeOutList.push_back(m_allCommand);
+		std::lock_guard <std::mutex> wlocker(m_workLocker);
+		workList.push_back(m_allCommand);
+	}
+	
 }
 DWORD WINAPI CTcpScheduling::timeOutThread(LPVOID lpParam)
 {

@@ -44,3 +44,5 @@ std::list<TcpClient*> g_onLineClients;
 
 std::string repeaterSerial; 
 std::string repeaterMode;
+
+CManager* g_manager = NULL;
