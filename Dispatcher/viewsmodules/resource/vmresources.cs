@@ -81,6 +81,7 @@ namespace Dispatcher.ViewsModules
             if (!_resource.IsInitialized) _resource.InitializeResources(this);            
         }
 
+
         public ICommand UpdateResource { get { return new Command(UpdateResourceExec); } }
         private void UpdateResourceExec()
         {

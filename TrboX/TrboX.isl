@@ -4590,9 +4590,9 @@ UwBpAG4AZwBsAGUASQBtAGEAZwBlAAEARQB4AHAAcgBlAHMAcwA=
 		<row><td>PROGMSG_IIS_ROLLBACKAPPPOOLS</td><td>##IDS_PROGMSG_IIS_ROLLBACKAPPPOOLS##</td><td/></row>
 		<row><td>PROGMSG_IIS_ROLLBACKVROOTS</td><td>##IDS_PROGMSG_IIS_ROLLBACKVROOTS##</td><td/></row>
 		<row><td>PROGMSG_IIS_ROLLBACKWEBSERVICEEXTENSIONS</td><td>##IDS_PROGMSG_IIS_ROLLBACKWEBSERVICEEXTENSIONS##</td><td/></row>
-		<row><td>ProductCode</td><td>{454B6C84-A081-4E32-8DF1-2126D575F91A}</td><td/></row>
+		<row><td>ProductCode</td><td>{6BCD3E13-C80D-4FDF-8C68-0AAE976C2363}</td><td/></row>
 		<row><td>ProductName</td><td>TrboX</td><td/></row>
-		<row><td>ProductVersion</td><td>3.01.0001</td><td/></row>
+		<row><td>ProductVersion</td><td>3.1</td><td/></row>
 		<row><td>ProgressType0</td><td>install</td><td/></row>
 		<row><td>ProgressType1</td><td>Installing</td><td/></row>
 		<row><td>ProgressType2</td><td>installed</td><td/></row>
