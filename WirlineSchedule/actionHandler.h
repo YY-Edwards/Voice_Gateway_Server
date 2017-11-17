@@ -3,6 +3,8 @@
 #include "stdafx.h"
 #include <string>
 #include "../lib/type.h"
+#include "Manager.h"
+
 
 /************************************************************************/
 /*²Î¿¼ÎÄµµ: http://120.26.88.11/w/dispatcher/trbox3.0/rpc/
@@ -404,6 +406,13 @@ inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, 
 							  if (d.HasMember("SessionId") && d["SessionId"].IsString())
 							  {
 								  strcpy_s(pNewTask->param.info.callParam.operateInfo.SessionId, d["SessionId"].GetString());
+								  std::string sessionid = d["SessionId"].GetString();
+								  if (g_manager->isRepeat(sessionid))
+								  {
+									  delete pNewTask;
+									  pNewTask = NULL;
+									  break;
+								  }
 							  }
 							  pNewTask->param.info.callParam.operateInfo.operate = StartCall;
 
@@ -439,6 +448,14 @@ inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, 
 							 if (d.HasMember("SessionId") && d["SessionId"].IsString())
 							 {
 								 strcpy_s(pNewTask->param.info.callParam.operateInfo.SessionId, d["SessionId"].GetString());
+								 std::string sessionid = d["SessionId"].GetString();
+								 if (g_manager->isRepeat(sessionid))
+								 {
+									 delete pNewTask;
+									 pNewTask = NULL;
+									 break;
+								 }
+
 							 }
 							 pNewTask->param.info.callParam.operateInfo.operate = StopCall;
 
@@ -627,6 +644,13 @@ inline void wlInfoActionHandler(CRemotePeer* pRemote, const std::string& param, 
 								  if (d.HasMember("SessionId") && d["SessionId"].IsString())
 								  {
 									  strcpy_s(pNewTask->param.info.getInfoParam.getInfo.SessionId, d["SessionId"].GetString());
+									  std::string sessionid = d["SessionId"].GetString();
+									  if (g_manager->isRepeat(sessionid))
+									  {
+										  delete pNewTask;
+										  pNewTask = NULL;
+										  break;
+									  }
 								  }
 			}
 				break;
@@ -639,6 +663,13 @@ inline void wlInfoActionHandler(CRemotePeer* pRemote, const std::string& param, 
 											if (d.HasMember("SessionId") && d["SessionId"].IsString())
 											{
 												strcpy_s(pNewTask->param.info.mnisStatusParam.SessionId, d["SessionId"].GetString());
+												std::string sessionid = d["SessionId"].GetString();
+												if (g_manager->isRepeat(sessionid))
+												{
+													delete pNewTask;
+													pNewTask = NULL;
+													break;
+												}
 											}
 			}
 				break;
@@ -704,6 +735,12 @@ inline void wlMnisQueryGpsActionHandler(CRemotePeer* pRemote, const std::string&
 			if (d.HasMember("SessionId") && d["SessionId"].IsString())
 			{
 				strcpy_s(pNewTask->param.info.queryGpsParam.SessionId, d["SessionId"].GetString());
+				std::string sessionid = d["SessionId"].GetString();
+				if (g_manager->isRepeat(sessionid))
+				{
+					delete pNewTask;
+					pNewTask = NULL;
+				}
 			}
 			if (pNewTask)
 			{
@@ -719,7 +756,6 @@ inline void wlMnisQueryGpsActionHandler(CRemotePeer* pRemote, const std::string&
 		{
 			strcpy_s(status, CLIENT_TRANSFER_FAIL);
 		}
-		//do nothing
 		strResp = CRpcJsonParser::buildResponse(status, sn, errorCode, statusText.c_str(), args);
 		pRemote->sendResponse(strResp.c_str(), strResp.size());
 	}
@@ -756,14 +792,20 @@ inline void wlMnisMessageHandler(CRemotePeer* pRemote, const std::string& param,
 			memset(pNewTask, 0, sizeof(REMOTE_TASK));
 			d.Parse(param.c_str());
 			pNewTask->cmd = REMOTE_CMD_MNIS_MSG;
-			if (d.HasMember("SessionId") && d["SessionId"].IsString())
-			{
-				strcpy_s(pNewTask->param.info.msgParam.SessionId, d["SessionId"].GetString());
-			}
 			strcpy_s(pNewTask->param.info.msgParam.Contents, d["Contents"].GetString());
 			pNewTask->param.info.msgParam.Source = d["Source"].GetInt();
 			pNewTask->param.info.msgParam.Target = d["Target"].GetInt();
 			pNewTask->param.info.msgParam.Type = d["Type"].GetInt();
+			if (d.HasMember("SessionId") && d["SessionId"].IsString())
+			{
+				strcpy_s(pNewTask->param.info.msgParam.SessionId, d["SessionId"].GetString());
+				std::string sessionid = d["SessionId"].GetString();
+				if (g_manager->isRepeat(sessionid))
+				{
+					delete pNewTask;
+					pNewTask = NULL;
+				}
+			}
 			if (pNewTask)
 			{
 
@@ -815,11 +857,17 @@ inline void wlMnisStatusHandler(CRemotePeer* pRemote, const std::string& param, 
 			memset(pNewTask, 0, sizeof(REMOTE_TASK));
 			d.Parse(param.c_str());
 			pNewTask->cmd = REMOTE_CMD_MNIS_STATUS;
+			pNewTask->param.info.mnisStatusParam.getType = d["getType"].GetInt();
 			if (d.HasMember("SessionId") && d["SessionId"].IsString())
 			{
 				strcpy_s(pNewTask->param.info.mnisStatusParam.SessionId, d["SessionId"].GetString());
+				std::string sessionid = d["SessionId"].GetString();
+				if (g_manager->isRepeat(sessionid))
+				{
+					delete pNewTask;
+					pNewTask = NULL;
+				}
 			}
-			pNewTask->param.info.mnisStatusParam.getType = d["getType"].GetInt();
 			if (pNewTask)
 			{
 				push_back_task(pNewTask);

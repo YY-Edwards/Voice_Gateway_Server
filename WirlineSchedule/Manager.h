@@ -74,6 +74,8 @@ public:
 	void lockCurTask();
 	/*完成对当前任务的操作*/
 	void unLockCurTask();
+	/*判断当前是否已存在此任务*/
+	bool isRepeat(std::string sessionId);
 private:
 	PLogReport m_report;
 	//HWND m_hwnd;
@@ -109,6 +111,7 @@ private:
 	void applayCurrentTask();
 	/*free current task*/
 	void freeCurrentTask();
+	bool isSameSessionId(std::string sessionId, REMOTE_TASK* p);
 };
 
 
