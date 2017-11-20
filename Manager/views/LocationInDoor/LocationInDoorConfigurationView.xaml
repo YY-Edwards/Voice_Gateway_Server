@@ -22,7 +22,7 @@
                 <ColumnDefinition Width="134"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <CheckBox  Content="　GPS位置"  HorizontalAlignment="Left" VerticalAlignment="Center"  Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" Grid.Column="1" IsChecked="{Binding IsEnable}" />
+            <CheckBox  Content="　室内位置"  HorizontalAlignment="Left" VerticalAlignment="Center"  Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource CheckBoxStyleNormal}" Grid.Column="1" IsChecked="{Binding IsEnable}" />
         </Grid>
         <Grid DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0" Height="36">
             <Grid.ColumnDefinitions>
