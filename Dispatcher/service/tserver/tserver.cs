@@ -20,7 +20,7 @@ namespace Dispatcher.Service
         private CTcpClient s_Tcp;
 
         private string m_Host = "127.0.0.1";
-        //private string m_Host = "192.168.2.122";
+        //private string m_Host = "192.168.2.115";
         private int m_Port = 9000;
         private int m_ImagePort = 8001;
         private string m_ImageFolder = "images";

@@ -13,8 +13,8 @@ namespace Manager.Models
 {
     public class Utility
     {
-        private static string Host = "192.168.2.142";
-        //private static string Host = "127.0.0.1";
+        //private static string Host = "192.168.2.142";
+        private static string Host = "127.0.0.1";
 
         public static string TServerHost{get{return Host;} }
         public static string LogServerHost { get { return Host; } }

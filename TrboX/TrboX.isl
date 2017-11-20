@@ -378,6 +378,14 @@
 		<row><td>libglog.dll1</td><td>{6F6031B8-41E4-4CA9-B951-0E77154209F2}</td><td>DEVICE</td><td>2</td><td/><td>libglog.dll1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>libmysql.dll</td><td>{7082AC17-48F1-4B35-9C49-14F85855C541}</td><td>SVR</td><td>2</td><td/><td>libmysql.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>libmysql.dll1</td><td>{C801747A-462E-4427-BD32-DC5B0734DD12}</td><td>DEVICE</td><td>2</td><td/><td>libmysql.dll1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>msvcp100.dll</td><td>{86CA616D-6B49-4407-8823-8FDA0340CBBB}</td><td>DEVICE</td><td>2</td><td/><td>msvcp100.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>msvcp100.dll1</td><td>{A19EA567-B119-4311-9CCD-E491C3BE2160}</td><td>SVR</td><td>2</td><td/><td>msvcp100.dll1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>msvcp120.dll</td><td>{50499F24-E491-4979-B425-17EFAF875462}</td><td>DEVICE</td><td>2</td><td/><td>msvcp120.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>msvcp120.dll1</td><td>{0B9FCE0E-59FA-4E74-B479-8539314449B3}</td><td>SVR</td><td>2</td><td/><td>msvcp120.dll1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>msvcr100.dll</td><td>{A38C6BB0-69BB-432F-8DFF-CCDC9DA66B10}</td><td>DEVICE</td><td>2</td><td/><td>msvcr100.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>msvcr100.dll1</td><td>{F009D744-6D99-4D1F-8253-BDFE5FC96F1D}</td><td>SVR</td><td>2</td><td/><td>msvcr100.dll1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>msvcr120.dll</td><td>{741BAA98-DDCD-49EB-B181-B0DF46A1A84F}</td><td>DEVICE</td><td>2</td><td/><td>msvcr120.dll</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>msvcr120.dll1</td><td>{316A2A5C-32E9-4015-B685-AD5B70B0E9D3}</td><td>SVR</td><td>2</td><td/><td>msvcr120.dll1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 	</table>
 
 	<table name="Condition">
@@ -1109,6 +1117,10 @@
 		<row><td>DEVICE</td><td>ISX_DEFAULTCOMPONENT2</td></row>
 		<row><td>DEVICE</td><td>libglog.dll1</td></row>
 		<row><td>DEVICE</td><td>libmysql.dll1</td></row>
+		<row><td>DEVICE</td><td>msvcp100.dll</td></row>
+		<row><td>DEVICE</td><td>msvcp120.dll</td></row>
+		<row><td>DEVICE</td><td>msvcr100.dll</td></row>
+		<row><td>DEVICE</td><td>msvcr120.dll</td></row>
 		<row><td>INSTALLDIR</td><td>CefSharp.Wpf.dll</td></row>
 		<row><td>INSTALLDIR</td><td>CefSharp.dll</td></row>
 		<row><td>INSTALLDIR</td><td>Component</td></row>
@@ -1148,6 +1160,14 @@
 		<row><td>INSTALLDIR</td><td>libglog.dll1</td></row>
 		<row><td>INSTALLDIR</td><td>libmysql.dll</td></row>
 		<row><td>INSTALLDIR</td><td>libmysql.dll1</td></row>
+		<row><td>INSTALLDIR</td><td>msvcp100.dll</td></row>
+		<row><td>INSTALLDIR</td><td>msvcp100.dll1</td></row>
+		<row><td>INSTALLDIR</td><td>msvcp120.dll</td></row>
+		<row><td>INSTALLDIR</td><td>msvcp120.dll1</td></row>
+		<row><td>INSTALLDIR</td><td>msvcr100.dll</td></row>
+		<row><td>INSTALLDIR</td><td>msvcr100.dll1</td></row>
+		<row><td>INSTALLDIR</td><td>msvcr120.dll</td></row>
+		<row><td>INSTALLDIR</td><td>msvcr120.dll1</td></row>
 		<row><td>SVR</td><td>Component10</td></row>
 		<row><td>SVR</td><td>Component11</td></row>
 		<row><td>SVR</td><td>Component4</td></row>
@@ -1156,6 +1176,10 @@
 		<row><td>SVR</td><td>ISX_DEFAULTCOMPONENT3</td></row>
 		<row><td>SVR</td><td>libglog.dll</td></row>
 		<row><td>SVR</td><td>libmysql.dll</td></row>
+		<row><td>SVR</td><td>msvcp100.dll1</td></row>
+		<row><td>SVR</td><td>msvcp120.dll1</td></row>
+		<row><td>SVR</td><td>msvcr100.dll1</td></row>
+		<row><td>SVR</td><td>msvcr120.dll1</td></row>
 		<row><td>TRBOX_</td><td>Component</td></row>
 		<row><td>TRBOX_</td><td>Component12</td></row>
 		<row><td>TRBOX_</td><td>ISX_DEFAULTCOMPONENT1</td></row>
@@ -2023,6 +2047,14 @@
 		<row><td>AlwaysInstall</td><td>libglog.dll1</td></row>
 		<row><td>AlwaysInstall</td><td>libmysql.dll</td></row>
 		<row><td>AlwaysInstall</td><td>libmysql.dll1</td></row>
+		<row><td>AlwaysInstall</td><td>msvcp100.dll</td></row>
+		<row><td>AlwaysInstall</td><td>msvcp100.dll1</td></row>
+		<row><td>AlwaysInstall</td><td>msvcp120.dll</td></row>
+		<row><td>AlwaysInstall</td><td>msvcp120.dll1</td></row>
+		<row><td>AlwaysInstall</td><td>msvcr100.dll</td></row>
+		<row><td>AlwaysInstall</td><td>msvcr100.dll1</td></row>
+		<row><td>AlwaysInstall</td><td>msvcr120.dll</td></row>
+		<row><td>AlwaysInstall</td><td>msvcr120.dll1</td></row>
 	</table>
 
 	<table name="File">
@@ -2058,6 +2090,14 @@
 		<row><td>microsoft.expression.drawing</td><td>Microsoft.Expression.Drawing.dll</td><td>MICROS~1.DLL|Microsoft.Expression.Drawing.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Trbox\bin\Microsoft.Expression.Drawing.dll</td><td>1</td><td/></row>
 		<row><td>microsoft.expression.interac</td><td>Microsoft.Expression.Interactions.dll</td><td>MICROS~1.DLL|Microsoft.Expression.Interactions.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Trbox\bin\Microsoft.Expression.Interactions.dll</td><td>1</td><td/></row>
 		<row><td>microsoft.expression.interac1</td><td>Microsoft.Expression.Interactions.dll1</td><td>MICROS~1.DLL|Microsoft.Expression.Interactions.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\TrboxMgr\Bin\Microsoft.Expression.Interactions.dll</td><td>1</td><td/></row>
+		<row><td>msvcp100.dll</td><td>msvcp100.dll</td><td>msvcp100.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\TrboX\Release\Device\msvcp100.dll</td><td>1</td><td/></row>
+		<row><td>msvcp100.dll1</td><td>msvcp100.dll1</td><td>msvcp100.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\TrboX\Release\Svr\msvcp100.dll</td><td>1</td><td/></row>
+		<row><td>msvcp120.dll</td><td>msvcp120.dll</td><td>msvcp120.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\TrboX\Release\Device\msvcp120.dll</td><td>1</td><td/></row>
+		<row><td>msvcp120.dll1</td><td>msvcp120.dll1</td><td>msvcp120.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\TrboX\Release\Svr\msvcp120.dll</td><td>1</td><td/></row>
+		<row><td>msvcr100.dll</td><td>msvcr100.dll</td><td>msvcr100.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\TrboX\Release\Device\msvcr100.dll</td><td>1</td><td/></row>
+		<row><td>msvcr100.dll1</td><td>msvcr100.dll1</td><td>msvcr100.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\TrboX\Release\Svr\msvcr100.dll</td><td>1</td><td/></row>
+		<row><td>msvcr120.dll</td><td>msvcr120.dll</td><td>msvcr120.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\TrboX\Release\Device\msvcr120.dll</td><td>1</td><td/></row>
+		<row><td>msvcr120.dll1</td><td>msvcr120.dll1</td><td>msvcr120.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\TrboX\Release\Svr\msvcr120.dll</td><td>1</td><td/></row>
 		<row><td>newtonsoft.json.dll</td><td>Newtonsoft.Json.dll</td><td>NEWTON~1.DLL|Newtonsoft.Json.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Trbox\bin\Newtonsoft.Json.dll</td><td>1</td><td/></row>
 		<row><td>newtonsoft.json.dll1</td><td>Newtonsoft.Json.dll1</td><td>NEWTON~1.DLL|Newtonsoft.Json.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\TrboxMgr\Bin\Newtonsoft.Json.dll</td><td>1</td><td/></row>
 		<row><td>sigmar.dll</td><td>Sigmar.dll</td><td>Sigmar.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Trbox\bin\Sigmar.dll</td><td>1</td><td/></row>
@@ -2253,6 +2293,14 @@
 		<row><td>libglog.dll1</td><td/><td/><td>_909A996A_AE5C_4B26_8CBF_BABA24DFBAF8_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>libmysql.dll</td><td/><td/><td>_756D1043_394A_40CA_B34E_FD5CB0502073_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>libmysql.dll1</td><td/><td/><td>_C549C782_091B_4666_93BE_9660EB8D62DF_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>msvcp100.dll</td><td/><td/><td>_E9D97925_E462_4EAF_A312_669919347F49_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>msvcp100.dll1</td><td/><td/><td>_BD74EDB3_5B3F_4755_AFE9_6C3842F9EC48_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>msvcp120.dll</td><td/><td/><td>_0A4B74FA_7288_4DDF_9AEA_74A8BDE84DA0_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>msvcp120.dll1</td><td/><td/><td>_A427D3F5_4B9C_48B8_8287_2AB3675A269F_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>msvcr100.dll</td><td/><td/><td>_4B18AA2A_C31B_48CF_81FA_AC609A57483D_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>msvcr100.dll1</td><td/><td/><td>_FF9A079F_408B_489D_8B21_0EAAFD9B5721_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>msvcr120.dll</td><td/><td/><td>_E3B1753E_859B_4E58_8A2F_13FFCBC2D8F3_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>msvcr120.dll1</td><td/><td/><td>_62BF206C_018E_4FDE_969C_3A870DCEF4B6_FILTER</td><td/><td/><td/><td/></row>
 	</table>
 
 	<table name="ISCustomActionReference">
@@ -2816,7 +2864,6 @@
 		<col def="I2">ISSetupLocation</col>
 		<col def="S255">ISReleaseFlags</col>
 		<row><td>_19ACA1DB_445A_4ACC_A1F8_CD8B40593184_</td><td>Microsoft .NET Framework 4.5 Full.prq</td><td/><td>1</td><td/></row>
-		<row><td>_E931E6E5_D446_4291_8C16_EBB6459AAD89_</td><td>Microsoft Visual C++ 2012 Redistributable Package (x86).prq</td><td/><td>1</td><td/></row>
 	</table>
 
 	<table name="ISSetupType">

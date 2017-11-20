@@ -41,7 +41,7 @@ namespace Dispatcher.Service
 
         private void OnDispatcherBegin(CDispatcher.OperateContent_t operate)
         {
-           if(operate.Opcode ==  RequestOpcode.radio || operate.Opcode ==  RequestOpcode.wlInfo)
+            if (operate.Opcode == RequestOpcode.status || operate.Opcode == RequestOpcode.wlInfo)
            {
                StatusParameter statusParameter = operate.Parameter as StatusParameter;
                if(statusParameter.getType == (long)StatusType_t.ConnectStatus)
@@ -52,7 +52,7 @@ namespace Dispatcher.Service
         }
         private void OnDispatcherCompleted(CDispatcher.OperateContent_t operate)
         {
-            if (operate.Opcode == RequestOpcode.radio || operate.Opcode == RequestOpcode.wlInfo)
+            if (operate.Opcode == RequestOpcode.status || operate.Opcode == RequestOpcode.wlInfo)
             {
                 StatusParameter statusParameter = operate.Parameter as StatusParameter;
                 if (statusParameter.getType == (long)StatusType_t.ConnectStatus)
@@ -63,7 +63,7 @@ namespace Dispatcher.Service
         }
         private void OnDispatcherFailure(CDispatcher.OperateContent_t operate, CDispatcher.Status status)
         {
-            if (operate.Opcode == RequestOpcode.radio || operate.Opcode == RequestOpcode.wlInfo)
+            if (operate.Opcode == RequestOpcode.status || operate.Opcode == RequestOpcode.wlInfo)
             {
                 StatusParameter statusParameter = operate.Parameter as StatusParameter;
                 if (statusParameter.getType == (long)StatusType_t.ConnectStatus)
@@ -127,12 +127,12 @@ namespace Dispatcher.Service
             {
                 if (replyparam.ContainsKey("SessionId"))
                 {
-                    if (replyparam.ContainsKey("Status"))
+                    if (replyparam.ContainsKey("Status") || replyparam.ContainsKey("status"))
                     {
                         try
                         {
                             //Console.WriteLine(replyparam["Status"].GetType().FullName);
-                            Int64 status = (Int64)replyparam["Status"];
+                            Int64 status = replyparam.ContainsKey("Status") ? (Int64)replyparam["Status"] : (Int64)replyparam["status"];
 
                             if (status == 0)//success
                             {
@@ -187,10 +187,9 @@ namespace Dispatcher.Service
                     OnLocationInDoorReport(parameter);
                     break;
                 default:
-                    CustomRequest(call,  parameter);
+                    CustomRequest(call, parameter);
                     break;
-
-            }
+            }  
         }
 
         private void OperateFailure(string sessionId, Status status)
@@ -678,7 +677,7 @@ namespace Dispatcher.Service
                             OnSendFailure(this, operateContent.Parameter.guid);
                            
 
-                            Log.Message("发起操作失败.");
+                            //Log.Message("发起操作失败.");
                         }
 
                         CustomReply(opcode, reply[0] == "success", reply[1]);
@@ -715,9 +714,12 @@ namespace Dispatcher.Service
                 switch(Opcode)
                 {
                     case RequestOpcode.call:
-                    case RequestOpcode.wlInfo:
-                        CallParameter callParam  = Parameter as CallParameter;
-                        if(callParam != null)return callParam.Operate == ExecType_t.Start ? "呼叫":"结束呼叫";
+                        CallParameter callParam = Parameter as CallParameter;
+                        if (callParam != null) return callParam.Operate == ExecType_t.Start ? "呼叫" : "结束呼叫";
+                        break;
+                    case RequestOpcode.wlCall:
+                        RepeaterCallParameter repeatercallParam = Parameter as RepeaterCallParameter;
+                        if (repeatercallParam != null) return repeatercallParam.operate == ExecType_t.Start ? "呼叫" : "结束呼叫";
                         break;
                     case RequestOpcode.message:
                          ShortMessageParameter shortMessageParam = Parameter as ShortMessageParameter;
