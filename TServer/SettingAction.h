@@ -252,7 +252,7 @@ void setLocationInDoorAction(CRemotePeer* pRemote, const std::string& param, uin
 	{
 		Document d;
 		d.Parse(param.c_str());
-		CSettings::instance()->setValue("locIndoor", d.GetObject());
+		CSettings::instance()->setValue("locationIndoor", d.GetObject());
 		std::string strResp = CSettings::instance()->getResponse("success", callId, 200, "", "");
 		sendResponse(pRemote, strResp.c_str(), strResp.size());
 	}
@@ -273,7 +273,7 @@ void getLocationInDoorAction(CRemotePeer* pRemote, const std::string& param, uin
 
 	try
 	{
-		std::string strResp = CSettings::instance()->getResponse("success", callId, 200, "", CSettings::instance()->getValue("locIndoor"));
+		std::string strResp = CSettings::instance()->getResponse("success", callId, 200, "", CSettings::instance()->getValue("locationIndoor"));
 		sendResponse(pRemote, strResp.c_str(), strResp.size());
 	}
 	catch (std::exception& e)

@@ -450,7 +450,7 @@ int CBroker::getLicenseStatus()
 }
 void CBroker::sendLoactionIndoorConfig()
 {
-	std::string strConnect = CSettings::instance()->getRequest("locationIndoor", "radio", m_radioClient->getCallId(), CSettings::instance()->getValue("locIndoor"));
+	std::string strConnect = CSettings::instance()->getRequest("locationIndoor", "radio", m_radioClient->getCallId(), CSettings::instance()->getValue("locationIndoor"));
 	m_radioClient->send(strConnect.c_str(), strConnect.size());
 }
 //void CBroker::sendLoactionIndoorConfigToWl()
