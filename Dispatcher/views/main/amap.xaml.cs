@@ -66,7 +66,7 @@ namespace Dispatcher.Views
         private void OnMapLoadCompleted(object sender, CefSharp.LoadCompletedEventArgs url)
         {
            //for test
-            OnDrawPoint(new DrawLocationReportArgs(ResourcesMgr.Instance().Members[0], new GpsReport() { Valid = true}));
+           // OnDrawPoint(new DrawLocationReportArgs(ResourcesMgr.Instance().Members[0], new GpsReport() { Valid = true}));
         }
 
         private void OnDrawPoint(DrawLocationReportArgs e)

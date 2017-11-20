@@ -428,7 +428,7 @@ namespace Dispatcher.ViewsModules
                     case NotifyKey_t.Location:
                         return BuildGpsCondition(FirstTime, LastTime, TargetID);
                     case NotifyKey_t.LocationInDoor:
-                        break;
+                        return BuildLocationInDoorCondition(FirstTime, LastTime, TargetID);
                 } 
                 return null;
             }
@@ -564,7 +564,31 @@ namespace Dispatcher.ViewsModules
             };
             }
 
+            private List<string[]> BuildLocationInDoorCondition(DateTime? Start, DateTime? End, int Target)
+            {
+                if (Start == null) Start = default(DateTime);
+                if (End == null) End = DateTime.Now;
+                if (Start.Value >= End.Value)
+                {
+                    return new List<string[]>() { new string[1] { "empty" } };
+                }
 
+                if (Target == -1)
+                {
+                    return new List<string[]>() 
+                {
+                    new string[3]{ ">","created_at",Start.Value.ToString("yyyy-MM-dd HH:mm:ss")},
+                    new string[4]{"and","<","created_at",End.Value.ToString("yyyy-MM-dd HH:mm:ss")},
+                };
+                }
+
+                return new List<string[]>() 
+            {
+                new string[3]{ ">","created_at",Start.Value.ToString("yyyy-MM-dd HH:mm:ss")},
+                new string[4]{"and","<","created_at",End.Value.ToString("yyyy-MM-dd HH:mm:ss")},
+                new string[4]{"and","=","source",Target.ToString()},
+            };
+            }
 
             private void ReceiveRequest(RequestOpcode call, object param)
         {

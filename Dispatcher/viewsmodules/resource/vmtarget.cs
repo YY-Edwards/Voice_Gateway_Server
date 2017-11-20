@@ -1122,17 +1122,18 @@ namespace Dispatcher.ViewsModules
             BeaconReport report = FilterLocationInDoorReport(e.Report);
             if (report == null) return;
 
+            //removeorginpoint
+            VMBeacon orginbeacon = ResourcesMgr.Instance().Beacons.Find(p => p.TargetList.Contains(this));
+            if (orginbeacon != null) orginbeacon.RemovePos.Execute(this);
+
+
+
             VMBeacon beacon = ResourcesMgr.Instance().Beacons.Find(p => p.Beacon != null && p.Beacon.Major == report.major && p.Beacon.Minor == report.minor);
             if (beacon != null)
             {
                 beacon.AddPos.Execute(this);
 
-                //Log.Message(FullName + "  室内定位信息(信标：" + beacon.Beacon.Major.ToString() + "," + beacon.Beacon.Minor.ToString() + ")");
-                //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.LocationInDoor, Contents = "室内位置信息(" + beacon.Beacon.Major.ToString() + "," + beacon.Beacon.Minor.ToString() + ")" }, true);
-
-                //removeorginpoint
-                VMBeacon orginbeacon = ResourcesMgr.Instance().Beacons.Find(p => p.TargetList.Contains(this));
-                if (orginbeacon != null) orginbeacon.RemovePos.Execute(this);
+                Log.Debug(FullName + "  室内定位信息(信标：" + beacon.Beacon.Major.ToString() + "," + beacon.Beacon.Minor.ToString() + ")");  
             }
         }
 
