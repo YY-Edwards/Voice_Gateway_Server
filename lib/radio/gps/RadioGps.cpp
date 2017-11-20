@@ -765,7 +765,15 @@ void CRadioGps::RecvData()
 									Respone r = { 0 };
 									r.source = m_ThreadGps->radioID;
 									r.bcon = getValidBcon(mBcon);
-									onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
+									if (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report)
+									{
+										onData(myCallBackFunc, GPS_IMME_COMM_INDOOR, r);
+									}
+									else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report)
+									{
+										onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
+									}
+									
 									count++;
 									break;
 								}
@@ -833,6 +841,7 @@ void CRadioGps::RecvData()
 							{
 								if (isImme)
 								{
+									isImme = false;
 									if (myCallBackFunc != NULL)
 									{
 										Respone r = { 0 };
