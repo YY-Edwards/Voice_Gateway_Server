@@ -69,16 +69,16 @@ void recvLocationIndoorAction(CRemotePeer* pRemote, const std::string& param, ui
 				f.push(element);
 			}*/
 
-			int major = d["bcon"]["major"].GetInt();
-			int minor = d["bcon"]["minor"].GetInt();
-			int time = d["bcon"]["timestamp"].GetInt();
-			int rssi = d["bcon"]["rssi"].GetInt();
-			int txpower = d["bcon"]["txpower"].GetInt();
+			int major = d["Report"]["major"].GetInt();
+			int minor = d["Report"]["minor"].GetInt();
+			int time = d["Report"]["timestamp"].GetInt();
+			int rssi = d["Report"]["rssi"].GetInt();
+			int txpower = d["Report"]["txpower"].GetInt();
 			FieldValue uuid(FieldValue::TArray);
-			for (int j = 0; j < d["bcon"]["uuid"].GetArray().Size(); j++)
+			for (int j = 0; j < d["Report"]["uuid"].GetArray().Size(); j++)
 			{
 				FieldValue temp(FieldValue::TInt);
-				temp.setInt(d["bcon"]["uuid"][j].GetInt());
+				temp.setInt(d["Report"]["uuid"][j].GetInt());
 				uuid.push(temp);
 			}
 
