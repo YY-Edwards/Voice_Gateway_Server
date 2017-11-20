@@ -41,7 +41,7 @@ void recvLocationIndoorAction(CRemotePeer* pRemote, const std::string& param, ui
 			element.setKeyVal("source", FieldValue(source));
 
 		}
-		if (d.HasMember("bcon") && d["bcon"].IsObject())
+		if (d.HasMember("Report") && d["Report"].IsObject())
 		{
 		/*	int len = d["bcons"].Size();
 			for (int i = 0; i < len; i++)
