@@ -575,7 +575,19 @@ namespace Dispatcher.Service
         {
             if (LocationResponse != null)
             {
-                LocationResponseArgs args = new LocationResponseArgs(res.Operate, res.Status, res.Report as GpsReport)
+                GpsReport report = null;
+
+                try
+                {
+                    report = JsonConvert.DeserializeObject<GpsReport>(JsonConvert.SerializeObject(res.Report));
+                }
+                catch
+                {
+
+                }
+
+
+                LocationResponseArgs args = new LocationResponseArgs(res.Operate, res.Status, report)
                 {
                     Target = res.Target,
                     Cycle = res.Cycle
@@ -607,7 +619,18 @@ namespace Dispatcher.Service
         {
             if (LocationInDoorResponse != null)
             {
-                LocationInDoorResponse(new LocationInDoorResponseArgs(res.Operate, res.Target, res.Status, res.Report as BeaconReport));
+                BeaconReport report = null;
+
+                try
+                {
+                    report = JsonConvert.DeserializeObject<BeaconReport>(JsonConvert.SerializeObject(res.Report));
+                }
+                catch
+                {
+
+                }
+
+                LocationInDoorResponse(new LocationInDoorResponseArgs(res.Operate, res.Target, res.Status, report));
             }
         }
 
