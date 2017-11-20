@@ -631,7 +631,9 @@ void DispatchOperate::connect(radio_t radioCfg, mnis_t mnisCfg, location_t locat
 		mnisCfg.MessagePort = radioCfg.MessagePort;
 		mnisCfg.TomeoutSeconds = radioCfg.TomeoutSeconds;
 		pDs->radioConnect(mnisCfg,locationCfg,locationIndoorCfg);
+		pDs->locationIndoorConfig(locationIndoorCfg.Interval, locationIndoorCfg.iBeaconNumber, locationIndoorCfg.IsEmergency);
 		pTs->radioConnect(radioCfg);
+		
 	}
 	else
 	{	
@@ -640,6 +642,7 @@ void DispatchOperate::connect(radio_t radioCfg, mnis_t mnisCfg, location_t locat
 			pDs->InitGPSOverturnSocket(inet_addr(locationCfg.GpsC.Ip),locationCfg.GpsC.Port);
 		}
 		pDs->radioConnect(mnisCfg, locationCfg, locationIndoorCfg);
+		pDs->locationIndoorConfig(locationIndoorCfg.Interval, locationIndoorCfg.iBeaconNumber, locationIndoorCfg.IsEmergency);
 		pTs->radioConnect(radioCfg);	
 	}
 	

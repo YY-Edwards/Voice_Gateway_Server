@@ -202,7 +202,7 @@ void connectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 			}
 			if (d.IsObject() && d.HasMember("locationIndoor") && d["locationIndoor"].IsObject())
 			{
-				parseLocationIndoorCfg(locationIndoorCfg, d["location"].GetObject());
+				parseLocationIndoorCfg(locationIndoorCfg, d["locationIndoor"].GetObject());
 			}
 			if (radioCfg.IsEnable)
 			{
