@@ -281,18 +281,32 @@ namespace Dispatcher.ViewsModules
             CLogServer.Instance().Initialize();
         }
 
+        private readonly object _serverStatusChangedLocakHelper = new object();
+
         private void OnTServerChanged(bool isinit)
         {
-            Log.Info(String.Format("TServer Status:{0}", isinit ? "Connected" : "Disconnected"));
-            m_TServerConnected = isinit;     
-            ServerStatus.Instance().TServer.SetStatus(m_TServerConnected);         
+            lock (_serverStatusChangedLocakHelper)
+            {
+                Log.Info(String.Format("TServer Status:{0}", isinit ? "Connected" : "Disconnected"));
+                m_TServerConnected = isinit;
+                ServerStatus.Instance().TServer.SetStatus(m_TServerConnected);
+
+                if (m_TServerConnected && m_LogServerConnected) ResourcesMgr.Instance().InitializeResources(_resourcesviewmodule);
+            }
         }
 
         private void OnLogServerChanged(bool isinit)
         {
-            Log.Info(String.Format("LogServer Status:{0}", isinit ? "Connected" : "Disconnected"));
-            m_LogServerConnected = isinit;            
-            ServerStatus.Instance().LogServer.SetStatus(m_LogServerConnected);
+            lock (_serverStatusChangedLocakHelper)
+            {
+                Log.Info(String.Format("LogServer Status:{0}", isinit ? "Connected" : "Disconnected"));
+                m_LogServerConnected = isinit;
+                ServerStatus.Instance().LogServer.SetStatus(m_LogServerConnected);
+
+                if (m_TServerConnected && m_LogServerConnected) ResourcesMgr.Instance().InitializeResources(_resourcesviewmodule);
+
+            }
+         
         }
         private void OnOperated(OperatedEventArgs e)
         {

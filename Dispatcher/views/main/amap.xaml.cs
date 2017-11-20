@@ -35,6 +35,7 @@ namespace Dispatcher.Views
         {
 
             map.WebBrowserJsOperation += new Controls.WebBrowserJsOperationHandler(WebBrowserJsOperation);
+            map.LoadCompleted += new CefSharp.LoadCompletedEventHandler(OnMapLoadCompleted);
             InitializedAmap();
 
             Log.Info("Amap Is Loaded");
@@ -62,8 +63,16 @@ namespace Dispatcher.Views
             map.FileUrl = entrance;
         }
 
+        private void OnMapLoadCompleted(object sender, CefSharp.LoadCompletedEventArgs url)
+        {
+           //for test
+            OnDrawPoint(new DrawLocationReportArgs(ResourcesMgr.Instance().Members[0], new GpsReport() { Valid = true}));
+        }
+
         private void OnDrawPoint(DrawLocationReportArgs e)
         {
+            if (e == null || e.Report == null || !e.Report.Valid) return;
+
             double middleLat, middleLon;
             GPSTransform.transform(e.Report.Lat, e.Report.Lon, out middleLat, out middleLon);
 

@@ -42,7 +42,7 @@ namespace Dispatcher.Service
             {
                 case RequestOpcode.wlCall:
                     OnCallRequest(parameter);
-                    break;
+                    break;                    
                 default:
                     break;
 

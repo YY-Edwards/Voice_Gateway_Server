@@ -171,8 +171,8 @@ namespace Dispatcher.ViewsModules
         {
             get
             {
-                if (IsInCall) return true;
-                else return !SystemStatus.IsSystemInCall && IsOnlineIfNeed && !IsInCall ? true : false;
+                if(IsInCall) return true;
+                else return ServerStatus.Instance().VoiceBusiness.IsConnected &&  !SystemStatus.IsSystemInCall && IsOnlineIfNeed && !IsInCall ? true : false;
             }
         }
 
@@ -180,6 +180,7 @@ namespace Dispatcher.ViewsModules
         {
             get
             {
+                if (!ServerStatus.Instance().DataBusiness.IsConnected) return false;
                 if (_type == TargetType_t.Member && _member != null) return true;
                 else return false;
             }
@@ -189,6 +190,7 @@ namespace Dispatcher.ViewsModules
         {
             get
             {
+                if (!ServerStatus.Instance().DataBusiness.IsConnected) return false;
                 if (_type == TargetType_t.Member) return _member != null && IsOnlineIfNeed && _member.HasLocation ? true : false;
                 else if (_type == TargetType_t.Group) return _group != null ? true : false;
                 else return false;
@@ -199,6 +201,7 @@ namespace Dispatcher.ViewsModules
         {
             get
             {
+                if (!ServerStatus.Instance().DataBusiness.IsConnected) return false;
                 if (_type == TargetType_t.Member) return _member != null && IsOnlineIfNeed && _member.HasLocatinInDoor ? true : false;
                 else if (_type == TargetType_t.Group) return _group != null ? true : false;
                 else return false;
@@ -1012,6 +1015,16 @@ namespace Dispatcher.ViewsModules
         }
         private void LocationExec(object parameter)
         {
+            LocationType_t type = (parameter as string).ToEnum<LocationType_t>();
+            if(type == LocationType_t.StartTriggered)
+            {
+                ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.Cycle));
+            }
+            else if(type == LocationType_t.StopTriggered)
+            {
+                ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.Idle));
+            }
+
             LocationRequest(QueryLocationType_t.LocationGps, (parameter as string).ToEnum<LocationType_t>());
         }
 
@@ -1065,6 +1078,17 @@ namespace Dispatcher.ViewsModules
 
         private void LocationInDoorExec(object parameter)
         {
+            LocationType_t type = (parameter as string).ToEnum<LocationType_t>();
+            if (type == LocationType_t.StartTriggered)
+            {
+                ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationStatus_t.Cycle));
+            }
+            else if (type == LocationType_t.StopTriggered)
+            {
+                ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationStatus_t.Idle));
+            }
+
+
             LocationRequest(QueryLocationType_t.LocationInDoor, (parameter as string).ToEnum<LocationType_t>());
         }
 

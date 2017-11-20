@@ -113,7 +113,11 @@ namespace Dispatcher.Service
 
         public void InitializeResources(VMResources vmresource)
         {
-            if (IsInitialized) return;
+            if (IsInitialized)
+            {
+                if (OnResourcesLoaded != null) OnResourcesLoaded(this, null);
+                return;
+            }
             IsInitialized = true;
 
             if (!CLogServer.Instance().IsInitialized) return;

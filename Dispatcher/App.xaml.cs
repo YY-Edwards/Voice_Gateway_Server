@@ -88,7 +88,7 @@ namespace Dispatcher
         {
             get
             {
-                string currentdir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + Company + "\\" + ProjectName + "\\" + Name + " " + Version + "\\";
+                string currentdir = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\" + Company + "\\" + ProjectName + "\\" + Name + "" + Version + "\\";
                 if (!Directory.Exists(currentdir))
                 {
                     Directory.CreateDirectory(currentdir);
