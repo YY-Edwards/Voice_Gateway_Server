@@ -763,24 +763,15 @@ void CRadioGps::RecvData()
 								if (myCallBackFunc != NULL)
 								{
 									Respone r = { 0 };
-<<<<<<< HEAD
 									r.source = m_ThreadGps->radioID;
 									r.bcon = getValidBcon(compareRssi(mBcon));
-=======
-									r.target = m_ThreadGps->radioID;
-									r.bcon = getValidBcon(mBcon);
-									
->>>>>>> 57bb6e1547210366553492c5347475a1699d0cbc
 									if (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report)
 									{
-										r.sessionId = it->sessionId;
 										onData(myCallBackFunc, GPS_IMME_COMM_INDOOR, r);
-										it = timeOutList.erase(it);
 									}
 									else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report)
 									{
 										onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
-										it = timeOutList.erase(it);
 									}
 									
 									count++;
@@ -866,7 +857,6 @@ void CRadioGps::RecvData()
 										r.operate = 0;
 										r.querymode = queryMode;
 										onData(myCallBackFunc, it->command, r);
-										it = timeOutList.erase(it);
 										count++;
 										break;
 									}
@@ -884,7 +874,6 @@ void CRadioGps::RecvData()
 										r.valid = 1;
 										r.querymode = queryMode;
 										onData(myCallBackFunc, RECV_GPS, r);
-										it = timeOutList.erase(it);
 										count++;
 										break;
 									}

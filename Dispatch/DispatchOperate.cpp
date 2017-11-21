@@ -394,6 +394,8 @@ void DispatchOperate::OnData(  int call, Respone data)
 		break;
 	case GPS_TRIGG_COMM_INDOOR:
 	case GPS_TRIGG_CSBK_INDOOR:
+	case GPS_IMME_COMM_INDOOR:
+	case GPS_IMME_CSBK_INDOOR:
 	{
 		FieldValue element(FieldValue::TObject);
 		element.setKeyVal("txpower", FieldValue(data.bcon.TXPower));
