@@ -764,7 +764,7 @@ void CRadioGps::RecvData()
 								{
 									Respone r = { 0 };
 									r.source = m_ThreadGps->radioID;
-									r.bcon = getValidBcon(mBcon);
+									r.bcon = getValidBcon(compareRssi(mBcon));
 									if (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report)
 									{
 										onData(myCallBackFunc, GPS_IMME_COMM_INDOOR, r);
@@ -787,7 +787,7 @@ void CRadioGps::RecvData()
 							
 								Respone r = { 0 };
 								r.source = m_ThreadGps->radioID;
-								r.bcon = getValidBcon(mBcon);
+								r.bcon = getValidBcon(compareRssi(mBcon));
 								onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
 							}
 
@@ -922,7 +922,6 @@ BconMajMinTimeReport CRadioGps::getValidBcon(std::list<BconMajMinTimeReport> bco
 {
 	
 	BconMajMinTimeReport bcon = {0};
-	//int maxPower = 0;
 	int maxRssi = 0;
 	std::list<BconMajMinTimeReport>::iterator it;
 	for (it = bcons.begin(); it != bcons.end(); it++)
@@ -961,4 +960,38 @@ BconMajMinTimeReport CRadioGps::getValidBcon(std::list<BconMajMinTimeReport> bco
 		lastBcons = bcons;
 	}
 	return bcon;
+}
+std::list<BconMajMinTimeReport> CRadioGps::compareRssi(std::list<BconMajMinTimeReport> bcons)
+{
+	if (compareLastBcons.size() <= 0 && compareLastButOneBcons.size()<=0)
+	{
+		compareLastBcons = bcons;
+	}
+	else if (compareLastBcons.size() > 0 && compareLastButOneBcons.size() <= 0)
+	{
+		compareLastButOneBcons = compareLastBcons;
+	}
+	else if (compareLastBcons.size() > 0 && compareLastButOneBcons.size() > 0)
+	{
+		compareLastButOneBcons = compareLastBcons;
+		compareLastBcons = bcons;
+		std::list<BconMajMinTimeReport>::iterator iter;
+		std::list<BconMajMinTimeReport>::iterator it;
+		std::list<BconMajMinTimeReport>::iterator itera;
+		for (iter = compareLastBcons.begin(); iter != compareLastBcons.end(); iter++)
+		{
+			for (it = compareLastButOneBcons.begin(); it != compareLastButOneBcons.end(); it++)
+			{
+				for (itera = bcons.begin(); itera != bcons.end(); itera++)
+				{
+					if (it->Major == itera->Major && it->Minor == itera->Minor && it->RSSI == itera->RSSI
+						&& iter->Major == itera->Major && iter->Minor == itera->Minor && iter->RSSI == itera->RSSI) 
+					{
+						it = bcons.erase(it);
+					}
+				}
+			}
+		}
+	}
+	return bcons;
 }
