@@ -901,7 +901,8 @@ void CXNLConnection::controlReply(unsigned char result, unsigned char transactio
 				if (myTcpCallBackFunc != NULL)
 				{
 					onTcpData(myTcpCallBackFunc, CHECK_RADIO_ONLINE, tr);
-					it = tcpCommandTimeOutList.erase(it);
+					it->status = tr.result;
+					//it = tcpCommandTimeOutList.erase(it);
 					break;
 				}
 			}
@@ -1009,7 +1010,8 @@ void CXNLConnection::callReply(unsigned char result, unsigned char transactionId
 					tr.result = REMOTE_FAILED;
 				}
 				onTcpData(myTcpCallBackFunc, it->command, tr);
-				it = tcpCommandTimeOutList.erase(it);
+				//it = tcpCommandTimeOutList.erase(it);
+				it->status = tr.result;
 				break;
 			}
 

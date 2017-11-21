@@ -84,6 +84,7 @@ namespace Manager.ViewModels
                         , "Zoom"
                         , "Position"
                         , "AreaMap"
+                        , "BeaconsOutArea"
                         , "BeaconsInArea" });
                 }
             }

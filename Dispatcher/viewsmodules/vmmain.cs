@@ -231,6 +231,7 @@ namespace Dispatcher.ViewsModules
 
             new Task(ConnectServer).Start();
             new Task(UpdateDeviceStatus).Start();
+            new Task(UpdateSessionStatus).Start();
         }
 
         private void ConnectServer()
@@ -250,16 +251,17 @@ namespace Dispatcher.ViewsModules
             }
         }
 
-     
-       
+
+        private bool _isFirstUpdateStatus = true;
         private void UpdateDeviceStatus()
         {
             while (true)
             {
                 if (m_TServerConnected && _dispatcher != null)
                 {
-                    _dispatcher.GetStatus();
-                    _dispatcher.GetOnlineList();
+                    _dispatcher.GetStatus(_isFirstUpdateStatus);
+                    _dispatcher.GetOnlineList(_isFirstUpdateStatus);
+                    _isFirstUpdateStatus = false;
 
                     if (ServerStatus.Instance().VoiceBusiness.IsConnected || ServerStatus.Instance().DataBusiness.IsConnected)
                     {
@@ -275,6 +277,20 @@ namespace Dispatcher.ViewsModules
                     Thread.Sleep(300);
                 }
             }                      
+        }
+
+        private void UpdateSessionStatus()
+        {
+            while (true)
+            {
+                if (m_TServerConnected && _dispatcher != null)
+                {
+                    _dispatcher.GetSessionStatus();
+                   
+                }
+
+                Thread.Sleep(FunctionConfigure.TimeoutSeconds * 1000);
+            }               
         }
 
 

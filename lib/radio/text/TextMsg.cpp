@@ -550,7 +550,7 @@ void CTextMsg::RecvMsg()
 						r.target = m_ThreadMsg->radioID;
 						r.source = m_selfId;
 						r.msgStatus = SUCESS;
-						r.msg = "";
+						r.msg = it->text;
 						r.sessionId = it->sessionId;
 						if (it->command == SEND_PRIVATE_MSG)
 						{
@@ -562,7 +562,8 @@ void CTextMsg::RecvMsg()
 						}
 						onData(myCallBackFunc, it->command, r);
 						m_pMnis->updateOnLineRadioInfo(atoi(stringId.c_str()), RADIO_STATUS_ONLINE);
-						it = timeOutList.erase(it);
+						it->status = SUCESS;
+						//it = timeOutList.erase(it);
 						break;
 					}
 
