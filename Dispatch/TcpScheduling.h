@@ -56,6 +56,8 @@ public:
 	void disConnect();
 	std::mutex m_workLocker;
 	void setUsb(bool result);
+	void getSessionStatus(std::string sessionId);
+	void sendSessionStatus();
 	
 };
 

@@ -461,6 +461,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 		dis.send2Client("sendArs", args);
 		break;
 	case RADIO_STATUS:
+	{
 		args["getType"] = RADIO_STATUS;
 		FieldValue info(FieldValue::TArray);
 		for (it = data.rs.begin(); it != data.rs.end(); it++)
@@ -470,7 +471,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 			bool isGps = false;
 			if (it->second.gpsQueryMode > 0)
 			{
-				if (it->second.gpsQueryMode != 25 )
+				if (it->second.gpsQueryMode != 25)
 				{
 					isGps = true;
 				}
@@ -496,7 +497,31 @@ void DispatchOperate::OnData(  int call, Respone data)
 		args["info"] = info;
 		args["SessionId"] = FieldValue((data.sessionId).c_str());
 		dis.send2Client("status", args);
-		break;
+	}
+	break;
+	case SESSION_STATUS:
+		{
+			args["getType"] = SESSION_STATUS;
+			FieldValue info(FieldValue::TArray);
+
+			std::list<Command>::iterator it;
+			std::lock_guard <std::mutex> locker(m_timeOutListLocker);
+			for (it = timeOutList.begin(); it != timeOutList.end(); it++)
+			{
+				if ((it->status) >= 0)
+				{
+					FieldValue element(FieldValue::TObject);
+					element.setKeyVal("SessionId", FieldValue((it->sessionId).c_str()));
+					element.setKeyVal("Status", FieldValue(it->status));
+					info.push(element);
+					it = timeOutList.erase(it);
+				}
+			}
+			args["info"] = info;
+			args["SessionId"] = FieldValue((data.sessionId).c_str());
+			dis.send2Client("status", args);
+		}
+	break;
 	}
 	
 }
@@ -585,10 +610,35 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 	case RADIO_ARS:
 		break;
 	case RADIO_SERIAL:
-		FieldValue fSerial (FieldValue::TString);
-		fSerial.setString((data.radioSerial).c_str());
-		args["serial"] = fSerial;
-		dis.send2Client("readSerial", args);
+		{
+			FieldValue fSerial(FieldValue::TString);
+			fSerial.setString((data.radioSerial).c_str());
+			args["serial"] = fSerial;
+			dis.send2Client("readSerial", args);
+		}
+		
+		break;
+	case TCP_SESSION_STATUS:
+		{
+			args["getType"] = SESSION_STATUS;
+			FieldValue info(FieldValue::TArray);
+			std::list<TcpCommand>::iterator it;
+			m_allCommandListLocker.lock();
+			for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); ++it)
+			{
+				if ((it->status) >= 0)
+				{
+					FieldValue element(FieldValue::TObject);
+					element.setKeyVal("SessionId", FieldValue((it->sessionId).c_str()));
+					element.setKeyVal("Status", FieldValue(it->status));
+					info.push(element);
+					it = tcpCommandTimeOutList.erase(it);
+				}
+			}
+			args["info"] = info;
+			args["SessionId"] = FieldValue((data.sessionId).c_str());
+			dis.send2Client("status", args);
+		}
 		break;
 	}
 
@@ -714,6 +764,10 @@ void DispatchOperate::getStatus( int type,std::string sessionId)
 		break;
 	case RADIO_STATUS:
 		pDs->getRadioStatus(type,sessionId);
+		break;
+	case SESSION_STATUS:
+		pDs->getRadioStatus(type, sessionId);
+		pTs->getSessionStatus(sessionId);
 		break;
 	}
 }

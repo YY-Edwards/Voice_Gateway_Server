@@ -30,6 +30,7 @@
 #define CALL_END               30
 #define RADIO_SERIAL           31
 #define CLOSE_PTT              32
+#define TCP_SESSION_STATUS         33                   //status
 
 //#define RADIO_STATUS_OFFLINE   0
 //#define RADIO_STATUS_ONLINE    1
@@ -106,6 +107,7 @@ typedef struct tagTcpCommand
 	unsigned char txXcmpCount;
 	std::string radioIP;
 	std::string sessionId;
+	int status;
 	//SOCKET s;
 }TcpCommand;
 extern std::list <TcpCommand> tcpCommandTimeOutList;

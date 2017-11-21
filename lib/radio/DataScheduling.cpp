@@ -198,6 +198,10 @@ void CDataScheduling::getRadioStatus( int type,std::string sessionId)
 		{
 			addUdpCommand( RADIO_STATUS, "", "", 0, "", 0, 0,sessionId);
 		}
+		else if (type == SESSION_STATUS)
+		{
+			addUdpCommand(SESSION_STATUS, "", "", 0, "", 0, 0, sessionId);
+		}
 	}
 }
 void CDataScheduling::connect()
@@ -317,6 +321,7 @@ void CDataScheduling::addUdpCommand(int command, std::string radioIP, std::strin
 	m_command.gpsIP = gpsIP;
 	m_command.text = text;
 	m_command.sessionId = sessionId;
+	m_command.status = -1;
 
 	//过滤掉客户端的超时重发
 	std::list<Command>::iterator it;
@@ -344,7 +349,7 @@ DWORD WINAPI CDataScheduling::timeOutThread(LPVOID lpParam)
 	CDataScheduling * p = (CDataScheduling *)(lpParam);
 	if (p!=NULL)
 	{
-		p->timeOut();
+		//p->timeOut();       //将超时改为界面直接获取当前会话的状态
 	
 	}
 	return 1;
@@ -385,6 +390,8 @@ void CDataScheduling::workThreadFunc()
 				break;
 			case RADIO_STATUS:
 				sendRadioStatusToClient();
+				break;
+			case SESSION_STATUS:
 				break;
 			case SEND_PRIVATE_MSG:
 				sendMsg(it->sessionId, it->text, it->radioId,m_mnisCfg.CAI );
@@ -547,12 +554,30 @@ void CDataScheduling::sendRadioStatusToClient()
 			r.rs = g_radioStatus;
 			r.sessionId = it->sessionId;
 			onData(myCallBackFunc, it->command, r);
-			it = timeOutList.erase(it);
+			//it = timeOutList.erase(it);
+			it->status = SUCESS;
 			break;
 		}
 	}
 }
-
+void CDataScheduling::sendSessionStatusToClient()
+{
+	std::list<Command>::iterator it;
+	std::lock_guard <std::mutex> locker(m_timeOutListLocker);
+	for (it = timeOutList.begin(); it != timeOutList.end(); it++)
+	{
+		if (SESSION_STATUS == it->command)
+		{
+			Respone r = { 0 };
+			r.status = it->status;
+			r.sessionId = it->sessionId;
+			onData(myCallBackFunc, it->command, r);
+			//it = timeOutList.erase(it);
+			it->status = SUCESS;
+			break;
+		}
+	}
+}
 void CDataScheduling::updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode)
 {
 	Respone response = { 0 };

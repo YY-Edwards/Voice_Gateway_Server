@@ -366,6 +366,9 @@ void CTcpScheduling::workThreadFunc()
 			case REMOTE_MONITOR:
 				wiretap(it->sessionId,it->radioId);
 				break;
+			case TCP_SESSION_STATUS:
+				sendSessionStatus();
+				break;
 			default:
 				break;
 			}
@@ -387,6 +390,7 @@ void CTcpScheduling::addTcpCommand( int command, std::string radioIP, int id, in
 	m_allCommand.sessionId = sessionId;
 	m_allCommand.transactionIdBase = 0;
 	m_allCommand.txXcmpCount = 0;
+	m_allCommand.status = -1;
 	//过滤掉客户端的超时重发
 	std::list<TcpCommand>::iterator it;
 	std::lock_guard <std::mutex> lockerTimeout(m_allCommandListLocker);
@@ -412,7 +416,7 @@ DWORD WINAPI CTcpScheduling::timeOutThread(LPVOID lpParam)
 	CTcpScheduling * p = (CTcpScheduling *)(lpParam);
 	if ( p!=NULL)
 	{
-		p->timeOut();
+		//p->timeOut();
 	}
 	return 1;
 }
@@ -982,5 +986,27 @@ void onTcpData(void(*func)(int, TcpRespone),  int call, TcpRespone data)
 void CTcpScheduling::setUsb(bool result)
 {
 	isTcpConnect = result;
+}
+void CTcpScheduling::getSessionStatus(std::string sessionId)
+{
+	addTcpCommand(TCP_SESSION_STATUS, "", 0, 0, sessionId);
+}
+void CTcpScheduling::sendSessionStatus()
+{
+	std::list<TcpCommand>::iterator it;
+	m_allCommandListLocker.lock();
+	for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); ++it)
+	{
+		if (TCP_SESSION_STATUS == it->command)
+		{
+			TcpRespone r = { 0 };
+			r.result = it->status;
+			r.sessionId = it->sessionId;
+			onTcpData(myTcpCallBackFunc, it->command, r);
+			//it = timeOutList.erase(it);
+			it->status = SUCESS;
+			break;
+		}
+	}
 }
 

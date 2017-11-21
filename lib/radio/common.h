@@ -13,6 +13,7 @@
 #define               MNIS_CONNECT           0              
 #define				  CONNECT_STATUS         1                   //status
 #define				  RADIO_STATUS           2                   //status
+#define               SESSION_STATUS         3                   //status
 #define               SEND_PRIVATE_MSG       9                   //messageStatus
 #define               SEND_GROUP_MSG         10					 //messageStatus
 #define               RECV_MSG               11					 //message
@@ -75,6 +76,7 @@ typedef struct tagCommand
 	std::string gpsIP;
 	std::string text;
 	std::string sessionId;
+	int status;
 }Command;
 typedef struct tagRespone
 {
@@ -101,6 +103,7 @@ typedef struct tagRespone
 	//GPSReporFormat  gps;
 	double cycle;
 	std::string sessionId;
+	int status;
 }Respone;
 #define MAX_IP_SIZE 16
 

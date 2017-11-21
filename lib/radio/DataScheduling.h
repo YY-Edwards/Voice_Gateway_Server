@@ -23,6 +23,7 @@ public:
 	/* 更新在线设备列表
 	/************************************************************************/
 	void updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode = -1);
+	void sendSessionStatusToClient();
 private:
 	CTextMsg        *pRadioMsg;
 	CRadioARS       *pRadioARS;
