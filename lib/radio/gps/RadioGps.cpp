@@ -765,11 +765,11 @@ void CRadioGps::RecvData()
 									Respone r = { 0 };
 									r.source = m_ThreadGps->radioID;
 									r.bcon = getValidBcon(compareRssi(mBcon));
-									if (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report)
+									if (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report &&r.bcon.TimeStamp !=0)
 									{
 										onData(myCallBackFunc, GPS_IMME_COMM_INDOOR, r);
 									}
-									else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report)
+									else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report &&r.bcon.TimeStamp != 0)
 									{
 										onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
 									}
@@ -788,7 +788,11 @@ void CRadioGps::RecvData()
 								Respone r = { 0 };
 								r.source = m_ThreadGps->radioID;
 								r.bcon = getValidBcon(compareRssi(mBcon));
-								onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
+								if (r.bcon.TimeStamp != 0)
+								{
+									onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
+								}
+								
 							}
 
 						}
@@ -923,42 +927,47 @@ BconMajMinTimeReport CRadioGps::getValidBcon(std::list<BconMajMinTimeReport> bco
 	
 	BconMajMinTimeReport bcon = {0};
 	int maxRssi = 0;
-	std::list<BconMajMinTimeReport>::iterator it;
-	for (it = bcons.begin(); it != bcons.end(); it++)
+	if (bcons.size() > 0)
 	{
-		if (maxRssi < it->RSSI)
+		std::list<BconMajMinTimeReport>::iterator it;
+		for (it = bcons.begin(); it != bcons.end(); it++)
 		{
-			maxRssi = it->RSSI;
-			bcon.Major = it->Major;
-			bcon.Minor = it->Minor;
-			bcon.RSSI = it->RSSI;
-			bcon.TimeStamp = it->TimeStamp;
-			bcon.TXPower = it->TXPower;
-			memcpy(bcon.uuid, it->uuid, 16);
-		}
-	}
-	if (lastBcons.size() <= 0)
-	{
-		lastBcons = bcons;
-		return bcon;
-	}
-	else
-	{
-		std::list<BconMajMinTimeReport>::iterator iter;
-		for (iter = lastBcons.begin(); iter != lastBcons.end(); iter++)
-		{
-			if (bcon.Major == iter->Major && bcon.Minor == iter->Minor)
+			if (maxRssi < it->RSSI)
 			{
-				lastBcons = bcons;
-				return bcon;
-			}
-			else
-			{
-				
+				maxRssi = it->RSSI;
+				bcon.Major = it->Major;
+				bcon.Minor = it->Minor;
+				bcon.RSSI = it->RSSI;
+				bcon.TimeStamp = it->TimeStamp;
+				bcon.TXPower = it->TXPower;
+				memcpy(bcon.uuid, it->uuid, 16);
 			}
 		}
-		lastBcons = bcons;
+		if (lastBcons.size() <= 0)
+		{
+			lastBcons = bcons;
+			return bcon;
+		}
+		else
+		{
+			std::list<BconMajMinTimeReport>::iterator iter;
+			for (iter = lastBcons.begin(); iter != lastBcons.end(); iter++)
+			{
+				if (bcon.Major == iter->Major && bcon.Minor == iter->Minor)
+				{
+					lastBcons = bcons;
+					return bcon;
+				}
+				else
+				{
+
+				}
+			}
+			lastBcons = bcons;
+		}
 	}
+	
+	
 	return bcon;
 }
 std::list<BconMajMinTimeReport> CRadioGps::compareRssi(std::list<BconMajMinTimeReport> bcons)
@@ -973,8 +982,6 @@ std::list<BconMajMinTimeReport> CRadioGps::compareRssi(std::list<BconMajMinTimeR
 	}
 	else if (compareLastBcons.size() > 0 && compareLastButOneBcons.size() > 0)
 	{
-		compareLastButOneBcons = compareLastBcons;
-		compareLastBcons = bcons;
 		std::list<BconMajMinTimeReport>::iterator iter;
 		std::list<BconMajMinTimeReport>::iterator it;
 		std::list<BconMajMinTimeReport>::iterator itera;
@@ -992,6 +999,8 @@ std::list<BconMajMinTimeReport> CRadioGps::compareRssi(std::list<BconMajMinTimeR
 				}
 			}
 		}
+		compareLastButOneBcons = compareLastBcons;
+		compareLastBcons = bcons;
 	}
 	return bcons;
 }
