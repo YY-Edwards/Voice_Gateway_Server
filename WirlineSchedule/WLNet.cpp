@@ -1074,11 +1074,8 @@ void CWLNet::Net_MaintainKeepAlive()
 
 void CWLNet::Net_MaintainAlive(DWORD eventIndex)
 {
-	/*进行调度组检查*/
-	checkDefaultGroupAndTalkTime();
+
 	int    rc;
-	/*进行语音记录检查*/
-	Process_WL_BURST_CALL(WL_BURST_CHECK_TIMEOUT, NULL);
 
 	switch (eventIndex)
 	{
@@ -1407,6 +1404,11 @@ void CWLNet::Net_MaintainAlive(DWORD eventIndex)
 	default:
 		break;
 	}
+
+	/*进行调度组检查*/
+	checkDefaultGroupAndTalkTime();
+	/*进行语音记录检查*/
+	//Process_WL_BURST_CALL(WL_BURST_CHECK_TIMEOUT, NULL);
 }
 
 void CWLNet::Net_WAITFOR_MAP_REQUEST_TX(DWORD eventIndex)
@@ -2416,6 +2418,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 										   delete (*i);
 										   m_voiceReocrds.erase(i);
 										   releaseVoiceReocrdsLock();
+										   SetCallStatus(CALL_IDLE);
 										   sprintf_s(m_reportMsg, "call back,then voice end %ld", diffTimestamp);
 										   sendLogToWindow();
 										   break;
@@ -2444,6 +2447,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 										   delete (*i);
 										   m_voiceReocrds.erase(i);
 										   releaseVoiceReocrdsLock();
+										   SetCallStatus(CALL_IDLE);
 										   sprintf_s(m_reportMsg, "call timeout,then end %ld", diffTimestamp);
 										   sendLogToWindow();
 										   break;
@@ -2638,6 +2642,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 																	   delete (*i);
 																	   m_voiceReocrds.erase(i);
 																	   releaseVoiceReocrdsLock();
+																	   SetCallStatus(CALL_IDLE);
 																	   sprintf_s(m_reportMsg, "Voice session end");
 																	   sendLogToWindow();
 																	   break;
@@ -6345,7 +6350,7 @@ void CWLNet::SetCallStatus(WORD value)
 	{
 		WORD prev = m_callStatus;
 		m_callStatus = value;
-		sprintf_s(m_reportMsg, "CALL_STATUS:%u->%u", prev, m_callStatus);
+		sprintf_s(m_reportMsg, "=============CALL_STATUS:%u->%u=============", prev, m_callStatus);
 		sendLogToWindow();
 	}
 }
@@ -6708,16 +6713,18 @@ void CWLNet::CorrectingBuffer(DWORD callId)
 
 void CWLNet::requestRecordEndEvent()
 {
-	//sprintf_s(m_reportMsg, "requestRecordEndEvent");
-	//sendLogToWindow();
+	sprintf_s(m_reportMsg, "requestRecordEndEvent");
+	sendLogToWindow();
 	ResetEvent(m_endRecordEvent);
 }
 
 void CWLNet::releaseRecordEndEvent()
 {
-	//sprintf_s(m_reportMsg, "releaseRecordEndEvent");
-	//sendLogToWindow();
+	sprintf_s(m_reportMsg, "releaseRecordEndEvent");
+	sendLogToWindow();
 	SetEvent(m_endRecordEvent);
+	/*判定当前是否需要结束通话*/
+	g_manager->handleStopCall();
 }
 
 void CWLNet::waitRecordEnd()
@@ -6752,6 +6759,7 @@ void CWLNet::waitRecordEnd()
 	m_sendVoices.push_back(m_pSendVoicePackage);
 	releaseReadySendVoicesLock();
 	g_bPTT = FALSE;
+	SetCallStatus(CALL_IDLE);
 	//sprintf_s(m_reportMsg, "填充结束标识");
 	//sendLogToWindow();
 }
@@ -6775,7 +6783,7 @@ void CWLNet::HangTimerCallCheck()
 {
 	if (!(GetCallStatus() == CALL_HANGUP || GetCallStatus() == CALL_IDLE || g_dongleIsUsing))
 	{
-		SetCallStatus(CALL_HANGUP);
+		//SetCallStatus(CALL_HANGUP);
 		SetCallStatus(CALL_IDLE);
 	}
 }

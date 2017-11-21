@@ -530,7 +530,7 @@ typedef struct SendVoiceStruct
 
 
 #define SEND_VOICE_INTERVAL 60
-#define VOICE_END_TIMEOUT 600
+#define VOICE_END_TIMEOUT 1200
 #define AUTHOR_RETRY_NUM 5
 #define AUTHOR_WAITTIME (1000*5)
 
