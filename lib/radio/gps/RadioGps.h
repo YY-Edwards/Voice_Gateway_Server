@@ -94,7 +94,10 @@ private:
 	int iBconNum;
 	bool isEme;
 	std::list<BconMajMinTimeReport> lastBcons;
+	std::list<BconMajMinTimeReport> compareLastBcons;
+	std::list<BconMajMinTimeReport> compareLastButOneBcons;
 	BconMajMinTimeReport getValidBcon(std::list<BconMajMinTimeReport> bcons);
+	std::list<BconMajMinTimeReport> compareRssi(std::list<BconMajMinTimeReport> bcons);
 
 
 };

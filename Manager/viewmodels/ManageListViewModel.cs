@@ -130,9 +130,9 @@ namespace Manager.ViewModels
             get 
             {
                 return new Command(() =>
-                {                   
-                    Read();
+                {
                     if (RegisterViewModel != null) RegisterViewModel.Query.Execute(null);
+                    Read();  
                 });
             }
         }

@@ -763,19 +763,15 @@ void CRadioGps::RecvData()
 								if (myCallBackFunc != NULL)
 								{
 									Respone r = { 0 };
-									r.target = m_ThreadGps->radioID;
-									r.bcon = getValidBcon(mBcon);
-									
-									if (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report)
+									r.source = m_ThreadGps->radioID;
+									r.bcon = getValidBcon(compareRssi(mBcon));
+									if (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report &&r.bcon.TimeStamp !=0)
 									{
-										r.sessionId = it->sessionId;
 										onData(myCallBackFunc, GPS_IMME_COMM_INDOOR, r);
-										it = timeOutList.erase(it);
 									}
-									else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report)
+									else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report &&r.bcon.TimeStamp != 0)
 									{
 										onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
-										it = timeOutList.erase(it);
 									}
 									
 									count++;
@@ -791,8 +787,12 @@ void CRadioGps::RecvData()
 							
 								Respone r = { 0 };
 								r.source = m_ThreadGps->radioID;
-								r.bcon = getValidBcon(mBcon);
-								onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
+								r.bcon = getValidBcon(compareRssi(mBcon));
+								if (r.bcon.TimeStamp != 0)
+								{
+									onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
+								}
+								
 							}
 
 						}
@@ -861,7 +861,6 @@ void CRadioGps::RecvData()
 										r.operate = 0;
 										r.querymode = queryMode;
 										onData(myCallBackFunc, it->command, r);
-										it = timeOutList.erase(it);
 										count++;
 										break;
 									}
@@ -879,7 +878,6 @@ void CRadioGps::RecvData()
 										r.valid = 1;
 										r.querymode = queryMode;
 										onData(myCallBackFunc, RECV_GPS, r);
-										it = timeOutList.erase(it);
 										count++;
 										break;
 									}
@@ -928,43 +926,81 @@ BconMajMinTimeReport CRadioGps::getValidBcon(std::list<BconMajMinTimeReport> bco
 {
 	
 	BconMajMinTimeReport bcon = {0};
-	//int maxPower = 0;
 	int maxRssi = 0;
-	std::list<BconMajMinTimeReport>::iterator it;
-	for (it = bcons.begin(); it != bcons.end(); it++)
+	if (bcons.size() > 0)
 	{
-		if (maxRssi < it->RSSI)
+		std::list<BconMajMinTimeReport>::iterator it;
+		for (it = bcons.begin(); it != bcons.end(); it++)
 		{
-			maxRssi = it->RSSI;
-			bcon.Major = it->Major;
-			bcon.Minor = it->Minor;
-			bcon.RSSI = it->RSSI;
-			bcon.TimeStamp = it->TimeStamp;
-			bcon.TXPower = it->TXPower;
-			memcpy(bcon.uuid, it->uuid, 16);
+			if (maxRssi < it->RSSI)
+			{
+				maxRssi = it->RSSI;
+				bcon.Major = it->Major;
+				bcon.Minor = it->Minor;
+				bcon.RSSI = it->RSSI;
+				bcon.TimeStamp = it->TimeStamp;
+				bcon.TXPower = it->TXPower;
+				memcpy(bcon.uuid, it->uuid, 16);
+			}
+		}
+		if (lastBcons.size() <= 0)
+		{
+			lastBcons = bcons;
+			return bcon;
+		}
+		else
+		{
+			std::list<BconMajMinTimeReport>::iterator iter;
+			for (iter = lastBcons.begin(); iter != lastBcons.end(); iter++)
+			{
+				if (bcon.Major == iter->Major && bcon.Minor == iter->Minor)
+				{
+					lastBcons = bcons;
+					return bcon;
+				}
+				else
+				{
+
+				}
+			}
+			lastBcons = bcons;
 		}
 	}
-	if (lastBcons.size() <= 0)
+	
+	
+	return bcon;
+}
+std::list<BconMajMinTimeReport> CRadioGps::compareRssi(std::list<BconMajMinTimeReport> bcons)
+{
+	if (compareLastBcons.size() <= 0 && compareLastButOneBcons.size()<=0)
 	{
-		lastBcons = bcons;
-		return bcon;
+		compareLastBcons = bcons;
 	}
-	else
+	else if (compareLastBcons.size() > 0 && compareLastButOneBcons.size() <= 0)
+	{
+		compareLastButOneBcons = compareLastBcons;
+	}
+	else if (compareLastBcons.size() > 0 && compareLastButOneBcons.size() > 0)
 	{
 		std::list<BconMajMinTimeReport>::iterator iter;
-		for (iter = lastBcons.begin(); iter != lastBcons.end(); iter++)
+		std::list<BconMajMinTimeReport>::iterator it;
+		std::list<BconMajMinTimeReport>::iterator itera;
+		for (iter = compareLastBcons.begin(); iter != compareLastBcons.end(); iter++)
 		{
-			if (bcon.Major == iter->Major && bcon.Minor == iter->Minor)
+			for (it = compareLastButOneBcons.begin(); it != compareLastButOneBcons.end(); it++)
 			{
-				lastBcons = bcons;
-				return bcon;
-			}
-			else
-			{
-				
+				for (itera = bcons.begin(); itera != bcons.end(); itera++)
+				{
+					if (it->Major == itera->Major && it->Minor == itera->Minor && it->RSSI == itera->RSSI
+						&& iter->Major == itera->Major && iter->Minor == itera->Minor && iter->RSSI == itera->RSSI) 
+					{
+						it = bcons.erase(it);
+					}
+				}
 			}
 		}
-		lastBcons = bcons;
+		compareLastButOneBcons = compareLastBcons;
+		compareLastBcons = bcons;
 	}
-	return bcon;
+	return bcons;
 }
