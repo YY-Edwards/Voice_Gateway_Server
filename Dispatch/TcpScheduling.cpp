@@ -416,7 +416,7 @@ DWORD WINAPI CTcpScheduling::timeOutThread(LPVOID lpParam)
 	CTcpScheduling * p = (CTcpScheduling *)(lpParam);
 	if ( p!=NULL)
 	{
-		//p->timeOut();
+		p->timeOut();
 	}
 	return 1;
 }
@@ -627,7 +627,8 @@ void CTcpScheduling::timeOut()
 					if (tcpCommandTimeOutList.size()>0)
 					if(it->command != RADIO_CONNECT)
 					{
-						it = tcpCommandTimeOutList.erase(it);
+						//it = tcpCommandTimeOutList.erase(it);
+						it->status = UNSUCESS;
 						break;
 					}
 

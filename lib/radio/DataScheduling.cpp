@@ -349,7 +349,7 @@ DWORD WINAPI CDataScheduling::timeOutThread(LPVOID lpParam)
 	CDataScheduling * p = (CDataScheduling *)(lpParam);
 	if (p!=NULL)
 	{
-		//p->timeOut();       //将超时改为界面直接获取当前会话的状态
+		p->timeOut();       //将超时改为界面直接获取当前会话的状态
 	
 	}
 	return 1;
@@ -507,7 +507,8 @@ void CDataScheduling::timeOut()
 					}
 					if (it->command != MNIS_CONNECT)
 					{
-						it = timeOutList.erase(it);
+						//it = timeOutList.erase(it);
+						it->status = UNSUCESS;
 						break;
 					}
 
