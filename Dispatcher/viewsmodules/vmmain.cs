@@ -214,11 +214,11 @@ namespace Dispatcher.ViewsModules
 
         private void OnResourcesLoaded(object sender, EventArgs e)
         {
-            if (m_TServerConnected && _dispatcher != null)
-            {
-                _dispatcher.GetStatus();
-                _dispatcher.GetOnlineList();
-            }
+            //if (m_TServerConnected && _dispatcher != null)
+            //{
+            //    _dispatcher.GetStatus();
+            //    _dispatcher.GetOnlineList();
+            //}
         }
 
         
@@ -229,7 +229,8 @@ namespace Dispatcher.ViewsModules
             CTServer.Instance().OnStatusChanged += OnTServerChanged;
             CLogServer.Instance().OnStatusChanged += OnLogServerChanged;
 
-            new Task(ConnectServer).Start();          
+            new Task(ConnectServer).Start();
+            new Task(UpdateDeviceStatus).Start();
         }
 
         private void ConnectServer()
@@ -247,6 +248,33 @@ namespace Dispatcher.ViewsModules
 
                 Thread.Sleep(20000);
             }
+        }
+
+     
+       
+        private void UpdateDeviceStatus()
+        {
+            while (true)
+            {
+                if (m_TServerConnected && _dispatcher != null)
+                {
+                    _dispatcher.GetStatus();
+                    _dispatcher.GetOnlineList();
+
+                    if (ServerStatus.Instance().VoiceBusiness.IsConnected || ServerStatus.Instance().DataBusiness.IsConnected)
+                    {
+                        Thread.Sleep(10000);
+                    }
+                    else
+                    {
+                        Thread.Sleep(120000);
+                    }
+                }
+                else
+                {
+                    Thread.Sleep(300);
+                }
+            }                      
         }
 
 
@@ -291,7 +319,7 @@ namespace Dispatcher.ViewsModules
                 m_TServerConnected = isinit;
                 ServerStatus.Instance().TServer.SetStatus(m_TServerConnected);
 
-                if (m_TServerConnected && m_LogServerConnected) ResourcesMgr.Instance().InitializeResources(_resourcesviewmodule);
+                //if (m_TServerConnected && m_LogServerConnected) UpdateDeviceStatus();
             }
         }
 
@@ -303,8 +331,7 @@ namespace Dispatcher.ViewsModules
                 m_LogServerConnected = isinit;
                 ServerStatus.Instance().LogServer.SetStatus(m_LogServerConnected);
 
-                if (m_TServerConnected && m_LogServerConnected) ResourcesMgr.Instance().InitializeResources(_resourcesviewmodule);
-
+                //if (m_TServerConnected && m_LogServerConnected) UpdateDeviceStatus();
             }
          
         }

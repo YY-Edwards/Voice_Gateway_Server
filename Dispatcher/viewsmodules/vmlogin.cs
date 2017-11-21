@@ -114,11 +114,28 @@ namespace Dispatcher.ViewsModules
             StartMonitorServer();
             Log.Debug("StartUp Monitor.");
 
-            
-            InitializeTServer();
-            InitializeLogServer();
-            Log.Debug("Initialize TServer and LogServer.");
+
+            new System.Threading.Tasks.Task(ConnectServer).Start();
         }
+
+        private void ConnectServer()
+        {
+            Log.Debug("Initialize TServer and LogServer.");
+            while (true)
+            {
+                if (!m_TServerConnected)
+                {
+                    InitializeTServer();
+                }
+                if (!m_LogServerConnected)
+                {
+                    InitializeLogServer();
+                }
+
+                Thread.Sleep(1000);
+            }
+        }
+
 
         private void OnTimeout(object sender, EventArgs e)
         {
@@ -138,6 +155,8 @@ namespace Dispatcher.ViewsModules
         public ICommand Login { get { return new Command(LoginExec); } }
         private void LoginExec(object parameter)
         {
+            Info = "";
+
             if (UserName == null || UserName == "")
             {
                 Info = "请输入用户名";
