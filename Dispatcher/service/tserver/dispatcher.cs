@@ -35,7 +35,9 @@ namespace Dispatcher.Service
             this.DispatcherCompleted += new Action<CDispatcher.OperateContent_t>(OnDispatcherCompleted);
             this.DispatcherFailure += new Action<CDispatcher.OperateContent_t, CDispatcher.Status>(OnDispatcherFailure);
 
-            new Task(DispatchProcess).Start();
+
+            //Timeout judgment Process
+            //new Task(DispatchProcess).Start();
         }
 
 
@@ -223,18 +225,30 @@ namespace Dispatcher.Service
         }
 
         
-        public void GetStatus()
+        public void GetStatus(bool isSession = true)
         {
             RequestOpcode opcode = _type == RequestType.radio ? RequestOpcode.status : RequestOpcode.wlInfo;
             var param = new StatusParameter() { getType = (long)StatusType_t.ConnectStatus };
-            Request(opcode, param);
+            Request(opcode, param, isSession);
         }
 
-        public void GetOnlineList()
+        public void GetOnlineList(bool isSession = true)
         {
             RequestOpcode opcode = _type == RequestType.radio ? RequestOpcode.status : RequestOpcode.wlInfo;
             var param = new StatusParameter() { getType = (long)StatusType_t.OnLineList };
-            Request(opcode, param);
+            Request(opcode, param, isSession);
+        }
+
+        public void GetSessionStatus()
+        {
+            lock (_operateList)
+            {
+                if(_operateList == null || _operateList.Count <= 0)return;
+            }
+
+            RequestOpcode opcode = _type == RequestType.radio ? RequestOpcode.status : RequestOpcode.wlInfo;
+            var param = new StatusParameter() { getType = (long)StatusType_t.SessionStatus };
+            Request(opcode, param, false);
         }
 
         private void OnStatusUpdate(string parameter)
@@ -256,8 +270,9 @@ namespace Dispatcher.Service
 
             try
             {
-                if ((_status.getType & (long)StatusType_t.ConnectStatus) != 0) OnConnectStatus((_status.info.ToString()).ToLong());
-                if ((_status.getType & (long)StatusType_t.OnLineList) != 0) OnOnLineList(JsonConvert.DeserializeObject<List<OnLineStatus_t>>(JsonConvert.SerializeObject(_status.info)));
+                if (_status.getType == (long)StatusType_t.ConnectStatus) OnConnectStatus((_status.info.ToString()).ToLong());
+                else if (_status.getType== (long)StatusType_t.OnLineList) OnOnLineList(JsonConvert.DeserializeObject<List<OnLineStatus_t>>(JsonConvert.SerializeObject(_status.info)));
+                else if (_status.getType == (long)StatusType_t.SessionStatus) OnSessionStatus(JsonConvert.DeserializeObject<List<SessonStatus>>(JsonConvert.SerializeObject(_status.info)));
             }
             catch(Exception ex)
             {
@@ -299,6 +314,15 @@ namespace Dispatcher.Service
                 Target.ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.OnlineStatus, rad.IsOnline));
                 Target.ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, rad.IsInGps ? LocationStatus_t.Cycle : LocationStatus_t.Idle));
                 Target.ChangeValue.Execute(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, rad.IsInLocationIndoor ? LocationStatus_t.Cycle : LocationStatus_t.Idle));
+            }
+        }
+
+        private void OnSessionStatus(List<SessonStatus> status)
+        {
+            foreach (SessonStatus session in status)
+            {
+                if (session.IsSuccess)OperateCompleted(session.Id);
+                else OperateFailure(session.Id, Status.Timeout);               
             }
         }
 
@@ -660,7 +684,7 @@ namespace Dispatcher.Service
        
        
      
-        public void Request(RequestOpcode opcode, Session parameter)
+        public void Request(RequestOpcode opcode, Session parameter, bool isSession = true)
         {
             if (!CTServer.Instance().IsInitialized) return;
             
@@ -678,15 +702,18 @@ namespace Dispatcher.Service
 
                 try
                 {
-                    if (DispatcherBegin != null) DispatcherBegin(operateContent);
-
-                    //Console.WriteLine(operateContent.Dept);
-
-                    lock (_operateList)
+                    if (isSession)
                     {
-                        _operateList.Add(operateContent);
-                    }
+                        if (DispatcherBegin != null) DispatcherBegin(operateContent);
 
+                        //Console.WriteLine(operateContent.Dept);
+
+                        lock (_operateList)
+                        {
+                            _operateList.Add(operateContent);
+                        }
+
+                    }
                     string[] reply = CTServer.Instance().Request(opcode, _type, parameter);
 
                     if (reply != null && reply.Length >=2)
@@ -832,6 +859,7 @@ namespace Dispatcher.Service
     {
         ConnectStatus = 1,
         OnLineList = 2,
+        SessionStatus = 3,
     }
 
     public class OnLineStatus_t
@@ -840,6 +868,21 @@ namespace Dispatcher.Service
         public bool IsInGps;
         public bool IsInLocationIndoor;
         public bool IsOnline;
+    }
+
+    public class SessonStatus
+    {
+        [JsonProperty(PropertyName = "SessionId")]
+        public string Id;
+
+        public int Status;
+
+        [JsonIgnore]
+        public bool IsSuccess
+        {
+            get { return (Status == 0); }
+            set { Status = value ? 0 : 1; }
+        }
     }
 
     public class CallParameter : Session
