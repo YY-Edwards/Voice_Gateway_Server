@@ -501,12 +501,10 @@ void DispatchOperate::OnData(  int call, Respone data)
 	break;
 	case SESSION_STATUS:
 		{
+			std::list<Command>::iterator it;
 			args["getType"] = SESSION_STATUS;
 			FieldValue info(FieldValue::TArray);
-
-			std::list<Command>::iterator it;
-			std::lock_guard <std::mutex> locker(m_timeOutListLocker);
-			for (it = timeOutList.begin(); it != timeOutList.end(); it++)
+			for (it = data.timeOutList.begin(); it != data.timeOutList.end(); it++)
 			{
 				if ((it->status) >= 0)
 				{
@@ -620,11 +618,10 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 		break;
 	case TCP_SESSION_STATUS:
 		{
+			std::list<TcpCommand>::iterator it;
 			args["getType"] = SESSION_STATUS;
 			FieldValue info(FieldValue::TArray);
-			std::list<TcpCommand>::iterator it;
-			m_allCommandListLocker.lock();
-			for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); ++it)
+			for (it = data.timeOutList.begin(); it != data.timeOutList.end(); ++it)
 			{
 				if ((it->status) >= 0)
 				{
@@ -632,7 +629,7 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 					element.setKeyVal("SessionId", FieldValue((it->sessionId).c_str()));
 					element.setKeyVal("Status", FieldValue(it->status));
 					info.push(element);
-					it = tcpCommandTimeOutList.erase(it);
+		
 				}
 			}
 			args["info"] = info;

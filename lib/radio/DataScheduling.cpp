@@ -392,6 +392,7 @@ void CDataScheduling::workThreadFunc()
 				sendRadioStatusToClient();
 				break;
 			case SESSION_STATUS:
+				sendSessionStatusToClient();
 				break;
 			case SEND_PRIVATE_MSG:
 				sendMsg(it->sessionId, it->text, it->radioId,m_mnisCfg.CAI );
@@ -565,17 +566,26 @@ void CDataScheduling::sendSessionStatusToClient()
 {
 	std::list<Command>::iterator it;
 	std::lock_guard <std::mutex> locker(m_timeOutListLocker);
+	Respone r = { 0 };
+	r.timeOutList = timeOutList;
 	for (it = timeOutList.begin(); it != timeOutList.end(); it++)
 	{
 		if (SESSION_STATUS == it->command)
 		{
-			Respone r = { 0 };
+			
 			r.status = it->status;
 			r.sessionId = it->sessionId;
 			onData(myCallBackFunc, it->command, r);
 			//it = timeOutList.erase(it);
 			it->status = SUCESS;
 			break;
+		}
+	}
+	for (it = timeOutList.begin(); it != timeOutList.end(); it++)
+	{
+		if (it->status>=0)
+		{
+			it = timeOutList.erase(it);
 		}
 	}
 }

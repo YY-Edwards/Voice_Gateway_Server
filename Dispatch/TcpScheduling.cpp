@@ -995,18 +995,28 @@ void CTcpScheduling::getSessionStatus(std::string sessionId)
 void CTcpScheduling::sendSessionStatus()
 {
 	std::list<TcpCommand>::iterator it;
-	m_allCommandListLocker.lock();
+	std::lock_guard <std::mutex> locker(m_allCommandListLocker);
+	TcpRespone r = { 0 };
+	r.timeOutList = tcpCommandTimeOutList;
 	for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); ++it)
 	{
 		if (TCP_SESSION_STATUS == it->command)
 		{
-			TcpRespone r = { 0 };
+			
 			r.result = it->status;
 			r.sessionId = it->sessionId;
 			onTcpData(myTcpCallBackFunc, it->command, r);
-			//it = timeOutList.erase(it);
+			//it = tcpCommandTimeOutList.erase(it);
 			it->status = SUCESS;
 			break;
+		}
+	}
+	for (it = tcpCommandTimeOutList.begin(); it != tcpCommandTimeOutList.end(); ++it)
+	{
+		if (it->status>=0)
+		{
+			it = tcpCommandTimeOutList.erase(it);
+
 		}
 	}
 }

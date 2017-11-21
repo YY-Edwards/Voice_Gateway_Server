@@ -104,6 +104,7 @@ typedef struct tagRespone
 	double cycle;
 	std::string sessionId;
 	int status;
+	std::list <Command> timeOutList;
 }Respone;
 #define MAX_IP_SIZE 16
 

@@ -543,7 +543,7 @@ void CRadioGps::RecvData()
 					m_timeOutListLocker.lock();
 					for (it = timeOutList.begin(); it != timeOutList.end(); it++)
 					{
-						if (it->radioId == m_ThreadGps->radioID)
+						if (it->radioId == m_ThreadGps->radioID && (it->command == GPS_IMME_COMM || it->command == GPS_IMME_CSBK || it->command == GPS_IMME_COMM_INDOOR || it->command == GPS_IMME_CSBK_INDOOR ))
 						{
 							if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Stop_Answer)
 							{
@@ -760,7 +760,7 @@ void CRadioGps::RecvData()
 						m_timeOutListLocker.lock();
 						for (it = timeOutList.begin(); it != timeOutList.end(); it++)
 						{
-							if (it->radioId == atoi(radioID))
+							if (it->radioId == atoi(radioID) && (it->command == GPS_IMME_COMM_INDOOR || it->command == GPS_IMME_CSBK_INDOOR))
 							{
 								if (myCallBackFunc != NULL)
 								{
@@ -777,6 +777,7 @@ void CRadioGps::RecvData()
 									else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report &&r.bcon.TimeStamp != 0)
 									{
 										onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
+										m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP == operate) ? (-1) : (queryMode));
 									}
 									
 									count++;
@@ -796,6 +797,7 @@ void CRadioGps::RecvData()
 								if (r.bcon.TimeStamp != 0)
 								{
 									onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
+									m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP == operate) ? (-1) : (queryMode));
 								}
 								
 							}
@@ -904,6 +906,7 @@ void CRadioGps::RecvData()
 								r.valid = valid;
 								r.querymode = queryMode;
 								onData(myCallBackFunc, RECV_GPS, r);
+								m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP == operate) ? (-1) : (queryMode));
 							}
 
 						}
@@ -914,7 +917,7 @@ void CRadioGps::RecvData()
 					}
 				}
 			}
-			m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP == operate) ? (-1) : (queryMode));
+			
 		}
 		else
 		{

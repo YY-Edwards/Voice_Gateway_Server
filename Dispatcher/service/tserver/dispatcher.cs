@@ -241,10 +241,10 @@ namespace Dispatcher.Service
 
         public void GetSessionStatus()
         {
-            lock (_operateList)
-            {
-                if(_operateList == null || _operateList.Count <= 0)return;
-            }
+            //lock (_operateList)
+            //{
+            //    if(_operateList == null || _operateList.Count <= 0)return;
+            //}
 
             RequestOpcode opcode = _type == RequestType.radio ? RequestOpcode.status : RequestOpcode.wlInfo;
             var param = new StatusParameter() { getType = (long)StatusType_t.SessionStatus };

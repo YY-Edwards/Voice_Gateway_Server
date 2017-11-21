@@ -67,6 +67,20 @@
 
 #define  SUCESS               0
 #define  UNSUCESS              1
+typedef struct tagTcpCommand
+{
+	int callId;
+	int timeOut;
+	int timeCount;
+	int command;
+	int radioId;
+	unsigned char transactionIdBase;
+	unsigned char txXcmpCount;
+	std::string radioIP;
+	std::string sessionId;
+	int status;
+	//SOCKET s;
+}TcpCommand;
 typedef struct tagTcpRespone
 {
 	int id;
@@ -76,6 +90,7 @@ typedef struct tagTcpRespone
 	int arsStatus;
 	std::string radioSerial;
 	std::string sessionId;
+	std::list <TcpCommand> timeOutList;
 }TcpRespone;
 typedef struct
 {
@@ -96,20 +111,7 @@ extern void(*myTcpCallBackFunc)(int, TcpRespone);
 void onTcpData(void(*func)( int, TcpRespone), int call, TcpRespone data);
 extern std::string m_radioIP;
 extern std::string m_mnisIP;
-typedef struct tagTcpCommand
-{
-	int callId;
-	int timeOut;
-	int timeCount;
-	int command;
-	int radioId;
-	unsigned char transactionIdBase;
-	unsigned char txXcmpCount;
-	std::string radioIP;
-	std::string sessionId;
-	int status;
-	//SOCKET s;
-}TcpCommand;
+
 extern std::list <TcpCommand> tcpCommandTimeOutList;
 extern  int  num;
 extern std::mutex m_allCommandListLocker;

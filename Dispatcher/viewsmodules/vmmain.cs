@@ -263,7 +263,7 @@ namespace Dispatcher.ViewsModules
                     _dispatcher.GetOnlineList(_isFirstUpdateStatus);
                     _isFirstUpdateStatus = false;
 
-                    if (ServerStatus.Instance().VoiceBusiness.IsConnected || ServerStatus.Instance().DataBusiness.IsConnected)
+                    if (!ServerStatus.Instance().VoiceBusiness.IsConnected || !ServerStatus.Instance().DataBusiness.IsConnected)
                     {
                         Thread.Sleep(10000);
                     }
