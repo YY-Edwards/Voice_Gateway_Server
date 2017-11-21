@@ -25,15 +25,24 @@ namespace Manager.ViewModels
             _logServerConnected = false;
             _tServerConnected = false;
 
+            _waitIconVisable = Visibility.Collapsed;
+
             TServer.Instance().StatusChanged += new Action<object, bool>(OnTServerStatusChanged);
             LogServer.Instance().StatusChanged += new Action<object, bool>(OnLogServerStatusChanged);
 
             if (ManageListViewModel == null) ManageListViewModel = new ManageListViewModel();
         }
 
+        private Visibility _waitIconVisable = Visibility.Collapsed;
+        public Visibility WaitIconVisible { get { return _waitIconVisable; } private set { _waitIconVisable = value; NotifyPropertyChanged("WaitIconVisible"); } }
+
 
         public string ServerStatus { get { return !_logServerConnected || !_tServerConnected ? "服务未连接" : "已连接服务"; } }
         public Visibility ReconnectBtnVisable { get { return !_logServerConnected || !_tServerConnected ? Visibility.Visible : Visibility.Collapsed; } }
+
+
+
+
 
         public ICommand ConnectServer
         {
@@ -65,6 +74,17 @@ namespace Manager.ViewModels
             TServer.Instance().InitializeServer();
         }
 
+        private void  ReadManagement()
+        {
+             
+             if (ManageListViewModel != null)
+             {
+                 WaitIconVisible = Visibility.Visible;
+                 ManageListViewModel.ReadManagement.Execute(null);
+                 WaitIconVisible = Visibility.Collapsed;
+             }             
+        }
+
         private readonly object _serverStatusChangedLocakHelper = new object();
         private void OnTServerStatusChanged(object sender, bool isconnected)
         {
@@ -74,7 +94,7 @@ namespace Manager.ViewModels
                 NotifyPropertyChanged(new string[] { "ServerStatus", "ReconnectBtnVisable" });
                 if (_tServerConnected && _logServerConnected)
                 {
-                    if (ManageListViewModel != null) ManageListViewModel.ReadManagement.Execute(null);
+                    ReadManagement();
                 }
             }  
         }
@@ -94,8 +114,8 @@ namespace Manager.ViewModels
 
                 if (_tServerConnected && _logServerConnected)
                 {
-                    if (ManageListViewModel != null) ManageListViewModel.ReadManagement.Execute(null);
-                }
+                    ReadManagement();                 
+               }
             }  
         }
 

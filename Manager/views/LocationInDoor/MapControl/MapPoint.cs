@@ -73,7 +73,14 @@ namespace Manager.Views
         public void SetPosition(double left, double top)
         {
             Point center = GetCenter();
-            this.Margin = new Thickness(left - center.X, top - center.Y, 0, 0);          
+            try
+            {
+                this.Margin = new Thickness(left - center.X, top - center.Y, 0, 0);
+            }
+            catch
+            {
+
+            }
         }
 
         protected abstract Point GetCenter();

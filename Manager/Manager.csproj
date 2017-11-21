@@ -160,6 +160,7 @@
     <Compile Include="Views\LocationInDoor\LocationInDoorConfigurationView.xaml.cs">
       <DependentUpon>LocationInDoorConfigurationView.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Views\LoadIcon.cs" />
     <Compile Include="Views\ManageList.xaml.cs">
       <DependentUpon>ManageList.xaml</DependentUpon>
     </Compile>
@@ -407,6 +408,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Views\LocationInDoor\MapControl\Cursors\hand-open.cur" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Views\images\loadicon.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

@@ -95,9 +95,9 @@ namespace Manager.ViewModels
 
         private Area _selectedArea;
         public Area SelectedArea { get { return _selectedArea; } set { 
-            if (value != null)_selectedArea = value; NotifyPropertyChanged(new string[] { "Zoom", "Position", "AreaMap", "BeaconsInArea" }); } }
+            if (value != null)_selectedArea = value; NotifyPropertyChanged(new string[] { "Zoom", "Position", "AreaMap","ImageSize", "BeaconsInArea" }); } }
 
-        public Size ImageSize { get { return SelectedArea == null ? new Size(0, 0) : new Size(SelectedArea.Width, SelectedArea.Height); } }
+        public Size ImageSize { get { return SelectedArea == null ? new Size(100, 100) : new Size(SelectedArea.Width, SelectedArea.Height); } }
         public ImageSource AreaMap
         {
             get
@@ -166,7 +166,8 @@ namespace Manager.ViewModels
         #endregion
 
 
-        public List<Beacon> BeaconListOutArea { get { return _elements == null ? new List<Beacon>() : _elements.FindAll(p => !p.IsValid || _areas == null || _areas.Find(q => q.ID == p.Area) == null); } }
+        public List<Beacon> BeaconListOutArea { get { 
+            return _elements == null ? new List<Beacon>() : _elements.FindAll(p => !p.IsValid || _areas == null || _areas.Find(q => q.ID == p.Area) == null); } }
         public ICollectionView BeaconsOutArea { get { return  new ListCollectionView(BeaconListOutArea); } }
 
         public ICollectionView BeaconsInArea
