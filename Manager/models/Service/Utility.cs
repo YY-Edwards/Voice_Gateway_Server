@@ -27,8 +27,8 @@ namespace Manager.Models
         public static int HttpServerPort = 8001;
 
 
-        public static List<double> GeneralQueryIntervals = new List<double>() { 30, 60, 120, 240 };
-        public static List<double> CSBKQueryIntervals = new List<double>() { 7.5, 20, 30, 40, 60 };
+        public static List<double> GeneralQueryIntervals = new List<double>() {10, 15, 20, 30, 60, 120, 240 };
+        public static List<double> CSBKQueryIntervals = new List<double>() { 7.5, 10, 15, 20, 30, 40, 60 };
         public static List<double> EnhCSBKQueryIntervals = new List<double>() { 7.5, 15, 30, 60, 120, 240, 480 };   
     }
 
