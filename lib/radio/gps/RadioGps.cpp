@@ -767,6 +767,7 @@ void CRadioGps::RecvData()
 									r.bcon = getValidBcon(compareRssi(mBcon));
 									if (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report &&r.bcon.TimeStamp !=0)
 									{
+										r.sessionId = it->sessionId;
 										onData(myCallBackFunc, GPS_IMME_COMM_INDOOR, r);
 									}
 									else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report &&r.bcon.TimeStamp != 0)
