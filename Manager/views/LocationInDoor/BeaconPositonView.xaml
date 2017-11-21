@@ -57,7 +57,7 @@
             <StackPanel Margin="16,0,0,0">
                 <StackPanel Orientation="Horizontal" Margin="0" Height="38">
                     <Label Content="区域 :" VerticalAlignment="Center" HorizontalAlignment="Left" Foreground="#FFBFBFBF" FontSize="14" Height="30" Grid.ColumnSpan="2" HorizontalContentAlignment="Right"/>
-                    <ComboBox x:Name="cmb_Areas"   HorizontalAlignment="Left" VerticalAlignment="Center" Width="263" Grid.Column="1" Margin="0,3" Height="30" Foreground="#FFBFBFBF" Style="{DynamicResource ComboBoxStyleNormal}" ItemsSource="{Binding AreaList}"  SelectedIndex="{Binding SelectedAreaIndex}" SelectedItem="{Binding SelectedArea}" >
+                    <ComboBox x:Name="cmb_Areas"   HorizontalAlignment="Left" VerticalAlignment="Center" Width="263" Grid.Column="1" Margin="0,3" Height="30" Foreground="#FFBFBFBF" Style="{DynamicResource ComboBoxStyleNormal}" ItemsSource="{Binding Areas}"  SelectedItem="{Binding SelectedArea}" >
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
                                 <Border>
