@@ -70,6 +70,7 @@ CWLNet::~CWLNet()
 {
 	clearPeers();
 	clearSendVoices();
+	clearSessionStatusList();
 	//StopNet();
 	stop();
 }
@@ -7593,6 +7594,7 @@ int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned l
 	args["target"] = (int)tgtId;
 	args["operate"] = operate;
 	args["SessionId"] = sessionid.c_str();
+	addSessionStatus(sessionid, stus);
 	std::string strRequest = CRpcJsonParser::buildCall("wlCallStatus", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -7693,6 +7695,7 @@ int CWLNet::wlCallStatus(REMOTE_TASK *p,int status)
 	args["target"] = (int)tgtId;
 	args["operate"] = operate;
 	args["SessionId"] = sessionid.c_str();
+	addSessionStatus(sessionid, stus);
 	std::string strRequest = CRpcJsonParser::buildCall("wlCallStatus", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -7846,6 +7849,7 @@ int CWLNet::wlInfo(int getType, FieldValue info,std::string sessionid)
 	args["getType"] = getType;
 	args["info"] = info;
 	args["SessionId"] = sessionid.c_str();
+	addSessionStatus(sessionid, CMD_SUCCESS);
 	std::string strRequest = CRpcJsonParser::buildCall("wlInfo", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -8198,6 +8202,7 @@ int CWLNet::wlMnisMessageStatus(int Type, int Target, int Source, std::string Co
 	args["Contents"] = Contents.c_str();
 	args["status"] = status;
 	args["SessionId"] = sessionid.c_str();
+	addSessionStatus(sessionid, status);
 	std::string strRequest = CRpcJsonParser::buildCall("messageStatus", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -8233,6 +8238,7 @@ int CWLNet::wlMnisMessage(int Type, int Target, int Source, std::string Contents
 	args["Source"] = Source;
 	args["Contents"] = Contents.c_str();
 	args["SessionId"] = sessionid.c_str();
+	addSessionStatus(sessionid, CMD_SUCCESS);
 	std::string strRequest = CRpcJsonParser::buildCall("message", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -8266,6 +8272,7 @@ int CWLNet::wlMnisSendArs(int Target, std::string IsOnline, std::string sessioni
 	args["Target"] = Target;
 	args["IsOnline"] = IsOnline.c_str();
 	args["sessionid"] = sessionid.c_str();
+	addSessionStatus(sessionid, CMD_SUCCESS);
 	std::string strRequest = CRpcJsonParser::buildCall("sendArs", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -8299,7 +8306,7 @@ int CWLNet::wlMnisStatus(int getType, FieldValue info, std::string sessionid)
 	args["getType"] = getType;
 	args["info"] = info;
 	args["SessionId"] = sessionid.c_str();
-
+	addSessionStatus(sessionid, CMD_SUCCESS);
 	std::string strRequest = CRpcJsonParser::buildCall("status", ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	sendLogToWindow();
@@ -8372,6 +8379,18 @@ void CWLNet::handleCallTimeOut()
 
 void CWLNet::send2Client(char* actionName, ArgumentType args)
 {
+	ArgumentType::iterator it = args.find("SessionId");
+	if (it != args.end())
+	{
+		std::string sessionid = args["SessionId"].getString();
+		int status = 0;
+		it = args.find("Status");
+		if (it != args.end())
+		{
+			status = args["Status"].getInt();
+		}
+		addSessionStatus(sessionid, status);
+	}
 	std::lock_guard<std::mutex> locker(m_lockerSend2Client);
 	std::string strRequest = CRpcJsonParser::buildCall(actionName, ++g_sn, args, "wl");
 	sprintf_s(m_reportMsg, "%s", strRequest.c_str());
@@ -8392,6 +8411,32 @@ void CWLNet::send2Client(char* actionName, ArgumentType args)
 			sendLogToWindow();
 		}
 	}
+}
+
+void CWLNet::getSessionStatusList(FieldValue &value)
+{
+	std::lock_guard <std::mutex> locker(m_mutexSessionStatusLst);
+	std::map<std::string,int>::iterator it;
+	for (it = m_sessionStatusMp.begin(); it != m_sessionStatusMp.end(); it++)
+	{
+		FieldValue element(FieldValue::TObject);
+		element.setKeyVal("SessionId", FieldValue(it->first.c_str()));
+		element.setKeyVal("Status", FieldValue(it->second));
+		value.push(element);
+	}
+}
+
+void CWLNet::clearSessionStatusList()
+{
+	std::lock_guard <std::mutex> locker(m_mutexSessionStatusLst);
+	m_sessionStatusMp.clear();
+}
+
+void CWLNet::addSessionStatus(std::string sessionid,int status)
+{
+	if (0 == sessionid.length()) return;
+	std::lock_guard <std::mutex> locker(m_mutexSessionStatusLst);
+	m_sessionStatusMp[sessionid] = status;
 }
 
 //bool CWLNet::getIsFirstBurstA()

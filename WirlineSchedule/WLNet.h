@@ -308,9 +308,13 @@ public:
 	void waitRecordEnd();
 	void setCurrentSendVoicePeer(CIPSCPeer* value);
 	int checkDefaultGroupAndTalkTime();
-	/************************************************************************/
-	/* 刷新停留在非调度组的时间戳
-	/************************************************************************/
+	/*获取当前已经处理的会话任务状态*/
+	void getSessionStatusList(FieldValue &value);
+	/*清空当前已经处理的会话任务状态*/
+	void clearSessionStatusList();
+	/*会话状态任务列表增加会话*/
+	void addSessionStatus(std::string sessionid,int status);
+	/* 刷新停留在非调度组的时间戳*/
 	int updateChangeToCurrentTick();
 	int setPlayCallOfCare(unsigned char calltype,unsigned long targetId);
 	/*存在一个需要告知界面的通话*/
@@ -513,6 +517,9 @@ private:
 	void sendLogToWindow();
 	char m_reportMsg[512];
 	PLogReport m_report;
+
+	std::map<std::string, int> m_sessionStatusMp;
+	std::mutex m_mutexSessionStatusLst;
 	/*
 	* Issue a UDP read request
 	*/
