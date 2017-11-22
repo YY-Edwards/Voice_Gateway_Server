@@ -48,6 +48,7 @@ private:
 	CTcpScheduling* pTs;
 	bool isUdpConnect;
 	std::mutex m_locker;
+	std::mutex m_sessionlocker;
 	std::string  mnisIP;
 	std::list <Command> udpTimeoutList;
 	std::list<SessionStatus>  sessionStatusList;

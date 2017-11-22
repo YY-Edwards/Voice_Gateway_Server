@@ -283,7 +283,7 @@ void DispatchOperate::OnDisConnect(CRemotePeer* pRemotePeer)
 }
 void DispatchOperate::OnData(  int call, Respone data)
 {
-	std::lock_guard <std::mutex> locker(dis.m_locker);
+	std::lock_guard <std::mutex> locker(dis.m_sessionlocker);
 	SessionStatus s;
 	s.sessionId = data.sessionId;
 	s.status = data.status;
@@ -510,7 +510,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 }
 void DispatchOperate::OnTcpData(int call, TcpRespone data)
 {
-	std::lock_guard <std::mutex> locker(dis.m_locker);
+	std::lock_guard <std::mutex> locker(dis.m_sessionlocker);
 	SessionStatus s;
 	s.sessionId = data.sessionId;
 	s.status = data.result;
@@ -776,4 +776,5 @@ void DispatchOperate::sendSessIonStatus(std::string sessionId)
 	args["info"] = info;
 	args["SessionId"] = FieldValue((sessionId).c_str());
 	dis.send2Client("status", args);
+	sessionStatusList.clear();
 }

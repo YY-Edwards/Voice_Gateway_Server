@@ -543,7 +543,7 @@ void CRadioGps::RecvData()
 					m_timeOutListLocker.lock();
 					for (it = timeOutList.begin(); it != timeOutList.end(); it++)
 					{
-						if (it->radioId == m_ThreadGps->radioID && (it->command == GPS_IMME_COMM || it->command == GPS_IMME_CSBK || it->command == GPS_IMME_COMM_INDOOR || it->command == GPS_IMME_CSBK_INDOOR ))
+						if (it->radioId == m_ThreadGps->radioID && (it->command ==STOP_QUERY_GPS ||it->command == GPS_TRIGG_COMM || it->command == GPS_TRIGG_CSBK || it->command == GPS_TRIGG_COMM_INDOOR || it->command == GPS_TRIGG_CSBK_INDOOR ))
 						{
 							if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Stop_Answer)
 							{
