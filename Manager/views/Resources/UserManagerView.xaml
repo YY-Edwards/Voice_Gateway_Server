@@ -11,7 +11,7 @@
         <DockPanel LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top" Margin="0,20">
             <DockPanel Height="24"  DockPanel.Dock="Top">
                 <Image Height="10" VerticalAlignment="Center" Width="13" Source="../images/double_arrow_13_10.png" IsEnabled="False"/>
-                <Label Content="账户" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                <Label Content="账户" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Microsoft YaHei UI" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
             </DockPanel>
             <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
             <DockPanel DockPanel.Dock="Top">
@@ -25,7 +25,7 @@
                                         <Image x:Name="Iconx" Source="../images/new_contact_22_22_p.png" Width="18" Height="18" Visibility="Collapsed" />
                                     </Grid>
                                     <DockPanel x:Name="dck_Content" Margin="5,0" >
-                                        <TextBlock Text="{Binding UserName}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" />
+                                        <TextBlock Text="{Binding UserName}"  TextWrapping="NoWrap" Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="#FFBEC3C7" FontSize="13" FontFamily="Microsoft YaHei UI" />
                                     </DockPanel>
                                 </DockPanel>
                             </Border>

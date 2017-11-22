@@ -41,7 +41,7 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <Control:Icon Command="{Binding DataContext.Remove, ElementName=UserControl}" HorizontalAlignment="Left" VerticalAlignment="Center" Image="/TrboX;component/resource/images/close_18_18_h.png" Width="18" Height="18" HoverImage="/TrboX;component/resource/images/close_18_18_n.png" Margin="15,0,5,2" CommandParameter="{Binding Mode=OneWay}"/>
-                                    <TextBlock Text="{Binding Name}" TextWrapping="NoWrap" Margin="0,0,15,0"  Foreground="#FFCDCDCD" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="14" FontFamily="Hiragino Sans GB W3" HorizontalAlignment="Center" />
+                                    <TextBlock Text="{Binding Name}" TextWrapping="NoWrap" Margin="0,0,15,0"  Foreground="#FFCDCDCD" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="14" FontFamily="Microsoft YaHei UI" HorizontalAlignment="Center" />
                                 </StackPanel>
                             </DataTemplate>
                         </ctrl:TitleView.ItemTemplate>
@@ -155,9 +155,9 @@
                                 <Border BorderBrush="Black" BorderThickness="0,1,0,0" Height="32" DockPanel.Dock="Bottom" Background="#FF2E2E2E">
                                     <Grid>
                                         <DockPanel HorizontalAlignment="Left" Height="31" LastChildFill="False" VerticalAlignment="Top">
-                                            <Label Content="第" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FFBFBFBF" FontFamily="Hiragino Sans GB W3" FontSize="13" Padding="5,5,0,5"/>
+                                            <Label Content="第" HorizontalAlignment="Left" VerticalAlignment="Top" Foreground="#FFBFBFBF" FontFamily="Microsoft YaHei UI" FontSize="13" Padding="5,5,0,5"/>
                                             <TextBox  x:Name="txt_CurrentPage" Text="{Binding Page}"  HorizontalAlignment="Left" Height="23" TextWrapping="Wrap"  VerticalAlignment="Center" Style="{DynamicResource TextBoxStyleNormal}" Foreground="#FFBFBFBF" CaretBrush="#FFBFBFBF" SelectionBrush="#FF4889EB" Margin="5,4"/>
-                                            <TextBlock  HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#FFBFBFBF" FontFamily="Hiragino Sans GB W3" FontSize="13">
+                                            <TextBlock  HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="#FFBFBFBF" FontFamily="Microsoft YaHei UI" FontSize="13">
                                                 <TextBlock.Text>
                                                     <MultiBinding StringFormat="页/共 {0} 页（共 {1} 条记录）">
                                                         <Binding Path="PageCount" Mode="OneWay"/>

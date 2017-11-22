@@ -46,7 +46,7 @@
                             <DataTemplate>
                                 <StackPanel Orientation="Horizontal">
                                     <!--<Control:Icon Command="{Binding DataContext.Remove, ElementName=UserControl}" HorizontalAlignment="Left" VerticalAlignment="Center" Image="/TrboX;component/resource/images/close_18_18_h.png" Width="18" Height="18" HoverImage="/TrboX;component/resource/images/close_18_18_n.png" Margin="10,0,5,2" CommandParameter="{Binding Mode=OneWay}"/>-->
-                                    <TextBlock Text="{Binding Name}" TextWrapping="NoWrap" Margin="15,0,15,0"  Foreground="#FFCDCDCD" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="14" FontFamily="Hiragino Sans GB W3" HorizontalAlignment="Center" />
+                                    <TextBlock Text="{Binding Name}" TextWrapping="NoWrap" Margin="15,0,15,0"  Foreground="#FFCDCDCD" VerticalAlignment="Center" DockPanel.Dock="Top" Height="Auto" FontSize="14" FontFamily="Microsoft YaHei UI" HorizontalAlignment="Center" />
                                 </StackPanel>
                             </DataTemplate>
                         </ctrl:TitleView.ItemTemplate>

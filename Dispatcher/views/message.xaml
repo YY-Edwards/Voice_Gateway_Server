@@ -9,7 +9,7 @@
             <Grid>
                 <DockPanel LastChildFill="False" Margin="22,0,0,0" HorizontalAlignment="Left">
                     <Image Margin="0,0,0,15" Source="/TrboX;component/resource/images/sub_title_60_20.png" Stretch="None" VerticalAlignment="Bottom"/>
-                    <TextBlock Text="{Binding SelectedItem.Header, ElementName=tab_NewType, StringFormat=新建\{0:D\}}" VerticalAlignment="Bottom" FontSize="14" Foreground="#FFF1F1F1" FontFamily="Hiragino Sans GB W3" Margin="19,0,0,6.5" Padding="0"/>
+                    <TextBlock Text="{Binding SelectedItem.Header, ElementName=tab_NewType, StringFormat=新建\{0:D\}}" VerticalAlignment="Bottom" FontSize="14" Foreground="#FFF1F1F1" FontFamily="Microsoft YaHei UI" Margin="19,0,0,6.5" Padding="0"/>
                 </DockPanel>
                 <DockPanel LastChildFill="False" HorizontalAlignment="Right" Background="{DynamicResource PanelBorderBrush}">
                     <DockPanel LastChildFill="False" Margin="0"  HorizontalAlignment="Right" DockPanel.Dock="Right">

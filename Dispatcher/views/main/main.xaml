@@ -50,7 +50,7 @@
                             <ctrl:RxView>
                                 <ctrl:RxView.ItemTemplate>
                                     <DataTemplate>
-                                        <RadioButton GroupName="RX"  Content="{Binding Name}" IsChecked="{Binding IsCurrentRx}" Margin="5,2.5,5,2.5" Height = "24" Style="{StaticResource RadioButtonStyleNav}" Background="{x:Null}" FontFamily="Hiragino Sans GB W3" FontSize="14"/>
+                                        <RadioButton GroupName="RX"  Content="{Binding Name}" IsChecked="{Binding IsCurrentRx}" Margin="5,2.5,5,2.5" Height = "24" Style="{StaticResource RadioButtonStyleNav}" Background="{x:Null}" FontFamily="Microsoft YaHei UI" FontSize="14"/>
                                     </DataTemplate>
                                 </ctrl:RxView.ItemTemplate>
                             </ctrl:RxView>

@@ -32,7 +32,7 @@
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Background="{DynamicResource PanelBackground}">
             <Image Margin="22,0,0,10" Source="/TrboX;component/resource/images/sub_title_60_20.png" Stretch="None" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
-            <TextBlock Text="{Binding SelectedItem.Header, ElementName=tabControl, StringFormat=新建\{0\}}" VerticalAlignment="Bottom" FontSize="14" Foreground="#FFF1F1F1" FontFamily="Hiragino Sans GB W3" Margin="19,0,0,6" Padding="0"/>
+            <TextBlock Text="{Binding SelectedItem.Header, ElementName=tabControl, StringFormat=新建\{0\}}" VerticalAlignment="Bottom" FontSize="14" Foreground="#FFF1F1F1" FontFamily="Microsoft YaHei UI" Margin="19,0,0,6" Padding="0"/>
         </StackPanel>
         <Border Background="#003B3B3D" Grid.ColumnSpan="2" PreviewMouseLeftButtonDown="Border_PreviewMouseLeftButtonDown" />
         <Controls:Icon  Height="18" VerticalAlignment="Center" Width="18" Margin="8,0,11,0" Image="/TrboX;component/resource/images/close_18_18_n.png" HoverImage="/TrboX;component/resource/images/close_18_18_h.png" HorizontalAlignment="Right" PressedImage="/TrboX;component/resource/images/close_18_18_h.png" Click="window_close"/>
@@ -58,7 +58,7 @@
                 <DockPanel  Margin="18,0" Grid.Column="1">
                     <StackPanel Height="45"   Orientation="Horizontal" DockPanel.Dock="Top">
                         <Image VerticalAlignment="Center" Source="/TrboX;component/resource/images/double_arrow_13_10.png" Stretch="None" Margin="0,0,10,0"/>
-                        <TextBlock Text="{Binding SelectedItem.Header, ElementName=tabControl, StringFormat=新建\{0\}}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0" FontSize="16" HorizontalAlignment="Left" Foreground="#FFCFCFCF" FontFamily="Hiragino Sans GB W3" />
+                        <TextBlock Text="{Binding SelectedItem.Header, ElementName=tabControl, StringFormat=新建\{0\}}" TextWrapping="Wrap" VerticalAlignment="Center" Margin="0" FontSize="16" HorizontalAlignment="Left" Foreground="#FFCFCFCF" FontFamily="Microsoft YaHei UI" />
                     </StackPanel>
                     <Separator Height="1" Margin="0" VerticalAlignment="Top" DockPanel.Dock="Top" Background="#FF1C1D1E"/>
                     <TabControl x:Name="tabControl" Style="{DynamicResource WorkTabControlStyle}" Background="{x:Null}" BorderThickness="0" Margin="20,20,30,30" SelectedIndex="{Binding TaskTypeIndex}">

@@ -27,7 +27,7 @@
         </Grid.RowDefinitions>
         <StackPanel Orientation="Horizontal" Background="{DynamicResource PanelBackground}">
             <Image Margin="22,0,0,10" Source="/TrboX;component/resource/images/sub_title_60_20.png" Stretch="None" VerticalAlignment="Bottom" HorizontalAlignment="Left"/>
-            <TextBlock  VerticalAlignment="Bottom" FontSize="14" Foreground="#FFF1F1F1" FontFamily="Hiragino Sans GB W3" Margin="19,0,0,6" Padding="0" Text="{Binding Target.FullName, ElementName=baseWindow}"/>
+            <TextBlock  VerticalAlignment="Bottom" FontSize="14" Foreground="#FFF1F1F1" FontFamily="Microsoft YaHei UI" Margin="19,0,0,6" Padding="0" Text="{Binding Target.FullName, ElementName=baseWindow}"/>
         </StackPanel>
         <Border Background="#003B3B3D" Grid.ColumnSpan="2" PreviewMouseLeftButtonDown="Border_PreviewMouseLeftButtonDown" />
         <Controls:Icon  Height="18" VerticalAlignment="Center" Width="18" Margin="8,0,11,0" Image="/TrboX;component/resource/images/close_18_18_n.png" HoverImage="/TrboX;component/resource/images/close_18_18_h.png" HorizontalAlignment="Right" PressedImage="/TrboX;component/resource/images/close_18_18_h.png" Click="window_close"/>
@@ -89,7 +89,7 @@
                                                             <StackPanel Orientation="Horizontal">
                                                                 <ctrl:LoadIcon Visibility="{Binding WaitIconVisible}" Width="16" Height="16" Margin="0,0,8,0" Opacity="0.8" DockPanel.Dock="Left"/>
                                                                 <Image Visibility="{Binding FailureIconVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="16" MaxHeight="16" DockPanel.Dock="Left" Source="/TrboX;component/resource/images/warning.png" Margin="0,0,8,0"/>
-                                                                <TextBlock Text="{Binding ContentBiref}" TextWrapping="Wrap" MaxWidth="{Binding ActualWidth, Converter={StaticResource NotifyInOperationWidthValueConverter}, ElementName=Msg, Mode=OneWay}"  Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" />
+                                                                <TextBlock Text="{Binding ContentBiref}" TextWrapping="Wrap" MaxWidth="{Binding ActualWidth, Converter={StaticResource NotifyInOperationWidthValueConverter}, ElementName=Msg, Mode=OneWay}"  Margin="0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="White" FontSize="14" FontFamily="Microsoft YaHei UI" />
                                                             </StackPanel>
                                                         </Border>
                                                     </DockPanel>
@@ -119,7 +119,7 @@
                     <Border x:Name="bdr_UnRead" BorderBrush="Black" BorderThickness="0" Height="40" VerticalAlignment="Top" Background="#7F1D1D1F" Margin="1" Visibility="Collapsed">
                         <DockPanel>
                             <Controls:Icon  Height="18" VerticalAlignment="Center" Width="18" Margin="0,0,8,0" Image="/TrboX;component/resource/images/panel_close_ 20_20_h.png" HoverImage="/TrboX;component/resource/images/panel_close_ 20_20_n.png" HorizontalAlignment="Center" PressedImage="/TrboX;component/resource/images/panel_close_ 20_20_n.png" DockPanel.Dock="Right"/>
-                            <Label Content="有未读消息，点击查看！" Margin="5,0,0,0" Foreground="#FFF1F1F1" FontSize="14" FontFamily="Hiragino Sans GB W3" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="0" Background="{x:Null}"/>
+                            <Label Content="有未读消息，点击查看！" Margin="5,0,0,0" Foreground="#FFF1F1F1" FontSize="14" FontFamily="Microsoft YaHei UI" HorizontalAlignment="Center" VerticalContentAlignment="Center" HorizontalContentAlignment="Center" Padding="0" Background="{x:Null}"/>
                         </DockPanel>
                     </Border>
                 </Grid>
@@ -138,7 +138,7 @@
                         <Button  Content="遥开" Command="{Binding Target.Control, ElementName=baseWindow, Mode=OneWay}" CommandParameter="StartUp"  IsEnabled="{Binding Target.CanShartUp, ElementName=baseWindow, Mode=OneWay}"  Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"  Style="{DynamicResource ButtonNormalStyle}" VerticalAlignment="Center" Margin="10,0,0,0" Background="#FF3B3B3D"  BorderBrush="#FF626262" Height="26" Width="60" Foreground="#FFC9CDD2" Tag="4"/>
 
 
-                        <!--<Button Command="{Binding Target.AddFastPanel, ElementName=baseWindow, Mode=OneWay}" Content="添加到快速操作" Style="{DynamicResource ButtonNormalStyle}" VerticalAlignment="Center" Margin="10,0,12,0" DockPanel.Dock="Right" Background="#FF3B3B3D" BorderBrush="#FF626262" Height="26" Width="121" Foreground="#FFC9CDD2" FontFamily="Hiragino Sans GB W3" FontSize="14" Tag="4,4,4,4" Focusable="False"/>-->
+                        <!--<Button Command="{Binding Target.AddFastPanel, ElementName=baseWindow, Mode=OneWay}" Content="添加到快速操作" Style="{DynamicResource ButtonNormalStyle}" VerticalAlignment="Center" Margin="10,0,12,0" DockPanel.Dock="Right" Background="#FF3B3B3D" BorderBrush="#FF626262" Height="26" Width="121" Foreground="#FFC9CDD2" FontFamily="Microsoft YaHei UI" FontSize="14" Tag="4,4,4,4" Focusable="False"/>-->
                     </DockPanel>
                 </Border>
                 <Border BorderBrush="Black" BorderThickness="0" ClipToBounds="True" Margin="0,0,0,1">

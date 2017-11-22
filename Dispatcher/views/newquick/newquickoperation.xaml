@@ -27,8 +27,8 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="220"/>
         </Grid.ColumnDefinitions>
-        <TextBlock TextWrapping="Wrap" Text="新建操作" HorizontalAlignment="Center" Foreground="#FFA8CBF0" FontSize="14" FontFamily="Hiragino Sans GB W3" VerticalAlignment="Center"/>
-        <TextBlock TextWrapping="Wrap" Text="快速操作列表" DockPanel.Dock="Top" HorizontalAlignment="Center" Foreground="#FFA8CBF0" FontSize="14" FontFamily="Hiragino Sans GB W3" Grid.Column="2" VerticalAlignment="Center"/>
+        <TextBlock TextWrapping="Wrap" Text="新建操作" HorizontalAlignment="Center" Foreground="#FFA8CBF0" FontSize="14" FontFamily="Microsoft YaHei UI" VerticalAlignment="Center"/>
+        <TextBlock TextWrapping="Wrap" Text="快速操作列表" DockPanel.Dock="Top" HorizontalAlignment="Center" Foreground="#FFA8CBF0" FontSize="14" FontFamily="Microsoft YaHei UI" Grid.Column="2" VerticalAlignment="Center"/>
 
         <Grid Background="#FF333335" Grid.Row="1" Margin="0,0,0,0" >
             <Grid x:Name="grid"  Margin="12,5,12,24" DataContext="{Binding Operation}">
@@ -106,7 +106,7 @@
                                         <Ellipse Margin="0" Stroke="Black" StrokeThickness="0" Fill="{Binding IconBackGround}" />
                                         <Image  Source="{Binding ViewModule.Icon}"  Width="12" Height="12" VerticalAlignment="Center" HorizontalAlignment="Center" />
                                     </Grid>
-                                    <TextBlock Text="{Binding ViewModule.FullName}"  TextWrapping="NoWrap" Margin="5,0,17,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="#FFD2DFF5" FontSize="13" FontFamily="Hiragino Sans GB W3"/>
+                                    <TextBlock Text="{Binding ViewModule.FullName}"  TextWrapping="NoWrap" Margin="5,0,17,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="#FFD2DFF5" FontSize="13" FontFamily="Microsoft YaHei UI"/>
                                 </DockPanel>
                             </Border>
                         </DataTemplate>
@@ -125,7 +125,7 @@
 
         <!--<DockPanel Margin="20,20,30,30">
             <DockPanel Width="220" Margin="0">
-                <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Center" Foreground="#FFA8CBF0" FontSize="14" FontFamily="Hiragino Sans GB W3"/>
+                <TextBlock DockPanel.Dock="Top" HorizontalAlignment="Center" Foreground="#FFA8CBF0" FontSize="14" FontFamily="Microsoft YaHei UI"/>
                 <Grid Background="#FF333335">
                     <DockPanel Margin="12,24" Background="#FF333335">
                         <ComboBox x:Name="cmb_OpType" Margin="0" VerticalAlignment="Center" SelectedIndex="0" DockPanel.Dock="Top" SelectionChanged="cmb_OpType_SelectionChanged" Style="{DynamicResource ComboBoxStyleNormal}" Height="30" Foreground="#FFB6BABE" >
@@ -281,7 +281,7 @@
 
             </DockPanel>
             <DockPanel Width="220" Margin="0" DockPanel.Dock="Right">
-                <TextBlock TextWrapping="Wrap" Text="快速操作" DockPanel.Dock="Top" HorizontalAlignment="Center" Foreground="#FFA8CBF0" FontSize="14" FontFamily="Hiragino Sans GB W3"/>
+                <TextBlock TextWrapping="Wrap" Text="快速操作" DockPanel.Dock="Top" HorizontalAlignment="Center" Foreground="#FFA8CBF0" FontSize="14" FontFamily="Microsoft YaHei UI"/>
                 <ListView x:Name="lst_SelectOperate"  View="{StaticResource SelectFastView}" BorderThickness="0"  ScrollViewer.VerticalScrollBarVisibility="Auto" Background="#FF333335" Margin="0,14,0,0"  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Width="218" />
 
             </DockPanel>

@@ -339,7 +339,7 @@
         <Setter Property="Margin" Value="0"/>
         <Setter Property="VerticalAlignment" Value="Top"/>
         <Setter Property="FontSize" Value="14"/>
-        <Setter Property="FontFamily" Value="Hiragino Sans GB W3" />
+        <Setter Property="FontFamily" Value="Microsoft YaHei UI" />
         <Setter Property="Foreground" Value="White" />
          <Style.Triggers>
             <Trigger Property="Role" Value="TopLevelHeader">
@@ -1809,7 +1809,7 @@
                     <!-- 我们将 Grid 用作根，原因在于这便于添加更多的元素来自定义按钮 -->
                     <Grid x:Name="Grid">
                         <Border x:Name="Border" Padding="{TemplateBinding Padding}" BorderThickness="1" Background="#FF3B3B3D" CornerRadius="4" BorderBrush="#FF5C5C5D"/>
-                        <TextBlock x:Name="textBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{TemplateBinding Content}" VerticalAlignment="Center" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" FontSize="14"/>
+                        <TextBlock x:Name="textBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{TemplateBinding Content}" VerticalAlignment="Center" FontFamily="Microsoft YaHei UI" Foreground="#FFCFCFCF" FontSize="14"/>
 
                         <!-- Content Presenter 是控件放置文本内容等项之处 -->
                         <!-- 通过利用绑定，无需编辑模板即可将控件参数化 -->
@@ -1847,7 +1847,7 @@
                     <!-- 我们将 Grid 用作根，原因在于这便于添加更多的元素来自定义按钮 -->
                     <Grid x:Name="Grid">
                         <Border x:Name="Border" Padding="{TemplateBinding Padding}" BorderThickness="0" Background="#FF4C4C4F" CornerRadius="0" BorderBrush="#FF5C5C5D"/>
-                        <TextBlock x:Name="textBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{TemplateBinding Content}" VerticalAlignment="Center" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" FontSize="14"/>
+                        <TextBlock x:Name="textBlock" HorizontalAlignment="Center" TextWrapping="Wrap" Text="{TemplateBinding Content}" VerticalAlignment="Center" FontFamily="Microsoft YaHei UI" Foreground="#FFCFCFCF" FontSize="14"/>
 
                         <!-- Content Presenter 是控件放置文本内容等项之处 -->
                         <!-- 通过利用绑定，无需编辑模板即可将控件参数化 -->
