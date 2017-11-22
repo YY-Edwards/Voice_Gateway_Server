@@ -1006,7 +1006,7 @@ void CTcpScheduling::sendSessionStatus()
 			r.result = it->status;
 			r.sessionId = it->sessionId;
 			onTcpData(myTcpCallBackFunc, it->command, r);
-			//it = tcpCommandTimeOutList.erase(it);
+			it = tcpCommandTimeOutList.erase(it);
 			it->status = SUCESS;
 			break;
 		}

@@ -283,11 +283,15 @@ void DispatchOperate::OnDisConnect(CRemotePeer* pRemotePeer)
 }
 void DispatchOperate::OnData(  int call, Respone data)
 {
+	std::lock_guard <std::mutex> locker(dis.m_locker);
+	SessionStatus s;
+	s.sessionId = data.sessionId;
+	s.status = data.status;
+	dis.sessionStatusList.push_back(s);
 	ArgumentType args;
 	FieldValue Gps(FieldValue::TObject);
 	FieldValue Indoor(FieldValue::TObject);
 	std::map<std::string, RadioStatus>::iterator it;
-	//std::list<BconMajMinTimeReport>::iterator mBcon;
 	FieldValue bcons(FieldValue::TArray);
 	switch (call)
 	{
@@ -500,32 +504,17 @@ void DispatchOperate::OnData(  int call, Respone data)
 	}
 	break;
 	case SESSION_STATUS:
-		{
-			dis.udpTimeoutList = data.timeOutList;
-			/*std::list<Command>::iterator it;
-			args["getType"] = SESSION_STATUS;
-			FieldValue info(FieldValue::TArray);
-			for (it = data.timeOutList.begin(); it != data.timeOutList.end(); it++)
-			{
-				if ((it->status) >= 0)
-				{
-					FieldValue element(FieldValue::TObject);
-					element.setKeyVal("SessionId", FieldValue((it->sessionId).c_str()));
-					element.setKeyVal("Status", FieldValue(it->status));
-					info.push(element);
-					it = timeOutList.erase(it);
-				}
-			}
-			args["info"] = info;
-			args["SessionId"] = FieldValue((data.sessionId).c_str());
-			dis.send2Client("status", args);*/
-		}
 	break;
 	}
 	
 }
 void DispatchOperate::OnTcpData(int call, TcpRespone data)
 {
+	std::lock_guard <std::mutex> locker(dis.m_locker);
+	SessionStatus s;
+	s.sessionId = data.sessionId;
+	s.status = data.result;
+	dis.sessionStatusList.push_back(s);
 	ArgumentType args;
 	switch (call)
 	{
@@ -618,37 +607,6 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 		
 		break;
 	case TCP_SESSION_STATUS:
-		{
-			std::list<TcpCommand>::iterator it;
-			args["getType"] = SESSION_STATUS;
-			FieldValue info(FieldValue::TArray);
-			for (it = data.timeOutList.begin(); it != data.timeOutList.end(); ++it)
-			{
-				if ((it->status) >= 0)
-				{
-					FieldValue element(FieldValue::TObject);
-					element.setKeyVal("SessionId", FieldValue((it->sessionId).c_str()));
-					element.setKeyVal("Status", FieldValue(it->status));
-					info.push(element);
-		
-				}
-			}
-			std::list<Command>::iterator iter;
-			for (iter = dis.udpTimeoutList.begin(); iter != dis.udpTimeoutList.end(); iter++)
-			{
-				if ((it->status) >= 0)
-				{
-				FieldValue element(FieldValue::TObject);
-				element.setKeyVal("SessionId", FieldValue((it->sessionId).c_str()));
-				element.setKeyVal("Status", FieldValue(it->status));
-				info.push(element);
-				iter = dis.udpTimeoutList.erase(iter);
-				}
-			}
-			args["info"] = info;
-			args["SessionId"] = FieldValue((data.sessionId).c_str());
-			dis.send2Client("status", args);
-		}
 		break;
 	}
 
@@ -776,8 +734,9 @@ void DispatchOperate::getStatus( int type,std::string sessionId)
 		pDs->getRadioStatus(type,sessionId);
 		break;
 	case SESSION_STATUS:
-		pDs->getRadioStatus(type, sessionId);
-		pTs->getSessionStatus(sessionId);
+		//pDs->getRadioStatus(type, sessionId);
+		//pTs->getSessionStatus(sessionId);
+		sendSessIonStatus(sessionId);
 		break;
 	}
 }
@@ -797,4 +756,24 @@ void DispatchOperate::OnRadioUsb(bool isConnected)
 void DispatchOperate::locationIndoorConfig(int Interval, int iBeaconNumber, bool isEmergency)
 {
 	pDs->locationIndoorConfig(Interval, iBeaconNumber, isEmergency);
+}
+void DispatchOperate::sendSessIonStatus(std::string sessionId)
+{
+	ArgumentType args;
+	args["getType"] = SESSION_STATUS;
+	FieldValue info(FieldValue::TArray);
+	std::list<SessionStatus>::iterator iter;
+	for (iter = sessionStatusList.begin(); iter != sessionStatusList.end(); iter++)
+	{
+		
+		FieldValue element(FieldValue::TObject);
+		element.setKeyVal("SessionId", FieldValue((iter->sessionId).c_str()));
+		element.setKeyVal("Status", FieldValue(iter->status));
+		info.push(element);
+		iter = sessionStatusList.erase(iter);
+		
+	}
+	args["info"] = info;
+	args["SessionId"] = FieldValue((sessionId).c_str());
+	dis.send2Client("status", args);
 }

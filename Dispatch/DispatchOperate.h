@@ -8,7 +8,10 @@
 #include "../lib/rpc/include/RpcJsonParser.h"
 #include "../lib/radio/DataScheduling.h"
 #include "tcpScheduling.h"
-
+struct SessionStatus{
+	std::string sessionId;
+	int status = -1;
+};
 
 class DispatchOperate
 {
@@ -46,7 +49,9 @@ private:
 	bool isUdpConnect;
 	std::mutex m_locker;
 	std::string  mnisIP;
-	 std::list <Command> udpTimeoutList;
-
+	std::list <Command> udpTimeoutList;
+	std::list<SessionStatus>  sessionStatusList;
+	
+	void sendSessIonStatus(std::string sessionId);
 };
 

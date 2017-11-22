@@ -472,6 +472,7 @@ void CDataScheduling::timeOut()
 							r.msgStatus = UNSUCESS;
 							r.msg = "";
 							r.msgType = PRIVATE;
+							r.status = UNSUCESS;
 							onData(myCallBackFunc, it->command, r);
 						}
 						
@@ -484,6 +485,7 @@ void CDataScheduling::timeOut()
 							r.msgStatus = UNSUCESS;
 							r.msg = "";
 							r.msgType = GROUP;
+							r.status = UNSUCESS;
 							onData(myCallBackFunc, it->command, r);
 						}
 						
@@ -502,6 +504,7 @@ void CDataScheduling::timeOut()
 							r.cycle = it->cycle;
 							r.querymode = it->querymode;
 							r.gpsType = START;
+							r.status = UNSUCESS;
 							onData(myCallBackFunc, it->command, r);
 						}
 					
@@ -515,6 +518,7 @@ void CDataScheduling::timeOut()
 							r.cycle = it->cycle;
 							r.querymode = it->querymode;
 							r.gpsType = STOP;
+							r.status = UNSUCESS;
 							onData(myCallBackFunc, it->command, r);
 						}
 					
@@ -531,6 +535,7 @@ void CDataScheduling::timeOut()
 							r.cycle = it->cycle;
 							r.querymode = it->querymode;
 							r.gpsType = START;
+							r.status = UNSUCESS;
 							onData(myCallBackFunc, it->command, r);
 						}
 
@@ -540,7 +545,7 @@ void CDataScheduling::timeOut()
 					}
 					if (it->command != MNIS_CONNECT)
 					{
-						//it = timeOutList.erase(it);
+						it = timeOutList.erase(it);
 						it->status = UNSUCESS;
 						break;
 					}
@@ -588,7 +593,7 @@ void CDataScheduling::sendRadioStatusToClient()
 			r.rs = g_radioStatus;
 			r.sessionId = it->sessionId;
 			onData(myCallBackFunc, it->command, r);
-			//it = timeOutList.erase(it);
+			it = timeOutList.erase(it);
 			it->status = SUCESS;
 			break;
 		}
@@ -608,7 +613,7 @@ void CDataScheduling::sendSessionStatusToClient()
 			r.status = it->status;
 			r.sessionId = it->sessionId;
 			onData(myCallBackFunc, it->command, r);
-			//it = timeOutList.erase(it);
+			it = timeOutList.erase(it);
 			it->status = SUCESS;
 			break;
 		}

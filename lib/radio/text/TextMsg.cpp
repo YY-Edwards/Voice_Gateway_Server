@@ -563,7 +563,7 @@ void CTextMsg::RecvMsg()
 						onData(myCallBackFunc, it->command, r);
 						m_pMnis->updateOnLineRadioInfo(atoi(stringId.c_str()), RADIO_STATUS_ONLINE);
 						it->status = SUCESS;
-						//it = timeOutList.erase(it);
+						it = timeOutList.erase(it);
 						break;
 					}
 
