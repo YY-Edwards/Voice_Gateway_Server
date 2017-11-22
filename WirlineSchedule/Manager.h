@@ -35,7 +35,7 @@ public:
 	/*建立通话*/
 	int initialCall(unsigned long targetId, unsigned char callTyp);
 	/*松开PTT*/
-	int stopCall();
+	int stopCall(bool needRequest = true);
 	/*解码加锁*/
 	void RequireDecodeEvent();
 	/*解码解锁*/
@@ -76,6 +76,10 @@ public:
 	void unLockCurTask();
 	/*判断当前是否已存在此任务*/
 	bool isRepeat(std::string sessionId);
+	/*处理是否停止通话*/
+	void handleStopCall();
+	/*设置是否停止通话*/
+	void setbNeedStopCall(bool value);
 private:
 	PLogReport m_report;
 	//HWND m_hwnd;
@@ -101,6 +105,7 @@ private:
 	CDataScheduling* m_pMnis;
 	std::mutex m_curTaskLocker;
 	UINT m_idTaskOnTimerProc;
+	bool m_bNeedStopCall;
 
 	static unsigned __stdcall HandleRemoteTaskProc(void * pThis);
 	/*判断当前任务超时线程*/

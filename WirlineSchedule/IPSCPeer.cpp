@@ -510,6 +510,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 																							  sprintf_s(m_reportMsg, "call end:%s", g_callRequstDeclineReasonCodeInfo.ReasonCode);
 																							  sendLogToWindow();
 																							  /*当前是否可以停止录音*/
+																							  //g_manager->setbNeedStopCall(true);
 																							  if (g_pNet->canStopRecord())
 																							  {
 																								  g_pNet->requestRecordEndEvent();

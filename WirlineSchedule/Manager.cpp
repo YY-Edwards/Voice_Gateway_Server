@@ -18,7 +18,8 @@ CSerialDongle* g_pDongle;
 BOOL g_dongleIsUsing;
 
 CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis, std::wstring& defaultAudioPath) :
-m_idTaskOnTimerProc(0)
+m_idTaskOnTimerProc(0),
+m_bNeedStopCall(false)
 {
 	g_pNet = new CWLNet(pDb, this, defaultAudioPath);
 	g_pDongle = new CSerialDongle();
@@ -356,13 +357,13 @@ int CManager::initialCall(unsigned long targetId, unsigned char callTyp)
 	}
 }
 
-int CManager::stopCall()
+int CManager::stopCall(bool needRequest)
 {
 	sprintf_s(m_reportMsg, "handle stopCall");
 	sendLogToWindow();
 	if (g_pNet->canStopRecord())
 	{
-		g_pNet->requestRecordEndEvent();
+		if (needRequest) g_pNet->requestRecordEndEvent();
 		g_pSound->setbRecord(FALSE);
 		g_pNet->waitRecordEnd();
 	}
@@ -722,10 +723,17 @@ void CManager::handleRemoteTask()
 										 {
 											 stopCall();
 										 }
-										 //else
-										 //{
-										 //g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
-										 //}
+										 else if (CALL_START == g_pNet->GetCallStatus())
+										 {
+											 sprintf_s(m_reportMsg, "call status is CALL_START");
+											 sendLogToWindow();
+											 setbNeedStopCall(true);
+										 }
+										 else
+										 {
+											 sprintf_s(m_reportMsg, "call status is CALL_IDLE or CALL_HUANGUP,will do nothing");
+											 sendLogToWindow();
+										 }
 			}
 				break;
 			case REMOTE_CMD_GET_CONN_STATUS:
@@ -1190,5 +1198,22 @@ bool CManager::isSameSessionId(std::string sessionId, REMOTE_TASK* p)
 		break;
 	}
 	return rlt;
+}
+
+void CManager::handleStopCall()
+{
+	if (m_bNeedStopCall)
+	{
+		setbNeedStopCall(false);
+		//if (g_pNet->GetCallStatus() != CALL_IDLE)
+		//{
+		stopCall();
+		//}
+	}
+}
+
+void CManager::setbNeedStopCall(bool value)
+{
+	m_bNeedStopCall = value;
 }
 
