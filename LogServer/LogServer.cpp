@@ -19,7 +19,7 @@
 
 #include "DbIbeaconAction.h"
 #include "DbLocationIndoorAction.h"
-#define SERVICE_CODE FALSE
+#define SERVICE_CODE TRUE
 int _tmain(int argc, _TCHAR* argv[])
 {
 	system("chcp 65001");
