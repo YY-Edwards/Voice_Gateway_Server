@@ -189,10 +189,12 @@ extern HANDLE g_waitHandleRemoteTask;
 #define REMOTE_CMD_MNIS_MSG 0x07
 #define REMOTE_CMD_MNIS_STATUS 0x08
 #define REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG 0x09
+#define REMOTE_CMD_SESSION_STATUS 0x0A
 //#define REMOTE_CMD_VOICE_LOG 0x09
 
 #define GET_TYPE_CONN 0x01
 #define GET_TYPE_ONLINE_DEVICES 0x02
+#define GET_TYPE_SESSION_STATUS 0x03
 /*JSON相关结构体*/
 
 /************************************************************************/

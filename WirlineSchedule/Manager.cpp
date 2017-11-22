@@ -750,6 +750,18 @@ void CManager::handleRemoteTask()
 											   g_pNet->wlInfo(GET_TYPE_CONN, info, task.param.info.getInfoParam.getInfo.SessionId);
 			}
 				break;
+			case REMOTE_CMD_SESSION_STATUS:
+			{
+											  FieldValue value(FieldValue::TArray);
+											  GET_INFO_PARAM info = task.param.info.getInfoParam.getInfo;
+											  /*获取当前已经处理的会话任务状态*/
+											  g_pNet->getSessionStatusList(value);
+											  /*清空当前已经处理的会话任务状态*/
+											  g_pNet->clearSessionStatusList();
+											  g_pNet->wlInfo(GET_TYPE_SESSION_STATUS, value, info.SessionId);
+
+			}
+				break;
 			case REMOTE_CMD_MNIS_QUERY_GPS:
 			{
 											  QUERY_GPS gps = task.param.info.queryGpsParam;
@@ -870,8 +882,30 @@ void CManager::OnData(int callFuncId, Respone response)
 	std::map<std::string, RadioStatus>::iterator it;
 	//std::list<BconMajMinTimeReport>::iterator mBcon;
 	FieldValue bcons(FieldValue::TArray);
+	FieldValue info(FieldValue::TArray);
 	switch (call)
 	{
+	case GPS_TRIGG_COMM_INDOOR:
+	case GPS_TRIGG_CSBK_INDOOR:
+	case GPS_IMME_COMM_INDOOR:
+	case GPS_IMME_CSBK_INDOOR:
+	{
+								 FieldValue element(FieldValue::TObject);
+								 element.setKeyVal("txpower", FieldValue(data.bcon.TXPower));
+								 element.setKeyVal("rssi", FieldValue(data.bcon.RSSI));
+								 element.setKeyVal("timestamp", FieldValue(data.bcon.TimeStamp));
+								 element.setKeyVal("major", FieldValue(data.bcon.Major));
+								 element.setKeyVal("minor", FieldValue(data.bcon.Minor));
+								 args["SessionId"] = FieldValue(data.sessionId.c_str());
+								 args["Target"] = FieldValue(data.target);
+								 args["Type"] = 1;   //1:becons 
+								 args["Cycle"] = FieldValue(data.cycle);
+								 args["Operate"] = FieldValue(data.operate);
+								 args["Status"] = FieldValue(data.gpsStatus);
+								 args["Report"] = element;
+								 g_pNet->send2Client("locationStatus", args);
+	}
+		break;
 	case MNIS_CONNECT:
 	{
 						 printf_s("MNIS_CONNECT:%d\r\n", response.connectStatus);
@@ -999,7 +1033,6 @@ void CManager::OnData(int callFuncId, Respone response)
 		break;
 	case RADIO_STATUS:
 		args["getType"] = RADIO_STATUS;
-		FieldValue info(FieldValue::TArray);
 		for (it = data.rs.begin(); it != data.rs.end(); it++)
 		{
 			FieldValue element(FieldValue::TObject);
@@ -1033,6 +1066,8 @@ void CManager::OnData(int callFuncId, Respone response)
 		args["info"] = info;
 		args["SessionId"] = FieldValue((data.sessionId).c_str());
 		g_pNet->send2Client("wlInfo", args);
+		break;
+	default:
 		break;
 	}
 }
@@ -1170,6 +1205,7 @@ bool CManager::isSameSessionId(std::string sessionId, REMOTE_TASK* p)
 	}
 		break;
 	case REMOTE_CMD_GET_CONN_STATUS:
+	case REMOTE_CMD_SESSION_STATUS:
 	{
 									   GET_INFO_PARAM info = p->param.info.getInfoParam.getInfo;
 									   return 0 == strcmp(sessionId.c_str(), info.SessionId);
@@ -1205,10 +1241,7 @@ void CManager::handleStopCall()
 	if (m_bNeedStopCall)
 	{
 		setbNeedStopCall(false);
-		//if (g_pNet->GetCallStatus() != CALL_IDLE)
-		//{
-		stopCall();
-		//}
+		stopCall(false);
 	}
 }
 
