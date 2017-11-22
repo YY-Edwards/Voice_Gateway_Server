@@ -200,7 +200,7 @@ void CDataScheduling::getRadioStatus( int type,std::string sessionId)
 		}
 		else if (type == SESSION_STATUS)
 		{
-			addUdpCommand(SESSION_STATUS, "", "", 0, "", 0, 0, sessionId);
+			//addUdpCommand(SESSION_STATUS, "", "", 0, "", 0, 0, sessionId);
 		}
 	}
 }
@@ -392,7 +392,7 @@ void CDataScheduling::workThreadFunc()
 				sendRadioStatusToClient();
 				break;
 			case SESSION_STATUS:
-				sendSessionStatusToClient();
+				//sendSessionStatusToClient();
 				break;
 			case SEND_PRIVATE_MSG:
 				sendMsg(it->sessionId, it->text, it->radioId,m_mnisCfg.CAI );
