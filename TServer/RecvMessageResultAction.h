@@ -29,6 +29,8 @@ void recvMessageResultAction(CRemotePeer* pRemote, const std::string& param, uin
 			std::string strResp = CRpcJsonParser::buildResponse("failed", callId, 404, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
 		}
+		//–¥»Îlog
+		addSmsLog(param, callId, pRemote);
 	}
 	catch (std::exception e){
 

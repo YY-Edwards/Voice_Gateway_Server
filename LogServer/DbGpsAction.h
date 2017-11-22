@@ -111,7 +111,7 @@ void gpsLogAction(CRemotePeer* pRemote, const std::string& param, uint64_t callI
 				float fLatitude = d["gps"][i]["latitude"].GetFloat();
 				float fLongitude = d["gps"][i]["longitude"].GetFloat();
 				float fVelocity = d["gps"][i]["velocity"].GetFloat();
-				int radio = d["gps"][i]["velocity"].GetInt();
+				int radio = d["gps"][i]["radio"].GetInt();
 
 				bool ret = CDb::instance()->insertGpsLog(radio, fLatitude, fLongitude, fVelocity, 0.0f);
 				if (!ret)

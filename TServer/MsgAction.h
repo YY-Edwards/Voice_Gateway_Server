@@ -125,7 +125,7 @@ void msgAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, 
 		}
 
 		//–¥»Îlog
-		addSmsLog(param, callId, pRemote);
+		//addSmsLog(param, callId, pRemote);
 	}
 	catch (std::exception e)
 	{
