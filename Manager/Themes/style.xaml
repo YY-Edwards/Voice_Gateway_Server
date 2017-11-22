@@ -590,7 +590,7 @@
                         <Popup IsOpen="{TemplateBinding IsDropDownOpen}" Placement="Bottom" x:Name="Popup" Focusable="False" AllowsTransparency="True" PopupAnimation="Slide" VerticalOffset="1">
                             <Grid MaxHeight="{TemplateBinding MaxDropDownHeight}" MinWidth="{TemplateBinding ActualWidth}" x:Name="DropDown" SnapsToDevicePixels="True">
                                 <Border x:Name="DropDownBorder" Background="#F94C4C4F" BorderBrush="#FF505053" BorderThickness="1"/>
-                                <ScrollViewer Margin="0,8" Style="{DynamicResource SimpleScrollViewer}" SnapsToDevicePixels="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
+                                <ScrollViewer Margin="0,8" Style="{DynamicResource ScrollViewerStyleNormal}" SnapsToDevicePixels="True" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" CanContentScroll="True">
 
                                     <!-- StackPanel 用于显示子级，方法是将 IsItemsHost 设置为 True -->
                                     <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Contained"/>

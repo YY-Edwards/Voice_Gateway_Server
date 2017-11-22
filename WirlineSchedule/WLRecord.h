@@ -67,7 +67,7 @@ private:
 	std::wstring m_defaultAudioPath;
 	CMySQL *m_pDb;
 	PLogReport m_report;
-	char m_reportMsg[512];
+	char m_reportMsg[WL_LOG_SIZE];
 	bool m_bExit;
 	HANDLE m_writeFileThread;
 private:

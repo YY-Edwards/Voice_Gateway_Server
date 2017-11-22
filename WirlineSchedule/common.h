@@ -42,6 +42,8 @@
 
 extern WLSocketLog *g_pWLlog;
 
+#define WL_PLAY_BUFFER_SIZE 30
+#define WL_LOG_SIZE  1024
 #define SESSION_SIZE 64
 #define FLAG_NHANDLE 0 //超时处理未执行
 #define FLAG_HANDLED 1 //超时处理已执行
