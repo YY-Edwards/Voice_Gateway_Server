@@ -46,6 +46,7 @@ private:
 	bool isUdpConnect;
 	std::mutex m_locker;
 	std::string  mnisIP;
+	 std::list <Command> udpTimeoutList;
 
 };
 

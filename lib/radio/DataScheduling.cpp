@@ -465,20 +465,28 @@ void CDataScheduling::timeOut()
 					case  MNIS_CONNECT:
 						break;
 					case SEND_PRIVATE_MSG:
-						r.sessionId = it->sessionId;
-						r.target = it->radioId;
-						r.msgStatus = UNSUCESS;
-						r.msg = "";
-						r.msgType = PRIVATE;
-						onData(myCallBackFunc, it->command, r);
+						if (it->status != SUCESS)
+						{
+							r.sessionId = it->sessionId;
+							r.target = it->radioId;
+							r.msgStatus = UNSUCESS;
+							r.msg = "";
+							r.msgType = PRIVATE;
+							onData(myCallBackFunc, it->command, r);
+						}
+						
 						break;
 					case SEND_GROUP_MSG:
-						r.sessionId = it->sessionId;
-						r.target = it->radioId;
-						r.msgStatus = UNSUCESS;
-						r.msg = "";
-						r.msgType = GROUP;
-						onData(myCallBackFunc, it->command, r);
+						if (it->status != SUCESS)
+						{
+							r.sessionId = it->sessionId;
+							r.target = it->radioId;
+							r.msgStatus = UNSUCESS;
+							r.msg = "";
+							r.msgType = GROUP;
+							onData(myCallBackFunc, it->command, r);
+						}
+						
 						break;
 					case  GPS_IMME_COMM:
 					case GPS_TRIGG_COMM:
@@ -486,23 +494,47 @@ void CDataScheduling::timeOut()
 					case GPS_TRIGG_CSBK:
 					case GPS_IMME_CSBK_EGPS:
 					case GPS_TRIGG_CSBK_EGPS:
-						r.sessionId = it->sessionId;
-						r.target = it->radioId;
-						r.gpsStatus = UNSUCESS;
-						r.cycle = it->cycle;
-						r.querymode = it->querymode;
-						r.gpsType = START;
-						onData(myCallBackFunc, it->command, r);
+						if (it->status != SUCESS)
+						{
+							r.sessionId = it->sessionId;
+							r.target = it->radioId;
+							r.gpsStatus = UNSUCESS;
+							r.cycle = it->cycle;
+							r.querymode = it->querymode;
+							r.gpsType = START;
+							onData(myCallBackFunc, it->command, r);
+						}
+					
 						break;
 					case STOP_QUERY_GPS:
-						r.sessionId = it->sessionId;
-						r.target = it->radioId;
-						r.gpsStatus = UNSUCESS;
-						r.cycle = it->cycle;
-						r.querymode = it->querymode;
-						r.gpsType = STOP;
-						onData(myCallBackFunc, it->command, r);
+						if (it->status != SUCESS)
+						{
+							r.sessionId = it->sessionId;
+							r.target = it->radioId;
+							r.gpsStatus = UNSUCESS;
+							r.cycle = it->cycle;
+							r.querymode = it->querymode;
+							r.gpsType = STOP;
+							onData(myCallBackFunc, it->command, r);
+						}
+					
 						break;
+					case GPS_TRIGG_COMM_INDOOR:
+					case GPS_TRIGG_CSBK_INDOOR:
+					case GPS_IMME_COMM_INDOOR:
+					case GPS_IMME_CSBK_INDOOR:
+						if (it->status != SUCESS)
+						{
+							r.sessionId = it->sessionId;
+							r.target = it->radioId;
+							r.gpsStatus = UNSUCESS;
+							r.cycle = it->cycle;
+							r.querymode = it->querymode;
+							r.gpsType = START;
+							onData(myCallBackFunc, it->command, r);
+						}
+
+					break;
 					default:
 						break;
 					}

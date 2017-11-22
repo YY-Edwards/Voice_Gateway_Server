@@ -405,7 +405,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 		element.setKeyVal("minor", FieldValue(data.bcon.Minor));
 		args["SessionId"] = FieldValue(data.sessionId.c_str());
 		args["Target"] = FieldValue(data.target);
-		args["Type"] = 0;   //1:becons 
+		args["Type"] = 1;   //1:becons 
 		args["Cycle"] = FieldValue(data.cycle);
 		args["Operate"] = FieldValue(data.operate);
 		args["Status"] = FieldValue(data.gpsStatus);
@@ -501,7 +501,8 @@ void DispatchOperate::OnData(  int call, Respone data)
 	break;
 	case SESSION_STATUS:
 		{
-			std::list<Command>::iterator it;
+			dis.udpTimeoutList = data.timeOutList;
+			/*std::list<Command>::iterator it;
 			args["getType"] = SESSION_STATUS;
 			FieldValue info(FieldValue::TArray);
 			for (it = data.timeOutList.begin(); it != data.timeOutList.end(); it++)
@@ -517,7 +518,7 @@ void DispatchOperate::OnData(  int call, Respone data)
 			}
 			args["info"] = info;
 			args["SessionId"] = FieldValue((data.sessionId).c_str());
-			dis.send2Client("status", args);
+			dis.send2Client("status", args);*/
 		}
 	break;
 	}
@@ -630,6 +631,18 @@ void DispatchOperate::OnTcpData(int call, TcpRespone data)
 					element.setKeyVal("Status", FieldValue(it->status));
 					info.push(element);
 		
+				}
+			}
+			std::list<Command>::iterator iter;
+			for (iter = dis.udpTimeoutList.begin(); iter != dis.udpTimeoutList.end(); iter++)
+			{
+				if ((it->status) >= 0)
+				{
+				FieldValue element(FieldValue::TObject);
+				element.setKeyVal("SessionId", FieldValue((it->sessionId).c_str()));
+				element.setKeyVal("Status", FieldValue(it->status));
+				info.push(element);
+				iter = dis.udpTimeoutList.erase(iter);
 				}
 			}
 			args["info"] = info;

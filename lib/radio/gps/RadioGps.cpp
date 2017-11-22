@@ -765,16 +765,16 @@ void CRadioGps::RecvData()
 								if (myCallBackFunc != NULL)
 								{
 									Respone r = { 0 };
-									r.source = m_ThreadGps->radioID;
+									r.target = m_ThreadGps->radioID;
 									r.bcon = getValidBcon(compareRssi(mBcon));
-									if (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report &&r.bcon.TimeStamp !=0)
+									if (m_ThreadGps->RcvBuffer[0] == Immediate_Location_Report &&r.bcon.TimeStamp !=0 && it->status == -1)
 									{
 										r.sessionId = it->sessionId;
 										onData(myCallBackFunc, GPS_IMME_COMM_INDOOR, r);
 										it->status = SUCESS;
 										//it = timeOutList.erase(it);
 									}
-									else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report &&r.bcon.TimeStamp != 0)
+									else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report &&r.bcon.TimeStamp != 0 && it->status == -1)
 									{
 										onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
 										m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP == operate) ? (-1) : (queryMode));
@@ -848,7 +848,7 @@ void CRadioGps::RecvData()
 						m_timeOutListLocker.lock();
 						for (it = timeOutList.begin(); it != timeOutList.end(); it++)
 						{
-							if (it->radioId == atoi(radioID))
+							if (it->radioId == atoi(radioID) && it->status == -1)
 							{
 								if (isImme)
 								{
