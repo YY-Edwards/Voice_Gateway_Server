@@ -11,7 +11,7 @@
              d:DesignHeight="28" Width="760" >
     <Grid>
         <Menu Style="{DynamicResource MenuStyleNormal}" HorizontalAlignment="Left">
-            <MenuItem Header="文件(_F)" Margin="0,0,5,0" Style="{DynamicResource MenuItemStyleTilte}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" InputGestureText="F" Height="28">
+            <MenuItem Header="文件(_F)" Margin="0,0,5,0" Style="{DynamicResource MenuItemStyleTilte}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Microsoft YaHei UI" InputGestureText="F" Height="28">
                 <MenuItem Header="新建" Height="28" Margin="1,0" Style="{DynamicResource MenuItemStyle1}" VerticalAlignment="Top">
                     <MenuItem Header="语音调度"   Style="{DynamicResource MenuItemStyleSub}"  Command="{Binding NewOperate, Mode=OneWay}" CommandParameter="Schedule"  Visibility="{x:Static svr:FunctionConfigure.ScheduleVisible}"/>
                     <!--InputGestureText="Ctrl+N"-->
@@ -28,7 +28,7 @@
                 <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
                 <MenuItem  Header="退出TrboX" Style="{DynamicResource MenuItemStyleSub}"  Command="{Binding Close, Mode=OneWay}"/>
             </MenuItem>
-            <MenuItem Header="视图(_V)" Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" Height="28">
+            <MenuItem Header="视图(_V)" Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Microsoft YaHei UI" Height="28">
                 <MenuItem Header="工具栏" Style="{DynamicResource MenuItemStyle1}">
                     <MenuItem Header="标准"       Style="{DynamicResource MenuItemStyle1}" IsChecked="True" IsEnabled="False"/>
                     <MenuItem Header="基本操作"   Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewTools, Mode=OneWay}" CommandParameter="Base" IsChecked="{Binding EnableViewBaseTools}"/>
@@ -64,7 +64,7 @@
                     <MenuItem Header="巡更"     Style="{DynamicResource MenuItemStyle1}" Command="{Binding ViewNotify, Mode=OneWay}" CommandParameter="Patrol" IsChecked="{Binding EnableViewNotifyPatrol}" Visibility="{x:Static svr:FunctionConfigure.PatrolVisible}"/>
                 </MenuItem>
             </MenuItem>
-            <MenuItem  Header="目标(_O)" Visibility="{Binding TagretVisible, Mode=OneWay}"  Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" Height="28">
+            <MenuItem  Header="目标(_O)" Visibility="{Binding TagretVisible, Mode=OneWay}"  Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Microsoft YaHei UI" Height="28">
                 <MenuItem  Header="打开"  Command ="{Binding TargetViewModule.OpenOperateWindow, Mode=OneWay}"  CommandParameter = "Schedule" Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
                 <MenuItem  Header="添加到快速操作" Command ="{Binding TargetViewModule.AddFastPanel, Mode=OneWay}"  Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
                 <Separator Margin="1,0"      Style="{DynamicResource SeparatorStyleNormal}" Height="16" Visibility="{x:Static svr:FunctionConfigure.ControlerVisible}"/>
@@ -93,21 +93,21 @@
                 <Separator Margin="1,0"  Style="{DynamicResource SeparatorStyleNormal}" Height="16"  Visibility="{x:Static svr:FunctionConfigure.JobTicketVisible}" />
                 <MenuItem  Header="工单" Style="{DynamicResource MenuItemStyle1}"  Visibility="{x:Static svr:FunctionConfigure.JobTicketVisible}"/>
             </MenuItem>
-            <MenuItem Header="录音(_R)" Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}"  HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" Height="28" Visibility="{x:Static svr:FunctionConfigure.RecordVisible}">
+            <MenuItem Header="录音(_R)" Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}"  HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Microsoft YaHei UI" Height="28" Visibility="{x:Static svr:FunctionConfigure.RecordVisible}">
                 <MenuItem  Header="刷新" Style="{DynamicResource MenuItemStyle1}" />
                 <MenuItem  Header="回放" Style="{DynamicResource MenuItemStyle1}" />
                 <Separator Margin="1,0"  Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
                 <MenuItem  Header="导入" Style="{DynamicResource MenuItemStyle1}" />
                 <MenuItem  Header="导出" Style="{DynamicResource MenuItemStyle1}" />
             </MenuItem>
-            <MenuItem Header="巡更(_P)" Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" Height="28" Visibility="{x:Static svr:FunctionConfigure.PatrolVisible}">
+            <MenuItem Header="巡更(_P)" Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Microsoft YaHei UI" Height="28" Visibility="{x:Static svr:FunctionConfigure.PatrolVisible}">
                 <MenuItem  Header="任务列表" Style="{DynamicResource MenuItemStyle1}"/>
                 <MenuItem  Header="新建常规任务" Style="{DynamicResource MenuItemStyle1}"/>
                 <MenuItem  Header="新建定时任务" Style="{DynamicResource MenuItemStyle1}"/>
                 <Separator Margin="1,0"  Style="{DynamicResource SeparatorStyleNormal}" Height="16"/>
                 <MenuItem   Header="跟踪" Style="{DynamicResource MenuItemStyle1}"/>
             </MenuItem>
-            <MenuItem Header="工具(_T)" Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" Height="28">
+            <MenuItem Header="工具(_T)" Margin="5,0" Style="{DynamicResource MenuItemStyleTilte}" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Microsoft YaHei UI" Height="28">
                 <MenuItem  Header="新建常用联系人" Command="{Binding ToolsFast, Mode=OneWay}" CommandParameter="Target" Style="{DynamicResource MenuItemStyle1}"/>
                 <MenuItem  Header="新建快速操作"   Command="{Binding ToolsFast, Mode=OneWay}" CommandParameter="Operation" Style="{DynamicResource MenuItemStyle1}"/>
                 <Separator Margin="1,0" Style="{DynamicResource SeparatorStyleNormal}" Height="16" Visibility="{x:Static svr:FunctionConfigure.AdvanceToolsVisible}"/>
@@ -115,7 +115,7 @@
                 <MenuItem  Header="导入配置"  Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.AdvanceToolsVisible}"/>
                 <MenuItem  Header="选项"  Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.AdvanceToolsVisible}"/>
             </MenuItem>
-            <MenuItem Header="帮助(_H)" Style="{DynamicResource MenuItemStyleTilte}" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Hiragino Sans GB W3" Height="28">
+            <MenuItem Header="帮助(_H)" Style="{DynamicResource MenuItemStyleTilte}" Margin="5,0" HorizontalAlignment="Left" VerticalAlignment="Center" Foreground="White" FontSize="14" FontFamily="Microsoft YaHei UI" Height="28">
                 <MenuItem Header="查看帮助" Command="{Binding Help, Mode=OneWay}" CommandParameter="Help" Style="{DynamicResource MenuItemStyle1}" Visibility="{x:Static svr:FunctionConfigure.HelpFileVisible}" />
                 <MenuItem Header="关于TrboX"  Command="{Binding Help, Mode=OneWay}" CommandParameter="About" Style="{DynamicResource MenuItemStyle1}"/>
             </MenuItem>

@@ -6,6 +6,6 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid Opacity=".85">
-        <TextBlock Text="页面加载中..." VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Hiragino Sans GB W3" FontSize="14"/>
+        <TextBlock Text="页面加载中..." VerticalAlignment="Center" HorizontalAlignment="Center" FontFamily="Microsoft YaHei UI" FontSize="14"/>
     </Grid>
 </UserControl>

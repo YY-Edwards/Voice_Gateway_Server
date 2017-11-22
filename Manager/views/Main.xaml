@@ -44,8 +44,8 @@
                 <Border x:Name="headerCatcher"  BorderBrush="Black" BorderThickness="0" Background="#FF3B3B3D">
                     <DockPanel LastChildFill="False" Margin="0,0,0,-2" HorizontalAlignment="Left" Width="322">
                         <Image Margin="22,0,0,0" Source="images/sub_title_60_20.png" Height="20" Width="60"/>
-                        <Label Content="3.0" VerticalAlignment="Top" Foreground="#FF7DABDC" Margin="5,6,0,0" VerticalContentAlignment="Center" FontSize="15" Padding="5,6,5,5" FontFamily="Hiragino Sans GB W3"/>
-                        <Label Content="management" VerticalAlignment="Top" Foreground="#FF7DABDC" FontSize="15" Padding="5,5.5,5,5" Margin="0,6,0,0" FontFamily="Hiragino Sans GB W3"/>
+                        <Label Content="3.0" VerticalAlignment="Top" Foreground="#FF7DABDC" Margin="5,6,0,0" VerticalContentAlignment="Center" FontSize="15" Padding="5,6,5,5" FontFamily="Microsoft YaHei UI"/>
+                        <Label Content="management" VerticalAlignment="Top" Foreground="#FF7DABDC" FontSize="15" Padding="5,5.5,5,5" Margin="0,6,0,0" FontFamily="Microsoft YaHei UI"/>
                     </DockPanel>
                 </Border>
                 <DockPanel HorizontalAlignment="Right" LastChildFill="False">
@@ -58,10 +58,10 @@
                 <DockPanel LastChildFill="False" Margin="16,0">
                     <Image HorizontalAlignment="Left" Height="15" VerticalAlignment="Center" Width="19" Source="images/notice_19_15_n.png" Margin="0,0,10,0"/>
                     <Views:LoadIcon Visibility="{Binding WaitIconVisible, Mode=OneWay}" Width="18" Height="18" Margin="0,0,8,0" Opacity="0.6" HorizontalAlignment="Left" />
-                    <TextBlock Text="{Binding ServerStatus}" TextWrapping="Wrap"  VerticalAlignment="Center" Foreground="#FFCFCFCF" FontSize="14" FontFamily="Hiragino Sans GB W3" />
-                    <Button Content="连接服务" Command="{Binding ConnectServer, Mode=OneWay}" Visibility="{Binding ReconnectBtnVisable}" Height="30" VerticalAlignment="Center" Width="90" HorizontalAlignment="Right" Style="{DynamicResource ButtonNormalStyle}" Tag="4" Foreground="#FFCFCFCF" FontSize="14" FontFamily="Hiragino Sans GB W3" BorderBrush="#FF5C5C5D" Background="#FF3B3B3D"  Margin="10,0,0,0" />
-                    <Button x:Name="windowCancal"  Content="取消" Height="30" VerticalAlignment="Center" Width="90" DockPanel.Dock="Right" Margin="0,15,0,13" HorizontalAlignment="Right" Style="{DynamicResource ButtonNormalStyle}" Tag="4" Foreground="#FFCFCFCF" FontSize="14" FontFamily="Hiragino Sans GB W3" BorderBrush="#FF5C5C5D" Background="#FF3B3B3D" />
-                    <Button Content="保存" Command="{Binding SaveConfigure, Mode=OneWay}"  Height="30" VerticalAlignment="Center" Width="90" DockPanel.Dock="Right" Margin="0,15,10,13" HorizontalAlignment="Right" Style="{DynamicResource ButtonNormalStyle}" Tag="4"  Foreground="#FFCFCFCF" FontSize="14" FontFamily="Hiragino Sans GB W3" BorderBrush="#FF5C5C5D" Background="#FF3B3B3D"/>
+                    <TextBlock Text="{Binding ServerStatus}" TextWrapping="Wrap"  VerticalAlignment="Center" Foreground="#FFCFCFCF" FontSize="14" FontFamily="Microsoft YaHei UI" />
+                    <Button Content="连接服务" Command="{Binding ConnectServer, Mode=OneWay}" Visibility="{Binding ReconnectBtnVisable}" Height="30" VerticalAlignment="Center" Width="90" HorizontalAlignment="Right" Style="{DynamicResource ButtonNormalStyle}" Tag="4" Foreground="#FFCFCFCF" FontSize="14" FontFamily="Microsoft YaHei UI" BorderBrush="#FF5C5C5D" Background="#FF3B3B3D"  Margin="10,0,0,0" />
+                    <Button x:Name="windowCancal"  Content="取消" Height="30" VerticalAlignment="Center" Width="90" DockPanel.Dock="Right" Margin="0,15,0,13" HorizontalAlignment="Right" Style="{DynamicResource ButtonNormalStyle}" Tag="4" Foreground="#FFCFCFCF" FontSize="14" FontFamily="Microsoft YaHei UI" BorderBrush="#FF5C5C5D" Background="#FF3B3B3D" />
+                    <Button Content="保存" Command="{Binding SaveConfigure, Mode=OneWay}"  Height="30" VerticalAlignment="Center" Width="90" DockPanel.Dock="Right" Margin="0,15,10,13" HorizontalAlignment="Right" Style="{DynamicResource ButtonNormalStyle}" Tag="4"  Foreground="#FFCFCFCF" FontSize="14" FontFamily="Microsoft YaHei UI" BorderBrush="#FF5C5C5D" Background="#FF3B3B3D"/>
                 </DockPanel>
             </Border>
             <Border x:Name="MainBoard" BorderBrush="Black" DockPanel.Dock="Top">
@@ -75,7 +75,7 @@
                                 <RowDefinition Height="31"/>
                                 <RowDefinition Height="*"/>
                             </Grid.RowDefinitions>
-                            <Label Background="#FF3B3B3D" VerticalContentAlignment="Center" Foreground="#FFE4E4E4" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D" FontSize="14" FontFamily="Hiragino Sans GB W3" Padding="20,5,5,5" Content="{Binding Content.Title, ElementName=settingContent}"/>
+                            <Label Background="#FF3B3B3D" VerticalContentAlignment="Center" Foreground="#FFE4E4E4" BorderThickness="0,0,0,1" BorderBrush="#FF0C0C0D" FontSize="14" FontFamily="Microsoft YaHei UI" Padding="20,5,5,5" Content="{Binding Content.Title, ElementName=settingContent}"/>
                             <Label x:Name="settingContent" Padding="0" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" Grid.Row="1" />
                         </Grid>
                     </Border>

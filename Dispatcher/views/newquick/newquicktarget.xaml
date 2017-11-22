@@ -19,8 +19,8 @@
             <ColumnDefinition Width="*"/>
             <ColumnDefinition Width="220"/>
         </Grid.ColumnDefinitions>
-        <TextBlock TextWrapping="Wrap" Text="所有联系人" HorizontalAlignment="Center" Foreground="#FFA8CBF0" FontSize="14" FontFamily="Hiragino Sans GB W3" VerticalAlignment="Center"/>
-        <TextBlock TextWrapping="Wrap" Text="常用联系人" DockPanel.Dock="Top" HorizontalAlignment="Center" Foreground="#FFA8CBF0" FontSize="14" FontFamily="Hiragino Sans GB W3" Grid.Column="2" VerticalAlignment="Center"/>
+        <TextBlock TextWrapping="Wrap" Text="所有联系人" HorizontalAlignment="Center" Foreground="#FFA8CBF0" FontSize="14" FontFamily="Microsoft YaHei UI" VerticalAlignment="Center"/>
+        <TextBlock TextWrapping="Wrap" Text="常用联系人" DockPanel.Dock="Top" HorizontalAlignment="Center" Foreground="#FFA8CBF0" FontSize="14" FontFamily="Microsoft YaHei UI" Grid.Column="2" VerticalAlignment="Center"/>
         <ListView x:Name="listView" ItemsSource="{Binding AllTarget, Mode=OneWay}"  BorderThickness="0" ScrollViewer.VerticalScrollBarVisibility="Auto" Background="#FF333335" Margin="0"  HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" ScrollViewer.HorizontalScrollBarVisibility="Hidden" Grid.Row="1" Style="{DynamicResource ListViewStyleNormal}">
             <ListView.View>
                 <ctrl:ResourceView>
@@ -29,7 +29,7 @@
                             <Border x:Name="Msg" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Padding="0" Height="32">
                                 <DockPanel Opacity="{Binding OnlineOpacity, Mode=OneWay}" >
                                     <Image x:Name="Icon" Source="{Binding Icon, Mode=OneWay}" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="16,0,0,0" />
-                                    <TextBlock Text="{Binding FullName, Mode=OneWay}"  TextWrapping="NoWrap" Margin="5,0,17,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  Foreground="#FFD2DFF5" FontSize="13" FontFamily="Hiragino Sans GB W3"/>
+                                    <TextBlock Text="{Binding FullName, Mode=OneWay}"  TextWrapping="NoWrap" Margin="5,0,17,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  Foreground="#FFD2DFF5" FontSize="13" FontFamily="Microsoft YaHei UI"/>
                                 </DockPanel>
                             </Border>
                         </DataTemplate>
@@ -45,7 +45,7 @@
                             <Border x:Name="Msg" HorizontalAlignment="Stretch"  VerticalAlignment="Stretch" Padding="0" Height="32">
                                 <DockPanel  Opacity="{Binding ViewModule.OnlineOpacity}" >
                                     <Image x:Name="Icon" Source="{Binding ViewModule.Icon}" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="16,0,0,0" />
-                                    <TextBlock Text="{Binding ViewModule.FullName}"  TextWrapping="NoWrap" Margin="5,0,17,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="#FFD2DFF5" FontSize="13" FontFamily="Hiragino Sans GB W3"/>
+                                    <TextBlock Text="{Binding ViewModule.FullName}"  TextWrapping="NoWrap" Margin="5,0,17,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" Foreground="#FFD2DFF5" FontSize="13" FontFamily="Microsoft YaHei UI"/>
                                 </DockPanel>
                             </Border>
                         </DataTemplate>

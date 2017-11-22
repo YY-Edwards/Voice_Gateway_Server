@@ -21,7 +21,7 @@
             <Image Height="15" VerticalAlignment="Center" Width="19" Source="/TrboX;component/resource/images/notice_19_15_n.png" Margin="15,0,8,0"/>
             <ctrl:LoadIcon Visibility="{Binding WaitVisible, Mode=OneWay}" Width="16" Height="16" Margin="0,0,8,0" Opacity="0.6" />
             <TextBlock  Text="{Binding StatusContent, Mode=OneWay}" VerticalAlignment="Center" Foreground="#FFABABAB"/>           
-            <Button Content="重新连接" Height="24" VerticalAlignment="Center" Width="90" HorizontalAlignment="Right" Style="{DynamicResource ButtonNormalStyle}" Tag="4" Foreground="#FFCFCFCF" FontSize="14" FontFamily="Hiragino Sans GB W3" BorderBrush="#FF5C5C5D" Background="#FF3B3B3D"  Margin="10,0,0,0" Visibility="{Binding ReconnectedVisible, Mode=OneWay}" Command="{Binding Reconnect, Mode=OneWay}" />           
+            <Button Content="重新连接" Height="24" VerticalAlignment="Center" Width="90" HorizontalAlignment="Right" Style="{DynamicResource ButtonNormalStyle}" Tag="4" Foreground="#FFCFCFCF" FontSize="14" FontFamily="Microsoft YaHei UI" BorderBrush="#FF5C5C5D" Background="#FF3B3B3D"  Margin="10,0,0,0" Visibility="{Binding ReconnectedVisible, Mode=OneWay}" Command="{Binding Reconnect, Mode=OneWay}" />           
         </StackPanel>
 
         <StackPanel  Visibility="{x:Static svr:FunctionConfigure.ExportVisible}" Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">

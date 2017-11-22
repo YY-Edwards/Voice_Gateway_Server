@@ -11,7 +11,7 @@
         <DockPanel LastChildFill="False" VerticalAlignment="Top" DockPanel.Dock="Top" Margin="0,20">
             <DockPanel Height="24"  DockPanel.Dock="Top">
                 <Image Height="10" VerticalAlignment="Center" Width="13" Source="../images/double_arrow_13_10.png"/>
-                <Label Content="常规" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                <Label Content="常规" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Microsoft YaHei UI" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
             </DockPanel>
             <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
             <TextBlock TextWrapping="Wrap" Text="使能/禁用GPS位置查询功能" Margin="20,6,0,6" Width="551.087" DockPanel.Dock="Top" HorizontalAlignment="Left" Foreground="#FFBFBFBF" FontSize="13"/>
@@ -40,7 +40,7 @@
         <DockPanel  DockPanel.Dock="Top"  Margin="0,20">
             <DockPanel Height="24"  DockPanel.Dock="Top">
                 <Image Height="10" VerticalAlignment="Center" Width="13" Source="../images/double_arrow_13_10.png"/>
-                <Label Content="GPS转发" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Hiragino Sans GB W3" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
+                <Label Content="GPS转发" Margin="5,0,0,0" FontSize="16" Padding="0" FontFamily="Microsoft YaHei UI" Foreground="#FFCFCFCF" HorizontalAlignment="Left" VerticalContentAlignment="Center"/>
             </DockPanel>
             <Separator Height="10" Margin="0,0,0,5" VerticalAlignment="Top" DockPanel.Dock="Top" Padding="0,2.5" Background="#FF1C1D1E"/>
             <TextBlock TextWrapping="Wrap" Text="使能/禁用GPS转发功能" Margin="20,6,0,6" Width="551.087" DockPanel.Dock="Top" HorizontalAlignment="Left" Foreground="#FFBFBFBF" FontSize="13"/>

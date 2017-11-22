@@ -212,7 +212,7 @@
                                                                     <Border Background="Transparent" Width="14" Height="14"/>
                                                                 </Grid>
                                                                 <Image Source="{Binding Target.Icon}" Width="20" Height="20" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="16,0,0,0" />
-                                                                <TextBlock Text="{Binding  Target.FullName}"  TextWrapping="NoWrap" Margin="5,0,17,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  Foreground="#FFD2DFF5" FontSize="13" FontFamily="Hiragino Sans GB W3"/>
+                                                                <TextBlock Text="{Binding  Target.FullName}"  TextWrapping="NoWrap" Margin="5,0,17,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  Foreground="#FFD2DFF5" FontSize="13" FontFamily="Microsoft YaHei UI"/>
                                                             </DockPanel>
                                                         </Border>
                                                     </DataTemplate>

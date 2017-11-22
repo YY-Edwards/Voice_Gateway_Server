@@ -80,7 +80,7 @@
                                                 <DockPanel Opacity="{Binding OnlineOpacity}">
                                                     <Image x:Name="Icon" Source="/TrboX;component/resource/images/group_18_18_on.png" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="34,0,0,0"/>                                                   
                                                     <DockPanel x:Name="dck_Content" Margin="5,0" >
-                                                        <TextBlock Text="{Binding FullName}"  TextWrapping="NoWrap" Margin="0,0,10,0" VerticalAlignment="Center"  Height="Auto" Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" />
+                                                        <TextBlock Text="{Binding FullName}"  TextWrapping="NoWrap" Margin="0,0,10,0" VerticalAlignment="Center"  Height="Auto" Foreground="#FFBEC3C7" FontSize="13" FontFamily="Microsoft YaHei UI" />
                                                         <ctrl:LoadIcon Visibility="{Binding WaitIconVisible}" Width="16" Height="16" Margin="0,0,8,0" Opacity="0.6" DockPanel.Dock="Left"/>
                                                         <Image Visibility="{Binding FailureIconVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="16" MaxHeight="16" DockPanel.Dock="Left" Source="/TrboX;component/resource/images/warning.png"/>
                                                         <Image Visibility="{Binding InCallStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" DockPanel.Dock="Left" Source="/TrboX;component/resource/images/call_22_22_h.png"/>
@@ -139,7 +139,7 @@
                                                 <DockPanel>
                                                     <Image  Opacity="{Binding OnlineOpacity}" x:Name="Icon" Source="{Binding Icon}" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="34,0,0,0"  />
                                                     <DockPanel x:Name="dck_Content" Margin="5,0" >
-                                                        <TextBlock x:Name="txt" Text="{Binding FullName}"  Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" TextWrapping="NoWrap" Margin="5,0,10,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  />
+                                                        <TextBlock x:Name="txt" Text="{Binding FullName}"  Foreground="#FFBEC3C7" FontSize="13" FontFamily="Microsoft YaHei UI" TextWrapping="NoWrap" Margin="5,0,10,0" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  />
                                                         <ctrl:LoadIcon Visibility="{Binding WaitIconVisible}" Width="16" Height="16" Margin="0,0,8,0" Opacity="0.6" DockPanel.Dock="Left"/>
                                                         <Image Visibility="{Binding FailureIconVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="16" MaxHeight="16" DockPanel.Dock="Left" Source="/TrboX;component/resource/images/warning.png"/>
                                                         <Image Visibility="{Binding InCallStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/call_22_22_h.png"/>
@@ -202,7 +202,7 @@
                                                 <DockPanel >
                                                     <Image Opacity="{Binding OnlineOpacity}" x:Name="Icon" Source="{Binding Icon}" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="34,0,0,0" />
                                                     <DockPanel x:Name="dck_Content" Margin="5,0" >
-                                                        <TextBlock Text="{Binding FullName}" ToolTip="{Binding target.HeaderWithoutKey}"  TextWrapping="NoWrap" Margin="5,0,10,0"  Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" />
+                                                        <TextBlock Text="{Binding FullName}" ToolTip="{Binding target.HeaderWithoutKey}"  TextWrapping="NoWrap" Margin="5,0,10,0"  Foreground="#FFBEC3C7" FontSize="13" FontFamily="Microsoft YaHei UI" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto" />
                                                         <ctrl:LoadIcon Visibility="{Binding WaitIconVisible}" Width="16" Height="16" Margin="0,0,8,0" Opacity="0.6" DockPanel.Dock="Left"/>
                                                         <Image Visibility="{Binding FailureIconVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="16" MaxHeight="16" DockPanel.Dock="Left" Source="/TrboX;component/resource/images/warning.png"/>
                                                         <Image Visibility="{Binding InCallStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/call_22_22_h.png"/>
@@ -266,7 +266,7 @@
                                                 <DockPanel>
                                                     <Image  Opacity="{Binding OnlineOpacity}"  x:Name="Icon" Source="{Binding Icon}" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="34,0,0,0"  />
                                                     <DockPanel x:Name="dck_Content" Margin="5,0" >
-                                                        <TextBlock Text="{Binding DeviceName}"  TextWrapping="NoWrap" Margin="5,0,10,0"  Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  />
+                                                        <TextBlock Text="{Binding DeviceName}"  TextWrapping="NoWrap" Margin="5,0,10,0"  Foreground="#FFBEC3C7" FontSize="13" FontFamily="Microsoft YaHei UI" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  />
                                                         <ctrl:LoadIcon Visibility="{Binding WaitIconVisible}" Width="16" Height="16" Margin="0,0,8,0" Opacity="0.6" DockPanel.Dock="Left"/>
                                                         <Image Visibility="{Binding FailureIconVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="16" MaxHeight="16" DockPanel.Dock="Left" Source="/TrboX;component/resource/images/warning.png"/>
                                                         <Image Visibility="{Binding InCallStatusVisible}" Height="Auto" VerticalAlignment="Center" Width="Auto" MaxWidth="18" MaxHeight="18" HorizontalAlignment="Left"  Source="/TrboX;component/resource/images/call_22_22_h.png"/>
@@ -294,7 +294,7 @@
                                                 <DockPanel >
                                                     <Image x:Name="Icon" Source="/TrboX;component/resource/images/ibeacon_18_18_on.png" Width="18" Height="18" VerticalAlignment="Center" HorizontalAlignment="Left" Margin="34,0,0,0"  />
                                                     <DockPanel x:Name="dck_Content" Margin="5,0" >
-                                                        <TextBlock Text="{Binding Name}"  TextWrapping="NoWrap" Margin="5,0,0,0"  Foreground="#FFBEC3C7" FontSize="13" FontFamily="Hiragino Sans GB W3" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  />
+                                                        <TextBlock Text="{Binding Name}"  TextWrapping="NoWrap" Margin="5,0,0,0"  Foreground="#FFBEC3C7" FontSize="13" FontFamily="Microsoft YaHei UI" VerticalAlignment="Center" DockPanel.Dock="Left" Height="Auto"  />
                                                     </DockPanel>
                                                 </DockPanel>
                                             </Border>
