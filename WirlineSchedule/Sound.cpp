@@ -1038,6 +1038,10 @@ void CSound::closeFile()
 
 void CSound::startPlay(int bufferSize)
 {
+	if (bufferSize == -1)
+	{
+		bufferSize = WL_PLAY_BUFFER_SIZE;
+	}
 	//Á¢¿Ì²¥·Å»º´æÄÚÈÝ
 	if (m_bStopPlay
 		&& (m_playList.size() > bufferSize)
