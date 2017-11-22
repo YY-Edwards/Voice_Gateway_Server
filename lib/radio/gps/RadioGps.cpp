@@ -568,7 +568,6 @@ void CRadioGps::RecvData()
 									r.operate = operate;
 									r.type = 0;
 									onData(myCallBackFunc, it->command, r);
-									it->status = SUCESS;
 									it = timeOutList.erase(it);
 									break;
 								}
@@ -584,7 +583,7 @@ void CRadioGps::RecvData()
 									r.type = 0;
 									onData(myCallBackFunc, it->command, r);
 									it = timeOutList.erase(it);
-									it->status = UNSUCESS;
+		
 									break;
 								}
 
@@ -771,7 +770,6 @@ void CRadioGps::RecvData()
 									{
 										r.sessionId = it->sessionId;
 										onData(myCallBackFunc, GPS_IMME_COMM_INDOOR, r);
-										it->status = SUCESS;
 										it = timeOutList.erase(it);
 									}
 									else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report &&r.bcon.TimeStamp != 0 && it->status == -1)  //当没有接收到Ack时，以第一条数据为准
@@ -886,7 +884,7 @@ void CRadioGps::RecvData()
 										r.querymode = queryMode;
 										onData(myCallBackFunc, RECV_GPS, r);
 										it = timeOutList.erase(it);
-										it->status = SUCESS;
+										
 										count++;
 										break;
 									}
