@@ -200,7 +200,7 @@ void CDataScheduling::getRadioStatus( int type,std::string sessionId)
 		}
 		else if (type == SESSION_STATUS)
 		{
-			addUdpCommand(SESSION_STATUS, "", "", 0, "", 0, 0, sessionId);
+			//addUdpCommand(SESSION_STATUS, "", "", 0, "", 0, 0, sessionId);
 		}
 	}
 }
@@ -392,7 +392,7 @@ void CDataScheduling::workThreadFunc()
 				sendRadioStatusToClient();
 				break;
 			case SESSION_STATUS:
-				sendSessionStatusToClient();
+				//sendSessionStatusToClient();
 				break;
 			case SEND_PRIVATE_MSG:
 				sendMsg(it->sessionId, it->text, it->radioId,m_mnisCfg.CAI );
@@ -546,7 +546,6 @@ void CDataScheduling::timeOut()
 					if (it->command != MNIS_CONNECT)
 					{
 						it = timeOutList.erase(it);
-						it->status = UNSUCESS;
 						break;
 					}
 
@@ -594,7 +593,6 @@ void CDataScheduling::sendRadioStatusToClient()
 			r.sessionId = it->sessionId;
 			onData(myCallBackFunc, it->command, r);
 			it = timeOutList.erase(it);
-			it->status = SUCESS;
 			break;
 		}
 	}
@@ -614,15 +612,8 @@ void CDataScheduling::sendSessionStatusToClient()
 			r.sessionId = it->sessionId;
 			onData(myCallBackFunc, it->command, r);
 			it = timeOutList.erase(it);
-			it->status = SUCESS;
+			
 			break;
-		}
-	}
-	for (it = timeOutList.begin(); it != timeOutList.end(); it++)
-	{
-		if (it->status>=0)
-		{
-			it = timeOutList.erase(it);
 		}
 	}
 }

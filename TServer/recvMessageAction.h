@@ -30,7 +30,7 @@ void recvMsgAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
 		}
 		//–¥»Îlog
-		addSmsLog(param,callId,pRemote);
+		//addSmsLog(param,callId,pRemote);
 	/*	Document d;
 		d.Parse(param.c_str());
 		int source = -1;
