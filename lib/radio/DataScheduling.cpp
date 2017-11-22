@@ -470,7 +470,7 @@ void CDataScheduling::timeOut()
 							r.sessionId = it->sessionId;
 							r.target = it->radioId;
 							r.msgStatus = UNSUCESS;
-							r.msg = "";
+							r.msg = it->text;
 							r.msgType = PRIVATE;
 							r.status = UNSUCESS;
 							onData(myCallBackFunc, it->command, r);
@@ -483,7 +483,7 @@ void CDataScheduling::timeOut()
 							r.sessionId = it->sessionId;
 							r.target = it->radioId;
 							r.msgStatus = UNSUCESS;
-							r.msg = "";
+							r.msg = it->text;
 							r.msgType = GROUP;
 							r.status = UNSUCESS;
 							onData(myCallBackFunc, it->command, r);
