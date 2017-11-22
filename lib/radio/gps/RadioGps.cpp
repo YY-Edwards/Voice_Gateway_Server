@@ -774,10 +774,10 @@ void CRadioGps::RecvData()
 										it->status = SUCESS;
 										it = timeOutList.erase(it);
 									}
-									else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report &&r.bcon.TimeStamp != 0 && it->status == -1)
+									else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report &&r.bcon.TimeStamp != 0 && it->status == -1)  //当没有接收到Ack时，以第一条数据为准
 									{
-										onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
-										m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP == operate) ? (-1) : (queryMode));
+										onData(myCallBackFunc, GPS_IMME_COMM_INDOOR, r);
+										m_pMnis->updateOnLineRadioInfo(atoi(radioID), GPS_IMME_COMM_INDOOR, (STOP == operate) ? (-1) : (queryMode));
 									}
 									
 									count++;
