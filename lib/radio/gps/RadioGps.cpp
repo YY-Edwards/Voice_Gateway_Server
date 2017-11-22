@@ -130,6 +130,7 @@ bool CRadioGps::SendQueryGPS( DWORD dwRadioID,int queryMode,double cycle,int cai
 {
 	int gpsCycle = static_cast<int>(cycle);
 	int gpsMode = queryMode;
+	//iBconNum = 5;   //test
 	memset(m_ThreadGps->SendBuffer, 0, sizeof(m_ThreadGps->SendBuffer));
 	switch (queryMode)
 	{
