@@ -1,0 +1,12 @@
+﻿<Window
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar"
+        xmlns:ViewsModules="clr-namespace:Dispatcher.ViewsModules" x:Class="Dispatcher.Views.Initilize"
+        Title="Initilize" Height="300" Width="522" 
+        BorderThickness="0" BorderBrush="{DynamicResource PanelBorderBrush}" WindowStartupLocation="CenterScreen" Background="#a01D1D1F" ResizeMode="NoResize" AllowsTransparency="True" WindowStyle="None" >
+    <Grid>
+        <TextBlock  Text="{Binding InitilizeContents}" Foreground="#FFE4DDDD" Margin="20,50,40,50"/>
+        <Controls:Icon IsEnabled="{Binding InitilizeCanClose}" Command="{Binding CloseInitilize, Mode=OneWay}"  Height="18" Width="18" Margin="8,6,11,0" Image="/TrboX;component/resource/images/close_18_18_n.png" HoverImage="/TrboX;component/resource/images/close_18_18_h.png" PressedImage="/TrboX;component/resource/images/close_18_18_h.png" HorizontalAlignment="Right" VerticalAlignment="Top" />
+    </Grid>
+</Window>

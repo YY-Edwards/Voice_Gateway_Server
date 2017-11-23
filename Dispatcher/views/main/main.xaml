@@ -4,7 +4,7 @@
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity" 
         xmlns:Windows="clr-namespace:Sigmar.Windows;assembly=Sigmar"
         xmlns:Views="clr-namespace:Dispatcher.Views"
-    xmlns:svr="clr-namespace:Dispatcher.Service"
+        xmlns:svr="clr-namespace:Dispatcher.Service"
         xmlns:ViewsModules="clr-namespace:Dispatcher.ViewsModules" 
     xmlns:ctrl="clr-namespace:Dispatcher.Controls"
     xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar" 

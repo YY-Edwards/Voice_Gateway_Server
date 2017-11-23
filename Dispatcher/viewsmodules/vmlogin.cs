@@ -29,9 +29,26 @@ namespace Dispatcher.ViewsModules
     {
 
         public event EventHandler OnLoginOK;
+        public event EventHandler InitializeCompleted;
 
         private string _info;
         public string Info { get { return _info; } set { _info = value; NotifyPropertyChanged("Info"); } }
+
+        private string initilizeContents = "";
+        public string InitilizeContents { get { return initilizeContents; } set { initilizeContents = value; NotifyPropertyChanged("InitilizeContents"); } }
+
+        private bool _initilizeCanClose = false;
+        public bool InitilizeCanClose { get{return _initilizeCanClose;} private set{_initilizeCanClose = value; NotifyPropertyChanged("InitilizeCanClose");} }
+
+        public ICommand CloseInitilize { get { return new Command(() => {
+            Environment.Exit(0);
+        }); } }
+
+        private void  AddInitilizeContents(string content)
+        {
+            if (this.InitilizeContents == "") InitilizeContents = content;
+            else InitilizeContents += "\r\n" + content;
+        }
 
         public string UserName { get; set;}
         private Semaphore _waitlogin;
@@ -49,11 +66,12 @@ namespace Dispatcher.ViewsModules
         private CMnisSetting _mnis;
         private CLocationSetting _location;
         private CLocationInDoorSetting _locationInDoor;
-       
-
-
+             
         private void LoadedExec(object parameter)
         {
+            InitilizeCanClose = false;
+
+
             if (_user == null)
             {
                 _user = CUserMgr.Instance();
@@ -141,6 +159,7 @@ namespace Dispatcher.ViewsModules
         {
             _issuccess = false;
             Info = "指令超时";
+            AddInitilizeContents("指令超时...");
             Log.Error("Communication Timeout");
             try
             {
@@ -191,6 +210,7 @@ namespace Dispatcher.ViewsModules
              if (!_issuccess)
              {
                  Info = "软件验证失败";
+                 AddInitilizeContents("软件验证失败...");
                  Log.Error("Login Failure, Unregister");
              }
             _waitlogin.Release();
@@ -199,10 +219,11 @@ namespace Dispatcher.ViewsModules
         private void OnConfigurationChanged(SettingType type, object config)
         {
             if (type == SettingType.Base)
-            {
+            {              
                 CBaseSetting setting = config as CBaseSetting;
                 if (setting != null)
                 {
+                    AddInitilizeContents("读取基本配置信息完成...");
                     FunctionConfigure.SetBaseSetting(setting);
                 }
             }
@@ -211,6 +232,7 @@ namespace Dispatcher.ViewsModules
                 CRadioSetting setting = config as CRadioSetting;
                 if (setting != null)
                 {
+                    AddInitilizeContents("读取车载台配置信息完成...");
                     FunctionConfigure.SetRadioSetting(setting);
                     ServerStatus.Instance().VehicleStation = new ServerStatus.ServerStatus_t(setting.Ride.Host, setting.Ride.MessagePort, false);                
                 }
@@ -220,6 +242,7 @@ namespace Dispatcher.ViewsModules
                 CRepeaterSetting setting = config as CRepeaterSetting;
                 if (setting != null)
                 {
+                    AddInitilizeContents("读取中继台配置信息完成...");
                     FunctionConfigure.SetRepeaterSetting(setting);
                     ServerStatus.Instance().Repeater = new ServerStatus.ServerStatus_t(setting.Master.Ip, setting.Master.Port, false);
                 }
@@ -229,19 +252,29 @@ namespace Dispatcher.ViewsModules
                 CMnisSetting setting = config as CMnisSetting;
                 if (setting != null)
                 {
+                    AddInitilizeContents("读取MNIS配置信息完成...");
                     FunctionConfigure.SetMnisSetting(setting);
                     ServerStatus.Instance().Mnis = new ServerStatus.ServerStatus_t(setting.Host, setting.MessagePort, false);
                 }
             }
             else if(type == SettingType.Location)
             {
+
                 CLocationSetting setting = config as CLocationSetting;
-                if (setting != null) FunctionConfigure.SetLocationSetting(setting);              
+                if (setting != null)
+                {
+                    AddInitilizeContents("读取GPS位置查询配置信息完成...");
+                    FunctionConfigure.SetLocationSetting(setting);
+                }
             }
             else if (type == SettingType.LocationInDoor)
             {
                 CLocationInDoorSetting setting = config as CLocationInDoorSetting;
-                if (setting != null) FunctionConfigure.SetLocationInDoorSetting(setting);
+                if (setting != null)
+                {
+                    AddInitilizeContents("读取室内位置查询配置信息完成...");
+                    FunctionConfigure.SetLocationInDoorSetting(setting);
+                }
             }
 
 
@@ -268,13 +301,31 @@ namespace Dispatcher.ViewsModules
 
                 _user.Auth(uid, psd);
                 _waitlogin.WaitOne();
-                if (!_issuccess) return;
+                if (!_issuccess)
+                {
+                    return;
+                }
 
+                if (OnLoginOK != null) OnLoginOK(this, new EventArgs());
+                AddInitilizeContents("账号验证成功...");
+                AddInitilizeContents("获取注册信息...");
                 _register.Get();
                 _waitlogin.WaitOne();
-                if (!_issuccess) return;
+                if (!_issuccess)
+                {
+                    AddInitilizeContents("获取注册信息失败...");
+                    InitilizeCanClose = true;
+                    return;
+                } 
 
-                if (!ReadSetting()) return;
+
+                if (!ReadSetting())
+                {
+                    AddInitilizeContents("读取配置信息失败...");
+                    InitilizeCanClose = true;
+                    return;
+                }
+
 
                 FunctionConfigure.InitilizeSystemConfiguration();
 
@@ -284,34 +335,41 @@ namespace Dispatcher.ViewsModules
                 CTServer.Instance().OnStatusChanged -= OnTServerChanged;
                 CLogServer.Instance().OnStatusChanged -= OnLogServerChanged;
 
+                AddInitilizeContents("初始化完成...");
 
-                if (OnLoginOK != null) OnLoginOK(this, new EventArgs());
+                if (InitializeCompleted != null) InitializeCompleted(this, new EventArgs());
+
             })).Start();
         }
 
 
         private bool ReadSetting()
         {
+            AddInitilizeContents("获取基本配置信息...");
             _base.Get();
             _waitlogin.WaitOne();
             if (!_issuccess) return false;
 
+            AddInitilizeContents("获取车载台配置信息...");
             _vehiclestation.Get();
             _waitlogin.WaitOne();
             if (!_issuccess) return false;
 
+            AddInitilizeContents("获取中继台配置信息...");
             _repeater.Get();
             _waitlogin.WaitOne();
             if (!_issuccess) return false;
 
+            AddInitilizeContents("获取MNIS配置信息...");
             _mnis.Get();
             _waitlogin.WaitOne();
             if (!_issuccess) return false;
 
+            AddInitilizeContents("获取GPS位置查询配置信息...");
             _location.Get();
             _waitlogin.WaitOne();
             if (!_issuccess) return false;
-
+            AddInitilizeContents("获取室内位置查询配置信息...");
             _locationInDoor.Get();
             _waitlogin.WaitOne();
             if (!_issuccess) return false;

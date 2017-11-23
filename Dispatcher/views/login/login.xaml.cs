@@ -32,6 +32,7 @@ namespace Dispatcher.Views
     public partial class Login : BaseWindow
     {
         private string loginbackgroud = App.RuntimeDir + "a453d476-5a9e-49e9-a767-f30055979069.htm";
+        Initilize initilizeWindow;
         public Login()
         {
             InitializeComponent();
@@ -43,6 +44,10 @@ namespace Dispatcher.Views
             }
             web.FileUrl = loginbackgroud;
             this.Loaded += delegate { Log.Info("Login window is Loaded."); };
+
+
+            initilizeWindow = new Initilize();
+            initilizeWindow.DataContext = this.DataContext;
         }
 
         private void ReleaseBackgroud()
@@ -88,15 +93,28 @@ namespace Dispatcher.Views
             (this.DataContext as VMLogin).UserName = (sender as TextBox).Text;
         }
 
+
+        
+
         private void OnLoginOK(object sender, EventArgs e)
+        {
+            Log.Info("Open Initialize Window.");
+            this.Dispatcher.BeginInvoke((Action)delegate()
+            {
+                initilizeWindow.Show();
+                this.Close();
+            });      
+        }
+
+        private void OnInitializeCompleted(object sender, EventArgs e)
         {
             Log.Info("Open Main Window.");
             this.Dispatcher.BeginInvoke((Action)delegate()
             {
                 Main main = new Main();
                 main.Show();
-                this.Close();
-            });          
+                initilizeWindow.Close();
+            });  
         }
     }
 }

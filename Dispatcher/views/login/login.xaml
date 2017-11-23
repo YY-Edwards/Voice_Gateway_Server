@@ -10,7 +10,7 @@
     x:Name="window"
         Title="login" Height="382" Width="522"  Style="{DynamicResource TrboxWindowStyle}" ShadowMargin="10" Background="{DynamicResource AppBackground}" BorderThickness="0" BorderBrush="{DynamicResource PanelBorderBrush}" WindowStartupLocation="CenterScreen">
     <Windows:BaseWindow.DataContext>
-        <ViewsModules:VMLogin OnLoginOK="OnLoginOK"/>
+        <ViewsModules:VMLogin OnLoginOK="OnLoginOK" InitializeCompleted ="OnInitializeCompleted"/>
     </Windows:BaseWindow.DataContext>
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Loaded">
