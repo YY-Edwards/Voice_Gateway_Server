@@ -362,6 +362,14 @@ public:
 	//int wlMnisLoactionIndoor(int source, FieldValue info);
 	/*发送相关数据*/
 	void send2Client(char* actionName, ArgumentType args);
+	/*增加待发送数据帧*/
+	void addSendVoiceFrame();
+	/*校正待发送数据的CallID*/
+	void calibrationCallID(SlotNumber_e slot);
+	/*当前缓冲数据发送完毕时的处理*/
+	void handleCurTaskCallTimeOut();
+
+	std::mutex m_mutexReadySendVoices;//待发送音频数据锁
 protected:
 	/*
 	* Socket work thread
@@ -515,7 +523,7 @@ private:
 	WORD m_masterPort;
 
 	void sendLogToWindow();
-	char m_reportMsg[512];
+	char m_reportMsg[WL_LOG_SIZE];
 	PLogReport m_report;
 
 	std::map<std::string, int> m_sessionStatusMp;
@@ -640,14 +648,12 @@ private:
 	int								m_PeerCount;
 	std::list<CIPSCPeer*>			m_pPeers;
 
-	std::mutex m_readySendVoicesLock;
-
-	//对待发送数据进行加锁
-	void requireReadySendVoicesLock();
+	////对待发送数据进行加锁
+	//void requireReadySendVoicesLock();
 	//待发送的数据
 	std::list<IPSCVoiceTemplate*> m_readySendVoices;
-	//对待发送数据进行解锁
-	void releaseReadySendVoicesLock();
+	////对待发送数据进行解锁
+	//void releaseReadySendVoicesLock();
 	//当前正在组装的待发送的AMBE数据
 	IPSCVoiceTemplate* m_pCurrentBuildSendvoice;
 

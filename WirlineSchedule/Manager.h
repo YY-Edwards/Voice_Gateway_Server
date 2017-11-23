@@ -70,20 +70,26 @@ public:
 	static void OnData(int callFuncId, Respone response);
 	/*更新在线设备信息*/
 	int updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode = -1);
-	/*请求对当前任务操作*/
-	void lockCurTask();
-	/*完成对当前任务的操作*/
-	void unLockCurTask();
+	///*请求对当前任务操作*/
+	//void lockCurTask();
+	///*完成对当前任务的操作*/
+	//void unLockCurTask();
 	/*判断当前是否已存在此任务*/
 	bool isRepeat(std::string sessionId);
+	/*判断是否和当前任务重复*/
+	void handleIsRepeatCurTask(std::string sessionId, bool &rlt);
 	/*处理是否停止通话*/
 	void handleStopCall();
 	/*设置是否停止通话*/
 	void setbNeedStopCall(bool value);
+	/*获取当前任务的相关信息*/
+	void getCurrentTaskInfo(int srcId, std::string &sessionid, int &cmd);
+	/*当前正在的处理的任务锁*/
+	std::mutex m_mutexCurTask;
 private:
 	PLogReport m_report;
 	//HWND m_hwnd;
-	char m_reportMsg[512];
+	char m_reportMsg[WL_LOG_SIZE];
 	int m_activePort;
 	TIMECAPS m_theTimeCaps;
 	HANDLE m_hWaitDecodeEvent;
@@ -103,7 +109,6 @@ private:
 	//REMOTE_TASK m_currentTask;
 
 	CDataScheduling* m_pMnis;
-	std::mutex m_curTaskLocker;
 	UINT m_idTaskOnTimerProc;
 	bool m_bNeedStopCall;
 
@@ -112,6 +117,8 @@ private:
 	static void PASCAL TaskOnTimerProc(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2);
 	/*处理超时任务*/
 	void handleTaskOnTimerProc();
+	/*验证当前任务是否超时*/
+	void handleCurTaskTimeOut();
 	/*applay current task*/
 	void applayCurrentTask();
 	/*free current task*/

@@ -23,7 +23,7 @@ private:
 	char m_strCurrentTableName[DATA_TABLE_NAME_SIZE];
 
 	PLogReport m_report;
-	char m_reportMsg[512];
+	char m_reportMsg[WL_LOG_SIZE];
 
 private:
 	std::string CreateCurrentTableByYearMonth();
