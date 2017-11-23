@@ -93,7 +93,7 @@ private:
 
 	BOOL m_SerialRxThreadRunning;
 	BOOL m_SerialTxThreadRunning;
-	char m_reportMsg[WL_LOG_SIZE];
+	char m_reportMsg[512];
 	PLogReport m_report;
 	OVERLAPPED m_osReader;
 	OVERLAPPED m_osWriter;

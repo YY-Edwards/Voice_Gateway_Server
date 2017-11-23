@@ -103,7 +103,7 @@ private:
 	SlotNumber_e m_useSlot;
 	bool m_Remote3rdParty;
 	PLogReport m_report;
-	char m_reportMsg[WL_LOG_SIZE];
+	char m_reportMsg[512];
 	u_long m_ulPeerID; //Stored in network byte order.
 	//char m_ucPeerMode;
 	//u_short m_uPeerServices;

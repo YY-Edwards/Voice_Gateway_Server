@@ -344,7 +344,7 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 
 			if (d.HasMember("locationIndoor") && d["locationIndoor"].IsObject())
 			{
-				parseLocationIndoorCfg(pNewTask->param.info.configParam.locationindoor, d["repeater"].GetObject());
+				parseLocationIndoorCfg(pNewTask->param.info.configParam.locationindoor, d["locationIndoor"].GetObject());
 			}
 			else
 			{

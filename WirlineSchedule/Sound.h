@@ -100,7 +100,7 @@ public:
 	FILE* m_pInputFile;
 	//FILE* m_pInputFile1;
 	void closeFile();
-	void startPlay(int bufferSize = -1);
+	void startPlay(int bufferSize = 50);
 	bool getbRecord();
 
 private:
@@ -137,7 +137,7 @@ private:
 	std::mutex m_PlayTaskLocker;//待填充的音频数据源锁
 
 	void sendLogToWindow();//将log显示至前台窗口
-	char m_reportMsg[WL_LOG_SIZE];//log内容
+	char m_reportMsg[512];//log内容
 	PLogReport m_report;//前台log回调函数指针
 	DWORD m_dwCurPlayZone;//当前播放buffer中的播放区域
 	DWORD m_dwEndPlayZone;//当前播放buffer中应该停止的区域

@@ -684,9 +684,9 @@ void CManager::handleRemoteTask()
 			case REMOTE_CMD_CALL:
 			{
 									//memcpy(&m_pCurrentTask, &task, sizeof(REMOTE_TASK));
-									//lockCurTask();
+									lockCurTask();
 									setCurrentTask(&task);
-									//unLockCurTask();
+									unLockCurTask();
 									if (g_pNet->getWlStatus() == ALIVE)
 									{
 										initialCall(task.param.info.callParam.operateInfo.tartgetId, task.param.info.callParam.operateInfo.callType);
@@ -715,9 +715,9 @@ void CManager::handleRemoteTask()
 			case REMOTE_CMD_STOP_CALL:
 			{
 										 //memcpy(&m_pCurrentTask, &task, sizeof(REMOTE_TASK));
-										 //lockCurTask();
+										 lockCurTask();
 										 setCurrentTask(&task);
-										 //unLockCurTask();
+										 unLockCurTask();
 										 g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
 										 if (CALL_ONGOING == g_pNet->GetCallStatus())
 										 {
@@ -765,7 +765,24 @@ void CManager::handleRemoteTask()
 			case REMOTE_CMD_MNIS_QUERY_GPS:
 			{
 											  QUERY_GPS gps = task.param.info.queryGpsParam;
-											  m_pMnis->radioGetGps(gps.Target, gps.Type, gps.Cycle, gps.SessionId, gps.Operate);
+											  switch (gps.Operate)
+											  {
+											  case GPS_Immediate:
+											  case GPS_start_Triggered:
+											  {
+																		  m_pMnis->radioGetGps(gps.Target, gps.Type, gps.Cycle, gps.SessionId, gps.Operate);//0.1
+											  }
+												  break;
+											  case GPS_stop_Triggered:
+											  {
+																		 m_pMnis->radioStopGps(gps.Target, gps.Type, gps.SessionId);//2
+											  }
+												  break;
+											  default:
+												  break;
+											  }
+
+
 			}
 				break;
 			case REMOTE_CMD_MNIS_MSG:
@@ -846,7 +863,6 @@ void CManager::applayCurrentTask()
 
 void CManager::setCurrentTask(REMOTE_TASK* value)
 {
-	std::lock_guard <std::mutex> locker(m_mutexCurTask);
 	freeCurrentTask();
 	applayCurrentTask();
 	memcpy(m_pCurrentTask, value, sizeof(REMOTE_TASK));
@@ -1086,9 +1102,29 @@ int CManager::updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode)
 
 void CManager::handleTaskOnTimerProc()
 {
-	//lockCurTask();
-	handleCurTaskTimeOut();
-	//unLockCurTask();
+	lockCurTask();
+	/*验证当前任务是否超时*/
+	REMOTE_TASK* p = getCurrentTask();
+	if (p)
+	{
+		if (p->timeOutTickCout != 0 && p->flag == FLAG_NHANDLE)
+		{
+			if (p->timeOutTickCout > GetTickCount())
+			{
+				p->flag = FLAG_HANDLED;
+				switch (p->cmd)
+				{
+				case StartCall:
+				case StopCall:
+					g_pNet->wlCallStatus(p, STATUS_CALL_END | REMOTE_CMD_FAIL);
+					break;
+				default:
+					break;
+				}
+			}
+		}
+	}
+	unLockCurTask();
 	/*验证队列任务是否超时*/
 	WaitForSingleObject(g_taskLockerEvent, INFINITE);
 	std::list<REMOTE_TASK*>::iterator it = g_remoteCommandTaskQueue.begin();
@@ -1130,29 +1166,32 @@ void PASCAL CManager::TaskOnTimerProc(UINT wTimerID, UINT msg, DWORD dwUser, DWO
 	}
 }
 
-//void CManager::lockCurTask()
-//{
-//	m_curTaskLocker.lock();
-//	sprintf_s(m_reportMsg, "lockCurTask");
-//	sendLogToWindow();
-//}
+void CManager::lockCurTask()
+{
+	m_curTaskLocker.lock();
+	sprintf_s(m_reportMsg, "lockCurTask");
+	sendLogToWindow();
+}
 
-//void CManager::unLockCurTask()
-//{
-//	m_curTaskLocker.unlock();
-//	sprintf_s(m_reportMsg, "unLockCurTask");
-//	sendLogToWindow();
-//}
+void CManager::unLockCurTask()
+{
+	m_curTaskLocker.unlock();
+	sprintf_s(m_reportMsg, "unLockCurTask");
+	sendLogToWindow();
+}
 
 bool CManager::isRepeat(std::string sessionId)
 {
 	bool rlt = false;
-	//lockCurTask();
-	handleIsRepeatCurTask(sessionId,rlt);
-	//unLockCurTask();
+	lockCurTask();
+	REMOTE_TASK* p = getCurrentTask();
+	if (p)
+	{
+		rlt = isSameSessionId(sessionId, p);
+	}
+	unLockCurTask();
 	if (rlt) return rlt;
 	WaitForSingleObject(g_taskLockerEvent, INFINITE);
-	REMOTE_TASK* p = NULL;
 	std::list<REMOTE_TASK*>::iterator it = g_remoteCommandTaskQueue.begin();
 	while (it != g_remoteCommandTaskQueue.end())
 	{
@@ -1185,8 +1224,8 @@ bool CManager::isSameSessionId(std::string sessionId, REMOTE_TASK* p)
 	case REMOTE_CMD_GET_CONN_STATUS:
 	case REMOTE_CMD_SESSION_STATUS:
 	{
-									   GET_INFO_PARAM info = p->param.info.getInfoParam.getInfo;
-									   return 0 == strcmp(sessionId.c_str(), info.SessionId);
+									  GET_INFO_PARAM info = p->param.info.getInfoParam.getInfo;
+									  return 0 == strcmp(sessionId.c_str(), info.SessionId);
 	}
 		break;
 	case REMOTE_CMD_MNIS_QUERY_GPS:
@@ -1226,50 +1265,5 @@ void CManager::handleStopCall()
 void CManager::setbNeedStopCall(bool value)
 {
 	m_bNeedStopCall = value;
-}
-
-void CManager::getCurrentTaskInfo(int srcId,std::string &sessionid, int &cmd)
-{
-	std::lock_guard<std::mutex> locker(m_mutexCurTask);
-	if (m_pCurrentTask && sessionid == "" && srcId == CONFIG_LOCAL_RADIO_ID)
-	{
-		sessionid = m_pCurrentTask->param.info.callParam.operateInfo.SessionId;
-		cmd = m_pCurrentTask->cmd;
-	}
-}
-
-void CManager::handleCurTaskTimeOut()
-{
-	std::lock_guard<std::mutex> locker(m_mutexCurTask);
-	REMOTE_TASK* p = getCurrentTask();
-	if (p)
-	{
-		if (p->timeOutTickCout != 0 && p->flag == FLAG_NHANDLE)
-		{
-			if (p->timeOutTickCout > GetTickCount())
-			{
-				p->flag = FLAG_HANDLED;
-				switch (p->cmd)
-				{
-				case StartCall:
-				case StopCall:
-					g_pNet->wlCallStatus(p, STATUS_CALL_END | REMOTE_CMD_FAIL);
-					break;
-				default:
-					break;
-				}
-			}
-		}
-	}
-}
-
-void CManager::handleIsRepeatCurTask(std::string sessionId,bool &rlt)
-{
-	std::lock_guard<std::mutex> locker(m_mutexCurTask);
-	REMOTE_TASK* p = getCurrentTask();
-	if (p)
-	{
-		rlt = isSameSessionId(sessionId, p);
-	}
 }
 
