@@ -7728,6 +7728,8 @@ void CWLNet::setWlStatus(WLStatus value)
 			info.setInt(REPEATER_DISCONNECT);
 			wlInfo(GET_TYPE_CONN, info, "");
 		}
+		sprintf_s(m_reportMsg, "=============WL_STATUS:%u->%u=============", old, m_WLStatus);
+		sendLogToWindow();
 	}
 }
 

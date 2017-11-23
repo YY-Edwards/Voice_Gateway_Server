@@ -942,7 +942,7 @@ void CManager::OnData(int callFuncId, Respone response)
 			args["SessionId"] = FieldValue(data.sessionId.c_str());
 			args["Source"] = FieldValue(NULL);
 			args["Target"] = FieldValue(data.target);
-			args["Contents"] = FieldValue("");
+			args["Contents"] = FieldValue(data.msg.c_str());
 			args["Status"] = FieldValue(data.msgStatus);
 			args["Type"] = FieldValue(data.msgType);
 			g_pNet->send2Client("messageStatus", args);
@@ -959,7 +959,7 @@ void CManager::OnData(int callFuncId, Respone response)
 			args["SessionId"] = FieldValue(data.sessionId.c_str());
 			args["Source"] = FieldValue(NULL);
 			args["Target"] = FieldValue(data.target);
-			args["Contents"] = FieldValue("");
+			args["Contents"] = FieldValue(data.msg.c_str());
 			args["Status"] = FieldValue(data.msgStatus);
 			args["Type"] = FieldValue(data.msgType);
 			g_pNet->send2Client("messageStatus", args);

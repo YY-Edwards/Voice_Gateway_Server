@@ -45,7 +45,7 @@ extern WLSocketLog *g_pWLlog;
 #define GPS_Immediate 0
 #define GPS_start_Triggered 1
 #define GPS_stop_Triggered 2
-#define WL_PLAY_BUFFER_SIZE 30
+#define WL_PLAY_BUFFER_SIZE 20 /*time is size*40ms*/
 #define WL_LOG_SIZE  1024
 #define SESSION_SIZE 64
 #define FLAG_NHANDLE 0 //超时处理未执行
