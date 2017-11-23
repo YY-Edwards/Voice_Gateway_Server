@@ -786,20 +786,31 @@ namespace Dispatcher.Service
                                      {
                                          return string.Format("GPS位置查询");
                                      }
-                                     else
+                                     else if(locationParam.Operate == LocationType_t.StartTriggered)
                                      {
-                                         return string.Format("{0}GPS位置周期查询(周期：{1})", locationParam.Operate == LocationType_t.StartTriggered ? "开始" : "结束", locationParam.Cycle);
+                                         return string.Format("开始GPS位置周期查询(周期：{0})", locationParam.Cycle);
                                      }
+                                     else if(locationParam.Operate == LocationType_t.StopTriggered)
+                                     {
+                                         return string.Format("结束GPS位置周期查询");
+                                     }
+                                     return "";
                                                                      
                                  case QueryLocationType_t.LocationInDoor:
                                      if (locationParam.Operate == LocationType_t.Immediate)
                                      {
                                          return string.Format("室内位置查询");
                                      }
-                                     else
+                                     else if (locationParam.Operate == LocationType_t.StartTriggered)
                                      {
-                                         return string.Format("{0}GPS室内位置周期查询(周期：{1})", locationParam.Operate == LocationType_t.StartTriggered ? "开始" : "结束", locationParam.Cycle);
-                                     }                                   
+                                         return string.Format("开始室内位置周期查询(周期：{0})", locationParam.Cycle);
+                                     }
+                                     else if (locationParam.Operate == LocationType_t.StopTriggered)
+                                     {
+                                         return string.Format("结束室内位置周期查询");
+                                     }
+                                     return "";
+                                                                     
                              }
                          }
                          break;

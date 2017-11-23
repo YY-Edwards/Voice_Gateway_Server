@@ -1003,7 +1003,8 @@ std::list<BconMajMinTimeReport> CRadioGps::compareRssi(std::list<BconMajMinTimeR
 					if (it->Major == itera->Major && it->Minor == itera->Minor && it->RSSI == itera->RSSI
 						&& iter->Major == itera->Major && iter->Minor == itera->Minor && iter->RSSI == itera->RSSI) 
 					{
-						it = bcons.erase(it);
+						itera = bcons.erase(itera);
+						break;
 					}
 				}
 			}
