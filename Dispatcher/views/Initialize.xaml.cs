@@ -22,7 +22,16 @@ namespace Dispatcher.Views
         public Initilize()
         {
             InitializeComponent();
+
+            this._contentsTextblock.TextChanged += new TextChangedEventHandler(OnContentsTextblockTextChanged);
         }
+
+        private void OnContentsTextblockTextChanged (object sender, TextChangedEventArgs e)
+        {
+            ((TextBox)sender).ScrollToEnd();
+        }
+
+
 
         //public void AddContent(string content)
         //{
