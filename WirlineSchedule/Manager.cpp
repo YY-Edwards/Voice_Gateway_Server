@@ -1163,7 +1163,7 @@ bool CManager::isRepeat(std::string sessionId)
 {
 	bool rlt = false;
 	//lockCurTask();
-	handleIsRepeatCurTask(sessionId,rlt);
+	handleIsRepeatCurTask(sessionId, rlt);
 	//unLockCurTask();
 	if (rlt) return rlt;
 	WaitForSingleObject(g_taskLockerEvent, INFINITE);
@@ -1194,32 +1194,42 @@ bool CManager::isSameSessionId(std::string sessionId, REMOTE_TASK* p)
 	case REMOTE_CMD_CALL:
 	{
 							CALL_OPERATE_PARAM info = p->param.info.callParam.operateInfo;
-							return 0 == strcmp(sessionId.c_str(), info.SessionId);
+							sprintf_s(m_reportMsg, "%s and %s is %d", sessionId.c_str(), info.SessionId, rlt = (0 == strcmp(sessionId.c_str(), info.SessionId)));
+							sendLogToWindow();
+							return rlt;
 	}
 		break;
 	case REMOTE_CMD_GET_CONN_STATUS:
 	case REMOTE_CMD_SESSION_STATUS:
 	{
-									   GET_INFO_PARAM info = p->param.info.getInfoParam.getInfo;
-									   return 0 == strcmp(sessionId.c_str(), info.SessionId);
+									  GET_INFO_PARAM info = p->param.info.getInfoParam.getInfo;
+									  sprintf_s(m_reportMsg, "%s and %s is %d", sessionId.c_str(), info.SessionId, rlt = (0 == strcmp(sessionId.c_str(), info.SessionId)));
+									  sendLogToWindow();
+									  return rlt;
 	}
 		break;
 	case REMOTE_CMD_MNIS_QUERY_GPS:
 	{
 									  QUERY_GPS info = p->param.info.queryGpsParam;
-									  return 0 == strcmp(sessionId.c_str(), info.SessionId);
+									  sprintf_s(m_reportMsg, "%s and %s is %d", sessionId.c_str(), info.SessionId, rlt = (0 == strcmp(sessionId.c_str(), info.SessionId)));
+									  sendLogToWindow();
+									  return rlt;
 	}
 		break;
 	case REMOTE_CMD_MNIS_MSG:
 	{
 								MNIS_MSG info = p->param.info.msgParam;
-								return 0 == strcmp(sessionId.c_str(), info.SessionId);
+								sprintf_s(m_reportMsg, "%s and %s is %d", sessionId.c_str(), info.SessionId, rlt = (0 == strcmp(sessionId.c_str(), info.SessionId)));
+								sendLogToWindow();
+								return rlt;
 	}
 		break;
 	case REMOTE_CMD_MNIS_STATUS:
 	{
 								   ARS info = p->param.info.mnisStatusParam;
-								   return 0 == strcmp(sessionId.c_str(), info.SessionId);
+								   sprintf_s(m_reportMsg, "%s and %s is %d", sessionId.c_str(), info.SessionId, rlt = (0 == strcmp(sessionId.c_str(), info.SessionId)));
+								   sendLogToWindow();
+								   return rlt;
 
 	}
 		break;
@@ -1240,10 +1250,16 @@ void CManager::handleStopCall()
 
 void CManager::setbNeedStopCall(bool value)
 {
+	if (value != m_bNeedStopCall)
+	{
+		sprintf_s(m_reportMsg, "=============NEED_STOP:%d->%d=============", m_bNeedStopCall, value);
+		sendLogToWindow();
+	}
 	m_bNeedStopCall = value;
+	
 }
 
-void CManager::getCurrentTaskInfo(int srcId,std::string &sessionid, int &cmd)
+void CManager::getCurrentTaskInfo(int srcId, std::string &sessionid, int &cmd)
 {
 	std::lock_guard<std::mutex> locker(m_mutexCurTask);
 	if (m_pCurrentTask && sessionid == "" && srcId == CONFIG_LOCAL_RADIO_ID)
@@ -1278,7 +1294,7 @@ void CManager::handleCurTaskTimeOut()
 	}
 }
 
-void CManager::handleIsRepeatCurTask(std::string sessionId,bool &rlt)
+void CManager::handleIsRepeatCurTask(std::string sessionId, bool &rlt)
 {
 	std::lock_guard<std::mutex> locker(m_mutexCurTask);
 	REMOTE_TASK* p = getCurrentTask();

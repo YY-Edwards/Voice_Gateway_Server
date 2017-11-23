@@ -1015,7 +1015,7 @@ void CWLNet::Net_MaintainKeepAlive()
 		}
 		else
 		{
-			sprintf_s(m_reportMsg, "MASTER心跳包异常");
+			sprintf_s(m_reportMsg, "MASTER heart package unnormal");
 			sendLogToWindow();
 		}
 		m_dwRecvMasterKeepAliveTime = 0;
@@ -2411,6 +2411,8 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 										   }
 										   else if (isNeedPlay(p->tagetId, p->callType) && p->srcId != CONFIG_LOCAL_RADIO_ID)
 										   {
+											   sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+											   sendLogToWindow();
 											   SetCallStatus(CALL_IDLE);
 											   wlCall(p->callType, p->srcId, p->tagetId, OPERATE_CALL_END, p->getBoolPlay());
 											   g_pNet->resetPlayFlag();
@@ -2428,6 +2430,8 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 									   {
 										   if (isNeedPlay((*i)->tagetId, (*i)->callType) && !g_dongleIsUsing)
 										   {
+											   sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+											   sendLogToWindow();
 											   SetCallStatus(CALL_IDLE);
 										   }
 										   (*i)->callStatus = VOICE_STATUS_END;
@@ -2439,6 +2443,8 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 										   }
 										   else if (isNeedPlay(p->tagetId, p->callType) && p->srcId != CONFIG_LOCAL_RADIO_ID)
 										   {
+											   sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+											   sendLogToWindow();
 											   SetCallStatus(CALL_IDLE);
 											   wlCall(p->callType, p->srcId, p->tagetId, OPERATE_CALL_END, p->getBoolPlay());
 											   g_pNet->resetPlayFlag();
@@ -2616,6 +2622,8 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 									  {
 															   if (isNeedPlay(tgtId, p->callType))
 															   {
+																   sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+																   sendLogToWindow();
 																   SetCallStatus(CALL_IDLE);
 															   }
 															   ///*结束本次通话*/
@@ -2632,7 +2640,6 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 																	   //else 
 																	   if (isNeedPlay(tgtId, p->callType) && p->sourceID != CONFIG_LOCAL_RADIO_ID)
 																	   {
-																		   SetCallStatus(CALL_IDLE);
 																		   wlCall(p->callType, srcId, tgtId, OPERATE_CALL_END, (*i)->getBoolPlay());
 																		   g_pNet->resetPlayFlag();
 																	   }
@@ -2643,7 +2650,12 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 																	   delete (*i);
 																	   m_voiceReocrds.erase(i);
 																	   releaseVoiceReocrdsLock();
-																	   //SetCallStatus(CALL_IDLE);
+																	   if (p->sourceID == CONFIG_LOCAL_RADIO_ID)
+																	   {
+																		   sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+																		   sendLogToWindow();
+																		   SetCallStatus(CALL_IDLE);
+																	   }
 																	   sprintf_s(m_reportMsg, "Voice session end");
 																	   sendLogToWindow();
 																	   break;
@@ -2682,6 +2694,10 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 																			 //delete (*i);
 																			 //m_voiceReocrds.erase(i);
 																			 //releaseVoiceReocrdsLock();
+																			 if (p->sourceID == CONFIG_LOCAL_RADIO_ID)
+																			 {
+																				 SetCallStatus(CALL_HANGUP);
+																			 }
 																			 sprintf_s(m_reportMsg, "Voice hang up");
 																			 sendLogToWindow();
 																			 break;
@@ -5561,6 +5577,8 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			}
 			if (!requestCallSuccess)
 			{
+				sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+				sendLogToWindow();
 				SetCallStatus(CALL_IDLE);
 				clearSendVoices();
 				sprintf_s(m_reportMsg, "new call failure:%s", g_callRequstDeclineReasonCodeInfo.ReasonCode);
@@ -5699,6 +5717,8 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			}
 			if (!requestCallSuccess)
 			{
+				sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+				sendLogToWindow();
 				SetCallStatus(CALL_IDLE);
 				clearSendVoices();
 				sprintf_s(m_reportMsg, "new call failure:%s", g_callRequstDeclineReasonCodeInfo.ReasonCode);
@@ -6400,6 +6420,9 @@ int CWLNet::callBack()
 		}
 		if (!requestCallSuccess)
 		{
+			sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d", __FILE__, __LINE__);
+			sendLogToWindow();
+
 			SetCallStatus(CALL_IDLE);
 			sprintf_s(m_reportMsg, "call back failure:%s", g_callRequstDeclineReasonCodeInfo.ReasonCode);
 			sendLogToWindow();
@@ -6483,6 +6506,8 @@ int CWLNet::newCall()
 			}
 			if (!requestCallSuccess)
 			{
+				sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+				sendLogToWindow();
 				SetCallStatus(CALL_IDLE);
 				sprintf_s(m_reportMsg, "new call failure:%s", g_callRequstDeclineReasonCodeInfo.ReasonCode);
 				sendLogToWindow();
@@ -6526,6 +6551,8 @@ int CWLNet::newCall()
 			}
 			if (!requestCallSuccess)
 			{
+				sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+				sendLogToWindow();
 				SetCallStatus(CALL_IDLE);
 				sprintf_s(m_reportMsg, "new call failure:%s", g_callRequstDeclineReasonCodeInfo.ReasonCode);
 				sendLogToWindow();
@@ -6566,6 +6593,8 @@ int CWLNet::newCall()
 			}
 			if (!requestCallSuccess)
 			{
+				sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+				sendLogToWindow();
 				SetCallStatus(CALL_IDLE);
 				sprintf_s(m_reportMsg, "new call failure:%s", g_callRequstDeclineReasonCodeInfo.ReasonCode);
 				sendLogToWindow();
@@ -6753,7 +6782,7 @@ void CWLNet::waitRecordEnd()
 	addSendVoiceFrame();
 	//releaseReadySendVoicesLock();
 	g_bPTT = FALSE;
-	SetCallStatus(CALL_IDLE);
+	//SetCallStatus(CALL_IDLE);
 	//sprintf_s(m_reportMsg, "填充结束标识");
 	//sendLogToWindow();
 }
@@ -6775,9 +6804,11 @@ void PASCAL CWLNet::HangTimerCallProc(UINT wTimerID, UINT msg, DWORD dwUser, DWO
 
 void CWLNet::HangTimerCallCheck()
 {
-	if (!(GetCallStatus() == CALL_HANGUP || GetCallStatus() == CALL_IDLE || g_dongleIsUsing))
+	if (!(GetCallStatus() == CALL_ONGOING || GetCallStatus() == CALL_HANGUP || GetCallStatus() == CALL_IDLE || g_dongleIsUsing))
 	{
 		//SetCallStatus(CALL_HANGUP);
+		sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d", __FILE__, __LINE__);
+		sendLogToWindow();
 		SetCallStatus(CALL_IDLE);
 	}
 }
@@ -7839,7 +7870,10 @@ int CWLNet::wlInfo(int getType, FieldValue info,std::string sessionid)
 	args["getType"] = getType;
 	args["info"] = info;
 	args["SessionId"] = sessionid.c_str();
-	addSessionStatus(sessionid, CMD_SUCCESS);
+	if (GET_TYPE_SESSION_STATUS != getType)
+	{
+		addSessionStatus(sessionid, CMD_SUCCESS);
+	}
 	std::string strRequest = CRpcJsonParser::buildCall("wlInfo", ++g_sn, args, "wl");
 	//sprintf_s(m_reportMsg, "%s", strRequest.c_str());
 	//sendLogToWindow();
@@ -8354,6 +8388,8 @@ void CWLNet::handleCallTimeOut()
 		g_bPTT = FALSE;
 	}
 	releaseRecordEndEvent();
+	sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+	sendLogToWindow();
 	SetCallStatus(CALL_IDLE);
 	Sleep(500);
 	handleCurTaskCallTimeOut();
