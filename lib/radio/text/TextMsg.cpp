@@ -478,7 +478,7 @@ bool CTextMsg::SendMsg(std::string  sessionId, std::string text, DWORD dwRadioID
 				r.target = m_ThreadMsg->radioID;
 				r.source = m_selfId;
 				r.msgStatus = SUCESS;
-				r.msg = "";
+				r.msg = it->text;
 				r.sessionId = it->sessionId;
 				if (it->command == SEND_GROUP_MSG)
 				{
