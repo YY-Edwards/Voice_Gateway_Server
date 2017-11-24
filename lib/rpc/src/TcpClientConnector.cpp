@@ -11,6 +11,7 @@ CTcpClientConnector::CTcpClientConnector()
 	, m_clientSocket(INVALID_SOCKET)
 	, m_nClientRunning(ClientNotRunning)
 	, m_pRemoteServer(NULL)
+	, m_bQuit(false)
 {
 }
 
@@ -49,6 +50,7 @@ int CTcpClientConnector::start(const char* connStr)
 
 void CTcpClientConnector::stop()
 {
+	m_bQuit = true;
 	if (ClientRunning == m_nClientRunning)
 	{
 		m_nClientRunning = ClientNotRunning;
@@ -91,7 +93,7 @@ DWORD WINAPI CTcpClientConnector::NetThread(LPVOID pVoid)
 
 DWORD CTcpClientConnector::netHandler()
 {
-	while (ClientRunning == m_nClientRunning)
+	while (ClientRunning == m_nClientRunning && !m_bQuit)
 	{
 		if (Connected == m_nConnected)
 		{
@@ -162,6 +164,10 @@ DWORD CTcpClientConnector::netHandler()
 		else {
 			// connect or re-connect server
 			Sleep(1000 * 10);
+			if (m_bQuit)
+			{
+				break;
+			}
 			connect(m_strConnStr.c_str());
 		}
 	}

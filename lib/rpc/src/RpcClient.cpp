@@ -55,6 +55,12 @@ int CRpcClient::start(const char* connStr)
 			//std::unique_lock<std::mutex> lk(m_mtxQuit);
 			//if (std::cv_status::timeout ==  m_evQuit.wait_for(lk, std::chrono::seconds(1)))
 			{
+				if (NULL == m_pConnector)
+				{
+					// TODO: temporary for avoid error, when stop the client
+					// it should redesign the stop logic
+					break;
+				}
 				if (!m_pConnector->isConnected())
 				{
 					// disconnected status, stop timeout check and don't send ping command
@@ -100,12 +106,17 @@ int CRpcClient::start(const char* connStr)
 
 void CRpcClient::stop()
 {
-	if (m_pConnector)
+	if (!m_bQuit)
 	{
-		m_pConnector->stop();
-		delete m_pConnector;
+		m_bQuit = true;
+		m_maintainThread.join();
+		if (m_pConnector)
+		{
+			m_pConnector->stop();
+			delete m_pConnector;
+		}
+		m_pConnector = NULL;
 	}
-	m_pConnector = NULL;
 }
 
 int CRpcClient::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
@@ -199,7 +210,7 @@ int CRpcClient::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 	}
 	catch (...)
 	{
-		printf("unknow error! \r\n");
+		printf("unknown error! \r\n");
 	}
 	return 0;
 }

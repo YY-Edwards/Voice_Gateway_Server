@@ -51,6 +51,7 @@ protected:
 	HANDLE m_recvThread;
 	int m_nClientRunning;
 	std::string m_strConnStr;
+	bool m_bQuit;
 
 	CRemotePeer* m_pRemoteServer;
 };

@@ -32,7 +32,7 @@ public:
 		std::list<CRequest*> m_lstRequest;
 	};
 
-public: // dereived from OnConnectorData
+public: // derived from OnConnectorData
 	virtual int onReceive(CRemotePeer* pRemote, char* pData, int dataLen);
 
 public:
