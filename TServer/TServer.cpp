@@ -63,7 +63,7 @@
 #include "GetSettingAction.h"
 #include "../lib/service\service.h"
 
-#define SERVICE_CODE    FALSE
+#define SERVICE_CODE    TRUE
 #define HTTP_PORT   8001
 std::string getServerName()
 {
@@ -171,6 +171,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	CService::instance()->SetServiceNameAndDescription(_T("Trbox.TServer"), _T("Trbox TServer Server"));
 	CService::instance()->SetServiceCode([&](){
 		serverActions["start"] = startAction;
+
 		serverActions["setBaseSetting"] = setBaseAction;
 		serverActions["getBaseSetting"] = getBaseAction;
 		serverActions["setRadioSetting"] = setRadioAction;
@@ -231,6 +232,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		wlClientActions["sendBeacons"] = recvLocationIndoorAction;
 		mclientActions["getSettingConfig"] = GetSettingAction;
 		CBroker::instance()->startLogClient();
+
 		CBroker::instance()->startWireLanClient(wlClientActions);
 		CBroker::instance()->startRpcServer(serverActions);
 		CBroker::instance()->startRadioClient(clientActions);
@@ -250,7 +252,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		{
 			Sleep(100);
 		}
-		CBroker::instance()->stop();
 		CHttp::getInstance()->stop();
 		
 	});
@@ -416,13 +417,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		ms.startMonitor(wstr.c_str(),_T("Trbox.Log"));
 		
 	}*/
-	/*等待结束标识*/
-	char temp = 0x00;
-	printf("press any key to end\r\n");
-	scanf_s("%c", &temp, 1);
-
+	while (1){ Sleep(1000); };
 	CHttp::getInstance()->stop();
-	//CBroker::instance()->stop();
 #endif
 	return 0;
 }
