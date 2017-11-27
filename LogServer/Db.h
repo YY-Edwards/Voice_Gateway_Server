@@ -37,11 +37,13 @@ private:
 	friend class std::auto_ptr<CDb>;
 	static std::auto_ptr<CDb> m_instance;
 	std::string m_strLastError;
+	bool databaseIsConnect;
 
 protected:
 	void migration();
 
 public:
+	
 	bool open(const char* host, u_short port, const char* user, const char* pass, const char* db);
 	void close();
 	int checkDbVersion();
@@ -97,5 +99,6 @@ public:
 	bool updateIBeacon(const char* condition, recordType& val);
 	bool insertLocationIndoor(int source, int major, int minor, int timestamp, int rssi, int txpower, std::string uuid);
 	int listLocation(const char* condition, std::list<recordType>& records);
+	bool getDatabaseStatus();
 };
 

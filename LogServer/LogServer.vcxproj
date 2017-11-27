@@ -117,6 +117,7 @@
     <ClInclude Include="AppEventAction.h" />
     <ClInclude Include="Db.h" />
     <ClInclude Include="DbAreaAction.h" />
+    <ClInclude Include="DbDatabaseStatus.h" />
     <ClInclude Include="DbGpsAction.h" />
     <ClInclude Include="DbGroupAction.h" />
     <ClInclude Include="DbIbeaconAction.h" />
