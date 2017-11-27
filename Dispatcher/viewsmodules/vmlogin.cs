@@ -285,7 +285,7 @@ namespace Dispatcher.ViewsModules
 
         private void LoginAPP(string uid, string psd)
         {
-            if (!m_LogServerConnected || !m_TServerConnected)
+            if (!m_LogServerConnected)
             {
                 Info = "未连接到服务";
                 Log.Fatal("Login Failure.Should Connect TServer and LogServer Begin Login.");
@@ -299,14 +299,22 @@ namespace Dispatcher.ViewsModules
                 _waitlogin = new Semaphore(0, 1);
 
 
-                _user.Auth(uid, psd);
-                _waitlogin.WaitOne();
-                if (!_issuccess)
+                //_user.Auth(uid, psd);
+                //_waitlogin.WaitOne();
+                //if (!_issuccess)
+                //{
+                //    return;
+                //}
+
+                if (OnLoginOK != null) OnLoginOK(this, new EventArgs());
+
+                if (!m_TServerConnected)
                 {
+                    AddInitilizeContents("初始化失败，未连接服务");
+                    InitilizeCanClose = true;
                     return;
                 }
 
-                if (OnLoginOK != null) OnLoginOK(this, new EventArgs());
                 AddInitilizeContents("账号验证成功...");
                 AddInitilizeContents("获取注册信息...");
                 _register.Get();

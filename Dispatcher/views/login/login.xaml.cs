@@ -93,8 +93,7 @@ namespace Dispatcher.Views
             (this.DataContext as VMLogin).UserName = (sender as TextBox).Text;
         }
 
-
-        
+       
 
         private void OnLoginOK(object sender, EventArgs e)
         {
