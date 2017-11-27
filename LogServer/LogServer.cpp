@@ -19,6 +19,7 @@
 
 #include "DbIbeaconAction.h"
 #include "DbLocationIndoorAction.h"
+#include "DbDatabaseStatus.h"
 #define SERVICE_CODE TRUE
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -29,11 +30,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	CService::instance()->SetServiceNameAndDescription(_T("Trbox.Log"), _T("Trbox Log Server"));
 	CService::instance()->SetServiceCode([&](){
 #endif
-		bool db_connected = false;
-		while (!db_connected){
-			db_connected = CDb::instance()->open("127.0.0.1", 3306, "root", "", "tbx");
-			Sleep(1000);
-		}
+		
 		
 		CRpcServer rpcServer;
 		rpcServer.addActionHandler("appEvent", appEventAction);
@@ -48,8 +45,15 @@ int _tmain(int argc, _TCHAR* argv[])
 		rpcServer.addActionHandler("area", areaAction);
 		rpcServer.addActionHandler("ibeacon", ibeaconAction);
 		rpcServer.addActionHandler("locationLog", locationIndoorAction);
+		rpcServer.addActionHandler("status", databaseStatusAction);
 
 		rpcServer.start(9003, CRpcServer::TCP);
+
+		bool db_connected = false;
+		while (!db_connected){
+			db_connected = CDb::instance()->open("127.0.0.1", 3306, "root", "", "tbx");
+			Sleep(1000);
+		}
 #if SERVICE_CODE
 
 		while (!CService::instance()->m_bServiceStopped){

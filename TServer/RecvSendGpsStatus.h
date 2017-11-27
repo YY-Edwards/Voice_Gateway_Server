@@ -7,14 +7,14 @@ void addLocationLog(std::string param, int callId, CRemotePeer* pRemote)
 {
 	Document d;
 	d.Parse(param.c_str());
-	int source = 0;
+	int Target = 0;
 	ArgumentType args;
 	FieldValue f(FieldValue::TArray);
 	FieldValue element(FieldValue::TObject);
-	if (d.HasMember("source") && d["source"].IsInt())
+	if (d.HasMember("Target") && d["Target"].IsInt())
 	{
-		source = d["source"].GetInt();
-		element.setKeyVal("source", FieldValue(source));
+		Target = d["Target"].GetInt();
+		element.setKeyVal("source", FieldValue(Target));
 
 	}
 	if (d.HasMember("Report") && d["Report"].IsObject())
@@ -33,21 +33,22 @@ void addLocationLog(std::string param, int callId, CRemotePeer* pRemote)
 				element.setKeyVal("longitude", FieldValue(lon));
 				element.setKeyVal("velocity", FieldValue(speed));
 				f.push(element);
-			}
-			args["operation"] = FieldValue("add");
-			args["gps"] = FieldValue(f);
+				args["operation"] = FieldValue("add");
+				args["gps"] = FieldValue(f);
 
-			std::string callJsonStr = CRpcJsonParser::buildCall("gpsLog", callId, args, "radio");
-			int result = CBroker::instance()->getLogClient()->sendRequest(callJsonStr.c_str(), callId,
-				pRemote,
-				[&](const char* pResponse, void* data){
-			}, nullptr);
-			if (-1 == result)
-			{
-				std::map<std::string, std::string> args;
-				std::string strResp = CRpcJsonParser::buildResponse("failed", callId, 404, "", ArgumentType());
-				pRemote->sendResponse(strResp.c_str(), strResp.size());
+				std::string callJsonStr = CRpcJsonParser::buildCall("gpsLog", callId, args, "radio");
+				int result = CBroker::instance()->getLogClient()->sendRequest(callJsonStr.c_str(), callId,
+					pRemote,
+					[&](const char* pResponse, void* data){
+				}, nullptr);
+				if (-1 == result)
+				{
+					std::map<std::string, std::string> args;
+					std::string strResp = CRpcJsonParser::buildResponse("failed", callId, 404, "", ArgumentType());
+					pRemote->sendResponse(strResp.c_str(), strResp.size());
+				}
 			}
+			
 			else if (type == 1) //1:becon
 			{
 				int major = d["Report"]["major"].GetInt();
@@ -113,6 +114,7 @@ void recvSendGpsStatusAction(CRemotePeer* pRemote, const std::string& param, uin
 			std::string strResp = CRpcJsonParser::buildResponse("failed", callId, 404, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
 		}
+		addLocationLog(param, callId, pRemote);
 	}
 	catch (std::exception e){
 

@@ -81,6 +81,8 @@ public:
 	bool getLic(std::string license);
 	void sendLoactionIndoorConfig();
 	//void sendLoactionIndoorConfigToWl();
+
+	void stop();
 protected:
 	CBroker();
 	~CBroker();

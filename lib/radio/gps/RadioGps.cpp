@@ -570,6 +570,7 @@ void CRadioGps::RecvData()
 									r.type = 0;
 									onData(myCallBackFunc, it->command, r);
 									it = timeOutList.erase(it);
+									m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP + 1 == operate) ? (-1) : (queryMode));
 									break;
 								}
 								else
@@ -584,7 +585,7 @@ void CRadioGps::RecvData()
 									r.type = 0;
 									onData(myCallBackFunc, it->command, r);
 									it = timeOutList.erase(it);
-		
+									m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP + 1 == operate) ? (-1) : (queryMode));
 									break;
 								}
 
@@ -772,11 +773,13 @@ void CRadioGps::RecvData()
 										r.sessionId = it->sessionId;
 										onData(myCallBackFunc, GPS_IMME_COMM_INDOOR, r);
 										it = timeOutList.erase(it);
+										m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP + 1 == operate) ? (-1) : (queryMode));
 									}
 									else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report &&r.bcon.TimeStamp != 0 && it->status == -1)  //当没有接收到Ack时，以第一条数据为准
 									{
 										onData(myCallBackFunc, GPS_IMME_COMM_INDOOR, r);
-										m_pMnis->updateOnLineRadioInfo(atoi(radioID), GPS_IMME_COMM_INDOOR, (STOP == operate) ? (-1) : (queryMode));
+										it = timeOutList.erase(it);
+										m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP+1 == operate) ? (-1) : (queryMode));
 									}
 									
 									count++;
@@ -796,7 +799,7 @@ void CRadioGps::RecvData()
 								if (r.bcon.TimeStamp != 0)
 								{
 									onData(myCallBackFunc, RECV_LOCATION_INDOOR, r);
-									m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP == operate) ? (-1) : (queryMode));
+									m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP+1 == operate) ? (-1) : (queryMode));
 								}
 								
 							}
@@ -905,7 +908,7 @@ void CRadioGps::RecvData()
 								r.valid = valid;
 								r.querymode = queryMode;
 								onData(myCallBackFunc, RECV_GPS, r);
-								m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP == operate) ? (-1) : (queryMode));
+								m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP+1 == operate) ? (-1) : (queryMode));
 							}
 
 						}

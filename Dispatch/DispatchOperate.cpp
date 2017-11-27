@@ -402,6 +402,14 @@ void DispatchOperate::OnData(  int call, Respone data)
 	case GPS_IMME_CSBK_INDOOR:
 	{
 		FieldValue element(FieldValue::TObject);
+		FieldValue uuid(FieldValue::TArray);
+		for (int i = 0; i < 16; i++)
+		{
+			FieldValue temp(FieldValue::TInt);
+			temp.setInt(data.bcon.uuid[i]);
+			uuid.push(temp);
+		}
+		element.setKeyVal("uuid", FieldValue(uuid));
 		element.setKeyVal("txpower", FieldValue(data.bcon.TXPower));
 		element.setKeyVal("rssi", FieldValue(data.bcon.RSSI));
 		element.setKeyVal("timestamp", FieldValue(data.bcon.TimeStamp));

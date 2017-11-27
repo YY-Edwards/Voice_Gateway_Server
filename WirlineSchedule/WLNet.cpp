@@ -2694,6 +2694,11 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 																			 //delete (*i);
 																			 //m_voiceReocrds.erase(i);
 																			 //releaseVoiceReocrdsLock();
+																			 if (isNeedPlay(tgtId, p->callType) && p->sourceID != CONFIG_LOCAL_RADIO_ID)
+																			 {
+																				 wlCall(p->callType, srcId, tgtId, OPERATE_CALL_END, (*i)->getBoolPlay());
+																				 g_pNet->resetPlayFlag();
+																			 }
 																			 if (p->sourceID == CONFIG_LOCAL_RADIO_ID)
 																			 {
 																				 SetCallStatus(CALL_HANGUP);

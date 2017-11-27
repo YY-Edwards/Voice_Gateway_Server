@@ -14,6 +14,7 @@ CBroker::CBroker()
 	, m_radioClient(NULL)
 	, m_rpcServer(NULL)
 	, m_logClient(NULL)
+	, m_monitorClient(NULL)
 	, callId(1)
 {
 	licenseStatus = 2;
@@ -35,23 +36,7 @@ CBroker::CBroker()
 
 CBroker::~CBroker()
 {
-	if (m_radioClient)
-	{
-		m_radioClient->stop();
-		delete m_radioClient;
-	}
 
-	if (m_logClient)
-	{
-		m_logClient->stop();
-		delete m_logClient;
-	}
-
-	if (m_rpcServer)
-	{
-		m_rpcServer->stop();
-		delete m_rpcServer;
-	}
 }
 
 
@@ -453,6 +438,41 @@ void CBroker::sendLoactionIndoorConfig()
 	std::string strConnect = CSettings::instance()->getRequest("locationIndoor", "radio", m_radioClient->getCallId(), CSettings::instance()->getValue("locationIndoor"));
 	m_radioClient->send(strConnect.c_str(), strConnect.size());
 }
+
+void CBroker::stop()
+{	
+	if (m_radioClient)
+	{
+		m_radioClient->stop();
+		delete m_radioClient;
+	}
+
+	if (m_wirelanClient)
+	{
+		m_wirelanClient->stop();
+		delete m_wirelanClient;
+	}
+
+	if (m_logClient)
+	{
+		m_logClient->stop();
+		delete m_logClient;
+	}
+
+	if (m_monitorClient)
+	{
+		m_monitorClient->stop();
+		delete m_monitorClient;
+	}
+
+	if (m_rpcServer)
+	{
+		m_rpcServer->stop();
+		delete m_rpcServer;
+	}
+
+}
+
 //void CBroker::sendLoactionIndoorConfigToWl()
 //{
 	//std::string strConnect = CSettings::instance()->getRequest("locationIndoor", "radio", m_wirelanClient->getCallId(), CSettings::instance()->getValue("locIndoor"));
