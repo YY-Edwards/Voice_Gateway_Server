@@ -31,7 +31,7 @@ static SERVICE_STATUS_HANDLE g_StatusHandle;
 static SERVICE_STATUS g_ServiceStatus = { 0 };
 static HANDLE g_ServiceStopEvent = INVALID_HANDLE_VALUE;
 static HANDLE g_ServiceStoppedEvent = INVALID_HANDLE_VALUE;
-#define SERVER_CODE  TRUE
+#define SERVER_CODE  FALSE
 #define			ConmpanyName			L"JiHua Information"
 #define			AppName					L"Trbox"
 #define			AppVersion				L"3.0"
