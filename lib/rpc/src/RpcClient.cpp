@@ -119,6 +119,15 @@ void CRpcClient::stop()
 	}
 }
 
+bool CRpcClient::isConnected()
+{
+	if (m_pConnector)
+	{
+		return m_pConnector->isConnected();
+	}
+	return false;
+}
+
 int CRpcClient::onReceive(CRemotePeer* pRemote, char* pData, int dataLen)
 {
 	char buffer[102400];

@@ -29,6 +29,7 @@ public: // dereived from OnConnectorData
 public:
 	int start(const char* connStr);
 	void stop();
+	bool isConnected();
 	int send(const char* pData, int dataLen);
 	int sendRequest(const char* pRequest,
 				uint64_t nCallId,
