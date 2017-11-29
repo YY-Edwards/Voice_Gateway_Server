@@ -31,6 +31,13 @@ CBroker::CBroker()
 	memset(m_serialInformation.repeaterSerial, 0, 16);
 	memset(m_serialInformation.res, 0, 16);
 	memset(m_serialInformation.time, 0, 16);
+	systemStatus = { -1 };
+	isRadio = false;
+	isRepeater = false;
+	isMnis = false;
+	isDeviceConnect = false;
+	isMnisConenct = false;
+	isRecvSerial = false;
 }
 
 
@@ -175,7 +182,20 @@ void CBroker::sendWirelanConfig()
 
 
 	std::string repeater = CSettings::instance()->getValue("repeater");
+	Document d;
+	d.Parse(repeater.c_str());
+	if (d.HasMember("IsEnable") && d["IsEnable"].IsBool())
+	{
+		isRepeater = d["IsEnable"].GetBool();
+	}
+	
 	std::string mnis = CSettings::instance()->getValue("mnis");
+	Document d1;
+	d1.Parse(mnis.c_str());
+	if (d.HasMember("IsEnable") && d["IsEnable"].IsBool())
+	{
+		isMnis = d["IsEnable"].GetBool();
+	}
 	std::string location = CSettings::instance()->getValue("location");
 	std::string locationIndoor = CSettings::instance()->getValue("locationIndoor");
 	if (repeater != "")
@@ -218,7 +238,19 @@ void CBroker::sendWirelanConfig()
 void CBroker::sendRadioConfig()
 {
 	std::string radio = CSettings::instance()->getValue("radio");
+	Document d;
+	d.Parse(radio.c_str());
+	if (d.HasMember("IsEnable") && d["IsEnable"].IsBool())
+	{
+		isRadio = d["IsEnable"].GetBool();
+	}
 	std::string mnis = CSettings::instance()->getValue("mnis");
+	Document d1;
+	d1.Parse(mnis.c_str());
+	if (d.HasMember("IsEnable") && d["IsEnable"].IsBool())
+	{
+		isMnis = d["IsEnable"].GetBool();
+	}
 	std::string location = CSettings::instance()->getValue("location");
 	std::string locationIndoor = CSettings::instance()->getValue("locationIndoor");
 	if (radio != "")
@@ -478,3 +510,107 @@ void CBroker::stop()
 	//std::string strConnect = CSettings::instance()->getRequest("locationIndoor", "radio", m_wirelanClient->getCallId(), CSettings::instance()->getValue("locIndoor"));
 	//m_wirelanClient->send(strConnect.c_str(), strConnect.size());
 //}
+void CBroker::setSystemStatus()
+{
+	/*
+	   workMode 0:offline,1:Only Vechtion Stations, 2:Only Repeater,3:Vechtion Stations With MNIS, 4:repeater with mnis
+	*/
+	if (isRadio)
+	{
+		if (isMnis)
+		{
+			systemStatus.workMode = 3;
+		}
+		else
+		{
+			systemStatus.workMode = 1;
+		}
+		
+	}
+	else if (isRepeater)
+	{
+		if (isMnis)
+		{
+			systemStatus.workMode = 4;
+		}
+		else
+		{
+			systemStatus.workMode = 2;
+		}
+	}
+	else
+	{
+		systemStatus.workMode = 0;
+	}
+	/*
+	"DeviceStatus":0:connected, 1:disconnect //vechion station status OR repeater status
+	*/
+	if (isDeviceConnect)
+	{
+		systemStatus.deviceStatus = 0;
+	}
+	else
+	{
+		systemStatus.deviceStatus = 1;
+	}
+	/*
+	"MnisStatus":0:connected, 1:disconnected
+	*/
+	if (isMnisConenct)
+	{
+		systemStatus.mnisStatus = 0;
+	}
+	else
+	{
+		systemStatus.mnisStatus = 1;
+	}
+	/*
+	"DeviceInfoStatus":0:Updated, 1:UnKnow
+	*/
+	std::string tempRadio(m_serialInformation.radioSerial);
+	std::string tempRepeater(m_serialInformation.repeaterSerial);
+	if (!tempRadio.empty())
+	{
+		systemStatus.deviceInfoStatus = 0;
+	}
+	else if (!tempRepeater.empty())
+	{
+		systemStatus.deviceInfoStatus = 0;
+	}
+	else
+	{
+		systemStatus.deviceInfoStatus = 1;
+	}
+}
+void CBroker::setDeviceStatus(bool device, bool mnis)
+{
+	isDeviceConnect = device;
+	isMnisConenct = mnis;
+}
+//SystemStatus CBroker::getSystemStatus()
+//{
+//	return systemStatus;
+//}
+void CBroker::sendSystemStatusToClient(std::string  sessionId, CRemotePeer* pRemote, uint64_t callId)
+{
+	ArgumentType args;
+	if (sessionId != "")
+	{
+		args["SessionId"] = FieldValue(sessionId.c_str());
+	}
+	args["getType"] = 4;
+	FieldValue element(FieldValue::TObject);
+	element.setKeyVal("WorkMode", FieldValue(systemStatus.workMode));
+	element.setKeyVal("ServerStatus", FieldValue(systemStatus.serverStatus));
+	element.setKeyVal("DeviceStatus", FieldValue(systemStatus.deviceStatus));
+	element.setKeyVal("MnisStatus", FieldValue(systemStatus.mnisStatus));
+	element.setKeyVal("DongleCount", FieldValue(systemStatus.dongleCount));
+	element.setKeyVal("MicphoneStatus", FieldValue(systemStatus.micphoneStatus));
+	element.setKeyVal("SpeakerStatus", FieldValue(systemStatus.speakerStatus));
+	element.setKeyVal("LEStatus", FieldValue(systemStatus.leStatus));
+	element.setKeyVal("WireLanStatus", FieldValue(systemStatus.wireLanStatus));
+	element.setKeyVal("DeviceInfoStatus", FieldValue(systemStatus.deviceInfoStatus));
+	args["info"] = FieldValue(element);
+	std::string strResp = CRpcJsonParser::buildCall("status", ++callId, args, "radio");
+	pRemote->sendResponse(strResp.c_str(), strResp.size());
+}

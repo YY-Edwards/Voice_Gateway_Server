@@ -19,6 +19,7 @@
 
 #include "DbIbeaconAction.h"
 #include "DbLocationIndoorAction.h"
+#include "DbDatabaseStatus.h"
 #define SERVICE_CODE TRUE
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -44,6 +45,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		rpcServer.addActionHandler("area", areaAction);
 		rpcServer.addActionHandler("ibeacon", ibeaconAction);
 		rpcServer.addActionHandler("locationLog", locationIndoorAction);
+		rpcServer.addActionHandler("status", databaseStatusAction);
 
 		rpcServer.start(9003, CRpcServer::TCP);
 

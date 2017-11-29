@@ -3,10 +3,22 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:Controls="clr-namespace:Sigmar.Controls;assembly=Sigmar"
         xmlns:ViewsModules="clr-namespace:Dispatcher.ViewsModules" x:Class="Dispatcher.Views.Initilize"
-        Title="Initilize" Height="300" Width="522" 
-        BorderThickness="0" BorderBrush="{DynamicResource PanelBorderBrush}" WindowStartupLocation="CenterScreen" Background="#a01D1D1F" ResizeMode="NoResize" AllowsTransparency="True" WindowStyle="None" >
+        Title="Initilize" Height="420" Width="656" 
+        BorderThickness="0" BorderBrush="{DynamicResource PanelBorderBrush}" WindowStartupLocation="CenterScreen" Background="#FF242424" ResizeMode="NoResize" AllowsTransparency="True" WindowStyle="None" >
     <Grid>
-        <TextBlock  Text="{Binding InitilizeContents}" Foreground="#FFE4DDDD" Margin="20,50,40,50"/>
-        <Controls:Icon IsEnabled="{Binding InitilizeCanClose}" Command="{Binding CloseInitilize, Mode=OneWay}"  Height="18" Width="18" Margin="8,6,11,0" Image="/TrboX;component/resource/images/close_18_18_n.png" HoverImage="/TrboX;component/resource/images/close_18_18_h.png" PressedImage="/TrboX;component/resource/images/close_18_18_h.png" HorizontalAlignment="Right" VerticalAlignment="Top" />
+        <DockPanel>
+            
+            <Image Source="/TrboX;component/resource/images/show.jpg" DockPanel.Dock="Right" HorizontalAlignment="Right" VerticalAlignment="Top" Opacity="0.8" Margin="0,-26,0,-37" />
+
+            <StackPanel Margin="28,32,16,32">
+                <Image Source="/TrboX;component/TrboX.ico" Stretch="Fill" HorizontalAlignment="Left" Height="64" Width="64" Visibility="Collapsed"/>
+                <Image Source="/TrboX;component/resource/images/sub_title_60_20.png" Stretch="None" HorizontalAlignment="Left" Height="51" Width="102"/>
+                <TextBlock Text="3.1版" Foreground="#FF7DABDC" FontSize="18" Margin="0,40,0,0"/>
+                <TextBlock Text=" © 2017, Jihua Information.&#x0d; All Rights Reserved." Foreground="#FF7DABDC" Margin="0"/>
+                <TextBlock Text="正在初始化..." Foreground="#FF7DABDC" Margin="0,35,0,5"/>
+                <TextBox x:Name="_contentsTextblock" Text="{Binding InitilizeContents}" Foreground="#FF7DABDC" Margin="0" Background="{x:Null}" BorderBrush="{x:Null}" BorderThickness="0" SelectionBrush="{x:Null}" IsReadOnly="True" Height="97" FontSize="11"/>
+            </StackPanel>
+        </DockPanel>
+        <Controls:Icon IsEnabled="{Binding InitilizeCanClose}" Command="{Binding CloseInitilize, Mode=OneWay}"  Height="18" Width="18" Margin="8,6,11,0" Image="/TrboX;component/resource/images/msg_close_18_18_n.png" HoverImage="/TrboX;component/resource/images/close_18_18_h.png" PressedImage="/TrboX;component/resource/images/close_18_18_h.png" HorizontalAlignment="Right" VerticalAlignment="Top" />
     </Grid>
 </Window>

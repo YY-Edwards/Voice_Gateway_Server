@@ -930,6 +930,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="resource\amap\index.html" />
+    <Resource Include="resource\images\show.jpg" />
     <Resource Include="resource\images\warning.png" />
     <Resource Include="resource\images\loadicon.png" />
     <Resource Include="resource\images\Abnormal.png" />

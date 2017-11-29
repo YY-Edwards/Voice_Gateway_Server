@@ -231,6 +231,7 @@ std::auto_ptr<CDb> CDb::m_instance;
 CDb::CDb()
 {
 	m_pMySQLDb = new CMySQL();
+	databaseIsConnect = false;
 }
 
 
@@ -305,9 +306,10 @@ bool CDb::open(const char* host, u_short port, const char* user, const char* pas
 	if (ret)
 	{
 		migration();
+		databaseIsConnect = true;
 		return true;
 	}
-
+	databaseIsConnect = false;
 	return false;
 }
 
@@ -1051,4 +1053,8 @@ int CDb::listLocation(const char* condition, std::list<recordType>& records)
 	}
 
 	return m_pMySQLDb->query(sql.c_str(), records);
+}
+bool CDb::getDatabaseStatus()
+{
+	return databaseIsConnect;
 }
