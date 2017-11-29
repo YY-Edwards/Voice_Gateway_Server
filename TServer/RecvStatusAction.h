@@ -11,7 +11,35 @@ void recvStatusAction(CRemotePeer* pRemote, const std::string& param, uint64_t c
 	std::lock_guard<std::mutex> locker(lock);
 
 	try{
-
+		Document d;
+		d.Parse(param.c_str());
+		if (d.HasMember("getType") && d["getType"].IsInt())
+		{
+			int getType = d["getType"].GetInt();
+			if (getType == 1)
+			{
+				if (d.HasMember("info") && d["info"].IsInt())
+				{
+					int info = d["info"].GetInt();
+					switch (info)
+					{
+					case 0:
+						CBroker::instance()->setDeviceStatus(true,true);
+						break;
+					case 1:
+						CBroker::instance()->setDeviceStatus(false,true);
+						break;
+					case 2:
+						CBroker::instance()->setDeviceStatus(true,false);
+						break;
+					case 3:
+						CBroker::instance()->setDeviceStatus(false,false);
+						break;
+					}
+					CBroker::instance()->sendSystemStatusToClient("", pRemote, callId);
+				}
+			}
+		}
 		std::string callCommand = CRpcJsonParser::mergeCommand("status", callId, param.c_str(), type.c_str());
 		int ret = CBroker::instance()->getRpcServer()->sendRequest(callCommand.c_str(),
 			callId,

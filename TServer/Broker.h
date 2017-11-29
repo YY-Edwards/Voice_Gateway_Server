@@ -20,6 +20,32 @@ struct SerialInformation{
 	char repeaterMode[13];
 
 };
+struct SystemStatus
+{
+	 /*
+	 "WorkMode":0:offline,1:Only Vechtion Stations, 2:Only Repeater,3:Vechtion Stations With MNIS, 4:repeater with mnis
+	 "ServerStatus":0:connected, 1:disconnect //vechion station status OR repeater status
+	 "DeviceStatus":0:connected, 1:disconnect //vechion station status OR repeater status
+	 "MnisStatus":0:connected, 1:disconnected
+	 "DatabaseStatus":0:connected, 1:disconnected
+	 "DongleCount":1
+	 "MicphoneStatus":0:connected, 1:disconnected
+	 "SpeakerStatus":0:connected, 1:disconnected
+	 "LEStatus":0:connected, 1:disconnected
+	 "WireLanStatus":0:registed, 1:UnRegisted
+	 "DeviceInfoStatus":0:Updated, 1:UnKnow
+		*/
+	int workMode;
+	int serverStatus;
+	int deviceStatus;
+	int mnisStatus;
+	int dongleCount;
+	int micphoneStatus;
+	int speakerStatus;
+	int leStatus;
+	int wireLanStatus;
+	int deviceInfoStatus;
+};
 class CRpcClient;
 class CRpcServer;
 
@@ -83,6 +109,10 @@ public:
 	//void sendLoactionIndoorConfigToWl();
 
 	void stop();
+	void setSystemStatus();
+	void setDeviceStatus(bool device, bool mnis);
+	//SystemStatus getSystemStatus();
+	void sendSystemStatusToClient(std::string  sessionId, CRemotePeer* pRemote, uint64_t callId);
 protected:
 	CBroker();
 	~CBroker();
@@ -101,6 +131,13 @@ private:
 	SerialInformation m_serialInformation ;
 	SerialInformation m_licenseInformation;
 	int licenseStatus;
+	SystemStatus  systemStatus;
+	bool isRadio;
+	bool isRepeater;
+	bool isMnis;
+	bool isDeviceConnect;
+	bool isMnisConenct;
+	bool isRecvSerial;
 	
 };
 
