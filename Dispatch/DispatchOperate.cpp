@@ -778,8 +778,6 @@ void DispatchOperate::sendSessIonStatus(std::string sessionId)
 		element.setKeyVal("SessionId", FieldValue((iter->sessionId).c_str()));
 		element.setKeyVal("Status", FieldValue(iter->status));
 		info.push(element);
-		iter = sessionStatusList.erase(iter);
-		
 	}
 	args["info"] = info;
 	args["SessionId"] = FieldValue((sessionId).c_str());
