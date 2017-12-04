@@ -57,7 +57,7 @@ CWLNet::CWLNet(CMySQL *pDb, CManager *pManager, std::wstring& defaultAudioPath)
 	m_pCurrentSendVoicePeer = NULL;
 	m_pSitePeer = NULL;
 	m_retryRequestCallCount = REQUEST_CALL_REPEAT_FREQUENCY;
-	m_pEventLoger = new WLRecord(pDb,defaultAudioPath);
+	m_pEventLoger = new WLRecord(pDb, defaultAudioPath);
 	m_pDb = pDb;
 	//m_dongleIdleEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
 	m_pManager = pManager;
@@ -2411,7 +2411,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 										   }
 										   else if (isNeedPlay(p->tagetId, p->callType) && p->srcId != CONFIG_LOCAL_RADIO_ID)
 										   {
-											   sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+											   sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d", __FILE__, __LINE__);
 											   sendLogToWindow();
 											   SetCallStatus(CALL_IDLE);
 											   wlCall(p->callType, p->srcId, p->tagetId, OPERATE_CALL_END, p->getBoolPlay());
@@ -2430,7 +2430,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 									   {
 										   if (isNeedPlay((*i)->tagetId, (*i)->callType) && !g_dongleIsUsing)
 										   {
-											   sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+											   sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d", __FILE__, __LINE__);
 											   sendLogToWindow();
 											   SetCallStatus(CALL_IDLE);
 										   }
@@ -2443,7 +2443,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 										   }
 										   else if (isNeedPlay(p->tagetId, p->callType) && p->srcId != CONFIG_LOCAL_RADIO_ID)
 										   {
-											   sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+											   sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d", __FILE__, __LINE__);
 											   sendLogToWindow();
 											   SetCallStatus(CALL_IDLE);
 											   wlCall(p->callType, p->srcId, p->tagetId, OPERATE_CALL_END, p->getBoolPlay());
@@ -2622,7 +2622,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 									  {
 															   if (isNeedPlay(tgtId, p->callType))
 															   {
-																   sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+																   sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d", __FILE__, __LINE__);
 																   sendLogToWindow();
 																   SetCallStatus(CALL_IDLE);
 															   }
@@ -2635,7 +2635,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 																   {
 																	   //if (p->sourceID == CONFIG_LOCAL_RADIO_ID)
 																	   //{
-																		   //wlCallStatus(p->callType, p->sourceID, p->targetID, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+																	   //wlCallStatus(p->callType, p->sourceID, p->targetID, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
 																	   //}
 																	   //else 
 																	   if (isNeedPlay(tgtId, p->callType) && p->sourceID != CONFIG_LOCAL_RADIO_ID)
@@ -2652,7 +2652,7 @@ void CWLNet::Process_WL_BURST_CALL(char wirelineOpCode, void  *pNetWork)
 																	   releaseVoiceReocrdsLock();
 																	   if (p->sourceID == CONFIG_LOCAL_RADIO_ID)
 																	   {
-																		   sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+																		   sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d", __FILE__, __LINE__);
 																		   sendLogToWindow();
 																		   SetCallStatus(CALL_IDLE);
 																	   }
@@ -4108,7 +4108,7 @@ void CWLNet::Net_WAITFOR_XNL_XCMP_READ_SERIAL_RESULT(DWORD eventIndex)
 			if ((m_CurrentRecvBuffer.buf[0] == LE_XNL) && (m_CurrentRecvBuffer.buf[8] == 0X0B) && (m_CurrentRecvBuffer.buf[20] == 0X0E))
 			{
 				memcpy(m_MasterSerial, m_CurrentRecvBuffer.buf + 23, 11);
-				memcpy((unsigned char*)repeaterSerial.c_str(), m_MasterSerial,11);
+				memcpy((unsigned char*)repeaterSerial.c_str(), m_MasterSerial, 11);
 				wlSendSerial();
 				//bool result = GetLic(m_MasterSerial);
 				int licenseResult;
@@ -5243,57 +5243,57 @@ void PASCAL CWLNet::OneMilliSecondProc(UINT wTimerID, UINT msg, DWORD dwUser, DW
 	{
 	case SEND_TYPE_MIC:
 	{
-						   if (!g_bPTT
-							   && p->m_sendVoices.size() <= 0)
-						   {
-							   /*关闭timer*/
-							   timeKillEvent(wTimerID);
-							   p->m_bIsSending = false;
+						  if (!g_bPTT
+							  && p->m_sendVoices.size() <= 0)
+						  {
+							  /*关闭timer*/
+							  timeKillEvent(wTimerID);
+							  p->m_bIsSending = false;
 
-							   sprintf_s(p->m_reportMsg, "PTT Release and SendVoices size is smaller than zero");
-							   p->sendLogToWindow();
-						   }
-						   else if (p->m_sendVoices.size() <= 0)
-						   {
-							   /*关闭timer*/
-							   timeKillEvent(wTimerID);
-							   p->m_bIsSending = false;
-							   p->handleCallTimeOut();
-						   }
-						   else
-						   {
-							   p->NetWorker_SendCallByWL();
-							   //if (p->m_sendVoices.size() < 1)
-							   //{
-								   //REMOTE_TASK *p = new REMOTE_TASK;
-								   //memset(p, 0, sizeof(REMOTE_TASK));
-								   //p->cmd = REMOTE_CMD_STOP_CALL;
-								   //push_back_task(p);
-							   //}
-						   }
+							  sprintf_s(p->m_reportMsg, "PTT Release and SendVoices size is smaller than zero");
+							  p->sendLogToWindow();
+						  }
+						  else if (p->m_sendVoices.size() <= 0)
+						  {
+							  /*关闭timer*/
+							  timeKillEvent(wTimerID);
+							  p->m_bIsSending = false;
+							  p->handleCallTimeOut();
+						  }
+						  else
+						  {
+							  p->NetWorker_SendCallByWL();
+							  //if (p->m_sendVoices.size() < 1)
+							  //{
+							  //REMOTE_TASK *p = new REMOTE_TASK;
+							  //memset(p, 0, sizeof(REMOTE_TASK));
+							  //p->cmd = REMOTE_CMD_STOP_CALL;
+							  //push_back_task(p);
+							  //}
+						  }
 	}
 		break;
 	case SEND_TYPE_FILE:
 	{
 						   //invalid switch,do nothing
-						  /*用户松开了PTT并且已发送完毕待发送数据*/
-						  //if (!g_bPTT
-							  //&& p->m_readySendVoices.size() <= 0)
-						  //{
-							  /*关闭timer*/
-							  //timeKillEvent(wTimerID);
-							  /*重置flag*/
-							  //p->m_bIsSending = false;
+						   /*用户松开了PTT并且已发送完毕待发送数据*/
+						   //if (!g_bPTT
+						   //&& p->m_readySendVoices.size() <= 0)
+						   //{
+						   /*关闭timer*/
+						   //timeKillEvent(wTimerID);
+						   /*重置flag*/
+						   //p->m_bIsSending = false;
 
-							  //sprintf_s(p->m_reportMsg, "m_readySendVoices send out end");
-							  //p->sendLogToWindow();
-						  //}
-						  /*发送数据*/
-						  //else
-						  //{
-							  //p->NetWorker_TxIfCall();
-							  //p->NetWorker_SendFile();
-						  //}
+						   //sprintf_s(p->m_reportMsg, "m_readySendVoices send out end");
+						   //p->sendLogToWindow();
+						   //}
+						   /*发送数据*/
+						   //else
+						   //{
+						   //p->NetWorker_TxIfCall();
+						   //p->NetWorker_SendFile();
+						   //}
 	}
 		break;
 	default:
@@ -5582,7 +5582,7 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			}
 			if (!requestCallSuccess)
 			{
-				sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+				sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d", __FILE__, __LINE__);
 				sendLogToWindow();
 				SetCallStatus(CALL_IDLE);
 				clearSendVoices();
@@ -5722,7 +5722,7 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			}
 			if (!requestCallSuccess)
 			{
-				sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+				sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d", __FILE__, __LINE__);
 				sendLogToWindow();
 				SetCallStatus(CALL_IDLE);
 				clearSendVoices();
@@ -6511,7 +6511,7 @@ int CWLNet::newCall()
 			}
 			if (!requestCallSuccess)
 			{
-				sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+				sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d", __FILE__, __LINE__);
 				sendLogToWindow();
 				SetCallStatus(CALL_IDLE);
 				sprintf_s(m_reportMsg, "new call failure:%s", g_callRequstDeclineReasonCodeInfo.ReasonCode);
@@ -6556,7 +6556,7 @@ int CWLNet::newCall()
 			}
 			if (!requestCallSuccess)
 			{
-				sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+				sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d", __FILE__, __LINE__);
 				sendLogToWindow();
 				SetCallStatus(CALL_IDLE);
 				sprintf_s(m_reportMsg, "new call failure:%s", g_callRequstDeclineReasonCodeInfo.ReasonCode);
@@ -6598,7 +6598,7 @@ int CWLNet::newCall()
 			}
 			if (!requestCallSuccess)
 			{
-				sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+				sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d", __FILE__, __LINE__);
 				sendLogToWindow();
 				SetCallStatus(CALL_IDLE);
 				sprintf_s(m_reportMsg, "new call failure:%s", g_callRequstDeclineReasonCodeInfo.ReasonCode);
@@ -7525,7 +7525,7 @@ int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned l
 {
 	int cmd = 0;
 	//m_pManager->lockCurTask();
-	m_pManager->getCurrentTaskInfo(srcId,sessionid, cmd);
+	m_pManager->getCurrentTaskInfo(srcId, sessionid, cmd);
 	//m_pManager->unLockCurTask();
 
 	int clientCallType = 0;
@@ -7642,7 +7642,7 @@ int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned l
 	return 0;
 }
 
-int CWLNet::wlCallStatus(REMOTE_TASK *p,int status)
+int CWLNet::wlCallStatus(REMOTE_TASK *p, int status)
 {
 	if (p == NULL) return 1;
 	unsigned char callType = p->param.info.callParam.operateInfo.callType;
@@ -7745,6 +7745,44 @@ int CWLNet::wlCallStatus(REMOTE_TASK *p,int status)
 
 void CWLNet::setWlStatus(WLStatus value)
 {
+
+	if (value > WAITFOR_XNL_XCMP_READ_SERIAL_RESULT)
+	{
+		if (m_pManager)
+		{
+			m_pManager->setDeviceInfoStatus(WL_SERIL_SUC);
+			m_pManager->setWireLanStatus(WL_REGISTER_SUC);
+			m_pManager->setLEStatus(WL_SYSTEM_CONNECT);
+		}
+	}
+	else if (value > WAITFOR_LE_NOTIFICATION_MAP_BROADCAST)
+	{
+		if (m_pManager)
+		{
+			m_pManager->setDeviceInfoStatus(WL_SERIL_FAL);
+			m_pManager->setWireLanStatus(WL_REGISTER_SUC);
+			m_pManager->setLEStatus(WL_SYSTEM_CONNECT);
+		}
+	}
+	else if (value > WAITFOR_MAP_REQUEST_TX)
+	{
+		if (m_pManager)
+		{
+			m_pManager->setDeviceInfoStatus(WL_SERIL_FAL);
+			m_pManager->setWireLanStatus(WL_REGISTER_FAL);
+			m_pManager->setLEStatus(WL_SYSTEM_CONNECT);
+		}
+	}
+	else
+	{
+		if (m_pManager)
+		{
+			m_pManager->setDeviceInfoStatus(WL_SERIL_FAL);
+			m_pManager->setWireLanStatus(WL_REGISTER_FAL);
+			m_pManager->setLEStatus(WL_SYSTEM_DISCONNECT);
+		}
+	}
+
 	FieldValue info(FieldValue::TInt);
 
 	if (m_WLStatus != value)
@@ -7864,7 +7902,7 @@ int CWLNet::wlCall(unsigned char callType, unsigned long source, unsigned long t
 	return 0;
 }
 
-int CWLNet::wlInfo(int getType, FieldValue info,std::string sessionid)
+int CWLNet::wlInfo(int getType, FieldValue info, std::string sessionid)
 {
 	if (!wlScheduleIsEnable())
 	{
@@ -8184,7 +8222,7 @@ int CWLNet::wlMnisSendGps(Respone data)
 	//args["Source"] = Source;
 	//args["Gps"] = Gps;
 	//args["SessionId"] = sessionid.c_str();
-	
+
 	FieldValue element(FieldValue::TObject);
 	element.setKeyVal("Lat", FieldValue(data.lat));
 	element.setKeyVal("Lon", FieldValue(data.lon));
@@ -8393,7 +8431,7 @@ void CWLNet::handleCallTimeOut()
 		g_bPTT = FALSE;
 	}
 	releaseRecordEndEvent();
-	sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d",__FILE__, __LINE__);
+	sprintf_s(m_reportMsg, "set CALL_IDLE at %s %d", __FILE__, __LINE__);
 	sendLogToWindow();
 	SetCallStatus(CALL_IDLE);
 	Sleep(500);
@@ -8439,7 +8477,7 @@ void CWLNet::send2Client(char* actionName, ArgumentType args)
 void CWLNet::getSessionStatusList(FieldValue &value)
 {
 	std::lock_guard <std::mutex> locker(m_mutexSessionStatusLst);
-	std::map<std::string,int>::iterator it;
+	std::map<std::string, int>::iterator it;
 	for (it = m_sessionStatusMp.begin(); it != m_sessionStatusMp.end(); it++)
 	{
 		FieldValue element(FieldValue::TObject);
@@ -8455,7 +8493,7 @@ void CWLNet::clearSessionStatusList()
 	m_sessionStatusMp.clear();
 }
 
-void CWLNet::addSessionStatus(std::string sessionid,int status)
+void CWLNet::addSessionStatus(std::string sessionid, int status)
 {
 	if (0 == sessionid.length()) return;
 	std::lock_guard <std::mutex> locker(m_mutexSessionStatusLst);
@@ -8469,7 +8507,7 @@ void CWLNet::addSendVoiceFrame()
 }
 
 void CWLNet::calibrationCallID(SlotNumber_e slot)
-{	
+{
 	//requireReadySendVoicesLock();
 	std::lock_guard<std::mutex> locker(m_mutexReadySendVoices);
 	for (auto i = m_sendVoices.begin(); i != m_sendVoices.end(); i++)

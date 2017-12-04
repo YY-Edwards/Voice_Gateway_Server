@@ -86,6 +86,24 @@ public:
 	void getCurrentTaskInfo(int srcId, std::string &sessionid, int &cmd);
 	/*当前正在的处理的任务锁*/
 	std::mutex m_mutexCurTask;
+
+	int DongCount();
+	void setDongleCount(int value);
+
+	int MicphoneStatus();
+	void setMicphoneStatus(int value);
+
+	int SpeakerStatus();
+	void setSpeakerStatus(int value);
+
+	int LEStatus();
+	void setLEStatus(int value);
+
+	int WireLanStatus();
+	void setWireLanStatus(int value);
+
+	int DeviceInfoStatus();
+	void setDeviceInfoStatus(int value);
 private:
 	PLogReport m_report;
 	//HWND m_hwnd;
@@ -111,6 +129,12 @@ private:
 	CDataScheduling* m_pMnis;
 	UINT m_idTaskOnTimerProc;
 	bool m_bNeedStopCall;
+	int m_dongleCount;//当期dongle数量
+	int m_micphoneStatus;//麦克风是否连接成功
+	int m_speakerStatus;//扬声器是否连接成功
+	int m_lEStatus;//LE是否连接成功
+	int m_wireLanStatus;//wirelan是否注册成功
+	int m_deviceInfoStatus;//序列号是否更新
 
 	static unsigned __stdcall HandleRemoteTaskProc(void * pThis);
 	/*判断当前任务超时线程*/
@@ -124,6 +148,7 @@ private:
 	/*free current task*/
 	void freeCurrentTask();
 	bool isSameSessionId(std::string sessionId, REMOTE_TASK* p);
+	void initialize();
 };
 
 

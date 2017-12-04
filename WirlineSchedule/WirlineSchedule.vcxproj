@@ -183,6 +183,7 @@
     <ClInclude Include="targetver.h" />
     <ClInclude Include="Tool.h" />
     <ClInclude Include="VoiceDefs.h" />
+    <ClInclude Include="WDK_VidPidQuery.h" />
     <ClInclude Include="WLNet.h" />
     <ClInclude Include="WLRecord.h" />
     <ClInclude Include="WLRecordFile.h" />
@@ -209,6 +210,7 @@
     <ClCompile Include="Manager.cpp" />
     <ClCompile Include="MySQL.cpp" />
     <ClCompile Include="RecorderServer.cpp" />
+    <ClCompile Include="WDK_VidPidQuery.cpp" />
     <ClCompile Include="WirlineSchedule.cpp" />
     <ClCompile Include="SerialDongle.cpp" />
     <ClCompile Include="SHA1.cpp" />
