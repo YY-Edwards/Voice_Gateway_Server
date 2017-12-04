@@ -664,10 +664,10 @@ DWORD WINAPI CBroker::clientConnectStatusThread(LPVOID lpParam)
 }
 void CBroker::clientConnectStatus()
 {
-	std::lock_guard <std::mutex> wlocker(sendLock);
+	
 	while (isStart)
 	{
-		
+		std::lock_guard <std::mutex> wlocker(sendLock);
 		setSystemStatus();
 		int isCurrentWlStatus = 1;
 		int isCurrentDispatchStatus = 1;
