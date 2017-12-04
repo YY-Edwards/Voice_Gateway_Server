@@ -614,6 +614,7 @@ void CBroker::setDeviceStatus(bool device, bool mnis)
 //}
 void CBroker::sendSystemStatusToClient(std::string  sessionId, CRemotePeer* pRemote, uint64_t callId)
 {
+	std::lock_guard <std::mutex> wlocker(sendLock);
 	ArgumentType args;
 	if (sessionId != "")
 	{

@@ -151,6 +151,7 @@ private:
 	bool isLastRadioConnectStatus;
 	bool isLastMnisConnectStatus;
 	void clientConnectStatus();
+	std::mutex    sendLock;
 	
 };
 
