@@ -172,6 +172,7 @@ private:
 	void clientConnectStatus();
 	std::mutex    sendLock;
 	std::mutex    DeviceStatusLock;
+	std::mutex    threadLock;
 	
 };
 

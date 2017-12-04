@@ -62,7 +62,7 @@ CBroker::CBroker()
 	isLastSpeakerStatus = 1;
 	isLastLEStatus=1;
 	isLastWireLanStatus = 1;
-	clientConnectStatus();
+
 }
 
 
@@ -628,7 +628,7 @@ void CBroker::setDeviceStatus(bool device, bool mnis)
 //}
 void CBroker::sendSystemStatusToClient(std::string  sessionId, CRemotePeer* pRemote, uint64_t callId)
 {
-	std::lock_guard <std::mutex> wlocker(sendLock);
+	//std::lock_guard <std::mutex> wlocker(sendLock);
 	ArgumentType args;
 	if (sessionId != "")
 	{
@@ -664,8 +664,10 @@ DWORD WINAPI CBroker::clientConnectStatusThread(LPVOID lpParam)
 }
 void CBroker::clientConnectStatus()
 {
+	std::lock_guard <std::mutex> wlocker(sendLock);
 	while (isStart)
 	{
+		
 		setSystemStatus();
 		int isCurrentWlStatus = 1;
 		int isCurrentDispatchStatus = 1;
