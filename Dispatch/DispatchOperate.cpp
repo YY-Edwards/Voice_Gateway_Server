@@ -7,6 +7,7 @@ DispatchOperate::DispatchOperate()
 	isTcpConnect = false;
 	pDs = new CDataScheduling();
 	pTs = new CTcpScheduling();
+	serial = "";
 }
 
 DispatchOperate::~DispatchOperate()
@@ -647,6 +648,8 @@ void DispatchOperate::send2Client( char* name, ArgumentType args)
 
 void DispatchOperate::connect(radio_t radioCfg, mnis_t mnisCfg, location_t locationCfg, locationindoor_t locationIndoorCfg)
 {
+	m_radioCfg = radioCfg;
+	m_mnisCfg = mnisCfg;
 	if (!mnisCfg.IsEnable)
 	{
 		mnisCfg.ID = radioCfg.ID;
@@ -745,6 +748,56 @@ void DispatchOperate::getStatus( int type,std::string sessionId)
 		//pDs->getRadioStatus(type, sessionId);
 		//pTs->getSessionStatus(sessionId);
 		sendSessIonStatus(sessionId);
+		break;
+	case SYSTEM_STATUS:
+		args["getType"] = SYSTEM_STATUS;
+
+		FieldValue element(FieldValue::TObject);
+		if (m_mnisCfg.IsEnable)
+		{ 
+			if (isUdpConnect)
+			{
+				element.setKeyVal("MnisStatus", FieldValue(0));
+			}
+			else
+			{
+				element.setKeyVal("MnisStatus", FieldValue(1));
+			}
+			
+		}
+		else
+		{
+			element.setKeyVal("MnisStatus", FieldValue(1));
+		}
+		if (m_radioCfg.IsEnable)
+		{
+			if (isUdpConnect)
+			{
+				element.setKeyVal("DeviceStatus", FieldValue(0));
+			}
+			else
+			{
+				element.setKeyVal("DeviceStatus", FieldValue(1));
+			}
+		}
+		else
+		{
+			element.setKeyVal("DeviceStatus", FieldValue(1));
+		}
+		
+	
+		if (serial != "")
+		{
+			element.setKeyVal("DeviceInfoStatus", FieldValue(0));
+		}
+		else
+		{
+			element.setKeyVal("DeviceInfoStatus", FieldValue(1));
+		}
+		
+		args["info"] = FieldValue(element);
+		args["SessionId"] = FieldValue(sessionId.c_str());
+		dis.send2Client("status", args);
 		break;
 	}
 }

@@ -54,5 +54,8 @@ private:
 	std::list<SessionStatus>  sessionStatusList;
 	
 	void sendSessIonStatus(std::string sessionId);
+	std::string serial;
+	radio_t m_radioCfg;
+	mnis_t m_mnisCfg;
 };
 
