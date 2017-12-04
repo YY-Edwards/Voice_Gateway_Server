@@ -46,7 +46,7 @@ namespace Dispatcher.Service
             if (operate.Opcode == RequestOpcode.status || operate.Opcode == RequestOpcode.wlInfo)
            {
                StatusParameter statusParameter = operate.Parameter as StatusParameter;
-               if(statusParameter.getType == (long)StatusType_t.ConnectStatus)
+               if(statusParameter.getType == (long)StatusType_t.GlobalStatus)
                {
                    ServerStatus.Instance().SetWaitStatus(true);
                }             
@@ -57,7 +57,7 @@ namespace Dispatcher.Service
             if (operate.Opcode == RequestOpcode.status || operate.Opcode == RequestOpcode.wlInfo)
             {
                 StatusParameter statusParameter = operate.Parameter as StatusParameter;
-                if (statusParameter.getType == (long)StatusType_t.ConnectStatus)
+                if (statusParameter.getType == (long)StatusType_t.GlobalStatus)
                 {
                     ServerStatus.Instance().SetWaitStatus(false);
                 }
@@ -68,7 +68,7 @@ namespace Dispatcher.Service
             if (operate.Opcode == RequestOpcode.status || operate.Opcode == RequestOpcode.wlInfo)
             {
                 StatusParameter statusParameter = operate.Parameter as StatusParameter;
-                if (statusParameter.getType == (long)StatusType_t.ConnectStatus)
+                if (statusParameter.getType == (long)StatusType_t.GlobalStatus)
                 {
                     ServerStatus.Instance().SetWaitStatus(false);
                 }
@@ -251,6 +251,13 @@ namespace Dispatcher.Service
             Request(opcode, param, false);
         }
 
+        public void GetGlobalStatus(bool isSession = true)
+        {
+             RequestOpcode opcode = _type == RequestType.radio ? RequestOpcode.status : RequestOpcode.wlInfo;
+             var param = new StatusParameter() { getType = (long)StatusType_t.GlobalStatus };
+             Request(opcode, param, isSession);           
+        }
+
         private void OnStatusUpdate(string parameter)
         {
             if (parameter == null || parameter == "") return;
@@ -273,6 +280,8 @@ namespace Dispatcher.Service
                 if (_status.getType == (long)StatusType_t.ConnectStatus) OnConnectStatus((_status.info.ToString()).ToLong());
                 else if (_status.getType== (long)StatusType_t.OnLineList) OnOnLineList(JsonConvert.DeserializeObject<List<OnLineStatus_t>>(JsonConvert.SerializeObject(_status.info)));
                 else if (_status.getType == (long)StatusType_t.SessionStatus) OnSessionStatus(JsonConvert.DeserializeObject<List<SessonStatus>>(JsonConvert.SerializeObject(_status.info)));
+                else if (_status.getType == (long)StatusType_t.GlobalStatus) OnGlobalStatus(JsonConvert.DeserializeObject<GlobalStatus>(JsonConvert.SerializeObject(_status.info)));
+
             }
             catch(Exception ex)
             {
@@ -324,6 +333,12 @@ namespace Dispatcher.Service
                 if (session.IsSuccess)OperateCompleted(session.Id);
                 else OperateFailure(session.Id, Status.Timeout);               
             }
+        }
+
+        private void OnGlobalStatus(GlobalStatus status)
+        {
+            ServerStatus.Instance().SetWaitStatus(false);
+            ServerStatus.Instance().SetGlobalStatus(status);
         }
 
         public event CallRequestHandler CallRequest;
@@ -871,6 +886,7 @@ namespace Dispatcher.Service
         ConnectStatus = 1,
         OnLineList = 2,
         SessionStatus = 3,
+        GlobalStatus = 4,
     }
 
     public class OnLineStatus_t

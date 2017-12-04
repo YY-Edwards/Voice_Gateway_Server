@@ -11,7 +11,7 @@
     xmlns:local="clr-namespace:Dispatcher.Views" 
     x:Name="baseWindow"
     x:Class="Dispatcher.Views.OperationWindow"
-        Title="OperationWindow" Height="610" Width="920"
+        Title="{Binding Target.FullName, ElementName=baseWindow}" Height="610" Width="920"
         Style="{DynamicResource TrboxWindowStyle}" ShadowMargin="10" Background="{DynamicResource AppBackground}" BorderBrush="{DynamicResource PanelBorderBrush}" BorderThickness="1">
     <Windows:BaseWindow.Resources>
         <svr:CNVBoolVisible x:Key="CNVBoolVisible" />

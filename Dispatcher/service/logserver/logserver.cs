@@ -17,8 +17,8 @@ namespace Dispatcher.Service
     {
         private CTcpClient s_Tcp;
 
-        private string m_Host = "127.0.0.1";
-        //private string m_Host = "192.168.2.115";
+        //private string m_Host = "127.0.0.1";
+        private string m_Host = "192.168.2.128";
         private int m_Port = 9003;
 
         private long s_CallID = 0;
@@ -62,8 +62,58 @@ namespace Dispatcher.Service
 
         private CLogServer() :base(0,3000,3)
         {
-
+            this.OnReceiveRequest += new ReceiveRequestHandele(OnLogServerReceiveRequest); 
         }
+
+        private void OnLogServerReceiveRequest(RequestOpcode call, object param)
+        {
+            switch(call)
+            {
+                case RequestOpcode.status:
+                case RequestOpcode.wlInfo:
+                    if (param != null) OnStatusUpdate(JsonConvert.SerializeObject(param));
+                    break;
+            }        
+        }
+
+        public void GetGlobalStatus()
+        {
+            RequestOpcode opcode = RequestOpcode.status;
+            var param = new StatusParameter() { getType = (long)StatusType_t.GlobalStatus };
+            Request(opcode, param);
+        }
+        private void OnStatusUpdate(string parameter)
+        {
+            if (parameter == null || parameter == "") return;
+            StatusParameter _status = null;
+
+            try
+            {
+                _status = JsonConvert.DeserializeObject<StatusParameter>(parameter);
+            }
+            catch
+            {
+                //WARNING("Parse  RadioStatusParam Error");
+                return;
+            }
+
+            if (_status == null) return;
+
+            try
+            {
+                if (_status.getType == (long)StatusType_t.GlobalStatus) OnGlobalStatus(JsonConvert.DeserializeObject<GlobalStatus>(JsonConvert.SerializeObject(_status.info)));
+            }
+            catch
+            {
+                //WARNING(ex);
+            }
+        }
+
+        private void OnGlobalStatus(GlobalStatus status)
+        {
+            ServerStatus.Instance().SetDatabaseStatus(status);
+        }
+
         public void Initialize()
         {
             if (!s_IsInitialized)
@@ -154,6 +204,8 @@ namespace Dispatcher.Service
             {
             }
         }
+
+
 
         private string BuildJson(RequestOpcode call, object param)
         {

@@ -259,8 +259,10 @@ namespace Dispatcher.ViewsModules
             {
                 if (m_TServerConnected && _dispatcher != null)
                 {
-                    _dispatcher.GetStatus(_isFirstUpdateStatus);
-                    _dispatcher.GetOnlineList(_isFirstUpdateStatus);
+                    _dispatcher.GetStatus(false);
+                    _dispatcher.GetOnlineList(false);
+                    _dispatcher.GetGlobalStatus(_isFirstUpdateStatus);
+                    CLogServer.Instance().GetGlobalStatus();
                     _isFirstUpdateStatus = false;
 
                     if (!ServerStatus.Instance().VoiceBusiness.IsConnected || !ServerStatus.Instance().DataBusiness.IsConnected)
@@ -285,8 +287,7 @@ namespace Dispatcher.ViewsModules
             {
                 if (m_TServerConnected && _dispatcher != null)
                 {
-                    _dispatcher.GetSessionStatus();
-                   
+                    _dispatcher.GetSessionStatus();                 
                 }
 
                 Thread.Sleep(FunctionConfigure.TimeoutSeconds * 1000);

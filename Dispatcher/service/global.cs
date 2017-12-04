@@ -13,12 +13,12 @@ namespace Dispatcher.Service
     {
         public enum Mode_t
         {
-            UnKnown,
-            Repeater,
-            RepeaterWithMnis,
-            VehicleStation,
-            VehicleStationWithMnis,
-            Debug,
+            UnKnown =0 ,
+            Repeater = 3,
+            RepeaterWithMnis = 4,
+            VehicleStation = 1,
+            VehicleStationWithMnis = 2,
+            Debug = 5,
         }
 
         public enum FeaturesType_t

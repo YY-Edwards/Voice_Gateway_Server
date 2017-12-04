@@ -1,34 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-
-using System.Windows;
+﻿using Dispatcher.Modules;
+using Dispatcher.Service;
+using Sigmar;
+using Sigmar.Logger;
+using System;
 using System.ComponentModel;
-using System.Windows.Input;
-using System.Windows.Controls;
-
 using System.Diagnostics;
 using System.IO;
-
-using Sigmar;
-using Sigmar.Extension;
-using Dispatcher.Views;
-using Dispatcher.Service;
-using Dispatcher.Modules;
-
-
+using System.Linq;
 using System.Threading;
-
-using Sigmar.Logger;
-
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Dispatcher.ViewsModules
 {
     public class VMLogin : INotifyPropertyChanged
     {
-
         public event EventHandler OnLoginOK;
+
         public event EventHandler InitializeCompleted;
 
         private string _info;
@@ -38,25 +26,31 @@ namespace Dispatcher.ViewsModules
         public string InitilizeContents { get { return initilizeContents; } set { initilizeContents = value; NotifyPropertyChanged("InitilizeContents"); } }
 
         private bool _initilizeCanClose = false;
-        public bool InitilizeCanClose { get{return _initilizeCanClose;} private set{_initilizeCanClose = value; NotifyPropertyChanged("InitilizeCanClose");} }
+        public bool InitilizeCanClose { get { return _initilizeCanClose; } private set { _initilizeCanClose = value; NotifyPropertyChanged("InitilizeCanClose"); } }
 
-        public ICommand CloseInitilize { get { return new Command(() => {
-            Environment.Exit(0);
-        }); } }
+        public ICommand CloseInitilize
+        {
+            get
+            {
+                return new Command(() =>
+                {
+                    Environment.Exit(0);
+                });
+            }
+        }
 
-        private void  AddInitilizeContents(string content)
+        private void AddInitilizeContents(string content)
         {
             if (this.InitilizeContents == "") InitilizeContents = content;
             else InitilizeContents += "\r\n" + content;
         }
 
-        public string UserName { get; set;}
+        public string UserName { get; set; }
         private Semaphore _waitlogin;
 
         public ICommand Loaded { get { return new Command(LoadedExec); } }
 
-
-        private CUserMgr _user ;
+        private CUserMgr _user;
         private CRegister _register;
 
         private CBaseSetting _base;
@@ -66,11 +60,10 @@ namespace Dispatcher.ViewsModules
         private CMnisSetting _mnis;
         private CLocationSetting _location;
         private CLocationInDoorSetting _locationInDoor;
-             
+
         private void LoadedExec(object parameter)
         {
             InitilizeCanClose = false;
-
 
             if (_user == null)
             {
@@ -84,8 +77,6 @@ namespace Dispatcher.ViewsModules
                 _register.OnQuery += new CRegister.OnRegiserHandle(OnQuery);
                 _register.Timeout += new EventHandler(OnTimeout);
             }
-
-           
 
             if (_base == null)
             {
@@ -101,37 +92,36 @@ namespace Dispatcher.ViewsModules
                 _vehiclestation.Timeout += new EventHandler(OnTimeout);
             }
 
-             if (_repeater == null)
+            if (_repeater == null)
             {
                 _repeater = new CRepeaterSetting();
                 _repeater.OnConfigurationChanged += new CConfiguration.ConfigurationChangedHandle(OnConfigurationChanged);
                 _repeater.Timeout += new EventHandler(OnTimeout);
             }
 
-             if (_mnis == null)
+            if (_mnis == null)
             {
                 _mnis = new CMnisSetting();
                 _mnis.OnConfigurationChanged += new CConfiguration.ConfigurationChangedHandle(OnConfigurationChanged);
                 _mnis.Timeout += new EventHandler(OnTimeout);
             }
 
-             if (_location == null)
+            if (_location == null)
             {
                 _location = new CLocationSetting();
                 _location.OnConfigurationChanged += new CConfiguration.ConfigurationChangedHandle(OnConfigurationChanged);
                 _location.Timeout += new EventHandler(OnTimeout);
             }
 
-             if (_locationInDoor == null)
+            if (_locationInDoor == null)
             {
                 _locationInDoor = new CLocationInDoorSetting();
                 _locationInDoor.OnConfigurationChanged += new CConfiguration.ConfigurationChangedHandle(OnConfigurationChanged);
                 _locationInDoor.Timeout += new EventHandler(OnTimeout);
             }
-           
+
             StartMonitorServer();
             Log.Debug("StartUp Monitor.");
-
 
             new System.Threading.Tasks.Task(ConnectServer).Start();
         }
@@ -154,7 +144,6 @@ namespace Dispatcher.ViewsModules
             }
         }
 
-
         private void OnTimeout(object sender, EventArgs e)
         {
             _issuccess = false;
@@ -165,13 +154,14 @@ namespace Dispatcher.ViewsModules
             {
                 _waitlogin.Release();
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 Log.Warning("Release Semaphore Failure", ex);
             }
         }
 
         public ICommand Login { get { return new Command(LoginExec); } }
+
         private void LoginExec(object parameter)
         {
             Info = "";
@@ -183,7 +173,6 @@ namespace Dispatcher.ViewsModules
                 return;
             }
 
-
             if (parameter == null || !(parameter is PasswordBox)) return;
 
             PasswordBox psdbox = parameter as PasswordBox;
@@ -192,8 +181,8 @@ namespace Dispatcher.ViewsModules
             LoginAPP(UserName, psd);
         }
 
-
         private bool _issuccess = true;
+
         private void OnLoginResult(LoginResultArgs e)
         {
             _issuccess = e.IsSuccess;
@@ -204,22 +193,23 @@ namespace Dispatcher.ViewsModules
             }
             _waitlogin.Release();
         }
+
         private void OnQuery(bool success, CRegister res)
         {
-             _issuccess =success;
-             if (!_issuccess)
-             {
-                 Info = "软件验证失败";
-                 AddInitilizeContents("软件验证失败...");
-                 Log.Error("Login Failure, Unregister");
-             }
+            _issuccess = success;
+            if (!_issuccess)
+            {
+                Info = "软件验证失败";
+                AddInitilizeContents("软件验证失败...");
+                Log.Error("Login Failure, Unregister");
+            }
             _waitlogin.Release();
         }
 
         private void OnConfigurationChanged(SettingType type, object config)
         {
             if (type == SettingType.Base)
-            {              
+            {
                 CBaseSetting setting = config as CBaseSetting;
                 if (setting != null)
                 {
@@ -227,17 +217,17 @@ namespace Dispatcher.ViewsModules
                     FunctionConfigure.SetBaseSetting(setting);
                 }
             }
-            else if(type == SettingType.Radio)
+            else if (type == SettingType.Radio)
             {
                 CRadioSetting setting = config as CRadioSetting;
                 if (setting != null)
                 {
                     AddInitilizeContents("读取车载台配置信息完成...");
                     FunctionConfigure.SetRadioSetting(setting);
-                    ServerStatus.Instance().VehicleStation = new ServerStatus.ServerStatus_t(setting.Ride.Host, setting.Ride.MessagePort, false);                
+                    ServerStatus.Instance().VehicleStation = new ServerStatus.ServerStatus_t(setting.Ride.Host, setting.Ride.MessagePort, false);
                 }
             }
-            else if(type == SettingType.Repeater)
+            else if (type == SettingType.Repeater)
             {
                 CRepeaterSetting setting = config as CRepeaterSetting;
                 if (setting != null)
@@ -247,7 +237,7 @@ namespace Dispatcher.ViewsModules
                     ServerStatus.Instance().Repeater = new ServerStatus.ServerStatus_t(setting.Master.Ip, setting.Master.Port, false);
                 }
             }
-            else if(type == SettingType.Mnis)
+            else if (type == SettingType.Mnis)
             {
                 CMnisSetting setting = config as CMnisSetting;
                 if (setting != null)
@@ -257,9 +247,8 @@ namespace Dispatcher.ViewsModules
                     ServerStatus.Instance().Mnis = new ServerStatus.ServerStatus_t(setting.Host, setting.MessagePort, false);
                 }
             }
-            else if(type == SettingType.Location)
+            else if (type == SettingType.Location)
             {
-
                 CLocationSetting setting = config as CLocationSetting;
                 if (setting != null)
                 {
@@ -277,11 +266,8 @@ namespace Dispatcher.ViewsModules
                 }
             }
 
-
             _waitlogin.Release();
         }
-
-  
 
         private void LoginAPP(string uid, string psd)
         {
@@ -295,16 +281,14 @@ namespace Dispatcher.ViewsModules
 
             new Thread(new ThreadStart(delegate()
             {
-
                 _waitlogin = new Semaphore(0, 1);
 
-
-                //_user.Auth(uid, psd);
-                //_waitlogin.WaitOne();
-                //if (!_issuccess)
-                //{
-                //    return;
-                //}
+                _user.Auth(uid, psd);
+                _waitlogin.WaitOne();
+                if (!_issuccess)
+                {
+                    return;
+                }
 
                 if (OnLoginOK != null) OnLoginOK(this, new EventArgs());
 
@@ -324,8 +308,7 @@ namespace Dispatcher.ViewsModules
                     AddInitilizeContents("获取注册信息失败...");
                     InitilizeCanClose = true;
                     return;
-                } 
-
+                }
 
                 if (!ReadSetting())
                 {
@@ -333,7 +316,6 @@ namespace Dispatcher.ViewsModules
                     InitilizeCanClose = true;
                     return;
                 }
-
 
                 FunctionConfigure.InitilizeSystemConfiguration();
 
@@ -346,10 +328,8 @@ namespace Dispatcher.ViewsModules
                 AddInitilizeContents("初始化完成...");
 
                 if (InitializeCompleted != null) InitializeCompleted(this, new EventArgs());
-
             })).Start();
         }
-
 
         private bool ReadSetting()
         {
@@ -387,6 +367,7 @@ namespace Dispatcher.ViewsModules
 
         private bool m_LogServerConnected = false;
         private bool m_TServerConnected = false;
+
         private void InitializeTServer()
         {
             if (!CTServer.Instance().IsInitialized)
@@ -410,9 +391,9 @@ namespace Dispatcher.ViewsModules
 
         private void OnTServerChanged(bool isinit)
         {
-            Log.Info(String.Format("TServer Status:{0}", isinit ? "Connected": "Disconnected"));
+            Log.Info(String.Format("TServer Status:{0}", isinit ? "Connected" : "Disconnected"));
             m_TServerConnected = isinit;
-            ServerStatus.Instance().TServer.SetHostAndPort(CTServer.Instance().Host, CTServer.Instance().Port);       
+            ServerStatus.Instance().TServer.SetHostAndPort(CTServer.Instance().Host, CTServer.Instance().Port);
             ServerStatus.Instance().TServer.SetStatus(m_TServerConnected);
         }
 
@@ -420,7 +401,7 @@ namespace Dispatcher.ViewsModules
         {
             Log.Info(String.Format("LogServer Status:{0}", isinit ? "Connected" : "Disconnected"));
             m_LogServerConnected = isinit;
-            ServerStatus.Instance().LogServer.SetHostAndPort(CLogServer.Instance().Host, CLogServer.Instance().Port);     
+            ServerStatus.Instance().LogServer.SetHostAndPort(CLogServer.Instance().Host, CLogServer.Instance().Port);
             ServerStatus.Instance().LogServer.SetStatus(m_LogServerConnected);
         }
 
@@ -455,6 +436,6 @@ namespace Dispatcher.ViewsModules
             }
         }
 
-        #endregion
+        #endregion INotifyPropertyChanged Members
     }
 }

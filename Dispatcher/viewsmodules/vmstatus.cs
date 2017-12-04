@@ -35,52 +35,72 @@ namespace Dispatcher.ViewsModules
         {
             get 
             {
-                if (_status == null || _status.TServer == null || !_status.TServer.IsConnected || _status.LogServer == null || !_status.LogServer.IsConnected) 
+                if (_status == null || _status.TServer == null || !_status.TServer.IsConnected || _status.LogServer == null || !_status.LogServer.IsConnected)
                     return "服务未连接";
+                else if (_status.SystemStatus == null)
+                {
+                    SetStatusWait(true);
+                    return "获取系统信息...";
+                }
                 else
                 {
-                    string status = "";
-                    switch (FunctionConfigure.WorkMode)
-                    {
-
-                        case FunctionConfigure.Mode_t.Debug:
-                            if (!_status.Repeater.IsConnected || !_status.VehicleStation.IsConnected || !_status.Mnis.IsConnected) return "设备未连接";
-                            else return "设备已连接";
-                        case FunctionConfigure.Mode_t.Repeater:
-                            return string.Format(
-                                "中继台{0}连接{1}", 
-                                _status.Repeater.IsConnected ? "已" : "未",
-                                _status.Repeater.IsConnected ?  string.Format("：{0}：{1}",_status.Repeater.Host, _status.Repeater.Port) : "");
-
-                        case FunctionConfigure.Mode_t.RepeaterWithMnis:
-                            return string.Format(
-                                "中继台{0}连接{1}\tMNIS{2}连接{3}",
-                                _status.Repeater.IsConnected ? "已" : "未",
-                                _status.Mnis.IsConnected ?string.Format("{0}：{1}", _status.Repeater.Host, _status.Repeater.Port) : "",
-                                _status.Mnis.IsConnected ? "已" : "未",
-                                _status.Mnis.IsConnected ? string.Format("{0}", _status.Mnis.Host) : ""  );
-
-                        case FunctionConfigure.Mode_t.VehicleStation:
-                            return string.Format(
-                                "车载台{0}连接{1}",
-                                _status.VehicleStation.IsConnected ? "已" : "未",
-                                _status.VehicleStation.IsConnected ? string.Format("：{0}", _status.VehicleStation.Host) : "");
-
-                        case FunctionConfigure.Mode_t.VehicleStationWithMnis:
-
-                            return string.Format(
-                               "车载台{0}连接{1}\tMNIS{2}连接{3}",
-                               _status.VehicleStation.IsConnected ? "已" : "未",
-                               _status.VehicleStation.IsConnected ? string.Format("{0}", _status.Repeater.Host) : "",
-                               _status.Mnis.IsConnected ? "已" : "未",
-                               _status.Mnis.IsConnected ? string.Format("{0}", _status.Mnis.Host) : "");                          
-                        default:
-                            return "离线模式";
-                    }
+                    SetStatusWait(false);
+                    return _status.SystemStatus.ToString();
                 }
+
+
+                //if (_status == null || _status.TServer == null || !_status.TServer.IsConnected || _status.LogServer == null || !_status.LogServer.IsConnected) 
+                //    return "服务未连接";
+                //else
+                //{
+                //    string status = "";
+                //    switch (FunctionConfigure.WorkMode)
+                //    {
+
+                //        case FunctionConfigure.Mode_t.Debug:
+                //            if (!_status.Repeater.IsConnected || !_status.VehicleStation.IsConnected || !_status.Mnis.IsConnected) return "设备未连接";
+                //            else return "设备已连接";
+                //        case FunctionConfigure.Mode_t.Repeater:
+                //            return string.Format(
+                //                "中继台{0}连接{1}", 
+                //                _status.Repeater.IsConnected ? "已" : "未",
+                //                _status.Repeater.IsConnected ?  string.Format("：{0}：{1}",_status.Repeater.Host, _status.Repeater.Port) : "");
+
+                //        case FunctionConfigure.Mode_t.RepeaterWithMnis:
+                //            return string.Format(
+                //                "中继台{0}连接{1}\tMNIS{2}连接{3}",
+                //                _status.Repeater.IsConnected ? "已" : "未",
+                //                _status.Mnis.IsConnected ?string.Format("{0}：{1}", _status.Repeater.Host, _status.Repeater.Port) : "",
+                //                _status.Mnis.IsConnected ? "已" : "未",
+                //                _status.Mnis.IsConnected ? string.Format("{0}", _status.Mnis.Host) : ""  );
+
+                //        case FunctionConfigure.Mode_t.VehicleStation:
+                //            return string.Format(
+                //                "车载台{0}连接{1}",
+                //                _status.VehicleStation.IsConnected ? "已" : "未",
+                //                _status.VehicleStation.IsConnected ? string.Format("：{0}", _status.VehicleStation.Host) : "");
+
+                //        case FunctionConfigure.Mode_t.VehicleStationWithMnis:
+
+                //            return string.Format(
+                //               "车载台{0}连接{1}\tMNIS{2}连接{3}",
+                //               _status.VehicleStation.IsConnected ? "已" : "未",
+                //               _status.VehicleStation.IsConnected ? string.Format("{0}", _status.Repeater.Host) : "",
+                //               _status.Mnis.IsConnected ? "已" : "未",
+                //               _status.Mnis.IsConnected ? string.Format("{0}", _status.Mnis.Host) : "");                          
+                //        default:
+                //            return "离线模式";
+                //    }
+                //}
             }
         }
 
+
+        public void UpdateGlobalStatus(GlobalStatus globalStatus)
+        {
+            _status.SystemStatus = globalStatus;
+            NotifyPropertyChanged("StatusContent");
+        }
         public Visibility ReconnectedVisible 
         {
             get 
