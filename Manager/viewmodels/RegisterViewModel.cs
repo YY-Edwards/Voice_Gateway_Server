@@ -59,7 +59,7 @@ namespace Manager.ViewModels
                 {
                     if (_licenseStatus.IsEver == 0)
                     {
-                        return string.Format("（认证成功,{0}前有效）", _licenseStatus.ExpirationTime.ToString("yyyy年Mm月dd日"));
+                        return string.Format("（认证成功,{0}前有效）", _licenseStatus.ExpirationTime.ToString("yyyy年MM月dd日"));
                     }
                     else
                     {
