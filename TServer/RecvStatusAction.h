@@ -18,26 +18,37 @@ void recvStatusAction(CRemotePeer* pRemote, const std::string& param, uint64_t c
 			int getType = d["getType"].GetInt();
 			if (getType == 1)
 			{
-				if (d.HasMember("info") && d["info"].IsInt())
+				if (type == "wl")
 				{
-					int info = d["info"].GetInt();
-					switch (info)
+					if (d.HasMember("info") && d["info"].IsInt())
 					{
-					case 0:
-						CBroker::instance()->setDeviceStatus(true,true);
-						break;
-					case 1:
-						CBroker::instance()->setDeviceStatus(false,true);
-						break;
-					case 2:
-						CBroker::instance()->setDeviceStatus(true,false);
-						break;
-					case 3:
-						CBroker::instance()->setDeviceStatus(false,false);
-						break;
+						CBroker::instance()->setDeviceStatusByType(System_MnisStatus, d["info"].GetInt());
 					}
-					//CBroker::instance()->sendSystemStatusToClient("", pRemote, callId);
 				}
+				else if (type == "radio")
+				{
+					if (d.HasMember("info") && d["info"].IsInt())
+					{
+						int info = d["info"].GetInt();
+						switch (info)
+						{
+						case 0:
+							CBroker::instance()->setDeviceStatus(true, true);
+							break;
+						case 1:
+							CBroker::instance()->setDeviceStatus(false, true);
+							break;
+						case 2:
+							CBroker::instance()->setDeviceStatus(true, false);
+							break;
+						case 3:
+							CBroker::instance()->setDeviceStatus(false, false);
+							break;
+						}
+						//CBroker::instance()->sendSystemStatusToClient("", pRemote, callId);
+					}
+				}
+				
 			}
 		}
 		std::string callCommand = CRpcJsonParser::mergeCommand("status", callId, param.c_str(), type.c_str());

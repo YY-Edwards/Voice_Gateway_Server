@@ -52,11 +52,17 @@ CBroker::CBroker()
 	isStart = true;
 	isRadioStart = false;
 	isRepeaterStart = false;
-	isLastDispatchStatus = false;
-	isLastWlStatus = false;
-	isLastSerialStatus = false;
-	isLastRadioConnectStatus = false;
-	isLastMnisConnectStatus = false;
+	isLastDispatchStatus = 1;
+	isLastWlStatus = 1;
+	isLastSerialStatus = 1;
+	isLastRadioConnectStatus = 1;
+	isLastMnisConnectStatus = 1;
+    lastDongleCount = 0;
+	isLastMicphoneStatus = 1;
+	isLastSpeakerStatus = 1;
+	isLastLEStatus=1;
+	isLastWireLanStatus = 1;
+	clientConnectStatus();
 }
 
 
@@ -540,11 +546,12 @@ void CBroker::setSystemStatus()
 	{
 		if (isMnis)
 		{
-			systemStatus.workMode = 3;
+			//systemStatus.workMode = 3;
+			setDeviceStatusByType(System_WorkMode, 3);
 		}
 		else
 		{
-			systemStatus.workMode = 1;
+			setDeviceStatusByType(System_WorkMode, 1);
 		}
 		
 	}
@@ -552,38 +559,42 @@ void CBroker::setSystemStatus()
 	{
 		if (isMnis)
 		{
-			systemStatus.workMode = 4;
+			setDeviceStatusByType(System_WorkMode, 4);
 		}
 		else
 		{
-			systemStatus.workMode = 2;
+			setDeviceStatusByType(System_WorkMode, 2);
 		}
 	}
 	else
 	{
-		systemStatus.workMode = 0;
+		setDeviceStatusByType(System_WorkMode, 0);
 	}
 	/*
 	"DeviceStatus":0:connected, 1:disconnect //vechion station status OR repeater status
 	*/
 	if (isDeviceConnect)
 	{
-		systemStatus.deviceStatus = 0;
+		//systemStatus.deviceStatus = 0;
+		setDeviceStatusByType(System_DeviceStatus, 0);
 	}
 	else
 	{
-		systemStatus.deviceStatus = 1;
+		//systemStatus.deviceStatus = 1;
+		setDeviceStatusByType(System_DeviceStatus, 1);
 	}
 	/*
 	"MnisStatus":0:connected, 1:disconnected
 	*/
 	if (isMnisConenct && isMnis)
 	{
-		systemStatus.mnisStatus = 0;
+		//systemStatus.mnisStatus = 0;
+		setDeviceStatusByType(System_MnisStatus, 0);
 	}
 	else
 	{
-		systemStatus.mnisStatus = 1;
+		//systemStatus.mnisStatus = 1;
+		setDeviceStatusByType(System_MnisStatus, 1);
 	}
 	/*
 	"DeviceInfoStatus":0:Updated, 1:UnKnow
@@ -592,15 +603,18 @@ void CBroker::setSystemStatus()
 	std::string tempRepeater(m_serialInformation.repeaterSerial);
 	if (!tempRadio.empty())
 	{
-		systemStatus.deviceInfoStatus = 0;
+		//systemStatus.deviceInfoStatus = 0;
+		setDeviceStatusByType(System_DeviceInfoStatus, 0);
 	}
 	else if (!tempRepeater.empty())
 	{
-		systemStatus.deviceInfoStatus = 0;
+		//systemStatus.deviceInfoStatus = 0;
+		setDeviceStatusByType(System_DeviceInfoStatus, 0);
 	}
 	else
 	{
-		systemStatus.deviceInfoStatus = 1;
+		//systemStatus.deviceInfoStatus = 1;
+		setDeviceStatusByType(System_DeviceInfoStatus, 1);
 	}
 }
 void CBroker::setDeviceStatus(bool device, bool mnis)
@@ -653,11 +667,17 @@ void CBroker::clientConnectStatus()
 	while (isStart)
 	{
 		setSystemStatus();
-		bool isCurrentDispatchStatus = false;
-		bool isCurrentWlStatus = false;
-		bool isCurrentSerialStatus = false;
-		bool isCurrentRadioConnectStatus = false;
-		bool isCurrentMnisConnectStatus = false;
+		int isCurrentWlStatus = 1;
+		int isCurrentDispatchStatus = 1;
+		int isCurrentWireLanStatus = 1;
+		int isCurrentSerialStatus = 1;
+		int isCurrentRadioConnectStatus = 1;
+		int isCurrentMnisConnectStatus = 1;
+		int currentDongleCount =0 ;
+		int isCurrentMicphoneStatus=1;
+		int isCurrentSpeakerStatus=1;
+		int isCurrentLEStatus=1;
+		int isLWireLanStatus=1;
 		if (isRadioStart)
 		{
 			 isCurrentDispatchStatus = m_radioClient->isConnected();
@@ -675,42 +695,46 @@ void CBroker::clientConnectStatus()
 		case 3:
 			if (isCurrentDispatchStatus)
 			{
-				systemStatus.serverStatus = 0;
+				//systemStatus.serverStatus = 0;
+				setDeviceStatusByType(System_ServerStatus, 0);
 			}
 			else
 			{
-				systemStatus.serverStatus = 1;
+				//systemStatus.serverStatus = 1;
+				setDeviceStatusByType(System_ServerStatus, 1);
 			}
 			break;
 		case 2:
 		case 4:
 			if (isCurrentWlStatus)
 			{
-				systemStatus.serverStatus = 0;
+				//systemStatus.serverStatus = 0;
+				setDeviceStatusByType(System_ServerStatus, 0);
 				
 			}
 			else
 			{
-				systemStatus.serverStatus = 1;
+				//systemStatus.serverStatus = 1;
+				setDeviceStatusByType(System_ServerStatus, 1);
 			}
 			break;
 		}
-		if (systemStatus.deviceInfoStatus == 0 )
-		{
-			isCurrentSerialStatus = true;
-		}
-		if (systemStatus.deviceStatus == 0)
-		{
-			isCurrentRadioConnectStatus = true;
-		}
-		if (systemStatus.mnisStatus == 0)
-		{
-			isCurrentMnisConnectStatus = true;
-		}
+		 isCurrentWireLanStatus = systemStatus.wireLanStatus;
+		 isCurrentSerialStatus = systemStatus.deviceInfoStatus;
+		 isCurrentRadioConnectStatus = systemStatus.deviceStatus;;
+		 isCurrentMnisConnectStatus = systemStatus.mnisStatus;
+		 currentDongleCount = systemStatus.dongleCount;
+		 isCurrentMicphoneStatus = systemStatus.micphoneStatus;
+		 isCurrentSpeakerStatus = systemStatus.speakerStatus;
+		 isCurrentLEStatus = systemStatus.leStatus;
+		 isLWireLanStatus = systemStatus.wireLanStatus;
+		
 		//std::lock_guard<std::mutex> locker(m_locker);
 		if (isLastDispatchStatus != isCurrentDispatchStatus || isLastWlStatus != isCurrentWlStatus
 			|| isLastMnisConnectStatus != isCurrentMnisConnectStatus || isLastSerialStatus != isCurrentSerialStatus
-			|| isLastRadioConnectStatus != isCurrentRadioConnectStatus 
+			|| isLastRadioConnectStatus != isCurrentRadioConnectStatus  || isLastLEStatus != isCurrentLEStatus 
+			|| isLastMicphoneStatus != isCurrentMicphoneStatus  || isLastSpeakerStatus!= isCurrentSpeakerStatus
+			|| isLastWireLanStatus != isCurrentWireLanStatus  || lastDongleCount!= currentDongleCount
 			)
 		{
 			for (auto i = rmtPeerList.begin(); i != rmtPeerList.end(); i++)
@@ -735,17 +759,24 @@ void CBroker::clientConnectStatus()
 				}
 			}
 		}*/
+	
 		isLastDispatchStatus = isCurrentDispatchStatus;
 		isLastWlStatus = isCurrentWlStatus;
+		isLastWireLanStatus = isCurrentWireLanStatus;
 		isLastSerialStatus = isCurrentSerialStatus;
 		isLastMnisConnectStatus = isCurrentMnisConnectStatus;
 		isLastRadioConnectStatus = isCurrentRadioConnectStatus;
+		isLastLEStatus = isCurrentLEStatus;
+		isLastMicphoneStatus = isCurrentMicphoneStatus;
+		isLastSpeakerStatus = isCurrentSpeakerStatus;
+		lastDongleCount!= currentDongleCount;
 		Sleep(1 * 1000);
 	}
 }
 
 void CBroker::setDeviceStatusByType(int type, int value)
 {
+	std::lock_guard <std::mutex> wlocker(DeviceStatusLock);
 	switch (type)
 	{
 	case System_WorkMode:

@@ -159,13 +159,19 @@ private:
 	bool isStart;
 	bool isRadioStart;
 	bool isRepeaterStart;
-	bool isLastDispatchStatus;
-	bool isLastWlStatus;
-	bool isLastSerialStatus;
-	bool isLastRadioConnectStatus;
-	bool isLastMnisConnectStatus;
+	int isLastDispatchStatus;
+	int isLastWlStatus;
+	int isLastSerialStatus;
+	int isLastRadioConnectStatus;
+	int isLastMnisConnectStatus;
+	int  lastDongleCount;
+	int isLastMicphoneStatus;
+	int isLastSpeakerStatus;
+	int isLastLEStatus;
+	int isLastWireLanStatus;
 	void clientConnectStatus();
 	std::mutex    sendLock;
+	std::mutex    DeviceStatusLock;
 	
 };
 
