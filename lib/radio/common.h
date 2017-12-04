@@ -14,6 +14,7 @@
 #define				  CONNECT_STATUS         1                   //status
 #define				  RADIO_STATUS           2                   //status
 #define               SESSION_STATUS         3                   //status
+#define               SYSTEM_STATUS          4                   //status
 #define               SEND_PRIVATE_MSG       9                   //messageStatus
 #define               SEND_GROUP_MSG         10					 //messageStatus
 #define               RECV_MSG               11					 //message
