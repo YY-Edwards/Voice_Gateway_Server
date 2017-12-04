@@ -63,7 +63,7 @@
 #include "GetSettingAction.h"
 #include "../lib/service\service.h"
 
-#define SERVICE_CODE    FALSE
+#define SERVICE_CODE    TRUE
 #define HTTP_PORT   8001
 std::string getServerName()
 {
