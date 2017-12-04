@@ -50,6 +50,13 @@ extern WLSocketLog *g_pWLlog;
 #define SESSION_SIZE 64
 #define FLAG_NHANDLE 0 //超时处理未执行
 #define FLAG_HANDLED 1 //超时处理已执行
+#define VID_PID "VID_03EB&PID_2307"
+#define WL_SYSTEM_CONNECT 0
+#define WL_SYSTEM_DISCONNECT 1
+#define WL_REGISTER_SUC 0
+#define WL_REGISTER_FAL 1
+#define WL_SERIL_SUC 0
+#define WL_SERIL_FAL 1
 
 /************************************************************************/
 /* MNIS
@@ -195,11 +202,13 @@ extern HANDLE g_waitHandleRemoteTask;
 #define REMOTE_CMD_MNIS_STATUS 0x08
 #define REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG 0x09
 #define REMOTE_CMD_SESSION_STATUS 0x0A
+#define REMOTE_CMD_SYSTEM_STATUS 0x0B
 //#define REMOTE_CMD_VOICE_LOG 0x09
 
 #define GET_TYPE_CONN 0x01
 #define GET_TYPE_ONLINE_DEVICES 0x02
 #define GET_TYPE_SESSION_STATUS 0x03
+#define GET_TYPE_SYSTEM_STATUS 0x04
 /*JSON相关结构体*/
 
 /************************************************************************/

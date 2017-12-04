@@ -2,52 +2,52 @@
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
     <ClCompile Include="common.cpp">
-      <Filter>source</Filter>
+      <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="HMAC_SHA1.cpp">
-      <Filter>source</Filter>
+      <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="SHA1.cpp">
-      <Filter>source</Filter>
+      <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="stdafx.cpp">
-      <Filter>source</Filter>
+      <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="WirlineSchedule.cpp">
-      <Filter>source</Filter>
+      <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="MySQL.cpp">
-      <Filter>source\data</Filter>
+      <Filter>源文件\data</Filter>
     </ClCompile>
     <ClCompile Include="RecorderServer.cpp">
-      <Filter>source\wampserver</Filter>
+      <Filter>源文件\wampserver</Filter>
     </ClCompile>
     <ClCompile Include="IPSCPeer.cpp">
-      <Filter>source\class</Filter>
+      <Filter>源文件\class</Filter>
     </ClCompile>
     <ClCompile Include="Manager.cpp">
-      <Filter>source\class</Filter>
+      <Filter>源文件\class</Filter>
     </ClCompile>
     <ClCompile Include="SerialDongle.cpp">
-      <Filter>source\class</Filter>
+      <Filter>源文件\class</Filter>
     </ClCompile>
     <ClCompile Include="Sound.cpp">
-      <Filter>source\class</Filter>
+      <Filter>源文件\class</Filter>
     </ClCompile>
     <ClCompile Include="Tool.cpp">
-      <Filter>source\class</Filter>
+      <Filter>源文件\class</Filter>
     </ClCompile>
     <ClCompile Include="WLNet.cpp">
-      <Filter>source\class</Filter>
+      <Filter>源文件\class</Filter>
     </ClCompile>
     <ClCompile Include="WLRecord.cpp">
-      <Filter>source\data</Filter>
+      <Filter>源文件\data</Filter>
     </ClCompile>
     <ClCompile Include="AudioLog.cpp">
-      <Filter>source\data</Filter>
+      <Filter>源文件\data</Filter>
     </ClCompile>
     <ClCompile Include="WLRecordFile.cpp">
-      <Filter>source\class</Filter>
+      <Filter>源文件\class</Filter>
     </ClCompile>
     <ClCompile Include="..\lib\rpc\src\TcpServer.cpp">
       <Filter>rpc\source</Filter>
@@ -77,39 +77,42 @@
       <Filter>rpc\source</Filter>
     </ClCompile>
     <ClCompile Include="WLSocketLog.cpp">
-      <Filter>source\class</Filter>
+      <Filter>源文件\class</Filter>
     </ClCompile>
     <ClCompile Include="..\lib\rpc\src\ringbuffer.c">
       <Filter>rpc\source</Filter>
     </ClCompile>
+    <ClCompile Include="WDK_VidPidQuery.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Ambe3000.h">
-      <Filter>include</Filter>
+      <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="common.h">
-      <Filter>include</Filter>
+      <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="HMAC_SHA1.h">
-      <Filter>include</Filter>
+      <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="SHA1.h">
-      <Filter>include</Filter>
+      <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
-      <Filter>include</Filter>
+      <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="targetver.h">
-      <Filter>include</Filter>
+      <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="VoiceDefs.h">
-      <Filter>include</Filter>
+      <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="MySQL.h">
-      <Filter>include\data</Filter>
+      <Filter>头文件\data</Filter>
     </ClInclude>
     <ClInclude Include="RecorderServer.h">
-      <Filter>include\wampserver</Filter>
+      <Filter>头文件\wampserver</Filter>
     </ClInclude>
     <ClInclude Include="mysql-connector-c\include\base64.h">
       <Filter>mysql-connector-c\include</Filter>
@@ -310,34 +313,34 @@
       <Filter>mysql-connector-c\include\mysys</Filter>
     </ClInclude>
     <ClInclude Include="mutex.h">
-      <Filter>include\wampserver</Filter>
+      <Filter>头文件\wampserver</Filter>
     </ClInclude>
     <ClInclude Include="IPSCPeer.h">
-      <Filter>include\class</Filter>
+      <Filter>头文件\class</Filter>
     </ClInclude>
     <ClInclude Include="SerialDongle.h">
-      <Filter>include\class</Filter>
+      <Filter>头文件\class</Filter>
     </ClInclude>
     <ClInclude Include="Sound.h">
-      <Filter>include\class</Filter>
+      <Filter>头文件\class</Filter>
     </ClInclude>
     <ClInclude Include="Tool.h">
-      <Filter>include\class</Filter>
+      <Filter>头文件\class</Filter>
     </ClInclude>
     <ClInclude Include="WLNet.h">
-      <Filter>include\class</Filter>
+      <Filter>头文件\class</Filter>
     </ClInclude>
     <ClInclude Include="Manager.h">
-      <Filter>include\class</Filter>
+      <Filter>头文件\class</Filter>
     </ClInclude>
     <ClInclude Include="WLRecord.h">
-      <Filter>include\data</Filter>
+      <Filter>头文件\data</Filter>
     </ClInclude>
     <ClInclude Include="AudioLog.h">
-      <Filter>include\data</Filter>
+      <Filter>头文件\data</Filter>
     </ClInclude>
     <ClInclude Include="WLRecordFile.h">
-      <Filter>include\class</Filter>
+      <Filter>头文件\class</Filter>
     </ClInclude>
     <ClInclude Include="..\lib\rpc\include\request.h">
       <Filter>rpc\include</Filter>
@@ -382,34 +385,19 @@
       <Filter>glog</Filter>
     </ClInclude>
     <ClInclude Include="WLSocketLog.h">
-      <Filter>include\class</Filter>
+      <Filter>头文件\class</Filter>
     </ClInclude>
     <ClInclude Include="..\lib\rpc\include\ringbuffer.h">
       <Filter>rpc\include</Filter>
+    </ClInclude>
+    <ClInclude Include="WDK_VidPidQuery.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="include">
-      <UniqueIdentifier>{57520bbf-e856-4e6b-956e-995892d6c4f4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source">
-      <UniqueIdentifier>{af2633c2-8a32-4dc2-9005-86b33b9eb70e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\data">
-      <UniqueIdentifier>{9842d64f-8510-4b23-8766-687ffa659807}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\wampserver">
-      <UniqueIdentifier>{59ab17ff-7597-43a5-b799-70b3765547ab}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\data">
-      <UniqueIdentifier>{5ff1fc2f-b425-438d-8dc1-ff090f99f95c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\wampserver">
-      <UniqueIdentifier>{73aefc18-6a16-43ca-aead-c0268dac440c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="mysql-connector-c">
       <UniqueIdentifier>{55d42700-df13-4f11-a354-db6263baa8f1}</UniqueIdentifier>
     </Filter>
@@ -424,12 +412,6 @@
     </Filter>
     <Filter Include="mysql-connector-c\include\mysys">
       <UniqueIdentifier>{0630fdfb-3a3d-40f8-a035-a6f44e86ce91}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="include\class">
-      <UniqueIdentifier>{2f0f0b62-e268-44b9-9c16-0676ffb928f7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="source\class">
-      <UniqueIdentifier>{b9dd4ab9-dda9-41cf-a964-20d04b2cc208}</UniqueIdentifier>
     </Filter>
     <Filter Include="rpc">
       <UniqueIdentifier>{2489940c-fab1-4b66-8561-5c7c7e6424ad}</UniqueIdentifier>
@@ -454,6 +436,30 @@
     </Filter>
     <Filter Include="glog">
       <UniqueIdentifier>{897a0b18-5e89-4115-8a72-bb3fcc983ebf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{57520bbf-e856-4e6b-956e-995892d6c4f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\data">
+      <UniqueIdentifier>{9842d64f-8510-4b23-8766-687ffa659807}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\wampserver">
+      <UniqueIdentifier>{59ab17ff-7597-43a5-b799-70b3765547ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="头文件\class">
+      <UniqueIdentifier>{2f0f0b62-e268-44b9-9c16-0676ffb928f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{af2633c2-8a32-4dc2-9005-86b33b9eb70e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\data">
+      <UniqueIdentifier>{5ff1fc2f-b425-438d-8dc1-ff090f99f95c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\wampserver">
+      <UniqueIdentifier>{73aefc18-6a16-43ca-aead-c0268dac440c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\class">
+      <UniqueIdentifier>{b9dd4ab9-dda9-41cf-a964-20d04b2cc208}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
