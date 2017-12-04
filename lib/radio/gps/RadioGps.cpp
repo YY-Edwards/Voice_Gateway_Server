@@ -585,7 +585,7 @@ void CRadioGps::RecvData()
 									r.type = 0;
 									onData(myCallBackFunc, it->command, r);
 									it = timeOutList.erase(it);
-									m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP + 1 == operate) ? (-1) : (queryMode));
+									//m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP + 1 == operate) ? (-1) : (queryMode));
 									break;
 								}
 
@@ -773,7 +773,7 @@ void CRadioGps::RecvData()
 										r.sessionId = it->sessionId;
 										onData(myCallBackFunc, GPS_IMME_COMM_INDOOR, r);
 										it = timeOutList.erase(it);
-										m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP + 1 == operate) ? (-1) : (queryMode));
+										//m_pMnis->updateOnLineRadioInfo(atoi(radioID), RADIO_STATUS_ONLINE, (STOP + 1 == operate) ? (-1) : (queryMode));
 									}
 									else if (m_ThreadGps->RcvBuffer[0] == Triggered_Location_Report &&r.bcon.TimeStamp != 0 && it->status == -1)  //当没有接收到Ack时，以第一条数据为准
 									{

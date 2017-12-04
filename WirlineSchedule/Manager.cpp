@@ -6,6 +6,7 @@
 #include "Sound.h"
 #include "WLNet.h"
 #include "actionHandler.h"
+#include "WDK_VidPidQuery.h"
 
 //temp delete
 //#include "Net.h"
@@ -17,9 +18,15 @@ BOOL g_bTX;       //Set or cleared by dongle.
 CSerialDongle* g_pDongle;
 BOOL g_dongleIsUsing;
 
-CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis, std::wstring& defaultAudioPath) :
-m_idTaskOnTimerProc(0),
-m_bNeedStopCall(false)
+CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis, std::wstring& defaultAudioPath)
+:m_idTaskOnTimerProc(0)
+, m_bNeedStopCall(false)
+, m_dongleCount(0)
+, m_micphoneStatus(WL_SYSTEM_DISCONNECT)
+, m_speakerStatus(WL_SYSTEM_DISCONNECT)
+, m_lEStatus(WL_SYSTEM_DISCONNECT)
+, m_wireLanStatus(WL_REGISTER_FAL)
+, m_deviceInfoStatus(WL_SERIL_FAL)
 {
 	g_pNet = new CWLNet(pDb, this, defaultAudioPath);
 	g_pDongle = new CSerialDongle();
@@ -49,6 +56,8 @@ m_bNeedStopCall(false)
 	m_pMnis = pMnis;
 	m_hWaitDecodeEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 	//memset(&m_currentTask, 0, sizeof(REMOTE_TASK));
+	/*获取当前Dongle的数量*/
+	initialize();
 }
 
 CManager::~CManager()
@@ -526,6 +535,7 @@ int CManager::config(REMOTE_TASK* pTask)
 		if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
 		{
 			//m_bDongleIsOpen = FALSE;
+			setDongleCount(0);
 			Env_DongleIsOk = false;
 			sprintf_s(m_reportMsg, "open dongle fail");
 			sendLogToWindow();
@@ -534,6 +544,7 @@ int CManager::config(REMOTE_TASK* pTask)
 		else
 		{
 			//m_bDongleIsOpen = TRUE;
+			setDongleCount(1);
 			Env_DongleIsOk = true;
 			sprintf_s(m_reportMsg, "open dongle success");
 			sendLogToWindow();
@@ -543,6 +554,8 @@ int CManager::config(REMOTE_TASK* pTask)
 		if (WL_RETURN_OK != g_pSound->StartSound())
 		{
 			Env_SoundIsOk = false;
+			setMicphoneStatus(WL_SYSTEM_DISCONNECT);
+			setSpeakerStatus(WL_SYSTEM_DISCONNECT);
 			sprintf_s(m_reportMsg, "sound initial fail");
 			sendLogToWindow();
 			g_pWLlog->sendLog("sound initial fail");
@@ -550,6 +563,8 @@ int CManager::config(REMOTE_TASK* pTask)
 		else
 		{
 			Env_SoundIsOk = true;
+			setMicphoneStatus(WL_SYSTEM_CONNECT);
+			setSpeakerStatus(WL_SYSTEM_CONNECT);
 			sprintf_s(m_reportMsg, "sound initial success");
 			sendLogToWindow();
 			g_pWLlog->sendLog("sound initial success");
@@ -607,6 +622,7 @@ int CManager::config(REMOTE_TASK* pTask)
 			if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
 			{
 				//m_bDongleIsOpen = FALSE;
+				setDongleCount(0);
 				Env_DongleIsOk = false;
 				sprintf_s(m_reportMsg, "initDongle:open dongle fail");
 				sendLogToWindow();
@@ -615,6 +631,7 @@ int CManager::config(REMOTE_TASK* pTask)
 			else
 			{
 				//m_bDongleIsOpen = TRUE;
+				setDongleCount(0);
 				Env_DongleIsOk = true;
 				sprintf_s(m_reportMsg, "open dongle success");
 				sendLogToWindow();
@@ -759,6 +776,26 @@ void CManager::handleRemoteTask()
 											  /*清空当前已经处理的会话任务状态*/
 											  g_pNet->clearSessionStatusList();
 											  g_pNet->wlInfo(GET_TYPE_SESSION_STATUS, value, info.SessionId);
+
+			}
+				break;
+			case REMOTE_CMD_SYSTEM_STATUS:
+			{
+											 GET_INFO_PARAM info = task.param.info.getInfoParam.getInfo;
+											 FieldValue value(FieldValue::TObject);
+											 //value.setKeyVal("SessionId", FieldValue(info.SessionId));
+											 //value.setKeyVal("WorkMode", FieldValue(info.SessionId));//工作模式-Tserver
+											 //value.setKeyVal("ServerStatus", FieldValue(info.SessionId));//服务状态-Tserver
+											 //value.setKeyVal("DeviceStatus", FieldValue(info.SessionId));//设备连接状态-Tserver侧修改
+											 //value.setKeyVal("MnisStatus", FieldValue(info.SessionId));//mnis状态-Tserver侧修改
+											 //value.setKeyVal("DatabaseStatus", FieldValue(info.SessionId));//数据库状态-LogServer
+											 value.setKeyVal("DongleCount", FieldValue(DongCount()));//dongle数量
+											 value.setKeyVal("MicphoneStatus", FieldValue(MicphoneStatus()));//麦克风状态
+											 value.setKeyVal("SpeakerStatus", FieldValue(SpeakerStatus()));//扬声器
+											 value.setKeyVal("LEStatus", FieldValue(LEStatus()));//LE注册状态
+											 value.setKeyVal("WireLanStatus", FieldValue(WireLanStatus()));//wirelan注册状态
+											 value.setKeyVal("DeviceInfoStatus", FieldValue(DeviceInfoStatus()));//设备序列号
+											 g_pNet->wlInfo(GET_TYPE_SYSTEM_STATUS, value, info.SessionId);
 
 			}
 				break;
@@ -1201,11 +1238,12 @@ bool CManager::isSameSessionId(std::string sessionId, REMOTE_TASK* p)
 		break;
 	case REMOTE_CMD_GET_CONN_STATUS:
 	case REMOTE_CMD_SESSION_STATUS:
+	case REMOTE_CMD_SYSTEM_STATUS:
 	{
-									  GET_INFO_PARAM info = p->param.info.getInfoParam.getInfo;
-									  sprintf_s(m_reportMsg, "%s and %s is %d", sessionId.c_str(), info.SessionId, rlt = (0 == strcmp(sessionId.c_str(), info.SessionId)));
-									  sendLogToWindow();
-									  return rlt;
+									 GET_INFO_PARAM info = p->param.info.getInfoParam.getInfo;
+									 sprintf_s(m_reportMsg, "%s and %s is %d", sessionId.c_str(), info.SessionId, rlt = (0 == strcmp(sessionId.c_str(), info.SessionId)));
+									 sendLogToWindow();
+									 return rlt;
 	}
 		break;
 	case REMOTE_CMD_MNIS_QUERY_GPS:
@@ -1256,7 +1294,7 @@ void CManager::setbNeedStopCall(bool value)
 		sendLogToWindow();
 	}
 	m_bNeedStopCall = value;
-	
+
 }
 
 void CManager::getCurrentTaskInfo(int srcId, std::string &sessionid, int &cmd)
@@ -1301,6 +1339,110 @@ void CManager::handleIsRepeatCurTask(std::string sessionId, bool &rlt)
 	if (p)
 	{
 		rlt = isSameSessionId(sessionId, p);
+	}
+}
+
+void CManager::initialize()
+{
+	/*获取dongle数量*/
+	com_use_t result = { 0 };
+	WDK_WhoAllVidPid(VID_PID, &result);
+	setDongleCount(result.num);
+}
+
+int CManager::DongCount()
+{
+	return m_dongleCount;
+}
+
+void CManager::setDongleCount(int value)
+{
+	if (m_dongleCount != value)
+	{
+		m_dongleCount = value;
+		FieldValue info(FieldValue::TObject);
+		info.setKeyVal("DongleCount", FieldValue(value));//dongle数量
+		if (g_pNet) g_pNet->wlInfo(GET_TYPE_SYSTEM_STATUS, info, "");
+	}
+}
+
+int CManager::MicphoneStatus()
+{
+	return m_micphoneStatus;
+}
+
+void CManager::setMicphoneStatus(int value)
+{
+	if (m_micphoneStatus != value)
+	{
+		m_micphoneStatus = value;
+		FieldValue info(FieldValue::TObject);
+		info.setKeyVal("MicphoneStatus", FieldValue(value));
+		if (g_pNet) g_pNet->wlInfo(GET_TYPE_SYSTEM_STATUS, info, "");
+	}
+}
+
+int CManager::SpeakerStatus()
+{
+	return m_speakerStatus;
+}
+
+void CManager::setSpeakerStatus(int value)
+{
+	if (m_speakerStatus != value)
+	{
+		m_speakerStatus = value;
+		FieldValue info(FieldValue::TObject);
+		info.setKeyVal("SpeakerStatus", FieldValue(value));
+		if (g_pNet) g_pNet->wlInfo(GET_TYPE_SYSTEM_STATUS, info, "");
+	}
+}
+
+int CManager::LEStatus()
+{
+	return m_lEStatus;
+}
+
+void CManager::setLEStatus(int value)
+{
+	if (m_lEStatus != value)
+	{
+		m_lEStatus = value;
+		FieldValue info(FieldValue::TObject);
+		info.setKeyVal("LEStatus", FieldValue(value));
+		if (g_pNet) g_pNet->wlInfo(GET_TYPE_SYSTEM_STATUS, info, "");
+	}
+}
+
+int CManager::WireLanStatus()
+{
+	return m_wireLanStatus;
+}
+
+void CManager::setWireLanStatus(int value)
+{
+	if (m_wireLanStatus != value)
+	{
+		m_wireLanStatus = value;
+		FieldValue info(FieldValue::TObject);
+		info.setKeyVal("WireLanStatus", FieldValue(value));
+		if (g_pNet) g_pNet->wlInfo(GET_TYPE_SYSTEM_STATUS, info, "");
+	}
+}
+
+int CManager::DeviceInfoStatus()
+{
+	return m_deviceInfoStatus;
+}
+
+void CManager::setDeviceInfoStatus(int value)
+{
+	if (m_deviceInfoStatus != value)
+	{
+		m_deviceInfoStatus = value;
+		FieldValue info(FieldValue::TObject);
+		info.setKeyVal("DeviceInfoStatus", FieldValue(value));
+		if (g_pNet) g_pNet->wlInfo(GET_TYPE_SYSTEM_STATUS, info, "");
 	}
 }
 

@@ -632,7 +632,7 @@ void CDataScheduling::updateOnLineRadioInfo(int radioId, int status, int gpsQuer
 	if (itor != g_radioStatus.end())
 	{
 		//Ë¢ÐÂ¼ÇÂ¼
-		if (gpsQueryMode != -1)
+		//if (gpsQueryMode != -1)
 		{
 			itor->second.gpsQueryMode = gpsQueryMode;
 		}

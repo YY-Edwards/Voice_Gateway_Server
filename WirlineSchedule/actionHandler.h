@@ -673,6 +673,25 @@ inline void wlInfoActionHandler(CRemotePeer* pRemote, const std::string& param, 
 											}
 			}
 				break;
+			case GET_TYPE_SYSTEM_STATUS:
+			{
+										   pNewTask = new REMOTE_TASK;
+										   memset(pNewTask, 0, sizeof(REMOTE_TASK));
+										   pNewTask->cmd = REMOTE_CMD_SYSTEM_STATUS;
+										   pNewTask->param.info.getInfoParam.getInfo.getType = getType;
+										   if (d.HasMember("SessionId") && d["SessionId"].IsString())
+										   {
+											   strcpy_s(pNewTask->param.info.getInfoParam.getInfo.SessionId, d["SessionId"].GetString());
+											   std::string sessionid = d["SessionId"].GetString();
+											   if (g_manager->isRepeat(sessionid))
+											   {
+												   delete pNewTask;
+												   pNewTask = NULL;
+												   break;
+											   }
+										   }
+			}
+				break;
 			case GET_TYPE_ONLINE_DEVICES:
 			{
 											pNewTask = new REMOTE_TASK;
