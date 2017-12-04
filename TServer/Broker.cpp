@@ -743,3 +743,45 @@ void CBroker::clientConnectStatus()
 		Sleep(1 * 1000);
 	}
 }
+
+void CBroker::setDeviceStatusByType(int type, int value)
+{
+	switch (type)
+	{
+	case System_WorkMode:
+		systemStatus.workMode = value;
+		break;
+	case System_ServerStatus:
+		systemStatus.serverStatus = value;
+		break;
+	case System_DeviceStatus:
+		systemStatus.deviceStatus = value;
+		break;
+	case System_MnisStatus:
+		systemStatus.mnisStatus = value;
+		break;
+	case System_DatabaseStatus:
+		systemStatus.databaseStatus = value;
+		break;
+	case System_DongleCount:
+		systemStatus.dongleCount = value;
+		break;
+	case System_MicphoneStatus:
+		systemStatus.micphoneStatus = value;
+		break;
+	case System_SpeakerStatus:
+		systemStatus.speakerStatus = value;
+		break;
+	case System_LEStatus:
+		systemStatus.leStatus = value;
+		break;
+	case System_WireLanStatus:
+		systemStatus.wireLanStatus = value;
+		break;
+	case System_DeviceInfoStatus:
+		systemStatus.deviceInfoStatus = value;
+		break;
+	default:
+		break;
+	}
+}

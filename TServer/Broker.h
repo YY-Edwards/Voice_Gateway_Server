@@ -4,6 +4,18 @@
 #include <mutex>
 #include <map>
 
+#define System_WorkMode 0x01
+#define System_ServerStatus 0x02
+#define System_DeviceStatus 0x03
+#define System_MnisStatus 0x04
+#define System_DatabaseStatus 0x05
+#define System_DongleCount 0x06
+#define System_MicphoneStatus 0x07
+#define System_SpeakerStatus 0x08
+#define System_LEStatus 0x09
+#define System_WireLanStatus 0x0A
+#define System_DeviceInfoStatus 0x0B
+
 struct SerialInformation{
 	char licType[12];
 	int deviceType;
@@ -45,6 +57,7 @@ struct SystemStatus
 	int leStatus;
 	int wireLanStatus;
 	int deviceInfoStatus;
+	int databaseStatus;
 };
 class CRpcClient;
 class CRpcServer;
@@ -114,6 +127,7 @@ public:
 	//SystemStatus getSystemStatus();
 	void sendSystemStatusToClient(std::string  sessionId, CRemotePeer* pRemote, uint64_t callId);
 	static DWORD WINAPI clientConnectStatusThread(LPVOID lpParam);
+	void setDeviceStatusByType(int type, int value);
 	
 protected:
 	CBroker();

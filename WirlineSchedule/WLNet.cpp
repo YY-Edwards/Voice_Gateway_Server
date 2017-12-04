@@ -7913,7 +7913,7 @@ int CWLNet::wlInfo(int getType, FieldValue info, std::string sessionid)
 	args["getType"] = getType;
 	args["info"] = info;
 	args["SessionId"] = sessionid.c_str();
-	if (GET_TYPE_SESSION_STATUS != getType)
+	if (!(GET_TYPE_SESSION_STATUS == getType || GET_TYPE_SYSTEM_STATUS == getType))
 	{
 		addSessionStatus(sessionid, CMD_SUCCESS);
 	}
