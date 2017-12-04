@@ -109,7 +109,7 @@ public:
 	//void sendLoactionIndoorConfigToWl();
 
 	void stop();
-	void setSystemStatus();
+
 	void setDeviceStatus(bool device, bool mnis);
 	//SystemStatus getSystemStatus();
 	void sendSystemStatusToClient(std::string  sessionId, CRemotePeer* pRemote, uint64_t callId);
@@ -120,6 +120,7 @@ protected:
 	~CBroker();
 
 private:
+	void setSystemStatus();
 	friend class std::auto_ptr<CBroker>;
 	static std::auto_ptr<CBroker> m_instance;
 
@@ -146,6 +147,9 @@ private:
 	bool isRepeaterStart;
 	bool isLastDispatchStatus;
 	bool isLastWlStatus;
+	bool isLastSerialStatus;
+	bool isLastRadioConnectStatus;
+	bool isLastMnisConnectStatus;
 	void clientConnectStatus();
 	
 };

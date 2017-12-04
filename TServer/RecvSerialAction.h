@@ -79,7 +79,7 @@ void readSerialAction(CRemotePeer* pRemote, const std::string& param, uint64_t c
 			SerialInformation s = CBroker::instance()->getSerialInformation();
 			memcpy(s.licType, "TrboX 3.0",12);
 			std::string serial = d["serial"].GetString();
-			CBroker::instance()->sendSystemStatusToClient("", pRemote, callId);
+			//CBroker::instance()->sendSystemStatusToClient("", pRemote, callId);
 			if (serial.length()!= 0)
 			{
 				if (type == "radio")

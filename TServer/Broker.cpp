@@ -32,7 +32,16 @@ CBroker::CBroker()
 	memset(m_serialInformation.repeaterSerial, 0, 16);
 	memset(m_serialInformation.res, 0, 16);
 	memset(m_serialInformation.time, 0, 16);
-	systemStatus = { -1 };
+	systemStatus.deviceInfoStatus = 1;
+	systemStatus.deviceStatus = 1;
+	systemStatus.dongleCount = 0;
+	systemStatus.leStatus = 1;
+	systemStatus.micphoneStatus = 1;
+	systemStatus.mnisStatus = 1;
+	systemStatus.serverStatus = 1;
+	systemStatus.speakerStatus = 1;
+	systemStatus.wireLanStatus = 1;
+	systemStatus.workMode = 0;
 	isRadio = false;
 	isRepeater = false;
 	isMnis = false;
@@ -45,6 +54,9 @@ CBroker::CBroker()
 	isRepeaterStart = false;
 	isLastDispatchStatus = false;
 	isLastWlStatus = false;
+	isLastSerialStatus = false;
+	isLastRadioConnectStatus = false;
+	isLastMnisConnectStatus = false;
 }
 
 
@@ -201,9 +213,9 @@ void CBroker::sendWirelanConfig()
 	std::string mnis = CSettings::instance()->getValue("mnis");
 	Document d1;
 	d1.Parse(mnis.c_str());
-	if (d.HasMember("IsEnable") && d["IsEnable"].IsBool())
+	if (d1.HasMember("IsEnable") && d1["IsEnable"].IsBool())
 	{
-		isMnis = d["IsEnable"].GetBool();
+		isMnis = d1["IsEnable"].GetBool();
 	}
 	std::string location = CSettings::instance()->getValue("location");
 	std::string locationIndoor = CSettings::instance()->getValue("locationIndoor");
@@ -256,9 +268,9 @@ void CBroker::sendRadioConfig()
 	std::string mnis = CSettings::instance()->getValue("mnis");
 	Document d1;
 	d1.Parse(mnis.c_str());
-	if (d.HasMember("IsEnable") && d["IsEnable"].IsBool())
+	if (d1.HasMember("IsEnable") && d1["IsEnable"].IsBool())
 	{
-		isMnis = d["IsEnable"].GetBool();
+		isMnis = d1["IsEnable"].GetBool();
 	}
 	std::string location = CSettings::instance()->getValue("location");
 	std::string locationIndoor = CSettings::instance()->getValue("locationIndoor");
@@ -565,7 +577,7 @@ void CBroker::setSystemStatus()
 	/*
 	"MnisStatus":0:connected, 1:disconnected
 	*/
-	if (isMnisConenct)
+	if (isMnisConenct && isMnis)
 	{
 		systemStatus.mnisStatus = 0;
 	}
@@ -641,6 +653,9 @@ void CBroker::clientConnectStatus()
 		setSystemStatus();
 		bool isCurrentDispatchStatus = false;
 		bool isCurrentWlStatus = false;
+		bool isCurrentSerialStatus = false;
+		bool isCurrentRadioConnectStatus = false;
+		bool isCurrentMnisConnectStatus = false;
 		if (isRadioStart)
 		{
 			 isCurrentDispatchStatus = m_radioClient->isConnected();
@@ -649,6 +664,7 @@ void CBroker::clientConnectStatus()
 		{
 			 isCurrentWlStatus = m_wirelanClient->isConnected();
 		}
+
 		switch (systemStatus.workMode)
 		{
 		case 0:
@@ -669,6 +685,7 @@ void CBroker::clientConnectStatus()
 			if (isCurrentWlStatus)
 			{
 				systemStatus.serverStatus = 0;
+				
 			}
 			else
 			{
@@ -676,8 +693,23 @@ void CBroker::clientConnectStatus()
 			}
 			break;
 		}
+		if (systemStatus.deviceInfoStatus == 0 )
+		{
+			isCurrentSerialStatus = true;
+		}
+		if (systemStatus.deviceStatus == 0)
+		{
+			isCurrentRadioConnectStatus = true;
+		}
+		if (systemStatus.mnisStatus == 0)
+		{
+			isCurrentMnisConnectStatus = true;
+		}
 		//std::lock_guard<std::mutex> locker(m_locker);
-		if (isLastDispatchStatus != isCurrentDispatchStatus)
+		if (isLastDispatchStatus != isCurrentDispatchStatus || isLastWlStatus != isCurrentWlStatus
+			|| isLastMnisConnectStatus != isCurrentMnisConnectStatus || isLastSerialStatus != isCurrentSerialStatus
+			|| isLastRadioConnectStatus != isCurrentRadioConnectStatus 
+			)
 		{
 			for (auto i = rmtPeerList.begin(); i != rmtPeerList.end(); i++)
 			{
@@ -689,7 +721,7 @@ void CBroker::clientConnectStatus()
 				}
 			}
 		}
-		if (isLastWlStatus != isCurrentWlStatus)
+		/*if (isLastWlStatus != isCurrentWlStatus)
 		{
 
 			for (auto i = rmtPeerList.begin(); i != rmtPeerList.end(); i++)
@@ -700,9 +732,12 @@ void CBroker::clientConnectStatus()
 					sendSystemStatusToClient("", peer, ++callId);
 				}
 			}
-		}
+		}*/
 		isLastDispatchStatus = isCurrentDispatchStatus;
 		isLastWlStatus = isCurrentWlStatus;
+		isLastSerialStatus = isCurrentSerialStatus;
+		isLastMnisConnectStatus = isCurrentMnisConnectStatus;
+		isLastRadioConnectStatus = isCurrentRadioConnectStatus;
 		Sleep(1 * 1000);
 	}
 }
