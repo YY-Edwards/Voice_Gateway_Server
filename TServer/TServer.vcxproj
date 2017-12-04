@@ -106,6 +106,7 @@
     <ClInclude Include="AllCallAction.h" />
     <ClInclude Include="Broker.h" />
     <ClInclude Include="CallAction.h" />
+    <ClInclude Include="common.h" />
     <ClInclude Include="ControlAction.h" />
     <ClInclude Include="GetSettingAction.h" />
     <ClInclude Include="GpsAction.h" />

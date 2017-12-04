@@ -225,6 +225,9 @@
     <ClInclude Include="QueryDeviceAction.h">
       <Filter>serverAction</Filter>
     </ClInclude>
+    <ClInclude Include="common.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

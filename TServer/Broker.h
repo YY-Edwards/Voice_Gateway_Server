@@ -113,6 +113,8 @@ public:
 	void setDeviceStatus(bool device, bool mnis);
 	//SystemStatus getSystemStatus();
 	void sendSystemStatusToClient(std::string  sessionId, CRemotePeer* pRemote, uint64_t callId);
+	static DWORD WINAPI clientConnectStatusThread(LPVOID lpParam);
+	
 protected:
 	CBroker();
 	~CBroker();
@@ -126,8 +128,9 @@ private:
 	CRpcClient* m_radioClient;
 	CRpcClient* m_wirelanClient;
 	CRpcClient* m_logClient;
-	CRpcServer* m_rpcServer;
 	CRpcClient* m_monitorClient;
+	CRpcServer* m_rpcServer;
+	
 	SerialInformation m_serialInformation ;
 	SerialInformation m_licenseInformation;
 	int licenseStatus;
@@ -138,6 +141,12 @@ private:
 	bool isDeviceConnect;
 	bool isMnisConenct;
 	bool isRecvSerial;
+	bool isStart;
+	bool isRadioStart;
+	bool isRepeaterStart;
+	bool isLastDispatchStatus;
+	bool isLastWlStatus;
+	void clientConnectStatus();
 	
 };
 

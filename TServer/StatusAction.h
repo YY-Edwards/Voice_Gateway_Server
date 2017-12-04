@@ -1,11 +1,41 @@
+#pragma once
 #include <string>
 #include <mutex>
 #include "../lib/type.h"
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
+#include "../lib/rpc/include/TcpServer.h"
 
+std::list<TcpClient *> rmtPeerList;
+void addPeer(CRemotePeer* peer)
+{
+	TcpClient *client = new TcpClient();
+	client->addr = ((TcpClient *)peer)->addr;
+	client->s = ((TcpClient *)peer)->s;
+	bool isHave = false;
+	for (auto i = rmtPeerList.begin(); i != rmtPeerList.end(); i++)
+	{
+		TcpClient *p = *i;
+		if (p->s == client->s)
+		{
+			isHave = true;
+			break;
+		}
+	}
+	if (!isHave)
+	{
+		rmtPeerList.push_back(client);
+	}
+	else
+	{
+		delete client;
+		client = NULL;
+	}
+}
 void statusAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
+	addPeer(pRemote);
+
 	static std::mutex lock;
 
 	std::lock_guard<std::mutex> locker(lock);

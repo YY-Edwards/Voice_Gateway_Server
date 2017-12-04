@@ -1,11 +1,13 @@
+#pragma once
 #include <string>
 #include <mutex>
 #include "../lib/type.h"
 #include "../lib/rpc/include/BaseConnector.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
-
 void callAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
+	addPeer(pRemote);
+	
 	static std::mutex lock;
 
 	std::lock_guard<std::mutex> locker(lock);

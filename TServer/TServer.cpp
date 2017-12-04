@@ -32,12 +32,12 @@
 //#include"SendSmsAction.h"
 //#include"StopCallAction.h"
 
-
+#include "StatusAction.h"
 #include "CallAction.h"
 #include "ControlAction.h"
 #include "GpsAction.h"
 #include "MsgAction.h"
-#include "StatusAction.h"
+
 #include "RegisterLicenseAction.h"
 #include "QueryLicenseAction.h"
 #include "QueryDeviceAction.h"

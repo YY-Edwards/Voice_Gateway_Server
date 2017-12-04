@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <mutex>
 #include "../lib/type.h"
@@ -93,6 +94,8 @@ void addSmsLog(std::string param, int callId, CRemotePeer* pRemote)
 }
 void msgAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
+	addPeer(pRemote);
+	
 	static std::mutex lock;
 
 	std::lock_guard<std::mutex> locker(lock);

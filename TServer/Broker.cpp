@@ -2,10 +2,11 @@
 #include "../lib/rpc/include/RpcClient.h"
 #include "../lib/rpc/include/RpcServer.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
+#include "../lib/rpc/include/TcpServer.h"
 #include "../lib//AES/Aes.h"
 #include "Broker.h"
 #include "Settings.h"
-
+#include "common.h"
 
 std::auto_ptr<CBroker> CBroker::m_instance;
 
@@ -38,6 +39,12 @@ CBroker::CBroker()
 	isDeviceConnect = false;
 	isMnisConenct = false;
 	isRecvSerial = false;
+	CreateThread(NULL, 0, clientConnectStatusThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	isStart = true;
+	isRadioStart = false;
+	isRepeaterStart = false;
+	isLastDispatchStatus = false;
+	isLastWlStatus = false;
 }
 
 
@@ -74,7 +81,8 @@ void CBroker::startRadioClient(std::map<std::string, ACTION> clientActions)
 		}
 
 		m_radioClient->start("tcp://127.0.0.1:9001");
-
+		isStart = true;
+		isRadioStart = true;
 		// send radio hardware connect command
 	/*	ArgumentType args;
 		FieldValue radioP(FieldValue::TObject);
@@ -135,7 +143,8 @@ void CBroker::startWireLanClient(std::map<std::string, ACTION> clientActions)
 			m_wirelanClient->addActionHandler(action->first.c_str(), action->second);
 		}
 		m_wirelanClient->start("tcp://127.0.0.1:9002");
-
+		isStart = true;
+		isRepeaterStart = true;
 		// send repeater hardware connect command by fixed parameter
 		//ArgumentType args;
 		//args["Type"] = "CPC";
@@ -502,7 +511,7 @@ void CBroker::stop()
 		m_rpcServer->stop();
 		delete m_rpcServer;
 	}
-
+	isStart = false;
 }
 
 //void CBroker::sendLoactionIndoorConfigToWl()
@@ -613,4 +622,87 @@ void CBroker::sendSystemStatusToClient(std::string  sessionId, CRemotePeer* pRem
 	args["info"] = FieldValue(element);
 	std::string strResp = CRpcJsonParser::buildCall("status", ++callId, args, "radio");
 	pRemote->sendResponse(strResp.c_str(), strResp.size());
+}
+DWORD WINAPI CBroker::clientConnectStatusThread(LPVOID lpParam)
+{
+	CBroker * p = (CBroker *)lpParam;
+	if (p != NULL)
+	{
+		p->clientConnectStatus();
+
+	}
+
+	return 1;
+}
+void CBroker::clientConnectStatus()
+{
+	while (isStart)
+	{
+		setSystemStatus();
+		bool isCurrentDispatchStatus = false;
+		bool isCurrentWlStatus = false;
+		if (isRadioStart)
+		{
+			 isCurrentDispatchStatus = m_radioClient->isConnected();
+		}
+		if (isRepeaterStart)
+		{
+			 isCurrentWlStatus = m_wirelanClient->isConnected();
+		}
+		switch (systemStatus.workMode)
+		{
+		case 0:
+			break;
+		case 1:
+		case 3:
+			if (isCurrentDispatchStatus)
+			{
+				systemStatus.serverStatus = 0;
+			}
+			else
+			{
+				systemStatus.serverStatus = 1;
+			}
+			break;
+		case 2:
+		case 4:
+			if (isCurrentWlStatus)
+			{
+				systemStatus.serverStatus = 0;
+			}
+			else
+			{
+				systemStatus.serverStatus = 1;
+			}
+			break;
+		}
+		//std::lock_guard<std::mutex> locker(m_locker);
+		if (isLastDispatchStatus != isCurrentDispatchStatus)
+		{
+			for (auto i = rmtPeerList.begin(); i != rmtPeerList.end(); i++)
+			{
+				TcpClient *peer = *i;
+				if (peer != NULL)
+				{
+
+					sendSystemStatusToClient("",peer,++callId);
+				}
+			}
+		}
+		if (isLastWlStatus != isCurrentWlStatus)
+		{
+
+			for (auto i = rmtPeerList.begin(); i != rmtPeerList.end(); i++)
+			{
+				TcpClient *peer = *i;
+				if (peer != NULL)
+				{
+					sendSystemStatusToClient("", peer, ++callId);
+				}
+			}
+		}
+		isLastDispatchStatus = isCurrentDispatchStatus;
+		isLastWlStatus = isCurrentWlStatus;
+		Sleep(1 * 1000);
+	}
 }

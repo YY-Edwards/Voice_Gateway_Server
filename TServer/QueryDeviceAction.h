@@ -1,3 +1,4 @@
+#pragma once
 #include <string>
 #include <mutex>
 #include "../lib/type.h"
@@ -6,6 +7,8 @@
 
 void queryDeviceAction(CRemotePeer* pRemote, const std::string& param, uint64_t callId, const std::string& type)
 {
+	addPeer(pRemote);
+	
 	LOG(INFO) << "queryDeviceAction";
 	static std::mutex lock;
 

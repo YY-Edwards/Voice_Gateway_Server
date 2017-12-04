@@ -36,7 +36,7 @@ void recvStatusAction(CRemotePeer* pRemote, const std::string& param, uint64_t c
 						CBroker::instance()->setDeviceStatus(false,false);
 						break;
 					}
-					CBroker::instance()->sendSystemStatusToClient("", pRemote, callId);
+					//CBroker::instance()->sendSystemStatusToClient("", pRemote, callId);
 				}
 			}
 		}
