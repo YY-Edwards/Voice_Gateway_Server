@@ -104,6 +104,10 @@ public:
 
 	int DeviceInfoStatus();
 	void setDeviceInfoStatus(int value);
+
+	void OnUpdateUsb(DWORD type);
+
+	static void OnUpdateUsbService(bool type);
 private:
 	PLogReport m_report;
 	//HWND m_hwnd;
@@ -125,6 +129,7 @@ private:
 
 	REMOTE_TASK *m_pCurrentTask;
 	//REMOTE_TASK m_currentTask;
+	com_use_t m_curDongleInfo;
 
 	CDataScheduling* m_pMnis;
 	UINT m_idTaskOnTimerProc;
@@ -149,6 +154,8 @@ private:
 	void freeCurrentTask();
 	bool isSameSessionId(std::string sessionId, REMOTE_TASK* p);
 	void initialize();
+	void handleUsbAdd();
+	void handleUsbDel();
 };
 
 

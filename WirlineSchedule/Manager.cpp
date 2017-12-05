@@ -631,7 +631,7 @@ int CManager::config(REMOTE_TASK* pTask)
 			else
 			{
 				//m_bDongleIsOpen = TRUE;
-				setDongleCount(0);
+				setDongleCount(1);
 				Env_DongleIsOk = true;
 				sprintf_s(m_reportMsg, "open dongle success");
 				sendLogToWindow();
@@ -1347,6 +1347,7 @@ void CManager::initialize()
 	/*获取dongle数量*/
 	com_use_t result = { 0 };
 	WDK_WhoAllVidPid(VID_PID, &result);
+	memcpy(&m_curDongleInfo, &result, sizeof(com_use_t));
 	setDongleCount(result.num);
 }
 
@@ -1443,6 +1444,160 @@ void CManager::setDeviceInfoStatus(int value)
 		FieldValue info(FieldValue::TObject);
 		info.setKeyVal("DeviceInfoStatus", FieldValue(value));
 		if (g_pNet) g_pNet->wlInfo(GET_TYPE_SYSTEM_STATUS, info, "");
+	}
+}
+
+void CManager::OnUpdateUsb(DWORD type)
+{
+	sprintf_s(m_reportMsg, "OnUpdateUsb");
+	sendLogToWindow();
+	//LOG_INFO("OnUpdateUsb");
+	switch (type)
+	{
+	case USB_ADD:
+	{
+					//LOG_INFO("USB_ADD");
+					sprintf_s(m_reportMsg, "USB_ADD");
+					sendLogToWindow();
+					handleUsbAdd();
+	}
+		break;
+	case USB_DEL:
+	{
+					//LOG_INFO("USB_DEL");
+					sprintf_s(m_reportMsg, "USB_DEL");
+					sendLogToWindow();
+					handleUsbDel();
+	}
+		break;
+	default:
+		break;
+	}
+}
+
+void CManager::OnUpdateUsbService(bool type)
+{
+	if (g_manager)
+	{
+		g_manager->OnUpdateUsb(type ? DBT_DEVICEARRIVAL : DBT_DEVICEREMOVECOMPLETE);
+	}
+}
+
+void CManager::handleUsbAdd()
+{
+	com_use_t result = { 0 };
+	WDK_WhoAllVidPid(VID_PID, &result);
+	memcpy(&m_curDongleInfo, &result, sizeof(com_use_t));
+	if (0 == DongCount())
+	{
+		for (int i = 0; i < result.num; i++)
+		{
+			/*重新配置dongle*/
+			WCHAR tmpStr[128] = { 0 };
+			swprintf_s(tmpStr, 128, L"\\\\.\\%s", g_tool.ANSIToUnicode(result.coms[i]).c_str());
+			if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
+			{
+				//m_bDongleIsOpen = FALSE;
+				setDongleCount(0);
+				Env_DongleIsOk = false;
+				sprintf_s(m_reportMsg, "initDongle:open dongle fail");
+				sendLogToWindow();
+				g_pWLlog->sendLog("dongle initial fail");
+				continue;
+			}
+			else
+			{
+				//m_bDongleIsOpen = TRUE;
+				sscanf_s(result.coms[i], "COM%d", &CONFIG_DONGLE_PORT);
+				setDongleCount(1);
+				Env_DongleIsOk = true;
+				sprintf_s(m_reportMsg, "open dongle success");
+				sendLogToWindow();
+				g_pWLlog->sendLog("dongle initial success");
+				break;
+			}
+		}
+	}
+}
+
+void CManager::handleUsbDel()
+{
+	com_use_t result = { 0 };
+	WDK_WhoAllVidPid(VID_PID, &result);
+	memcpy(&m_curDongleInfo, &result, sizeof(com_use_t));
+	if (0 == DongCount())
+	{
+		for (int i = 0; i < result.num; i++)
+		{
+			/*重新配置dongle*/
+			WCHAR tmpStr[128] = { 0 };
+			swprintf_s(tmpStr, 128, L"\\\\.\\%s", g_tool.ANSIToUnicode(result.coms[i]).c_str());
+			if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
+			{
+				//m_bDongleIsOpen = FALSE;
+				setDongleCount(0);
+				Env_DongleIsOk = false;
+				sprintf_s(m_reportMsg, "initDongle:open dongle fail");
+				sendLogToWindow();
+				g_pWLlog->sendLog("dongle initial fail");
+				continue;
+			}
+			else
+			{
+				//m_bDongleIsOpen = TRUE;
+				sscanf_s(result.coms[i], "COM%d", &CONFIG_DONGLE_PORT);
+				setDongleCount(1);
+				Env_DongleIsOk = true;
+				sprintf_s(m_reportMsg, "open dongle success");
+				sendLogToWindow();
+				g_pWLlog->sendLog("dongle initial success");
+				break;
+			}
+		}
+	}
+	else
+	{
+		bool ishave = false;
+		char temp[64] = { 0 };
+		sprintf_s(temp, "COM%d", CONFIG_DONGLE_PORT);
+		for (int i = 0; i < result.num; i++)
+		{
+			if (0 == strcmp(temp, result.coms[i]))
+			{
+				ishave = true;
+				break;
+			}
+		}
+		if (!ishave)
+		{
+			for (int i = 0; i < result.num; i++)
+			{
+				/*重新配置dongle*/
+				WCHAR tmpStr[128] = { 0 };
+				swprintf_s(tmpStr, 128, L"\\\\.\\%s", g_tool.ANSIToUnicode(result.coms[i]).c_str());
+				if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
+				{
+					//m_bDongleIsOpen = FALSE;
+					setDongleCount(0);
+					Env_DongleIsOk = false;
+					sprintf_s(m_reportMsg, "initDongle:open dongle fail");
+					sendLogToWindow();
+					g_pWLlog->sendLog("dongle initial fail");
+					continue;
+				}
+				else
+				{
+					//m_bDongleIsOpen = TRUE;
+					sscanf_s(result.coms[i], "COM%d", &CONFIG_DONGLE_PORT);
+					setDongleCount(1);
+					Env_DongleIsOk = true;
+					sprintf_s(m_reportMsg, "open dongle success");
+					sendLogToWindow();
+					g_pWLlog->sendLog("dongle initial success");
+					break;
+				}
+			}
+		}
 	}
 }
 

@@ -1,5 +1,7 @@
 #ifndef COMMON_H
 #define COMMON_H
+
+#include <dbt.h>
 #include <process.h>
 #include "Ambe3000.h"
 #include <MMSystem.h>
@@ -42,6 +44,9 @@
 
 extern WLSocketLog *g_pWLlog;
 
+#define USB_DEL DBT_DEVICEREMOVECOMPLETE
+#define USB_ADD DBT_DEVICEARRIVAL
+#define INTERVAL_CHECK_USB 500
 #define GPS_Immediate 0
 #define GPS_start_Triggered 1
 #define GPS_stop_Triggered 2
@@ -57,6 +62,13 @@ extern WLSocketLog *g_pWLlog;
 #define WL_REGISTER_FAL 1
 #define WL_SERIL_SUC 0
 #define WL_SERIL_FAL 1
+
+
+typedef struct _com_use_t
+{
+	char coms[255][8];
+	int num;
+}com_use_t;
 
 /************************************************************************/
 /* MNIS

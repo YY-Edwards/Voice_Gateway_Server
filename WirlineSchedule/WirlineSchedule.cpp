@@ -89,6 +89,131 @@ std::wstring getAppdataPath(){
 	return std::wstring(szBuffer);
 }
 
+bool m_bCheckUsbRun = false;
+CManager *m_pManager = NULL;
+HDEVNOTIFY m_hDevNotify = NULL;
+
+LRESULT CALLBACK WndProc(HWND h, UINT msg, WPARAM wp, LPARAM lp)
+{
+	//char temp[512] = { 0 };
+	//sprintf_s(temp, "WndProc Work  HWND:0x%08x,\tmsg:0x%04x,\tWPARAM:0x%04x\n", h, msg, wp);
+	//handleLog(temp);
+	switch (msg)
+	{
+	case WM_DEVICECHANGE:
+	{
+							switch ((DWORD)wp)
+							{
+							case DBT_DEVICEARRIVAL:
+							case DBT_DEVICEREMOVECOMPLETE:
+							{
+															 PDEV_BROADCAST_HDR pHdr = (PDEV_BROADCAST_HDR)lp;
+															 switch (pHdr->dbch_devicetype)
+															 {
+															 case DBT_DEVTYP_DEVICEINTERFACE:
+															 {
+																								PDEV_BROADCAST_DEVICEINTERFACE pDevInf = (PDEV_BROADCAST_DEVICEINTERFACE)pHdr;
+																								if (m_pManager)
+																								{
+																									m_pManager->OnUpdateUsb((DWORD)wp);
+																								}
+																								break;
+															 }
+																 break;
+															 default:
+																 break;
+															 }
+							}
+								break;
+							default:
+								break;
+							}
+	}
+		return TRUE;
+	default:
+		return DefWindowProc(h, msg, wp, lp);
+	}
+}
+
+static unsigned int __stdcall OperateProc(void* pArguments)
+{
+	handleLog("OperateProc Start");
+	/*操作处理*/
+	char temp;
+	while ('0' != (temp = getchar()))
+	{
+		switch (temp)
+		{
+		default:
+			break;
+		}
+	}
+	m_bCheckUsbRun = false;
+	//MSG msg;
+	//while (m_bOperateRun)
+	//{
+	//	if (PeekMessage(&msg, m_hNotifyWnd, 0, 0, PM_REMOVE) != 0)
+	//	{
+	//		TranslateMessage(&msg);
+	//		DispatchMessage(&msg);
+	//	}
+	//	else
+	//	{
+	//		Sleep(INTERVAL_CHECK_USB);
+	//	}
+	//}
+	handleLog("OperateProc End");
+	return 0;
+}
+
+void RegisterDevice(HWND& hwnd, HDEVNOTIFY& hDevNotify)
+{
+	const GUID GUID_DEVINTERFACE_LIST[] = {
+		{ 0xA5DCBF10, 0x6530, 0x11D2, { 0x90, 0x1F, 0x00, 0xC0, 0x4F, 0xB9, 0x51, 0xED } },
+		{ 0x53f56307, 0xb6bf, 0x11d0, { 0x94, 0xf2, 0x00, 0xa0, 0xc9, 0x1e, 0xfb, 0x8b } },
+		{ 0x4D1E55B2, 0xF16F, 0x11CF, { 0x88, 0xCB, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30 } }, /* HID */
+		{ 0xad498944, 0x762f, 0x11d0, { 0x8d, 0xcb, 0x00, 0xc0, 0x4f, 0xc3, 0x35, 0x8c } } };
+
+	DEV_BROADCAST_DEVICEINTERFACE NotificationFilter;
+	ZeroMemory(&NotificationFilter, sizeof(NotificationFilter));
+	NotificationFilter.dbcc_size = sizeof(DEV_BROADCAST_DEVICEINTERFACE);
+	NotificationFilter.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
+	for (int i = 0; i < sizeof(GUID_DEVINTERFACE_LIST) / sizeof(GUID); i++)
+	{
+		NotificationFilter.dbcc_classguid = GUID_DEVINTERFACE_LIST[i];
+		hDevNotify = RegisterDeviceNotification(hwnd, &NotificationFilter, DEVICE_NOTIFY_WINDOW_HANDLE);
+		if (!hDevNotify) {
+			//MessageBox(hwnd, TEXT("注册USB设备通知失败"), TEXT("错误"), MB_ICONERROR);
+			handleLog("RegisterDeviceNotification fail");
+			break;
+		}
+	}
+}
+
+void RegisterDevice(HDEVNOTIFY& hDevNotify)
+{
+	const GUID GUID_DEVINTERFACE_LIST[] = {
+		{ 0xA5DCBF10, 0x6530, 0x11D2, { 0x90, 0x1F, 0x00, 0xC0, 0x4F, 0xB9, 0x51, 0xED } },
+		{ 0x53f56307, 0xb6bf, 0x11d0, { 0x94, 0xf2, 0x00, 0xa0, 0xc9, 0x1e, 0xfb, 0x8b } },
+		{ 0x4D1E55B2, 0xF16F, 0x11CF, { 0x88, 0xCB, 0x00, 0x11, 0x11, 0x00, 0x00, 0x30 } }, /* HID */
+		{ 0xad498944, 0x762f, 0x11d0, { 0x8d, 0xcb, 0x00, 0xc0, 0x4f, 0xc3, 0x35, 0x8c } } };
+
+	DEV_BROADCAST_DEVICEINTERFACE NotificationFilter;
+	ZeroMemory(&NotificationFilter, sizeof(NotificationFilter));
+	NotificationFilter.dbcc_size = sizeof(DEV_BROADCAST_DEVICEINTERFACE);
+	NotificationFilter.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
+	for (int i = 0; i < sizeof(GUID_DEVINTERFACE_LIST) / sizeof(GUID); i++)
+	{
+		NotificationFilter.dbcc_classguid = GUID_DEVINTERFACE_LIST[i];
+		hDevNotify = RegisterDeviceNotification(CService::instance()->m_StatusHandle, &NotificationFilter, DEVICE_NOTIFY_SERVICE_HANDLE);
+		if (!hDevNotify) {
+			//MessageBox(hwnd, TEXT("注册USB设备通知失败"), TEXT("错误"), MB_ICONERROR);
+			handleLog("RegisterDeviceNotification fail");
+			break;
+		}
+	}
+}
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	//utf8显示
@@ -145,12 +270,13 @@ int _tmain(int argc, _TCHAR* argv[])
 		/* 运行代码
 		/************************************************************************/
 		LOG(INFO) << "================Service started================";
+		RegisterDevice(m_hDevNotify);
 #endif
 
 		/*声明变量并初始化*/
 		CMySQL *m_pDb = new CMySQL();
 		CDataScheduling *m_pMnis = new CDataScheduling();
-		CManager *m_pManager = new CManager(m_pDb, m_pMnis,defaultAudioPath);
+		m_pManager = new CManager(m_pDb, m_pMnis, defaultAudioPath);
 		g_manager = m_pManager;
 		BOOL m_ret = FALSE;
 		PLogReport m_report = NULL;
@@ -163,6 +289,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		m_pMnis->setCallBackFunc(CManager::OnData);
 		m_pRpcServer->setOnConnectHandler(CManager::OnConnect);
 		m_pRpcServer->setOnDisconnectHandler(CManager::OnDisConnect);
+#if SERVICE_CODDE
+		CService::instance()->SetRadioUsb(CManager::OnUpdateUsbService);
+#endif
 
 		/*设置基本参数*/
 		m_report = handleLog;
@@ -193,41 +322,92 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 #else
 		handleLog("input 0 for end");
-		scanf_s("%d", &cmd);
-		/*等待用户选择退出*/
-		while (cmd != 0)
+		/*注册设备插拔事件*/
+		unsigned int m_pOperateThreadId = 0;
+		HANDLE m_pOperateThread = NULL;
+		WNDCLASS wc;
+		ZeroMemory(&wc, sizeof(wc));
+		wc.lpszClassName = TEXT("myusbmsg");
+		wc.lpfnWndProc = WndProc;
+		RegisterClass(&wc);
+		HWND m_hNotifyWnd = CreateWindow(TEXT("myusbmsg"), TEXT(""), 0, 0, 0, 0, 0,
+			0, 0, GetModuleHandle(0), 0);
+		//初始化当前串口状态
+		RegisterDevice(m_hNotifyWnd, m_hDevNotify);
+		//操作测试线程
+		m_pOperateThread = (HANDLE)_beginthreadex(
+			NULL,
+			0,
+			OperateProc,
+			NULL,
+			CREATE_SUSPENDED,
+			&m_pOperateThreadId
+			);
+		if (NULL == m_pOperateThread)
 		{
-			switch (cmd)
-			{
-			case 1:
-			{
-					  REMOTE_TASK *pTask = new REMOTE_TASK;
-					  memset(pTask, 0, sizeof(REMOTE_TASK));
-					  pTask->cmd = REMOTE_CMD_CALL;
-					  pTask->param.info.callParam.operateInfo.callType = GROUP_CALL;
-					  pTask->param.info.callParam.operateInfo.isCurrent = 1;
-					  pTask->param.info.callParam.operateInfo.operate = 0;
-					  pTask->param.info.callParam.operateInfo.source = 5;
-					  pTask->param.info.callParam.operateInfo.tartgetId = 9;
-					  push_back_task(pTask);
-			}
-				break;
-			case 2:
-			{
-					  REMOTE_TASK *pTask = new REMOTE_TASK;
-					  memset(pTask, 0, sizeof(REMOTE_TASK));
-					  pTask->cmd = REMOTE_CMD_STOP_CALL;
-					  push_back_task(pTask);
-			}
-				break;
-			default:
-				break;
-			}
-
-			handleLog("input 0 for end");
-			scanf_s("%d", &cmd);
+			handleLog("create OperateProc fail");
+			goto WL_END;
 		}
+		m_bCheckUsbRun = true;
+		ResumeThread(m_pOperateThread);
+		MSG msg;
+		while (m_bCheckUsbRun)
+		{
+			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != 0)
+			{
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+			}
+			else
+			{
+				Sleep(INTERVAL_CHECK_USB);
+			}
+		}
+		handleLog("check usb proc exit");
+		m_bCheckUsbRun = false;
+		if (NULL != m_pOperateThread)
+		{
+			WaitForSingleObject(m_pOperateThread, 1000);
+			CloseHandle(m_pOperateThread);
+			m_pOperateThread = NULL;
+		}
+		//handleLog("input 0 for end");
+		//scanf_s("%d", &cmd);
+		///*等待用户选择退出*/
+		//while (cmd != 0)
+		//{
+		//	switch (cmd)
+		//	{
+		//	case 1:
+		//	{
+		//			  REMOTE_TASK *pTask = new REMOTE_TASK;
+		//			  memset(pTask, 0, sizeof(REMOTE_TASK));
+		//			  pTask->cmd = REMOTE_CMD_CALL;
+		//			  pTask->param.info.callParam.operateInfo.callType = GROUP_CALL;
+		//			  pTask->param.info.callParam.operateInfo.isCurrent = 1;
+		//			  pTask->param.info.callParam.operateInfo.operate = 0;
+		//			  pTask->param.info.callParam.operateInfo.source = 5;
+		//			  pTask->param.info.callParam.operateInfo.tartgetId = 9;
+		//			  push_back_task(pTask);
+		//	}
+		//		break;
+		//	case 2:
+		//	{
+		//			  REMOTE_TASK *pTask = new REMOTE_TASK;
+		//			  memset(pTask, 0, sizeof(REMOTE_TASK));
+		//			  pTask->cmd = REMOTE_CMD_STOP_CALL;
+		//			  push_back_task(pTask);
+		//	}
+		//		break;
+		//	default:
+		//		break;
+		//	}
+
+		//	handleLog("input 0 for end");
+		//	scanf_s("%d", &cmd);
+		//}
 #endif
+	WL_END:
 		/************************************************************************/
 		/* 资源释放
 		/************************************************************************/
