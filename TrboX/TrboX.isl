@@ -262,6 +262,7 @@
 		<row><td>NewBinary16</td><td/><td>&lt;ISProductFolder&gt;\Redist\Language Independent\OS Independent\InstallFirstUse.ico</td></row>
 		<row><td>NewBinary17</td><td/><td>&lt;ISProductFolder&gt;\Redist\Language Independent\OS Independent\InstallPartial.ico</td></row>
 		<row><td>NewBinary18</td><td/><td>&lt;ISProductFolder&gt;\Redist\Language Independent\OS Independent\InstallStateMenu.ico</td></row>
+		<row><td>NewBinary19</td><td/><td>E:\Projects\20160812_TrboX 3.0\Prj\TrboX\Release\TrboxMgr\ServerManager.exe</td></row>
 		<row><td>NewBinary2</td><td/><td>&lt;ISProductFolder&gt;\Redist\Language Independent\OS Independent\New.ibd</td></row>
 		<row><td>NewBinary3</td><td/><td>&lt;ISProductFolder&gt;\Redist\Language Independent\OS Independent\Up.ibd</td></row>
 		<row><td>NewBinary4</td><td/><td>&lt;ISProductFolder&gt;\Redist\Language Independent\OS Independent\WarningIcon.ibd</td></row>
@@ -346,6 +347,7 @@
 		<row><td>Component10</td><td>{2134AF52-E637-4FA4-ADD7-D5783F449038}</td><td>SVR</td><td>2</td><td/><td>File3</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component11</td><td>{A273BAFB-C5E7-4A68-A294-EDF16D80D5BA}</td><td>SVR</td><td>2</td><td/><td>File4</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component12</td><td>{48E124B1-DF7D-4CB1-96C0-D6CA2C4A3CF8}</td><td>TRBOX_</td><td>2</td><td/><td>File6</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
+		<row><td>Component13</td><td>{498514C1-3DFD-42C4-BCE3-74815EA901D8}</td><td>TRBOX_MGR</td><td>2</td><td/><td>File7</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component2</td><td>{04C2A115-6796-46BF-9C8E-07DE4D1FE34D}</td><td>DEVICE</td><td>2</td><td/><td>File2</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component3</td><td>{7890224F-977E-4CF1-BAE2-5B96781449BF}</td><td>DEVICE</td><td>2</td><td/><td>File3</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
 		<row><td>Component4</td><td>{46236873-5E7A-4B58-92FD-7B6353661882}</td><td>SVR</td><td>2</td><td/><td>File1</td><td>17</td><td/><td/><td/><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td><td>/LogFile=</td></row>
@@ -1128,6 +1130,7 @@
 		<row><td>INSTALLDIR</td><td>Component10</td></row>
 		<row><td>INSTALLDIR</td><td>Component11</td></row>
 		<row><td>INSTALLDIR</td><td>Component12</td></row>
+		<row><td>INSTALLDIR</td><td>Component13</td></row>
 		<row><td>INSTALLDIR</td><td>Component2</td></row>
 		<row><td>INSTALLDIR</td><td>Component3</td></row>
 		<row><td>INSTALLDIR</td><td>Component4</td></row>
@@ -1186,6 +1189,7 @@
 		<row><td>TRBOX_</td><td>icudt.dll</td></row>
 		<row><td>TRBOX_</td><td>libcef.dll</td></row>
 		<row><td>TRBOX_MGR</td><td>Component1</td></row>
+		<row><td>TRBOX_MGR</td><td>Component13</td></row>
 		<row><td>TRBOX_MGR</td><td>Component6</td></row>
 		<row><td>TRBOX_MGR</td><td>ISX_DEFAULTCOMPONENT</td></row>
 	</table>
@@ -1197,6 +1201,7 @@
 		<col def="S0">Target</col>
 		<col def="I4">ExtendedType</col>
 		<col def="S255">ISComments</col>
+		<row><td>DeleteService</td><td>1122</td><td>AppDataFolder</td><td>[AppDataFolder]servermanager.exe uninstall -t all</td><td/><td/></row>
 		<row><td>ISPreventDowngrade</td><td>19</td><td/><td>[IS_PREVENT_DOWNGRADE_EXIT]</td><td/><td>Exits install when a newer version of this product is found</td></row>
 		<row><td>ISPrint</td><td>1</td><td>SetAllUsers.dll</td><td>PrintScrollableText</td><td/><td>Prints the contents of a ScrollableText control on a dialog.</td></row>
 		<row><td>ISRunSetupTypeAddLocalEvent</td><td>1</td><td>ISExpHlp.dll</td><td>RunSetupTypeAddLocalEvent</td><td/><td>Run the AddLocal events associated with the Next button on the Setup Type dialog.</td></row>
@@ -1204,6 +1209,7 @@
 		<row><td>ISSelfRegisterFiles</td><td>3073</td><td>ISSELFREG.DLL</td><td>ISSelfRegisterFiles</td><td/><td/></row>
 		<row><td>ISSelfRegisterFinalize</td><td>1</td><td>ISSELFREG.DLL</td><td>ISSelfRegisterFinalize</td><td/><td/></row>
 		<row><td>ISUnSelfRegisterFiles</td><td>3073</td><td>ISSELFREG.DLL</td><td>ISUnSelfRegisterFiles</td><td/><td/></row>
+		<row><td>InstallService</td><td>1106</td><td>File7</td><td>update -t all -a y</td><td/><td/></row>
 		<row><td>SetARPINSTALLLOCATION</td><td>51</td><td>ARPINSTALLLOCATION</td><td>[INSTALLDIR]</td><td/><td/></row>
 		<row><td>SetAllUsersProfileNT</td><td>51</td><td>ALLUSERSPROFILE</td><td>[%SystemRoot]\Profiles\All Users</td><td/><td/></row>
 		<row><td>ShowMsiLog</td><td>226</td><td>SystemFolder</td><td>[SystemFolder]notepad.exe "[MsiLogFileLocation]"</td><td/><td>Shows Property-driven MSI Log</td></row>
@@ -1291,6 +1297,8 @@
 		<row><td>MY_PRODUCT_NAME</td><td>DIRECTORY</td><td>MYPROD~1|My Product Name</td><td/><td>0</td><td/></row>
 		<row><td>MY_PRODUCT_NAME1</td><td>JIHUA_INFORMATION</td><td>TRBOX3~1|TrboX 3.1</td><td/><td>0</td><td/></row>
 		<row><td>MyPicturesFolder</td><td>TARGETDIR</td><td>.:MyPict~1|MyPictures</td><td/><td>0</td><td/></row>
+		<row><td>NEW_DIRECTORY1</td><td>TARGETDIR</td><td>NEW_DIRECTORY1</td><td/><td>0</td><td/></row>
+		<row><td>NEW_DIRECTORY2</td><td>TARGETDIR</td><td>NEW_DIRECTORY2</td><td/><td>0</td><td/></row>
 		<row><td>NetHoodFolder</td><td>TARGETDIR</td><td>.:NetHood</td><td/><td>0</td><td/></row>
 		<row><td>PersonalFolder</td><td>TARGETDIR</td><td>.:Personal</td><td/><td>0</td><td/></row>
 		<row><td>PrimaryVolumePath</td><td>TARGETDIR</td><td>.:Primar~1|PrimaryVolumePath</td><td/><td>0</td><td/></row>
@@ -2015,6 +2023,7 @@
 		<row><td>AlwaysInstall</td><td>Component10</td></row>
 		<row><td>AlwaysInstall</td><td>Component11</td></row>
 		<row><td>AlwaysInstall</td><td>Component12</td></row>
+		<row><td>AlwaysInstall</td><td>Component13</td></row>
 		<row><td>AlwaysInstall</td><td>Component2</td></row>
 		<row><td>AlwaysInstall</td><td>Component3</td></row>
 		<row><td>AlwaysInstall</td><td>Component4</td></row>
@@ -2076,6 +2085,7 @@
 		<row><td>File4</td><td>Component11</td><td>Monitor.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Monitor&gt;|Built</td><td>3</td><td/></row>
 		<row><td>File5</td><td>Component6</td><td>Manager.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Manager&gt;|Built</td><td>3</td><td/></row>
 		<row><td>File6</td><td>Component12</td><td>Dispatcher.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;Dispatcher&gt;|Built</td><td>3</td><td/></row>
+		<row><td>File7</td><td>Component13</td><td>ServerManager.主输出</td><td>0</td><td/><td/><td/><td>1</td><td>&lt;ServerManager&gt;|Built</td><td>3</td><td/></row>
 		<row><td>cefsharp.dll</td><td>CefSharp.dll</td><td>CefSharp.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Trbox\bin\CefSharp.dll</td><td>1</td><td/></row>
 		<row><td>cefsharp.wpf.dll</td><td>CefSharp.Wpf.dll</td><td>CEFSHA~1.DLL|CefSharp.Wpf.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\Trbox\bin\CefSharp.Wpf.dll</td><td>1</td><td/></row>
 		<row><td>controls.wpf.dll</td><td>Controls.WPF.dll</td><td>CONTRO~1.DLL|Controls.WPF.dll</td><td>0</td><td/><td/><td/><td>1</td><td>E:\Projects\20160812_TrboX 3.0\Prj\trbox\Release\TrboxMgr\Bin\Controls.WPF.dll</td><td>1</td><td/></row>
@@ -2261,6 +2271,7 @@
 		<row><td>Component10</td><td/><td/><td>_793CE145_28D8_4A38_A472_97DD93658DDE_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component11</td><td/><td/><td>_A9083488_BA7B_44D8_8852_EF5989B68355_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component12</td><td/><td/><td>_6071A81B_D805_4AED_9C7F_54AB9F5D6DE5_FILTER</td><td/><td/><td/><td/></row>
+		<row><td>Component13</td><td/><td/><td>_D6735D56_6555_480F_8997_B4463EBF0A77_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component2</td><td/><td/><td>_DA9B56C7_6171_4210_BD9B_1BABB1753CE4_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component3</td><td/><td/><td>_D645E487_BC89_482E_9E97_DA6BB22E0F3E_FILTER</td><td/><td/><td/><td/></row>
 		<row><td>Component4</td><td/><td/><td>_7E42CFF1_E342_4223_99C6_9041EB42389B_FILTER</td><td/><td/><td/><td/></row>
@@ -2592,6 +2603,7 @@
 		<row><td>Manager</td><td>Manager\Manager.csproj</td><td/><td>2</td></row>
 		<row><td>Monitor</td><td>Monitor\Monitor.vcxproj</td><td/><td>2</td></row>
 		<row><td>ProgramFilesFolder</td><td/><td/><td>1</td></row>
+		<row><td>ServerManager</td><td>ServerManager\ServerManager.csproj</td><td/><td>2</td></row>
 		<row><td>SystemFolder</td><td/><td/><td>1</td></row>
 		<row><td>TServer</td><td>TServer\TServer.vcxproj</td><td/><td>2</td></row>
 		<row><td>WindowsFolder</td><td/><td/><td>1</td></row>
@@ -4172,6 +4184,7 @@
 		<row><td>CostInitialize</td><td/><td>800</td><td>CostInitialize</td><td/></row>
 		<row><td>CreateFolders</td><td/><td>3700</td><td>CreateFolders</td><td/></row>
 		<row><td>CreateShortcuts</td><td/><td>4500</td><td>CreateShortcuts</td><td/></row>
+		<row><td>DeleteService</td><td>REMOVE="ALL" And (&amp;AlwaysInstall=2)</td><td>6401</td><td/><td/></row>
 		<row><td>DeleteServices</td><td>VersionNT</td><td>2000</td><td>DeleteServices</td><td/></row>
 		<row><td>DuplicateFiles</td><td/><td>4210</td><td>DuplicateFiles</td><td/></row>
 		<row><td>FileCost</td><td/><td>900</td><td>FileCost</td><td/></row>
@@ -4186,6 +4199,7 @@
 		<row><td>InstallFinalize</td><td/><td>6600</td><td>InstallFinalize</td><td/></row>
 		<row><td>InstallInitialize</td><td/><td>1501</td><td>InstallInitialize</td><td/></row>
 		<row><td>InstallODBC</td><td/><td>5400</td><td>InstallODBC</td><td/></row>
+		<row><td>InstallService</td><td>Not Installed</td><td>6402</td><td/><td/></row>
 		<row><td>InstallServices</td><td>VersionNT</td><td>5800</td><td>InstallServices</td><td/></row>
 		<row><td>InstallValidate</td><td/><td>1400</td><td>InstallValidate</td><td/></row>
 		<row><td>IsolateComponents</td><td/><td>950</td><td>IsolateComponents</td><td/></row>

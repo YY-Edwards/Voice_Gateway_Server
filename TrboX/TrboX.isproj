@@ -49,6 +49,10 @@
 			<Name>Monitor</Name>
 			<Project>{811EDE63-7C0E-4A12-B5DF-A846A68BD8EB}</Project>
 		</ProjectReference>
+		<ProjectReference Include="..\ServerManager\ServerManager.csproj">
+			<Name>ServerManager</Name>
+			<Project>{6F6C930F-39D7-4004-B91E-5D8C81A2CB4D}</Project>
+		</ProjectReference>
 		<ProjectReference Include="..\TServer\TServer.vcxproj">
 			<Name>TServer</Name>
 			<Project>{F1B82FB7-BBFF-49A3-BD27-29F1552C41CF}</Project>
