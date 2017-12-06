@@ -209,20 +209,28 @@ void CBroker::sendWirelanConfig()
 
 
 	std::string repeater = CSettings::instance()->getValue("repeater");
-	Document d;
-	d.Parse(repeater.c_str());
-	if (d.HasMember("IsEnable") && d["IsEnable"].IsBool())
+	if (repeater != "")
 	{
-		isRepeater = d["IsEnable"].GetBool();
+		Document d;
+		d.Parse(repeater.c_str());
+		if (d.HasMember("IsEnable") && d["IsEnable"].IsBool())
+		{
+			isRepeater = d["IsEnable"].GetBool();
+		}
 	}
 	
+	
 	std::string mnis = CSettings::instance()->getValue("mnis");
-	Document d1;
-	d1.Parse(mnis.c_str());
-	if (d1.HasMember("IsEnable") && d1["IsEnable"].IsBool())
+	if (mnis != "")
 	{
-		isMnis = d1["IsEnable"].GetBool();
+		Document d1;
+		d1.Parse(mnis.c_str());
+		if (d1.HasMember("IsEnable") && d1["IsEnable"].IsBool())
+		{
+			isMnis = d1["IsEnable"].GetBool();
+		}
 	}
+	
 	std::string location = CSettings::instance()->getValue("location");
 	std::string locationIndoor = CSettings::instance()->getValue("locationIndoor");
 	if (repeater != "")
@@ -265,19 +273,27 @@ void CBroker::sendWirelanConfig()
 void CBroker::sendRadioConfig()
 {
 	std::string radio = CSettings::instance()->getValue("radio");
-	Document d;
-	d.Parse(radio.c_str());
-	if (d.HasMember("IsEnable") && d["IsEnable"].IsBool())
+	if (radio != "")
 	{
-		isRadio = d["IsEnable"].GetBool();
+		Document d;
+		d.Parse(radio.c_str());
+		if (d.HasMember("IsEnable") && d["IsEnable"].IsBool())
+		{
+			isRadio = d["IsEnable"].GetBool();
+		}
 	}
+	
 	std::string mnis = CSettings::instance()->getValue("mnis");
-	Document d1;
-	d1.Parse(mnis.c_str());
-	if (d1.HasMember("IsEnable") && d1["IsEnable"].IsBool())
+	if (mnis != "")
 	{
-		isMnis = d1["IsEnable"].GetBool();
+		Document d1;
+		d1.Parse(mnis.c_str());
+		if (d1.HasMember("IsEnable") && d1["IsEnable"].IsBool())
+		{
+			isMnis = d1["IsEnable"].GetBool();
+		}
 	}
+
 	std::string location = CSettings::instance()->getValue("location");
 	std::string locationIndoor = CSettings::instance()->getValue("locationIndoor");
 	if (radio != "")
@@ -573,12 +589,12 @@ void CBroker::setSystemStatus()
 	/*
 	"DeviceStatus":0:connected, 1:disconnect //vechion station status OR repeater status
 	*/
-	if (isDeviceConnect)
+	if (isRadio &&isDeviceConnect)
 	{
 		//systemStatus.deviceStatus = 0;
 		setDeviceStatusByType(System_DeviceStatus, 0);
 	}
-	else
+	else if (isRadio)
 	{
 		//systemStatus.deviceStatus = 1;
 		setDeviceStatusByType(System_DeviceStatus, 1);
@@ -771,7 +787,7 @@ void CBroker::clientConnectStatus()
 		isLastLEStatus = isCurrentLEStatus;
 		isLastMicphoneStatus = isCurrentMicphoneStatus;
 		isLastSpeakerStatus = isCurrentSpeakerStatus;
-		lastDongleCount!= currentDongleCount;
+		lastDongleCount = currentDongleCount;
 		Sleep(1 * 1000);
 	}
 }
