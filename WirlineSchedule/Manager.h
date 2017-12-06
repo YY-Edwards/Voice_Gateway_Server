@@ -105,6 +105,9 @@ public:
 	int DeviceInfoStatus();
 	void setDeviceInfoStatus(int value);
 
+	int MnisStatus();
+	void setMnisStatus(int value);
+
 	void OnUpdateUsb(DWORD type);
 
 	static void OnUpdateUsbService(bool type);
@@ -140,6 +143,7 @@ private:
 	int m_lEStatus;//LE是否连接成功
 	int m_wireLanStatus;//wirelan是否注册成功
 	int m_deviceInfoStatus;//序列号是否更新
+	int m_mnisStatus;
 
 	static unsigned __stdcall HandleRemoteTaskProc(void * pThis);
 	/*判断当前任务超时线程*/

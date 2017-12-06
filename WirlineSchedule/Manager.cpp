@@ -27,6 +27,7 @@ CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis, std::wstring& defaultAud
 , m_lEStatus(WL_SYSTEM_DISCONNECT)
 , m_wireLanStatus(WL_REGISTER_FAL)
 , m_deviceInfoStatus(WL_SERIL_FAL)
+, m_mnisStatus(WL_SYSTEM_DISCONNECT)
 {
 	g_pNet = new CWLNet(pDb, this, defaultAudioPath);
 	g_pDongle = new CSerialDongle();
@@ -789,7 +790,7 @@ void CManager::handleRemoteTask()
 											 //value.setKeyVal("WorkMode", FieldValue(info.SessionId));//工作模式-Tserver
 											 //value.setKeyVal("ServerStatus", FieldValue(info.SessionId));//服务状态-Tserver
 											 //value.setKeyVal("DeviceStatus", FieldValue(info.SessionId));//设备连接状态-Tserver侧修改
-											 //value.setKeyVal("MnisStatus", FieldValue(info.SessionId));//mnis状态-Tserver侧修改
+											 value.setKeyVal("MnisStatus", FieldValue(MnisStatus()));//mnis状态-Tserver侧修改
 											 //value.setKeyVal("DatabaseStatus", FieldValue(info.SessionId));//数据库状态-LogServer
 											 value.setKeyVal("DongleCount", FieldValue(DongCount()));//dongle数量
 											 value.setKeyVal("MicphoneStatus", FieldValue(MicphoneStatus()));//麦克风状态
@@ -961,19 +962,25 @@ void CManager::OnData(int callFuncId, Respone response)
 								 g_pNet->send2Client("locationStatus", args);
 	}
 		break;
-	case MNIS_CONNECT:
-	{
-						 printf_s("MNIS_CONNECT:%d\r\n", response.connectStatus);
-						 Env_MnisIsOk = true;
-						 //g_pNet->wlMnisConnectStatus(response.connectStatus);
-	}
-		break;
-	case MNIS_DIS_CONNECT:
-	{
-							 printf_s("MNIS_DIS_CONNECT:%d\r\n", response.connectStatus);
-							 Env_MnisIsOk = false;
-	}
-		break;
+	case CONNECT_STATUS:
+		switch (response.connectStatus)
+		{
+		case MNIS_CONNECT:
+		{
+							 printf_s("MNIS_CONNECT:%d\r\n", response.connectStatus);
+							 Env_MnisIsOk = true;
+							 if (g_manager) g_manager->setMnisStatus(WL_SYSTEM_CONNECT);
+							 //g_pNet->wlMnisConnectStatus(response.connectStatus);
+		}
+			break;
+		default:
+		{
+				   printf_s("MNIS_DIS_CONNECT:%d\r\n", response.connectStatus);
+				   Env_MnisIsOk = false;
+				   if (g_manager) g_manager->setMnisStatus(WL_SYSTEM_DISCONNECT);
+		}
+			break;
+		}
 	case SEND_PRIVATE_MSG:
 		args["type"] = FieldValue(PRIVATE);
 		try
@@ -1600,6 +1607,22 @@ void CManager::handleUsbDel()
 				}
 			}
 		}
+	}
+}
+
+int CManager::MnisStatus()
+{
+	return m_mnisStatus;
+}
+
+void CManager::setMnisStatus(int value)
+{
+	if (m_mnisStatus != value)
+	{
+		m_mnisStatus = value;
+		FieldValue info(FieldValue::TObject);
+		info.setKeyVal("MnisStatus", FieldValue(value));
+		if (g_pNet) g_pNet->wlInfo(GET_TYPE_SYSTEM_STATUS, info, "");
 	}
 }
 
