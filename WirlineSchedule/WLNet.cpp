@@ -7783,10 +7783,9 @@ void CWLNet::setWlStatus(WLStatus value)
 		}
 	}
 
-	FieldValue info(FieldValue::TInt);
-
 	if (m_WLStatus != value)
 	{
+		FieldValue info(FieldValue::TInt);
 		WLStatus old;
 		old = m_WLStatus;
 		m_WLStatus = value;
@@ -7799,7 +7798,7 @@ void CWLNet::setWlStatus(WLStatus value)
 		/*断开连接*/
 		if (old == ALIVE)
 		{
-			info.setInt(REPEATER_DISCONNECT);
+			info.setInt(REPEATER_DISCONNECT); 
 			wlInfo(GET_TYPE_CONN, info, "");
 		}
 		sprintf_s(m_reportMsg, "=============WL_STATUS:%u->%u=============", old, m_WLStatus);
@@ -7907,6 +7906,23 @@ int CWLNet::wlInfo(int getType, FieldValue info, std::string sessionid)
 	if (!wlScheduleIsEnable())
 	{
 		return 0;
+	}
+	
+	if (GET_TYPE_CONN == getType)
+	{
+		int deviceStatus = info.getInt();
+		int rlt = 0x0000000f;
+		int haveDevice = 0x0000000e;
+		int haveMnis = 0x0000000d;
+		if (REPEATER_CONNECT == deviceStatus)
+		{
+			rlt = rlt&haveDevice;
+		}
+		if (WL_SYSTEM_CONNECT == m_pManager->MnisStatus())
+		{
+			rlt = rlt&haveMnis;
+		}
+		info.setInt(rlt);
 	}
 	/*将参数打包成json格式*/
 	ArgumentType args;
