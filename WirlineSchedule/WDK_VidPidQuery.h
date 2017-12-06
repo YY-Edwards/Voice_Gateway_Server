@@ -23,11 +23,6 @@ typedef struct _HIDD_VIDPID
 	USHORT  VendorID;
 	USHORT  ProductID;
 } HIDD_VIDPID;
-typedef struct _com_use_t
-{
-	char coms[255][8];
-	int num;
-}com_use_t;
 #endif  
 
 

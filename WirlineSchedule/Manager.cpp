@@ -27,6 +27,7 @@ CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis, std::wstring& defaultAud
 , m_lEStatus(WL_SYSTEM_DISCONNECT)
 , m_wireLanStatus(WL_REGISTER_FAL)
 , m_deviceInfoStatus(WL_SERIL_FAL)
+, m_mnisStatus(WL_SYSTEM_DISCONNECT)
 {
 	g_pNet = new CWLNet(pDb, this, defaultAudioPath);
 	g_pDongle = new CSerialDongle();
@@ -540,6 +541,7 @@ int CManager::config(REMOTE_TASK* pTask)
 			sprintf_s(m_reportMsg, "open dongle fail");
 			sendLogToWindow();
 			g_pWLlog->sendLog("open dongle fail");
+			handleUsbAdd();
 		}
 		else
 		{
@@ -627,11 +629,12 @@ int CManager::config(REMOTE_TASK* pTask)
 				sprintf_s(m_reportMsg, "initDongle:open dongle fail");
 				sendLogToWindow();
 				g_pWLlog->sendLog("dongle initial fail");
+				handleUsbAdd();
 			}
 			else
 			{
 				//m_bDongleIsOpen = TRUE;
-				setDongleCount(0);
+				setDongleCount(1);
 				Env_DongleIsOk = true;
 				sprintf_s(m_reportMsg, "open dongle success");
 				sendLogToWindow();
@@ -787,7 +790,7 @@ void CManager::handleRemoteTask()
 											 //value.setKeyVal("WorkMode", FieldValue(info.SessionId));//工作模式-Tserver
 											 //value.setKeyVal("ServerStatus", FieldValue(info.SessionId));//服务状态-Tserver
 											 //value.setKeyVal("DeviceStatus", FieldValue(info.SessionId));//设备连接状态-Tserver侧修改
-											 //value.setKeyVal("MnisStatus", FieldValue(info.SessionId));//mnis状态-Tserver侧修改
+											 value.setKeyVal("MnisStatus", FieldValue(MnisStatus()));//mnis状态-Tserver侧修改
 											 //value.setKeyVal("DatabaseStatus", FieldValue(info.SessionId));//数据库状态-LogServer
 											 value.setKeyVal("DongleCount", FieldValue(DongCount()));//dongle数量
 											 value.setKeyVal("MicphoneStatus", FieldValue(MicphoneStatus()));//麦克风状态
@@ -959,19 +962,25 @@ void CManager::OnData(int callFuncId, Respone response)
 								 g_pNet->send2Client("locationStatus", args);
 	}
 		break;
-	case MNIS_CONNECT:
-	{
-						 printf_s("MNIS_CONNECT:%d\r\n", response.connectStatus);
-						 Env_MnisIsOk = true;
-						 //g_pNet->wlMnisConnectStatus(response.connectStatus);
-	}
-		break;
-	case MNIS_DIS_CONNECT:
-	{
-							 printf_s("MNIS_DIS_CONNECT:%d\r\n", response.connectStatus);
-							 Env_MnisIsOk = false;
-	}
-		break;
+	case CONNECT_STATUS:
+		switch (response.connectStatus)
+		{
+		case MNIS_CONNECT:
+		{
+							 printf_s("MNIS_CONNECT:%d\r\n", response.connectStatus);
+							 Env_MnisIsOk = true;
+							 if (g_manager) g_manager->setMnisStatus(WL_SYSTEM_CONNECT);
+							 //g_pNet->wlMnisConnectStatus(response.connectStatus);
+		}
+			break;
+		default:
+		{
+				   printf_s("MNIS_DIS_CONNECT:%d\r\n", response.connectStatus);
+				   Env_MnisIsOk = false;
+				   if (g_manager) g_manager->setMnisStatus(WL_SYSTEM_DISCONNECT);
+		}
+			break;
+		}
 	case SEND_PRIVATE_MSG:
 		args["type"] = FieldValue(PRIVATE);
 		try
@@ -1344,10 +1353,11 @@ void CManager::handleIsRepeatCurTask(std::string sessionId, bool &rlt)
 
 void CManager::initialize()
 {
-	/*获取dongle数量*/
-	com_use_t result = { 0 };
-	WDK_WhoAllVidPid(VID_PID, &result);
-	setDongleCount(result.num);
+	///*获取dongle数量*/
+	//com_use_t result = { 0 };
+	//WDK_WhoAllVidPid(VID_PID, &result);
+	////memcpy(&m_curDongleInfo, &result, sizeof(com_use_t));
+	//setDongleCount(result.num);
 }
 
 int CManager::DongCount()
@@ -1442,6 +1452,176 @@ void CManager::setDeviceInfoStatus(int value)
 		m_deviceInfoStatus = value;
 		FieldValue info(FieldValue::TObject);
 		info.setKeyVal("DeviceInfoStatus", FieldValue(value));
+		if (g_pNet) g_pNet->wlInfo(GET_TYPE_SYSTEM_STATUS, info, "");
+	}
+}
+
+void CManager::OnUpdateUsb(DWORD type)
+{
+	sprintf_s(m_reportMsg, "OnUpdateUsb");
+	sendLogToWindow();
+	//LOG_INFO("OnUpdateUsb");
+	switch (type)
+	{
+	case USB_ADD:
+	{
+					//LOG_INFO("USB_ADD");
+					sprintf_s(m_reportMsg, "USB_ADD");
+					sendLogToWindow();
+					handleUsbAdd();
+	}
+		break;
+	case USB_DEL:
+	{
+					//LOG_INFO("USB_DEL");
+					sprintf_s(m_reportMsg, "USB_DEL");
+					sendLogToWindow();
+					handleUsbDel();
+	}
+		break;
+	default:
+		break;
+	}
+}
+
+void CManager::OnUpdateUsbService(bool type)
+{
+	if (g_manager)
+	{
+		g_manager->OnUpdateUsb(type ? DBT_DEVICEARRIVAL : DBT_DEVICEREMOVECOMPLETE);
+	}
+}
+
+void CManager::handleUsbAdd()
+{
+	com_use_t result = { 0 };
+	WDK_WhoAllVidPid(VID_PID, &result);
+	//memcpy(&m_curDongleInfo, &result, sizeof(com_use_t));
+	if (0 == DongCount())
+	{
+		for (int i = 0; i < result.num; i++)
+		{
+			/*重新配置dongle*/
+			WCHAR tmpStr[128] = { 0 };
+			swprintf_s(tmpStr, 128, L"\\\\.\\%s", g_tool.ANSIToUnicode(result.coms[i]).c_str());
+			if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
+			{
+				//m_bDongleIsOpen = FALSE;
+				setDongleCount(0);
+				Env_DongleIsOk = false;
+				sprintf_s(m_reportMsg, "initDongle:open dongle fail");
+				sendLogToWindow();
+				g_pWLlog->sendLog("dongle initial fail");
+				continue;
+			}
+			else
+			{
+				//m_bDongleIsOpen = TRUE;
+				sscanf_s(result.coms[i], "COM%d", &CONFIG_DONGLE_PORT);
+				setDongleCount(1);
+				Env_DongleIsOk = true;
+				sprintf_s(m_reportMsg, "open dongle success");
+				sendLogToWindow();
+				g_pWLlog->sendLog("dongle initial success");
+				break;
+			}
+		}
+	}
+}
+
+void CManager::handleUsbDel()
+{
+	com_use_t result = { 0 };
+	WDK_WhoAllVidPid(VID_PID, &result);
+	//memcpy(&m_curDongleInfo, &result, sizeof(com_use_t));
+	if (0 == DongCount())
+	{
+		for (int i = 0; i < result.num; i++)
+		{
+			/*重新配置dongle*/
+			WCHAR tmpStr[128] = { 0 };
+			swprintf_s(tmpStr, 128, L"\\\\.\\%s", g_tool.ANSIToUnicode(result.coms[i]).c_str());
+			if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
+			{
+				//m_bDongleIsOpen = FALSE;
+				setDongleCount(0);
+				Env_DongleIsOk = false;
+				sprintf_s(m_reportMsg, "initDongle:open dongle fail");
+				sendLogToWindow();
+				g_pWLlog->sendLog("dongle initial fail");
+				continue;
+			}
+			else
+			{
+				//m_bDongleIsOpen = TRUE;
+				sscanf_s(result.coms[i], "COM%d", &CONFIG_DONGLE_PORT);
+				setDongleCount(1);
+				Env_DongleIsOk = true;
+				sprintf_s(m_reportMsg, "open dongle success");
+				sendLogToWindow();
+				g_pWLlog->sendLog("dongle initial success");
+				break;
+			}
+		}
+	}
+	else
+	{
+		bool ishave = false;
+		char temp[64] = { 0 };
+		sprintf_s(temp, "COM%d", CONFIG_DONGLE_PORT);
+		for (int i = 0; i < result.num; i++)
+		{
+			if (0 == strcmp(temp, result.coms[i]))
+			{
+				ishave = true;
+				break;
+			}
+		}
+		if (!ishave)
+		{
+			for (int i = 0; i < result.num; i++)
+			{
+				/*重新配置dongle*/
+				WCHAR tmpStr[128] = { 0 };
+				swprintf_s(tmpStr, 128, L"\\\\.\\%s", g_tool.ANSIToUnicode(result.coms[i]).c_str());
+				if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
+				{
+					//m_bDongleIsOpen = FALSE;
+					setDongleCount(0);
+					Env_DongleIsOk = false;
+					sprintf_s(m_reportMsg, "initDongle:open dongle fail");
+					sendLogToWindow();
+					g_pWLlog->sendLog("dongle initial fail");
+					continue;
+				}
+				else
+				{
+					//m_bDongleIsOpen = TRUE;
+					sscanf_s(result.coms[i], "COM%d", &CONFIG_DONGLE_PORT);
+					setDongleCount(1);
+					Env_DongleIsOk = true;
+					sprintf_s(m_reportMsg, "open dongle success");
+					sendLogToWindow();
+					g_pWLlog->sendLog("dongle initial success");
+					break;
+				}
+			}
+		}
+	}
+}
+
+int CManager::MnisStatus()
+{
+	return m_mnisStatus;
+}
+
+void CManager::setMnisStatus(int value)
+{
+	if (m_mnisStatus != value)
+	{
+		m_mnisStatus = value;
+		FieldValue info(FieldValue::TObject);
+		info.setKeyVal("MnisStatus", FieldValue(value));
 		if (g_pNet) g_pNet->wlInfo(GET_TYPE_SYSTEM_STATUS, info, "");
 	}
 }

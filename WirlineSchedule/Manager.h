@@ -104,6 +104,13 @@ public:
 
 	int DeviceInfoStatus();
 	void setDeviceInfoStatus(int value);
+
+	int MnisStatus();
+	void setMnisStatus(int value);
+
+	void OnUpdateUsb(DWORD type);
+
+	static void OnUpdateUsbService(bool type);
 private:
 	PLogReport m_report;
 	//HWND m_hwnd;
@@ -125,6 +132,7 @@ private:
 
 	REMOTE_TASK *m_pCurrentTask;
 	//REMOTE_TASK m_currentTask;
+	//com_use_t m_curDongleInfo;
 
 	CDataScheduling* m_pMnis;
 	UINT m_idTaskOnTimerProc;
@@ -135,6 +143,7 @@ private:
 	int m_lEStatus;//LE是否连接成功
 	int m_wireLanStatus;//wirelan是否注册成功
 	int m_deviceInfoStatus;//序列号是否更新
+	int m_mnisStatus;
 
 	static unsigned __stdcall HandleRemoteTaskProc(void * pThis);
 	/*判断当前任务超时线程*/
@@ -149,6 +158,8 @@ private:
 	void freeCurrentTask();
 	bool isSameSessionId(std::string sessionId, REMOTE_TASK* p);
 	void initialize();
+	void handleUsbAdd();
+	void handleUsbDel();
 };
 
 
