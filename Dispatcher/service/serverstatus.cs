@@ -67,8 +67,8 @@ namespace Dispatcher.Service
             if (WorkMode == FunctionConfigure.Mode_t.UnKnown) return "离线模式";
             else if (WorkMode == FunctionConfigure.Mode_t.Debug) return "调试模式";
 
-            string serverDept = IsServerConnected ? "" : "服务未连接\t";
-            string deviceDept = string.Format("{0}{1}连接{2}\t",
+            string serverDept = IsServerConnected ? "" : "服务未连接    ";
+            string deviceDept = string.Format("{0}{1}连接{2}    ",
                  WorkMode == FunctionConfigure.Mode_t.VehicleStation || WorkMode == FunctionConfigure.Mode_t.VehicleStationWithMnis ? "车载台" : "中继台",
                  IsDeviceConnected ? "已" : "未",
                  WorkMode == FunctionConfigure.Mode_t.VehicleStation || WorkMode == FunctionConfigure.Mode_t.VehicleStationWithMnis
@@ -77,7 +77,7 @@ namespace Dispatcher.Service
                         : (FunctionConfigure.RepeaterSetting != null ? string.Format("({0})", FunctionConfigure.RepeaterSetting.Master.Ip) : "")
                 );
             string mnisDept = WorkMode != FunctionConfigure.Mode_t.RepeaterWithMnis && WorkMode != FunctionConfigure.Mode_t.VehicleStationWithMnis ? "" :
-                string.Format("MNIS{0}连接{1}\t",
+                string.Format("MNIS{0}连接{1}    ",
                 IsMnisConnected ? "已" : "未",
                  (FunctionConfigure.MnisSetting != null ? string.Format("({0})", FunctionConfigure.MnisSetting.Host) : "")
                 );
@@ -88,7 +88,7 @@ namespace Dispatcher.Service
                     , serverDept
                     , deviceDept
                     , mnisDept
-                    , IsDatabaseConnected ? "" : "数据库未连接\t"
+                    , IsDatabaseConnected ? "" : "数据库未连接    "
                     , IsDeviceInfoUpdated ? "" : "正在读取设备信息..."
                     );
             }
@@ -98,12 +98,12 @@ namespace Dispatcher.Service
                     , serverDept
                     , deviceDept
                     , mnisDept
-                    , IsDatabaseConnected ? "" : "数据库未连接\t"
-                    , DongleCount > 0 ? "" : "Dongle连接异常\t"
-                    , IsMicphoneConnected ? "" : "麦克风连接异常\t"
-                    , IsSpeakerConnected ? "" : "喇叭连接异常\t"
-                    , IsLEConnected ? "" : "LE连接异常\t"
-                    , IsWireLanConnected ? "" : "Wirelan连接异常\t"
+                    , IsDatabaseConnected ? "" : "数据库未连接    "
+                    , DongleCount > 0 ? "" : "Dongle连接异常    "
+                    , IsMicphoneConnected ? "" : "麦克风连接异常    "
+                    , IsSpeakerConnected ? "" : "喇叭连接异常    "
+                    , IsLEConnected ? "" : "LE连接异常    "
+                    , IsWireLanConnected ? "" : "Wirelan连接异常    "
                     , IsDeviceInfoUpdated ? "" : "正在读取设备信息..."
                     );
             }
