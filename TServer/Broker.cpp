@@ -644,6 +644,8 @@ void CBroker::setDeviceStatus(bool device, bool mnis)
 //}
 void CBroker::sendSystemStatusToClient(std::string  sessionId, CRemotePeer* pRemote, uint64_t callId)
 {
+	std::string strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
+	pRemote->sendResponse(strResp.c_str(), strResp.size());
 	//std::lock_guard <std::mutex> wlocker(sendLock);
 	ArgumentType args;
 	if (sessionId != "")
