@@ -72,7 +72,7 @@ void CService::InstallService(){
 		SERVICE_ERROR_NORMAL,
 		args.str().c_str(),
 		NULL, NULL, NULL,
-		userName.c_str(),
+		NULL,//userName.c_str(),
 		NULL);
 
 
