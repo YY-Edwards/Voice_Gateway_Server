@@ -1241,7 +1241,7 @@ bool CManager::isSameSessionId(std::string sessionId, REMOTE_TASK* p)
 	{
 							CALL_OPERATE_PARAM info = p->param.info.callParam.operateInfo;
 							sprintf_s(m_reportMsg, "%s and %s is %d", sessionId.c_str(), info.SessionId, rlt = (0 == strcmp(sessionId.c_str(), info.SessionId)));
-							sendLogToWindow();
+							//sendLogToWindow();
 							return rlt;
 	}
 		break;
@@ -1251,7 +1251,7 @@ bool CManager::isSameSessionId(std::string sessionId, REMOTE_TASK* p)
 	{
 									 GET_INFO_PARAM info = p->param.info.getInfoParam.getInfo;
 									 sprintf_s(m_reportMsg, "%s and %s is %d", sessionId.c_str(), info.SessionId, rlt = (0 == strcmp(sessionId.c_str(), info.SessionId)));
-									 sendLogToWindow();
+									 //sendLogToWindow();
 									 return rlt;
 	}
 		break;
@@ -1259,7 +1259,7 @@ bool CManager::isSameSessionId(std::string sessionId, REMOTE_TASK* p)
 	{
 									  QUERY_GPS info = p->param.info.queryGpsParam;
 									  sprintf_s(m_reportMsg, "%s and %s is %d", sessionId.c_str(), info.SessionId, rlt = (0 == strcmp(sessionId.c_str(), info.SessionId)));
-									  sendLogToWindow();
+									  //sendLogToWindow();
 									  return rlt;
 	}
 		break;
@@ -1267,7 +1267,7 @@ bool CManager::isSameSessionId(std::string sessionId, REMOTE_TASK* p)
 	{
 								MNIS_MSG info = p->param.info.msgParam;
 								sprintf_s(m_reportMsg, "%s and %s is %d", sessionId.c_str(), info.SessionId, rlt = (0 == strcmp(sessionId.c_str(), info.SessionId)));
-								sendLogToWindow();
+								//sendLogToWindow();
 								return rlt;
 	}
 		break;
@@ -1275,7 +1275,7 @@ bool CManager::isSameSessionId(std::string sessionId, REMOTE_TASK* p)
 	{
 								   ARS info = p->param.info.mnisStatusParam;
 								   sprintf_s(m_reportMsg, "%s and %s is %d", sessionId.c_str(), info.SessionId, rlt = (0 == strcmp(sessionId.c_str(), info.SessionId)));
-								   sendLogToWindow();
+								   //sendLogToWindow();
 								   return rlt;
 
 	}
