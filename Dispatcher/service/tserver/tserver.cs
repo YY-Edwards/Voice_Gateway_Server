@@ -218,10 +218,11 @@ namespace Dispatcher.Service
                 if (json != string.Empty)
                 {
                     if (session != null && !_requestList.ContainsKey(s_CallID)) _requestList.Add(s_CallID, session.guid);
-                    TServerResponse res = RequestWithoutReply<TServerResponse>(s_CallID, Encoding.UTF8.GetBytes(json));
-                    
-                    if (res == null) return null;
-                    return new string[2] { res.status, JsonConvert.SerializeObject(res.contents, Formatting.None) };
+                    //TServerResponse res = RequestWithoutReply<TServerResponse>(s_CallID, Encoding.UTF8.GetBytes(json));
+                    RequestWithoutReply(s_CallID, Encoding.UTF8.GetBytes(json));
+                    return null;
+                    //if (res == null) return null;
+                    //return new string[2] { res.status, JsonConvert.SerializeObject(res.contents, Formatting.None) };
                 }
 
                 if (session != null && SendFailure != null) SendFailure(this, session.guid);
@@ -238,6 +239,37 @@ namespace Dispatcher.Service
             }
         }
 
+
+        public string[] RequestSync(RequestOpcode call, RequestType type, object param)
+        {
+            Session session = param as Session;
+
+            try
+            {
+                string json = BuildJson(call, type, param);
+
+                if (json != string.Empty)
+                {
+                    if (session != null && !_requestList.ContainsKey(s_CallID)) _requestList.Add(s_CallID, session.guid);
+                    TServerResponse res = RequestWithoutReply<TServerResponse>(s_CallID, Encoding.UTF8.GetBytes(json));
+
+                    if (res == null) return null;
+                    return new string[2] { res.status, JsonConvert.SerializeObject(res.contents, Formatting.None) };
+                }
+
+                if (session != null && SendFailure != null) SendFailure(this, session.guid);
+
+                Log.Warning("Request Failure.");
+                return null;
+
+            }
+            catch (Exception ex)
+            {
+                if (session != null && SendFailure != null) SendFailure(this, session.guid);
+                Log.Warning("Request Failure.", ex);
+                return null;
+            }
+        }
 
         protected override bool SendBytes(byte[] bytes)
         {

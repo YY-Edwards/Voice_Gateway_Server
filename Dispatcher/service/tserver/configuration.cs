@@ -49,7 +49,7 @@ namespace Dispatcher.Service
             {
                 try
                 {
-                    string[] reply = CTServer.Instance().Request(opcode, RequestType.radio, parameter);
+                    string[] reply = CTServer.Instance().RequestSync(opcode, RequestType.radio, parameter);
                     m_NeedSave = false;
 
                     if (reply != null && reply.Length >=2)
