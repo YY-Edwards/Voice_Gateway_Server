@@ -149,7 +149,12 @@ void wlInfoAction(CRemotePeer* pRemote, const std::string& param, uint64_t callI
 			{
 						 if (d.HasMember("info") && d["info"].IsInt())
 						 {
-							 int value = d["info"].GetInt();
+							 int rlt = d["info"].GetInt();
+							 int value = 1;
+							 if (0 == (rlt & 0x00000001))
+							 {
+								 value = 0;
+							 }
 							 /*¸üÐÂDeviceStatus*/
 							 CBroker::instance()->setDeviceStatusByType(System_DeviceStatus, value);
 						 }
