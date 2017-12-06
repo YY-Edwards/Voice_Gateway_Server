@@ -540,6 +540,7 @@ int CManager::config(REMOTE_TASK* pTask)
 			sprintf_s(m_reportMsg, "open dongle fail");
 			sendLogToWindow();
 			g_pWLlog->sendLog("open dongle fail");
+			handleUsbAdd();
 		}
 		else
 		{
@@ -627,6 +628,7 @@ int CManager::config(REMOTE_TASK* pTask)
 				sprintf_s(m_reportMsg, "initDongle:open dongle fail");
 				sendLogToWindow();
 				g_pWLlog->sendLog("dongle initial fail");
+				handleUsbAdd();
 			}
 			else
 			{
@@ -1344,11 +1346,11 @@ void CManager::handleIsRepeatCurTask(std::string sessionId, bool &rlt)
 
 void CManager::initialize()
 {
-	/*获取dongle数量*/
-	com_use_t result = { 0 };
-	WDK_WhoAllVidPid(VID_PID, &result);
-	memcpy(&m_curDongleInfo, &result, sizeof(com_use_t));
-	setDongleCount(result.num);
+	///*获取dongle数量*/
+	//com_use_t result = { 0 };
+	//WDK_WhoAllVidPid(VID_PID, &result);
+	////memcpy(&m_curDongleInfo, &result, sizeof(com_use_t));
+	//setDongleCount(result.num);
 }
 
 int CManager::DongCount()
@@ -1487,7 +1489,7 @@ void CManager::handleUsbAdd()
 {
 	com_use_t result = { 0 };
 	WDK_WhoAllVidPid(VID_PID, &result);
-	memcpy(&m_curDongleInfo, &result, sizeof(com_use_t));
+	//memcpy(&m_curDongleInfo, &result, sizeof(com_use_t));
 	if (0 == DongCount())
 	{
 		for (int i = 0; i < result.num; i++)
@@ -1524,7 +1526,7 @@ void CManager::handleUsbDel()
 {
 	com_use_t result = { 0 };
 	WDK_WhoAllVidPid(VID_PID, &result);
-	memcpy(&m_curDongleInfo, &result, sizeof(com_use_t));
+	//memcpy(&m_curDongleInfo, &result, sizeof(com_use_t));
 	if (0 == DongCount())
 	{
 		for (int i = 0; i < result.num; i++)

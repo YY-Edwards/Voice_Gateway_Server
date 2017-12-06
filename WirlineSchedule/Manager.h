@@ -129,7 +129,7 @@ private:
 
 	REMOTE_TASK *m_pCurrentTask;
 	//REMOTE_TASK m_currentTask;
-	com_use_t m_curDongleInfo;
+	//com_use_t m_curDongleInfo;
 
 	CDataScheduling* m_pMnis;
 	UINT m_idTaskOnTimerProc;
