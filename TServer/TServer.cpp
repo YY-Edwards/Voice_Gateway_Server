@@ -347,12 +347,11 @@ int _tmain(int argc, _TCHAR* argv[])
 	wlClientActions["wlPlayStatus"] = wlPlayStatusAction;;
 	wlClientActions["wlGetConfig"] = wlGetConfigAction;
 	wlClientActions["connectStatus"] = recvConnetResultAction;
-	//wlClientActions["sendGpsStatus"] = recvSendGpsStatusAction;
 	wlClientActions["locationStatus"] = recvSendGpsStatusAction;
 	wlClientActions["sendGps"] = recvGpsAction;
 	wlClientActions["messageStatus"] = recvMessageResultAction;
 	wlClientActions["message"] = recvMsgAction;
-	wlClientActions["status"] = recvStatusAction;
+	wlClientActions["status"] = statusAction;
 	wlClientActions["sendArs"] = recvArsAction;
 	wlClientActions["wlReadSerial"] = wlReadSerialAction;
 	wlClientActions["sendBeacons"] = recvLocationIndoorAction;

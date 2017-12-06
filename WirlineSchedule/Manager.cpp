@@ -758,15 +758,19 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_GET_CONN_STATUS:
 			{
+											   int rlt = 0xffffffff;
+											   int haveMnis = 0xfffffffe;
+											   int haveDevice = 0xfffffffc;
 											   FieldValue info(FieldValue::TInt);
 											   if (g_pNet->getWlStatus() == ALIVE)
 											   {
-												   info.setInt(REPEATER_CONNECT);
+												   rlt = rlt&haveDevice;
 											   }
-											   else
+											   if (WL_SYSTEM_CONNECT ==  MnisStatus())
 											   {
-												   info.setInt(REPEATER_DISCONNECT);
+												   rlt = rlt&haveMnis;
 											   }
+											   info.setInt(rlt);
 											   g_pNet->wlInfo(GET_TYPE_CONN, info, task.param.info.getInfoParam.getInfo.SessionId);
 			}
 				break;
