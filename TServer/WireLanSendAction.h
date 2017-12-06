@@ -99,6 +99,12 @@ void wlInfoAction(CRemotePeer* pRemote, const std::string& param, uint64_t callI
 						 if (d.HasMember("info") && d["info"].IsObject())
 						 {
 							 Value json = d["info"].GetObject();
+							 if (json.HasMember("MnisStatus") && json["MnisStatus"].IsInt())
+							 {
+								 int value = json["MnisStatus"].GetInt();
+								 /*¸üÐÂMnisStatus*/
+								 CBroker::instance()->setDeviceStatusByType(System_MnisStatus, value);
+							 }
 							 if (json.HasMember("DongleCount") && json["DongleCount"].IsInt())
 							 {
 								 int value = json["DongleCount"].GetInt();
