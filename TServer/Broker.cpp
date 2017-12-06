@@ -666,7 +666,7 @@ void CBroker::sendSystemStatusToClient(std::string  sessionId, CRemotePeer* pRem
 	element.setKeyVal("DeviceInfoStatus", FieldValue(systemStatus.deviceInfoStatus));
 	args["info"] = FieldValue(element);
 	args["Status"] = 0;
-	std::string strResp = CRpcJsonParser::buildCall("status", ++callId, args, "radio");
+	 strResp = CRpcJsonParser::buildCall("status", ++callId, args, "radio");
 	pRemote->sendResponse(strResp.c_str(), strResp.size());
 }
 DWORD WINAPI CBroker::clientConnectStatusThread(LPVOID lpParam)
