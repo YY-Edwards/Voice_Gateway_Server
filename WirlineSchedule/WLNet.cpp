@@ -8544,10 +8544,59 @@ void CWLNet::handleCurTaskCallTimeOut()
 	REMOTE_TASK *task = m_pManager->getCurrentTask();
 	if (task)
 	{
-		task->param.info.callParam.operateInfo.source = CONFIG_LOCAL_RADIO_ID;
-		wlCallStatus(task, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+		wlRequestCallTimeOutEnd(task);
+		//CALL_OPERATE_PARAM param = task->param.info.callParam.operateInfo;
+		//wlCall(param.callType, CONFIG_LOCAL_RADIO_ID, param.tartgetId, OPERATE_CALL_END, true);
 	}
 	//m_pManager->unLockCurTask();
+}
+
+int CWLNet::wlRequestCallTimeOutEnd(REMOTE_TASK *p)
+{
+	if (p == NULL) return 0;
+	int clientCallType;
+	CALL_OPERATE_PARAM param = p->param.info.callParam.operateInfo;
+	int callType = param.callType;
+	if (callType == GROUP_CALL)
+	{
+		clientCallType = CLIENT_CALL_TYPE_Group;
+	}
+	else if (callType == ALL_CALL)
+	{
+		clientCallType = CLIENT_CALL_TYPE_All;
+	}
+	else
+	{
+		clientCallType = CLIENT_CALL_TYPE_Private;
+	}
+	/*将参数打包成json格式*/
+	ArgumentType args;
+	args["status"] = CMD_SUCCESS;
+	args["type"] = clientCallType;
+	args["source"] = (int)param.source;
+	args["target"] = (int)param.tartgetId;
+	args["operate"] = OPERATE_CALL_END;
+	std::string strRequest = CRpcJsonParser::buildCall("wlCallStatus", ++g_sn, args, "wl");
+	//sprintf_s(m_reportMsg, "%s", strRequest.c_str());
+	//sendLogToWindow();
+
+	TcpClient *redayDelete = NULL;
+	/*发送到Client*/
+	for (auto i = g_onLineClients.begin(); i != g_onLineClients.end(); i++)
+	{
+		TcpClient* p = *i;
+		try
+		{
+			p->sendResponse(strRequest.c_str(), strRequest.size());
+		}
+		catch (...)
+		{
+			redayDelete = p;
+			sprintf_s(m_reportMsg, "sendCallStatus fail, socket:%lu", p->s);
+			sendLogToWindow();
+		}
+	}
+	return 0;
 }
 
 //bool CWLNet::getIsFirstBurstA()
