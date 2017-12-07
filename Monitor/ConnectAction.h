@@ -17,11 +17,11 @@ void ConnectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 		doc.Parse(param.c_str());
 		if (doc.IsObject() && doc.HasMember("IsEnable") && doc["IsEnable"].IsBool())
 		{
-			if (true == doc["IsEnable"].GetBool())
+			if (true == doc["IsEnable"].GetBool() && type == "radio")
 			{
 				serverName = "Trbox.Dispatch";
 			}
-			else
+			else if (true == doc["IsEnable"].GetBool() && type == "wl")
 			{
 				serverName = "Trbox.Wirelan";
 			}
