@@ -37,6 +37,8 @@ namespace ServerManager
             Console.WriteLine("Register Stop Method");
             _commandLineManager.AddCommand(new CommandLine("stop", new Dictionary<string, CommandParameter>() { { "-t", new CommandParameter("-t", "target", ParameterType.String) } }, Stop, "Stop Server"));
 
+            _commandLineManager.AddCommand(new CommandLine("exit", null, Exit, "Exit Tools"));
+
 
             string SvrPath = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName) + @"\Svr\";
             string DevicePath = Directory.GetParent(Directory.GetParent(AppDomain.CurrentDomain.BaseDirectory).FullName) + @"\Device\";
@@ -85,6 +87,11 @@ namespace ServerManager
             }  
         }
 
+
+        private static  void Exit(Dictionary<string, CommandParameter> args)
+        {
+            Environment.Exit(0);
+        }
 
         private static void Install(Dictionary<string, CommandParameter> args)
         {
