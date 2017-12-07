@@ -6378,7 +6378,7 @@ void CWLNet::SetCallStatus(WORD value)
 	{
 		WORD prev = m_callStatus;
 		m_callStatus = value;
-		sprintf_s(m_reportMsg, "=============CALL_STATUS:%u->%u=============", prev, m_callStatus);
+		sprintf_s(m_reportMsg, "=============CALL_STATUS:%u->%u;Call_Id:%lu=============", prev, m_callStatus, g_callId);
 		sendLogToWindow();
 	}
 }
