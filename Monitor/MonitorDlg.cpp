@@ -232,8 +232,9 @@ LRESULT CMonitorDlg::OnSysTrayMsg(WPARAM w, LPARAM l)
 void CMonitorDlg::OnRestart()
 {
 	m_tserver.stopServer(L"Trbox.TServer");
-	m_monitorServer.stopMonitor();
-
+	m_monitorServer.stopServer(L"Trbox.Log");
+	m_monitorServer.stopServer(L"Trbox.Dispatch");
+	m_monitorServer.stopServer(L"Trbox.Wirelan");
 	Sleep(10000);
 	m_tserver.StartMonitor();
 }

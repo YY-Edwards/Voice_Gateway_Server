@@ -28,15 +28,16 @@ void CMonitorServer::startMonitor(LPCTSTR lpName)
 }
 void CMonitorServer::stopMonitor()
 {
-	if (m_handle)
+	if (m_handle || m_logServerHandle)
 	{
 		isMonitor = false;
+		isStart = false;
 		WaitForSingleObject(m_handle,1000);
 		CloseHandle(m_handle);
+		WaitForSingleObject(m_handle, 1000);
+		CloseHandle(m_handle);
 	}
-	stopServer(L"Trbox.Log");
-	stopServer(L"Trbox.Dispatch");
-	stopServer(L"Trbox.Wirelan");
+	
 	isMonitor = true;
 }
 DWORD WINAPI CMonitorServer::monitorThread(LPVOID lpParam)
