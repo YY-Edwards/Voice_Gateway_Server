@@ -7,13 +7,15 @@ public:
 	void StartMonitor();
 	void stopMonitor();
 	void stopServer(LPCTSTR lpName);
+	static DWORD WINAPI logServerThread(LPVOID lpParam);
 private:
-	
+	void logServerThreadFunc();
 	static DWORD WINAPI monitorThread(LPVOID lpParam);
 	void monitorThreadFunc();
 	bool isMonitor;
 	HANDLE m_handle;
 	TCHAR serverName[300];
+	TCHAR logServerName[300];
 	bool isStart;
 };
 

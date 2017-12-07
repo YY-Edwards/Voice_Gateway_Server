@@ -729,27 +729,24 @@ namespace Dispatcher.Service
                         }
 
                     }
+                    string[] reply = CTServer.Instance().Request(opcode, _type, parameter);
 
-                    CTServer.Instance().Request(opcode, _type, parameter);
-
-                    //string[] reply = CTServer.Instance().Request(opcode, _type, parameter);
-
-                    //if (reply != null && reply.Length >=2)
-                    //{
-                    //    if (reply[0] == "success")
-                    //    {
+                    if (reply != null && reply.Length >=2)
+                    {
+                        if (reply[0] == "success")
+                        {
                            
-                    //    }
-                    //    else
-                    //    {
-                    //        OnSendFailure(this, operateContent.Parameter.guid);
+                        }
+                        else
+                        {
+                            OnSendFailure(this, operateContent.Parameter.guid);
                            
 
-                    //        //Log.Message("发起操作失败.");
-                    //    }
+                            //Log.Message("发起操作失败.");
+                        }
 
-                    //    CustomReply(opcode, reply[0] == "success", reply[1]);
-                    //}
+                        CustomReply(opcode, reply[0] == "success", reply[1]);
+                    }
                 }
                 catch
                 {

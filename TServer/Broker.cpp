@@ -338,7 +338,26 @@ void CBroker::sendRadioConfig()
 }
 void CBroker::sendSettingConfig()
 {
-	std::string strConnect = CSettings::instance()->getRequest("connect", "radio", m_monitorClient->getCallId(), CSettings::instance()->getValue("radio"));
+	std::string radio = CSettings::instance()->getValue("radio");
+	std::string repeater = CSettings::instance()->getValue("repeater");
+	if (radio != "")
+	{
+		radio = "{\"radio\":" + radio + ",";
+	}
+	else
+	{
+		radio = "\"radio\":null ,";
+	}
+	if (repeater != "")
+	{
+		repeater = "\"repeater\":" + repeater + "}";
+	}
+	else
+	{
+		repeater = "\"repeater\":null }";
+	}
+	std::string content = radio + repeater;
+	std::string strConnect = CSettings::instance()->getRequest("connect", "radio", m_monitorClient->getCallId(), content);
 	m_monitorClient->send(strConnect.c_str(), strConnect.size());
 }
 bool CBroker::getLic(std::string license)
@@ -666,7 +685,7 @@ void CBroker::sendSystemStatusToClient(std::string  sessionId, CRemotePeer* pRem
 	element.setKeyVal("DeviceInfoStatus", FieldValue(systemStatus.deviceInfoStatus));
 	args["info"] = FieldValue(element);
 	args["Status"] = 0;
-	strResp = CRpcJsonParser::buildCall("status", ++callId, args, "radio");
+	 strResp = CRpcJsonParser::buildCall("status", ++callId, args, "radio");
 	pRemote->sendResponse(strResp.c_str(), strResp.size());
 }
 DWORD WINAPI CBroker::clientConnectStatusThread(LPVOID lpParam)

@@ -119,7 +119,7 @@ void CMonitorServer::logServerThreadFunc()
 				SERVICE_ERROR_NORMAL,
 				args.str().c_str(),
 				NULL, NULL, NULL,
-				userName.c_str(),
+				NULL,
 				NULL);
 
 			if (schService == NULL)
@@ -252,7 +252,7 @@ void CMonitorServer::monitorThreadFunc()
 				SERVICE_ERROR_NORMAL,
 				args.str().c_str(),
 				NULL, NULL, NULL,
-				userName.c_str(),
+				NULL,
 				NULL);
 
 			if (schService == NULL)

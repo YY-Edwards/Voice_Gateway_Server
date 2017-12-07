@@ -15,17 +15,27 @@ void ConnectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 		pRemote->sendResponse(strResp.c_str(), strResp.size());
 		rapidjson::Document doc;
 		doc.Parse(param.c_str());
-		if (doc.IsObject() && doc.HasMember("IsEnable") && doc["IsEnable"].IsBool())
+		if (doc.IsObject() && doc.HasMember("radio") && doc["radio"].IsObject())
 		{
-			if (true == doc["IsEnable"].GetBool())
+			Value objRadio = doc["radio"].GetObject();
+			if (objRadio.HasMember("IsEnable") && objRadio["IsEnable"].IsBool())
 			{
-				serverName = "Trbox.Dispatch";
+				if (true == objRadio["IsEnable"].GetBool())
+				{
+					serverName = "Trbox.Dispatch";
+				}
 			}
-			else
+		}
+		if (doc.IsObject() && doc.HasMember("repeater") && doc["repeater"].IsObject())
+		{
+			Value objRepeater = doc["repeater"].GetObject();
+			if (objRepeater.HasMember("IsEnable") && objRepeater["IsEnable"].IsBool())
 			{
-				serverName = "Trbox.Wirelan";
+				if (true == objRepeater["IsEnable"].GetBool())
+				{
+					serverName = "Trbox.Wirelan";
+				}
 			}
-
 		}
 		std::wstring wstr(serverName.length(), L' ');
 		std::copy(serverName.begin(), serverName.end(), wstr.begin());
