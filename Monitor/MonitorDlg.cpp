@@ -144,7 +144,7 @@ void CMonitorDlg::OnConnect(CRemotePeer* pRemotePeer)
 
 	if (pRemotePeer)
 	{
-		std::string strRequest = CRpcJsonParser::buildCall("getSettingConfig", 1, ArgumentType(), "monitor");
+		std::string strRequest = CRpcJsonParser::buildCall("getSettingConfig", 1, ArgumentType(), "radio");
 		pRemotePeer->sendResponse((const char *)strRequest.c_str(), strRequest.size());
 
 	}
