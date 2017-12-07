@@ -11,18 +11,8 @@ void recvGetConfigAction(CRemotePeer* pRemote, const std::string& param, uint64_
 	std::lock_guard<std::mutex> locker(lock);
 
 	try{
-		if (type == "radio")
-		{
+
 			CBroker::instance()->sendRadioConfig();
-		}
-		else if (type == "monitor")
-		{
-			CBroker::instance()->sendRadioConfig();
-			Sleep(1000);
-			CBroker::instance()->sendWirelanConfig();
-		}
-		
-	
 	}
 	catch (std::exception e){
 
