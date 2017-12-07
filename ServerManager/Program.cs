@@ -67,14 +67,14 @@ namespace ServerManager
 
             Console.WriteLine("");
 
-            try
-            {
-                File.Copy(AppDomain.CurrentDomain.BaseDirectory + "ServerManager.exe", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/ServerManager.exe", true);
-            }
-            catch
-            {
+            //try
+            //{
+            //    File.Copy(AppDomain.CurrentDomain.BaseDirectory + "ServerManager.exe", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "/ServerManager.exe", true);
+            //}
+            //catch
+            //{
 
-            }
+            //}
 
             if (args.Length <= 0)
             {
