@@ -232,10 +232,10 @@ LRESULT CMonitorDlg::OnSysTrayMsg(WPARAM w, LPARAM l)
 void CMonitorDlg::OnRestart()
 {
 	m_tserver.stopServer(L"Trbox.TServer");
-	m_monitorServer.stopServer(L"Trbox.Log");
+	m_tserver.stopServer(L"Trbox.Log");
 	m_monitorServer.stopServer(L"Trbox.Dispatch");
 	m_monitorServer.stopServer(L"Trbox.Wirelan");
-	Sleep(10000);
+	Sleep(30000);
 	m_tserver.StartMonitor();
 }
 void CMonitorDlg::OnWindowPosChanging(WINDOWPOS* lpwndpos)

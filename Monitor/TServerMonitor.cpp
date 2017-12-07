@@ -11,6 +11,7 @@ CTServerMonitor::CTServerMonitor()
 	isMonitor = true;
 	isStart = false;
 	m_handle = CreateThread(NULL, 0, monitorThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	 CreateThread(NULL, 0, logServerThread, this, THREAD_PRIORITY_NORMAL, NULL);
 }
 
 
@@ -22,9 +23,10 @@ CTServerMonitor::~CTServerMonitor()
 void CTServerMonitor::StartMonitor()
 {
 	//memcpy(serverName,lpName,300);
+	memset(logServerName, 0, 300);
+	StrCpy(logServerName, _T("Trbox.Log"));
 	memcpy(serverName, _T("Trbox.TServer"), 300);
 	isStart = true;
-	
 }
 void CTServerMonitor::stopMonitor()
 {
@@ -178,11 +180,12 @@ void CTServerMonitor::monitorThreadFunc()
 			::CloseServiceHandle(schSCManager);
 		}
 		
-		Sleep(10000);
+		Sleep(30000);
 	}
 }
 void CTServerMonitor::stopServer(LPCTSTR lpName)
 {
+
 	SC_HANDLE hSC = OpenSCManager(
 		NULL,                    // local computer
 		NULL,                    // ServicesActive database 
@@ -231,5 +234,155 @@ void CTServerMonitor::stopServer(LPCTSTR lpName)
 				}
 			}
 		}
+	}
+}
+DWORD WINAPI CTServerMonitor::logServerThread(LPVOID lpParam)
+{
+	CTServerMonitor * p = (CTServerMonitor *)(lpParam);
+	if (p != NULL)
+	{
+		p->logServerThreadFunc();
+	}
+	return 1;
+}
+void CTServerMonitor::logServerThreadFunc()
+{
+	while (isMonitor)
+	{
+		if (isStart)
+		{
+			std::wstring userName = _T("NT AUTHORITY\\NetworkService");
+
+			SC_HANDLE schSCManager;
+			SC_HANDLE schService;
+
+			SERVICE_STATUS_PROCESS ssStatus;
+			DWORD dwOldCheckPoint;
+			DWORD dwStartTickCount;
+			DWORD dwWaitTime;
+			DWORD dwBytesNeeded;
+			// Get a handle to the SCM database. 
+			schSCManager = OpenSCManager(
+				NULL,                    // local computer
+				NULL,                    // ServicesActive database 
+				SC_MANAGER_ALL_ACCESS);  // full access rights 
+
+			if (NULL == schSCManager)
+			{
+				//throw std::system_error(GetLastError(), std::system_category(), "OpenSCManager failed");
+				std::string str = std::to_string(GetLastError());
+				LOG(INFO) << " Log Server OpenSCManager failed" + str;
+			}
+			// Get a handle to the service.
+			schService = OpenService(
+				schSCManager,         // SCM database 
+				logServerName,            // name of service         
+				SERVICE_ALL_ACCESS
+				);  // full access 
+
+			if (schService == NULL)
+			{
+				TCHAR szFilePath[MAX_PATH];
+				::GetModuleFileName(NULL, szFilePath, MAX_PATH);
+				(_tcsrchr(szFilePath, _T('\\')))[1] = 0;
+				std::wstring wstr;
+				if (0 == wcscmp(logServerName, L"Trbox.Log"))
+				{
+					wstr = (std::wstring)szFilePath + _T("LogServer.exe");
+				}
+				else
+				{
+					LOG(INFO) << "logServerName != Trbox.log";
+					return;
+				}
+				LPCWSTR pWstr = wstr.c_str();
+
+				std::wstringstream args;
+				//TCHAR m_szServiceRun[300];
+				//StrCpy(m_szServiceRun, _T("run"));
+				args << "\"" << pWstr << "\" ";
+				args << _T("run");
+				//创建服务  
+				schService = ::CreateService(
+					schSCManager, logServerName, logServerName,
+					SERVICE_ALL_ACCESS,
+					SERVICE_WIN32_OWN_PROCESS,
+					SERVICE_AUTO_START,
+					SERVICE_ERROR_NORMAL,
+					args.str().c_str(),
+					NULL, NULL, NULL,
+					userName.c_str(),
+					NULL);
+
+				if (schService == NULL)
+				{
+					if (ERROR_SERVICE_EXISTS == GetLastError())
+					{
+						//printf("Service already installed");
+						LOG(INFO) << " Service already installed";
+						exit(1);
+					}
+					else
+					{
+						//throw std::system_error(GetLastError(), std::system_category(), "CreateService failed");
+						std::string str = std::to_string(GetLastError());
+						LOG(INFO) << " Log Server CreateService failed" + str;
+					}
+				}
+
+			}
+
+			// Check the status in case the service is not stopped. 
+
+			if (!QueryServiceStatusEx(
+				schService,                     // handle to service 
+				SC_STATUS_PROCESS_INFO,         // information level
+				(LPBYTE)&ssStatus,             // address of structure
+				sizeof(SERVICE_STATUS_PROCESS), // size of structure
+				&dwBytesNeeded))              // size needed if buffer is too small
+			{
+				std::string str = std::to_string(GetLastError());
+				LOG(INFO) << " Log Server QueryServiceStatusEx failed" + str;
+				//printf("QueryServiceStatusEx failed (%d)\n", GetLastError());
+			}
+			else
+			{
+				switch (ssStatus.dwCurrentState)
+				{
+				case SERVICE_STOPPED:
+				{
+										if (FALSE == ::StartService(schService, NULL, NULL)) {
+											int a = GetLastError();
+											//printf("Start LogServer failed %d \n", a);
+											std::string str = std::to_string(GetLastError());
+											LOG(INFO) << " Log Server Start failed" + str;
+										}
+
+										// it will take at least a couple of seconds for the service to start.
+										Sleep(2000);
+										SERVICE_STATUS status;
+										DWORD start = GetTickCount();
+										while (QueryServiceStatus(schService, &status) == TRUE) {
+											if (status.dwCurrentState == SERVICE_RUNNING) {
+												break;
+											}
+											DWORD current = GetTickCount();
+											if (current - start >= cThirtySeconds) {
+												OutputDebugStringA("Service start timed out.");
+												break;
+											}
+										}
+				}
+					break;
+				case SERVICE_STOP_PENDING:
+					break;
+
+				}
+			}
+			::CloseServiceHandle(schService);
+			::CloseServiceHandle(schSCManager);
+		}
+
+		Sleep(30000);
 	}
 }
