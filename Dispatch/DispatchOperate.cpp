@@ -650,34 +650,35 @@ void DispatchOperate::connect(radio_t radioCfg, mnis_t mnisCfg, location_t locat
 {
 	m_radioCfg = radioCfg;
 	m_mnisCfg = mnisCfg;
-	if (!mnisCfg.IsEnable)
+	if(radioCfg.IsEnable)
 	{
-		mnisCfg.ID = radioCfg.ID;
-		mnisCfg.ArsPort = radioCfg.ArsPort;
-		mnisCfg.CAI = radioCfg.CAI;
-		mnisCfg.GpsPort = radioCfg.GpsPort;
-		mnisCfg.GroupCAI = radioCfg.GroupCAI;
-		memcpy(mnisCfg.Host, radioCfg.Host, MAX_IP_SIZE);
-		mnisCfg.LocationType = radioCfg.LocationType;
-		mnisCfg.MessagePort = radioCfg.MessagePort;
-		mnisCfg.TomeoutSeconds = radioCfg.TomeoutSeconds;
-		pDs->radioConnect(mnisCfg,locationCfg,locationIndoorCfg);
-		pDs->locationIndoorConfig(locationIndoorCfg.Interval, locationIndoorCfg.iBeaconNumber, locationIndoorCfg.IsEmergency);
-		pTs->radioConnect(radioCfg);
-		
-	}
-	else
-	{	
-		if (!locationCfg.IsEnableGpsC)
+		if (!mnisCfg.IsEnable)
 		{
-			pDs->InitGPSOverturnSocket(inet_addr(locationCfg.GpsC.Ip),locationCfg.GpsC.Port);
+			mnisCfg.ID = radioCfg.ID;
+			mnisCfg.ArsPort = radioCfg.ArsPort;
+			mnisCfg.CAI = radioCfg.CAI;
+			mnisCfg.GpsPort = radioCfg.GpsPort;
+			mnisCfg.GroupCAI = radioCfg.GroupCAI;
+			memcpy(mnisCfg.Host, radioCfg.Host, MAX_IP_SIZE);
+			mnisCfg.LocationType = radioCfg.LocationType;
+			mnisCfg.MessagePort = radioCfg.MessagePort;
+			mnisCfg.TomeoutSeconds = radioCfg.TomeoutSeconds;
+			pDs->radioConnect(mnisCfg, locationCfg, locationIndoorCfg);
+			pDs->locationIndoorConfig(locationIndoorCfg.Interval, locationIndoorCfg.iBeaconNumber, locationIndoorCfg.IsEmergency);
+			pTs->radioConnect(radioCfg);
+
 		}
-		pDs->radioConnect(mnisCfg, locationCfg, locationIndoorCfg);
-		pDs->locationIndoorConfig(locationIndoorCfg.Interval, locationIndoorCfg.iBeaconNumber, locationIndoorCfg.IsEmergency);
-		pTs->radioConnect(radioCfg);	
+		else
+		{
+			if (!locationCfg.IsEnableGpsC)
+			{
+				pDs->InitGPSOverturnSocket(inet_addr(locationCfg.GpsC.Ip), locationCfg.GpsC.Port);
+			}
+			pDs->radioConnect(mnisCfg, locationCfg, locationIndoorCfg);
+			pDs->locationIndoorConfig(locationIndoorCfg.Interval, locationIndoorCfg.iBeaconNumber, locationIndoorCfg.IsEmergency);
+			pTs->radioConnect(radioCfg);
+		}
 	}
-	
-	
 }
 void DispatchOperate::call( int type,int op, int id,std::string sessionId)
 {
