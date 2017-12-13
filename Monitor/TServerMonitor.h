@@ -14,6 +14,7 @@ private:
 	void monitorThreadFunc();
 	bool isMonitor;
 	HANDLE m_handle;
+	HANDLE m_logHandle;
 	TCHAR serverName[300];
 	TCHAR logServerName[300];
 	bool isStart;

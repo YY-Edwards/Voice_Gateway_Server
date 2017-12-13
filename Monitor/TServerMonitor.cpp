@@ -10,8 +10,7 @@ CTServerMonitor::CTServerMonitor()
 {
 	isMonitor = true;
 	isStart = false;
-	m_handle = CreateThread(NULL, 0, monitorThread, this, THREAD_PRIORITY_NORMAL, NULL);
-	 CreateThread(NULL, 0, logServerThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	
 }
 
 
@@ -26,15 +25,34 @@ void CTServerMonitor::StartMonitor()
 	memset(logServerName, 0, 300);
 	StrCpy(logServerName, _T("Trbox.Log"));
 	memcpy(serverName, _T("Trbox.TServer"), 300);
+	if (NULL == m_handle)
+	{
+		m_handle = CreateThread(NULL, 0, monitorThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	}
+	if (NULL == m_logHandle)
+	{
+		m_logHandle = CreateThread(NULL, 0, logServerThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	}
 	isStart = true;
+	isMonitor = true;
 }
 void CTServerMonitor::stopMonitor()
 {
 	if (m_handle)
 	{
+		isStart = false;
 		isMonitor = false;
 		WaitForSingleObject(m_handle, 1000);
 		CloseHandle(m_handle);
+		m_handle = NULL;
+	}
+	if (m_logHandle)
+	{
+		isStart = false;
+		isMonitor = false;
+		WaitForSingleObject(m_logHandle, 1000);
+		CloseHandle(m_logHandle);
+		m_logHandle = NULL;
 	}
 }
 DWORD WINAPI CTServerMonitor::monitorThread(LPVOID lpParam)
@@ -110,7 +128,7 @@ void CTServerMonitor::monitorThreadFunc()
 					SERVICE_ERROR_NORMAL,
 					args.str().c_str(),
 					NULL, NULL, NULL,
-					userName.c_str(),
+					NULL,
 					NULL);
 
 				if (schService == NULL)
@@ -311,7 +329,7 @@ void CTServerMonitor::logServerThreadFunc()
 					SERVICE_ERROR_NORMAL,
 					args.str().c_str(),
 					NULL, NULL, NULL,
-					userName.c_str(),
+					NULL,
 					NULL);
 
 				if (schService == NULL)
