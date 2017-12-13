@@ -105,13 +105,18 @@ namespace Dispatcher.Views
             });      
         }
 
+        private Main main;
+
         private void OnInitializeCompleted(object sender, EventArgs e)
         {
             Log.Info("Open Main Window.");
             this.Dispatcher.BeginInvoke((Action)delegate()
             {
-                Main main = new Main();
-                main.Show();
+                if (main == null)
+                {
+                    main = new Main();
+                    main.Show();
+                }
                 initilizeWindow.Close();
             });  
         }
