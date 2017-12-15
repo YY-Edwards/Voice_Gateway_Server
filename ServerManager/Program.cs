@@ -96,10 +96,10 @@ namespace ServerManager
         private static void Install(Dictionary<string, CommandParameter> args)
         {
             List<SvrMgr> svrs = GetSvr(args);
-            bool autoStart = false;
-            if (args.ContainsKey("-a") && args["-a"].IsVaild && args["-a"].Type == ParameterType.String && args["-a"].Value as string != null && (args["-a"].Value as string).ToLower() == "y")
+            string autoStart = string.Empty;
+            if (args.ContainsKey("-a") && args["-a"].IsVaild && args["-a"].Type == ParameterType.String && args["-a"].Value as string != null)
             {
-                autoStart = true;
+                autoStart = (args["-a"].Value as string).ToLower();
             }
 
             if(svrs == null)return;
@@ -107,11 +107,15 @@ namespace ServerManager
                 if (svr != null)
                 {
                     svr.Install();
-                    if (autoStart)
-                    {
-                        System.Threading.Thread.Sleep(300);
-                        svr.Start();
-                    }
+
+                    if (autoStart == "y" || (autoStart == "s" && (svr.Name == "Trbox.TServer"|| svr.Name == "Trbox.Log")) || (autoStart == "d" && (svr.Name == "Trbox.Dispatch" || svr.Name == "Trbox.Wirelan")))
+                    {                     
+                       for (int i = 0; i < 5; i++)
+                       {
+                           System.Threading.Thread.Sleep(300);
+                           if (svr.Start()) break;
+                       }
+                    }                  
                 }
 
         }
@@ -128,19 +132,23 @@ namespace ServerManager
             List<SvrMgr> svrs = GetSvr(args);
             if (svrs == null) return;
 
-            bool autoStart = false;
-            if (args.ContainsKey("-a") && args["-a"].IsVaild && args["-a"].Type == ParameterType.String && args["-a"].Value as string != null && (args["-a"].Value as string).ToLower() == "y")
+            string autoStart = string.Empty;
+            if (args.ContainsKey("-a") && args["-a"].IsVaild && args["-a"].Type == ParameterType.String && args["-a"].Value as string != null)
             {
-                autoStart = true;
+                autoStart = (args["-a"].Value as string).ToLower();
             }
 
             foreach (SvrMgr svr in svrs) if (svr != null)
                 {
                     svr.Update();
-                    if (autoStart)
+                    if (autoStart == "y" || (autoStart == "s" && (svr.Name == "Trbox.TServer" || svr.Name == "Trbox.Log")) || (autoStart == "d" && (svr.Name == "Trbox.Dispatch" || svr.Name == "Trbox.Wirelan")))
                     {
-                        System.Threading.Thread.Sleep(300);
-                        svr.Start();
+
+                        for (int i = 0; i < 5; i++)
+                        {
+                            System.Threading.Thread.Sleep(300);
+                            if (svr.Start()) break;
+                        }                       
                     }
                 }
         }

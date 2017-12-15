@@ -66,12 +66,12 @@ namespace ServerManager
         } }
 
 
-        public void Install()
+        public bool Install()
         {
             if (!System.IO.File.Exists(Path))
             {
                 Console.WriteLine(string.Format("Install {0} Error\r\n{1}", Name, "Can not Found " + Path));
-                return;
+                return false;
             }
             try
             {
@@ -82,19 +82,22 @@ namespace ServerManager
                     Process process = Process.Start(a);
                    
                     Console.WriteLine(string.Format("Install {0} Sucecss ", Name));
+                    return true;
                 }
                 else
                 {
                     Console.WriteLine(string.Format("Install {0} Error,{0} Already Exists", Name));
+                    return false;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(string.Format("Install {0} Error\r\n{1}",Name, ex.Message) );
+                return false;
             }
         }
 
-        public void Uninstall()
+        public bool Uninstall()
         {
             try
             {
@@ -110,15 +113,19 @@ namespace ServerManager
                     a.WindowStyle = ProcessWindowStyle.Hidden;
                     Process process = Process.Start(a);
                     Console.WriteLine(string.Format("Uninstall {0} Sucecss ", Name));
+
+                    return true;
                 }
                 else
                 {
                     Console.WriteLine(string.Format("Uninstall {0} Error,{0} not Exists", Name));
+                    return false;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(string.Format("Uninstall {0} Error\r\n{1}", Name, ex.Message));
+                return false;
             }
         }
 
@@ -130,7 +137,7 @@ namespace ServerManager
             Install();
         }
 
-        public void Start()
+        public bool Start()
         {
             try
             {
@@ -140,19 +147,22 @@ namespace ServerManager
                     a.WindowStyle = ProcessWindowStyle.Hidden;
                     Process process = Process.Start(a);
                     Console.WriteLine(string.Format("Start {0} Sucecss ", Name));
+                    return true;
                 }
                 else
                 {
                     Console.WriteLine(string.Format("Start {0} Error,{0} not Exists", Name));
+                    return false;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(string.Format("Start {0} Error\r\n{1}", Name, ex.Message));
+                return false;
             }
         }
 
-        public void Stop()
+        public bool Stop()
         {
             try
             {
@@ -162,15 +172,18 @@ namespace ServerManager
                     a.WindowStyle = ProcessWindowStyle.Hidden;
                     Process process = Process.Start(a);
                     Console.WriteLine(string.Format("Stop {0} Sucecss ", Name));
+                    return true;
                 }
                 else
                 {
                     Console.WriteLine(string.Format("Stop {0} Error,{0} not Exists", Name));
+                    return false;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(string.Format("Stop {0} Error\r\n{1}", Name, ex.Message));
+                return false;
             }
         }
     }
