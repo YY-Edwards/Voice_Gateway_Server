@@ -11,26 +11,31 @@ CMonitorServer::CMonitorServer()
 	isMonitor = true;
 	isStart = false;
 	memset(serverName,0,300);
-	m_handle = CreateThread(NULL, 0, monitorThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	
 }
 CMonitorServer::~CMonitorServer()
 {
 }
 void CMonitorServer::startMonitor(LPCTSTR lpName)
 {
+	if (NULL == m_handle)
+	{
+		m_handle = CreateThread(NULL, 0, monitorThread, this, THREAD_PRIORITY_NORMAL, NULL);
+	}
+
 	isStart = true;
+	isMonitor = true;
 	StrCpy(serverName, lpName);
 }
 void CMonitorServer::stopMonitor()
 {
-	if (m_handle || m_logServerHandle)
+	if (m_handle )
 	{
 		isMonitor = false;
 		isStart = false;
 		WaitForSingleObject(m_handle,1000);
 		CloseHandle(m_handle);
-		WaitForSingleObject(m_handle, 1000);
-		CloseHandle(m_handle);
+		m_handle = NULL;
 	}
 }
 DWORD WINAPI CMonitorServer::monitorThread(LPVOID lpParam)
@@ -196,7 +201,7 @@ void CMonitorServer::monitorThreadFunc()
 			::CloseServiceHandle(schSCManager);
 		}
 	
-		Sleep(10000);
+		Sleep(20000);
 	}
 }
 void CMonitorServer::stopServer(LPCTSTR lpName)

@@ -129,6 +129,8 @@ BOOL CMonitorDlg::OnInitDialog()
 	// TODO:  在此添加额外的初始化代码
 	m_startMysql.startMysql();    //启动检测mysql线程
 	m_tserver.StartMonitor();
+	m_serverDis.startMonitor(_T("Trbox.Dispatch"));
+	m_serverWl.startMonitor(_T("Trbox.Wirelan"));
 	rpcServer.setOnConnectHandler(CMonitorDlg::OnConnect);
 	rpcServer.addActionHandler("connect", ConnectAction);
 	rpcServer.start(TCP_PORT, rpcServer.TCP);
@@ -146,7 +148,6 @@ void CMonitorDlg::OnConnect(CRemotePeer* pRemotePeer)
 	{
 		std::string strRequest = CRpcJsonParser::buildCall("getSettingConfig", 1, ArgumentType(), "radio");
 		pRemotePeer->sendResponse((const char *)strRequest.c_str(), strRequest.size());
-
 	}
 }
 void CMonitorDlg::OnSysCommand(UINT nID, LPARAM lParam)
@@ -235,8 +236,11 @@ void CMonitorDlg::OnRestart()
 	m_tserver.stopServer(L"Trbox.Log");
 	m_monitorServer.stopServer(L"Trbox.Dispatch");
 	m_monitorServer.stopServer(L"Trbox.Wirelan");
+	m_tserver.stopMonitor();
 	Sleep(30000);
 	m_tserver.StartMonitor();
+	m_serverDis.startMonitor(_T("Trbox.Dispatch"));
+	m_serverWl.startMonitor(_T("Trbox.Wirelan"));
 }
 void CMonitorDlg::OnWindowPosChanging(WINDOWPOS* lpwndpos)
 {

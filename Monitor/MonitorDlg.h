@@ -47,6 +47,8 @@ private:
 	CTServerMonitor m_tserver;
 	CRpcServer rpcServer;
 	CStartMysql m_startMysql;
+	CMonitorServer m_serverDis;
+	CMonitorServer m_serverWl;
 	std::string getServerName();
 	static void OnConnect(CRemotePeer* pRemotePeer);
 	std::wstring getAppdataPath();

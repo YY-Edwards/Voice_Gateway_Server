@@ -45,7 +45,6 @@ void ConnectAction(CRemotePeer* pRemote, const std::string& param, uint64_t call
 
 		}
 	}
-
 	catch (std::exception e){
 
 	}
