@@ -37,6 +37,7 @@ public:
 	BOOL GetVoiceRows(std::vector<std::map<std::string, std::string> >& v, LPCSTR pstrCondition);
 	BOOL GetVoiceRows(std::vector<std::map<std::string, std::string> >& v, LPCSTR pstrCondition, int offset, int nCount);
 	DWORD GetVoiceRowCount(LPCSTR pstrCondition);
+	unsigned long GetLastVoiceRowId();
 
 public: // derived from CDbInterface
 

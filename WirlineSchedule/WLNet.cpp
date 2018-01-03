@@ -40,7 +40,7 @@ CWLNet::CWLNet(CMySQL *pDb, CManager *pManager, std::wstring& defaultAudioPath)
 	m_CurrentRecvBuffer.buf = m_RxBuffer;
 	m_CurrentRecvBuffer.len = sizeof(m_RxBuffer);
 
-	if (!g_tool.GetApplicationPath(m_strSettingFilePath))
+	if (!g_pTool->GetApplicationPath(m_strSettingFilePath))
 	{
 		sprintf_s(m_reportMsg, "GetApplicationPath fail");
 		sendLogToWindow();
@@ -282,50 +282,50 @@ DWORD CWLNet::NetThread()
 			Net_WAITFOR_LE_NOTIFICATION_MAP_BROADCAST(EventIndex);
 			break;
 			//xnl connect start
-		case XNL_CONNECT:
-			Net_XNL_CONNECT(EventIndex);
-			break;
-		case WAITFOR_XNL_DEVICE_MASTER_QUERY_TX:
-			Net_XNL_DEVICE_MASTER_QUERY_TX(EventIndex);
-			break;
-		case WAITFOR_XNL_MASTER_STATUS_BROADCAST:
-			Net_WAITFOR_XNL_MASTER_STATUS_BROADCAST(EventIndex);
-			break;
-		case WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX:
-			Net_WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX(EventIndex);
-			break;
-		case WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY:
-			Net_WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY(EventIndex);
-			break;
-		case WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX:
-			Net_WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX(EventIndex);
-			break;
-		case WAITFOR_XNL_DEVICE_CONNECT_REPLY:
-			Net_WAITFOR_XNL_DEVICE_CONNECT_REPLY(EventIndex);
-			break;
-		case WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST:
-			Net_WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST(EventIndex);
-			break;
-		case WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1:
-			Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1(EventIndex);
-			break;
-		case WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2_TX:
-			Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2_TX(EventIndex);
-			break;
-		case WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2:
-			Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2(EventIndex);
-			break;
-		case WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3_TX:
-			Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3_TX(EventIndex);
-			break;
-		case WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3:
-			Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3(EventIndex);
-			break;
-		case WAITFOR_XNL_XCMP_READ_SERIAL:
-			Net_XNL_XCMP_READ_SERIAL(EventIndex);
-			break;
-		case WAITFOR_XNL_XCMP_READ_SERIAL_RESULT:
-			Net_WAITFOR_XNL_XCMP_READ_SERIAL_RESULT(EventIndex);
+		//case XNL_CONNECT:
+		//	Net_XNL_CONNECT(EventIndex);
+		//	break;
+		//case WAITFOR_XNL_DEVICE_MASTER_QUERY_TX:
+		//	Net_XNL_DEVICE_MASTER_QUERY_TX(EventIndex);
+		//	break;
+		//case WAITFOR_XNL_MASTER_STATUS_BROADCAST:
+		//	Net_WAITFOR_XNL_MASTER_STATUS_BROADCAST(EventIndex);
+		//	break;
+		//case WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX:
+		//	Net_WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX(EventIndex);
+		//	break;
+		//case WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY:
+		//	Net_WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY(EventIndex);
+		//	break;
+		//case WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX:
+		//	Net_WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX(EventIndex);
+		//	break;
+		//case WAITFOR_XNL_DEVICE_CONNECT_REPLY:
+		//	Net_WAITFOR_XNL_DEVICE_CONNECT_REPLY(EventIndex);
+		//	break;
+		//case WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST:
+		//	Net_WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST(EventIndex);
+		//	break;
+		//case WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1:
+		//	Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1(EventIndex);
+		//	break;
+		//case WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2_TX:
+		//	Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2_TX(EventIndex);
+		//	break;
+		//case WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2:
+		//	Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2(EventIndex);
+		//	break;
+		//case WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3_TX:
+		//	Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3_TX(EventIndex);
+		//	break;
+		//case WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3:
+		//	Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3(EventIndex);
+		//	break;
+		//case WAITFOR_XNL_XCMP_READ_SERIAL:
+		//	Net_XNL_XCMP_READ_SERIAL(EventIndex);
+		//	break;
+		//case WAITFOR_XNL_XCMP_READ_SERIAL_RESULT:
+		//	Net_WAITFOR_XNL_XCMP_READ_SERIAL_RESULT(EventIndex);
 
 		case ALIVE:
 			Net_MaintainAlive(EventIndex);
@@ -1508,7 +1508,7 @@ void CWLNet::Net_WAITFOR_LE_NOTIFICATION_MAP_BROADCAST(DWORD eventIndex)
 				/*程序开始正常工作*/
 				//m_WLStatus = ALIVE;
 				//setWlStatus(ALIVE);
-				setWlStatus(XNL_CONNECT);
+				//setWlStatus(XNL_CONNECT);
 				WCHAR  str[8];
 				swprintf_s(str, __TEXT("%d"), 1);
 				WritePrivateProfileString(SYS_SECTION, CONNECT_RESULT, str, m_strSettingFilePath);
@@ -3040,7 +3040,7 @@ void CWLNet::Net_XNL_CONNECT(DWORD eventIndex)
 			case 0:               //Tx completed successfully immediately.
 			case WSA_IO_PENDING:  //Completion is pending
 				//m_WLStatus = WAITFOR_XNL_DEVICE_MASTER_QUERY_TX;
-				setWlStatus(WAITFOR_XNL_DEVICE_MASTER_QUERY_TX);
+				//setWlStatus(WAITFOR_XNL_DEVICE_MASTER_QUERY_TX);
 				//strSysLog = _T("发送0x70(XNL_DEVICE_MASTER_QUERY)");
 				//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 				break;
@@ -3063,7 +3063,7 @@ void CWLNet::Net_XNL_CONNECT(DWORD eventIndex)
 		if ((GetTickCount() - m_dwMasterMapBroadcastTimer) > 100000UL)
 		{
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3090,7 +3090,7 @@ void CWLNet::Net_XNL_DEVICE_MASTER_QUERY_TX(DWORD eventIndex)
 		if (TRUE != rc){ //XNL_DEVICE_MASTER_QUERY Transmission failed.
 
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("发送0x70(XNL_DEVICE_MASTER_QUERY)失败，重新注册");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 			break;
@@ -3098,7 +3098,7 @@ void CWLNet::Net_XNL_DEVICE_MASTER_QUERY_TX(DWORD eventIndex)
 		m_dwXnlMasterStatusBrdcstTimer = GetTickCount();
 
 		//m_WLStatus = WAITFOR_XNL_MASTER_STATUS_BROADCAST;
-		setWlStatus(WAITFOR_XNL_MASTER_STATUS_BROADCAST);
+		//setWlStatus(WAITFOR_XNL_MASTER_STATUS_BROADCAST);
 
 		break;
 
@@ -3106,7 +3106,7 @@ void CWLNet::Net_XNL_DEVICE_MASTER_QUERY_TX(DWORD eventIndex)
 		WSAResetEvent(m_eventArray[TxEvent]);
 		// transfer to XNL_DEVICE_MASTER_QUERY
 		//m_WLStatus = WAITFOR_XNL_MASTER_STATUS_BROADCAST;
-		setWlStatus(WAITFOR_XNL_MASTER_STATUS_BROADCAST);
+		//setWlStatus(WAITFOR_XNL_MASTER_STATUS_BROADCAST);
 		//strSysLog = _T("等待0x70(XNL_MASTER_STATUS_BROADCAST)");
 		//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		break;
@@ -3115,7 +3115,7 @@ void CWLNet::Net_XNL_DEVICE_MASTER_QUERY_TX(DWORD eventIndex)
 		if ((GetTickCount() - m_dwXnlMasterStatusBrdcstTimer) > 100000UL)
 		{
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3187,7 +3187,7 @@ void CWLNet::Net_WAITFOR_XNL_MASTER_STATUS_BROADCAST(DWORD eventIndex)
 				case 0:               //Tx completed successfully immediately.
 				case WSA_IO_PENDING:  //Completion is pending
 					//m_WLStatus = WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX;
-					setWlStatus(WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX);
+					//setWlStatus(WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX);
 					//strSysLog = _T("发送0x70(XNL_DEVICE_AUTH_KEY_REQUEST)");
 					//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 					break;
@@ -3215,7 +3215,7 @@ void CWLNet::Net_WAITFOR_XNL_MASTER_STATUS_BROADCAST(DWORD eventIndex)
 		if ((GetTickCount() - m_dwXnlMasterStatusBrdcstTimer) > 100000UL)  // 100 seconds
 		{
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3242,14 +3242,14 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX(DWORD eventIndex)
 		WSAResetEvent(m_eventArray[TxEvent]);
 		if (TRUE != rc){
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("发送0x70(XNL_DEVICE_AUTH_KEY_REQUEST)失败，重新注册");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 			break;
 		}
 		m_dwXnlDeviceAuthTimer = GetTickCount();
 		//m_WLStatus = WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY;
-		setWlStatus(WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY);
+		//setWlStatus(WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY);
 		//strSysLog = _T("等待0x70(XNL_DEVICE_AUTH_KEY_REPLY)");
 		//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		break;
@@ -3257,7 +3257,7 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX(DWORD eventIndex)
 	case RxIndex:
 		WSAResetEvent(m_eventArray[TxEvent]);
 		//m_WLStatus = WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY;
-		setWlStatus(WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY);
+		//setWlStatus(WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY);
 		//	strSysLog = _T("等待0x70(XNL_DEVICE_AUTH_KEY_REPLY)");
 		//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		break;
@@ -3265,7 +3265,7 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX(DWORD eventIndex)
 		if ((GetTickCount() - m_dwXnlDeviceAuthTimer) > 100000UL)  // 100 seconds
 		{
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3344,7 +3344,7 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY(DWORD eventIndex)
 				case 0:               //Tx completed successfully immediately.
 				case WSA_IO_PENDING:  //Completion is pending
 					//m_WLStatus = WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX;
-					setWlStatus(WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX);
+					//setWlStatus(WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX);
 					//strSysLog = _T("发送0x70(XNL_DEVICE_CONNECT_REQUEST)");
 					//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 					break;
@@ -3373,7 +3373,7 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY(DWORD eventIndex)
 		if ((GetTickCount() - m_dwXnlDeviceAuthTimer) > 100000UL)  // 100 seconds
 		{
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3400,14 +3400,14 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX(DWORD eventIndex)
 		WSAResetEvent(m_eventArray[TxEvent]);
 		if (TRUE != rc){
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("发送0x70(XNL_DEVICE_CONNECT_REQUEST)失败，重新注册");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 			break;
 		}
 		m_dwXnlConnectTimer = GetTickCount();
 		//m_WLStatus = WAITFOR_XNL_DEVICE_CONNECT_REPLY;
-		setWlStatus(WAITFOR_XNL_DEVICE_CONNECT_REPLY);
+		//setWlStatus(WAITFOR_XNL_DEVICE_CONNECT_REPLY);
 		//strSysLog = _T("等待0x70(XNL_DEVICE_CONNECT_REPLY)");
 		//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		break;
@@ -3415,14 +3415,14 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX(DWORD eventIndex)
 	case RxIndex:
 		WSAResetEvent(m_eventArray[TxEvent]);
 		//m_WLStatus = WAITFOR_XNL_DEVICE_CONNECT_REPLY;
-		setWlStatus(WAITFOR_XNL_DEVICE_CONNECT_REPLY);
+		//setWlStatus(WAITFOR_XNL_DEVICE_CONNECT_REPLY);
 		break;
 
 	case TIMEOUT:
 		if ((GetTickCount() - m_dwXnlConnectTimer) > 100000UL)  // 100 seconds
 		{
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3471,7 +3471,7 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_CONNECT_REPLY(DWORD eventIndex)
 				rc = IssueReadRequest();
 				m_dwXnlDeviceSysmapBrdcstTimer = GetTickCount();
 				//m_WLStatus = WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST; //Advance state.
-				setWlStatus(WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST);
+				//setWlStatus(WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST);
 				//strSysLog = _T("等待0x70(XNL_DEVICE_SYSMAP_BROADCAST)");
 				//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 				memcpy(xnlAddr, m_CurrentRecvBuffer.buf + 21, 2);
@@ -3496,7 +3496,7 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_CONNECT_REPLY(DWORD eventIndex)
 		if ((GetTickCount() - m_dwXnlConnectTimer) > 100000UL)
 		{
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3564,7 +3564,7 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST(DWORD eventIndex)
 				case WSA_IO_PENDING:
 					//Completion is pending
 					//m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1;
-					setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1);
+					//setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1);
 					//strSysLog = _T("发送0x70(XNL_DATA_MSG_DEVICE_INIT_1)");
 					//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 					break;
@@ -3594,7 +3594,7 @@ void CWLNet::Net_WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST(DWORD eventIndex)
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 		}
 		break;
 	default:
@@ -3655,7 +3655,7 @@ void CWLNet::Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1(DWORD eventIndex)
 				case WSA_IO_PENDING:
 					//Completion is pending
 					//m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2_TX;
-					setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2_TX);
+					//setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2_TX);
 					//strSysLog = _T("发送0x70(XNL_DATA_MSG_DEVICE_INIT_2)");
 					//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 					break;
@@ -3683,7 +3683,7 @@ void CWLNet::Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1(DWORD eventIndex)
 		if ((GetTickCount() - m_dwXnlDeviceSysmapBrdcstTimer) > 100000UL)  // 100 seconds
 		{
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3709,25 +3709,25 @@ void CWLNet::Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2_TX(DWORD eventIndex)
 		WSAResetEvent(m_eventArray[TxEvent]);
 		if (TRUE != rc){
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			break;
 		}
 		m_dwXnlDeviceSysmapBrdcstTimer = GetTickCount();
 		//m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2;
-		setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2);
+		//setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2);
 		break;
 
 	case RxIndex:
 		WSAResetEvent(m_eventArray[TxEvent]);
 		//m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2;
-		setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2);
+		//setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2);
 		break;
 
 	case TIMEOUT:
 		if ((GetTickCount() - m_dwXnlDeviceSysmapBrdcstTimer) > 100000UL)  // 100 seconds
 		{
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3810,7 +3810,7 @@ void CWLNet::Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2(DWORD eventIndex)
 					//Completion is pending
 
 					//m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3_TX;
-					setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3_TX);
+					//setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3_TX);
 					//strSysLog = _T("发送0x70(XNL_DATA_MSG_DEVICE_INIT_3)");
 					//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 					break;
@@ -3835,7 +3835,7 @@ void CWLNet::Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2(DWORD eventIndex)
 		if ((GetTickCount() - m_dwXnlDeviceSysmapBrdcstTimer) > 100000UL)  // 100 seconds
 		{
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3862,23 +3862,23 @@ void CWLNet::Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3_TX(DWORD eventIndex)
 		WSAResetEvent(m_eventArray[TxEvent]);
 		if (TRUE != rc){
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			break;
 		}
 		m_dwXnlDeviceInitTimer = GetTickCount();
 		//m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3;
-		setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3);
+		//setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3);
 		break;
 	case RxIndex:
 		WSAResetEvent(m_eventArray[TxEvent]);
 		//m_WLStatus = WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3;
-		setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3);
+		//setWlStatus(WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3);
 		break;
 	case TIMEOUT:
 		if ((GetTickCount() - m_dwXnlDeviceInitTimer) > 100000UL)  // 100 seconds
 		{
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -3948,7 +3948,7 @@ void CWLNet::Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3(DWORD eventIndex)
 				case WSA_IO_PENDING:
 					//Completion is pending
 					//m_WLStatus = WAITFOR_XNL_XCMP_READ_SERIAL;
-					setWlStatus(WAITFOR_XNL_XCMP_READ_SERIAL);
+					//setWlStatus(WAITFOR_XNL_XCMP_READ_SERIAL);
 					//strSysLog = _T("发送0x70(WAITFOR_XNL_XCMP_READ_SERIAL)");
 					//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 					break;
@@ -3974,7 +3974,7 @@ void CWLNet::Net_WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3(DWORD eventIndex)
 		if ((GetTickCount() - m_dwXnlDeviceInitTimer) > 100000UL)  // 100 seconds
 		{
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 		}
@@ -4042,7 +4042,7 @@ void CWLNet::Net_XNL_XCMP_READ_SERIAL(DWORD eventIndex)
 			case WSA_IO_PENDING:
 				//Completion is pending
 				//m_WLStatus = WAITFOR_XNL_XCMP_READ_SERIAL_RESULT;
-				setWlStatus(WAITFOR_XNL_XCMP_READ_SERIAL_RESULT);
+				//setWlStatus(WAITFOR_XNL_XCMP_READ_SERIAL_RESULT);
 				//strSysLog = _T("......获取master序列号......");
 				//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 				break;
@@ -4068,7 +4068,7 @@ void CWLNet::Net_XNL_XCMP_READ_SERIAL(DWORD eventIndex)
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 			//m_WLStatus = XNL_CONNECT;
-			setWlStatus(XNL_CONNECT);
+			//setWlStatus(XNL_CONNECT);
 		}
 		break;
 
@@ -4200,7 +4200,7 @@ void CWLNet::Net_WAITFOR_XNL_XCMP_READ_SERIAL_RESULT(DWORD eventIndex)
 			//strSysLog = _T("注册超时，重新开始注册！");
 			//::PostMessage(hwnd, WM_SYSLOG, 0, (LPARAM)strSysLog.AllocSysString());
 			//m_WLStatus = WAITFOR_XNL_XCMP_READ_SERIAL;
-			setWlStatus(WAITFOR_XNL_XCMP_READ_SERIAL);
+			//setWlStatus(WAITFOR_XNL_XCMP_READ_SERIAL);
 		}
 		break;
 
@@ -4282,7 +4282,7 @@ bool CWLNet::FindLocalIP(WCHAR* strAddr)
 	for (DWORD i = 0; i < ipcount; i++)
 	{
 
-		std::wstring temp = g_tool.ANSIToUnicode(iplist[i]);
+		std::wstring temp = g_pTool->ANSIToUnicode(iplist[i]);
 
 		if (0 == wcscmp(temp.c_str(), strAddr))
 		{
@@ -5548,7 +5548,7 @@ int CWLNet::SendFile(unsigned int length, char* pData)
 			addSendVoiceFrame();
 			//releaseReadySendVoicesLock();
 
-			SlotNumber_e registSlotNumber = SLOT1;
+			slot_number_enum registSlotNumber = SLOT1;
 			while (m_retryRequestCallCount)
 			{
 				// 				sprintf_s(m_reportMsg, "12");
@@ -6463,7 +6463,7 @@ int CWLNet::newCall()
 		m_pCurrentSendVoicePeer = GetPeer(m_ulMasterPeerID);//192.168.2.121：50000
 		if (m_pCurrentSendVoicePeer)
 		{
-			SlotNumber_e registerSlot = CONFIG_DEFAULT_SLOT;
+			slot_number_enum registerSlot = CONFIG_DEFAULT_SLOT;
 			while (m_retryRequestCallCount)
 			{
 				// 				sprintf_s(m_reportMsg, "18");
@@ -6718,7 +6718,7 @@ short CWLNet::Build_WL_VC_VOICE_END_BURST(CHAR* pPacket, T_WL_PROTOCOL_19* pData
 void CWLNet::CorrectingBuffer(DWORD callId)
 {
 	//m_startTalkTickcount = GetTickCount();
-	SlotNumber_e slot = m_pCurrentSendVoicePeer->getUseSlot();
+	slot_number_enum slot = m_pCurrentSendVoicePeer->getUseSlot();
 	/*核对语音记录信息*/
 	for (auto i = m_voiceReocrds.begin(); i != m_voiceReocrds.end(); i++)
 	{
@@ -7743,7 +7743,7 @@ int CWLNet::wlCallStatus(REMOTE_TASK *p, int status)
 	return 0;
 }
 
-void CWLNet::setWlStatus(WLStatus value)
+void CWLNet::setWlStatus(le_status_enum value)
 {
 
 	if (value > WAITFOR_XNL_XCMP_READ_SERIAL_RESULT)
@@ -7786,7 +7786,7 @@ void CWLNet::setWlStatus(WLStatus value)
 	if (m_WLStatus != value)
 	{
 		FieldValue info(FieldValue::TInt);
-		WLStatus old;
+		le_status_enum old;
 		old = m_WLStatus;
 		m_WLStatus = value;
 		/*连接成功*/
@@ -7806,7 +7806,7 @@ void CWLNet::setWlStatus(WLStatus value)
 	}
 }
 
-WLStatus CWLNet::getWlStatus()
+le_status_enum CWLNet::getWlStatus()
 {
 	return m_WLStatus;
 }
@@ -8431,7 +8431,7 @@ void CWLNet::startSend()
 
 void CWLNet::setAudioPath(const std::string& path)
 {
-	std::wstring wPath = g_tool.ANSIToUnicode(path);
+	std::wstring wPath = g_pTool->ANSIToUnicode(path);
 	m_pEventLoger->setAudioPath(wPath);
 }
 
@@ -8522,7 +8522,7 @@ void CWLNet::addSendVoiceFrame()
 	m_sendVoices.push_back(m_pSendVoicePackage);
 }
 
-void CWLNet::calibrationCallID(SlotNumber_e slot)
+void CWLNet::calibrationCallID(slot_number_enum slot)
 {
 	//requireReadySendVoicesLock();
 	std::lock_guard<std::mutex> locker(m_mutexReadySendVoices);

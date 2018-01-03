@@ -142,11 +142,6 @@ static unsigned int __stdcall OperateProc(void* pArguments)
 	char temp;
 	while ('0' != (temp = getchar()))
 	{
-		switch (temp)
-		{
-		default:
-			break;
-		}
 	}
 	m_bCheckUsbRun = false;
 	//MSG msg;
@@ -220,6 +215,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	system("chcp 65001");
 	system("cls");
 
+	/*工具初始化*/
+	g_pTool = new CTool();
 	/*log初始化*/
 	g_pWLlog = new WLSocketLog();
 	int createFileRlt = 0;
@@ -238,6 +235,8 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		createFileRlt = _wmkdir(appFolder.c_str());
 	}
+
+	wcscpy(g_ambedata_path, appFolder.c_str());
 	std::wstring defaultAudioPath = appFolder;
 	//defaultAudioPath += L"\\Voice";
 	appFolder = appFolder + L"\\" + AppNameSub;
@@ -258,9 +257,9 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	//FLAGS_log_dir = "./";
 	google::InitGoogleLogging("");
-	google::SetLogDestination(google::GLOG_INFO, g_tool.UnicodeToUTF8(pathLogInfo).c_str());
-	google::SetLogDestination(google::GLOG_ERROR, g_tool.UnicodeToUTF8(pathLogError).c_str());
-	google::SetLogDestination(google::GLOG_WARNING, g_tool.UnicodeToUTF8(pathLogWarning).c_str());
+	google::SetLogDestination(google::GLOG_INFO, g_pTool->UnicodeToUTF8(pathLogInfo).c_str());
+	google::SetLogDestination(google::GLOG_ERROR, g_pTool->UnicodeToUTF8(pathLogError).c_str());
+	google::SetLogDestination(google::GLOG_WARNING, g_pTool->UnicodeToUTF8(pathLogWarning).c_str());
 	google::SetLogFilenameExtension("log");
 
 #if SERVICE_CODDE
@@ -314,6 +313,10 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		/*初始化数据库*/
 		m_ret = m_pDb->Open(DB_HOST, DB_PORT, DB_USER, DB_PWD, DB_NAME);
+		if (m_ret)
+		{
+			g_pDb=m_pDb;
+		}
 
 #if SERVICE_CODDE
 		while (!CService::instance()->m_bServiceStopped)

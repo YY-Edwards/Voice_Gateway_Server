@@ -6,8 +6,6 @@
 #include "MySQL.h"
 //#include "WLNet.h"
 
-
-extern CTool g_tool;
 //extern CWLNet* g_pNet;
 
 class CVoiceData{

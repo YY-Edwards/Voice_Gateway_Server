@@ -7,11 +7,14 @@
 #include "WLNet.h"
 #include "actionHandler.h"
 #include "WDK_VidPidQuery.h"
+#include "NSManager.h"
+#include "NSWLNet.h"
+#include "NSLog.h"
+#include "NSSound.h"
 
 //temp delete
 //#include "Net.h"
 
-CTool g_tool;
 BOOL g_bPTT;      //Set or cleared by user interface.
 BOOL g_bTX;       //Set or cleared by dongle.
 
@@ -29,6 +32,9 @@ CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis, std::wstring& defaultAud
 , m_deviceInfoStatus(WL_SERIL_FAL)
 , m_mnisStatus(WL_SYSTEM_DISCONNECT)
 {
+	g_pNSSound = new NSSound();
+	g_pNSManager = new NSManager();
+	g_pNSNet = new NSWLNet(g_pNSManager);
 	g_pNet = new CWLNet(pDb, this, defaultAudioPath);
 	g_pDongle = new CSerialDongle();
 	g_pSound = new CSound();
@@ -74,6 +80,24 @@ CManager::~CManager()
 		m_idTaskOnTimerProc = 0;
 	}
 	stop();
+	if (g_pNSSound)
+	{
+		delete g_pNSSound;
+		g_pNSSound = NULL;
+	}
+	if (g_pNSManager)
+	{
+		delete g_pNSManager;
+		g_pNSManager = NULL;
+	}
+	if (g_pNSNet)
+	{
+		if (WL == g_repeater_net_mode)
+		{
+			delete (NSWLNet*)g_pNSNet;
+			g_pNSNet = NULL;
+		}
+	}
 }
 
 // int CManager::initSys()
@@ -449,6 +473,8 @@ int CManager::SendFile(unsigned int length, char* pData)
 
 int CManager::setPlayCallOfCare(unsigned char calltype, unsigned long targetId)
 {
+	g_playCalltype = calltype;
+	g_playTargetId = targetId;
 	return g_pNet->setPlayCallOfCare(calltype, targetId);
 }
 
@@ -501,6 +527,7 @@ int CManager::config(REMOTE_TASK* pTask)
 		}
 	}
 	CONFIG_DEFAULT_GROUP = pConfig->reapeater.DefaultGroupId;
+	g_playTargetId = CONFIG_DEFAULT_GROUP;
 	if (CONFIG_DONGLE_PORT != pConfig->reapeater.Dongle.donglePort)
 	{
 		CONFIG_DONGLE_PORT = pConfig->reapeater.Dongle.donglePort;
@@ -517,135 +544,168 @@ int CManager::config(REMOTE_TASK* pTask)
 		//程序启动后第一次获取配置
 		//////////////////////////////////////////////////////////////////////////
 		CONFIG_CURRENT_TAGET = CONFIG_DEFAULT_GROUP;
-		/*与主中继相连*/
-		if (!g_pNet->StartNet(inet_addr(CONFIG_MASTER_IP), CONFIG_MASTER_PORT, INADDR_ANY, CONFIG_LOCAL_PEER_ID, CONFIG_LOCAL_RADIO_ID, CONFIG_RECORD_TYPE))
+		StartNetParam param = { 0 };
+		param.hang_time = CONFIG_HUNG_TIME;
+		param.local_peer_id = CONFIG_LOCAL_PEER_ID;
+		param.local_port = 40000;
+		param.local_radio_id = CONFIG_LOCAL_RADIO_ID;
+		param.master_firewall_time = CONFIG_MASTER_HEART_TIME;
+		strcpy(param.master_ip, CONFIG_MASTER_IP);
+		param.master_port = CONFIG_MASTER_PORT;
+		param.peer_firewall_time = CONFIG_PEER_HEART_AND_REG_TIME;
+		param.work_mode = CPC;
+		/*初始化网络*/
+		rlt = g_pNSNet->StartNet(&param);
+		/*初始化Dongle*/
+		g_pNSManager->Initialize(g_pNSNet);
+		setDongleCount(g_pNSManager->SizeDongle());
+		Env_DongleIsOk = (0 != DongCount());
+		/*初始化声卡*/
+		if (0 != g_pNSSound->InitSoundIn())
 		{
-			Env_NetIsOk = false;
-			sprintf_s(m_reportMsg, "net initial fail");
-			sendLogToWindow();
-			g_pWLlog->sendLog("net initial fail");
-		}
-		else
-		{
-			Env_NetIsOk = true;
-			g_pWLlog->sendLog("net initial success");
-		}
-		/*配置dongle*/
-		WCHAR tmpStr[128] = { 0 };
-		swprintf_s(tmpStr, 128, L"\\\\.\\COM%d", CONFIG_DONGLE_PORT);
-		if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
-		{
-			//m_bDongleIsOpen = FALSE;
-			setDongleCount(0);
-			Env_DongleIsOk = false;
-			sprintf_s(m_reportMsg, "open dongle fail");
-			sendLogToWindow();
-			g_pWLlog->sendLog("open dongle fail");
-			handleUsbAdd();
-		}
-		else
-		{
-			//m_bDongleIsOpen = TRUE;
-			setDongleCount(1);
-			Env_DongleIsOk = true;
-			sprintf_s(m_reportMsg, "open dongle success");
-			sendLogToWindow();
-			g_pWLlog->sendLog("open dongle success");
-		}
-		/*配置麦克风和扬声器*/
-		if (WL_RETURN_OK != g_pSound->StartSound())
-		{
-			Env_SoundIsOk = false;
 			setMicphoneStatus(WL_SYSTEM_DISCONNECT);
-			setSpeakerStatus(WL_SYSTEM_DISCONNECT);
-			sprintf_s(m_reportMsg, "sound initial fail");
-			sendLogToWindow();
-			g_pWLlog->sendLog("sound initial fail");
 		}
 		else
 		{
-			Env_SoundIsOk = true;
 			setMicphoneStatus(WL_SYSTEM_CONNECT);
-			setSpeakerStatus(WL_SYSTEM_CONNECT);
-			sprintf_s(m_reportMsg, "sound initial success");
-			sendLogToWindow();
-			g_pWLlog->sendLog("sound initial success");
 		}
+		if (0 != g_pNSSound->InitSoundOut())
+		{
+			setSpeakerStatus(WL_SYSTEM_DISCONNECT);
+		}
+		else
+		{
+			setSpeakerStatus(WL_SYSTEM_CONNECT);
+		}
+		///*与主中继相连*/
+		//if (!g_pNet->StartNet(inet_addr(CONFIG_MASTER_IP), CONFIG_MASTER_PORT, INADDR_ANY, CONFIG_LOCAL_PEER_ID, CONFIG_LOCAL_RADIO_ID, CONFIG_RECORD_TYPE))
+		//{
+		//	Env_NetIsOk = false;
+		//	sprintf_s(m_reportMsg, "net initial fail");
+		//	sendLogToWindow();
+		//	g_pWLlog->sendLog("net initial fail");
+		//}
+		//else
+		//{
+		//	Env_NetIsOk = true;
+		//	g_pWLlog->sendLog("net initial success");
+		//}
+		///*配置dongle*/
+		//WCHAR tmpStr[128] = { 0 };
+		//swprintf_s(tmpStr, 128, L"\\\\.\\COM%d", CONFIG_DONGLE_PORT);
+		//if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
+		//{
+		//	//m_bDongleIsOpen = FALSE;
+		//	setDongleCount(0);
+		//	Env_DongleIsOk = false;
+		//	sprintf_s(m_reportMsg, "open dongle fail");
+		//	sendLogToWindow();
+		//	g_pWLlog->sendLog("open dongle fail");
+		//	handleUsbAdd();
+		//}
+		//else
+		//{
+		//	//m_bDongleIsOpen = TRUE;
+		//	setDongleCount(1);
+		//	Env_DongleIsOk = true;
+		//	sprintf_s(m_reportMsg, "open dongle success");
+		//	sendLogToWindow();
+		//	g_pWLlog->sendLog("open dongle success");
+		//}
+		///*配置麦克风和扬声器*/
+		//if (WL_RETURN_OK != g_pSound->StartSound())
+		//{
+		//	Env_SoundIsOk = false;
+		//	setMicphoneStatus(WL_SYSTEM_DISCONNECT);
+		//	setSpeakerStatus(WL_SYSTEM_DISCONNECT);
+		//	sprintf_s(m_reportMsg, "sound initial fail");
+		//	sendLogToWindow();
+		//	g_pWLlog->sendLog("sound initial fail");
+		//}
+		//else
+		//{
+		//	Env_SoundIsOk = true;
+		//	setMicphoneStatus(WL_SYSTEM_CONNECT);
+		//	setSpeakerStatus(WL_SYSTEM_CONNECT);
+		//	sprintf_s(m_reportMsg, "sound initial success");
+		//	sendLogToWindow();
+		//	g_pWLlog->sendLog("sound initial success");
+		//}
 		/*配置mnis*/
 		//m_pMnis->radioConnect(CONFIG_MNIS_IP);
 		m_pMnis->radioConnect(pConfig->mnis, pConfig->location, pConfig->locationindoor);
-
 		m_bIsHaveConfig = true;
 	}
 	else
 	{
-		if (!Env_SoundIsOk)
-		{
-			g_pSound->stop();
-			/*配置麦克风和扬声器*/
-			if (WL_RETURN_OK != g_pSound->StartSound())
-			{
-				Env_SoundIsOk = false;
-				sprintf_s(m_reportMsg, "sound initial fail");
-				sendLogToWindow();
-				g_pWLlog->sendLog("sound initial fail");
+		NSLog::instance()->AddLog("recive config,but this is not first load,please restart service");
 
-			}
-			else
-			{
-				Env_SoundIsOk = true;
-				sprintf_s(m_reportMsg, "sound initial success");
-				sendLogToWindow();
-				g_pWLlog->sendLog("sound initial success");
-			}
+		//if (!Env_SoundIsOk)
+		//{
+		//	g_pSound->stop();
+		//	/*配置麦克风和扬声器*/
+		//	if (WL_RETURN_OK != g_pSound->StartSound())
+		//	{
+		//		Env_SoundIsOk = false;
+		//		sprintf_s(m_reportMsg, "sound initial fail");
+		//		sendLogToWindow();
+		//		g_pWLlog->sendLog("sound initial fail");
 
-		}
-		if (bMasterChange)
-		{
-			/*重新与主中继相连接*/
-			if (!g_pNet->StartNet(inet_addr(CONFIG_MASTER_IP), CONFIG_MASTER_PORT, INADDR_ANY, CONFIG_LOCAL_PEER_ID, CONFIG_LOCAL_RADIO_ID, CONFIG_RECORD_TYPE))
-			{
-				Env_NetIsOk = false;
-				sprintf_s(m_reportMsg, "net initial fail");
-				sendLogToWindow();
-				g_pWLlog->sendLog("net initial fail");
-			}
-			else
-			{
-				Env_NetIsOk = true;
-				g_pWLlog->sendLog("net initial success");
-			}
-		}
-		if (bDongleChange)
-		{
-			/*重新配置dongle*/
-			WCHAR tmpStr[128] = { 0 };
-			swprintf_s(tmpStr, 128, L"\\\\.\\COM%d", CONFIG_DONGLE_PORT);
-			if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
-			{
-				//m_bDongleIsOpen = FALSE;
-				setDongleCount(0);
-				Env_DongleIsOk = false;
-				sprintf_s(m_reportMsg, "initDongle:open dongle fail");
-				sendLogToWindow();
-				g_pWLlog->sendLog("dongle initial fail");
-				handleUsbAdd();
-			}
-			else
-			{
-				//m_bDongleIsOpen = TRUE;
-				setDongleCount(1);
-				Env_DongleIsOk = true;
-				sprintf_s(m_reportMsg, "open dongle success");
-				sendLogToWindow();
-				g_pWLlog->sendLog("dongle initial success");
-			}
-		}
-		if (bMnisChange)
-		{
-			/*配置mnis*/
-			m_pMnis->radioConnect(pConfig->mnis, pConfig->location, pConfig->locationindoor);
-		}
+		//	}
+		//	else
+		//	{
+		//		Env_SoundIsOk = true;
+		//		sprintf_s(m_reportMsg, "sound initial success");
+		//		sendLogToWindow();
+		//		g_pWLlog->sendLog("sound initial success");
+		//	}
+		//}
+		//if (bMasterChange)
+		//{
+		//	/*重新与主中继相连接*/
+		//	if (!g_pNet->StartNet(inet_addr(CONFIG_MASTER_IP), CONFIG_MASTER_PORT, INADDR_ANY, CONFIG_LOCAL_PEER_ID, CONFIG_LOCAL_RADIO_ID, CONFIG_RECORD_TYPE))
+		//	{
+		//		Env_NetIsOk = false;
+		//		sprintf_s(m_reportMsg, "net initial fail");
+		//		sendLogToWindow();
+		//		g_pWLlog->sendLog("net initial fail");
+		//	}
+		//	else
+		//	{
+		//		Env_NetIsOk = true;
+		//		g_pWLlog->sendLog("net initial success");
+		//	}
+		//}
+		//if (bDongleChange)
+		//{
+		//	/*重新配置dongle*/
+		//	WCHAR tmpStr[128] = { 0 };
+		//	swprintf_s(tmpStr, 128, L"\\\\.\\COM%d", CONFIG_DONGLE_PORT);
+		//	if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
+		//	{
+		//		//m_bDongleIsOpen = FALSE;
+		//		setDongleCount(0);
+		//		Env_DongleIsOk = false;
+		//		sprintf_s(m_reportMsg, "initDongle:open dongle fail");
+		//		sendLogToWindow();
+		//		g_pWLlog->sendLog("dongle initial fail");
+		//		handleUsbAdd();
+		//	}
+		//	else
+		//	{
+		//		//m_bDongleIsOpen = TRUE;
+		//		setDongleCount(1);
+		//		Env_DongleIsOk = true;
+		//		sprintf_s(m_reportMsg, "open dongle success");
+		//		sendLogToWindow();
+		//		g_pWLlog->sendLog("dongle initial success");
+		//	}
+		//}
+		//if (bMnisChange)
+		//{
+		//	/*配置mnis*/
+		//	m_pMnis->radioConnect(pConfig->mnis, pConfig->location, pConfig->locationindoor);
+		//}
 	}
 	return rlt;
 }
@@ -680,6 +740,7 @@ unsigned __stdcall CManager::HandleRemoteTaskProc(void * pThis)
 void CManager::handleRemoteTask()
 {
 	REMOTE_TASK task = { 0 };
+	NSWLNet* pNSNet = NULL;
 	while (m_bRemoteTaskThreadRun)
 	{
 		//sprintf_s(m_reportMsg, "3");
@@ -703,33 +764,50 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_CALL:
 			{
-									//memcpy(&m_pCurrentTask, &task, sizeof(REMOTE_TASK));
+									////memcpy(&m_pCurrentTask, &task, sizeof(REMOTE_TASK));
 									//lockCurTask();
 									setCurrentTask(&task);
 									//unLockCurTask();
-									if (g_pNet->getWlStatus() == ALIVE)
+									//if (g_pNet->getWlStatus() == ALIVE)
+									//{
+									//	initialCall(task.param.info.callParam.operateInfo.tartgetId, task.param.info.callParam.operateInfo.callType);
+									//}
+									//else
+									//{
+									//	g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL);
+									//}
+									CALL_OPERATE_PARAM cmdInfo = task.param.info.callParam.operateInfo;
+									pNSNet = (NSWLNet*)g_pNSNet;
+									if (Call_Thread_Status_Idle == pNSNet->CallThreadStatus() && Mic_Idle == g_pNSSound->MicStatus())
 									{
-										initialCall(task.param.info.callParam.operateInfo.tartgetId, task.param.info.callParam.operateInfo.callType);
+										pNSNet->CurCallCmd = cmdInfo;
+										make_call_param_t param = { 0 };
+										param.callType = cmdInfo.callType;
+										param.targetID = cmdInfo.tartgetId;
+										pNSNet->CallStart(&param);
 									}
 									else
 									{
+										NSLog::instance()->AddLog("CallThreadStatus is not idle or MicStatus is not idle");
 										g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL);
 									}
 			}
 				break;
 			case REMOTE_CMD_SET_PLAY_CALL:
 			{
-											 //setCurrentTask(&task);
-											 if (setPlayCallOfCare(task.param.info.setCareCallParam.playParam.callType, task.param.info.setCareCallParam.playParam.targetId))
-											 {
-												 g_pNet->wlPlayStatus(CMD_FAIL, task.param.info.setCareCallParam.playParam.targetId);
+											 setCurrentTask(&task);
+											 //if (setPlayCallOfCare(task.param.info.setCareCallParam.playParam.callType, task.param.info.setCareCallParam.playParam.targetId))
+											 //{
+												// g_pNet->wlPlayStatus(CMD_FAIL, task.param.info.setCareCallParam.playParam.targetId);
 
-											 }
-											 else
-											 {
-												 //do nothing
-												 //g_pNet->wlPlayStatus(CMD_SUCCESS, task.param.info.setCareCallParam.playParam.targetId);
-											 }
+											 //}
+											 //else
+											 //{
+												// //do nothing
+												// //g_pNet->wlPlayStatus(CMD_SUCCESS, task.param.info.setCareCallParam.playParam.targetId);
+											 //}
+											 setPlayCallOfCare(task.param.info.setCareCallParam.playParam.callType, task.param.info.setCareCallParam.playParam.targetId);
+											 g_pNet->wlPlayStatus(CMD_SUCCESS, task.param.info.setCareCallParam.playParam.targetId);
 			}
 				break;
 			case REMOTE_CMD_STOP_CALL:
@@ -738,28 +816,43 @@ void CManager::handleRemoteTask()
 										 //lockCurTask();
 										 setCurrentTask(&task);
 										 //unLockCurTask();
-										 g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
-										 if (CALL_ONGOING == g_pNet->GetCallStatus())
-										 {
-											 stopCall();
-										 }
-										 else if (CALL_START == g_pNet->GetCallStatus())
-										 {
-											 sprintf_s(m_reportMsg, "call status is CALL_START");
-											 sendLogToWindow();
-											 setbNeedStopCall(true);
-										 }
-										 else
-										 {
-											 sprintf_s(m_reportMsg, "call status is CALL_IDLE or CALL_HUANGUP,will do nothing");
-											 sendLogToWindow();
-										 }
+										 //g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
+										 //if (CALL_ONGOING == g_pNet->GetCallStatus())
+										 //{
+											// stopCall();
+										 //}
+										 //else if (CALL_START == g_pNet->GetCallStatus())
+										 //{
+											// sprintf_s(m_reportMsg, "call status is CALL_START");
+											// sendLogToWindow();
+											// setbNeedStopCall(true);
+										 //}
+										 //else
+										 //{
+											// sprintf_s(m_reportMsg, "call status is CALL_IDLE or CALL_HUANGUP,will do nothing");
+											// sendLogToWindow();
+										 //}
+										 pNSNet = (NSWLNet*)g_pNSNet;
+										 pNSNet->CurCallCmd = task.param.info.callParam.operateInfo;
+										 pNSNet->CallStop();
+										 
 			}
 				break;
 			case REMOTE_CMD_GET_CONN_STATUS:
 			{
+											   //FieldValue info(FieldValue::TInt);
+											   //if (g_pNet->getWlStatus() == ALIVE)
+											   //{
+												  // info.setInt(REPEATER_CONNECT);
+											   //}
+											   //else
+											   //{
+												  // info.setInt(REPEATER_DISCONNECT);
+											   //}
+											   //g_pNet->wlInfo(GET_TYPE_CONN, info, task.param.info.getInfoParam.getInfo.SessionId);
+											   pNSNet = (NSWLNet*)g_pNSNet;
 											   FieldValue info(FieldValue::TInt);
-											   if (g_pNet->getWlStatus() == ALIVE)
+											   if (pNSNet->LeStatus() == ALIVE)
 											   {
 												   info.setInt(REPEATER_CONNECT);
 											   }
@@ -916,7 +1009,6 @@ void CManager::OnConnect(CRemotePeer* pRemotePeer)
 
 		//发送serial to tserver
 		g_pNet->wlSendSerial();
-
 	}
 }
 
@@ -1458,30 +1550,31 @@ void CManager::setDeviceInfoStatus(int value)
 
 void CManager::OnUpdateUsb(DWORD type)
 {
-	sprintf_s(m_reportMsg, "OnUpdateUsb");
-	sendLogToWindow();
-	//LOG_INFO("OnUpdateUsb");
-	switch (type)
-	{
-	case USB_ADD:
-	{
-					//LOG_INFO("USB_ADD");
-					sprintf_s(m_reportMsg, "USB_ADD");
-					sendLogToWindow();
-					handleUsbAdd();
-	}
-		break;
-	case USB_DEL:
-	{
-					//LOG_INFO("USB_DEL");
-					sprintf_s(m_reportMsg, "USB_DEL");
-					sendLogToWindow();
-					handleUsbDel();
-	}
-		break;
-	default:
-		break;
-	}
+	g_pNSManager->OnUpdateUsb(type);
+	//sprintf_s(m_reportMsg, "OnUpdateUsb");
+	//sendLogToWindow();
+	////LOG_INFO("OnUpdateUsb");
+	//switch (type)
+	//{
+	//case USB_ADD:
+	//{
+	//				//LOG_INFO("USB_ADD");
+	//				sprintf_s(m_reportMsg, "USB_ADD");
+	//				sendLogToWindow();
+	//				handleUsbAdd();
+	//}
+	//	break;
+	//case USB_DEL:
+	//{
+	//				//LOG_INFO("USB_DEL");
+	//				sprintf_s(m_reportMsg, "USB_DEL");
+	//				sendLogToWindow();
+	//				handleUsbDel();
+	//}
+	//	break;
+	//default:
+	//	break;
+	//}
 }
 
 void CManager::OnUpdateUsbService(bool type)
@@ -1503,7 +1596,7 @@ void CManager::handleUsbAdd()
 		{
 			/*重新配置dongle*/
 			WCHAR tmpStr[128] = { 0 };
-			swprintf_s(tmpStr, 128, L"\\\\.\\%s", g_tool.ANSIToUnicode(result.coms[i]).c_str());
+			swprintf_s(tmpStr, 128, L"\\\\.\\%s", g_pTool->ANSIToUnicode(result.coms[i]).c_str());
 			if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
 			{
 				//m_bDongleIsOpen = FALSE;
@@ -1540,7 +1633,7 @@ void CManager::handleUsbDel()
 		{
 			/*重新配置dongle*/
 			WCHAR tmpStr[128] = { 0 };
-			swprintf_s(tmpStr, 128, L"\\\\.\\%s", g_tool.ANSIToUnicode(result.coms[i]).c_str());
+			swprintf_s(tmpStr, 128, L"\\\\.\\%s", g_pTool->ANSIToUnicode(result.coms[i]).c_str());
 			if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
 			{
 				//m_bDongleIsOpen = FALSE;
@@ -1583,7 +1676,7 @@ void CManager::handleUsbDel()
 			{
 				/*重新配置dongle*/
 				WCHAR tmpStr[128] = { 0 };
-				swprintf_s(tmpStr, 128, L"\\\\.\\%s", g_tool.ANSIToUnicode(result.coms[i]).c_str());
+				swprintf_s(tmpStr, 128, L"\\\\.\\%s", g_pTool->ANSIToUnicode(result.coms[i]).c_str());
 				if (WL_RETURN_OK != g_pDongle->OpenDongle(tmpStr, this))
 				{
 					//m_bDongleIsOpen = FALSE;

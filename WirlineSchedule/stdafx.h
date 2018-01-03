@@ -5,6 +5,10 @@
 
 #pragma once
 
+#ifndef _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include "targetver.h"
 
 #define WIN32_LEAN_AND_MEAN             //  从 Windows 头文件中排除极少使用的信息
@@ -13,8 +17,17 @@
 #include <stdio.h>
 #include <tchar.h>
 #include "common.h"
+#include "NSGlobal.h"
 
+class NSNetBase;
+class NSManager;
 
+extern NSNetBase* g_pNSNet;
+extern NSManager* g_pNSManager;
+extern CTool* g_pTool;
+extern decline_reason_code_info_t g_callRequstDeclineReasonCodeInfo;
+extern std::string repeaterSerial;
+extern std::string repeaterMode;
 
 
 // TODO:  在此处引用程序需要的其他头文件

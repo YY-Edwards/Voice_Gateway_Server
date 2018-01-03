@@ -605,7 +605,7 @@ void CSerialDongle::ParseDVSImsg(DVSI3000struct* pMsg)
 	{
 	case AMBE3000_AMBE_TYPE_BYTE:
 	{
-									deObfuscate(DONGLETOIPSC, (tAMBEFrame*)pMsg);
+									deObfuscate(DONGLETOAMBE, (tAMBEFrame*)pMsg);
 									g_pNet->NetStuffTxVoice((unsigned char*)&(pMsg->AMBEType.theAMBEFrame.fld.ChannelBits[0]));
 	}
 		break;
@@ -631,10 +631,10 @@ void CSerialDongle::deObfuscate(ScrambleDirection theDirection, tAMBEFrame* pAMB
 	//Code to break apart and shuffle the bits.
 	switch (theDirection)
 	{
-	case IPSCTODONGLE:
+	case AMBETODONGLE:
 		DirectionArray = &IPSCTODONGLETABLE[0];
 		break;
-	case DONGLETOIPSC:
+	case DONGLETOAMBE:
 		DirectionArray = &DONGLETOIPSCTABLE[0];
 		break;
 	default:
@@ -678,13 +678,13 @@ void CSerialDongle::deObfuscate(ScrambleDirection theDirection, tAMBEFrame* pAMB
 	theByte = BitsGoingOut[48] << 7;  //Handle special case.
 	pAMBEFrame->fld.ChannelBits[6] = theByte;
 
-	if (IPSCTODONGLE == theDirection)
+	if (AMBETODONGLE == theDirection)
 	{
 		m_AMBELocker.lock();
 		m_AMBE_CirBuff.push_back(pAMBEFrame);
 		m_AMBELocker.unlock();
 	}
-	else if (DONGLETOIPSC == theDirection)
+	else if (DONGLETOAMBE == theDirection)
 	{
 		////test code
 		if (NULL != g_pSound->m_pInputFile)

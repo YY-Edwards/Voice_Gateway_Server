@@ -27,8 +27,8 @@ CIPSCPeer::CIPSCPeer(CWLNet* pLELayer, WCHAR* IP_Address, WCHAR* Port)
 	//m_uPeerServices = 0;
 
 	memset(&m_PeerAddr, 0, sizeof(m_PeerAddr));
-	m_PeerAddr.sin_addr.s_addr = inet_addr(g_tool.UnicodeToANSI(IP_Address).c_str());
-	m_PeerAddr.sin_port = htons(((u_short)(atoi(g_tool.UnicodeToANSI(Port).c_str()))));
+	m_PeerAddr.sin_addr.s_addr = inet_addr(g_pTool->UnicodeToANSI(IP_Address).c_str());
+	m_PeerAddr.sin_port = htons(((u_short)(atoi(g_pTool->UnicodeToANSI(Port).c_str()))));
 	m_PeerAddr.sin_family = AF_INET;
 
 	//m_FirewallOpenTimerReset = FIREWALLOPENTIMER_DEFAULT;
@@ -471,7 +471,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 										  {
 											  if (IPSC == recordType)
 											  {
-												  networkData.slotNumber = *((SlotNumber_e*)(pParameter));
+												  networkData.slotNumber = *((slot_number_enum*)(pParameter));
 											  }
 											  else
 											  {
@@ -492,7 +492,7 @@ BOOL CIPSCPeer::HandlePacket(DWORD handleCode, void* pParameter, u_long masterIp
 										  {
 										  case Channel_Control_Request_Status_Grant:
 										  {
-																					   m_useSlot = (SlotNumber_e)p->slotNumber;
+																					   m_useSlot = (slot_number_enum)p->slotNumber;
 																					   m_pWLNet->setCurrentSendVoicePeer(this);
 																					   m_pWLNet->CorrectingBuffer(p->callID);
 																					   m_pWLNet->releaseNewCallEvent();
@@ -1471,7 +1471,7 @@ void CIPSCPeer::setRemote3rdParty(bool value)
 	m_Remote3rdParty = value;
 }
 
-SlotNumber_e CIPSCPeer::getUseSlot()
+slot_number_enum CIPSCPeer::getUseSlot()
 {
 	return  m_useSlot;
 }
@@ -1630,10 +1630,10 @@ void CIPSCPeer::destroy()
 	}
 }
 
-void CIPSCPeer::getCallRequestRltInfo(DECLINE_REASON_CODE_INFO &declineReasonCodeInfo)
+void CIPSCPeer::getCallRequestRltInfo(decline_reason_code_info_t &declineReasonCodeInfo)
 {
 	unsigned char value = declineReasonCodeInfo.Value;
-	memset(&declineReasonCodeInfo, 0, sizeof(DECLINE_REASON_CODE_INFO));
+	memset(&declineReasonCodeInfo, 0, sizeof(decline_reason_code_info_t));
 	declineReasonCodeInfo.Value = value;
 	declineReasonCodeInfo.BhaveGet = true;
 	DWORD recordType = CONFIG_RECORD_TYPE;
@@ -1760,7 +1760,7 @@ void CIPSCPeer::getCallRequestRltInfo(DECLINE_REASON_CODE_INFO &declineReasonCod
 
 void CIPSCPeer::setUseSlot(unsigned char value)
 {
-	m_useSlot = (SlotNumber_e)value;
+	m_useSlot = (slot_number_enum)value;
 }
 
 bool CIPSCPeer::isSame(CIPSCPeer *pPeer)

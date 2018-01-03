@@ -134,7 +134,7 @@ inline void parseRepeaterCfg(repeater_t &cfg, Value json)
 	}
 	if (json.HasMember("DefaultGroupId") && json["DefaultGroupId"].IsInt())
 	{
-		cfg.DefaultChannel = (SlotNumber_e)json["DefaultChannel"].GetInt();
+		cfg.DefaultChannel = (slot_number_enum)json["DefaultChannel"].GetInt();
 	}
 
 	if (json["Dongle"].IsObject())
@@ -183,7 +183,7 @@ inline void parseRepeaterCfg(repeater_t &cfg, Value json)
 		cfg.Type = json["Type"].GetInt();
 		recordType = cfg.Type;
 	}
-	_RECORD_TYPE_VALUE temp = LCP;
+	work_mode_enum temp = LCP;
 	if (recordType == 0)
 	{
 		temp = IPSC;
