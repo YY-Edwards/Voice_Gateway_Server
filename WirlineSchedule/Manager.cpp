@@ -553,7 +553,7 @@ int CManager::config(REMOTE_TASK* pTask)
 		strcpy(param.master_ip, CONFIG_MASTER_IP);
 		param.master_port = CONFIG_MASTER_PORT;
 		param.peer_firewall_time = CONFIG_PEER_HEART_AND_REG_TIME;
-		param.work_mode = CPC;
+		param.work_mode = CONFIG_RECORD_TYPE;
 		/*初始化网络*/
 		rlt = g_pNSNet->StartNet(&param);
 		/*初始化Dongle*/
