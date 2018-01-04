@@ -20,7 +20,7 @@
 /*≤•∑≈“Ù∆µ≤…—˘≈‰÷√*/
 const int NUM_OUT_BUFFERS = 32;  //Software managed.
 const int OUT_BYTES_PER_SAMPLE = 2;
-const int OUT_SAMPLES_PER_20mS = 160;
+//const int OUT_SAMPLES_PER_20mS = 160;
 const int OUT_BYTES_PER_20mS = OUT_SAMPLES_PER_20mS * OUT_BYTES_PER_SAMPLE;
 const int OUT_SOUNDCARD_SAMPLES_PER_S = 8000;
 const int OUT_BITS_PER_SAMPLE = 16;

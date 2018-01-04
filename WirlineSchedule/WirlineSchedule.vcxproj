@@ -104,9 +104,12 @@
     <ClInclude Include="AudioLog.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="actionHandler.h" />
+    <ClInclude Include="global.h" />
     <ClInclude Include="HMAC_SHA1.h" />
     <ClInclude Include="IPSCPeer.h" />
+    <ClInclude Include="linklist.h" />
     <ClInclude Include="Manager.h" />
+    <ClInclude Include="MotoDefine.h" />
     <ClInclude Include="mutex.h" />
     <ClInclude Include="mysql-connector-c\include\atomic\gcc_builtins.h" />
     <ClInclude Include="mysql-connector-c\include\atomic\generic-msvc.h" />
@@ -175,6 +178,20 @@
     <ClInclude Include="mysql-connector-c\include\waiting_threads.h" />
     <ClInclude Include="mysql-connector-c\include\wqueue.h" />
     <ClInclude Include="MySQL.h" />
+    <ClInclude Include="net.h" />
+    <ClInclude Include="NSAmbe.h" />
+    <ClInclude Include="NSDongle.h" />
+    <ClInclude Include="NSGlobal.h" />
+    <ClInclude Include="NSLog.h" />
+    <ClInclude Include="NSManager.h" />
+    <ClInclude Include="NSNetBase.h" />
+    <ClInclude Include="NSRecordFile.h" />
+    <ClInclude Include="NSSerial.h" />
+    <ClInclude Include="NSSound.h" />
+    <ClInclude Include="NSStruct.h" />
+    <ClInclude Include="NSWLNet.h" />
+    <ClInclude Include="NSWLPeer.h" />
+    <ClInclude Include="NS\mutex.h" />
     <ClInclude Include="RecorderServer.h" />
     <ClInclude Include="SerialDongle.h" />
     <ClInclude Include="SHA1.h" />
@@ -207,8 +224,29 @@
     <ClCompile Include="common.cpp" />
     <ClCompile Include="HMAC_SHA1.cpp" />
     <ClCompile Include="IPSCPeer.cpp" />
+    <ClCompile Include="linklist.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Manager.cpp" />
     <ClCompile Include="MySQL.cpp" />
+    <ClCompile Include="net.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="NSAmbe.cpp" />
+    <ClCompile Include="NSDongle.cpp" />
+    <ClCompile Include="NSGlobal.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="NSLog.cpp" />
+    <ClCompile Include="NSManager.cpp" />
+    <ClCompile Include="NSRecordFile.cpp" />
+    <ClCompile Include="NSSerial.cpp" />
+    <ClCompile Include="NSSound.cpp" />
+    <ClCompile Include="NSWLNet.cpp" />
+    <ClCompile Include="NSWLPeer.cpp" />
     <ClCompile Include="RecorderServer.cpp" />
     <ClCompile Include="WDK_VidPidQuery.cpp" />
     <ClCompile Include="WirlineSchedule.cpp" />

@@ -122,7 +122,8 @@ INT WINAPI WDK_WhoAllVidPid(string ssin, com_use_t* pValue)
 			if (str2.find(s2) != string::npos)
 			{
 				int num = str2.find(s2);
-				string StrCom = str2.substr(num, 4);
+				int end = str2.find(")");
+				string StrCom = str2.substr(num, end - num);
 				//cout << "ÕÒµ½µÄCOMºÅÎª" << StrCom << endl;
 				strcpy_s(pValue->coms[index++], 8, StrCom.c_str());
 			}

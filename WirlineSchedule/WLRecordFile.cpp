@@ -41,7 +41,7 @@ void CRecordFile::WriteVoiceFrame(char* pFrame, int len /*= 7*/, bool bLocalRequ
 		tAMBEFrame* pAMBEFrame = NULL;
 		pAMBEFrame = g_pDongle->GetFreeAMBEBuffer();
 		memcpy(pAMBEFrame->fld.ChannelBits, pFrame, len);
-		g_pDongle->deObfuscate(IPSCTODONGLE, pAMBEFrame);
+		g_pDongle->deObfuscate(AMBETODONGLE, pAMBEFrame);
 		g_pDongle->MarkAMBEBufferFilled();
 		//继续解码数据
 		g_pDongle->releaseWaitNextNetDataEvent();

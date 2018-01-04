@@ -1,6 +1,9 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include "MotoDefine.h"
+#include "NetStruct.h"
+#include "NSStruct.h"
 #include <dbt.h>
 #include <process.h>
 #include "Ambe3000.h"
@@ -129,58 +132,58 @@ enum CLIENT_CALL_TYPE
 #define CLIENT_TRANSFER_FAIL "fail"
 #define WL_SERVER_PORT 9002
 
-enum WLStatus
-{
-	STARTING = 0,
-	WAITFOR_LE_MASTER_PEER_REGISTRATION_TX,
-	WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE,
-	WAITFOR_MAP_REQUEST_TX,
-	WAITFOR_LE_NOTIFICATION_MAP_BROADCAST,
-
-	//xnl connect
-	XNL_CONNECT,
-	WAITFOR_XNL_DEVICE_MASTER_QUERY_TX,
-	WAITFOR_XNL_MASTER_STATUS_BROADCAST,
-	WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX,
-	WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY,
-	WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX,
-	WAITFOR_XNL_DEVICE_CONNECT_REPLY,
-	WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST,
-	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1,
-	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2,
-	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2_TX,
-	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3_TX,
-	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3,
-	WAITFOR_XNL_XCMP_READ_SERIAL,
-	WAITFOR_XNL_XCMP_READ_SERIAL_RESULT,
-
-	ALIVE,
-	TRANSMITTING1,
-	TRANSMITTING2,
-	WAITINGFOR_LE_DEREGISTRATION_TXFREE,
-	WAITINGFOR_LE_DEREGISTRATION_TRANSMISSION,
-	BAILOUT
-};
+//enum WLStatus
+//{
+//	STARTING = 0,
+//	WAITFOR_LE_MASTER_PEER_REGISTRATION_TX,
+//	WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE,
+//	WAITFOR_MAP_REQUEST_TX,
+//	WAITFOR_LE_NOTIFICATION_MAP_BROADCAST,
+//
+//	//xnl connect
+//	XNL_CONNECT,
+//	WAITFOR_XNL_DEVICE_MASTER_QUERY_TX,
+//	WAITFOR_XNL_MASTER_STATUS_BROADCAST,
+//	WAITFOR_XNL_DEVICE_AUTH_KEY_REQUEST_TX,
+//	WAITFOR_XNL_DEVICE_AUTH_KEY_REPLY,
+//	WAITFOR_XNL_DEVICE_CONNECT_REQUEST_TX,
+//	WAITFOR_XNL_DEVICE_CONNECT_REPLY,
+//	WAITFOR_XNL_DEVICE_SYSMAP_BROADCAST,
+//	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_1,
+//	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2,
+//	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_2_TX,
+//	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3_TX,
+//	WAITFOR_XNL_DATA_MSG_DEVICE_INIT_3,
+//	WAITFOR_XNL_XCMP_READ_SERIAL,
+//	WAITFOR_XNL_XCMP_READ_SERIAL_RESULT,
+//
+//	ALIVE,
+//	TRANSMITTING1,
+//	TRANSMITTING2,
+//	WAITINGFOR_LE_DEREGISTRATION_TXFREE,
+//	WAITINGFOR_LE_DEREGISTRATION_TRANSMISSION,
+//	BAILOUT
+//};
 
 #define GROUP_CALL 0x4f//79
 #define PRIVATE_CALL 0x50//80
 #define ALL_CALL 0x53//83
 
-enum _RECORD_TYPE_VALUE
-{
-	IPSC = 0,
-	CPC,
-	LCP,
-};
-#define MAX_IP_SIZE 16
-
-enum SlotNumber_e
-{
-	NULL_SLOT = 0x00,
-	SLOT1,
-	SLOT2,
-	BOTH_SLOT1_SLOT2,
-};
+//enum _RECORD_TYPE_VALUE
+//{
+//	IPSC = 0,
+//	CPC,
+//	LCP,
+//};
+//#define MAX_IP_SIZE 16
+//
+//enum SlotNumber_e
+//{
+//	NULL_SLOT = 0x00,
+//	SLOT1,
+//	SLOT2,
+//	BOTH_SLOT1_SLOT2,
+//};
 
 /*配置参数区域*/
 extern bool CONFIG_SCHDULE_ISENABLE;//是否与客户交互工作
@@ -191,12 +194,12 @@ extern unsigned short CONFIG_MASTER_PORT;//MASTER端口
 extern unsigned long CONFIG_DEFAULT_GROUP;//默认通话组
 extern unsigned long CONFIG_LOCAL_RADIO_ID;//本机RADIO ID
 extern unsigned long CONFIG_LOCAL_PEER_ID;//本机PEER ID
-extern _RECORD_TYPE_VALUE CONFIG_RECORD_TYPE;//当前的录音模式
+extern work_mode_enum CONFIG_RECORD_TYPE;//当前的录音模式
 extern unsigned short CONFIG_DONGLE_PORT;//dongle端口
 extern long CONFIG_HUNG_TIME;//session间隔时间
 extern long CONFIG_MASTER_HEART_TIME;//主中继心跳间隔
 extern long CONFIG_PEER_HEART_AND_REG_TIME;//非主中继心跳间隔和注册间隔
-extern SlotNumber_e CONFIG_DEFAULT_SLOT;//默认信道
+extern slot_number_enum CONFIG_DEFAULT_SLOT;//默认信道
 extern long CONFIG_TIMEOUT_SECONDS;//通话请求、获取在线设备列表请求的超时响应时间
 
 //////////////////////////////////////////////////////////////////////////
@@ -266,11 +269,11 @@ typedef struct
 	unsigned long DefaultGroupId;
 	unsigned long LocalRadioId;
 	unsigned long LocalPeerId;
-	_RECORD_TYPE_VALUE recordType;
+	work_mode_enum recordType;
 	long MinHungTime;
 	long MaxSiteAliveTime;
 	long MaxPeerAliveTime;
-	SlotNumber_e DefaultChannel;
+	slot_number_enum DefaultChannel;
 	DONGLE_t Dongle;
 	char AudioPath[PATH_FILE_MAXSIZE];
 }repeater_t;
@@ -428,10 +431,10 @@ extern long GO_BACK_DEFAULT_GROUP_TIME;//处于非调度组的时间
 #define DATA_TABLE_NAME_SIZE 64
 #define FILE_NAME_MAXSIZE 64
 typedef void(*PLogReport)(char* log_msg);
-enum    ScrambleDirection  {
-	IPSCTODONGLE,
-	DONGLETOIPSC
-};
+//enum    ScrambleDirection  {
+//	IPSCTODONGLE,
+//	DONGLETOIPSC
+//};
 
 #define MAP_MAX_SIZE 128
 #define WL_REGISTRATION_ENTRY_MAX_SIZE 32
@@ -606,499 +609,499 @@ typedef struct SendVoiceStruct
 #define	WL_VC_CHNL_CTRL_STATUS_REMOTE			0x0E16
 #define	WL_VC_CALL_SESSION_STATUS_REMOTE		0x0E20
 
-#pragma region 协议结构体
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char peerMode;
-	unsigned long peerServices;
-	unsigned short currentLinkProtocolVersion;
-	unsigned short oldestLinkProtocolVersion;
-	unsigned short length;
-}T_LE_PROTOCOL_90;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned short peerMode;
-	unsigned long peerServices;
-	unsigned char leadingChannelID;
-	unsigned short currentLinkProtocolVersion;
-	unsigned short oldestLinkProtocolVersion;
-	unsigned short length;
-}T_LE_PROTOCOL_90_LCP;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char peerMode;
-	unsigned long peerServices;
-	unsigned short numPeers;
-	unsigned short acceptedLinkProtocolVersion;
-	unsigned short oldestLinkProtocolVersion;
-	unsigned short length;
-}T_LE_PROTOCOL_91;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned short peerMode;
-	unsigned long peerServices;
-	unsigned char leadingChannelID;
-	unsigned short numPeers;
-	unsigned short acceptedLinkProtocolVersion;
-	unsigned short oldestLinkProtocolVersion;
-	unsigned short length;
-}T_LE_PROTOCOL_91_LCP;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned short length;
-}T_LE_PROTOCOL_92;
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char mapType;
-	unsigned short acceptedLinkProtocolVersion;
-	unsigned short oldestLinkProtocolVersion;
-	unsigned short length;
-}T_LE_PROTOCOL_92_LCP;
-
-
-typedef struct
-{
-	unsigned long remotePeerID;
-	unsigned long remoteIPAddr;
-	unsigned short remotePort;
-	unsigned char peerMode;
-}MAP_PEER;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned short mapLength;
-	MAP_PEER mapPeers[MAP_MAX_SIZE];
-	unsigned short length;
-	unsigned short mapNums;
-}T_LE_PROTOCOL_93;
-
-typedef struct
-{
-	unsigned long remotePeerID;
-	unsigned long remoteIPAddr;
-	unsigned short remotePort;
-	unsigned short peerMode;
-	unsigned char leadingChannelID;
-}WIDE_MAP;
-
-typedef struct
-{
-	unsigned char talkgroupID;
-	unsigned short configuredSiteBits;
-}PROGRAMMING_MAP_INFO;
-
-typedef struct
-{
-	unsigned char numConfiguredTalkgroups;
-	PROGRAMMING_MAP_INFO programmingMapInfos[MAP_MAX_SIZE];
-}PROGRAMMING_MAP;
-
-typedef struct
-{
-	unsigned char talkgroupID;
-	unsigned char configuredSiteBits[16];
-
-}ENHANCED_PROGRAMMING_MAP_INFO;
-
-typedef struct
-{
-	unsigned char numConfiguredTalkgroups;
-	ENHANCED_PROGRAMMING_MAP_INFO enhancedProgrammingMapInfos[MAP_MAX_SIZE];
-
-}ENHANCED_PROGRAMMING_MAP;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char mapType;
-	unsigned short mapLength;
-	union
-	{
-		WIDE_MAP wideMapPeers[MAP_MAX_SIZE];
-		PROGRAMMING_MAP programmingMapPeers[MAP_MAX_SIZE];
-		ENHANCED_PROGRAMMING_MAP enhancedProgrammingMapPeers[MAP_MAX_SIZE];
-	} mapPayload;
-	unsigned short acceptedLinkProtocolVersion;
-	unsigned short oldestLinkProtocolVersion;
-	unsigned short length;
-	unsigned short mapNums;
-}T_LE_PROTOCOL_93_LCP;
-
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned short currentLinkProtocolVersion;
-	unsigned short oldestLinkProtocolVersion;
-	unsigned short length;
-}T_LE_PROTOCOL_94;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned short currentLinkProtocolVersion;
-	unsigned short oldestLinkProtocolVersion;
-	unsigned short length;
-}T_LE_PROTOCOL_95;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char peerMode;
-	unsigned long peerServices;
-	unsigned short currentLinkProtocolVersion;
-	unsigned short oldestLinkProtocolVersion;
-	unsigned short length;
-}T_LE_PROTOCOL_96;
-
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned short peerMode;
-	unsigned long peerServices;
-	unsigned char leadingChannelID;
-	unsigned short currentLinkProtocolVersion;
-	unsigned short oldestLinkProtocolVersion;
-	unsigned short length;
-}T_LE_PROTOCOL_96_LCP;
-
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char peerMode;
-	unsigned long peerServices;
-	unsigned short acceptedLinkProtocolVersion;
-	unsigned short oldestLinkProtocolVersion;
-	unsigned short length;
-}T_LE_PROTOCOL_97;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned short peerMode;
-	unsigned long peerServices;
-	unsigned char leadingChannelID;
-	unsigned short currentLinkProtocolVersion;
-	unsigned short oldestLinkProtocolVersion;
-	unsigned short length;
-}T_LE_PROTOCOL_97_LCP;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char peerMode;
-	unsigned long peerServices;
-	unsigned short length;
-}T_LE_PROTOCOL_98;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned short peerMode;
-	unsigned long peerServices;
-	unsigned short currentLinkProtocolVersion;
-	unsigned short oldestLinkProtocolVersion;
-	unsigned short length;
-}T_LE_PROTOCOL_98_LCP;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char peerMode;
-	unsigned long peerServices;
-	unsigned short length;
-}T_LE_PROTOCOL_99;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned short peerMode;
-	unsigned long peerServices;
-	unsigned short currentLinkProtocolVersion;
-	unsigned short oldestLinkProtocolVersion;
-	unsigned short length;
-}T_LE_PROTOCOL_99_LCP;
-
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned short length;
-}T_LE_PROTOCOL_9A;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned short currentLinkProtocolVersion;
-	unsigned short oldestLinkProtocolVersion;
-	unsigned short length;
-}T_LE_PROTOCOL_9A_LCP;
-
-typedef struct
-{
-	unsigned char AddressType;
-	unsigned long addressRangeStart;
-	unsigned long addressRangeEnd;
-	unsigned char VoiceAttributes;
-	unsigned char CSBKAttributes;
-}WL_REGISTRATION_ENTRY;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char wirelineOpcode;
-	unsigned char registrationSlotNumber;
-	unsigned long registrationPduID;
-	unsigned short registrationID;
-	unsigned char wirelineStatusRegistration;
-	unsigned char numberOfRegistrationEntries;
-	WL_REGISTRATION_ENTRY wlRegistrationEntries[WL_REGISTRATION_ENTRY_MAX_SIZE];
-	unsigned char currentLinkProtocolVersion;
-	unsigned char oldestLinkProtocolVersion;
-	unsigned char WirelineAuthenticationID[4];
-	unsigned char WirelineAuthenticationSignature[10];
-	unsigned short length;
-}T_WL_PROTOCOL_01;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char wirelineOpcode;
-	unsigned long registrationPduID;
-	unsigned short registrationIDSlot1;
-	unsigned short registrationIDSlot2;
-	unsigned char registrationStatus;
-	unsigned char registrationStatusCode;
-	unsigned char currentLinkProtocolVersion;
-	unsigned char oldestLinkProtocolVersion;
-	unsigned short length;
-}T_WL_PROTOCOL_02;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char wirelineOpcode;
-	unsigned char registrationSlotNumber;
-	unsigned long registrationPduID;
-	unsigned char registrationOperationOpcode;
-	unsigned char currentLinkProtocolVersion;
-	unsigned char oldestLinkProtocolVersion;
-	unsigned short length;
-}T_WL_PROTOCOL_03;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char wirelineOpcode;
-	unsigned char slotNumber;
-	unsigned long statusPduID;
-	unsigned char conventionalchannelStatus;
-	unsigned char restChannelStatus;
-	unsigned char typeOfCall;
-	unsigned char currentLinkProtocolVersion;
-	unsigned char oldestLinkProtocolVersion;
-	unsigned short length;
-}T_WL_PROTOCOL_11;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char wirelineOpcode;
-	unsigned char slotNumber;
-	unsigned char currentLinkProtocolVersion;
-	unsigned char oldestLinkProtocolVersion;
-	unsigned short length;
-}T_WL_PROTOCOL_12;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char wirelineOpcode;
-	unsigned char slotNumber;
-	unsigned long callID;
-	unsigned char callType;
-	unsigned long sourceID;
-	unsigned long targetID;
-	unsigned char accessCriteria;
-	unsigned char callAttributes;
-	unsigned char preambleDuration;
-	unsigned __int64 CSBKArguments;
-	unsigned char currentLinkProtocolVersion;
-	unsigned char oldestLinkProtocolVersion;
-	unsigned char WirelineAuthenticationID[4];
-	unsigned char WirelineAuthenticationSignature[10];
-	unsigned short length;
-}T_WL_PROTOCOL_13;
-
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char wirelineOpcode;
-	unsigned char slotNumber;
-	unsigned long callID;
-	unsigned char callType;
-	unsigned char chnCtrlstatus;
-	unsigned char DeclineReasonCode;
-	unsigned char currentLinkProtocolVersion;
-	unsigned char oldestLinkProtocolVersion;
-	unsigned short length;
-}T_WL_PROTOCOL_16;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char wirelineOpcode;
-	unsigned char slotNumber;
-	unsigned long callID;
-	unsigned char callType;
-	unsigned long sourceID;
-	unsigned long targetID;
-	unsigned char callAttributes;
-	unsigned char MFID;
-	unsigned char serviceOption;
-	unsigned char currentLinkProtocolVersion;
-	unsigned char oldestLinkProtocolVersion;
-	unsigned short length;
-}T_WL_PROTOCOL_18;
-
-typedef struct
-{
-	unsigned char header;
-	unsigned char MPT;
-	unsigned short SequenceNumber;
-	unsigned long Timestamp;
-	unsigned long SSRC;
-
-}RTP_HEADER;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char wirelineOpcode;
-	unsigned char slotNumber;
-	unsigned long callID;
-	unsigned char callType;
-	unsigned long sourceID;
-	unsigned long targetID;
-	RTP_HEADER RTPInformationField;
-	unsigned char burstType;
-	unsigned char MFID;
-	unsigned char serviceOption;
-	unsigned char currentLinkProtocolVersion;
-	unsigned char oldestLinkProtocolVersion;
-	unsigned short length;
-}T_WL_PROTOCOL_19;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char wirelineOpcode;
-	unsigned char slotNumber;
-	unsigned long callID;
-	unsigned char callType;
-	unsigned long sourceID;
-	unsigned long targetID;
-	unsigned char callSessionStatus;
-	unsigned char currentLinkProtocolVersion;
-	unsigned char oldestLinkProtocolVersion;
-	unsigned short length;
-}T_WL_PROTOCOL_20;
-
-typedef struct
-{
-	char data[20];
-}AMBE_VOICE_ENCODED_FRAMES;
-
-typedef struct
-{
-	unsigned char Opcode;
-	unsigned long peerID;
-	unsigned char wirelineOpcode;
-	unsigned char slotNumber;
-	unsigned long callID;
-	unsigned char callType;
-	unsigned long sourceID;
-	unsigned long targetID;
-	unsigned char callAttributes;
-	RTP_HEADER RTPInformationField;
-	unsigned char burstType;
-	unsigned char MFID;
-	unsigned char serviceOption;
-	unsigned char algorithmID;
-	unsigned char keyID;
-	unsigned long IV;
-	AMBE_VOICE_ENCODED_FRAMES AMBEVoiceEncodedFrames;
-	unsigned short rawRssiValue;
-	unsigned char currentLinkProtocolVersion;
-	unsigned char oldestLinkProtocolVersion;
-	unsigned char WirelineAuthenticationID[4];
-	unsigned char WirelineAuthenticationSignature[10];
-	unsigned short length;
-}T_WL_PROTOCOL_21;
-
-typedef struct
-{
-	unsigned char Value;
-	char ReasonCode[256];
-	char FailureScenarios[1024];
-	bool BhaveGet;
-	bool NewCallRetry;
-	bool HangCallRetry;
-	bool RetryOfIPSC;
-}DECLINE_REASON_CODE_INFO;
-
-extern DECLINE_REASON_CODE_INFO g_callRequstDeclineReasonCodeInfo;
-
-
-//repeater serial  and repeater mode
-extern std::string repeaterSerial;
-extern std::string repeaterMode;
-
-#pragma endregion
+//#pragma region 协议结构体
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char peerMode;
+//	unsigned long peerServices;
+//	unsigned short currentLinkProtocolVersion;
+//	unsigned short oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_LE_PROTOCOL_90;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned short peerMode;
+//	unsigned long peerServices;
+//	unsigned char leadingChannelID;
+//	unsigned short currentLinkProtocolVersion;
+//	unsigned short oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_LE_PROTOCOL_90_LCP;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char peerMode;
+//	unsigned long peerServices;
+//	unsigned short numPeers;
+//	unsigned short acceptedLinkProtocolVersion;
+//	unsigned short oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_LE_PROTOCOL_91;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned short peerMode;
+//	unsigned long peerServices;
+//	unsigned char leadingChannelID;
+//	unsigned short numPeers;
+//	unsigned short acceptedLinkProtocolVersion;
+//	unsigned short oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_LE_PROTOCOL_91_LCP;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned short length;
+//}T_LE_PROTOCOL_92;
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char mapType;
+//	unsigned short acceptedLinkProtocolVersion;
+//	unsigned short oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_LE_PROTOCOL_92_LCP;
+//
+//
+//typedef struct
+//{
+//	unsigned long remotePeerID;
+//	unsigned long remoteIPAddr;
+//	unsigned short remotePort;
+//	unsigned char peerMode;
+//}MAP_PEER;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned short mapLength;
+//	MAP_PEER mapPeers[MAP_MAX_SIZE];
+//	unsigned short length;
+//	unsigned short mapNums;
+//}T_LE_PROTOCOL_93;
+//
+//typedef struct
+//{
+//	unsigned long remotePeerID;
+//	unsigned long remoteIPAddr;
+//	unsigned short remotePort;
+//	unsigned short peerMode;
+//	unsigned char leadingChannelID;
+//}WIDE_MAP;
+//
+//typedef struct
+//{
+//	unsigned char talkgroupID;
+//	unsigned short configuredSiteBits;
+//}PROGRAMMING_MAP_INFO;
+//
+//typedef struct
+//{
+//	unsigned char numConfiguredTalkgroups;
+//	PROGRAMMING_MAP_INFO programmingMapInfos[MAP_MAX_SIZE];
+//}PROGRAMMING_MAP;
+//
+//typedef struct
+//{
+//	unsigned char talkgroupID;
+//	unsigned char configuredSiteBits[16];
+//
+//}ENHANCED_PROGRAMMING_MAP_INFO;
+//
+//typedef struct
+//{
+//	unsigned char numConfiguredTalkgroups;
+//	ENHANCED_PROGRAMMING_MAP_INFO enhancedProgrammingMapInfos[MAP_MAX_SIZE];
+//
+//}ENHANCED_PROGRAMMING_MAP;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char mapType;
+//	unsigned short mapLength;
+//	union
+//	{
+//		WIDE_MAP wideMapPeers[MAP_MAX_SIZE];
+//		PROGRAMMING_MAP programmingMapPeers[MAP_MAX_SIZE];
+//		ENHANCED_PROGRAMMING_MAP enhancedProgrammingMapPeers[MAP_MAX_SIZE];
+//	} mapPayload;
+//	unsigned short acceptedLinkProtocolVersion;
+//	unsigned short oldestLinkProtocolVersion;
+//	unsigned short length;
+//	unsigned short mapNums;
+//}T_LE_PROTOCOL_93_LCP;
+//
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned short currentLinkProtocolVersion;
+//	unsigned short oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_LE_PROTOCOL_94;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned short currentLinkProtocolVersion;
+//	unsigned short oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_LE_PROTOCOL_95;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char peerMode;
+//	unsigned long peerServices;
+//	unsigned short currentLinkProtocolVersion;
+//	unsigned short oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_LE_PROTOCOL_96;
+//
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned short peerMode;
+//	unsigned long peerServices;
+//	unsigned char leadingChannelID;
+//	unsigned short currentLinkProtocolVersion;
+//	unsigned short oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_LE_PROTOCOL_96_LCP;
+//
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char peerMode;
+//	unsigned long peerServices;
+//	unsigned short acceptedLinkProtocolVersion;
+//	unsigned short oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_LE_PROTOCOL_97;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned short peerMode;
+//	unsigned long peerServices;
+//	unsigned char leadingChannelID;
+//	unsigned short currentLinkProtocolVersion;
+//	unsigned short oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_LE_PROTOCOL_97_LCP;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char peerMode;
+//	unsigned long peerServices;
+//	unsigned short length;
+//}T_LE_PROTOCOL_98;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned short peerMode;
+//	unsigned long peerServices;
+//	unsigned short currentLinkProtocolVersion;
+//	unsigned short oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_LE_PROTOCOL_98_LCP;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char peerMode;
+//	unsigned long peerServices;
+//	unsigned short length;
+//}T_LE_PROTOCOL_99;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned short peerMode;
+//	unsigned long peerServices;
+//	unsigned short currentLinkProtocolVersion;
+//	unsigned short oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_LE_PROTOCOL_99_LCP;
+//
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned short length;
+//}T_LE_PROTOCOL_9A;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned short currentLinkProtocolVersion;
+//	unsigned short oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_LE_PROTOCOL_9A_LCP;
+//
+//typedef struct
+//{
+//	unsigned char AddressType;
+//	unsigned long addressRangeStart;
+//	unsigned long addressRangeEnd;
+//	unsigned char VoiceAttributes;
+//	unsigned char CSBKAttributes;
+//}WL_REGISTRATION_ENTRY;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char wirelineOpcode;
+//	unsigned char registrationSlotNumber;
+//	unsigned long registrationPduID;
+//	unsigned short registrationID;
+//	unsigned char wirelineStatusRegistration;
+//	unsigned char numberOfRegistrationEntries;
+//	WL_REGISTRATION_ENTRY wlRegistrationEntries[WL_REGISTRATION_ENTRY_MAX_SIZE];
+//	unsigned char currentLinkProtocolVersion;
+//	unsigned char oldestLinkProtocolVersion;
+//	unsigned char WirelineAuthenticationID[4];
+//	unsigned char WirelineAuthenticationSignature[10];
+//	unsigned short length;
+//}T_WL_PROTOCOL_01;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char wirelineOpcode;
+//	unsigned long registrationPduID;
+//	unsigned short registrationIDSlot1;
+//	unsigned short registrationIDSlot2;
+//	unsigned char registrationStatus;
+//	unsigned char registrationStatusCode;
+//	unsigned char currentLinkProtocolVersion;
+//	unsigned char oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_WL_PROTOCOL_02;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char wirelineOpcode;
+//	unsigned char registrationSlotNumber;
+//	unsigned long registrationPduID;
+//	unsigned char registrationOperationOpcode;
+//	unsigned char currentLinkProtocolVersion;
+//	unsigned char oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_WL_PROTOCOL_03;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char wirelineOpcode;
+//	unsigned char slotNumber;
+//	unsigned long statusPduID;
+//	unsigned char conventionalchannelStatus;
+//	unsigned char restChannelStatus;
+//	unsigned char typeOfCall;
+//	unsigned char currentLinkProtocolVersion;
+//	unsigned char oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_WL_PROTOCOL_11;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char wirelineOpcode;
+//	unsigned char slotNumber;
+//	unsigned char currentLinkProtocolVersion;
+//	unsigned char oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_WL_PROTOCOL_12;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char wirelineOpcode;
+//	unsigned char slotNumber;
+//	unsigned long callID;
+//	unsigned char callType;
+//	unsigned long sourceID;
+//	unsigned long targetID;
+//	unsigned char accessCriteria;
+//	unsigned char callAttributes;
+//	unsigned char preambleDuration;
+//	unsigned __int64 CSBKArguments;
+//	unsigned char currentLinkProtocolVersion;
+//	unsigned char oldestLinkProtocolVersion;
+//	unsigned char WirelineAuthenticationID[4];
+//	unsigned char WirelineAuthenticationSignature[10];
+//	unsigned short length;
+//}T_WL_PROTOCOL_13;
+//
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char wirelineOpcode;
+//	unsigned char slotNumber;
+//	unsigned long callID;
+//	unsigned char callType;
+//	unsigned char chnCtrlstatus;
+//	unsigned char DeclineReasonCode;
+//	unsigned char currentLinkProtocolVersion;
+//	unsigned char oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_WL_PROTOCOL_16;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char wirelineOpcode;
+//	unsigned char slotNumber;
+//	unsigned long callID;
+//	unsigned char callType;
+//	unsigned long sourceID;
+//	unsigned long targetID;
+//	unsigned char callAttributes;
+//	unsigned char MFID;
+//	unsigned char serviceOption;
+//	unsigned char currentLinkProtocolVersion;
+//	unsigned char oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_WL_PROTOCOL_18;
+//
+//typedef struct
+//{
+//	unsigned char header;
+//	unsigned char MPT;
+//	unsigned short SequenceNumber;
+//	unsigned long Timestamp;
+//	unsigned long SSRC;
+//
+//}RTP_HEADER;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char wirelineOpcode;
+//	unsigned char slotNumber;
+//	unsigned long callID;
+//	unsigned char callType;
+//	unsigned long sourceID;
+//	unsigned long targetID;
+//	RTP_HEADER RTPInformationField;
+//	unsigned char burstType;
+//	unsigned char MFID;
+//	unsigned char serviceOption;
+//	unsigned char currentLinkProtocolVersion;
+//	unsigned char oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_WL_PROTOCOL_19;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char wirelineOpcode;
+//	unsigned char slotNumber;
+//	unsigned long callID;
+//	unsigned char callType;
+//	unsigned long sourceID;
+//	unsigned long targetID;
+//	unsigned char callSessionStatus;
+//	unsigned char currentLinkProtocolVersion;
+//	unsigned char oldestLinkProtocolVersion;
+//	unsigned short length;
+//}T_WL_PROTOCOL_20;
+//
+//typedef struct
+//{
+//	char data[20];
+//}AMBE_VOICE_ENCODED_FRAMES;
+//
+//typedef struct
+//{
+//	unsigned char Opcode;
+//	unsigned long peerID;
+//	unsigned char wirelineOpcode;
+//	unsigned char slotNumber;
+//	unsigned long callID;
+//	unsigned char callType;
+//	unsigned long sourceID;
+//	unsigned long targetID;
+//	unsigned char callAttributes;
+//	RTP_HEADER RTPInformationField;
+//	unsigned char burstType;
+//	unsigned char MFID;
+//	unsigned char serviceOption;
+//	unsigned char algorithmID;
+//	unsigned char keyID;
+//	unsigned long IV;
+//	AMBE_VOICE_ENCODED_FRAMES AMBEVoiceEncodedFrames;
+//	unsigned short rawRssiValue;
+//	unsigned char currentLinkProtocolVersion;
+//	unsigned char oldestLinkProtocolVersion;
+//	unsigned char WirelineAuthenticationID[4];
+//	unsigned char WirelineAuthenticationSignature[10];
+//	unsigned short length;
+//}T_WL_PROTOCOL_21;
+//
+//typedef struct
+//{
+//	unsigned char Value;
+//	char ReasonCode[256];
+//	char FailureScenarios[1024];
+//	bool BhaveGet;
+//	bool NewCallRetry;
+//	bool HangCallRetry;
+//	bool RetryOfIPSC;
+//}DECLINE_REASON_CODE_INFO;
+//
+//extern DECLINE_REASON_CODE_INFO g_callRequstDeclineReasonCodeInfo;
+//
+//
+////repeater serial  and repeater mode
+//extern std::string repeaterSerial;
+//extern std::string repeaterMode;
+//
+//#pragma endregion
 
 class CManager;
 extern CManager* g_manager;

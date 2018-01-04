@@ -737,5 +737,11 @@ void CMySQL::sendLogToWindow()
 	}
 }
 
+unsigned long CMySQL::GetLastVoiceRowId()
+{
+	std::string id = GetLastRow(m_strCurrentTableName)["id"];
+	return (unsigned long)atoi(id.c_str());
+}
+
 
 

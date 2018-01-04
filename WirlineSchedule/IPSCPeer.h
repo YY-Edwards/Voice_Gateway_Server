@@ -30,7 +30,6 @@
 // };
 
 class CWLNet;
-extern CTool g_tool;
 
 class CIPSCPeer
 {
@@ -62,7 +61,7 @@ public:
 	/*打印PEER的概要信息*/
 	void printInfo();
 	/*获取当前PEER正在使用SLOT 0表示未使用*/
-	SlotNumber_e getUseSlot();
+	slot_number_enum getUseSlot();
 	/*设置当前PEER使用的SLOT*/
 	void setUseSlot(unsigned char value);
 	/*关闭定时器*/
@@ -100,7 +99,7 @@ protected:
 	int SendToPeer(const SOCKADDR_IN* pAddr);
 
 private:
-	SlotNumber_e m_useSlot;
+	slot_number_enum m_useSlot;
 	bool m_Remote3rdParty;
 	PLogReport m_report;
 	char m_reportMsg[WL_LOG_SIZE];
@@ -161,7 +160,7 @@ private:
 	/*PEER状态检测线程*/
 	static void PASCAL PeerStatusCheck(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2);
 	/*获取请求通话结果相关信息*/
-	void getCallRequestRltInfo(DECLINE_REASON_CODE_INFO &declineReasonCodeInfo);
+	void getCallRequestRltInfo(decline_reason_code_info_t &declineReasonCodeInfo);
 
 	bool m_bIsMaster;
 	bool m_bFirstInit;

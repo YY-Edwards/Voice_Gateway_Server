@@ -1,0 +1,15 @@
+#include "NSGlobal.h"
+#include "Tool.h"
+
+repeater_net_mode_enum g_repeater_net_mode = WL;
+unsigned short g_timing_alive_time_master = (15 * 1000);
+unsigned short g_timing_alive_time_peer = (15 * 1000);
+unsigned short g_hang_time = (4 * 1000);
+CMySQL* g_pDb = NULL;
+wchar_t g_ambedata_path[260] = { 0 };
+unsigned short g_network_mode = 0x0000;
+//CTool* g_pTool = new CTool();
+NSSound* g_pNSSound = NULL;
+//NSManager* g_pManager = NULL;
+unsigned char g_playCalltype = 0x4f;
+unsigned long g_playTargetId = 0;

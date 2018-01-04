@@ -98,7 +98,7 @@ BOOL WLRecord::WriteVoiceFile()
 			voiceRecord["length"] = str + temp;
 			sprintf_s(temp, "%u", dwOffset);
 			voiceRecord["offset"] = str + temp;
-			voiceRecord["file_path"] = g_tool.UnicodeToANSI(strAudioPath);
+			voiceRecord["file_path"] = g_pTool->UnicodeToANSI(strAudioPath);
 			sprintf_s(temp, "%u", (*i)->m_srcPeerId);
 			voiceRecord["src_peer_id"] = str + temp;
 			sprintf_s(temp, "%d", (*i)->m_srcSlot);
@@ -199,7 +199,7 @@ void WLRecord::setAudioPath(const std::wstring& path)
 		temp += L"\\";
 		if (!PathFileExists(temp.c_str()))
 		{
-			std::string str = g_tool.UnicodeToANSI(temp);
+			std::string str = g_pTool->UnicodeToANSI(temp);
 			sprintf_s(m_reportMsg, "error:audio path %s not exist,there will used default audio path", str.c_str());
 			sendLogToWindow();
 		}

@@ -9,7 +9,6 @@
 #include "Manager.h"
 #include "WLRecordFile.h"
 
-extern CTool g_tool;
 extern CSerialDongle* g_pDongle;
 extern CSound* g_pSound;
 extern BOOL g_dongleIsUsing;
@@ -37,61 +36,61 @@ static const DWORD RxIndex = WAIT_OBJECT_0 + 0;
 static const DWORD TxIndex = WAIT_OBJECT_0 + 1;
 static const DWORD TickIndex = WAIT_OBJECT_0 + 2;
 
-static const BYTE WL_PROTOCOL = 0xb2;
-static const BYTE MONITOR_CHANNEL_STATUS = 0x80;
-static const BYTE NOT_MONITOR_CHANNEL_STATUS = 0x00;
-static const BYTE REGISTERED_VOICE_SERVICE = 0x80;
-static const BYTE WL_REGISTRATION_REQUEST = 0x01;
-static const BYTE WL_REGISTRATION_STATUS = 0x02;
+//static const BYTE WL_PROTOCOL = 0xb2;
+///static const BYTE MONITOR_CHANNEL_STATUS = 0x80;
+//static const BYTE NOT_MONITOR_CHANNEL_STATUS = 0x00;
+//static const BYTE REGISTERED_VOICE_SERVICE = 0x80;
+//static const BYTE WL_REGISTRATION_REQUEST = 0x01;
+//static const BYTE WL_REGISTRATION_STATUS = 0x02;
 
-static const BYTE WL_REGISTRATION_GENERAL_OPS = 0x03;
-static const BYTE WL_CHNL_STATUS = 0x11;
-static const BYTE WL_CHNL_STATUS_QUERY = 0x12;
-static const BYTE WL_VC_VOICE_START = 0x18;
-static const BYTE WL_VC_VOICE_END_BURST = 0x19;
-static const BYTE WL_VC_CALL_SESSION_STATUS = 0x20;
-static const BYTE WL_VC_VOICE_BURST = 0x21;
-static const BYTE WL_VC_PRIVACY_BURST = 0x22;
-static const BYTE WL_VC_CHNL_CTRL_REQUEST = 0x13;
-static const BYTE WL_VC_CHNL_CTRL_STATUS = 0x16;
+//static const BYTE WL_REGISTRATION_GENERAL_OPS = 0x03;
+//static const BYTE WL_CHNL_STATUS = 0x11;
+//static const BYTE WL_CHNL_STATUS_QUERY = 0x12;
+//static const BYTE WL_VC_VOICE_START = 0x18;
+//static const BYTE WL_VC_VOICE_END_BURST = 0x19;
+//static const BYTE WL_VC_CALL_SESSION_STATUS = 0x20;
+//static const BYTE WL_VC_VOICE_BURST = 0x21;
+//static const BYTE WL_VC_PRIVACY_BURST = 0x22;
+//static const BYTE WL_VC_CHNL_CTRL_REQUEST = 0x13;
+//static const BYTE WL_VC_CHNL_CTRL_STATUS = 0x16;
 
-static const BYTE Access_Criteria_Polite_Access = 0x01;
+//static const BYTE Access_Criteria_Polite_Access = 0x01;
 static const BYTE Access_Criteria_Transmit_Interrupt = 0x02;
 static const BYTE Access_Criteria_Impolite_Access = 0x03;
 
-static const BYTE Channel_Control_Request_Status_Received = 0x01;
-static const BYTE Channel_Control_Request_Status_Transmitting = 0x02;
-static const BYTE Channel_Control_Request_Status_Transmission_Successful = 0x03;
-static const BYTE Channel_Control_Request_Status_Grant = 0x04;
-static const BYTE Channel_Control_Request_Status_Declined = 0x05;
-static const BYTE Channel_Control_Request_Status_Interrupting = 0x06;
+//static const BYTE Channel_Control_Request_Status_Received = 0x01;
+//static const BYTE Channel_Control_Request_Status_Transmitting = 0x02;
+//static const BYTE Channel_Control_Request_Status_Transmission_Successful = 0x03;
+//static const BYTE Channel_Control_Request_Status_Grant = 0x04;
+//static const BYTE Channel_Control_Request_Status_Declined = 0x05;
+//static const BYTE Channel_Control_Request_Status_Interrupting = 0x06;
 
-const char LE_MASTER_PEER_REGISTRATION_REQUEST = (const char)0x90;
+//const char LE_MASTER_PEER_REGISTRATION_REQUEST = (const char)0x90;
 const int LE_MASTER_PEER_REGISTRATION_REQUEST_L = 14;
 const int LE_MASTER_PEER_REGISTRATION_REQUEST_LCP_L = 16;
-const char LE_MASTER_PEER_REGISTRATION_RESPONSE = (const char)0x91;
+//const char LE_MASTER_PEER_REGISTRATION_RESPONSE = (const char)0x91;
 const int LE_MASTER_PEER_REGISTRATION_RESPONSE_L = 16;
 const int LE_MASTER_PEER_REGISTRATION_RESPONSE_LCP_L = 18;
-const char LE_NOTIFICATION_MAP_REQUEST = (const char)0x92;
+//const char LE_NOTIFICATION_MAP_REQUEST = (const char)0x92;
 const int LE_NOTIFICATION_MAP_REQUEST_L = 5;
 const int LE_NOTIFICATION_MAP_REQUEST_LCP_L = 10;
-const char LE_NOTIFICATION_MAP_BROADCAST = (const char)0x93;
+//const char LE_NOTIFICATION_MAP_BROADCAST = (const char)0x93;
 const int LE_NOTIFICATION_MAP_BROADCAST_ENTRY = 11;
-const char LE_PEER_REGISTRATION_REQUEST = (const char)0x94;
+//const char LE_PEER_REGISTRATION_REQUEST = (const char)0x94;
 
-const char LE_PEER_REGISTRATION_RESPONSE = (const char)0x95;
+//const char LE_PEER_REGISTRATION_RESPONSE = (const char)0x95;
 
-const char LE_MASTER_KEEP_ALIVE_REQUEST = (const char)0x96;
+//const char LE_MASTER_KEEP_ALIVE_REQUEST = (const char)0x96;
 const int LE_MASTER_KEEP_ALIVE_REQUEST_L = 14;
 const int LE_MASTER_KEEP_ALIVE_REQUEST_LCP_L = 16;
-const char LE_MASTER_KEEP_ALIVE_RESPONSE = (const char)0x97;
-const char LE_PEER_KEEP_ALIVE_REQUEST = (const char)0x98;
+//const char LE_MASTER_KEEP_ALIVE_RESPONSE = (const char)0x97;
+//const char LE_PEER_KEEP_ALIVE_REQUEST = (const char)0x98;
 
-const char LE_PEER_KEEP_ALIVE_RESPONSE = (const char)0x99;
+//const char LE_PEER_KEEP_ALIVE_RESPONSE = (const char)0x99;
 
-const char LE_DEREGISTRATION_REQUEST = (const char)0x9A;
-const int LE_DEREGISTRATION_REQUEST_L = 5;
-const char LE_DEREGISTRATION_RESPONSE = (const char)0x9B;
+//const char LE_DEREGISTRATION_REQUEST = (const char)0x9A;
+//const int LE_DEREGISTRATION_REQUEST_L = 5;
+//const char LE_DEREGISTRATION_RESPONSE = (const char)0x9B;
 const char IPSC_GRP_VOICE_CALL = (const char)0x80;
 const char IPSC_PVT_VOICE_CALL = (const char)0x81;
 const char IPSC_GRP_DATA_CALL = (const char)0x83;
@@ -162,19 +161,19 @@ const int PEERITEMLENGTH = 11;
 // Call Define
 const int  MAXCALLPARAMS = 28;
 const unsigned __int8 DATA_TYPE_PI_HEADER = (const unsigned __int8)0x00;
-const unsigned __int8 DATA_TYPE_VOICE_HEADER = (const unsigned __int8)0x01;
-const unsigned __int8 DATA_TYPE_VOICE_TERMINATOR = (const unsigned __int8)0x02;
+//const unsigned __int8 DATA_TYPE_VOICE_HEADER = (const unsigned __int8)0x01;
+//const unsigned __int8 DATA_TYPE_VOICE_TERMINATOR = (const unsigned __int8)0x02;
 const unsigned __int8 DATA_TYPE_CSBK = (const unsigned __int8)0x03;
 const unsigned __int8 DATA_TYPE_DATA_HEADER = (const unsigned __int8)0x06;
 const unsigned __int8 DATA_TYPE_UNCONFIRM_DATA_CONT = (const unsigned __int8)0x07;
 const unsigned __int8 DATA_TYPE_CONFIRM_DATA_CONT = (const unsigned __int8)0x08;
-const unsigned __int8 DATA_TYPE_VOICE = (const unsigned __int8)0x0A;
+//const unsigned __int8 DATA_TYPE_VOICE = (const unsigned __int8)0x0A;
 const unsigned __int8 DATA_TYPE_SYNC_UNDETECT = (const unsigned __int8)0x13;
 
 //////////////////////////////////////////////////////////////////////////
 // Const define for XNL
 //XNL Connect
-const char LE_XNL = (const char)0x70;
+//const char LE_XNL = (const char)0x70;
 const char LE_XNL_DEVICE_MASTER_QUERY_1 = (const char)0x00;
 const char LE_XNL_DEVICE_MASTER_QUERY_2 = (const char)0x03;
 const int LE_XNL_DEVICE_MASTER_QUERY_L = 19;
@@ -231,14 +230,14 @@ enum _EventIndex
 	TickEvent,
 };
 
-enum _AddressType{
-	IndividualCall = 0x01,
-	GroupCall,
-	AllIndividualCall,
-	AllTalkGroupCall,
-	AllWideTalkGroupCall,
-	AllLocalTalkGroupCall,
-};
+//enum _AddressType{
+//	IndividualCall = 0x01,
+//	GroupCall,
+//	AllIndividualCall,
+//	AllTalkGroupCall,
+//	AllWideTalkGroupCall,
+//	AllLocalTalkGroupCall,
+//};
 
 #define LCP_PRIVATE_CALL	0x50
 #define LCP_GROUP_CALL      0x4f;
@@ -367,7 +366,7 @@ public:
 	/*增加待发送数据帧*/
 	void addSendVoiceFrame();
 	/*校正待发送数据的CallID*/
-	void calibrationCallID(SlotNumber_e slot);
+	void calibrationCallID(slot_number_enum slot);
 	/*当前缓冲数据发送完毕时的处理*/
 	void handleCurTaskCallTimeOut();
 
@@ -608,7 +607,7 @@ private:
 
 	DWORD  m_BytesSent;
 
-	WLStatus						m_WLStatus;
+	le_status_enum m_WLStatus;
 	BOOL							m_bExit;
 	//DWORD							m_dwRecType;
 
@@ -759,8 +758,8 @@ private:
 public:
 	//delete old code
 	//void CloseServer();
-	void setWlStatus(WLStatus value);
-	WLStatus getWlStatus();
+	void setWlStatus(le_status_enum value);
+	le_status_enum getWlStatus();
 	/************************************************************************/
 	/*验证此语音是否需要实时播放
 	/************************************************************************/

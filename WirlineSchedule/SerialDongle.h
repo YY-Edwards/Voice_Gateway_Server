@@ -4,11 +4,11 @@
 #include <mutex>
 #include <list>
 
-const DWORD  INTERNALCOMBUFFSIZE = 2048;
-const DWORD  DONGLEBAUDRATE = 230400;
-const __int8 DONGLEBITS = 8;
-const __int8 DONGLEPARITY = NOPARITY;
-const __int8 DONGLESTOP = ONESTOPBIT;
+//const DWORD  INTERNALCOMBUFFSIZE = 2048;
+//const DWORD  DONGLEBAUDRATE = 230400;
+//const __int8 DONGLEBITS = 8;
+//const __int8 DONGLEPARITY = NOPARITY;
+//const __int8 DONGLESTOP = ONESTOPBIT;
 
 //Serial Events (two different arrays).
 const int SERIAL_TICKLE = 0;
@@ -20,13 +20,13 @@ const int SERIAL_TX = 1;
 //const int  MAXDONGLEAMBEFRAMES = 2048; //About 41 Seconds.
 //const int  MAXDONGLEAMBEFRAMESMASK = MAXDONGLEAMBEFRAMES - 1;
 
-enum PARSERSTATE
-{
-	FIND_START,
-	HIGH_LENGTH,
-	LOW_LENGTH,
-	READ_DATA
-};
+//enum PARSERSTATE
+//{
+//	FIND_START,
+//	HIGH_LENGTH,
+//	LOW_LENGTH,
+//	READ_DATA
+//};
 
 class CManager;
 class CSound;

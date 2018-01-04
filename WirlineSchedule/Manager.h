@@ -10,7 +10,6 @@ class CSound;
 class CTool;
 class CWLNet;
 
-extern CTool g_tool;
 extern BOOL g_bPTT;      //Set or cleared by user interface.
 
 extern CSerialDongle* g_pDongle;
