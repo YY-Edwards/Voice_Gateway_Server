@@ -569,7 +569,7 @@ void NSWLNet::onRecive(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient, con
 
 void NSWLNet::onDisconn(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient, int errCode)
 {
-	m_pLog->AddLog("onDisconn");
+	m_pLog->AddLog("onDisconn,errCode:%d", errCode);
 	clearMasterXqttnet();
 }
 
@@ -3365,7 +3365,12 @@ void NSWLNet::CheckRecordsThread()
 					{
 						record->WriteToDb();
 					}
-					g_pNet->wlCall(record->call_type, record->src_radio, record->target_radio, OPERATE_CALL_END, (record->call_type == g_playCalltype && record->target_radio == g_playTargetId));
+					if (VOICE_BURST == record->CallStatus() ||
+						VOICE_END_BURST == record->CallStatus() ||
+						VOICE_START == record->CallStatus())
+					{
+						g_pNet->wlCall(record->call_type, record->src_radio, record->target_radio, OPERATE_CALL_END, (record->call_type == g_playCalltype && record->target_radio == g_playTargetId));
+					}
 					removeItem(&m_records, record);
 					curItem->pNext = NULL;
 					freeList(curItem);
@@ -3869,6 +3874,11 @@ void NSWLNet::ResetRingAmbe()
 
 int NSWLNet::sendNetDataBase(const char* pData, int len, void* send_to)
 {
+	if (NULL == m_pMasterXqttnet)
+	{
+		m_pLog->AddLog("sendNetDataBase fail,m_pMasterXqttnet is null");
+		return 0;
+	}
 	int rlt = 0;
 	TRYLOCK(m_mutexSend);
 	rlt = sendDataUdp(m_pMasterXqttnet, pData, len, (SOCKADDR_IN*)send_to, sizeof(SOCKADDR_IN));
@@ -4084,12 +4094,13 @@ void NSWLNet::HandleAmbeData(void* pData, unsigned long length)
 
 			  if (sizeRingAmbeSend() < RING_SIZE_AMBE_SEND)
 			  {
+				  //m_pLog->AddLog("add a frame");
 				  AddRingAmbeItem(&m_burstAmbe);
 			  }
 			  else
 			  {
+				  m_pLog->AddLog("no add a frame,will end call");
 				  setCallThreadStatus(Call_Thread_Call_Fail);
-				  //m_pLog->AddLog("no add a frame");
 			  }
 			  m_TxSubCount = 0;
 	}
@@ -4124,6 +4135,7 @@ void NSWLNet::SendAmbeData()
 		{
 			if (sizeRingAmbeSend() > 0)
 			{
+				//m_pLog->AddLog("pop a frame");
 				send_ambe_voice_encoded_frames_t voice = { 0 };
 				PopRingAmbeItem(&voice);
 				Build_T_WL_PROTOCOL_21(m_vcBurst, voice.start);
@@ -4162,7 +4174,11 @@ void NSWLNet::SendAmbeData()
 			}
 			else
 			{
-				m_pLog->AddLog("not pop a frame");
+				m_pLog->AddLog("not pop a frame£¬will send empty 60ms ambe");
+				Build_T_WL_PROTOCOL_21(m_vcBurst, false);
+				m_vcBurst.AMBEVoiceEncodedFrames = m_startAmbe.ambe;
+				m_sendBuffer.net_length = Build_WL_VC_VOICE_BURST(m_sendBuffer.net_data, &m_vcBurst);
+				sendNetDataBase(m_sendBuffer.net_data, m_sendBuffer.net_length, &peer->m_sockaddr);
 			}
 		}
 		else

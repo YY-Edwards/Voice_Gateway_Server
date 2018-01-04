@@ -754,8 +754,6 @@ void CManager::handleRemoteTask()
 		WaitForSingleObject(g_waitHandleRemoteTask, 1000);
 		while (g_remoteCommandTaskQueue.size() > 0)
 		{
-			//sprintf_s(m_reportMsg, "have task");
-			//sendLogToWindow();
 			/*处理任务*/
 			get_front_task(task);
 			erase_front_task();
@@ -770,18 +768,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_CALL:
 			{
-									////memcpy(&m_pCurrentTask, &task, sizeof(REMOTE_TASK));
-									//lockCurTask();
 									setCurrentTask(&task);
-									//unLockCurTask();
-									//if (g_pNet->getWlStatus() == ALIVE)
-									//{
-									//	initialCall(task.param.info.callParam.operateInfo.tartgetId, task.param.info.callParam.operateInfo.callType);
-									//}
-									//else
-									//{
-									//	g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL);
-									//}
 									CALL_OPERATE_PARAM cmdInfo = task.param.info.callParam.operateInfo;
 									pNSNet = (NSWLNet*)g_pNSNet;
 									if (Call_Thread_Status_Idle == pNSNet->CallThreadStatus() && Mic_Idle == g_pNSSound->MicStatus())
@@ -802,60 +789,21 @@ void CManager::handleRemoteTask()
 			case REMOTE_CMD_SET_PLAY_CALL:
 			{
 											 setCurrentTask(&task);
-											 //if (setPlayCallOfCare(task.param.info.setCareCallParam.playParam.callType, task.param.info.setCareCallParam.playParam.targetId))
-											 //{
-												// g_pNet->wlPlayStatus(CMD_FAIL, task.param.info.setCareCallParam.playParam.targetId);
-
-											 //}
-											 //else
-											 //{
-												// //do nothing
-												// //g_pNet->wlPlayStatus(CMD_SUCCESS, task.param.info.setCareCallParam.playParam.targetId);
-											 //}
 											 setPlayCallOfCare(task.param.info.setCareCallParam.playParam.callType, task.param.info.setCareCallParam.playParam.targetId);
 											 g_pNet->wlPlayStatus(CMD_SUCCESS, task.param.info.setCareCallParam.playParam.targetId);
 			}
 				break;
 			case REMOTE_CMD_STOP_CALL:
 			{
-										 //memcpy(&m_pCurrentTask, &task, sizeof(REMOTE_TASK));
-										 //lockCurTask();
 										 setCurrentTask(&task);
-										 //unLockCurTask();
-										 //g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS);
-										 //if (CALL_ONGOING == g_pNet->GetCallStatus())
-										 //{
-											// stopCall();
-										 //}
-										 //else if (CALL_START == g_pNet->GetCallStatus())
-										 //{
-											// sprintf_s(m_reportMsg, "call status is CALL_START");
-											// sendLogToWindow();
-											// setbNeedStopCall(true);
-										 //}
-										 //else
-										 //{
-											// sprintf_s(m_reportMsg, "call status is CALL_IDLE or CALL_HUANGUP,will do nothing");
-											// sendLogToWindow();
-										 //}
 										 pNSNet = (NSWLNet*)g_pNSNet;
 										 pNSNet->CurCallCmd = task.param.info.callParam.operateInfo;
 										 pNSNet->CallStop();
-										 
+
 			}
 				break;
 			case REMOTE_CMD_GET_CONN_STATUS:
 			{
-											   //FieldValue info(FieldValue::TInt);
-											   //if (g_pNet->getWlStatus() == ALIVE)
-											   //{
-												  // info.setInt(REPEATER_CONNECT);
-											   //}
-											   //else
-											   //{
-												  // info.setInt(REPEATER_DISCONNECT);
-											   //}
-											   //g_pNet->wlInfo(GET_TYPE_CONN, info, task.param.info.getInfoParam.getInfo.SessionId);
 											   pNSNet = (NSWLNet*)g_pNSNet;
 											   FieldValue info(FieldValue::TInt);
 											   if (pNSNet->LeStatus() == ALIVE)
@@ -885,12 +833,7 @@ void CManager::handleRemoteTask()
 			{
 											 GET_INFO_PARAM info = task.param.info.getInfoParam.getInfo;
 											 FieldValue value(FieldValue::TObject);
-											 //value.setKeyVal("SessionId", FieldValue(info.SessionId));
-											 //value.setKeyVal("WorkMode", FieldValue(info.SessionId));//工作模式-Tserver
-											 //value.setKeyVal("ServerStatus", FieldValue(info.SessionId));//服务状态-Tserver
-											 //value.setKeyVal("DeviceStatus", FieldValue(info.SessionId));//设备连接状态-Tserver侧修改
 											 value.setKeyVal("MnisStatus", FieldValue(MnisStatus()));//mnis状态-Tserver侧修改
-											 //value.setKeyVal("DatabaseStatus", FieldValue(info.SessionId));//数据库状态-LogServer
 											 value.setKeyVal("DongleCount", FieldValue(DongCount()));//dongle数量
 											 value.setKeyVal("MicphoneStatus", FieldValue(MicphoneStatus()));//麦克风状态
 											 value.setKeyVal("SpeakerStatus", FieldValue(SpeakerStatus()));//扬声器
@@ -1695,7 +1638,6 @@ void CManager::handleUsbDel()
 				}
 				else
 				{
-					//m_bDongleIsOpen = TRUE;
 					sscanf_s(result.coms[i], "COM%d", &CONFIG_DONGLE_PORT);
 					setDongleCount(1);
 					Env_DongleIsOk = true;
@@ -1724,4 +1666,3 @@ void CManager::setMnisStatus(int value)
 		if (g_pNet) g_pNet->wlInfo(GET_TYPE_SYSTEM_STATUS, info, "");
 	}
 }
-

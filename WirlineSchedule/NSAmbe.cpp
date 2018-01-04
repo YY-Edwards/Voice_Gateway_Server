@@ -20,6 +20,7 @@ NSAmbe::NSAmbe(NSManager* pManager)
 
 NSAmbe::~NSAmbe()
 {
+	m_pLog->AddLog("~NSAmbe");
 #if _DEBUG	
 	if (m_outFile)
 	{
@@ -92,7 +93,9 @@ void NSAmbe::OnDataAmbe(void* pData, unsigned long length, unsigned long index)
 	//LOG_INFO("Recive index:%d ambe package", index);
 	if (pData)
 	{
-		if (m_pManager)
+		if (m_pManager 
+			//&& 0xfeeefeee != *(unsigned int*)m_pManager
+			)
 		{
 			m_pManager->HandleAmbeData(pData, length);
 		}

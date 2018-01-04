@@ -20,6 +20,7 @@ public:
 	SYSTEMTIME* StartTime();
 	unsigned int Length();;
 	void setCallStatus(int value);
+	int CallStatus();
 	void WriteToDb();
 
 	unsigned long src_radio;
