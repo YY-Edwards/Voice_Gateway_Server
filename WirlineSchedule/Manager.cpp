@@ -768,10 +768,12 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_CALL:
 			{
+									call_thread_status_enum callStatus = pNSNet->CallThreadStatus();
+									mic_status_enum micStatus = g_pNSSound->MicStatus();
 									setCurrentTask(&task);
 									CALL_OPERATE_PARAM cmdInfo = task.param.info.callParam.operateInfo;
 									pNSNet = (NSWLNet*)g_pNSNet;
-									if (Call_Thread_Status_Idle == pNSNet->CallThreadStatus() && Mic_Idle == g_pNSSound->MicStatus())
+									if (Call_Thread_Status_Idle == callStatus && Mic_Idle == micStatus)
 									{
 										pNSNet->CurCallCmd = cmdInfo;
 										make_call_param_t param = { 0 };

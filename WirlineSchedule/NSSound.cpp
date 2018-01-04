@@ -483,10 +483,7 @@ void NSSound::SoundInThread()
 							 waveInReset(m_hWaveIn);
 							 waveInClose(m_hWaveIn);
 						 }
-						 else
-						 {
-							 setMicStatus(Mic_Idle);
-						 }
+						 setMicStatus(Mic_Idle);
 		}
 			break;
 		default:
@@ -529,7 +526,6 @@ void NSSound::handleWaveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwParam1, DWORD
 						  m_pAmbe = NULL;
 					  }
 					  m_hWaveIn = NULL;
-					  setMicStatus(Mic_Idle);
 	}
 		break;
 	case WIM_DATA:

@@ -8544,18 +8544,16 @@ void CWLNet::handleCurTaskCallTimeOut()
 	REMOTE_TASK *task = m_pManager->getCurrentTask();
 	if (task)
 	{
-		wlRequestCallTimeOutEnd(task);
+		wlRequestCallEnd(task->param.info.callParam.operateInfo);
 		//CALL_OPERATE_PARAM param = task->param.info.callParam.operateInfo;
 		//wlCall(param.callType, CONFIG_LOCAL_RADIO_ID, param.tartgetId, OPERATE_CALL_END, true);
 	}
 	//m_pManager->unLockCurTask();
 }
 
-int CWLNet::wlRequestCallTimeOutEnd(REMOTE_TASK *p)
+int CWLNet::wlRequestCallEnd(CALL_OPERATE_PARAM param)
 {
-	if (p == NULL) return 0;
 	int clientCallType;
-	CALL_OPERATE_PARAM param = p->param.info.callParam.operateInfo;
 	int callType = param.callType;
 	if (callType == GROUP_CALL)
 	{

@@ -1070,8 +1070,9 @@ void NSWLNet::AmbeDataThread()
 												  {
 													  /*更新通话状态*/
 													  m_localRecordFile->setCallStatus(CALL_SESSION_STATUS_HANG);
-													  g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS, CurCallCmd.SessionId);
-												  }
+													  g_pNet->wlRequestCallEnd(CurCallCmd);
+													  //g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS, CurCallCmd.SessionId);
+													}
 											  }
 										  }
 		}
@@ -3626,7 +3627,8 @@ void NSWLNet::CallThread()
 			break;
 		case Call_Thread_Call_Fail:
 		{
-									  g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL, CurCallCmd.SessionId);
+									  g_pNet->wlRequestCallEnd(CurCallCmd);
+									  //g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL, CurCallCmd.SessionId);
 									  g_pNSSound->setMicStatus(Mic_Stop);
 									  setCallThreadStatus(Call_Thread_Status_Idle);
 		}
@@ -4141,7 +4143,6 @@ void NSWLNet::SendAmbeData()
 				Build_T_WL_PROTOCOL_21(m_vcBurst, voice.start);
 				if (voice.start)
 				{
-
 					g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_START | REMOTE_CMD_SUCCESS, CurCallCmd.SessionId);
 					if (m_localRecordFile)
 					{
