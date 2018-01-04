@@ -657,8 +657,8 @@ static int acceptEventWorkerWithSelectUdp(pXQTTNet pNet)
 						}
 						else if (0 == recvLen) {
 							// remote close connection
-							SafeCall(pClientNet->_netOnDisconn, pNet, pClientNet, getNetError());
-							closeAndDestoryClientNet(pClientNet);
+							//SafeCall(pClientNet->_netOnDisconn, pNet, pClientNet, getNetError());
+							//closeAndDestoryClientNet(pClientNet);
 						}
 						else{
 							SafeCall(pClientNet->_netOnRecv, pNet, pClientNet, recvBuf, recvLen);

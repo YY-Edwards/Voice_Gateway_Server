@@ -697,8 +697,22 @@ void NSDongle::handleOutPcm(unsigned __int8* pSamples)
 		pData->_head[1 + (i << 1)] = *pSamples++;
 		pData->_head[+(i << 1)] = *pSamples++;
 	}
-	//处理PCM数据
-	(*(m_pCurHanleRing->pOnData))(pData->_head, sizeof(pData->_head), m_pCurHanleRing->index, m_pCurHanleRing->param);
+	if (m_pCurHanleRing)
+	{
+		if (m_pCurHanleRing->pOnData)
+		{
+			//处理PCM数据
+			(*(m_pCurHanleRing->pOnData))(pData->_head, sizeof(pData->_head), m_pCurHanleRing->index, m_pCurHanleRing->param);
+		}
+		else
+		{
+			m_pLog->AddLog("m_pCurHanleRing->pOnData is null");
+		}
+	}
+	else
+	{
+		m_pLog->AddLog("m_pCurHanleRing is null");
+	}
 }
 
 bool NSDongle::IsIdle()
@@ -730,6 +744,8 @@ void NSDongle::clearCurHandleRing()
 {
 	if (m_pCurHanleRing)
 	{
+		m_pCurHanleRing->param = NULL;
+		m_pCurHanleRing->pOnData = NULL;
 		delete m_pCurHanleRing;
 		m_pCurHanleRing = NULL;
 	}
@@ -847,8 +863,22 @@ change_data_t* NSDongle::getFreePcmChangeDataBuffer(pOnData fun, void* param)
 
 void NSDongle::handleOutAmbe(unsigned __int8* pSamples)
 {
-	//处理AMBE数据
-	(*(m_pCurHanleRing->pOnData))(pSamples, 7, m_pCurHanleRing->index, m_pCurHanleRing->param);
+	if (m_pCurHanleRing)
+	{
+		if (m_pCurHanleRing->pOnData)
+		{
+			//处理AMBE数据
+			(*(m_pCurHanleRing->pOnData))(pSamples, 7, m_pCurHanleRing->index, m_pCurHanleRing->param);
+		}
+		else
+		{
+			m_pLog->AddLog("m_pCurHanleRing->pOnData is null");
+		}
+	}
+	else
+	{
+		m_pLog->AddLog("m_pCurHanleRing is null");
+	}
 }
 
 int NSDongle::sizeRing()

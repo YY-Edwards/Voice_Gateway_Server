@@ -17,13 +17,7 @@
 #include <stdio.h>
 #include <tchar.h>
 #include "common.h"
-#include "NSGlobal.h"
 
-class NSNetBase;
-class NSManager;
-
-extern NSNetBase* g_pNSNet;
-extern NSManager* g_pNSManager;
 extern CTool* g_pTool;
 extern decline_reason_code_info_t g_callRequstDeclineReasonCodeInfo;
 extern std::string repeaterSerial;

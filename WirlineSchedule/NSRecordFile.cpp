@@ -248,6 +248,11 @@ BOOL NSRecordFile::CreateNewFileByYearMonth()
 	return TRUE;
 }
 
+int NSRecordFile::CallStatus()
+{
+	return call_status;
+}
+
 //bool CRecordFile::TimeOutUpdateStatusToDb()
 //{
 //	return (timeout_status < GetTickCount());

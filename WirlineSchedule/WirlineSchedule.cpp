@@ -6,6 +6,7 @@
 #include "WLNet.h"
 #include "../lib/radio/DataScheduling.h"
 #include "../lib/service/service.h"
+#include "NSLog.h"
 
 #include <shlobj.h> 
 
@@ -473,6 +474,17 @@ int _tmain(int argc, _TCHAR* argv[])
 		{
 			delete g_pWLlog;
 			g_pWLlog = NULL;
+		}
+		if (g_pTool)
+		{
+			delete g_pTool;
+			g_pTool = NULL;
+		}
+		NSLog* pLog = NSLog::instance();
+		if (pLog)
+		{
+			delete pLog;
+			pLog = NULL;
 		}
 #if SERVICE_CODDE
 	});
