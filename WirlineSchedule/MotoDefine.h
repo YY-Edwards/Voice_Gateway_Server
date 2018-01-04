@@ -42,7 +42,7 @@ const short LE_XNL_DATA_MSG_ACK = 0x000c;
 const unsigned short LE_XNL_XCMP_RADIO_STATUS = 0x000e;
 const unsigned short LE_XNL_XCMP_RADIO_STATUS_REPLY = 0x800e;
 const unsigned short LE_XNL_XCMP_RADIO_STATUS_BRDCST = 0xb00e;
-const unsigned char  LE_XNL_XCMP_RADIO_STATUS_CONDITION_SERIAL = 0x08;
+const unsigned char  LE_XNL_XCMP_RADIO_STATUS_CONDITION_SERIAL = 0x0b;
 
 const char  LE_XNL_PROTOCOL_ID = 0x00;
 const char  LE_XNL_FLAGS = 0x00;
