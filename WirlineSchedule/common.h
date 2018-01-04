@@ -1,6 +1,7 @@
 #ifndef COMMON_H
 #define COMMON_H
 
+#include "NSGlobal.h"
 #include "MotoDefine.h"
 #include "NetStruct.h"
 #include "NSStruct.h"

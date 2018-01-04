@@ -32,6 +32,7 @@ CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis, std::wstring& defaultAud
 , m_deviceInfoStatus(WL_SERIL_FAL)
 , m_mnisStatus(WL_SYSTEM_DISCONNECT)
 {
+	g_pNSTool = new CTool();
 	g_pNSSound = new NSSound();
 	g_pNSManager = new NSManager();
 	g_pNSNet = new NSWLNet(g_pNSManager);
@@ -97,6 +98,11 @@ CManager::~CManager()
 			delete (NSWLNet*)g_pNSNet;
 			g_pNSNet = NULL;
 		}
+	}
+	if (g_pNSTool)
+	{
+		delete g_pNSTool;
+		g_pNSTool = NULL;
 	}
 }
 

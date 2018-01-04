@@ -53,7 +53,7 @@ int NSManager::Initialize(NSNetBase* &pNet)
 		dongle.hcom = NULL;
 		dongle.isusing = false;
 
-		swprintf_s(dongle.createfile, SIZE_COM_NAME, L"\\\\.\\%s", g_pTool->ANSIToUnicode(result.coms[i]).c_str());
+		swprintf_s(dongle.createfile, SIZE_COM_NAME, L"\\\\.\\%s", g_pNSTool->ANSIToUnicode(result.coms[i]).c_str());
 		strcpy(dongle.strname, result.coms[i]);
 		NSDongle* p = new NSDongle(this);
 		if (WL_OK != p->Initialize(&dongle))
@@ -326,7 +326,7 @@ void NSManager::handleUsbAdd()
 			dongle.hcom = NULL;
 			dongle.isusing = false;
 
-			swprintf_s(dongle.createfile, SIZE_COM_NAME, L"\\\\.\\%s", g_pTool->ANSIToUnicode(result.coms[i]).c_str());
+			swprintf_s(dongle.createfile, SIZE_COM_NAME, L"\\\\.\\%s", g_pNSTool->ANSIToUnicode(result.coms[i]).c_str());
 			strcpy(dongle.strname, result.coms[i]);
 			NSDongle* p = new NSDongle(this);
 			if (WL_OK != p->Initialize(&dongle))

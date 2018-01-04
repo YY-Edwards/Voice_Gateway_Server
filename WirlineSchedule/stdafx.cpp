@@ -6,8 +6,6 @@
 
 // TODO:  在 STDAFX.H 中
 // 引用任何所需的附加头文件，而不是在此文件中引用
-NSNetBase* g_pNSNet = NULL;
-NSManager* g_pNSManager = NULL;
 CTool* g_pTool = NULL;
 decline_reason_code_info_t g_callRequstDeclineReasonCodeInfo = { 0 };
 std::string repeaterSerial = "";
