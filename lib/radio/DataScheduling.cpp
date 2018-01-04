@@ -254,20 +254,21 @@ void CDataScheduling::connect()
 }
 void CDataScheduling::disConnect()
 {
-	if (m_hWthd && isUdpConnect)
+	timeOutList.clear();
+	workList.clear();
+	if (m_hWthd )
 	{
 		m_workThread = false;
 		WaitForSingleObject(m_hWthd,1000);
 		CloseHandle(m_hWthd);
 	}
-	if (m_hTthd && isUdpConnect)
+	if (m_hTthd )
 	{
 		m_timeoutThread = false;
 		WaitForSingleObject(m_hTthd, 1000);
 		CloseHandle(m_hTthd);
 	}
-	timeOutList.clear();
-	workList.clear();
+	
 	pRadioARS->CloseARSSocket();
 	pRadioGPS->CloseGPSSocket();
 	pRadioMsg->CloseSocket();

@@ -19,7 +19,7 @@ extern CWLNet* g_pNet;
 #define DB_USER				"root"
 #define DB_PWD				""
 #define DB_NAME				"tbx"
-#define SERVICE_CODDE		TRUE
+#define SERVICE_CODDE		FALSE
 
 #define			ConmpanyName	L"JiHua Information"
 #define			AppName			L"Trbox"
