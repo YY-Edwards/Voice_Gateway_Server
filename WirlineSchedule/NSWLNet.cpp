@@ -4088,6 +4088,7 @@ void NSWLNet::HandleAmbeData(void* pData, unsigned long length)
 			  }
 			  else
 			  {
+				  setCallThreadStatus(Call_Thread_Call_Fail);
 				  //m_pLog->AddLog("no add a frame");
 			  }
 			  m_TxSubCount = 0;
