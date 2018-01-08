@@ -621,16 +621,20 @@ void CBroker::setSystemStatus()
 	/*
 	"MnisStatus":0:connected, 1:disconnected
 	*/
-	if (isMnisConenct && isMnis)
+	if (isRadio)
 	{
-		//systemStatus.mnisStatus = 0;
-		setDeviceStatusByType(System_MnisStatus, 0);
+		if (isMnisConenct && isMnis)
+		{
+			//systemStatus.mnisStatus = 0;
+			setDeviceStatusByType(System_MnisStatus, 0);
+		}
+		else
+		{
+			//systemStatus.mnisStatus = 1;
+			setDeviceStatusByType(System_MnisStatus, 1);
+		}
 	}
-	else
-	{
-		//systemStatus.mnisStatus = 1;
-		setDeviceStatusByType(System_MnisStatus, 1);
-	}
+	
 	/*
 	"DeviceInfoStatus":0:Updated, 1:UnKnow
 	*/
