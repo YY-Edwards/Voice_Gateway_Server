@@ -20,7 +20,7 @@ using System.Runtime.InteropServices;
 using Sigmar.Controls;
 using Sigmar.Extension;
 using Dispatcher.ViewsModules;
-using Sigmar.Logger;
+using Dispatcher;
 
 namespace Dispatcher.Views
 {

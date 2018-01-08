@@ -12,7 +12,7 @@ using System.Windows.Data;
 using System.Windows.Controls;
 
 using Sigmar;
-using Sigmar.Logger;
+using Dispatcher;
 
 
 using Dispatcher.Modules;

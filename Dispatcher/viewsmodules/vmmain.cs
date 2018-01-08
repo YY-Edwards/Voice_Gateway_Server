@@ -2,7 +2,7 @@
 using Dispatcher.Views;
 using Dispatcher.Modules;
 using Sigmar.Extension;
-using Sigmar.Logger;
+using Dispatcher;
 using System;
 using System.ComponentModel;
 using System.Windows.Input;

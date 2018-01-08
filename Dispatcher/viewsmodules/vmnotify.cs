@@ -11,7 +11,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 using Sigmar;
-using Sigmar.Logger;
+using Dispatcher;
 using Sigmar.Extension;
 using Dispatcher.Service;
 

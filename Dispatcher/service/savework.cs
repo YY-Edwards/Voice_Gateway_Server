@@ -11,7 +11,7 @@ using Sigmar.Encrypt;
 
 
 using Dispatcher.Modules;
-using Sigmar.Logger;
+using Dispatcher;
 
 namespace Dispatcher.Service
 {

@@ -1,7 +1,7 @@
 ﻿using Dispatcher.Service;
 using Dispatcher.ViewsModules;
 using System.Collections.Generic;
-using Sigmar.Logger;
+using Dispatcher;
 using Sigmar.Windows;
 using System;
 using System.Windows;

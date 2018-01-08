@@ -22,7 +22,7 @@ using System.Diagnostics;
 using System.IO;
 
 using Dispatcher.ViewsModules;
-using Sigmar.Logger;
+using Dispatcher;
 
 namespace Dispatcher.Views
 {

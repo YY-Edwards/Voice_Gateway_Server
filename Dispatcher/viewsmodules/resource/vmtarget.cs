@@ -12,7 +12,7 @@ using System.Windows.Data;
 
 using Dispatcher.Modules;
 using Dispatcher.Service;
-using Sigmar.Logger;
+using Dispatcher;
 using Sigmar;
 using Sigmar.Extension;
 
@@ -633,9 +633,9 @@ namespace Dispatcher.ViewsModules
                 case CallOperatedType_t.Stop:
                     if (_dispatcher != null)
                     {
-                        if (_type == TargetType_t.Group && Group.IsAllTarget) _dispatcher.StopCall(-1);
-                        else if (_type == TargetType_t.Group) _dispatcher.StopCall(Group.GroupID);
-                        else if (Member.HasDevice) _dispatcher.StopCall(Member.RadioID);
+                        if (_type == TargetType_t.Group && Group.IsAllTarget) _dispatcher.StopCall(-1, TargetMode_t.All);
+                        else if (_type == TargetType_t.Group) _dispatcher.StopCall(Group.GroupID, TargetMode_t.Group);
+                        else if (Member.HasDevice) _dispatcher.StopCall(Member.RadioID, TargetMode_t.Private);
                         else return;
                         //Log.Message("结束呼叫  " + FullName);
                         //AddNotify(new CNotice() { Time = DateTime.Now, Type = NotifyKey_t.Called, Contents = "结束呼叫" });

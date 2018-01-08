@@ -13,7 +13,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 
 using Sigmar.Windows;
-using Sigmar.Logger;
+using Dispatcher;
 
 namespace Dispatcher.Views
 {
@@ -26,13 +26,13 @@ namespace Dispatcher.Views
         {
             InitializeComponent();
 
-            Log.BindingMessage(__logBox_ReceiveMessage);
+            //Log.BindingMessage(__logBox_ReceiveMessage);
         }
 
         private void __logBox_ReceiveMessage(LogContent log)
         {
-            if (__logBox == null) return;
-            __logBox.AddLog(log);
+            //if (__logBox == null) return;
+            //__logBox.AddLog(log);
         }
     }
 }

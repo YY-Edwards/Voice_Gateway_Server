@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-using Sigmar.Logger;
+using Dispatcher;
 using System.Threading;
 using Dispatcher.Modules;
 using Dispatcher.ViewsModules;

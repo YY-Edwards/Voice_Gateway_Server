@@ -73,8 +73,8 @@
     </Reference>
     <Reference Include="PresentationFramework.Aero" />
     <Reference Include="PresentationFramework.Aero2" />
-    <Reference Include="Sigmar, Version=1.1.4.22569, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Sigmar.1.2.1\lib\net40\Sigmar.dll</HintPath>
+    <Reference Include="Sigmar, Version=1.2.5.26041, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Sigmar.1.2.5\lib\net40\Sigmar.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -965,6 +965,9 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <WCFMetadata Include="Service References\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

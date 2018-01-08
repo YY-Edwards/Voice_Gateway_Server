@@ -8,7 +8,7 @@ using Newtonsoft.Json.Linq;
 
 using System.Threading;
 
-using Sigmar.Logger;
+using Dispatcher;
 using Sigmar.Extension;
 using Dispatcher.ViewsModules;
 
@@ -365,10 +365,10 @@ namespace Dispatcher.Service
             Request(opcode, param);  
         }
 
-        public void StopCall(int target)
+        public void StopCall(int target, TargetMode_t mode = TargetMode_t.Private)
         {
             RequestOpcode opcode = _type == RequestType.radio ? RequestOpcode.call : RequestOpcode.wlCall;
-            var param = GetCallParameter(ExecType_t.Stop, TargetMode_t.Private, target);
+            var param = GetCallParameter(ExecType_t.Stop, mode, target);
             Request(opcode, param);  
         }
 
