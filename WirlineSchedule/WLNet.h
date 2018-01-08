@@ -323,7 +323,7 @@ public:
 	/*告知界面当前请求通话的状态*/
 	int wlCallStatus(REMOTE_TASK *p,int status);
 	/*告知界面当前请求通话超时结束*/
-	int wlRequestCallTimeOutEnd(REMOTE_TASK *p);
+	int wlRequestCallEnd(CALL_OPERATE_PARAM param);
 	/*告知界面当前收到的通话的状态*/
 	int wlCall(unsigned char callType, unsigned long source, unsigned long target, int operate, bool isCurrent);
 	/*告知界面中继台的连接情况*/
