@@ -459,3 +459,12 @@ void NSManager::setSizeDongle(int value)
 {
 	m_sizeDongle = value;
 }
+
+int NSManager::SizeIdleDongle()
+{
+	int rlt = 0;
+	TRYLOCK(m_mutexIdleDongles);
+	rlt = listSize(m_idleDongles);
+	RELEASELOCK(m_mutexIdleDongles);
+	return rlt;
+}

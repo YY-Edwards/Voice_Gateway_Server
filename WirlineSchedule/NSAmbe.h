@@ -17,7 +17,7 @@ public:
 	/*测试AMBE转PCM并把PCM文件写入指定文件*/
 	void Ambe2Pcm(void* pBuffer, unsigned long length);
 	/*测试PCM转AMBE并把AMBE文件写入指定文件*/
-	void Pcm2Ambe(void* pBuffer, unsigned long length);
+	int Pcm2Ambe(void* pBuffer, unsigned long length);
 	/*PCM数据回调*/
 	void OnDataPcm(void* pData, unsigned long length, unsigned long index);
 	/*AMBE数据回调*/
