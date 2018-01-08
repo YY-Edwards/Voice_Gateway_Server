@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using System.Threading;
 using System.Windows.Threading;
-using Sigmar.Logger;
+using Dispatcher;
 
 namespace Dispatcher.Service
 {

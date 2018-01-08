@@ -1,7 +1,7 @@
 ﻿using Dispatcher.Modules;
 using Dispatcher.Service;
 using Sigmar;
-using Sigmar.Logger;
+using Dispatcher;
 using System;
 using System.ComponentModel;
 using System.Diagnostics;

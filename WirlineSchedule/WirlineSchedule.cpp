@@ -7,6 +7,7 @@
 #include "../lib/radio/DataScheduling.h"
 #include "../lib/service/service.h"
 #include "NSLog.h"
+#include <exception>
 
 #include <shlobj.h> 
 
@@ -212,323 +213,336 @@ void RegisterDevice(HDEVNOTIFY& hDevNotify)
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	//utf8显示
-	system("chcp 65001");
-	system("cls");
-
-	/*工具初始化*/
-	g_pTool = new CTool();
-	/*log初始化*/
-	g_pWLlog = new WLSocketLog();
-	int createFileRlt = 0;
-	std::wstring appFolder = getAppdataPath() + L"\\" + ConmpanyName;
-	if (!PathFileExists(appFolder.c_str()))
+	try
 	{
-		createFileRlt = _wmkdir(appFolder.c_str());
-	}
-	appFolder = appFolder + L"\\" + AppName;
-	if (!PathFileExists(appFolder.c_str()))
-	{
-		createFileRlt = _wmkdir(appFolder.c_str());
-	}
-	appFolder = appFolder + L"\\" + AppVersion;
-	if (!PathFileExists(appFolder.c_str()))
-	{
-		createFileRlt = _wmkdir(appFolder.c_str());
-	}
+		//utf8显示
+		system("chcp 65001");
+		system("cls");
 
-	wcscpy(g_ambedata_path, appFolder.c_str());
-	std::wstring defaultAudioPath = appFolder;
-	//defaultAudioPath += L"\\Voice";
-	appFolder = appFolder + L"\\" + AppNameSub;
-	if (!PathFileExists(appFolder.c_str()))
-	{
-		createFileRlt = _wmkdir(appFolder.c_str());
-	}
-
-	std::wstring logFolder = appFolder + L"\\" + Log_log;
-	if (!PathFileExists(logFolder.c_str()))
-	{
-		createFileRlt = _wmkdir(logFolder.c_str());
-	}
-
-	std::wstring pathLogInfo = logFolder + L"\\" + Log_info;
-	std::wstring pathLogError = logFolder + L"\\" + Log_error;
-	std::wstring pathLogWarning = logFolder + L"\\" + Log_warning;
-
-	//FLAGS_log_dir = "./";
-	google::InitGoogleLogging("");
-	google::SetLogDestination(google::GLOG_INFO, g_pTool->UnicodeToUTF8(pathLogInfo).c_str());
-	google::SetLogDestination(google::GLOG_ERROR, g_pTool->UnicodeToUTF8(pathLogError).c_str());
-	google::SetLogDestination(google::GLOG_WARNING, g_pTool->UnicodeToUTF8(pathLogWarning).c_str());
-	google::SetLogFilenameExtension("log");
-
-#if SERVICE_CODDE
-	CService::instance()->SetServiceNameAndDescription(_T("Trbox.Wirelan"), _T("Trbox Wirelan Server"));
-	CService::instance()->SetServiceCode([&](){
-		/************************************************************************/
-		/* 运行代码
-		/************************************************************************/
-		LOG(INFO) << "================Service started================";
-		RegisterDevice(m_hDevNotify);
-#endif
-
-		/*声明变量并初始化*/
-		CMySQL *m_pDb = new CMySQL();
-		CDataScheduling *m_pMnis = new CDataScheduling();
-		m_pManager = new CManager(m_pDb, m_pMnis, defaultAudioPath);
-		g_manager = m_pManager;
-		BOOL m_ret = FALSE;
-		PLogReport m_report = NULL;
-		HWND m_hwnd = NULL;
-		char m_temp = 0x00;
-		int cmd = 0;
-		CRpcServer *m_pRpcServer = new CRpcServer();
-
-		/*设置回调*/
-		m_pMnis->setCallBackFunc(CManager::OnData);
-		m_pRpcServer->setOnConnectHandler(CManager::OnConnect);
-		m_pRpcServer->setOnDisconnectHandler(CManager::OnDisConnect);
-#if SERVICE_CODDE
-		CService::instance()->SetRadioUsb(CManager::OnUpdateUsbService);
-#endif
-
-		/*设置基本参数*/
-		m_report = handleLog;
-		m_pDb->SetLogPtr(m_report);
-		m_pManager->setLogPtr(m_report);
-		/*开启远程任务处理线程*/
-		m_pManager->startHandleRemoteTask();
-		/*初始化服务部分*/
-		m_pRpcServer->addActionHandler("wlConnect", wlConnectActionHandler);
-		m_pRpcServer->addActionHandler("wlCall", wlCallActionHandler);
-		m_pRpcServer->addActionHandler("wlCallStatus", wlCallStatusActionHandler);
-		m_pRpcServer->addActionHandler("wlPlay", wlPlayActionHandler);
-		m_pRpcServer->addActionHandler("wlInfo", wlInfoActionHandler);
-		//m_pRpcServer->addActionHandler("queryGps", wlMnisQueryGpsActionHandler);
-		m_pRpcServer->addActionHandler("location", wlMnisQueryGpsActionHandler);
-		m_pRpcServer->addActionHandler("message", wlMnisMessageHandler);
-		m_pRpcServer->addActionHandler("status", wlMnisStatusHandler);
-		//m_pRpcServer->addActionHandler("locationIndoor", wlMnisLocationIndoorHandler);
-		m_pRpcServer->start(WL_SERVER_PORT);
-
-		/*初始化数据库*/
-		m_ret = m_pDb->Open(DB_HOST, DB_PORT, DB_USER, DB_PWD, DB_NAME);
-		if (m_ret)
+		/*工具初始化*/
+		g_pTool = new CTool();
+		/*log初始化*/
+		g_pWLlog = new WLSocketLog();
+		int createFileRlt = 0;
+		std::wstring appFolder = getAppdataPath() + L"\\" + ConmpanyName;
+		if (!PathFileExists(appFolder.c_str()))
 		{
-			g_pDb=m_pDb;
+			createFileRlt = _wmkdir(appFolder.c_str());
+		}
+		appFolder = appFolder + L"\\" + AppName;
+		if (!PathFileExists(appFolder.c_str()))
+		{
+			createFileRlt = _wmkdir(appFolder.c_str());
+		}
+		appFolder = appFolder + L"\\" + AppVersion;
+		if (!PathFileExists(appFolder.c_str()))
+		{
+			createFileRlt = _wmkdir(appFolder.c_str());
 		}
 
-#if SERVICE_CODDE
-		while (!CService::instance()->m_bServiceStopped)
+		wcscpy(g_ambedata_path, appFolder.c_str());
+		std::wstring defaultAudioPath = appFolder;
+		//defaultAudioPath += L"\\Voice";
+		appFolder = appFolder + L"\\" + AppNameSub;
+		if (!PathFileExists(appFolder.c_str()))
 		{
-			Sleep(100);
+			createFileRlt = _wmkdir(appFolder.c_str());
 		}
+
+		std::wstring logFolder = appFolder + L"\\" + Log_log;
+		if (!PathFileExists(logFolder.c_str()))
+		{
+			createFileRlt = _wmkdir(logFolder.c_str());
+		}
+
+		std::wstring pathLogInfo = logFolder + L"\\" + Log_info;
+		std::wstring pathLogError = logFolder + L"\\" + Log_error;
+		std::wstring pathLogWarning = logFolder + L"\\" + Log_warning;
+
+		//FLAGS_log_dir = "./";
+		google::InitGoogleLogging("");
+		google::SetLogDestination(google::GLOG_INFO, g_pTool->UnicodeToUTF8(pathLogInfo).c_str());
+		google::SetLogDestination(google::GLOG_ERROR, g_pTool->UnicodeToUTF8(pathLogError).c_str());
+		google::SetLogDestination(google::GLOG_WARNING, g_pTool->UnicodeToUTF8(pathLogWarning).c_str());
+		google::SetLogFilenameExtension("log");
+
+#if SERVICE_CODDE
+		CService::instance()->SetServiceNameAndDescription(_T("Trbox.Wirelan"), _T("Trbox Wirelan Server"));
+		CService::instance()->SetServiceCode([&](){
+			/************************************************************************/
+			/* 运行代码
+			/************************************************************************/
+			LOG(INFO) << "================Service started================";
+			RegisterDevice(m_hDevNotify);
+#endif
+
+			/*声明变量并初始化*/
+			CMySQL *m_pDb = new CMySQL();
+			CDataScheduling *m_pMnis = new CDataScheduling();
+			m_pManager = new CManager(m_pDb, m_pMnis, defaultAudioPath);
+			g_manager = m_pManager;
+			BOOL m_ret = FALSE;
+			PLogReport m_report = NULL;
+			HWND m_hwnd = NULL;
+			char m_temp = 0x00;
+			int cmd = 0;
+			CRpcServer *m_pRpcServer = new CRpcServer();
+
+			/*设置回调*/
+			m_pMnis->setCallBackFunc(CManager::OnData);
+			m_pRpcServer->setOnConnectHandler(CManager::OnConnect);
+			m_pRpcServer->setOnDisconnectHandler(CManager::OnDisConnect);
+#if SERVICE_CODDE
+			CService::instance()->SetRadioUsb(CManager::OnUpdateUsbService);
+#endif
+
+			/*设置基本参数*/
+			m_report = handleLog;
+			m_pDb->SetLogPtr(m_report);
+			m_pManager->setLogPtr(m_report);
+			/*开启远程任务处理线程*/
+			m_pManager->startHandleRemoteTask();
+			/*初始化服务部分*/
+			m_pRpcServer->addActionHandler("wlConnect", wlConnectActionHandler);
+			m_pRpcServer->addActionHandler("wlCall", wlCallActionHandler);
+			m_pRpcServer->addActionHandler("wlCallStatus", wlCallStatusActionHandler);
+			m_pRpcServer->addActionHandler("wlPlay", wlPlayActionHandler);
+			m_pRpcServer->addActionHandler("wlInfo", wlInfoActionHandler);
+			//m_pRpcServer->addActionHandler("queryGps", wlMnisQueryGpsActionHandler);
+			m_pRpcServer->addActionHandler("location", wlMnisQueryGpsActionHandler);
+			m_pRpcServer->addActionHandler("message", wlMnisMessageHandler);
+			m_pRpcServer->addActionHandler("status", wlMnisStatusHandler);
+			//m_pRpcServer->addActionHandler("locationIndoor", wlMnisLocationIndoorHandler);
+			m_pRpcServer->start(WL_SERVER_PORT);
+
+			/*初始化数据库*/
+			m_ret = m_pDb->Open(DB_HOST, DB_PORT, DB_USER, DB_PWD, DB_NAME);
+			if (m_ret)
+			{
+				g_pDb = m_pDb;
+			}
+
+#if SERVICE_CODDE
+			while (!CService::instance()->m_bServiceStopped)
+			{
+				Sleep(100);
+			}
 #else
-		handleLog("input 0 for end");
-		/*注册设备插拔事件*/
-		unsigned int m_pOperateThreadId = 0;
-		HANDLE m_pOperateThread = NULL;
-		WNDCLASS wc;
-		ZeroMemory(&wc, sizeof(wc));
-		wc.lpszClassName = TEXT("myusbmsg");
-		wc.lpfnWndProc = WndProc;
-		RegisterClass(&wc);
-		HWND m_hNotifyWnd = CreateWindow(TEXT("myusbmsg"), TEXT(""), 0, 0, 0, 0, 0,
-			0, 0, GetModuleHandle(0), 0);
-		//初始化当前串口状态
-		RegisterDevice(m_hNotifyWnd, m_hDevNotify);
-		//操作测试线程
-		m_pOperateThread = (HANDLE)_beginthreadex(
-			NULL,
-			0,
-			OperateProc,
-			NULL,
-			CREATE_SUSPENDED,
-			&m_pOperateThreadId
-			);
-		if (NULL == m_pOperateThread)
-		{
-			handleLog("create OperateProc fail");
-			goto WL_END;
-		}
-		m_bCheckUsbRun = true;
-		ResumeThread(m_pOperateThread);
-		MSG msg;
-		while (m_bCheckUsbRun)
-		{
-			if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != 0)
+			handleLog("input 0 for end");
+			/*注册设备插拔事件*/
+			unsigned int m_pOperateThreadId = 0;
+			HANDLE m_pOperateThread = NULL;
+			WNDCLASS wc;
+			ZeroMemory(&wc, sizeof(wc));
+			wc.lpszClassName = TEXT("myusbmsg");
+			wc.lpfnWndProc = WndProc;
+			RegisterClass(&wc);
+			HWND m_hNotifyWnd = CreateWindow(TEXT("myusbmsg"), TEXT(""), 0, 0, 0, 0, 0,
+				0, 0, GetModuleHandle(0), 0);
+			//初始化当前串口状态
+			RegisterDevice(m_hNotifyWnd, m_hDevNotify);
+			//操作测试线程
+			m_pOperateThread = (HANDLE)_beginthreadex(
+				NULL,
+				0,
+				OperateProc,
+				NULL,
+				CREATE_SUSPENDED,
+				&m_pOperateThreadId
+				);
+			if (NULL == m_pOperateThread)
 			{
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
+				handleLog("create OperateProc fail");
+				goto WL_END;
 			}
-			else
+			m_bCheckUsbRun = true;
+			ResumeThread(m_pOperateThread);
+			MSG msg;
+			while (m_bCheckUsbRun)
 			{
-				Sleep(INTERVAL_CHECK_USB);
+				if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) != 0)
+				{
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
+				}
+				else
+				{
+					Sleep(INTERVAL_CHECK_USB);
+				}
 			}
-		}
-		handleLog("check usb proc exit");
-		m_bCheckUsbRun = false;
-		if (NULL != m_pOperateThread)
-		{
-			WaitForSingleObject(m_pOperateThread, 1000);
-			CloseHandle(m_pOperateThread);
-			m_pOperateThread = NULL;
-		}
-		//handleLog("input 0 for end");
-		//scanf_s("%d", &cmd);
-		///*等待用户选择退出*/
-		//while (cmd != 0)
-		//{
-		//	switch (cmd)
-		//	{
-		//	case 1:
-		//	{
-		//			  REMOTE_TASK *pTask = new REMOTE_TASK;
-		//			  memset(pTask, 0, sizeof(REMOTE_TASK));
-		//			  pTask->cmd = REMOTE_CMD_CALL;
-		//			  pTask->param.info.callParam.operateInfo.callType = GROUP_CALL;
-		//			  pTask->param.info.callParam.operateInfo.isCurrent = 1;
-		//			  pTask->param.info.callParam.operateInfo.operate = 0;
-		//			  pTask->param.info.callParam.operateInfo.source = 5;
-		//			  pTask->param.info.callParam.operateInfo.tartgetId = 9;
-		//			  push_back_task(pTask);
-		//	}
-		//		break;
-		//	case 2:
-		//	{
-		//			  REMOTE_TASK *pTask = new REMOTE_TASK;
-		//			  memset(pTask, 0, sizeof(REMOTE_TASK));
-		//			  pTask->cmd = REMOTE_CMD_STOP_CALL;
-		//			  push_back_task(pTask);
-		//	}
-		//		break;
-		//	default:
-		//		break;
-		//	}
+			handleLog("check usb proc exit");
+			m_bCheckUsbRun = false;
+			if (NULL != m_pOperateThread)
+			{
+				WaitForSingleObject(m_pOperateThread, 1000);
+				CloseHandle(m_pOperateThread);
+				m_pOperateThread = NULL;
+			}
+			//handleLog("input 0 for end");
+			//scanf_s("%d", &cmd);
+			///*等待用户选择退出*/
+			//while (cmd != 0)
+			//{
+			//	switch (cmd)
+			//	{
+			//	case 1:
+			//	{
+			//			  REMOTE_TASK *pTask = new REMOTE_TASK;
+			//			  memset(pTask, 0, sizeof(REMOTE_TASK));
+			//			  pTask->cmd = REMOTE_CMD_CALL;
+			//			  pTask->param.info.callParam.operateInfo.callType = GROUP_CALL;
+			//			  pTask->param.info.callParam.operateInfo.isCurrent = 1;
+			//			  pTask->param.info.callParam.operateInfo.operate = 0;
+			//			  pTask->param.info.callParam.operateInfo.source = 5;
+			//			  pTask->param.info.callParam.operateInfo.tartgetId = 9;
+			//			  push_back_task(pTask);
+			//	}
+			//		break;
+			//	case 2:
+			//	{
+			//			  REMOTE_TASK *pTask = new REMOTE_TASK;
+			//			  memset(pTask, 0, sizeof(REMOTE_TASK));
+			//			  pTask->cmd = REMOTE_CMD_STOP_CALL;
+			//			  push_back_task(pTask);
+			//	}
+			//		break;
+			//	default:
+			//		break;
+			//	}
 
-		//	handleLog("input 0 for end");
-		//	scanf_s("%d", &cmd);
-		//}
+			//	handleLog("input 0 for end");
+			//	scanf_s("%d", &cmd);
+			//}
 #endif
-	WL_END:
-		/************************************************************************/
-		/* 资源释放
-		/************************************************************************/
-		if (m_pManager)
-		{
-			//m_pManager->stop();
-			delete m_pManager;
-			m_pManager = NULL;
-		}
-		if (NULL != m_pMnis)
-		{
-			m_pMnis->radioDisConnect();
-			delete m_pMnis;
-			m_pMnis = NULL;
-		}
-		if (g_pNet)
-		{
-			//g_pNet->stop();
-			delete g_pNet;
-			g_pNet = NULL;
-		}
-		while (g_onLineClients.size() > 0)
-		{
-			TcpClient *p = g_onLineClients.front();
-			g_onLineClients.pop_front();
-			if (p)
+		WL_END:
+			/************************************************************************/
+			/* 资源释放
+			/************************************************************************/
+			if (m_pManager)
 			{
-				delete p;
-				p = NULL;
+				//m_pManager->stop();
+				delete m_pManager;
+				m_pManager = NULL;
+			}
+			if (NULL != m_pMnis)
+			{
+				m_pMnis->radioDisConnect();
+				delete m_pMnis;
+				m_pMnis = NULL;
+			}
+			if (g_pNet)
+			{
+				//g_pNet->stop();
+				delete g_pNet;
+				g_pNet = NULL;
+			}
+			while (g_onLineClients.size() > 0)
+			{
+				TcpClient *p = g_onLineClients.front();
+				g_onLineClients.pop_front();
+				if (p)
+				{
+					delete p;
+					p = NULL;
+				}
+			}
+			if (m_pRpcServer)
+			{
+				m_pRpcServer->stop();
+				delete m_pRpcServer;
+				m_pRpcServer = NULL;
+			}
+
+			if (g_pSound)
+			{
+				//g_pSound->stop();
+				delete g_pSound;
+				g_pSound = NULL;
+			}
+
+			if (g_pDongle)
+			{
+				//g_pDongle->stop();
+				delete g_pDongle;
+				g_pDongle = NULL;
+			}
+
+			if (m_pDb)
+			{
+				//m_pDb->stop();
+				delete m_pDb;
+				m_pDb = NULL;
+			}
+			if (g_pWLlog)
+			{
+				delete g_pWLlog;
+				g_pWLlog = NULL;
+			}
+			if (g_pTool)
+			{
+				delete g_pTool;
+				g_pTool = NULL;
+			}
+			NSLog* pLog = NSLog::instance();
+			if (pLog)
+			{
+				delete pLog;
+				pLog = NULL;
+			}
+#if SERVICE_CODDE
+		});
+		std::wstring strArg = argv[1];
+		try{
+			if (0 == strArg.compare(_T("install")))
+			{
+				CService::instance()->InstallService();
+				//InstallService();
+			}
+			else if (0 == strArg.compare(_T("uninstall")))
+			{
+				CService::instance()->UninstallService();
+				//LOG(INFO) << "UnInstall Service";
+			}
+			else if (0 == strArg.compare(_T("start")))
+			{
+				CService::instance()->StartWindowsService();
+				//LOG(INFO) << "Start Service";
+			}
+			else if (0 == strArg.compare(_T("stop")))
+			{
+				CService::instance()->StopService();
+				//LOG(INFO) << "Stop Service";
+			}
+			else if (0 == strArg.compare(_T("run")))
+			{
+				CService::instance()->RunService();
 			}
 		}
-		if (m_pRpcServer)
-		{
-			m_pRpcServer->stop();
-			delete m_pRpcServer;
-			m_pRpcServer = NULL;
+		catch (std::system_error syserr) {
+			exit(1);
+		}
+		catch (std::runtime_error runerr) {
+			exit(1);
+		}
+		catch (...) {
+			exit(1);
 		}
 
-		if (g_pSound)
-		{
-			//g_pSound->stop();
-			delete g_pSound;
-			g_pSound = NULL;
-		}
-
-		if (g_pDongle)
-		{
-			//g_pDongle->stop();
-			delete g_pDongle;
-			g_pDongle = NULL;
-		}
-
-		if (m_pDb)
-		{
-			//m_pDb->stop();
-			delete m_pDb;
-			m_pDb = NULL;
-		}
-		if (g_pWLlog)
-		{
-			delete g_pWLlog;
-			g_pWLlog = NULL;
-		}
-		if (g_pTool)
-		{
-			delete g_pTool;
-			g_pTool = NULL;
-		}
-		NSLog* pLog = NSLog::instance();
-		if (pLog)
-		{
-			delete pLog;
-			pLog = NULL;
-		}
-#if SERVICE_CODDE
-	});
-	std::wstring strArg = argv[1];
-	try{
-		if (0 == strArg.compare(_T("install")))
-		{
-			CService::instance()->InstallService();
-			//InstallService();
-		}
-		else if (0 == strArg.compare(_T("uninstall")))
-		{
-			CService::instance()->UninstallService();
-			//LOG(INFO) << "UnInstall Service";
-		}
-		else if (0 == strArg.compare(_T("start")))
-		{
-			CService::instance()->StartWindowsService();
-			//LOG(INFO) << "Start Service";
-		}
-		else if (0 == strArg.compare(_T("stop")))
-		{
-			CService::instance()->StopService();
-			//LOG(INFO) << "Stop Service";
-		}
-		else if (0 == strArg.compare(_T("run")))
-		{
-			CService::instance()->RunService();
-		}
-	}
-	catch (std::system_error syserr) {
-		exit(1);
-	}
-	catch (std::runtime_error runerr) {
-		exit(1);
-	}
-	catch (...) {
-		exit(1);
-	}
-
-	wprintf(argv[1]);
+		wprintf(argv[1]);
 
 #else
-		_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+			_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
-		return 0;
+			return 0;
+		}
+		catch (const std::exception e)
+		{
+			printf("\nexception what %s", e.what());
+			return 1;
+		}
+		catch (...)
+		{
+			printf("\nunknown exception");
+			return 2;
+		}
 	}

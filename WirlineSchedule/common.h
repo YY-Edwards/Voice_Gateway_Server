@@ -417,7 +417,6 @@ extern std::list<TcpClient*> g_onLineClients;
 //extern TcpClient *pTempClient;
 //////////////////////////////////////////////////////////////////////////
 
-#define ALL_CALL_ID 255
 extern unsigned long CONFIG_CURRENT_TAGET;//当前通话目标
 //extern bool g_bIsHaveDefaultGroupCall;
 //extern bool g_bIsHavePrivateCall;

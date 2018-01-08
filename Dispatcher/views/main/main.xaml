@@ -12,6 +12,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
    mc:Ignorable="d" 
     x:Name="window" x:Class="Dispatcher.Views.Main"
+    WindowStartupLocation="CenterScreen"
         Title="TrboX3.0" Height="800" Width="1280" Style="{DynamicResource TrboxWindowStyle}" ShadowMargin="10" Background="{DynamicResource AppBackground}" BorderThickness="0" BorderBrush="{DynamicResource PanelBorderBrush}" >
     <Windows:BaseWindow.DataContext>
         <ViewsModules:VMMain OnViewModulesOperated="VMMain_OnOperated"/>

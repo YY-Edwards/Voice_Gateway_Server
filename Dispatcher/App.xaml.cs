@@ -10,12 +10,166 @@ using System.IO;
 using System.Security.Principal;
 using System.Diagnostics;
 using System.Reflection;
-using Sigmar.Logger;
+using Dispatcher;
 
 using Dispatcher.Views;
 
 namespace Dispatcher
 {
+
+    public class Log
+    {
+        public static void Initialize(string dir, string title, int buffersize = 100)
+        {
+            //Log.Initialize(dir,name);
+        }
+        private static Action<LogContent> Onmessage;
+        public static void BindingMessage(Action<LogContent> onnotify)
+        {
+            Onmessage = onnotify;
+        }
+
+        public static void Message(string message)
+        {
+            if (Onmessage != null) Onmessage(new  LogContent(LogMode_t.MESSAGE, message));
+        }
+
+        public static void Info(string info)
+        {
+        }
+
+        public static void Debug(string debug)
+        {
+        }
+
+
+        public static void Warning(Exception ex)
+        {
+        }
+
+
+        public static void Error(Exception ex)
+        {
+        }
+
+
+        public static void Fatal(Exception ex)
+        {
+        }
+        public static void Warning(string warning = null, Exception ex = null)
+        {
+        }
+
+
+        public static void Error(string error, Exception ex = null)
+        {
+        }
+
+
+        public static void Fatal(string fatal, Exception ex = null)
+        {
+        }
+
+        public static void Report(string str, bool istx = true)
+        {
+        }
+
+        public static void Report(byte[] bytes, bool istx = true)
+        {
+        }
+        public static void Report(ReportType_t type, byte[] bytes, bool istx, string source, string target, string parse = null)
+        {
+        }
+
+        public static void Report(ReportType_t type, string str, bool istx, string source, string target, string parse = null)
+        {
+        }
+    }
+
+    public enum LogMode_t
+    {
+        None = 0,
+        ALL = 0xFFFF,
+        INFO = 0x0001,
+        DEBUG = 0x0002,
+        WARNING = 0x0004,
+        ERROR = 0x0008,
+        FATAL = 0x0010,
+        REPORT = 0x0011,
+        MESSAGE = 0x0012,
+    }
+    public enum ReportType_t
+    {
+        UnKnown,
+        Text,
+        Json,
+        Hex,
+        Dec,
+    }
+
+    public class LogContent
+    {
+        public DateTime Time;
+        private LogMode_t Mode;
+        public string Message;
+        private string Method;
+        private Exception Ex;
+        private int Code;
+        private Report Reports;
+
+        public LogContent(LogMode_t mode, string message, string method = "", Exception ex = null, int code = 0)
+        {
+            Mode = mode;
+            Message = message;
+            Method = method;
+            Ex = ex;
+            Code = 0;
+            Reports = null;
+        }
+        public LogContent(Report report)
+        {
+            Mode = LogMode_t.REPORT;
+            Reports = report;
+        }
+
+
+        public LogMode_t GetMode()
+        {
+            return Mode;
+        }
+
+        public bool HasException()
+        {
+            return Ex != null;
+        }
+
+        private string ExMessage { get { return Ex == null ? "" : Ex.Message; } }
+
+
+
+        private static long lastticks = 0;
+        private static int ticksappend = 0;
+        public string ToHtml()
+        {
+            return "";
+        }
+
+
+        public string ToString()
+        {
+            return "";
+        }
+        public string ToSimpleString()
+        {
+            return "";
+        }
+
+        public string ToString(string format)
+        {
+            return "";
+        }
+
+    }
     /// <summary>
     /// App.xaml 的交互逻辑
     /// </summary>
@@ -26,12 +180,26 @@ namespace Dispatcher
             base.OnStartup(e);
             CheckAdministrator();
 
+
+            this.DispatcherUnhandledException += (sender, args) =>
+            {
+                args.Handled = true;
+            };
+
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+            {
+            };
+
+
+
             Logs.SetStartUpWindow(typeof(Login));
             Log.Initialize(RuntimeDir, ProjectName + Version);
             StartupUri = new Uri("views/logger/logger.xaml", UriKind.RelativeOrAbsolute);
             Log.Info("Startup application in Administrator.");
            
         }
+
+
         private void CheckAdministrator()
         {
             var wi = WindowsIdentity.GetCurrent();

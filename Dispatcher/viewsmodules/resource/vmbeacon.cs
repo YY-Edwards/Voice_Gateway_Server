@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.Windows.Input;
 
 using Sigmar;
-using Sigmar.Logger;
+using Dispatcher;
 
 using Dispatcher.Service;
 using Dispatcher.Modules;

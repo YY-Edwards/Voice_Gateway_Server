@@ -214,6 +214,7 @@ namespace ServerManager
 
         public CommandLine FindCommandAndExcute(string command)
         {
+            if (command == null) return null;
             string[] args = command.Trim().Split(new char[1] { ' ' });
 
             if (args == null || args.Length <= 0)

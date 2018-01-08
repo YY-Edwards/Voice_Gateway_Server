@@ -10,7 +10,7 @@ using System.Windows.Input;
 using System.Threading;
 
 using Sigmar;
-using Sigmar.Logger;
+using Dispatcher;
 
 using Dispatcher.Service;
 

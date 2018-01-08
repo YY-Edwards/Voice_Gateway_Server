@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 using Newtonsoft.Json;
 using System.ComponentModel;
-using Sigmar.Logger;
+using Dispatcher;
 
 namespace Dispatcher.Modules
 {

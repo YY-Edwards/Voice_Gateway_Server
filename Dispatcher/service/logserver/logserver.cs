@@ -9,7 +9,7 @@ using System.Threading;
 
 using Sigmar;
 using Sigmar.Extension;
-using Sigmar.Logger;
+using Dispatcher;
 
 namespace Dispatcher.Service
 {

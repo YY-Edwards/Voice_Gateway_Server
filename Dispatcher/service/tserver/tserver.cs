@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 using Sigmar;
 using Sigmar.Extension;
-using Sigmar.Logger;
+using Dispatcher;
 
 namespace Dispatcher.Service
 {

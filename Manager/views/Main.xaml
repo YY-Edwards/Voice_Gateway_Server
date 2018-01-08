@@ -19,7 +19,7 @@
         Width="1010"
         AllowsTransparency="True"
         WindowStyle="None"
-        Background="#FF1C1D1E"      
+        Background="#FF1C1D1E" WindowStartupLocation="CenterScreen"      
     >
     <Window.InputBindings>
         <KeyBinding  Key="F12" Command="{Binding ToggleLogger, ElementName=win_Main, Mode=OneWay}"></KeyBinding>

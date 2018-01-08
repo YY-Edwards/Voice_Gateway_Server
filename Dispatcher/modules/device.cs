@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dispatcher.Service;
 
-using Sigmar.Logger;
+using Dispatcher;
 namespace Dispatcher.Modules
 {
     public class Device

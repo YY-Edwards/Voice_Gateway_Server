@@ -41,6 +41,7 @@ public:
 	le_status_enum LeStatus();
 	call_thread_status_enum CallThreadStatus();
 	CALL_OPERATE_PARAM CurCallCmd;
+	void CallStopUnnormal();
 private:
 	StartNetParam m_netParam;//配置参数
 	pXQTTNet m_pMasterXqttnet;//主中继持有指针

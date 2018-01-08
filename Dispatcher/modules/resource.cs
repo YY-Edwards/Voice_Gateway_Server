@@ -11,7 +11,7 @@ using System.ComponentModel;
 using System.Threading;
 using Dispatcher.Service;
 
-using Sigmar.Logger;
+using Dispatcher;
 
 namespace Dispatcher.Modules
 {

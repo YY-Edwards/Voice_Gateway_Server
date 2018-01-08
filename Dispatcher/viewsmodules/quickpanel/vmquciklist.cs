@@ -11,7 +11,7 @@ using System.Windows.Input;
 using System.Windows.Data;
 
 using Sigmar;
-using Sigmar.Logger;
+using Dispatcher;
 using Sigmar.Extension;
 
 using Dispatcher.Service;

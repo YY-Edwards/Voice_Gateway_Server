@@ -8,7 +8,7 @@ using System.Linq;
 using Sigmar.Extension;
 using Dispatcher.Views;
 using Dispatcher.ViewsModules;
-using Sigmar.Logger;
+using Dispatcher;
 
 namespace Dispatcher.Service
 {

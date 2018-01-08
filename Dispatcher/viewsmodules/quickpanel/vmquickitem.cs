@@ -9,7 +9,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 
 using Sigmar;
-using Sigmar.Logger;
+using Dispatcher;
 using Dispatcher.Service;
 using Dispatcher.Views;
 using Dispatcher.Modules;

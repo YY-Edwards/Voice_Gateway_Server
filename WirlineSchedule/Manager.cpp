@@ -480,7 +480,18 @@ int CManager::SendFile(unsigned int length, char* pData)
 int CManager::setPlayCallOfCare(unsigned char calltype, unsigned long targetId)
 {
 	g_playCalltype = calltype;
-	g_playTargetId = targetId;
+	if (PRIVATE_CALL == calltype)
+	{
+		g_playTargetId = CONFIG_LOCAL_RADIO_ID;
+	}
+	else if (ALL_CALL == calltype)
+	{
+		g_playTargetId = ALL_CALL_ID;
+	}
+	else
+	{
+		g_playTargetId = targetId;
+	}
 	return g_pNet->setPlayCallOfCare(calltype, targetId);
 }
 
@@ -768,11 +779,11 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_CALL:
 			{
-									call_thread_status_enum callStatus = pNSNet->CallThreadStatus();
 									mic_status_enum micStatus = g_pNSSound->MicStatus();
 									setCurrentTask(&task);
 									CALL_OPERATE_PARAM cmdInfo = task.param.info.callParam.operateInfo;
 									pNSNet = (NSWLNet*)g_pNSNet;
+									call_thread_status_enum callStatus = pNSNet->CallThreadStatus();
 									if (Call_Thread_Status_Idle == callStatus && Mic_Idle == micStatus)
 									{
 										pNSNet->CurCallCmd = cmdInfo;

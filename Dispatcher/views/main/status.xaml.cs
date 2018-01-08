@@ -15,7 +15,7 @@ using System.Windows.Shapes;
 
 using Sigmar.Controls;
 using Dispatcher.ViewsModules;
-using Sigmar.Logger;
+using Dispatcher;
 
 namespace Dispatcher.Views
 {

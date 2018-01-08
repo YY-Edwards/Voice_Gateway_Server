@@ -1,6 +1,6 @@
 ﻿using Dispatcher.Service;
 using Sigmar;
-using Sigmar.Logger;
+using Dispatcher;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Input;

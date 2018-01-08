@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
 using System.Threading;
-using Sigmar.Logger;
+using Dispatcher;
 
 namespace Dispatcher.Service
 {

@@ -16,7 +16,7 @@ using Sigmar.Controls;
 
 using Dispatcher.ViewsModules;
 using Dispatcher.Service;
-using Sigmar.Logger;
+using Dispatcher;
 
 namespace Dispatcher.Views
 {

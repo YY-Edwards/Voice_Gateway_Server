@@ -3,6 +3,7 @@
 #include "NSLog.h"
 #include <process.h>
 #include "NSAmbe.h"
+#include "NSWLNet.h"
 
 #define RING_SIZE_OUT 64
 
@@ -509,6 +510,7 @@ void CALLBACK NSSound::waveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwInstance, 
 
 void NSSound::handleWaveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwParam1, DWORD_PTR dwParam2)
 {
+	bool bError = false;
 	switch (uMsg)
 	{
 	case WIM_CLOSE:
@@ -543,11 +545,13 @@ void NSSound::handleWaveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwParam1, DWORD
 						 /*处理音频数据*/
 						 if (m_pAmbe)
 						 {
-							 m_pAmbe->Pcm2Ambe((unsigned char*)m_cbBuffer[m_bufflag], BUFFER_SIZE);
+							 int rlt = m_pAmbe->Pcm2Ambe((unsigned char*)m_cbBuffer[m_bufflag], BUFFER_SIZE);
+							 bError = (0 != rlt);
 						 }
 						 else
 						 {
 							 m_pLog->AddLog("m_pAmbe is null");
+							 bError = true;
 						 }
 						 m_bufflag = (m_bufflag + 1) % BUFFER_NUM;
 					 }
@@ -561,11 +565,13 @@ void NSSound::handleWaveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwParam1, DWORD
 							 /*处理音频数据*/
 							 if (m_pAmbe)
 							 {
-								 m_pAmbe->Pcm2Ambe((unsigned char*)pwhi->lpData, pwhi->dwBytesRecorded);
+								 int rlt = m_pAmbe->Pcm2Ambe((unsigned char*)pwhi->lpData, pwhi->dwBytesRecorded);
+								 bError = (0 != rlt);
 							 }
 							 else
 							 {
 								 m_pLog->AddLog("m_pAmbe is null");
+								 bError = true;
 							 }
 						 }
 					 }
@@ -585,6 +591,11 @@ void NSSound::handleWaveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwParam1, DWORD
 		break;
 	default:
 		break;
+	}
+	if (bError)
+	{
+		NSWLNet* pNet = (NSWLNet*)g_pNSNet;
+		pNet->CallStopUnnormal();
 	}
 }
 

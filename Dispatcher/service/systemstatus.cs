@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Dispatcher.ViewsModules;
 using System.ComponentModel;
-using Sigmar.Logger;
+using Dispatcher;
 
 namespace Dispatcher.Service
 {

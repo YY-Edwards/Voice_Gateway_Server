@@ -9,6 +9,7 @@
 #include "NSSound.h"
 #include "Manager.h"
 #include "WLNet.h"
+#include "NSManager.h"
 
 #define AUTHENTIC_ID_SIZE	4
 #define VENDER_KEY_SIZE		20
@@ -1070,9 +1071,9 @@ void NSWLNet::AmbeDataThread()
 												  {
 													  /*更新通话状态*/
 													  m_localRecordFile->setCallStatus(CALL_SESSION_STATUS_HANG);
-													  g_pNet->wlRequestCallEnd(CurCallCmd);
-													  //g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS, CurCallCmd.SessionId);
-													}
+													  //g_pNet->wlRequestCallEnd(CurCallCmd);
+													  g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS, CurCallCmd.SessionId);
+												  }
 											  }
 										  }
 		}
@@ -3565,6 +3566,15 @@ call_thread_status_enum NSWLNet::CallThreadStatus()
 	return m_callThreadStatus;
 }
 
+void NSWLNet::CallStopUnnormal()
+{
+	if (Call_Thread_Send_Burst == CallThreadStatus())
+	{
+		setCallThreadStatus(Call_Thread_Call_Fail);
+	}
+
+}
+
 void NSWLNet::setCallThreadStatus(call_thread_status_enum value)
 {
 	if (value != m_callThreadStatus)
@@ -3627,8 +3637,8 @@ void NSWLNet::CallThread()
 			break;
 		case Call_Thread_Call_Fail:
 		{
-									  g_pNet->wlRequestCallEnd(CurCallCmd);
-									  //g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL, CurCallCmd.SessionId);
+									  //g_pNet->wlRequestCallEnd(CurCallCmd);
+									  g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL, CurCallCmd.SessionId);
 									  g_pNSSound->setMicStatus(Mic_Stop);
 									  setCallThreadStatus(Call_Thread_Status_Idle);
 		}
@@ -4048,6 +4058,7 @@ void NSWLNet::CallStop()
 	else
 	{
 		m_pLog->AddLog("no call need stop");
+		g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS, CurCallCmd.SessionId);
 	}
 }
 
@@ -4175,11 +4186,12 @@ void NSWLNet::SendAmbeData()
 			}
 			else
 			{
-				m_pLog->AddLog("not pop a frame，will send empty 60ms ambe");
-				Build_T_WL_PROTOCOL_21(m_vcBurst, false);
-				m_vcBurst.AMBEVoiceEncodedFrames = m_startAmbe.ambe;
-				m_sendBuffer.net_length = Build_WL_VC_VOICE_BURST(m_sendBuffer.net_data, &m_vcBurst);
-				sendNetDataBase(m_sendBuffer.net_data, m_sendBuffer.net_length, &peer->m_sockaddr);
+
+					m_pLog->AddLog("not pop a frame,will send empty 60ms ambe");
+					Build_T_WL_PROTOCOL_21(m_vcBurst, false);
+					m_vcBurst.AMBEVoiceEncodedFrames = m_startAmbe.ambe;
+					m_sendBuffer.net_length = Build_WL_VC_VOICE_BURST(m_sendBuffer.net_data, &m_vcBurst);
+					sendNetDataBase(m_sendBuffer.net_data, m_sendBuffer.net_length, &peer->m_sockaddr);
 			}
 		}
 		else

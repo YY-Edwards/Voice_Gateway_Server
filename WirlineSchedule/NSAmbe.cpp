@@ -75,8 +75,9 @@ void NSAmbe::OnDataPcm(void* pData, unsigned long length, unsigned long index)
 	}
 }
 
-void NSAmbe::Pcm2Ambe(void* pBuffer, unsigned long length)
+int NSAmbe::Pcm2Ambe(void* pBuffer, unsigned long length)
 {
+	int rlt = 0;
 	if (NULL == m_useDongle) m_useDongle = m_pManager->PopIdleDonglesItem();
 	if (m_useDongle)
 	{
@@ -85,7 +86,9 @@ void NSAmbe::Pcm2Ambe(void* pBuffer, unsigned long length)
 	else
 	{
 		m_pLog->AddLog("no useable dongle");
+		rlt = 1;
 	}
+	return rlt;
 }
 
 void NSAmbe::OnDataAmbe(void* pData, unsigned long length, unsigned long index)

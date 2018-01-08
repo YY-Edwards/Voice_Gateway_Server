@@ -12,7 +12,7 @@ using System.Windows.Resources;
 using System.IO;
 
 using Dispatcher.Service;
-using Sigmar.Logger;
+using Dispatcher;
 
 namespace Dispatcher.ViewsModules
 {
