@@ -49,12 +49,16 @@ void recvLocationIndoorAction(CRemotePeer* pRemote, const std::string& param, ui
 			int rssi = d["Report"]["rssi"].GetInt();
 			int txpower = d["Report"]["txpower"].GetInt();
 			FieldValue uuid(FieldValue::TArray);
-			for (int j = 0; j < d["Report"]["uuid"].GetArray().Size(); j++)
+			if (d["Report"].HasMember("uuid"))
 			{
-				FieldValue temp(FieldValue::TInt);
-				temp.setInt(d["Report"]["uuid"][j].GetInt());
-				uuid.push(temp);
+				for (int j = 0; j < d["Report"]["uuid"].GetArray().Size(); j++)
+				{
+					FieldValue temp(FieldValue::TInt);
+					temp.setInt(d["Report"]["uuid"][j].GetInt());
+					uuid.push(temp);
+				}
 			}
+			
 
 			element.setKeyVal("major", FieldValue(major));
 			element.setKeyVal("minor", FieldValue(minor));

@@ -723,11 +723,22 @@ void CBroker::clientConnectStatus()
 		int isLWireLanStatus=1;
 		if (isRadioStart)
 		{
-			 isCurrentDispatchStatus = m_radioClient->isConnected();
+			isCurrentDispatchStatus = (m_radioClient->isConnected() ? 0 : 1);
+			if (isCurrentDispatchStatus)
+			if (isLastDispatchStatus != isCurrentDispatchStatus)
+			{
+				getSystemstatus("radio");
+			}
+			
 		}
 		if (isRepeaterStart)
 		{
-			 isCurrentWlStatus = m_wirelanClient->isConnected();
+			isCurrentWlStatus = (m_wirelanClient->isConnected() ? 0 : 1);
+			if (isCurrentWlStatus)
+			 if (isLastWlStatus != isCurrentWlStatus )
+			 {
+				 getSystemstatus("wl");
+			 }
 		}
 
 		switch (systemStatus.workMode)
@@ -857,5 +868,21 @@ void CBroker::setDeviceStatusByType(int type, int value)
 		break;
 	default:
 		break;
+	}
+	
+}
+void CBroker::getSystemstatus(std::string type)
+{
+	if ("radio" == type)
+	{
+		std::string content = "{\"SessionId\":\"93d7e65c-202b-4f15-b5d1-08405a7a028f\",\"getType\":4, \"info\" : \"\"}";
+		std::string strConnect = CSettings::instance()->getRequest("status", "radio", m_radioClient->getCallId(), content);
+		m_radioClient->send(strConnect.c_str(), strConnect.size());
+	}
+	else
+	{
+		std::string content = "{\"SessionId\":\"93d7e65c-202b-4f15-b5d1-08405a7a028f\",\"getType\":4, \"info\" : \"\"}";
+		std::string strConnect = CSettings::instance()->getRequest("wlInfo", "wl", m_radioClient->getCallId(), content);
+		m_wirelanClient->send(strConnect.c_str(), strConnect.size());
 	}
 }

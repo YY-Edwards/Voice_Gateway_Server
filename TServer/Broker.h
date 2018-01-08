@@ -120,7 +120,7 @@ public:
 	bool getLic(std::string license);
 	void sendLoactionIndoorConfig();
 	//void sendLoactionIndoorConfigToWl();
-
+	void getSystemstatus(std::string type);
 	void stop();
 
 	void setDeviceStatus(bool device, bool mnis);
