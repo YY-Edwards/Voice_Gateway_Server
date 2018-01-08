@@ -747,7 +747,7 @@ void CBroker::clientConnectStatus()
 			break;
 		case 1:
 		case 3:
-			if (isCurrentDispatchStatus)
+			if (isCurrentDispatchStatus==0)
 			{
 				//systemStatus.serverStatus = 0;
 				setDeviceStatusByType(System_ServerStatus, 0);
@@ -760,7 +760,7 @@ void CBroker::clientConnectStatus()
 			break;
 		case 2:
 		case 4:
-			if (isCurrentWlStatus)
+			if (isCurrentWlStatus==0)
 			{
 				//systemStatus.serverStatus = 0;
 				setDeviceStatusByType(System_ServerStatus, 0);
