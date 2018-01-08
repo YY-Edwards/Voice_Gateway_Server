@@ -180,6 +180,18 @@ namespace Dispatcher
             base.OnStartup(e);
             CheckAdministrator();
 
+
+            this.DispatcherUnhandledException += (sender, args) =>
+            {
+                args.Handled = true;
+            };
+
+            AppDomain.CurrentDomain.UnhandledException += (sender, args) =>
+            {
+            };
+
+
+
             Logs.SetStartUpWindow(typeof(Login));
             Log.Initialize(RuntimeDir, ProjectName + Version);
             StartupUri = new Uri("views/logger/logger.xaml", UriKind.RelativeOrAbsolute);
