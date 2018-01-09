@@ -33,8 +33,8 @@ CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis, std::wstring& defaultAud
 , m_mnisStatus(WL_SYSTEM_DISCONNECT)
 {
 	g_pNSTool = new CTool();
-	g_pNSSound = new NSSound();
 	g_pNSManager = new NSManager();
+	g_pNSSound = new NSSound();
 	g_pNSNet = new NSWLNet(g_pNSManager);
 	g_pNet = new CWLNet(pDb, this, defaultAudioPath);
 	g_pDongle = new CSerialDongle();
