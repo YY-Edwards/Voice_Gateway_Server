@@ -489,6 +489,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				delete pLog;
 				pLog = NULL;
 			}
+			DELETELOCKER(g_mutexRemoteCommandTaskQueue);
 #if SERVICE_CODDE
 		});
 		std::wstring strArg = argv[1];

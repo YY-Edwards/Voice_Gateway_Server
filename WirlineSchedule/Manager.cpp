@@ -59,11 +59,10 @@ CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis, std::wstring& defaultAud
 	m_remoteTaskThreadId = 0;
 	m_bRemoteTaskThreadRun = false;
 	m_bIsHaveConfig = false;
-	//memset(&m_pCurrentTask, 0, sizeof(REMOTE_TASK));
-	m_pCurrentTask = NULL;
+	memset(&m_currentTask, 0, sizeof(REMOTE_TASK));
+	//m_pCurrentTask = NULL;
 	m_pMnis = pMnis;
 	m_hWaitDecodeEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-	//memset(&m_currentTask, 0, sizeof(REMOTE_TASK));
 	/*获取当前Dongle的数量*/
 	initialize();
 }
@@ -760,10 +759,7 @@ void CManager::handleRemoteTask()
 	NSWLNet* pNSNet = NULL;
 	while (m_bRemoteTaskThreadRun)
 	{
-		//sprintf_s(m_reportMsg, "3");
-		//sendLogToWindow();
-		WaitForSingleObject(g_waitHandleRemoteTask, 1000);
-		while (g_remoteCommandTaskQueue.size() > 0)
+		while (size_task() > 0)
 		{
 			/*处理任务*/
 			get_front_task(task);
@@ -919,47 +915,31 @@ void CManager::handleRemoteTask()
 				break;
 			}
 		}
+		WaitForSingleObject(g_waitHandleRemoteTask, INFINITE);
 	}
 }
 
 void CManager::stop()
 {
+	m_bRemoteTaskThreadRun = false;
 	if (m_hRemoteTaskThread)
 	{
-		m_bRemoteTaskThreadRun = false;
 		SetEvent(g_waitHandleRemoteTask);
 		WaitForSingleObject(m_hRemoteTaskThread, 1000);
 		CloseHandle(m_hRemoteTaskThread);
-	}
-	freeCurrentTask();
-}
-
-REMOTE_TASK* CManager::getCurrentTask()
-{
-	return m_pCurrentTask;
-}
-
-void CManager::freeCurrentTask()
-{
-	if (m_pCurrentTask)
-	{
-		delete m_pCurrentTask;
-		m_pCurrentTask = NULL;
+		m_hRemoteTaskThread = NULL;
 	}
 }
 
-void CManager::applayCurrentTask()
+void CManager::getCurrentTask(REMOTE_TASK &task)
 {
-	m_pCurrentTask = new REMOTE_TASK;
-	memset(m_pCurrentTask, 0, sizeof(REMOTE_TASK));
+	task = m_currentTask;
 }
 
 void CManager::setCurrentTask(REMOTE_TASK* value)
 {
 	std::lock_guard <std::mutex> locker(m_mutexCurTask);
-	freeCurrentTask();
-	applayCurrentTask();
-	memcpy(m_pCurrentTask, value, sizeof(REMOTE_TASK));
+	m_currentTask = *value;
 }
 
 void CManager::OnConnect(CRemotePeer* pRemotePeer)
@@ -1194,18 +1174,12 @@ int CManager::updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode)
 	return 0;
 }
 
-//REMOTE_TASK* CManager::getCurrentTaskR()
-//{
-//	return &m_currentTask;
-//}
-
 void CManager::handleTaskOnTimerProc()
 {
-	//lockCurTask();
-	handleCurTaskTimeOut();
-	//unLockCurTask();
 	/*验证队列任务是否超时*/
-	WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	handleCurTaskTimeOut();
+	//WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	TRYLOCK(g_mutexRemoteCommandTaskQueue);
 	std::list<REMOTE_TASK*>::iterator it = g_remoteCommandTaskQueue.begin();
 	while (it != g_remoteCommandTaskQueue.end())
 	{
@@ -1233,7 +1207,8 @@ void CManager::handleTaskOnTimerProc()
 		}
 		it++;
 	}
-	SetEvent(g_taskLockerEvent);
+	RELEASELOCK(g_mutexRemoteCommandTaskQueue);
+	//SetEvent(g_taskLockerEvent);
 }
 
 void PASCAL CManager::TaskOnTimerProc(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2)
@@ -1266,7 +1241,8 @@ bool CManager::isRepeat(std::string sessionId)
 	handleIsRepeatCurTask(sessionId, rlt);
 	//unLockCurTask();
 	if (rlt) return rlt;
-	WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	//WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	TRYLOCK(g_mutexRemoteCommandTaskQueue);
 	REMOTE_TASK* p = NULL;
 	std::list<REMOTE_TASK*>::iterator it = g_remoteCommandTaskQueue.begin();
 	while (it != g_remoteCommandTaskQueue.end())
@@ -1276,7 +1252,8 @@ bool CManager::isRepeat(std::string sessionId)
 		if (rlt) break;
 		it++;
 	}
-	SetEvent(g_taskLockerEvent);
+	RELEASELOCK(g_mutexRemoteCommandTaskQueue);
+	//SetEvent(g_taskLockerEvent);
 	return rlt;
 }
 
@@ -1363,17 +1340,18 @@ void CManager::setbNeedStopCall(bool value)
 void CManager::getCurrentTaskInfo(int srcId, std::string &sessionid, int &cmd)
 {
 	std::lock_guard<std::mutex> locker(m_mutexCurTask);
-	if (m_pCurrentTask && sessionid == "" && srcId == CONFIG_LOCAL_RADIO_ID)
+	if (m_currentTask.cmd != 0 && sessionid == "" && srcId == CONFIG_LOCAL_RADIO_ID)
 	{
-		sessionid = m_pCurrentTask->param.info.callParam.operateInfo.SessionId;
-		cmd = m_pCurrentTask->cmd;
+		sessionid = m_currentTask.param.info.callParam.operateInfo.SessionId;
+		cmd = m_currentTask.cmd;
 	}
 }
 
 void CManager::handleCurTaskTimeOut()
 {
-	std::lock_guard<std::mutex> locker(m_mutexCurTask);
-	REMOTE_TASK* p = getCurrentTask();
+	REMOTE_TASK task = { 0 };
+	getCurrentTask(task);
+	REMOTE_TASK* p = &task;
 	if (p)
 	{
 		if (p->timeOutTickCout != 0 && p->flag == FLAG_NHANDLE)
@@ -1393,12 +1371,14 @@ void CManager::handleCurTaskTimeOut()
 			}
 		}
 	}
+	setCurrentTask(p);
 }
 
 void CManager::handleIsRepeatCurTask(std::string sessionId, bool &rlt)
 {
-	std::lock_guard<std::mutex> locker(m_mutexCurTask);
-	REMOTE_TASK* p = getCurrentTask();
+	REMOTE_TASK task = { 0 };
+	getCurrentTask(task);
+	REMOTE_TASK* p = &task;
 	if (p)
 	{
 		rlt = isSameSessionId(sessionId, p);

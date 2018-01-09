@@ -8,6 +8,7 @@
 #define __HMAC_SHA1_H__
 
 #include "SHA1.h"
+#include "NSLog.h"
 
 typedef unsigned char BYTE ;
 
@@ -36,10 +37,34 @@ class CHMAC_SHA1 : public CSHA1
              AppendBuf1(new char[HMAC_BUF_LEN]),
              AppendBuf2(new char[HMAC_BUF_LEN]),
              SHA1_Key(new char[HMAC_BUF_LEN])
-		{}
+		{
+			while (NULL == szReport 
+				|| NULL == AppendBuf1
+				|| NULL == AppendBuf2
+				|| NULL == SHA1_Key)
+			{
+				if (NULL == szReport)
+				{
+					szReport = new char[HMAC_BUF_LEN];
+				}
+				if (NULL == AppendBuf1)
+				{
+					AppendBuf1 = new char[HMAC_BUF_LEN];
+				}
+				if (NULL == AppendBuf2)
+				{
+					AppendBuf2 = new char[HMAC_BUF_LEN];
+				}
+				if (NULL == SHA1_Key)
+				{
+					SHA1_Key = new char[HMAC_BUF_LEN];
+				}
+			}
+		}
 
         ~CHMAC_SHA1()
         {
+			//NSLog::instance()->AddLog("~CHMAC_SHA1");
             delete[] szReport ;
             delete[] AppendBuf1 ;
             delete[] AppendBuf2 ;

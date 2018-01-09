@@ -7574,7 +7574,6 @@ int CWLNet::wlCallStatus(unsigned char callType, unsigned long srcId, unsigned l
 		}
 			break;
 		}
-		//m_pManager->freeCurrentTask();
 	}
 	else
 	{
@@ -7695,8 +7694,6 @@ int CWLNet::wlCallStatus(REMOTE_TASK *p, int status)
 	}
 		break;
 	}
-
-	//m_pManager->freeCurrentTask();
 
 	if (callType == GROUP_CALL)
 	{
@@ -8539,16 +8536,13 @@ void CWLNet::calibrationCallID(slot_number_enum slot)
 
 void CWLNet::handleCurTaskCallTimeOut()
 {
-	//m_pManager->lockCurTask();
-	std::lock_guard<std::mutex> locker(m_pManager->m_mutexCurTask);
-	REMOTE_TASK *task = m_pManager->getCurrentTask();
+	REMOTE_TASK p = { 0 };
+	m_pManager->getCurrentTask(p);
+	REMOTE_TASK *task = &p;
 	if (task)
 	{
 		wlRequestCallEnd(task->param.info.callParam.operateInfo);
-		//CALL_OPERATE_PARAM param = task->param.info.callParam.operateInfo;
-		//wlCall(param.callType, CONFIG_LOCAL_RADIO_ID, param.tartgetId, OPERATE_CALL_END, true);
 	}
-	//m_pManager->unLockCurTask();
 }
 
 int CWLNet::wlRequestCallEnd(CALL_OPERATE_PARAM param)
