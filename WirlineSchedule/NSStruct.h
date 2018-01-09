@@ -99,6 +99,7 @@ typedef enum _mic_status_enum
 }mic_status_enum;
 typedef enum _record_call_status_enum
 {
+	VOICE_INIT,
 	VOICE_START,//语音正常开始
 	VOICE_BURST,//语音数据包,如果记录最后为此状态,则代表此条记录因为超时结束
 	VOICE_END_BURST,//语音正常结束,如果记录最后为此状态,则代表此条记录未收到通话状态标识符

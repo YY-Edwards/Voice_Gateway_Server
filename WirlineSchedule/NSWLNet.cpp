@@ -975,7 +975,7 @@ void NSWLNet::AmbeDataThread()
 								  record->call_id = call_id;
 								  record->call_type = call_type;
 								  record->src_slot = src_slot;
-								  g_pNet->wlCall(record->call_type, record->src_radio, record->target_radio, OPERATE_CALL_START, (call_type == g_playCalltype && target_radio == g_playTargetId));
+								  record->setCallStatus(VOICE_START);
 								  AddRecordsItem(record);
 		}
 			break;
@@ -996,7 +996,7 @@ void NSWLNet::AmbeDataThread()
 									  record->call_id = call_id;
 									  record->call_type = call_type;
 									  record->src_slot = src_slot;
-									  g_pNet->wlCall(record->call_type, record->src_radio, record->target_radio, OPERATE_CALL_START, (call_type == g_playCalltype && target_radio == g_playTargetId));
+									  record->setCallStatus(VOICE_START);
 								  }
 								  record->setCallStatus(VOICE_BURST);
 								  record->WriteVoiceFrame(voiceFrame, 21);
@@ -1049,7 +1049,6 @@ void NSWLNet::AmbeDataThread()
 											  {
 												  /*更新通话状态*/
 												  record->setCallStatus(CALL_SESSION_STATUS_HANG);
-												  g_pNet->wlCall(record->call_type, record->src_radio, record->target_radio, OPERATE_CALL_END, (call_type == g_playCalltype && target_radio == g_playTargetId));
 											  }
 										  }
 										  /*如果是由本地发出的通话*/
@@ -1070,9 +1069,8 @@ void NSWLNet::AmbeDataThread()
 												  else if (Call_Session_Call_Hang == callSessionStatus)
 												  {
 													  /*更新通话状态*/
+													  memcpy(m_localRecordFile->SessionId, CurCallCmd.SessionId, SESSION_SIZE);
 													  m_localRecordFile->setCallStatus(CALL_SESSION_STATUS_HANG);
-													  //g_pNet->wlRequestCallEnd(CurCallCmd);
-													  g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS, CurCallCmd.SessionId);
 												  }
 											  }
 										  }
@@ -4154,7 +4152,7 @@ void NSWLNet::SendAmbeData()
 				Build_T_WL_PROTOCOL_21(m_vcBurst, voice.start);
 				if (voice.start)
 				{
-					g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_START | REMOTE_CMD_SUCCESS, CurCallCmd.SessionId);
+					//g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_START | REMOTE_CMD_SUCCESS, CurCallCmd.SessionId);
 					if (m_localRecordFile)
 					{
 						delete m_localRecordFile;
@@ -4167,6 +4165,8 @@ void NSWLNet::SendAmbeData()
 					m_localRecordFile->call_id = CallId();
 					m_localRecordFile->call_type = m_makeCallParam.callType;
 					m_localRecordFile->src_slot = peer->SlotNumber();
+					memcpy(m_localRecordFile->SessionId, CurCallCmd.SessionId, SESSION_SIZE);
+					m_localRecordFile->setCallStatus(VOICE_START);
 				}
 				else
 				{
