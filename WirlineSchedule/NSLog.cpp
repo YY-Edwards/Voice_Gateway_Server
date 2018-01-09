@@ -12,18 +12,18 @@ typedef struct _log_t
 {                                                                                                       \
 	time_t t = time(0);                                                                                 \
 struct tm ttt = *localtime(&t);                                                                     \
-	fprintf(stdout, "[INFO] [%5d %4d-%02d-%02d %02d:%02d:%02d %03d] [%s:%d] " format "\n", \
+	fprintf(stdout, "[INFO] [%5d %4d-%02d-%02d %02d:%02d:%02d %03d] " format "\n", \
 	GetCurrentProcessId(), ttt.tm_year + 1900, ttt.tm_mon + 1, ttt.tm_mday, ttt.tm_hour, \
-	ttt.tm_min, ttt.tm_sec, GetTickCount() % 1000, __FUNCTION__, __LINE__, ##__VA_ARGS__);                            \
+	ttt.tm_min, ttt.tm_sec, GetTickCount() % 1000,##__VA_ARGS__);                            \
 }
 
 #define LOG_ERR(format, ...)                                                                            \
 {                                                                                                       \
 	time_t t = time(0);                                                                                 \
 struct tm ttt = *localtime(&t);                                                                     \
-	fprintf(stderr, "[ERRO] [%5d %4d-%02d-%02d %02d:%02d:%02d %03d] [%s:%d] " format "\n", \
+	fprintf(stderr, "[ERRO] [%5d %4d-%02d-%02d %02d:%02d:%02d %03d] " format "\n", \
 	GetCurrentProcessId(), ttt.tm_year + 1900, ttt.tm_mon + 1, ttt.tm_mday, ttt.tm_hour, \
-	ttt.tm_min, ttt.tm_sec, GetTickCount() % 1000, __FUNCTION__, __LINE__, ##__VA_ARGS__);                            \
+	ttt.tm_min, ttt.tm_sec, GetTickCount() % 1000,##__VA_ARGS__);                            \
 }
 
 NSLog::NSLog()
