@@ -836,7 +836,7 @@ void NSDongle::WritePcm(void* src, int dataLen, pOnData fun, void* param)
 		int size = sizeRing();
 		if (size == SIZE_RING_TX)
 		{
-			m_pLog->AddLog("%s ring buffer will full,then sleep...", m_self.strname);
+			m_pLog->AddLog("%s ring buffer will full,then sleep...,status:%s", m_self.strname, IsIdle() ? "IDLE" : "WORK");
 			Sleep(RX_TX_TIMEOUT);
 		}
 		//LOG_INFO("push");
