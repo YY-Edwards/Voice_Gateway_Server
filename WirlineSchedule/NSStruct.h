@@ -31,7 +31,7 @@ class NSManager;
 #define Mode_Work_CPC (unsigned short)0x0001
 #define Mode_Work_LCP (unsigned short)0x0002
 #define Mode_Work_Mask (unsigned short)0x00ff
-#define TIMEOUT_VOICE_FRAME (600)//600ms为官方文档推荐的数据,实际情况可能需要比这个数据大
+#define TIMEOUT_VOICE_FRAME (600*2)//600ms为官方文档推荐的数据,实际情况可能需要比这个数据大
 
 const int OUT_SAMPLES_PER_20mS = 160;
 const DWORD  INTERNALCOMBUFFSIZE = 2048;

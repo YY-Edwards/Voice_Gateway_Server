@@ -768,13 +768,13 @@ void CManager::handleRemoteTask()
 			{
 			case REMOTE_CMD_CONFIG:
 			{
-									  sprintf_s(m_reportMsg, "Handle REMOTE_CMD_CONFIG");
-									  sendLogToWindow();
+									  NSLog::instance()->AddLog("Handle REMOTE_CMD_CONFIG");
 									  config(&task);
 			}
 				break;
 			case REMOTE_CMD_CALL:
 			{
+									NSLog::instance()->AddLog("Handle REMOTE_CMD_CALL");
 									mic_status_enum micStatus = g_pNSSound->MicStatus();
 									setCurrentTask(&task);
 									CALL_OPERATE_PARAM cmdInfo = task.param.info.callParam.operateInfo;
@@ -797,6 +797,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_SET_PLAY_CALL:
 			{
+											 NSLog::instance()->AddLog("Handle REMOTE_CMD_SET_PLAY_CALL");
 											 setCurrentTask(&task);
 											 setPlayCallOfCare(task.param.info.setCareCallParam.playParam.callType, task.param.info.setCareCallParam.playParam.targetId);
 											 g_pNet->wlPlayStatus(CMD_SUCCESS, task.param.info.setCareCallParam.playParam.targetId);
@@ -804,6 +805,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_STOP_CALL:
 			{
+										 NSLog::instance()->AddLog("Handle REMOTE_CMD_STOP_CALL");
 										 setCurrentTask(&task);
 										 pNSNet = (NSWLNet*)g_pNSNet;
 										 pNSNet->CurCallCmd = task.param.info.callParam.operateInfo;
@@ -813,6 +815,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_GET_CONN_STATUS:
 			{
+											   NSLog::instance()->AddLog("Handle REMOTE_CMD_GET_CONN_STATUS");
 											   pNSNet = (NSWLNet*)g_pNSNet;
 											   FieldValue info(FieldValue::TInt);
 											   if (pNSNet->LeStatus() == ALIVE)
@@ -828,6 +831,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_SESSION_STATUS:
 			{
+											  NSLog::instance()->AddLog("Handle REMOTE_CMD_SESSION_STATUS");
 											  FieldValue value(FieldValue::TArray);
 											  GET_INFO_PARAM info = task.param.info.getInfoParam.getInfo;
 											  /*获取当前已经处理的会话任务状态*/
@@ -840,6 +844,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_SYSTEM_STATUS:
 			{
+											 NSLog::instance()->AddLog("Handle REMOTE_CMD_SYSTEM_STATUS");
 											 GET_INFO_PARAM info = task.param.info.getInfoParam.getInfo;
 											 FieldValue value(FieldValue::TObject);
 											 value.setKeyVal("MnisStatus", FieldValue(MnisStatus()));//mnis状态-Tserver侧修改
@@ -855,6 +860,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_MNIS_QUERY_GPS:
 			{
+											  NSLog::instance()->AddLog("Handle REMOTE_CMD_MNIS_QUERY_GPS");
 											  QUERY_GPS gps = task.param.info.queryGpsParam;
 											  switch (gps.Operate)
 											  {
@@ -876,11 +882,13 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_MNIS_MSG:
 			{
+										NSLog::instance()->AddLog("Handle REMOTE_CMD_MNIS_MSG");
 										m_pMnis->radioSendMsg(task.param.info.msgParam.Contents, task.param.info.msgParam.Target, task.param.info.msgParam.Type, task.param.info.msgParam.SessionId);
 			}
 				break;
 			case REMOTE_CMD_MNIS_STATUS:
 			{
+										   NSLog::instance()->AddLog("Handle REMOTE_CMD_MNIS_STATUS");
 										   switch (task.param.info.mnisStatusParam.getType)
 										   {
 										   case MNIS_GET_TYPE_CONNECT:
@@ -908,10 +916,12 @@ void CManager::handleRemoteTask()
 				//case is no use
 			case REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG:
 			{
+														   NSLog::instance()->AddLog("Handle REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG");
 														   m_pMnis->locationIndoorConfig(task.param.info.locationParam.internal, task.param.info.locationParam.ibconNum, task.param.info.locationParam.isEmergency);
 			}
 				break;
 			default:
+				NSLog::instance()->AddLog("Handle Unknown %d", task.cmd);
 				break;
 			}
 		}
@@ -933,13 +943,18 @@ void CManager::stop()
 
 void CManager::getCurrentTask(REMOTE_TASK &task)
 {
+	NSLog::instance()->AddLog("Lock m_mutexCurTask");
+	std::lock_guard <std::mutex> locker(m_mutexCurTask);
 	task = m_currentTask;
+	NSLog::instance()->AddLog("UnLock m_mutexCurTask");
 }
 
 void CManager::setCurrentTask(REMOTE_TASK* value)
 {
+	NSLog::instance()->AddLog("Lock m_mutexCurTask");
 	std::lock_guard <std::mutex> locker(m_mutexCurTask);
 	m_currentTask = *value;
+	NSLog::instance()->AddLog("UnLock m_mutexCurTask");
 }
 
 void CManager::OnConnect(CRemotePeer* pRemotePeer)
@@ -1339,12 +1354,14 @@ void CManager::setbNeedStopCall(bool value)
 
 void CManager::getCurrentTaskInfo(int srcId, std::string &sessionid, int &cmd)
 {
+	NSLog::instance()->AddLog("Lock m_mutexCurTask");
 	std::lock_guard<std::mutex> locker(m_mutexCurTask);
 	if (m_currentTask.cmd != 0 && sessionid == "" && srcId == CONFIG_LOCAL_RADIO_ID)
 	{
 		sessionid = m_currentTask.param.info.callParam.operateInfo.SessionId;
 		cmd = m_currentTask.cmd;
 	}
+	NSLog::instance()->AddLog("UnLock m_mutexCurTask");
 }
 
 void CManager::handleCurTaskTimeOut()
