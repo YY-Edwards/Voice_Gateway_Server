@@ -10,6 +10,8 @@
 #include "NSWLPeer.h"
 #include "WLNet.h"
 
+#define MAX_RECORD_BUFFER_SIZE (100*1024)
+
 NSRecordFile::NSRecordFile(NSManager* pManager, NSWLPeer* peer)
 :src_radio(0)
 , target_radio(0)
@@ -26,6 +28,7 @@ NSRecordFile::NSRecordFile(NSManager* pManager, NSWLPeer* peer)
 , m_pAmbe(NULL)
 , m_peer(peer)
 , m_pManager(pManager)
+, buffer((char*)malloc(MAX_RECORD_BUFFER_SIZE))
 {
 	if (m_peer) m_peer->setRecordFile(this);
 	GetLocalTime(&time);
@@ -48,6 +51,8 @@ NSRecordFile::~NSRecordFile()
 		m_peer->setRecordFile(NULL);
 		m_peer = NULL;
 	}
+	free(buffer);
+	buffer = NULL;
 }
 
 void NSRecordFile::WriteVoiceFrame(const char* pAmbe, int size, bool needDongle /*= true*/)
@@ -71,8 +76,16 @@ void NSRecordFile::WriteVoiceFrame(const char* pAmbe, int size, bool needDongle 
 	}
 
 
-	memcpy(buffer + length, pAmbe, size);
-	length += size;
+	if (NULL != buffer && (length + size) > MAX_RECORD_BUFFER_SIZE)
+	{
+		buffer = (char*)realloc(buffer, length + size);
+	}
+	if (buffer)
+	{
+		memcpy(buffer + length, pAmbe, size);
+		length += size;
+	}
+
 	timeout = GetTickCount() + TIMEOUT_VOICE_FRAME;//等待Voice_Burst或者Voice_End标识
 }
 
