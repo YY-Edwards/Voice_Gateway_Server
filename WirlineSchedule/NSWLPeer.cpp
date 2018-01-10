@@ -25,7 +25,7 @@ NSWLPeer::NSWLPeer(wl_peer_build_param_t* p)
 	m_sockaddr.sin_family = AF_INET;
 	m_sockaddr.sin_addr.s_addr = p->addr;
 	m_sockaddr.sin_port = htons(p->port);
-#ifdef _DEBUG
+#if _DEBUG
 	in_addr addr;
 	addr.S_un.S_addr = p->addr;
 	char temp[128] = { 0 };

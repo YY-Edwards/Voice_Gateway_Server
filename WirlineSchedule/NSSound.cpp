@@ -3,6 +3,7 @@
 #include "NSLog.h"
 #include <process.h>
 #include "NSAmbe.h"
+#include "NSWLNet.h"
 
 #define RING_SIZE_OUT 64
 
@@ -19,7 +20,7 @@ NSSound::NSSound()
 , m_waveOutCurrentBlock(0)
 , m_hWaveOut(NULL)
 , m_hWaveIn(NULL)
-, m_pAmbe(NULL)
+, m_pAmbe(new NSAmbe(g_pNSManager))
 , m_bWaveInReset(false)
 , m_bufflag(0)
 , m_micStatus(Mic_Error)
@@ -509,6 +510,7 @@ void CALLBACK NSSound::waveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwInstance, 
 
 void NSSound::handleWaveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwParam1, DWORD_PTR dwParam2)
 {
+	bool bError = false;
 	switch (uMsg)
 	{
 	case WIM_CLOSE:
@@ -519,11 +521,6 @@ void NSSound::handleWaveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwParam1, DWORD
 						  {
 							  waveInUnprepareHeader(m_hWaveIn, &m_whis[i], sizeof (WAVEHDR));
 						  }
-					  }
-					  if (m_pAmbe)
-					  {
-						  m_pAmbe->WirteEnd();
-						  m_pAmbe = NULL;
 					  }
 					  m_hWaveIn = NULL;
 	}
@@ -543,11 +540,13 @@ void NSSound::handleWaveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwParam1, DWORD
 						 /*处理音频数据*/
 						 if (m_pAmbe)
 						 {
-							 m_pAmbe->Pcm2Ambe((unsigned char*)m_cbBuffer[m_bufflag], BUFFER_SIZE);
+							 int rlt = m_pAmbe->Pcm2Ambe((unsigned char*)m_cbBuffer[m_bufflag], BUFFER_SIZE);
+							 bError = (0 != rlt);
 						 }
 						 else
 						 {
 							 m_pLog->AddLog("m_pAmbe is null");
+							 bError = true;
 						 }
 						 m_bufflag = (m_bufflag + 1) % BUFFER_NUM;
 					 }
@@ -561,11 +560,13 @@ void NSSound::handleWaveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwParam1, DWORD
 							 /*处理音频数据*/
 							 if (m_pAmbe)
 							 {
-								 m_pAmbe->Pcm2Ambe((unsigned char*)pwhi->lpData, pwhi->dwBytesRecorded);
+								 int rlt = m_pAmbe->Pcm2Ambe((unsigned char*)pwhi->lpData, pwhi->dwBytesRecorded);
+								 bError = (0 != rlt);
 							 }
 							 else
 							 {
 								 m_pLog->AddLog("m_pAmbe is null");
+								 bError = true;
 							 }
 						 }
 					 }
@@ -573,18 +574,16 @@ void NSSound::handleWaveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwParam1, DWORD
 		break;
 	case WIM_OPEN:
 	{
-					 /*申请dongle*/
-					 if (m_pAmbe)
-					 {
-						 m_pAmbe->WirteEnd();
-						 m_pAmbe = NULL;
-					 }
-					 m_pAmbe = new NSAmbe(g_pNSManager);
 					 setMicStatus(Mic_Work);
 	}
 		break;
 	default:
 		break;
+	}
+	if (bError)
+	{
+		NSWLNet* pNet = (NSWLNet*)g_pNSNet;
+		pNet->CallStopUnnormal();
 	}
 }
 
@@ -595,6 +594,21 @@ void NSSound::setMicStatus(mic_status_enum value)
 		m_pLog->AddLog("====Mic Status From %d To %d====", m_micStatus, value);
 		m_micStatus = value;
 		ContinueInThread();
+	}
+}
+
+void NSSound::DongleInfo(char* info)
+{
+	if (info)
+	{
+		if (m_pAmbe)
+		{
+			m_pAmbe->AboutInfo(info);
+		}
+		else
+		{
+			sprintf(info, "m_pAmbe is null");
+		}
 	}
 }
 

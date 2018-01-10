@@ -8,6 +8,7 @@
 #include "NSAmbe.h"
 #include "NSManager.h"
 #include "NSWLPeer.h"
+#include "WLNet.h"
 
 NSRecordFile::NSRecordFile(NSManager* pManager, NSWLPeer* peer)
 :src_radio(0)
@@ -17,7 +18,7 @@ NSRecordFile::NSRecordFile(NSManager* pManager, NSWLPeer* peer)
 , src_peer_id(0)
 , src_rssi(0)
 , src_slot(0)
-, call_status(VOICE_START)
+, call_status(VOICE_INIT)
 , timeout(GetTickCount() + TIMEOUT_VOICE_FRAME)
 , m_pLog(NSLog::instance())
 , id(0)
@@ -32,7 +33,7 @@ NSRecordFile::NSRecordFile(NSManager* pManager, NSWLPeer* peer)
 
 NSRecordFile::~NSRecordFile()
 {
-#ifdef _DEBUG
+#if _DEBUG
 	char temp[1024] = { 0 };
 	sprintf_s(temp, "Voice Record CallId %lu From %lu To %lu On Peer:%lu in Slot 0x%02x Delete", call_id, src_radio, target_radio, src_peer_id, src_slot);
 	m_pLog->AddLog(temp);
@@ -77,7 +78,7 @@ void NSRecordFile::WriteVoiceFrame(const char* pAmbe, int size, bool needDongle 
 
 bool NSRecordFile::TimeOut()
 {
-#ifdef _DEBUG
+#if _DEBUG
 	if (timeout < GetTickCount())
 	{
 		char temp[64] = { 0 };
@@ -116,25 +117,48 @@ unsigned int NSRecordFile::Length()
 
 void NSRecordFile::setCallStatus(int value)
 {
-	char temp[1024] = { 0 };
+
 	if (value != call_status)
 	{
+#if _DEBUG
+		m_pLog->AddLog("====CallStatus From %d To %d On CallId %d====",call_status, value, call_id);
+#endif
 		call_status = value;
-#ifdef _DEBUG
-		if (VOICE_BURST == call_status)
+		if (VOICE_START == call_status)
 		{
+			if (src_radio == CONFIG_LOCAL_RADIO_ID)
+			{
+				g_pNet->wlCallStatus(call_type, src_radio, target_radio, STATUS_CALL_START | REMOTE_CMD_SUCCESS, SessionId);
+			}
+			else
+			{
+				g_pNet->wlCall(call_type, src_radio, target_radio, OPERATE_CALL_START, (call_type == g_playCalltype && target_radio == g_playTargetId));
+			}
+		}
+		else if (VOICE_BURST == call_status)
+		{
+#if _DEBUG
+			char temp[1024] = { 0 };
 			sprintf_s(temp, "Voice Record CallId %lu From %lu To %lu On Peer:%lu in Slot 0x%02x VOICE_BURST", call_id, src_radio, target_radio, src_peer_id, src_slot);
 			m_pLog->AddLog(temp);
+#endif
 		}
 		else if (CALL_SESSION_STATUS_HANG == call_status)
 		{
 			timeout = GetTickCount() + g_hang_time;//等待Session_End标识
+			if (src_radio == CONFIG_LOCAL_RADIO_ID)
+			{
+				g_pNet->wlCallStatus(call_type, src_radio, target_radio, STATUS_CALL_END | REMOTE_CMD_SUCCESS, SessionId);
+			}
+			else
+			{
+				g_pNet->wlCall(call_type, src_radio, target_radio, OPERATE_CALL_END, (call_type == g_playCalltype && target_radio == g_playTargetId));
+			}
 		}
 		else if (VOICE_END_BURST == call_status)
 		{
 			timeout = GetTickCount() + TIMEOUT_VOICE_FRAME;//等待Session_Hang标识
 		}
-#endif
 	}
 }
 

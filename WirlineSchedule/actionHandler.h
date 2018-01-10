@@ -10,25 +10,39 @@
 /*²Î¿¼ÎÄµµ: http://120.26.88.11/w/dispatcher/trbox3.0/rpc/
 /************************************************************************/
 
+inline int size_task()
+{
+	int rlt = 0;
+	TRYLOCK(g_mutexRemoteCommandTaskQueue);
+	rlt = g_remoteCommandTaskQueue.size();
+	RELEASELOCK(g_mutexRemoteCommandTaskQueue);
+	return rlt;
+}
+
 inline void push_front_task(REMOTE_TASK* task)
 {
-	WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	//WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	TRYLOCK(g_mutexRemoteCommandTaskQueue);
 	g_remoteCommandTaskQueue.push_front(task);
-	SetEvent(g_taskLockerEvent);
+	RELEASELOCK(g_mutexRemoteCommandTaskQueue);
+	//SetEvent(g_taskLockerEvent);
 	SetEvent(g_waitHandleRemoteTask);
 }
 
 inline void push_back_task(REMOTE_TASK* task)
 {
-	WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	//WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	TRYLOCK(g_mutexRemoteCommandTaskQueue);
 	g_remoteCommandTaskQueue.push_back(task);
-	SetEvent(g_taskLockerEvent);
+	RELEASELOCK(g_mutexRemoteCommandTaskQueue);
+	//SetEvent(g_taskLockerEvent);
 	SetEvent(g_waitHandleRemoteTask);
 }
 
 inline void erase_front_task()
 {
-	WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	//WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	TRYLOCK(g_mutexRemoteCommandTaskQueue);
 	REMOTE_TASK *p = g_remoteCommandTaskQueue.front();
 	if (p)
 	{
@@ -36,23 +50,17 @@ inline void erase_front_task()
 		delete p;
 		p = NULL;
 	}
-	SetEvent(g_taskLockerEvent);
+	RELEASELOCK(g_mutexRemoteCommandTaskQueue);
+	//SetEvent(g_taskLockerEvent);
 }
 
 inline void get_front_task(REMOTE_TASK &target)
 {
-	WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	//WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	TRYLOCK(g_mutexRemoteCommandTaskQueue);
 	target = *g_remoteCommandTaskQueue.front();
-	SetEvent(g_taskLockerEvent);
-}
-
-inline void requestRemoteTaskLock()
-{
-	WaitForSingleObject(g_taskLockerEvent, INFINITE);
-}
-inline void releaseRemoteTaskLock()
-{
-	SetEvent(g_taskLockerEvent);
+	RELEASELOCK(g_mutexRemoteCommandTaskQueue);
+	//SetEvent(g_taskLockerEvent);
 }
 
 inline void addCRemotePeer(TcpClient* client)

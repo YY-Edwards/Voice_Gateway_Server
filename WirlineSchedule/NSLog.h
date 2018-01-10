@@ -3,6 +3,13 @@
 #include "NS\mutex.h"
 #include "linklist.h"
 
+#define SIZE_MAX_MSG 5118
+
+typedef struct _log_t
+{
+	char message[SIZE_MAX_MSG];
+}log_t;
+
 class NSLog
 {
 public:
@@ -18,12 +25,15 @@ private:
 	bool m_bWork;
 	HANDLE m_pLogThread;
 	LOCKERTYPE m_mutexLog;
-	pLinkItem m_logs;
+	pLinkList m_logs;
+	HANDLE m_waitLogEvent;
 
 	void Initialize();
 	static unsigned int __stdcall LogthreadProc(void* pArguments);
 	void Logthread();
 	void clearLogs();
+	void AddLogsItem(log_t* log);
+	void handleMsg(char* pMsg,bool bPrint);
 };
 
 

@@ -15,7 +15,7 @@ NSDongle::NSDongle(NSManager* pManager)
 , m_pSerialTxThread(NULL)
 , m_bRun(false)
 , m_pCurHanleRing(NULL)
-, m_idleCount(0)
+, m_idleTimeTickCount(0)
 , m_bIdle(true)
 , m_ringBuffer(createRingBuffer(SIZE_RING_TX + 1, sizeof(change_data_t)))
 , m_mutexRing(INITLOCKER())
@@ -23,6 +23,11 @@ NSDongle::NSDongle(NSManager* pManager)
 , m_idxIdle(0)
 , m_pManager(pManager)
 , m_pLog(NSLog::instance())
+, m_prevTime(0)
+, m_frameCount(0)
+, m_totalTime(0)
+, m_curAvg(0.0)
+, m_sendCount(0)
 {
 	m_pChangeDataPcmPools = (change_data_t*)calloc(m_sizePool, sizeof(change_data_t));
 	m_pChangeDataAmbePools = (change_data_t*)calloc(m_sizePool, sizeof(change_data_t));
@@ -410,7 +415,6 @@ void NSDongle::WriteAmbe(void* src, int dataLen, pOnData fun, void* param)
 		m_pLog->AddLog("%s src is NULL", m_self.strname);
 		return;
 	}
-	//m_pLog->AddLog("%s ambe to pcm start", m_self.strname);
 	char *pBuffer = (char*)src;
 	int count = 0;
 	int leftLen = dataLen;
@@ -438,15 +442,34 @@ void NSDongle::WriteAmbe(void* src, int dataLen, pOnData fun, void* param)
 		markAmbeBufferFilled(pAMBEFrame);
 
 		/*写入缓冲*/
-		int size =sizeRing();
-		if (size == SIZE_RING_TX)
+		//int size =sizeRing();
+		//if (size == SIZE_RING_TX)
+		//{
+		//	m_pLog->AddLog("%s ring buffer will full,then sleep...", m_self.strname);
+		//	Sleep(RX_TX_TIMEOUT);
+		//}
+		//if (!addRingItem(item))
+		//{
+		//	m_pLog->AddLog("%s ring buffer push fail", m_self.strname);
+		//	m_idxIdle--;
+		//	break;
+		//}
+		if (sizeRing() < SIZE_RING_TX)
 		{
-			m_pLog->AddLog("%s ring buffer will full,then sleep...", m_self.strname);
-			Sleep(RX_TX_TIMEOUT);
+			if (!addRingItem(item))
+			{
+				char temp[1024] = { 0 };
+				StatusInfo(temp);
+				m_pLog->AddLog("ambe ring buffer push fail,%s", temp);
+				m_idxIdle--;
+				break;
+			}
 		}
-		if (!addRingItem(item))
+		else
 		{
-			m_pLog->AddLog("%s ring buffer push fail", m_self.strname);
+			char temp[1024] = { 0 };
+			StatusInfo(temp);
+			m_pLog->AddLog("ambe ring buffer full,%s", temp);
 			m_idxIdle--;
 			break;
 		}
@@ -624,9 +647,26 @@ void NSDongle::parseDVSImsg(DVSI3000struct* pMsg)
 
 void NSDongle::initRead()
 {
-	m_bIdle = false;
-	m_idleCount = GetTickCount() + MILSECONDS_IDLE_REAL;
-	setUsing(true);
+#if _DEBUG
+	unsigned long cur = GetTickCount();
+	int dealTime = cur - m_prevTime;
+	if (dealTime > MILSECONDS_IDLE_REAL)
+	{
+		m_frameCount = 0;
+		m_totalTime = 0;
+		m_curAvg = 0;
+		m_sendCount = 0;
+	}
+	else
+	{
+		m_frameCount++;
+		m_totalTime += dealTime;
+		m_curAvg = (double)m_totalTime / (double)m_frameCount;
+	}
+	m_prevTime = cur;
+	//m_pLog->AddLog("%s cur frame time:%dms,avg:%.4fms", Name(), dealTime, rlt);
+#endif
+	alive();
 	unsigned long dwRead = 0;
 	unsigned long result = 0;
 	/*初始化读*/
@@ -647,9 +687,7 @@ void NSDongle::initRead()
 
 void NSDongle::initWrite()
 {
-	m_bIdle = false;
-	m_idleCount = GetTickCount() + MILSECONDS_IDLE_REAL;
-	setUsing(true);
+	alive();
 	unsigned long dwWritten = 0;
 	unsigned long result = 0;
 	const void* pdata = NULL;
@@ -688,6 +726,7 @@ void NSDongle::initWrite()
 
 void NSDongle::handleOutPcm(unsigned __int8* pSamples)
 {
+	m_sendCount++;
 	int i = 0;
 	//定义新的数据指针
 	out_data_pcm_t* pData = &m_outPcmData;
@@ -753,33 +792,33 @@ void NSDongle::clearCurHandleRing()
 
 void NSDongle::setUsing(bool value)
 {
-	if (m_self.isusing != value)
-	{
-		m_self.isusing = value;
-	}
+	m_self.isusing = value;
 }
 
 void NSDongle::handleInitWrite()
 {
 	if (!m_self.isusing && 0 < sizeRing())
 	{
+		setUsing(true);
 		initWrite();
 	}
 }
 
 void NSDongle::handleEndWork()
 {
-	if (!m_bIdle && m_idleCount < GetTickCount())
+	if (!m_bIdle)
 	{
-		m_bIdle = true;
-		if (m_pCurHanleRing)
+		if (m_idleTimeTickCount < GetTickCount())
 		{
-			(*(m_pCurHanleRing->pOnData))(NULL, 0, 0, m_pCurHanleRing->param);
-			clearCurHandleRing();
-			m_idxIdle = 0;
+			m_bIdle = true;
+			if (m_pCurHanleRing)
+			{
+				(*(m_pCurHanleRing->pOnData))(NULL, 0, 0, m_pCurHanleRing->param);
+				clearCurHandleRing();
+			}
+			/*回收此Dongle*/
+			m_pManager->AddIdleDonglesItem(this);
 		}
-		/*回收此Dongle*/
-		m_pManager->AddIdleDonglesItem(this);
 	}
 }
 
@@ -797,6 +836,15 @@ bool NSDongle::addRingItem(change_data_t* p)
 
 void NSDongle::WritePcm(void* src, int dataLen, pOnData fun, void* param)
 {
+	change_data_t tmpItem = { 0 };
+	change_data_t* pTmpItem = &tmpItem;
+	while (g_should_delete > 0)
+	{
+		popRingItem(pTmpItem);
+		g_should_delete--;
+	}
+	pTmpItem = NULL;
+
 	if (NULL == src || 0 >= dataLen)
 	{
 		m_pLog->AddLog("%s src is NULL", m_self.strname);
@@ -833,16 +881,35 @@ void NSDongle::WritePcm(void* src, int dataLen, pOnData fun, void* param)
 		length -= 320;
 
 		/*写入缓冲*/
-		int size = sizeRing();
-		if (size == SIZE_RING_TX)
+		//int size = sizeRing();
+		//if (size == SIZE_RING_TX)
+		//{
+		//	m_pLog->AddLog("%s pcm ring buffer will full,then sleep...,status:%s", m_self.strname, IsIdle() ? "IDLE" : "WORK");
+		//	Sleep(RX_TX_TIMEOUT);
+		//}
+		////LOG_INFO("push");
+		//if (!addRingItem(item))
+		//{
+		//	m_pLog->AddLog("%s ring buffer push fail", m_self.strname);
+		//	m_idxIdle--;
+		//	break;
+		//}
+		if (sizeRing() < SIZE_RING_TX)
 		{
-			m_pLog->AddLog("%s ring buffer will full,then sleep...", m_self.strname);
-			Sleep(RX_TX_TIMEOUT);
+			if (!addRingItem(item))
+			{
+				char temp[1024] = { 0 };
+				StatusInfo(temp);
+				m_pLog->AddLog("pcm ring buffer push fail,%s", temp);
+				m_idxIdle--;
+				break;
+			}
 		}
-		//LOG_INFO("push");
-		if (!addRingItem(item))
+		else
 		{
-			m_pLog->AddLog("%s ring buffer push fail", m_self.strname);
+			char temp[1024] = { 0 };
+			StatusInfo(temp);
+			m_pLog->AddLog("pcm ring buffer full,%s", temp);
 			m_idxIdle--;
 			break;
 		}
@@ -863,6 +930,7 @@ change_data_t* NSDongle::getFreePcmChangeDataBuffer(pOnData fun, void* param)
 
 void NSDongle::handleOutAmbe(unsigned __int8* pSamples)
 {
+	m_sendCount++;
 	if (m_pCurHanleRing)
 	{
 		if (m_pCurHanleRing->pOnData)
@@ -899,4 +967,37 @@ void NSDongle::popRingItem(change_data_t* &item)
 char* NSDongle::Name()
 {
 	return m_self.strname;
+}
+
+void NSDongle::StatusInfo(char* msg)
+{
+	if (msg)
+	{
+		sprintf(msg, "name:%s,work status:%s, avg : %.4fms, waste time : %lums, frame count : %lu,send count:%lu,ring size:%d"
+			, Name()
+			, IsIdle() ? "IDLE" : "WORK"
+			, m_curAvg, m_totalTime
+			, m_frameCount
+			, m_sendCount
+			, sizeRing());
+	}
+}
+void NSDongle::ReadyUse()
+{
+	m_pLog->AddLog("%s reset start",Name());
+	m_idxIdle = 0;
+	change_data_t item = { 0 };
+	change_data_t* pItem = &item;
+	while (sizeRing() > 0)
+	{
+		popRingItem(pItem);
+	}
+	pItem = NULL;
+	m_pLog->AddLog("%s reset end", Name());
+}
+
+void NSDongle::alive()
+{
+	m_bIdle = false;
+	m_idleTimeTickCount = GetTickCount() + MILSECONDS_IDLE_REAL;
 }

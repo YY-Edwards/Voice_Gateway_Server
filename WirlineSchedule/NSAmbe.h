@@ -17,7 +17,7 @@ public:
 	/*测试AMBE转PCM并把PCM文件写入指定文件*/
 	void Ambe2Pcm(void* pBuffer, unsigned long length);
 	/*测试PCM转AMBE并把AMBE文件写入指定文件*/
-	void Pcm2Ambe(void* pBuffer, unsigned long length);
+	int Pcm2Ambe(void* pBuffer, unsigned long length);
 	/*PCM数据回调*/
 	void OnDataPcm(void* pData, unsigned long length, unsigned long index);
 	/*AMBE数据回调*/
@@ -30,6 +30,8 @@ public:
 	static void OnDataAmbeFun(void* pData, unsigned long length, unsigned long index, void* param);
 	/*表示写入完毕*/
 	void WirteEnd();
+	/*当前dongle的工作状态*/
+	void AboutInfo(char* info);
 private:
 	NSManager* m_pManager;
 	bool m_bWriteEnd;

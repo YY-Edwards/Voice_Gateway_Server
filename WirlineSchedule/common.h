@@ -25,6 +25,7 @@
 
 #include "WLSocketLog.h"
 #include "../lib/radio/common.h"
+#include "NS/mutex.h"
 
 #ifdef _DEBUG
 #define DEBUG_CLIENTBLOCK new( _CLIENT_BLOCK, __FILE__, __LINE__)
@@ -205,7 +206,7 @@ extern long CONFIG_TIMEOUT_SECONDS;//Õ®ª∞«Î«Û°¢ªÒ»°‘⁄œﬂ…Ë±∏¡–±Ì«Î«Ûµƒ≥¨ ±œÏ”¶ ±º
 
 //////////////////////////////////////////////////////////////////////////
 /*–≈∫≈*/
-extern HANDLE g_taskLockerEvent;
+//extern HANDLE g_taskLockerEvent;
 extern HANDLE g_waitHandleRemoteTask;
 /*JSONœ‡πÿ‘∂≥Ã√¸¡Ó*/
 #define REMOTE_CMD_CONFIG 0x01
@@ -412,12 +413,12 @@ typedef struct
 }REMOTE_TASK;
 /*‘∂≥Ã√¸¡Ó»ŒŒÒ∂”¡–*/
 extern std::list<REMOTE_TASK*> g_remoteCommandTaskQueue;
+extern LOCKERTYPE g_mutexRemoteCommandTaskQueue;
 extern unsigned long long g_sn;
 extern std::list<TcpClient*> g_onLineClients;
 //extern TcpClient *pTempClient;
 //////////////////////////////////////////////////////////////////////////
 
-#define ALL_CALL_ID 255
 extern unsigned long CONFIG_CURRENT_TAGET;//µ±«∞Õ®ª∞ƒø±Í
 //extern bool g_bIsHaveDefaultGroupCall;
 //extern bool g_bIsHavePrivateCall;

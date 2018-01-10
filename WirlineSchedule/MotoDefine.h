@@ -119,6 +119,7 @@ static const unsigned char Channel_Control_Request_Status_Interrupting = 0x06;
 static const unsigned char Access_Criteria_Polite_Access = 0x01;
 #define CSBK_ARGUMENTS 0x0000000000000000	//in voice call csbk auguments should set 0
 #define PREAMBLE_DURATION 0x00	//Preamble Duration. For voice call set it to 0.
+#define ALL_CALL_ID 255
 
 #define BURST_A 0x01
 #define BURST_B 0x02

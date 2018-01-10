@@ -22,6 +22,8 @@ public:
 	void WritePcm(void* src, int dataLen, pOnData fun, void* param);
 	/*返回dongle的名字*/
 	char* Name();
+	void StatusInfo(char* msg);
+	void ReadyUse();
 private:
 	dongle_t m_self;//dongle信息
 	HANDLE m_hReadSerialEvent;//读事件
@@ -41,7 +43,7 @@ private:
 	pRingBuffer m_ringBuffer;
 	//CAmbe* m_parent;
 	change_data_t* m_pCurHanleRing;
-	unsigned long m_idleCount;
+	unsigned long m_idleTimeTickCount;
 	bool m_bIdle;
 	change_data_t* m_pChangeDataPcmPools;//数据容器池
 	change_data_t* m_pChangeDataAmbePools;//数据容器池
@@ -52,7 +54,13 @@ private:
 	out_data_pcm_t m_outPcmData;
 	NSManager* m_pManager;
 	NSLog* m_pLog;
+	unsigned long m_prevTime;
+	unsigned long m_frameCount;
+	unsigned long m_totalTime;
+	unsigned long m_sendCount;
+	double m_curAvg;
 
+	void alive();
 	/*清除串口读写缓存*/
 	bool purgeCommDongle(dongle_t* p);
 	/*打开dongle*/

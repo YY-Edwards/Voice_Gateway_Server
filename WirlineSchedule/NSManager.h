@@ -26,6 +26,7 @@ public:
 	void AddIdleDonglesItem(NSDongle* p);
 	void HandleAmbeData(void* pData, unsigned long length);
 	int SizeDongle();
+	int SizeIdleDongle();
 private:
 	//TIMECAPS m_theTimeCaps;
 	LOCKERTYPE m_mutexDongles;//dongle³Ø»¥³âËø

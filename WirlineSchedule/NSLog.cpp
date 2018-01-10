@@ -3,34 +3,30 @@
 #include <process.h>
 #include <time.h>
 
-typedef struct _log_t
-{
-	char* pData;
-}log_t;
-
-#define LOG_INFO(format, ...)                                                                           \
-{                                                                                                       \
-	time_t t = time(0);                                                                                 \
-struct tm ttt = *localtime(&t);                                                                     \
-	fprintf(stdout, "[INFO] [%5d %4d-%02d-%02d %02d:%02d:%02d %03d] [%s:%d] " format "\n", \
-	GetCurrentProcessId(), ttt.tm_year + 1900, ttt.tm_mon + 1, ttt.tm_mday, ttt.tm_hour, \
-	ttt.tm_min, ttt.tm_sec, GetTickCount() % 1000, __FUNCTION__, __LINE__, ##__VA_ARGS__);                            \
-}
-
-#define LOG_ERR(format, ...)                                                                            \
-{                                                                                                       \
-	time_t t = time(0);                                                                                 \
-struct tm ttt = *localtime(&t);                                                                     \
-	fprintf(stderr, "[ERRO] [%5d %4d-%02d-%02d %02d:%02d:%02d %03d] [%s:%d] " format "\n", \
-	GetCurrentProcessId(), ttt.tm_year + 1900, ttt.tm_mon + 1, ttt.tm_mday, ttt.tm_hour, \
-	ttt.tm_min, ttt.tm_sec, GetTickCount() % 1000, __FUNCTION__, __LINE__, ##__VA_ARGS__);                            \
-}
+//#define LOG_INFO(format, ...)                                                                           \
+//{                                                                                                       \
+//	time_t t = time(0);                                                                                 \
+//struct tm ttt = *localtime(&t);                                                                     \
+//	fprintf(stdout, "[INFO] [%5d %4d-%02d-%02d %02d:%02d:%02d %03d] " format "\n", \
+//	GetCurrentProcessId(), ttt.tm_year + 1900, ttt.tm_mon + 1, ttt.tm_mday, ttt.tm_hour, \
+//	ttt.tm_min, ttt.tm_sec, GetTickCount() % 1000,##__VA_ARGS__);                            \
+//}
+//
+//#define LOG_ERR(format, ...)                                                                            \
+//{                                                                                                       \
+//	time_t t = time(0);                                                                                 \
+//struct tm ttt = *localtime(&t);                                                                     \
+//	fprintf(stderr, "[ERRO] [%5d %4d-%02d-%02d %02d:%02d:%02d %03d] " format "\n", \
+//	GetCurrentProcessId(), ttt.tm_year + 1900, ttt.tm_mon + 1, ttt.tm_mday, ttt.tm_hour, \
+//	ttt.tm_min, ttt.tm_sec, GetTickCount() % 1000,##__VA_ARGS__);                            \
+//}
 
 NSLog::NSLog()
 :m_bWork(false)
 , m_pLogThread(NULL)
 , m_mutexLog(INITLOCKER())
 , m_logs(NULL)
+, m_waitLogEvent(CreateEvent(NULL,FALSE,FALSE,NULL))
 {
 
 }
@@ -67,6 +63,7 @@ void NSLog::Initialize()
 		{
 			return;
 		}
+		BOOL rlt =SetThreadPriority(m_pLogThread, THREAD_PRIORITY_BELOW_NORMAL);
 		m_bWork = true;
 		ResumeThread(m_pLogThread);
 	}
@@ -84,32 +81,37 @@ unsigned int __stdcall NSLog::LogthreadProc(void* pArguments)
 
 void NSLog::Logthread()
 {
+	pLinkItem it = NULL;
 	while (m_bWork)
 	{
 		TRYLOCK(m_mutexLog);
-		pLinkItem it = popFront(&m_logs);
-		if (it)
+		it = popFront(&m_logs);
+		while (it)
 		{
 			log_t* p = (log_t*)it->data;
 			if (p)
 			{
-				if (p->pData)
-				{
-#ifdef _DEBUG
-					LOG_INFO("%s", p->pData);
-					LOG(INFO) << p->pData;
-#endif // _DEBUG
-					delete p->pData;
-					p->pData = NULL;
-				}
+				handleMsg(p->message, true);
 				delete p;
 				p = NULL;
 			}
 			freeList(it);
+			it = popFront(&m_logs);
 		}
 		RELEASELOCK(m_mutexLog);
-		Sleep(INTERVAL_LOG);
+		WaitForSingleObject(m_waitLogEvent, INFINITE);
 	}
+}
+
+void NSLog::handleMsg(char* pMsg, bool bPrint)
+{
+#if _DEBUG
+	if (bPrint)
+	{
+		printf("%s", pMsg);
+	}
+	LOG(INFO) << pMsg;
+#endif // _DEBUG
 }
 
 void NSLog::Stop()
@@ -117,6 +119,7 @@ void NSLog::Stop()
 	m_bWork = false;
 	if (NULL != m_pLogThread)
 	{
+		SetEvent(m_waitLogEvent);
 		WaitForSingleObject(m_pLogThread, 1000);
 		CloseHandle(m_pLogThread);
 		m_pLogThread = NULL;
@@ -130,7 +133,7 @@ void NSLog::AddLog(const char* format, ...)
 		return;
 	}
 
-	char buf[4096];
+	char buf[4096] = { 0 };
 	va_list args;
 	va_start(args, format);
 	_vsnprintf(buf, sizeof(buf)-1, format, args);
@@ -141,30 +144,11 @@ void NSLog::AddLog(const char* format, ...)
 	{
 		return;
 	}
-
-#ifdef _DEBUG
-	LOG_INFO("%s", buf);
-#else
-	log_t* pInfo = new log_t;
-	pInfo->pData = new char[length+1];
-	memset(pInfo->pData, 0, length + 1);
-	strcpy(pInfo->pData, buf);
-	TRYLOCK(m_mutexLog);
-	if (NULL == m_logs)
-	{
-		m_logs = createLinkList();
-		m_logs->data = pInfo;
-	}
-	else if (NULL == m_logs->data)
-	{
-		m_logs->data = pInfo;
-	}
-	else
-	{
-		appendData(&m_logs,pInfo);
-	}
-	RELEASELOCK(m_mutexLog);
-#endif // _DEBUG
+	log_t* pLog = new log_t;
+	time_t t = time(0);
+	struct tm ttt = *localtime(&t);
+	sprintf(pLog->message, "[INFO] [%5d %4d-%02d-%02d %02d:%02d:%02d %03d] %s\n", GetCurrentProcessId(), ttt.tm_year + 1900, ttt.tm_mon + 1, ttt.tm_mday, ttt.tm_hour, ttt.tm_min, ttt.tm_sec, GetTickCount() % 1000, buf);
+	AddLogsItem(pLog);
 }
 
 void NSLog::clearLogs()
@@ -176,11 +160,7 @@ void NSLog::clearLogs()
 		log_t* p = (log_t*)it->data;
 		if (p)
 		{
-			if (p->pData)
-			{
-				delete p->pData;
-				p->pData = NULL;
-			}
+			handleMsg(p->message, false);
 			delete p;
 			p = NULL;
 		}
@@ -188,4 +168,12 @@ void NSLog::clearLogs()
 		it = popFront(&m_logs);
 	}
 	RELEASELOCK(m_mutexLog);
+}
+
+void NSLog::AddLogsItem(log_t* log)
+{
+	TRYLOCK(m_mutexLog);
+	appendData(&m_logs, log);
+	RELEASELOCK(m_mutexLog);
+	SetEvent(m_waitLogEvent);
 }
