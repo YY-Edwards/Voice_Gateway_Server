@@ -27,6 +27,7 @@ public:
 	void WritePcm(const char* pData, int length);
 	mic_status_enum MicStatus();
 	void setMicStatus(mic_status_enum value);
+	void DongleInfo(char* info);
 private:
 	bool m_bOutWork;
 	bool m_bInWork;

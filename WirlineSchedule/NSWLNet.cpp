@@ -3635,8 +3635,8 @@ void NSWLNet::CallThread()
 			break;
 		case Call_Thread_Call_Fail:
 		{
-									  //g_pNet->wlRequestCallEnd(CurCallCmd);
-									  g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL, CurCallCmd.SessionId);
+									  g_pNet->wlRequestCallEnd(CurCallCmd);
+									  //g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL, CurCallCmd.SessionId);
 									  g_pNSSound->setMicStatus(Mic_Stop);
 									  setCallThreadStatus(Call_Thread_Status_Idle);
 		}
@@ -4040,6 +4040,7 @@ void NSWLNet::getWirelineAuthentication(char* pPacket, short &size)
 void NSWLNet::ReadyMakeCall()
 {
 	/*初始化通话相关参数*/
+	g_should_delete = 0;
 	m_TxSubCount = 0;
 	m_burstType = BURST_A;
 	m_SequenceNumber = 1;
@@ -4187,11 +4188,17 @@ void NSWLNet::SendAmbeData()
 			else
 			{
 
-					m_pLog->AddLog("not pop a frame,will send empty 60ms ambe");
-					Build_T_WL_PROTOCOL_21(m_vcBurst, false);
-					m_vcBurst.AMBEVoiceEncodedFrames = m_startAmbe.ambe;
-					m_sendBuffer.net_length = Build_WL_VC_VOICE_BURST(m_sendBuffer.net_data, &m_vcBurst);
-					sendNetDataBase(m_sendBuffer.net_data, m_sendBuffer.net_length, &peer->m_sockaddr);
+				char temp[1024] = { 0 };
+				if (g_pNSSound)
+				{
+					g_pNSSound->DongleInfo(temp);
+				}
+				m_pLog->AddLog("not pop a frame,will send empty 60ms ambe,%s", temp);
+				Build_T_WL_PROTOCOL_21(m_vcBurst, false);
+				m_vcBurst.AMBEVoiceEncodedFrames = m_startAmbe.ambe;
+				m_sendBuffer.net_length = Build_WL_VC_VOICE_BURST(m_sendBuffer.net_data, &m_vcBurst);
+				sendNetDataBase(m_sendBuffer.net_data, m_sendBuffer.net_length, &peer->m_sockaddr);
+				g_should_delete += 3;
 			}
 		}
 		else

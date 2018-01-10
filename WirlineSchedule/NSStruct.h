@@ -8,7 +8,6 @@ class NSManager;
 #define Size_Ambe_Send_Data 128
 #define TIMEOUT_LE (30*1000)
 #define SIZE_SERIAL 10
-#define INTERVAL_LOG 500
 #define SIZE_COM_NAME 16
 #define WL_FAIL_AMBE_DONGLE_ZERO 0x1011 //可用Dongle数量为0
 #define WL_OK 0x0000 //成功

@@ -26,6 +26,7 @@ NSLog::NSLog()
 , m_pLogThread(NULL)
 , m_mutexLog(INITLOCKER())
 , m_logs(NULL)
+, m_waitLogEvent(CreateEvent(NULL,FALSE,FALSE,NULL))
 {
 
 }
@@ -62,6 +63,7 @@ void NSLog::Initialize()
 		{
 			return;
 		}
+		BOOL rlt =SetThreadPriority(m_pLogThread, THREAD_PRIORITY_BELOW_NORMAL);
 		m_bWork = true;
 		ResumeThread(m_pLogThread);
 	}
@@ -79,28 +81,37 @@ unsigned int __stdcall NSLog::LogthreadProc(void* pArguments)
 
 void NSLog::Logthread()
 {
+	pLinkItem it = NULL;
 	while (m_bWork)
 	{
 		TRYLOCK(m_mutexLog);
-		pLinkItem it = popFront(&m_logs);
-		if (it)
+		it = popFront(&m_logs);
+		while (it)
 		{
 			log_t* p = (log_t*)it->data;
 			if (p)
 			{
-
-#if _DEBUG
-				printf("%s", p->message);
-				LOG(INFO) << p->message;
-#endif // _DEBUG
+				handleMsg(p->message, true);
 				delete p;
 				p = NULL;
 			}
 			freeList(it);
+			it = popFront(&m_logs);
 		}
 		RELEASELOCK(m_mutexLog);
-		Sleep(INTERVAL_LOG);
+		WaitForSingleObject(m_waitLogEvent, INFINITE);
 	}
+}
+
+void NSLog::handleMsg(char* pMsg, bool bPrint)
+{
+#if _DEBUG
+	if (bPrint)
+	{
+		printf("%s", pMsg);
+	}
+	LOG(INFO) << pMsg;
+#endif // _DEBUG
 }
 
 void NSLog::Stop()
@@ -108,6 +119,7 @@ void NSLog::Stop()
 	m_bWork = false;
 	if (NULL != m_pLogThread)
 	{
+		SetEvent(m_waitLogEvent);
 		WaitForSingleObject(m_pLogThread, 1000);
 		CloseHandle(m_pLogThread);
 		m_pLogThread = NULL;
@@ -148,9 +160,7 @@ void NSLog::clearLogs()
 		log_t* p = (log_t*)it->data;
 		if (p)
 		{
-#if _DEBUG
-			LOG(INFO) << p->message;
-#endif // _DEBUG
+			handleMsg(p->message, false);
 			delete p;
 			p = NULL;
 		}
@@ -165,4 +175,5 @@ void NSLog::AddLogsItem(log_t* log)
 	TRYLOCK(m_mutexLog);
 	appendData(&m_logs, log);
 	RELEASELOCK(m_mutexLog);
+	SetEvent(m_waitLogEvent);
 }

@@ -26,12 +26,14 @@ private:
 	HANDLE m_pLogThread;
 	LOCKERTYPE m_mutexLog;
 	pLinkList m_logs;
-	void AddLogsItem(log_t* log);
+	HANDLE m_waitLogEvent;
 
 	void Initialize();
 	static unsigned int __stdcall LogthreadProc(void* pArguments);
 	void Logthread();
 	void clearLogs();
+	void AddLogsItem(log_t* log);
+	void handleMsg(char* pMsg,bool bPrint);
 };
 
 

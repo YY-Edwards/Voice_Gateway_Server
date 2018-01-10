@@ -155,4 +155,18 @@ void NSAmbe::canDeleteSelf()
 		delete this;
 	}
 }
+void NSAmbe::AboutInfo(char* info)
+{
+	if (info)
+	{
+		if (m_useDongle)
+		{
+			m_useDongle->StatusInfo(info);
+		}
+		else
+		{
+			sprintf(info, "m_useDongle is null");
+		}
+	}
+}
 

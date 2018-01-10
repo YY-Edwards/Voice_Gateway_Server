@@ -597,6 +597,21 @@ void NSSound::setMicStatus(mic_status_enum value)
 	}
 }
 
+void NSSound::DongleInfo(char* info)
+{
+	if (info)
+	{
+		if (m_pAmbe)
+		{
+			m_pAmbe->AboutInfo(info);
+		}
+		else
+		{
+			sprintf(info, "m_pAmbe is null");
+		}
+	}
+}
+
 mic_status_enum NSSound::MicStatus()
 {
 	return m_micStatus;
