@@ -33,7 +33,7 @@ NSRecordFile::NSRecordFile(NSManager* pManager, NSWLPeer* peer)
 
 NSRecordFile::~NSRecordFile()
 {
-#ifdef _DEBUG
+#if _DEBUG
 	char temp[1024] = { 0 };
 	sprintf_s(temp, "Voice Record CallId %lu From %lu To %lu On Peer:%lu in Slot 0x%02x Delete", call_id, src_radio, target_radio, src_peer_id, src_slot);
 	m_pLog->AddLog(temp);
@@ -78,7 +78,7 @@ void NSRecordFile::WriteVoiceFrame(const char* pAmbe, int size, bool needDongle 
 
 bool NSRecordFile::TimeOut()
 {
-#ifdef _DEBUG
+#if _DEBUG
 	if (timeout < GetTickCount())
 	{
 		char temp[64] = { 0 };
@@ -137,7 +137,7 @@ void NSRecordFile::setCallStatus(int value)
 		}
 		else if (VOICE_BURST == call_status)
 		{
-#ifdef _DEBUG
+#if _DEBUG
 			char temp[1024] = { 0 };
 			sprintf_s(temp, "Voice Record CallId %lu From %lu To %lu On Peer:%lu in Slot 0x%02x VOICE_BURST", call_id, src_radio, target_radio, src_peer_id, src_slot);
 			m_pLog->AddLog(temp);

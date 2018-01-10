@@ -1303,7 +1303,7 @@ void NSWLNet::clearWorkItems()
 		if (NULL != item->data)
 		{
 			p = (work_item_t*)item->data;
-#ifdef _DEBUG
+#if _DEBUG
 			char temp[128] = { 0 };
 			unsigned char Opcode = '\0';
 			if (Recive == p->type)
@@ -1456,7 +1456,7 @@ void NSWLNet::clearWorkTimeOutItems()
 		if (NULL != item->data)
 		{
 			p = (work_item_t*)item->data;
-#ifdef _DEBUG
+#if _DEBUG
 			char temp[128] = { 0 };
 			unsigned char Opcode = '\0';
 			if (Recive == p->type)
@@ -2892,7 +2892,7 @@ void NSWLNet::findTimeOutItemAndDelete(unsigned long peerId, const char Opcode, 
 		p = (work_item_t*)item->data;
 		if (p)
 		{
-#ifdef _DEBUG
+#if _DEBUG
 			//char temp[128] = { 0 };
 			//unsigned char Opcode = '\0';
 			//if (Recive == p->type)
@@ -2994,7 +2994,7 @@ void NSWLNet::findItemAndDelete(unsigned long peerId, const char Opcode, const c
 		p = (work_item_t*)item->data;
 		if (p)
 		{
-#ifdef _DEBUG
+#if _DEBUG
 			//char temp[128] = { 0 };
 			//unsigned char Opcode = '\0';
 			//if (Recive == p->type)
