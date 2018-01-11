@@ -282,6 +282,7 @@ NSDongle* NSManager::PopIdleDonglesItem()
 		if (item->data)
 		{
 			p = (NSDongle*)item->data;
+			p->ReadyUse();
 			m_pLog->AddLog("dongle %s use start", p->Name());
 		}
 		freeList(item);
