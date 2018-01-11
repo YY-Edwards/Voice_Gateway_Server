@@ -33,8 +33,8 @@ CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis, std::wstring& defaultAud
 , m_mnisStatus(WL_SYSTEM_DISCONNECT)
 {
 	g_pNSTool = new CTool();
-	g_pNSSound = new NSSound();
 	g_pNSManager = new NSManager();
+	g_pNSSound = new NSSound();
 	g_pNSNet = new NSWLNet(g_pNSManager);
 	g_pNet = new CWLNet(pDb, this, defaultAudioPath);
 	g_pDongle = new CSerialDongle();
@@ -59,11 +59,10 @@ CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis, std::wstring& defaultAud
 	m_remoteTaskThreadId = 0;
 	m_bRemoteTaskThreadRun = false;
 	m_bIsHaveConfig = false;
-	//memset(&m_pCurrentTask, 0, sizeof(REMOTE_TASK));
-	m_pCurrentTask = NULL;
+	memset(&m_currentTask, 0, sizeof(REMOTE_TASK));
+	//m_pCurrentTask = NULL;
 	m_pMnis = pMnis;
 	m_hWaitDecodeEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
-	//memset(&m_currentTask, 0, sizeof(REMOTE_TASK));
 	/*获取当前Dongle的数量*/
 	initialize();
 }
@@ -760,10 +759,7 @@ void CManager::handleRemoteTask()
 	NSWLNet* pNSNet = NULL;
 	while (m_bRemoteTaskThreadRun)
 	{
-		//sprintf_s(m_reportMsg, "3");
-		//sendLogToWindow();
-		WaitForSingleObject(g_waitHandleRemoteTask, 1000);
-		while (g_remoteCommandTaskQueue.size() > 0)
+		while (size_task() > 0)
 		{
 			/*处理任务*/
 			get_front_task(task);
@@ -772,13 +768,13 @@ void CManager::handleRemoteTask()
 			{
 			case REMOTE_CMD_CONFIG:
 			{
-									  sprintf_s(m_reportMsg, "Handle REMOTE_CMD_CONFIG");
-									  sendLogToWindow();
+									  NSLog::instance()->AddLog("Handle REMOTE_CMD_CONFIG");
 									  config(&task);
 			}
 				break;
 			case REMOTE_CMD_CALL:
 			{
+									NSLog::instance()->AddLog("Handle REMOTE_CMD_CALL");
 									mic_status_enum micStatus = g_pNSSound->MicStatus();
 									setCurrentTask(&task);
 									CALL_OPERATE_PARAM cmdInfo = task.param.info.callParam.operateInfo;
@@ -801,6 +797,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_SET_PLAY_CALL:
 			{
+											 NSLog::instance()->AddLog("Handle REMOTE_CMD_SET_PLAY_CALL");
 											 setCurrentTask(&task);
 											 setPlayCallOfCare(task.param.info.setCareCallParam.playParam.callType, task.param.info.setCareCallParam.playParam.targetId);
 											 g_pNet->wlPlayStatus(CMD_SUCCESS, task.param.info.setCareCallParam.playParam.targetId);
@@ -808,6 +805,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_STOP_CALL:
 			{
+										 NSLog::instance()->AddLog("Handle REMOTE_CMD_STOP_CALL");
 										 setCurrentTask(&task);
 										 pNSNet = (NSWLNet*)g_pNSNet;
 										 pNSNet->CurCallCmd = task.param.info.callParam.operateInfo;
@@ -817,6 +815,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_GET_CONN_STATUS:
 			{
+											   NSLog::instance()->AddLog("Handle REMOTE_CMD_GET_CONN_STATUS");
 											   pNSNet = (NSWLNet*)g_pNSNet;
 											   FieldValue info(FieldValue::TInt);
 											   if (pNSNet->LeStatus() == ALIVE)
@@ -832,6 +831,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_SESSION_STATUS:
 			{
+											  NSLog::instance()->AddLog("Handle REMOTE_CMD_SESSION_STATUS");
 											  FieldValue value(FieldValue::TArray);
 											  GET_INFO_PARAM info = task.param.info.getInfoParam.getInfo;
 											  /*获取当前已经处理的会话任务状态*/
@@ -844,6 +844,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_SYSTEM_STATUS:
 			{
+											 NSLog::instance()->AddLog("Handle REMOTE_CMD_SYSTEM_STATUS");
 											 GET_INFO_PARAM info = task.param.info.getInfoParam.getInfo;
 											 FieldValue value(FieldValue::TObject);
 											 value.setKeyVal("MnisStatus", FieldValue(MnisStatus()));//mnis状态-Tserver侧修改
@@ -859,6 +860,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_MNIS_QUERY_GPS:
 			{
+											  NSLog::instance()->AddLog("Handle REMOTE_CMD_MNIS_QUERY_GPS");
 											  QUERY_GPS gps = task.param.info.queryGpsParam;
 											  switch (gps.Operate)
 											  {
@@ -880,11 +882,13 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_MNIS_MSG:
 			{
+										NSLog::instance()->AddLog("Handle REMOTE_CMD_MNIS_MSG");
 										m_pMnis->radioSendMsg(task.param.info.msgParam.Contents, task.param.info.msgParam.Target, task.param.info.msgParam.Type, task.param.info.msgParam.SessionId);
 			}
 				break;
 			case REMOTE_CMD_MNIS_STATUS:
 			{
+										   NSLog::instance()->AddLog("Handle REMOTE_CMD_MNIS_STATUS");
 										   switch (task.param.info.mnisStatusParam.getType)
 										   {
 										   case MNIS_GET_TYPE_CONNECT:
@@ -912,54 +916,45 @@ void CManager::handleRemoteTask()
 				//case is no use
 			case REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG:
 			{
+														   NSLog::instance()->AddLog("Handle REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG");
 														   m_pMnis->locationIndoorConfig(task.param.info.locationParam.internal, task.param.info.locationParam.ibconNum, task.param.info.locationParam.isEmergency);
 			}
 				break;
 			default:
+				NSLog::instance()->AddLog("Handle Unknown %d", task.cmd);
 				break;
 			}
 		}
+		WaitForSingleObject(g_waitHandleRemoteTask, INFINITE);
 	}
 }
 
 void CManager::stop()
 {
+	m_bRemoteTaskThreadRun = false;
 	if (m_hRemoteTaskThread)
 	{
-		m_bRemoteTaskThreadRun = false;
 		SetEvent(g_waitHandleRemoteTask);
 		WaitForSingleObject(m_hRemoteTaskThread, 1000);
 		CloseHandle(m_hRemoteTaskThread);
-	}
-	freeCurrentTask();
-}
-
-REMOTE_TASK* CManager::getCurrentTask()
-{
-	return m_pCurrentTask;
-}
-
-void CManager::freeCurrentTask()
-{
-	if (m_pCurrentTask)
-	{
-		delete m_pCurrentTask;
-		m_pCurrentTask = NULL;
+		m_hRemoteTaskThread = NULL;
 	}
 }
 
-void CManager::applayCurrentTask()
+void CManager::getCurrentTask(REMOTE_TASK &task)
 {
-	m_pCurrentTask = new REMOTE_TASK;
-	memset(m_pCurrentTask, 0, sizeof(REMOTE_TASK));
+	NSLog::instance()->AddLog("Lock m_mutexCurTask");
+	std::lock_guard <std::mutex> locker(m_mutexCurTask);
+	task = m_currentTask;
+	NSLog::instance()->AddLog("UnLock m_mutexCurTask");
 }
 
 void CManager::setCurrentTask(REMOTE_TASK* value)
 {
+	NSLog::instance()->AddLog("Lock m_mutexCurTask");
 	std::lock_guard <std::mutex> locker(m_mutexCurTask);
-	freeCurrentTask();
-	applayCurrentTask();
-	memcpy(m_pCurrentTask, value, sizeof(REMOTE_TASK));
+	m_currentTask = *value;
+	NSLog::instance()->AddLog("UnLock m_mutexCurTask");
 }
 
 void CManager::OnConnect(CRemotePeer* pRemotePeer)
@@ -1194,18 +1189,12 @@ int CManager::updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode)
 	return 0;
 }
 
-//REMOTE_TASK* CManager::getCurrentTaskR()
-//{
-//	return &m_currentTask;
-//}
-
 void CManager::handleTaskOnTimerProc()
 {
-	//lockCurTask();
-	handleCurTaskTimeOut();
-	//unLockCurTask();
 	/*验证队列任务是否超时*/
-	WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	handleCurTaskTimeOut();
+	//WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	TRYLOCK(g_mutexRemoteCommandTaskQueue);
 	std::list<REMOTE_TASK*>::iterator it = g_remoteCommandTaskQueue.begin();
 	while (it != g_remoteCommandTaskQueue.end())
 	{
@@ -1233,7 +1222,8 @@ void CManager::handleTaskOnTimerProc()
 		}
 		it++;
 	}
-	SetEvent(g_taskLockerEvent);
+	RELEASELOCK(g_mutexRemoteCommandTaskQueue);
+	//SetEvent(g_taskLockerEvent);
 }
 
 void PASCAL CManager::TaskOnTimerProc(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2)
@@ -1266,7 +1256,8 @@ bool CManager::isRepeat(std::string sessionId)
 	handleIsRepeatCurTask(sessionId, rlt);
 	//unLockCurTask();
 	if (rlt) return rlt;
-	WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	//WaitForSingleObject(g_taskLockerEvent, INFINITE);
+	TRYLOCK(g_mutexRemoteCommandTaskQueue);
 	REMOTE_TASK* p = NULL;
 	std::list<REMOTE_TASK*>::iterator it = g_remoteCommandTaskQueue.begin();
 	while (it != g_remoteCommandTaskQueue.end())
@@ -1276,7 +1267,8 @@ bool CManager::isRepeat(std::string sessionId)
 		if (rlt) break;
 		it++;
 	}
-	SetEvent(g_taskLockerEvent);
+	RELEASELOCK(g_mutexRemoteCommandTaskQueue);
+	//SetEvent(g_taskLockerEvent);
 	return rlt;
 }
 
@@ -1362,18 +1354,21 @@ void CManager::setbNeedStopCall(bool value)
 
 void CManager::getCurrentTaskInfo(int srcId, std::string &sessionid, int &cmd)
 {
+	NSLog::instance()->AddLog("Lock m_mutexCurTask");
 	std::lock_guard<std::mutex> locker(m_mutexCurTask);
-	if (m_pCurrentTask && sessionid == "" && srcId == CONFIG_LOCAL_RADIO_ID)
+	if (m_currentTask.cmd != 0 && sessionid == "" && srcId == CONFIG_LOCAL_RADIO_ID)
 	{
-		sessionid = m_pCurrentTask->param.info.callParam.operateInfo.SessionId;
-		cmd = m_pCurrentTask->cmd;
+		sessionid = m_currentTask.param.info.callParam.operateInfo.SessionId;
+		cmd = m_currentTask.cmd;
 	}
+	NSLog::instance()->AddLog("UnLock m_mutexCurTask");
 }
 
 void CManager::handleCurTaskTimeOut()
 {
-	std::lock_guard<std::mutex> locker(m_mutexCurTask);
-	REMOTE_TASK* p = getCurrentTask();
+	REMOTE_TASK task = { 0 };
+	getCurrentTask(task);
+	REMOTE_TASK* p = &task;
 	if (p)
 	{
 		if (p->timeOutTickCout != 0 && p->flag == FLAG_NHANDLE)
@@ -1393,12 +1388,14 @@ void CManager::handleCurTaskTimeOut()
 			}
 		}
 	}
+	setCurrentTask(p);
 }
 
 void CManager::handleIsRepeatCurTask(std::string sessionId, bool &rlt)
 {
-	std::lock_guard<std::mutex> locker(m_mutexCurTask);
-	REMOTE_TASK* p = getCurrentTask();
+	REMOTE_TASK task = { 0 };
+	getCurrentTask(task);
+	REMOTE_TASK* p = &task;
 	if (p)
 	{
 		rlt = isSameSessionId(sessionId, p);
@@ -1513,6 +1510,7 @@ void CManager::setDeviceInfoStatus(int value)
 void CManager::OnUpdateUsb(DWORD type)
 {
 	g_pNSManager->OnUpdateUsb(type);
+	setDongleCount(g_pNSManager->SizeDongle());
 	//sprintf_s(m_reportMsg, "OnUpdateUsb");
 	//sendLogToWindow();
 	////LOG_INFO("OnUpdateUsb");

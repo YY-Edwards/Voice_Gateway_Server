@@ -369,7 +369,6 @@ public:
 	void calibrationCallID(slot_number_enum slot);
 	/*当前缓冲数据发送完毕时的处理*/
 	void handleCurTaskCallTimeOut();
-
 	std::mutex m_mutexReadySendVoices;//待发送音频数据锁
 protected:
 	/*
@@ -377,10 +376,6 @@ protected:
 	*/
 	static DWORD WINAPI NetThreadProc(LPVOID pVoid);
 	DWORD NetThread();
-	//void InitControlBuffer(DWORD dwSelfPeerId);
-
-
-	//void Build_LE_MASTER_PEER_REGISTRATION_REQUEST();
 	DWORD Build_LE_MASTER_PEER_REGISTRATION_REQUEST(CHAR* pPacket, T_LE_PROTOCOL_90* pData);
 	DWORD Build_LE_MASTER_PEER_REGISTRATION_REQUEST(CHAR* pPacket, T_LE_PROTOCOL_90_LCP* pData);
 	void Unpack_LE_MASTER_PEER_REGISTRATION_RESPONSE(char* pData, T_LE_PROTOCOL_91& networkData);

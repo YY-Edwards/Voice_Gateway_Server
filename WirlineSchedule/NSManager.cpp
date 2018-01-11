@@ -282,6 +282,8 @@ NSDongle* NSManager::PopIdleDonglesItem()
 		if (item->data)
 		{
 			p = (NSDongle*)item->data;
+			p->ReadyUse();
+			m_pLog->AddLog("dongle %s use start", p->Name());
 		}
 		freeList(item);
 	}
@@ -426,6 +428,7 @@ NSDongle* NSManager::FindDonglesItem(const void* condition, LinkMatchFunc fun)
 
 void NSManager::AddIdleDonglesItem(NSDongle* p)
 {
+	m_pLog->AddLog("dongle %s use end", p->Name());
 	TRYLOCK(m_mutexIdleDongles);
 	appendData(&m_idleDongles, p);
 	RELEASELOCK(m_mutexIdleDongles);

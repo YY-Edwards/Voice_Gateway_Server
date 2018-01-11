@@ -23,14 +23,8 @@ class CManager
 public:
 	CManager(CMySQL *db, CDataScheduling *pMnis,std::wstring& defaultAudioPath);
 	~CManager();
-	// 	/*初始化系统*/
-	// 	int initSys();
-	/*获取句柄*/
-	//int initWnd(HWND current_hwnd);
 	/*设置日志回调方法*/
 	int setLogPtr(PLogReport log_handel);
-	// 	/*播放默认文件语音*/
-	// 	int play();
 	/*建立通话*/
 	int initialCall(unsigned long targetId, unsigned char callTyp);
 	/*松开PTT*/
@@ -39,12 +33,6 @@ public:
 	void RequireDecodeEvent();
 	/*解码解锁*/
 	void ReleaseDecodeEvent();
-	// 	/*初始化dongle*/
-	// 	int initDongle(unsigned int serial_port);
-	// 	/*播放指定数据*/
-	// 	int play(unsigned int length, char* pData);
-	// 	/*加载指定音频数据*/
-	// 	int LoadVoiceData(unsigned int length, char* pData);
 	/*断开与主中继的连接*/
 	int disConnect();
 	/*建立通话并发送文件语音*/
@@ -58,7 +46,7 @@ public:
 	void handleRemoteTask();
 	//void handleVoiceLog(const VOICE_LOG& param);
 	void stop();
-	REMOTE_TASK* getCurrentTask();
+	void getCurrentTask(REMOTE_TASK &task);
 	/*设置延时的需要返回操作结果的任务*/
 	void setCurrentTask(REMOTE_TASK* value);
 	/*client接入*/
@@ -69,10 +57,6 @@ public:
 	static void OnData(int callFuncId, Respone response);
 	/*更新在线设备信息*/
 	int updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode = -1);
-	///*请求对当前任务操作*/
-	//void lockCurTask();
-	///*完成对当前任务的操作*/
-	//void unLockCurTask();
 	/*判断当前是否已存在此任务*/
 	bool isRepeat(std::string sessionId);
 	/*判断是否和当前任务重复*/
@@ -126,12 +110,8 @@ private:
 	bool m_bIsHaveConfig;
 	/*推送日志到回调*/
 	void sendLogToWindow();
-	// 	/*加载指定文件的语音数据*/
-	// 	void LoadVoiceData(LPCWSTR filePath);
 
-	REMOTE_TASK *m_pCurrentTask;
-	//REMOTE_TASK m_currentTask;
-	//com_use_t m_curDongleInfo;
+	REMOTE_TASK m_currentTask;
 
 	CDataScheduling* m_pMnis;
 	UINT m_idTaskOnTimerProc;
@@ -151,10 +131,6 @@ private:
 	void handleTaskOnTimerProc();
 	/*验证当前任务是否超时*/
 	void handleCurTaskTimeOut();
-	/*applay current task*/
-	void applayCurrentTask();
-	/*free current task*/
-	void freeCurrentTask();
 	bool isSameSessionId(std::string sessionId, REMOTE_TASK* p);
 	void initialize();
 	void handleUsbAdd();

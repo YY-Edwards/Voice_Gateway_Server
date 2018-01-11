@@ -191,7 +191,6 @@ namespace Dispatcher
             };
 
 
-
             Logs.SetStartUpWindow(typeof(Login));
             Log.Initialize(RuntimeDir, ProjectName + Version);
             StartupUri = new Uri("views/logger/logger.xaml", UriKind.RelativeOrAbsolute);

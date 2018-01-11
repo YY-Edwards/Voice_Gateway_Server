@@ -975,7 +975,7 @@ void NSWLNet::AmbeDataThread()
 								  record->call_id = call_id;
 								  record->call_type = call_type;
 								  record->src_slot = src_slot;
-								  g_pNet->wlCall(record->call_type, record->src_radio, record->target_radio, OPERATE_CALL_START, (call_type == g_playCalltype && target_radio == g_playTargetId));
+								  record->setCallStatus(VOICE_START);
 								  AddRecordsItem(record);
 		}
 			break;
@@ -996,7 +996,7 @@ void NSWLNet::AmbeDataThread()
 									  record->call_id = call_id;
 									  record->call_type = call_type;
 									  record->src_slot = src_slot;
-									  g_pNet->wlCall(record->call_type, record->src_radio, record->target_radio, OPERATE_CALL_START, (call_type == g_playCalltype && target_radio == g_playTargetId));
+									  record->setCallStatus(VOICE_START);
 								  }
 								  record->setCallStatus(VOICE_BURST);
 								  record->WriteVoiceFrame(voiceFrame, 21);
@@ -1049,7 +1049,6 @@ void NSWLNet::AmbeDataThread()
 											  {
 												  /*更新通话状态*/
 												  record->setCallStatus(CALL_SESSION_STATUS_HANG);
-												  g_pNet->wlCall(record->call_type, record->src_radio, record->target_radio, OPERATE_CALL_END, (call_type == g_playCalltype && target_radio == g_playTargetId));
 											  }
 										  }
 										  /*如果是由本地发出的通话*/
@@ -1070,9 +1069,8 @@ void NSWLNet::AmbeDataThread()
 												  else if (Call_Session_Call_Hang == callSessionStatus)
 												  {
 													  /*更新通话状态*/
+													  memcpy(m_localRecordFile->SessionId, CurCallCmd.SessionId, SESSION_SIZE);
 													  m_localRecordFile->setCallStatus(CALL_SESSION_STATUS_HANG);
-													  //g_pNet->wlRequestCallEnd(CurCallCmd);
-													  g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS, CurCallCmd.SessionId);
 												  }
 											  }
 										  }
@@ -1305,7 +1303,7 @@ void NSWLNet::clearWorkItems()
 		if (NULL != item->data)
 		{
 			p = (work_item_t*)item->data;
-#ifdef _DEBUG
+#if _DEBUG
 			char temp[128] = { 0 };
 			unsigned char Opcode = '\0';
 			if (Recive == p->type)
@@ -1458,7 +1456,7 @@ void NSWLNet::clearWorkTimeOutItems()
 		if (NULL != item->data)
 		{
 			p = (work_item_t*)item->data;
-#ifdef _DEBUG
+#if _DEBUG
 			char temp[128] = { 0 };
 			unsigned char Opcode = '\0';
 			if (Recive == p->type)
@@ -1732,6 +1730,10 @@ void NSWLNet::SendDataToMaster(work_item_t* p, unsigned long timeOut /*= TIMEOUT
 
 void NSWLNet::sendWorkItemNetData(work_item_t* p)
 {
+	if (p->data.send_data.protocol.le.PROTOCOL_90.peerID == 0xfeeefeee)
+	{
+		return;
+	}
 	send_data_t* pSend = &p->data.send_data;
 	//sendDataUdp(m_pMasterXqttnet, pSend->net_data, pSend->net_lenth, (SOCKADDR_IN*)pSend->send_to, sizeof(SOCKADDR_IN));
 	sendNetDataBase(pSend->net_data, pSend->net_lenth, pSend->send_to);
@@ -2894,7 +2896,7 @@ void NSWLNet::findTimeOutItemAndDelete(unsigned long peerId, const char Opcode, 
 		p = (work_item_t*)item->data;
 		if (p)
 		{
-#ifdef _DEBUG
+#if _DEBUG
 			//char temp[128] = { 0 };
 			//unsigned char Opcode = '\0';
 			//if (Recive == p->type)
@@ -2996,7 +2998,7 @@ void NSWLNet::findItemAndDelete(unsigned long peerId, const char Opcode, const c
 		p = (work_item_t*)item->data;
 		if (p)
 		{
-#ifdef _DEBUG
+#if _DEBUG
 			//char temp[128] = { 0 };
 			//unsigned char Opcode = '\0';
 			//if (Recive == p->type)
@@ -3637,8 +3639,8 @@ void NSWLNet::CallThread()
 			break;
 		case Call_Thread_Call_Fail:
 		{
-									  //g_pNet->wlRequestCallEnd(CurCallCmd);
-									  g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL, CurCallCmd.SessionId);
+									  g_pNet->wlRequestCallEnd(CurCallCmd);
+									  //g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL, CurCallCmd.SessionId);
 									  g_pNSSound->setMicStatus(Mic_Stop);
 									  setCallThreadStatus(Call_Thread_Status_Idle);
 		}
@@ -4042,6 +4044,7 @@ void NSWLNet::getWirelineAuthentication(char* pPacket, short &size)
 void NSWLNet::ReadyMakeCall()
 {
 	/*初始化通话相关参数*/
+	g_should_delete = 0;
 	m_TxSubCount = 0;
 	m_burstType = BURST_A;
 	m_SequenceNumber = 1;
@@ -4154,7 +4157,7 @@ void NSWLNet::SendAmbeData()
 				Build_T_WL_PROTOCOL_21(m_vcBurst, voice.start);
 				if (voice.start)
 				{
-					g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_START | REMOTE_CMD_SUCCESS, CurCallCmd.SessionId);
+					//g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_START | REMOTE_CMD_SUCCESS, CurCallCmd.SessionId);
 					if (m_localRecordFile)
 					{
 						delete m_localRecordFile;
@@ -4167,6 +4170,8 @@ void NSWLNet::SendAmbeData()
 					m_localRecordFile->call_id = CallId();
 					m_localRecordFile->call_type = m_makeCallParam.callType;
 					m_localRecordFile->src_slot = peer->SlotNumber();
+					memcpy(m_localRecordFile->SessionId, CurCallCmd.SessionId, SESSION_SIZE);
+					m_localRecordFile->setCallStatus(VOICE_START);
 				}
 				else
 				{
@@ -4187,11 +4192,17 @@ void NSWLNet::SendAmbeData()
 			else
 			{
 
-					m_pLog->AddLog("not pop a frame,will send empty 60ms ambe");
-					Build_T_WL_PROTOCOL_21(m_vcBurst, false);
-					m_vcBurst.AMBEVoiceEncodedFrames = m_startAmbe.ambe;
-					m_sendBuffer.net_length = Build_WL_VC_VOICE_BURST(m_sendBuffer.net_data, &m_vcBurst);
-					sendNetDataBase(m_sendBuffer.net_data, m_sendBuffer.net_length, &peer->m_sockaddr);
+				char temp[1024] = { 0 };
+				if (g_pNSSound)
+				{
+					g_pNSSound->DongleInfo(temp);
+				}
+				m_pLog->AddLog("not pop a frame,will send empty 60ms ambe,%s", temp);
+				Build_T_WL_PROTOCOL_21(m_vcBurst, false);
+				m_vcBurst.AMBEVoiceEncodedFrames = m_startAmbe.ambe;
+				m_sendBuffer.net_length = Build_WL_VC_VOICE_BURST(m_sendBuffer.net_data, &m_vcBurst);
+				sendNetDataBase(m_sendBuffer.net_data, m_sendBuffer.net_length, &peer->m_sockaddr);
+				g_should_delete += 3;
 			}
 		}
 		else

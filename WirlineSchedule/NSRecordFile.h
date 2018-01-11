@@ -1,7 +1,6 @@
 #ifndef WLNSRECORDFILE_H
 #define WLNSRECORDFILE_H
 
-#define MAX_RECORD_BUFFER_SIZE (100*1024)
 #define PATH_FILE_MAXSIZE 1024
 
 class NSLog;
@@ -30,11 +29,12 @@ public:
 	int src_rssi;
 	int src_slot;
 	unsigned long call_id;
+	char SessionId[SESSION_SIZE];
 private:
 	SYSTEMTIME time;//this time is voice start time
 	unsigned int length;
 	unsigned long timeout;
-	char buffer[MAX_RECORD_BUFFER_SIZE];
+	char* buffer;
 	int call_status;
 	NSLog* m_pLog;
 	unsigned int id;
@@ -43,6 +43,7 @@ private:
 	NSAmbe* m_pAmbe;
 	NSWLPeer* m_peer;//此条语音记录的产生者
 	NSManager* m_pManager;
+	//char* m_fullBuffer;
 
 	BOOL CreateNewFileByYearMonth();
 };

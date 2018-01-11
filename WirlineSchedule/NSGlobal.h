@@ -26,5 +26,6 @@ extern NSSound* g_pNSSound;
 extern NSManager* g_pNSManager;
 extern unsigned char g_playCalltype;
 extern unsigned long g_playTargetId;
+extern int g_should_delete;
 
 #endif

@@ -20,7 +20,7 @@ NSSound::NSSound()
 , m_waveOutCurrentBlock(0)
 , m_hWaveOut(NULL)
 , m_hWaveIn(NULL)
-, m_pAmbe(NULL)
+, m_pAmbe(new NSAmbe(g_pNSManager))
 , m_bWaveInReset(false)
 , m_bufflag(0)
 , m_micStatus(Mic_Error)
@@ -522,11 +522,6 @@ void NSSound::handleWaveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwParam1, DWORD
 							  waveInUnprepareHeader(m_hWaveIn, &m_whis[i], sizeof (WAVEHDR));
 						  }
 					  }
-					  if (m_pAmbe)
-					  {
-						  m_pAmbe->WirteEnd();
-						  m_pAmbe = NULL;
-					  }
 					  m_hWaveIn = NULL;
 	}
 		break;
@@ -579,13 +574,6 @@ void NSSound::handleWaveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwParam1, DWORD
 		break;
 	case WIM_OPEN:
 	{
-					 /*ÉêÇëdongle*/
-					 if (m_pAmbe)
-					 {
-						 m_pAmbe->WirteEnd();
-						 m_pAmbe = NULL;
-					 }
-					 m_pAmbe = new NSAmbe(g_pNSManager);
 					 setMicStatus(Mic_Work);
 	}
 		break;
@@ -606,6 +594,21 @@ void NSSound::setMicStatus(mic_status_enum value)
 		m_pLog->AddLog("====Mic Status From %d To %d====", m_micStatus, value);
 		m_micStatus = value;
 		ContinueInThread();
+	}
+}
+
+void NSSound::DongleInfo(char* info)
+{
+	if (info)
+	{
+		if (m_pAmbe)
+		{
+			m_pAmbe->AboutInfo(info);
+		}
+		else
+		{
+			sprintf(info, "m_pAmbe is null");
+		}
 	}
 }
 

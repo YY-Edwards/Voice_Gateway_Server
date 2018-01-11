@@ -8,7 +8,6 @@ class NSManager;
 #define Size_Ambe_Send_Data 128
 #define TIMEOUT_LE (30*1000)
 #define SIZE_SERIAL 10
-#define INTERVAL_LOG 500
 #define SIZE_COM_NAME 16
 #define WL_FAIL_AMBE_DONGLE_ZERO 0x1011 //可用Dongle数量为0
 #define WL_OK 0x0000 //成功
@@ -31,7 +30,7 @@ class NSManager;
 #define Mode_Work_CPC (unsigned short)0x0001
 #define Mode_Work_LCP (unsigned short)0x0002
 #define Mode_Work_Mask (unsigned short)0x00ff
-#define TIMEOUT_VOICE_FRAME (600)//600ms为官方文档推荐的数据,实际情况可能需要比这个数据大
+#define TIMEOUT_VOICE_FRAME (600*2)//600ms为官方文档推荐的数据,实际情况可能需要比这个数据大
 
 const int OUT_SAMPLES_PER_20mS = 160;
 const DWORD  INTERNALCOMBUFFSIZE = 2048;
@@ -99,6 +98,7 @@ typedef enum _mic_status_enum
 }mic_status_enum;
 typedef enum _record_call_status_enum
 {
+	VOICE_INIT,
 	VOICE_START,//语音正常开始
 	VOICE_BURST,//语音数据包,如果记录最后为此状态,则代表此条记录因为超时结束
 	VOICE_END_BURST,//语音正常结束,如果记录最后为此状态,则代表此条记录未收到通话状态标识符

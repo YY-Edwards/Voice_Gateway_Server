@@ -30,6 +30,8 @@ public:
 	static void OnDataAmbeFun(void* pData, unsigned long length, unsigned long index, void* param);
 	/*表示写入完毕*/
 	void WirteEnd();
+	/*当前dongle的工作状态*/
+	void AboutInfo(char* info);
 private:
 	NSManager* m_pManager;
 	bool m_bWriteEnd;
