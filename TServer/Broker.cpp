@@ -895,6 +895,9 @@ void CBroker::sendLicenseToWlClient()
 	case 1:
 		content = "{\"result\":0}";  //success;
 		break;
+	case 2:
+		content = "{\"result\":2}";  //δ֪;
+		break;
 	default:
 		content = "{\"result\":1}";   //failure
 		break;
