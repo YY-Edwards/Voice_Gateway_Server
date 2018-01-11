@@ -1404,10 +1404,22 @@ void NSWLNet::Build_WorkItem_LE_90(work_item_t* p)
 		pNetworkData = &pSendData->protocol.le.PROTOCOL_90;
 		pNetworkData->Opcode = LE_MASTER_PEER_REGISTRATION_REQUEST;
 		pNetworkData->peerID = m_netParam.local_peer_id;
-		pNetworkData->currentLinkProtocolVersion = CPC_CURRENTLPVERSION;
-		pNetworkData->oldestLinkProtocolVersion = CPC_OLDESTPVERSION;
-		pNetworkData->peerMode = CPC_MODE;
-		pNetworkData->peerServices = CPC_SERVICES;
+		
+		if (CPC == m_netParam.work_mode)
+		{
+			pNetworkData->currentLinkProtocolVersion = CPC_CURRENTLPVERSION;
+			pNetworkData->oldestLinkProtocolVersion = CPC_OLDESTPVERSION;
+			pNetworkData->peerMode = CPC_MODE;
+			pNetworkData->peerServices = CPC_SERVICES;
+		}
+		else
+		{
+			pNetworkData->currentLinkProtocolVersion = IPSC_CURRENTLPVERSION;
+			pNetworkData->oldestLinkProtocolVersion = IPSC_OLDESTPVERSION;
+			pNetworkData->peerMode = IPSC_MODE;
+			pNetworkData->peerServices = IPSC_SERVICES;
+		}
+		
 		pSendData->net_lenth = Build_LE_MASTER_PEER_REGISTRATION_REQUEST(pSendData->net_data, pNetworkData);
 	}
 }
