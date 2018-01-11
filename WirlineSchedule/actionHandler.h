@@ -941,6 +941,61 @@ inline void wlMnisStatusHandler(CRemotePeer* pRemote, const std::string& param, 
 	}
 }
 
+/*授权结果的通知*/
+inline void wlLicenseHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
+{
+	if (!wlScheduleIsEnable())
+	{
+		return;
+	}
+	g_sn = sn;
+	Document d;
+	int errorCode = 0;
+	ArgumentType args;
+	std::string strResp = "";
+	char status[64] = { 0 };
+	strcpy_s(status, CLIENT_TRANSFER_OK);
+	std::string statusText = "";
+	try
+	{
+		try
+		{
+			d.Parse(param.c_str());
+			if (d.HasMember("result") && d["result"].IsInt())
+			{
+				int result = d["result"].GetInt();
+				if (0 == result)
+				{
+					g_license_status = license_status_enum::license_status_pass;
+				}
+				else if (1 == result)
+				{
+					g_license_status = license_status_enum::license_status_nopass;
+				}
+				else
+				{
+					g_license_status = license_status_enum::license_status_unknown;
+				}
+			}
+		}
+		catch (...)
+		{
+			strcpy_s(status, CLIENT_TRANSFER_FAIL);
+		}
+		//do nothing
+		strResp = CRpcJsonParser::buildResponse(status, sn, errorCode, statusText.c_str(), args);
+		pRemote->sendResponse(strResp.c_str(), strResp.size());
+	}
+	catch (std::exception* e)
+	{
+		printf_s("call response send error");
+	}
+	catch (...)
+	{
+		printf_s("call response send error");
+	}
+}
+
 /*未使用的方法*/
 inline void wlMnisLocationIndoorHandler(CRemotePeer* pRemote, const std::string& param, uint64_t sn, const std::string& type)
 {

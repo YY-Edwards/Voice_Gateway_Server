@@ -17,6 +17,8 @@ class NSManager;
 #define RX_TX_TIMEOUT 25 //必须大于20
 #define MILSECONDS_IDLE_REAL 100 //网络数据间隔为60ms这里设置100ms来判定解密结束
 #define TIMEOUT_TRY_COUNT 3
+#define TIMEOUT_TRY_COUNT_98 10
+#define TIMEOUT_LE_98 (6*1000)
 #define SLEEP_WORK_THREAD 10
 #define SLEEP_TIMEOUT_THREAD 100
 #define SLEEP_AMBE_THREAD 10

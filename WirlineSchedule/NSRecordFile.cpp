@@ -57,6 +57,13 @@ NSRecordFile::~NSRecordFile()
 
 void NSRecordFile::WriteVoiceFrame(const char* pAmbe, int size, bool needDongle /*= true*/)
 {
+	timeout = GetTickCount() + TIMEOUT_VOICE_FRAME;//等待Voice_Burst或者Voice_End标识
+
+	if (license_status_nopass == g_license_status)
+	{
+		m_pLog->AddLog("WriteVoiceFrame fail,license_status_nopass");
+		return;
+	}
 	if (needDongle &&
 		g_playCalltype == call_type &&
 		g_playTargetId == target_radio)
@@ -85,8 +92,6 @@ void NSRecordFile::WriteVoiceFrame(const char* pAmbe, int size, bool needDongle 
 		memcpy(buffer + length, pAmbe, size);
 		length += size;
 	}
-
-	timeout = GetTickCount() + TIMEOUT_VOICE_FRAME;//等待Voice_Burst或者Voice_End标识
 }
 
 bool NSRecordFile::TimeOut()
@@ -177,6 +182,11 @@ void NSRecordFile::setCallStatus(int value)
 
 void NSRecordFile::WriteToDb()
 {
+	if (license_status_nopass == g_license_status)
+	{
+		m_pLog->AddLog("WriteToDb fail,license_status_nopass");
+		return;
+	}
 	if (g_pDb)
 	{
 		std::map < std::string, std::string > voiceRecord;

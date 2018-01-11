@@ -7,6 +7,12 @@ class NSSound;
 class NSManager;
 class NSNetBase;
 
+typedef enum _license_status_enum
+{
+	license_status_unknown,
+	license_status_pass,
+	license_status_nopass
+}license_status_enum;
 typedef enum _repeater_net_mode_enum
 {
 	WL,
@@ -27,5 +33,6 @@ extern NSManager* g_pNSManager;
 extern unsigned char g_playCalltype;
 extern unsigned long g_playTargetId;
 extern int g_should_delete;
+extern license_status_enum g_license_status;
 
 #endif

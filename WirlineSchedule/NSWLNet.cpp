@@ -412,7 +412,6 @@ void NSWLNet::OnError(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient, int 
 
 void NSWLNet::onRecive(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient, const char* pData, int len)
 {
-
 	work_item_t *pItem = new work_item_t;
 	memset(pItem, 0, sizeof(work_item_t));
 	pItem->type = Recive;
@@ -1356,7 +1355,15 @@ void NSWLNet::AddWorkItem(work_item_t* p)
 {
 	if (Send == p->type)
 	{
-		SendDataToMaster(p);
+		switch ((char)p->data.send_data.protocol.le.PROTOCOL_90.Opcode)
+		{
+		case LE_PEER_KEEP_ALIVE_REQUEST:
+			SendDataToMaster(p, TIMEOUT_LE_98);
+			break;
+		default:
+			SendDataToMaster(p);
+			break;
+		}
 	}
 	else
 	{
@@ -1719,23 +1726,21 @@ DWORD NSWLNet::Build_LE_MASTER_PEER_KEEP_ALIVE_REQUEST(CHAR* pPacket, T_LE_PROTO
 
 void NSWLNet::SendDataToMaster(work_item_t* p, unsigned long timeOut /*= TIMEOUT_LE*/)
 {
+	/*发送数据*/
 	sendWorkItemNetData(p);
 	send_data_t* pSend = &p->data.send_data;
+	/*定义超时重发时间*/
 	if (0 != timeOut)
 	{
 		pSend->timeout_send = GetTickCount() + timeOut;
 	}
+	/*加入超时重发线程*/
 	AddWorkTimeOutItem(p);
 }
 
 void NSWLNet::sendWorkItemNetData(work_item_t* p)
 {
-	if (p->data.send_data.protocol.le.PROTOCOL_90.peerID == 0xfeeefeee)
-	{
-		return;
-	}
 	send_data_t* pSend = &p->data.send_data;
-	//sendDataUdp(m_pMasterXqttnet, pSend->net_data, pSend->net_lenth, (SOCKADDR_IN*)pSend->send_to, sizeof(SOCKADDR_IN));
 	sendNetDataBase(pSend->net_data, pSend->net_lenth, pSend->send_to);
 }
 
@@ -2481,6 +2486,7 @@ void NSWLNet::Handle_Le_Status_Alive_Recive(const char Opcode, work_item_t* &cur
 										  }
 										  /*解析map表*/
 										  Handle_MapBroadcast(pProtocol, pProtocolLcp);
+										  OpreateFlag = Oprate_Del;
 	}
 		break;
 	default:
@@ -2595,14 +2601,17 @@ bool NSWLNet::HandleRetryAndTimingSend(work_item_t* curItem, item_oprate_enum &O
 	send_data_t* pSend = &curItem->data.send_data;
 	if (0 != pSend->timing)
 	{
+		/*定时发送item*/
 		OpreateFlag = Oprate_Other;
 		if (pSend->timing <= GetTickCount())
 		{
+			/*现在发送*/
 			pSend->timing = 0;
 			AddWorkItem(curItem);
 		}
 		else
 		{
+			/*放在下一轮判断*/
 			AddWorkTimeOutItem(curItem);
 		}
 	}
@@ -2780,7 +2789,7 @@ void NSWLNet::Handle_Le_Status_Alive_TimeOut_Recive(const char Opcode, work_item
 										  }
 										  /*删除0x94*/
 										  findTimeOutItemAndDelete(protocol->peerID, LE_PEER_REGISTRATION_REQUEST, 0x00, Send);
-										  /*定时发送0x98*/
+										  /*立即发送0x98*/
 										  condition.peer_id = protocol->peerID;
 										  peer = FindPeersItem(&condition);
 										  if (peer)
@@ -2813,8 +2822,6 @@ void NSWLNet::Handle_Le_Status_Alive_TimeOut_Recive(const char Opcode, work_item
 									   {
 										   protocol_lcp = &curItem->data.recive_data.protocol.le_lcp.PROTOCOL_98_LCP;
 										   if (protocol_lcp->peerMode & 0x0080) is3rd = true;
-										   /*删除0x98*/
-										   findTimeOutItemAndDelete(protocol_lcp->peerID, LE_PEER_KEEP_ALIVE_REQUEST, 0x00, Send);
 										   condition.peer_id = protocol_lcp->peerID;
 										   peer = FindPeersItem(&condition);
 										   if (peer)
@@ -2827,8 +2834,6 @@ void NSWLNet::Handle_Le_Status_Alive_TimeOut_Recive(const char Opcode, work_item
 									   {
 										   protocol = &curItem->data.recive_data.protocol.le.PROTOCOL_98;
 										   if (protocol->peerServices & 0x00002000) is3rd = true;
-										   /*删除0x98*/
-										   findTimeOutItemAndDelete(protocol->peerID, LE_PEER_KEEP_ALIVE_REQUEST, 0x00, Send);
 										   condition.peer_id = protocol->peerID;
 										   peer = FindPeersItem(&condition);
 										   if (peer)

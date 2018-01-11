@@ -15,3 +15,4 @@ NSManager* g_pNSManager = NULL;
 unsigned char g_playCalltype = 0x4f;
 unsigned long g_playTargetId = 0;
 int g_should_delete = 0;
+license_status_enum g_license_status = license_status_unknown;

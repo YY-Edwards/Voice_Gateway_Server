@@ -774,6 +774,12 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_CALL:
 			{
+									if (license_status_nopass == g_license_status)
+									{
+										NSLog::instance()->AddLog("REMOTE_CMD_CALL fail,license_status_nopass");
+										g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL);
+										continue;
+									}
 									NSLog::instance()->AddLog("Handle REMOTE_CMD_CALL");
 									mic_status_enum micStatus = g_pNSSound->MicStatus();
 									setCurrentTask(&task);
@@ -797,6 +803,12 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_SET_PLAY_CALL:
 			{
+											 if (license_status_nopass == g_license_status)
+											 {
+												 NSLog::instance()->AddLog("REMOTE_CMD_SET_PLAY_CALL fail,license_status_nopass");
+												 g_pNet->wlPlayStatus(CMD_FAIL, task.param.info.setCareCallParam.playParam.targetId);
+												 continue;
+											 }
 											 NSLog::instance()->AddLog("Handle REMOTE_CMD_SET_PLAY_CALL");
 											 setCurrentTask(&task);
 											 setPlayCallOfCare(task.param.info.setCareCallParam.playParam.callType, task.param.info.setCareCallParam.playParam.targetId);
@@ -805,6 +817,12 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_STOP_CALL:
 			{
+										 if (license_status_nopass == g_license_status)
+										 {
+											 NSLog::instance()->AddLog("REMOTE_CMD_STOP_CALL fail,license_status_nopass");
+											 g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, task.param.info.callParam.operateInfo.source, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS, task.param.info.callParam.operateInfo.SessionId);
+											 continue;
+										 }
 										 NSLog::instance()->AddLog("Handle REMOTE_CMD_STOP_CALL");
 										 setCurrentTask(&task);
 										 pNSNet = (NSWLNet*)g_pNSNet;
@@ -860,6 +878,11 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_MNIS_QUERY_GPS:
 			{
+											  if (license_status_nopass == g_license_status)
+											  {
+												  NSLog::instance()->AddLog("REMOTE_CMD_MNIS_QUERY_GPS fail,license_status_nopass");
+												  continue;
+											  }
 											  NSLog::instance()->AddLog("Handle REMOTE_CMD_MNIS_QUERY_GPS");
 											  QUERY_GPS gps = task.param.info.queryGpsParam;
 											  switch (gps.Operate)
@@ -882,6 +905,11 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_MNIS_MSG:
 			{
+										if (license_status_nopass == g_license_status)
+										{
+											NSLog::instance()->AddLog("REMOTE_CMD_MNIS_MSG fail,license_status_nopass");
+											continue;
+										}
 										NSLog::instance()->AddLog("Handle REMOTE_CMD_MNIS_MSG");
 										m_pMnis->radioSendMsg(task.param.info.msgParam.Contents, task.param.info.msgParam.Target, task.param.info.msgParam.Type, task.param.info.msgParam.SessionId);
 			}
@@ -907,6 +935,11 @@ void CManager::handleRemoteTask()
 											   break;
 										   default:
 										   {
+													  if (license_status_nopass == g_license_status)
+													  {
+														  NSLog::instance()->AddLog("getRadioStatus fail,license_status_nopass");
+														  continue;
+													  }
 													  m_pMnis->getRadioStatus(task.param.info.mnisStatusParam.getType, task.param.info.mnisStatusParam.SessionId);
 										   }
 											   break;
@@ -916,6 +949,11 @@ void CManager::handleRemoteTask()
 				//case is no use
 			case REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG:
 			{
+														   if (license_status_nopass == g_license_status)
+														   {
+															   NSLog::instance()->AddLog("REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG fail,license_status_nopass");
+															   continue;
+														   }
 														   NSLog::instance()->AddLog("Handle REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG");
 														   m_pMnis->locationIndoorConfig(task.param.info.locationParam.internal, task.param.info.locationParam.ibconNum, task.param.info.locationParam.isEmergency);
 			}
