@@ -116,7 +116,7 @@ void readSerialAction(CRemotePeer* pRemote, const std::string& param, uint64_t c
 				CBroker::instance()->setLicenseStatus(2);   //正在连接设备获取序列号
 			}
 			
-		  
+			CBroker::instance()->sendLicenseToWlClient();  //发送授权结果到wl
 			std::string strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
 			

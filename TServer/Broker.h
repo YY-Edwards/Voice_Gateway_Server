@@ -128,7 +128,7 @@ public:
 	void sendSystemStatusToClient(std::string  sessionId, CRemotePeer* pRemote, uint64_t callId);
 	static DWORD WINAPI clientConnectStatusThread(LPVOID lpParam);
 	void setDeviceStatusByType(int type, int value);
-	
+	void sendLicenseToWlClient();
 protected:
 	CBroker();
 	~CBroker();

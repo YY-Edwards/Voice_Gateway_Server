@@ -724,7 +724,7 @@ void CBroker::clientConnectStatus()
 		if (isRadioStart)
 		{
 			isCurrentDispatchStatus = (m_radioClient->isConnected() ? 0 : 1);
-			if (isCurrentDispatchStatus)
+			if (isCurrentDispatchStatus==0)
 			if (isLastDispatchStatus != isCurrentDispatchStatus)
 			{
 				getSystemstatus("radio");
@@ -734,10 +734,11 @@ void CBroker::clientConnectStatus()
 		if (isRepeaterStart)
 		{
 			isCurrentWlStatus = (m_wirelanClient->isConnected() ? 0 : 1);
-			if (isCurrentWlStatus)
+			if (isCurrentWlStatus==0)
 			 if (isLastWlStatus != isCurrentWlStatus )
 			 {
 				 getSystemstatus("wl");
+				 sendLicenseToWlClient();  //发送授权结果到wl
 			 }
 		}
 
@@ -885,4 +886,19 @@ void CBroker::getSystemstatus(std::string type)
 		std::string strConnect = CSettings::instance()->getRequest("wlInfo", "wl", m_radioClient->getCallId(), content);
 		m_wirelanClient->send(strConnect.c_str(), strConnect.size());
 	}
+}
+void CBroker::sendLicenseToWlClient()
+{
+	std::string content = "";
+	switch (licenseStatus)
+	{
+	case 1:
+		content = "{\"result\":0}";  //success;
+		break;
+	default:
+		content = "{\"result\":1}";   //failure
+		break;
+	}
+	std::string strConnect = CSettings::instance()->getRequest("wlLicense", "wl", m_radioClient->getCallId(), content);
+	m_wirelanClient->send(strConnect.c_str(), strConnect.size());
 }
