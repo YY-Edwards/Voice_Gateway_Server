@@ -1730,6 +1730,10 @@ void NSWLNet::SendDataToMaster(work_item_t* p, unsigned long timeOut /*= TIMEOUT
 
 void NSWLNet::sendWorkItemNetData(work_item_t* p)
 {
+	if (p->data.send_data.protocol.le.PROTOCOL_90.peerID == 0xfeeefeee)
+	{
+		return;
+	}
 	send_data_t* pSend = &p->data.send_data;
 	//sendDataUdp(m_pMasterXqttnet, pSend->net_data, pSend->net_lenth, (SOCKADDR_IN*)pSend->send_to, sizeof(SOCKADDR_IN));
 	sendNetDataBase(pSend->net_data, pSend->net_lenth, pSend->send_to);
