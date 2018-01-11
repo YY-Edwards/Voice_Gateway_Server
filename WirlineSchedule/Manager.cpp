@@ -1510,6 +1510,7 @@ void CManager::setDeviceInfoStatus(int value)
 void CManager::OnUpdateUsb(DWORD type)
 {
 	g_pNSManager->OnUpdateUsb(type);
+	setDongleCount(g_pNSManager->SizeDongle());
 	//sprintf_s(m_reportMsg, "OnUpdateUsb");
 	//sendLogToWindow();
 	////LOG_INFO("OnUpdateUsb");
