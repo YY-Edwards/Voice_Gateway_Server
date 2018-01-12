@@ -647,6 +647,7 @@ void NSDongle::parseDVSImsg(DVSI3000struct* pMsg)
 
 void NSDongle::initRead()
 {
+	//m_pLog->AddLog("%s initRead", Name());
 #if _DEBUG
 	unsigned long cur = GetTickCount();
 	int dealTime = cur - m_prevTime;
@@ -687,6 +688,7 @@ void NSDongle::initRead()
 
 void NSDongle::initWrite()
 {
+	//m_pLog->AddLog("%s initWrite",Name());
 	alive();
 	unsigned long dwWritten = 0;
 	unsigned long result = 0;
@@ -810,14 +812,21 @@ void NSDongle::handleEndWork()
 	{
 		if (m_idleTimeTickCount < GetTickCount())
 		{
-			m_bIdle = true;
+			if (!m_self.isusing)
+			{
+				m_bIdle = true;
+				/*回收此Dongle*/
+				m_pManager->AddIdleDonglesItem(this);
+			}
+			else
+			{
+				m_pLog->AddLog("%s is bad,maybe you need Re-plug dongle device.if invalid,please replace dongle device", Name());
+			}
 			if (m_pCurHanleRing)
 			{
 				(*(m_pCurHanleRing->pOnData))(NULL, 0, 0, m_pCurHanleRing->param);
 				clearCurHandleRing();
 			}
-			/*回收此Dongle*/
-			m_pManager->AddIdleDonglesItem(this);
 		}
 	}
 }

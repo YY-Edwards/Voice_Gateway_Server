@@ -15,7 +15,7 @@ class NSManager;
 #define SIZE_RING_TX 64
 #define SIZE_POOL SIZE_RING_TX
 #define RX_TX_TIMEOUT 25 //必须大于20
-#define MILSECONDS_IDLE_REAL 100 //网络数据间隔为60ms这里设置100ms来判定解密结束
+#define MILSECONDS_IDLE_REAL (60*2) //网络数据间隔为60ms这里设置120ms来判定解密结束
 #define TIMEOUT_TRY_COUNT 3
 #define TIMEOUT_TRY_COUNT_98 10
 #define TIMEOUT_LE_98 (6*1000)
