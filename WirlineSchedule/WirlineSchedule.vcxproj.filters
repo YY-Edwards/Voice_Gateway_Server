@@ -85,41 +85,41 @@
     <ClCompile Include="WDK_VidPidQuery.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="NSWLNet.cpp">
-      <Filter>NS</Filter>
-    </ClCompile>
-    <ClCompile Include="NSManager.cpp">
-      <Filter>NS</Filter>
-    </ClCompile>
     <ClCompile Include="linklist.c">
-      <Filter>NS</Filter>
-    </ClCompile>
-    <ClCompile Include="NSLog.cpp">
-      <Filter>NS</Filter>
+      <Filter>NS\source</Filter>
     </ClCompile>
     <ClCompile Include="net.c">
-      <Filter>NS</Filter>
+      <Filter>NS\source</Filter>
     </ClCompile>
     <ClCompile Include="NSAmbe.cpp">
-      <Filter>NS</Filter>
+      <Filter>NS\source</Filter>
     </ClCompile>
     <ClCompile Include="NSDongle.cpp">
-      <Filter>NS</Filter>
+      <Filter>NS\source</Filter>
     </ClCompile>
     <ClCompile Include="NSGlobal.cpp">
-      <Filter>NS</Filter>
+      <Filter>NS\source</Filter>
     </ClCompile>
-    <ClCompile Include="NSSerial.cpp">
-      <Filter>NS</Filter>
+    <ClCompile Include="NSLog.cpp">
+      <Filter>NS\source</Filter>
     </ClCompile>
-    <ClCompile Include="NSSound.cpp">
-      <Filter>NS</Filter>
-    </ClCompile>
-    <ClCompile Include="NSWLPeer.cpp">
-      <Filter>NS</Filter>
+    <ClCompile Include="NSManager.cpp">
+      <Filter>NS\source</Filter>
     </ClCompile>
     <ClCompile Include="NSRecordFile.cpp">
-      <Filter>NS</Filter>
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NSSerial.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NSSound.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NSWLNet.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NSWLPeer.cpp">
+      <Filter>NS\source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -429,56 +429,56 @@
     <ClInclude Include="WDK_VidPidQuery.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="NSNetBase.h">
-      <Filter>NS</Filter>
-    </ClInclude>
-    <ClInclude Include="NSWLNet.h">
-      <Filter>NS</Filter>
-    </ClInclude>
-    <ClInclude Include="NSManager.h">
-      <Filter>NS</Filter>
+    <ClInclude Include="global.h">
+      <Filter>NS\include</Filter>
     </ClInclude>
     <ClInclude Include="linklist.h">
-      <Filter>NS</Filter>
-    </ClInclude>
-    <ClInclude Include="NSLog.h">
-      <Filter>NS</Filter>
-    </ClInclude>
-    <ClInclude Include="global.h">
-      <Filter>NS</Filter>
-    </ClInclude>
-    <ClInclude Include="net.h">
-      <Filter>NS</Filter>
-    </ClInclude>
-    <ClInclude Include="NSStruct.h">
-      <Filter>NS</Filter>
-    </ClInclude>
-    <ClInclude Include="NS\mutex.h">
-      <Filter>NS</Filter>
-    </ClInclude>
-    <ClInclude Include="NSAmbe.h">
-      <Filter>NS</Filter>
-    </ClInclude>
-    <ClInclude Include="NSDongle.h">
-      <Filter>NS</Filter>
+      <Filter>NS\include</Filter>
     </ClInclude>
     <ClInclude Include="MotoDefine.h">
-      <Filter>NS</Filter>
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NS\mutex.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="net.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NSAmbe.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NSDongle.h">
+      <Filter>NS\include</Filter>
     </ClInclude>
     <ClInclude Include="NSGlobal.h">
-      <Filter>NS</Filter>
+      <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="NSSerial.h">
-      <Filter>NS</Filter>
+    <ClInclude Include="NSLog.h">
+      <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="NSSound.h">
-      <Filter>NS</Filter>
+    <ClInclude Include="NSManager.h">
+      <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="NSWLPeer.h">
-      <Filter>NS</Filter>
+    <ClInclude Include="NSNetBase.h">
+      <Filter>NS\include</Filter>
     </ClInclude>
     <ClInclude Include="NSRecordFile.h">
-      <Filter>NS</Filter>
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NSSerial.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NSSound.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NSStruct.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NSWLNet.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NSWLPeer.h">
+      <Filter>NS\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -550,6 +550,12 @@
     </Filter>
     <Filter Include="NS">
       <UniqueIdentifier>{a8161e58-54de-4cf1-8305-77f9563fa69c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\include">
+      <UniqueIdentifier>{96958e9b-ba28-44fd-9c3e-0bf148ef285d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\source">
+      <UniqueIdentifier>{527b4355-347d-4722-8e91-0c87e374ba08}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

@@ -3,7 +3,7 @@
 #include "NSWLNet.h"
 #include "HMAC_SHA1.h"
 #include "NSLog.h"
-#include "Manager.h"
+//#include "Manager.h"
 
 #define AUTHENTIC_ID_SIZE	4
 #define VENDER_KEY_SIZE		20
@@ -598,17 +598,26 @@ void NSWLPeer::setWlRegStatus(wl_reg_status value)
 		m_wlRegStatus = value;
 		if (WL_REG_SUCCESS == m_wlRegStatus)
 		{
-			if (g_manager)
-			{
-				g_manager->setWireLanStatus(WL_REGISTER_SUC);
-			}
+			onsystemstatuschange_info_t info = { 0 };
+			info.type = System_WireLanStatus;
+			info.value = WL_REGISTER_SUC;
+			NS_SafeSystemStatusChangeEvent(&info);
+			//if (g_manager)
+			//{
+			//	g_manager->setWireLanStatus(WL_REGISTER_SUC);
+			//}
 		}
 		else
 		{
-			if (g_manager)
-			{
-				g_manager->setWireLanStatus(WL_REGISTER_FAL);
-			}
+
+			onsystemstatuschange_info_t info = { 0 };
+			info.type = System_WireLanStatus;
+			info.value = WL_REGISTER_FAL;
+			NS_SafeSystemStatusChangeEvent(&info);
+			//if (g_manager)
+			//{
+			//	g_manager->setWireLanStatus(WL_REGISTER_FAL);
+			//}
 		}
 	}
 }

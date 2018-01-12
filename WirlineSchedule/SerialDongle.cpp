@@ -1063,9 +1063,10 @@ void CSerialDongle::releaseWaitNextNetDataEvent()
 
 void CSerialDongle::startCoding(int bufferSize)
 {
+	int size = m_PCM_CirBuff.size();
 	if (
 		!m_bCoding //当前状态为未开始
-		&& (m_PCM_CirBuff.size() > bufferSize)
+		&& (size > bufferSize)
 		)
 	{
 		//提醒界面

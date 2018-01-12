@@ -7,6 +7,27 @@ class NSSound;
 class NSManager;
 class NSNetBase;
 
+typedef struct _oncall_info_t
+{
+	unsigned char callType;
+	unsigned long srcId;
+	unsigned long tgtId;
+	int status;
+	bool isCurrent;
+}oncall_info_t;
+typedef struct _oncallstatus_info_t
+{
+	unsigned char callType;
+	unsigned long srcId;
+	unsigned long tgtId;
+	int status;
+}oncallstatus_info_t;
+typedef struct _onsystemstatuschange_info_t
+{
+	int type;
+	int value;
+}onsystemstatuschange_info_t;
+
 typedef enum _license_status_enum
 {
 	license_status_unknown,
@@ -18,6 +39,10 @@ typedef enum _repeater_net_mode_enum
 	WL,
 	P2P
 }repeater_net_mode_enum;
+
+typedef void(*OnCall)(void* onCallParam, oncall_info_t* info);
+typedef void(*OnCallStatus)(void* onCallStatusParam, oncallstatus_info_t* info);
+typedef void(*OnNSSystemStatusChange)(void* OnSystemStatusChangeParam, onsystemstatuschange_info_t* info);
 
 extern NSNetBase* g_pNSNet;
 extern repeater_net_mode_enum g_repeater_net_mode;
@@ -34,5 +59,21 @@ extern unsigned char g_playCalltype;
 extern unsigned long g_playTargetId;
 extern int g_should_delete;
 extern license_status_enum g_license_status;
+//extern void* onCallParam;
+//extern OnCall g_event_oncall;
+//extern void* onCallStatusParam;
+//extern OnCallStatus g_event_oncallstatus;
+//extern void* onSystemStatusChangeParam;
+//extern OnNSSystemStatusChange g_event_systemstatuschange;
+
+void NS_RegCallEvent(void* param, OnCall callback);
+void NS_UnregCallEvent();
+void NS_SafeCallEvent(oncall_info_t* info);
+void NS_RegCallStatusEvent(void* param, OnCallStatus callback);
+void NS_UnregCallStatusEvent();
+void NS_SafeCallStatusEvent(oncallstatus_info_t* info);
+void NS_RegSystemStatusChangeEvent(void* param, OnNSSystemStatusChange callback);
+void NS_UnregSystemStatusChangeEvent();
+void NS_SafeSystemStatusChangeEvent(onsystemstatuschange_info_t* info);
 
 #endif

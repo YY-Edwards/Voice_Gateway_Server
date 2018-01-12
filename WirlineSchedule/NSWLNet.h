@@ -40,7 +40,7 @@ public:
 	/*获取当前LE状态*/
 	le_status_enum LeStatus();
 	call_thread_status_enum CallThreadStatus();
-	CALL_OPERATE_PARAM CurCallCmd;
+	//CALL_OPERATE_PARAM CurCallCmd;
 	void CallStopUnnormal();
 private:
 	StartNetParam m_netParam;//配置参数

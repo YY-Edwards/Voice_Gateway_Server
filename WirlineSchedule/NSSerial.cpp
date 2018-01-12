@@ -3,7 +3,7 @@
 #include "NSLog.h"
 #include <process.h>
 #include "NSNetBase.h"
-#include "Manager.h"
+//#include "Manager.h"
 
 NSSerial::NSSerial()
 :m_bThreadWork(false)
@@ -205,11 +205,11 @@ void NSSerial::GetSerialThread()
 						   }
 						   break;
 					   }
-			if (NULL != currentItem)
-			{
-				delete currentItem;
-				currentItem = NULL;
-			}
+					   if (NULL != currentItem)
+					   {
+						   delete currentItem;
+						   currentItem = NULL;
+					   }
 		}
 			break;
 		default:
@@ -753,7 +753,7 @@ void NSSerial::SendXnlToMaster(work_item_t *w, unsigned long timeout /*= TIMEOUT
 	send_data_t* pSend = &w->data.send_data;
 	//if (sendDataUdp(m_pMasterXqttnet, pSend->net_data, pSend->net_lenth, (SOCKADDR_IN*)pSend->send_to, sizeof(SOCKADDR_IN)))
 	//{
-	if (m_pCallParam->sendNetDataBase(pSend->net_data,pSend->net_lenth,pSend->send_to))
+	if (m_pCallParam->sendNetDataBase(pSend->net_data, pSend->net_lenth, pSend->send_to))
 	{
 		if (0 != timeout)
 		{
@@ -783,17 +783,25 @@ void NSSerial::SetXnlStatus(xnl_status_enum value)
 		m_xnl_status_enum = value;
 		if (GET_SERIAL_SUCCESS == m_xnl_status_enum)
 		{
-			if (g_manager)
-			{
-				g_manager->setDeviceInfoStatus(WL_SERIL_SUC);
-			}
+				onsystemstatuschange_info_t info = { 0 };
+				info.type = System_DeviceInfoStatus;
+				info.value = WL_SERIL_SUC;
+				NS_SafeSystemStatusChangeEvent(&info);
+			//if (g_manager)
+			//{
+			//	g_manager->setDeviceInfoStatus(WL_SERIL_SUC);
+			//}
 		}
 		else
 		{
-			if (g_manager)
-			{
-				g_manager->setDeviceInfoStatus(WL_SERIL_FAL);
-			}
+				onsystemstatuschange_info_t info = { 0 };
+				info.type = System_DeviceInfoStatus;
+				info.value = WL_SERIL_FAL;
+				NS_SafeSystemStatusChangeEvent(&info);
+			//if (g_manager)
+			//{
+			//	g_manager->setDeviceInfoStatus(WL_SERIL_FAL);
+			//}
 		}
 	}
 }

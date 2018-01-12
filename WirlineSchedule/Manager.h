@@ -124,6 +124,12 @@ private:
 	int m_deviceInfoStatus;//序列号是否更新
 	int m_mnisStatus;
 
+	static void OnCall(void* param, oncall_info_t* info);
+	void onCall(oncall_info_t* info);
+	static void OnCallStatus(void* param,oncallstatus_info_t* info);
+	void onCallStatus(oncallstatus_info_t* info);
+	static void OnSystemStatusChange(void* param,onsystemstatuschange_info_t* info);
+	void onSystemStatusChange(onsystemstatuschange_info_t* info);
 	static unsigned __stdcall HandleRemoteTaskProc(void * pThis);
 	/*判断当前任务超时线程*/
 	static void PASCAL TaskOnTimerProc(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dwl, DWORD dw2);

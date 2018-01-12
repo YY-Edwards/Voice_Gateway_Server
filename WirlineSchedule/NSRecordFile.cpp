@@ -8,7 +8,7 @@
 #include "NSAmbe.h"
 #include "NSManager.h"
 #include "NSWLPeer.h"
-#include "WLNet.h"
+//#include "WLNet.h"
 
 #define MAX_RECORD_BUFFER_SIZE (100*1024)
 
@@ -146,11 +146,24 @@ void NSRecordFile::setCallStatus(int value)
 		{
 			if (src_radio == CONFIG_LOCAL_RADIO_ID)
 			{
-				g_pNet->wlCallStatus(call_type, src_radio, target_radio, STATUS_CALL_START | REMOTE_CMD_SUCCESS, SessionId);
+					oncallstatus_info_t info = { 0 };
+					info.callType = call_type;
+					info.srcId = src_radio;
+					info.tgtId = target_radio;
+					info.status = STATUS_CALL_START | REMOTE_CMD_SUCCESS;
+					NS_SafeCallStatusEvent(&info);
+				//g_pNet->wlCallStatus(call_type, src_radio, target_radio, STATUS_CALL_START | REMOTE_CMD_SUCCESS, SessionId);
 			}
 			else
 			{
-				g_pNet->wlCall(call_type, src_radio, target_radio, OPERATE_CALL_START, (call_type == g_playCalltype && target_radio == g_playTargetId));
+					oncall_info_t info = { 0 };
+					info.callType = call_type;
+					info.srcId = src_radio;
+					info.tgtId = target_radio;
+					info.status = OPERATE_CALL_START;
+					info.isCurrent = (call_type == g_playCalltype && target_radio == g_playTargetId);
+					NS_SafeCallEvent(&info);
+				//g_pNet->wlCall(call_type, src_radio, target_radio, OPERATE_CALL_START, (call_type == g_playCalltype && target_radio == g_playTargetId));
 			}
 		}
 		else if (VOICE_BURST == call_status)
@@ -166,11 +179,24 @@ void NSRecordFile::setCallStatus(int value)
 			timeout = GetTickCount() + g_hang_time;//µÈ´ýSession_End±êÊ¶
 			if (src_radio == CONFIG_LOCAL_RADIO_ID)
 			{
-				g_pNet->wlCallStatus(call_type, src_radio, target_radio, STATUS_CALL_END | REMOTE_CMD_SUCCESS, SessionId);
+					oncallstatus_info_t info = { 0 };
+					info.callType = call_type;
+					info.srcId = src_radio;
+					info.tgtId = target_radio;
+					info.status = STATUS_CALL_END | REMOTE_CMD_SUCCESS;
+					NS_SafeCallStatusEvent(&info);
+				//g_pNet->wlCallStatus(call_type, src_radio, target_radio, STATUS_CALL_END | REMOTE_CMD_SUCCESS, SessionId);
 			}
 			else
 			{
-				g_pNet->wlCall(call_type, src_radio, target_radio, OPERATE_CALL_END, (call_type == g_playCalltype && target_radio == g_playTargetId));
+					oncall_info_t info = { 0 };
+					info.callType = call_type;
+					info.srcId = src_radio;
+					info.tgtId = target_radio;
+					info.status = OPERATE_CALL_END;
+					info.isCurrent = (call_type == g_playCalltype && target_radio == g_playTargetId);
+					NS_SafeCallEvent(&info);
+				//g_pNet->wlCall(call_type, src_radio, target_radio, OPERATE_CALL_END, (call_type == g_playCalltype && target_radio == g_playTargetId));
 			}
 		}
 		else if (VOICE_END_BURST == call_status)

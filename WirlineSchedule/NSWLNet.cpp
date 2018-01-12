@@ -7,8 +7,8 @@
 #include "NSRecordFile.h"
 #include "HMAC_SHA1.h"
 #include "NSSound.h"
-#include "Manager.h"
-#include "WLNet.h"
+//#include "Manager.h"
+//#include "WLNet.h"
 #include "NSManager.h"
 
 #define AUTHENTIC_ID_SIZE	4
@@ -68,7 +68,7 @@ NSWLNet::NSWLNet(NSManager* pManager)
 	memset(&m_burstAmbe, 0, sizeof(send_ambe_voice_encoded_frames_t));
 	initVoiceBurst();
 	m_timerId = timeSetEvent(SEND_VOICE_INTERVAL, 1, SendAmbeDataProc, (DWORD)this, TIME_PERIODIC);
-	memset(&CurCallCmd, 0, sizeof(CALL_OPERATE_PARAM));
+	//memset(&CurCallCmd, 0, sizeof(CALL_OPERATE_PARAM));
 }
 
 NSWLNet::~NSWLNet()
@@ -1068,7 +1068,7 @@ void NSWLNet::AmbeDataThread()
 												  else if (Call_Session_Call_Hang == callSessionStatus)
 												  {
 													  /*更新通话状态*/
-													  memcpy(m_localRecordFile->SessionId, CurCallCmd.SessionId, SESSION_SIZE);
+													  //memcpy(m_localRecordFile->SessionId, CurCallCmd.SessionId, SESSION_SIZE);
 													  m_localRecordFile->setCallStatus(CALL_SESSION_STATUS_HANG);
 												  }
 											  }
@@ -1257,37 +1257,53 @@ void NSWLNet::SetLeStatus(le_status_enum value)
 		m_leStatus = value;
 		if (m_leStatus > WAITFOR_MAP_REQUEST_TX)
 		{
-			if (g_manager)
-			{
-				g_manager->setLEStatus(WL_SYSTEM_CONNECT);
-			}
+			onsystemstatuschange_info_t info = { 0 };
+			info.type = System_LEStatus;
+			info.value = WL_SYSTEM_CONNECT;
+			NS_SafeSystemStatusChangeEvent(&info);
+			//if (g_manager)
+			//{
+			//	g_manager->setLEStatus(WL_SYSTEM_CONNECT);
+			//}
 		}
 		else
 		{
-			if (g_manager)
-			{
-				g_manager->setLEStatus(WL_SYSTEM_DISCONNECT);
-			}
+			onsystemstatuschange_info_t info = { 0 };
+			info.type = System_LEStatus;
+			info.value = WL_SYSTEM_DISCONNECT;
+			NS_SafeSystemStatusChangeEvent(&info);
+			//if (g_manager)
+			//{
+			//	g_manager->setLEStatus(WL_SYSTEM_DISCONNECT);
+			//}
 		}
 
-		FieldValue info(FieldValue::TInt);
+		//FieldValue info(FieldValue::TInt);
 		/*连接成功*/
 		if (ALIVE == m_leStatus)
 		{
-			if (g_pNet)
-			{
-				info.setInt(REPEATER_CONNECT);
-				g_pNet->wlInfo(GET_TYPE_CONN, info, "");
-			}
+			onsystemstatuschange_info_t info = { 0 };
+			info.type = System_RepeaterStatus;
+			info.value = REPEATER_CONNECT;
+			NS_SafeSystemStatusChangeEvent(&info);
+			//if (g_pNet)
+			//{
+			//	info.setInt(REPEATER_CONNECT);
+			//	g_pNet->wlInfo(GET_TYPE_CONN, info, "");
+			//}
 		}
 		/*断开连接*/
 		if (ALIVE == old)
 		{
-			if (g_pNet)
-			{
-				info.setInt(REPEATER_DISCONNECT);
-				g_pNet->wlInfo(GET_TYPE_CONN, info, "");
-			}
+			onsystemstatuschange_info_t info = { 0 };
+			info.type = System_RepeaterStatus;
+			info.value = REPEATER_DISCONNECT;
+			NS_SafeSystemStatusChangeEvent(&info);
+			//if (g_pNet)
+			//{
+			//	info.setInt(REPEATER_DISCONNECT);
+			//	g_pNet->wlInfo(GET_TYPE_CONN, info, "");
+			//}
 		}
 	}
 }
@@ -1404,7 +1420,7 @@ void NSWLNet::Build_WorkItem_LE_90(work_item_t* p)
 		pNetworkData = &pSendData->protocol.le.PROTOCOL_90;
 		pNetworkData->Opcode = LE_MASTER_PEER_REGISTRATION_REQUEST;
 		pNetworkData->peerID = m_netParam.local_peer_id;
-		
+
 		if (CPC == m_netParam.work_mode)
 		{
 			pNetworkData->currentLinkProtocolVersion = CPC_CURRENTLPVERSION;
@@ -1419,7 +1435,7 @@ void NSWLNet::Build_WorkItem_LE_90(work_item_t* p)
 			pNetworkData->peerMode = IPSC_MODE;
 			pNetworkData->peerServices = IPSC_SERVICES;
 		}
-		
+
 		pSendData->net_lenth = Build_LE_MASTER_PEER_REGISTRATION_REQUEST(pSendData->net_data, pNetworkData);
 	}
 }
@@ -3073,10 +3089,13 @@ void NSWLNet::SetSerialNumber(unsigned char* pSerial)
 	char temp[11] = { 0 };
 	memcpy(temp, m_serialNumber, sizeof(m_serialNumber));
 	repeaterSerial = temp;
-	if (g_pNet)
-	{
-		g_pNet->wlSendSerial();
-	}
+	onsystemstatuschange_info_t info = { 0 };
+	info.type = System_SendSerial;
+	NS_SafeSystemStatusChangeEvent(&info);
+	//if (g_pNet)
+	//{
+	//	g_pNet->wlSendSerial();
+	//}
 }
 
 void NSWLNet::Handle_Wl_Status_Alive_TimeOut_Recive(const char wlOpcode, moto_protocol_wl_t* protocol, item_oprate_enum &OpreateFlag)
@@ -3390,7 +3409,15 @@ void NSWLNet::CheckRecordsThread()
 						VOICE_END_BURST == record->CallStatus() ||
 						VOICE_START == record->CallStatus())
 					{
-						g_pNet->wlCall(record->call_type, record->src_radio, record->target_radio, OPERATE_CALL_END, (record->call_type == g_playCalltype && record->target_radio == g_playTargetId));
+
+						oncall_info_t info = { 0 };
+						info.callType = record->call_type;
+						info.srcId = record->src_radio;
+						info.tgtId = record->target_radio;
+						info.status = OPERATE_CALL_END;
+						info.isCurrent = (record->call_type == g_playCalltype && record->target_radio == g_playTargetId);
+						NS_SafeCallEvent(&info);
+						//g_pNet->wlCall(record->call_type, record->src_radio, record->target_radio, OPERATE_CALL_END, (record->call_type == g_playCalltype && record->target_radio == g_playTargetId));
 					}
 					removeItem(&m_records, record);
 					curItem->pNext = NULL;
@@ -3656,7 +3683,10 @@ void NSWLNet::CallThread()
 			break;
 		case Call_Thread_Call_Fail:
 		{
-									  g_pNet->wlRequestCallEnd(CurCallCmd);
+									  onsystemstatuschange_info_t info = { 0 };
+									  info.type = System_SendTimeOutCallEnd;
+									  NS_SafeSystemStatusChangeEvent(&info);
+									  //g_pNet->wlRequestCallEnd(CurCallCmd);
 									  //g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL, CurCallCmd.SessionId);
 									  g_pNSSound->setMicStatus(Mic_Stop);
 									  setCallThreadStatus(Call_Thread_Status_Idle);
@@ -4078,7 +4108,10 @@ void NSWLNet::CallStop()
 	else
 	{
 		m_pLog->AddLog("no call need stop");
-		g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS, CurCallCmd.SessionId);
+		oncallstatus_info_t info = { 0 };
+		info.status = STATUS_CALL_END | REMOTE_CMD_SUCCESS;
+		NS_SafeCallStatusEvent(&info);
+		//g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS, CurCallCmd.SessionId);
 	}
 }
 
@@ -4187,7 +4220,7 @@ void NSWLNet::SendAmbeData()
 					m_localRecordFile->call_id = CallId();
 					m_localRecordFile->call_type = m_makeCallParam.callType;
 					m_localRecordFile->src_slot = peer->SlotNumber();
-					memcpy(m_localRecordFile->SessionId, CurCallCmd.SessionId, SESSION_SIZE);
+					//memcpy(m_localRecordFile->SessionId, CurCallCmd.SessionId, SESSION_SIZE);
 					m_localRecordFile->setCallStatus(VOICE_START);
 				}
 				else

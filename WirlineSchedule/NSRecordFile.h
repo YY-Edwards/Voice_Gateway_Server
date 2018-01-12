@@ -29,7 +29,7 @@ public:
 	int src_rssi;
 	int src_slot;
 	unsigned long call_id;
-	char SessionId[SESSION_SIZE];
+	//char SessionId[SESSION_SIZE];
 private:
 	SYSTEMTIME time;//this time is voice start time
 	unsigned int length;

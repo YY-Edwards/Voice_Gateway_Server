@@ -36,6 +36,12 @@ CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis, std::wstring& defaultAud
 	g_pNSManager = new NSManager();
 	g_pNSSound = new NSSound();
 	g_pNSNet = new NSWLNet(g_pNSManager);
+
+	/*注册事件*/
+	NS_RegCallEvent(this, &OnCall);
+	NS_RegCallStatusEvent(this, &OnCallStatus);
+	NS_RegSystemStatusChangeEvent(this, &OnSystemStatusChange);
+
 	g_pNet = new CWLNet(pDb, this, defaultAudioPath);
 	g_pDongle = new CSerialDongle();
 	g_pSound = new CSound();
@@ -80,6 +86,11 @@ CManager::~CManager()
 		m_idTaskOnTimerProc = 0;
 	}
 	stop();
+	/*注销事件*/
+	NS_UnregCallEvent();
+	NS_UnregCallStatusEvent();
+	NS_UnregSystemStatusChangeEvent();
+
 	if (g_pNSSound)
 	{
 		delete g_pNSSound;
@@ -561,14 +572,14 @@ int CManager::config(REMOTE_TASK* pTask)
 		//////////////////////////////////////////////////////////////////////////
 		CONFIG_CURRENT_TAGET = CONFIG_DEFAULT_GROUP;
 		StartNetParam param = { 0 };
-		param.hang_time = CONFIG_HUNG_TIME;
+		param.hang_time = (unsigned short)CONFIG_HUNG_TIME;
 		param.local_peer_id = CONFIG_LOCAL_PEER_ID;
 		param.local_port = 40000;
 		param.local_radio_id = CONFIG_LOCAL_RADIO_ID;
-		param.master_firewall_time = CONFIG_MASTER_HEART_TIME;
+		param.master_firewall_time = (unsigned short)CONFIG_MASTER_HEART_TIME;
 		strcpy(param.master_ip, CONFIG_MASTER_IP);
 		param.master_port = CONFIG_MASTER_PORT;
-		param.peer_firewall_time = CONFIG_PEER_HEART_AND_REG_TIME;
+		param.peer_firewall_time = (unsigned short)CONFIG_PEER_HEART_AND_REG_TIME;
 		param.work_mode = CONFIG_RECORD_TYPE;
 		/*初始化网络*/
 		rlt = g_pNSNet->StartNet(&param);
@@ -788,7 +799,7 @@ void CManager::handleRemoteTask()
 									call_thread_status_enum callStatus = pNSNet->CallThreadStatus();
 									if (Call_Thread_Status_Idle == callStatus && Mic_Idle == micStatus)
 									{
-										pNSNet->CurCallCmd = cmdInfo;
+										//pNSNet->CurCallCmd = cmdInfo;
 										make_call_param_t param = { 0 };
 										param.callType = cmdInfo.callType;
 										param.targetID = cmdInfo.tartgetId;
@@ -826,7 +837,7 @@ void CManager::handleRemoteTask()
 										 NSLog::instance()->AddLog("Handle REMOTE_CMD_STOP_CALL");
 										 setCurrentTask(&task);
 										 pNSNet = (NSWLNet*)g_pNSNet;
-										 pNSNet->CurCallCmd = task.param.info.callParam.operateInfo;
+										 //pNSNet->CurCallCmd = task.param.info.callParam.operateInfo;
 										 pNSNet->CallStop();
 
 			}
@@ -1713,5 +1724,108 @@ void CManager::setMnisStatus(int value)
 		FieldValue info(FieldValue::TObject);
 		info.setKeyVal("MnisStatus", FieldValue(value));
 		if (g_pNet) g_pNet->wlInfo(GET_TYPE_SYSTEM_STATUS, info, "");
+	}
+}
+
+void CManager::OnCall(void* param, oncall_info_t* info)
+{
+	CManager* p = (CManager*)param;
+	if (p)
+	{
+		p->onCall(info);
+	}
+}
+
+void CManager::onCall(oncall_info_t* info)
+{
+	NSLog::instance()->AddLog("OnCall callType:0x%02x,srcId:%lu,tgtId:%lu,status:%d,isCurrent:%s", info->callType, info->srcId, info->tgtId, info->status, info->isCurrent ? "TRUE" : "FALSE");
+	g_pNet->wlCall(info->callType, info->srcId, info->tgtId, info->status, info->isCurrent);
+}
+
+void CManager::OnCallStatus(void* param, oncallstatus_info_t* info)
+{
+	CManager* p = (CManager*)param;
+	if (p)
+	{
+		p->onCallStatus(info);
+	}
+}
+
+void CManager::onCallStatus(oncallstatus_info_t* info)
+{
+	NSLog::instance()->AddLog("onCallStatus callType:0x%02x,srcId:%lu,tgtId:%lu,status:%d", info->callType, info->srcId, info->tgtId, info->status);
+	REMOTE_TASK task = { 0 };
+	getCurrentTask(task);
+	CALL_OPERATE_PARAM CurCallCmd = task.param.info.callParam.operateInfo;
+	g_pNet->wlCallStatus(CurCallCmd.callType, CONFIG_LOCAL_RADIO_ID, CurCallCmd.tartgetId, info->status, CurCallCmd.SessionId);
+}
+
+void CManager::OnSystemStatusChange(void* param, onsystemstatuschange_info_t* info)
+{
+	CManager* p = (CManager*)param;
+	if (p)
+	{
+		p->onSystemStatusChange(info);
+	}
+}
+
+void CManager::onSystemStatusChange(onsystemstatuschange_info_t* info)
+{
+	NSLog::instance()->AddLog("onSystemStatusChange type:%d,value:%d", info->type, info->value);
+	switch (info->type)
+	{
+	case System_WorkMode:
+		break;
+	case System_ServerStatus:
+		break;
+	case System_DeviceStatus:
+		break;
+	case System_MnisStatus:
+		break;
+	case System_DatabaseStatus:
+		break;
+	case System_DongleCount:
+		break;
+	case System_MicphoneStatus:
+		break;
+	case System_SpeakerStatus:
+		break;
+	case System_LEStatus:
+	{
+							setLEStatus(info->value);
+	}
+		break;
+	case System_WireLanStatus:
+	{
+								 setWireLanStatus(info->value);
+	}
+		break;
+	case System_DeviceInfoStatus:
+	{
+									setDeviceInfoStatus(info->value);
+	}
+		break;
+	case System_RepeaterStatus:
+	{
+								  FieldValue value(FieldValue::TInt);
+								  value.setInt(info->value);
+								  g_pNet->wlInfo(GET_TYPE_CONN, value, "");
+	}
+		break;
+	case System_SendSerial:
+	{
+							  g_pNet->wlSendSerial();
+	}
+		break;
+	case System_SendTimeOutCallEnd:
+	{
+									  REMOTE_TASK task = { 0 };
+									  getCurrentTask(task);
+									  CALL_OPERATE_PARAM CurCallCmd = task.param.info.callParam.operateInfo;
+									  g_pNet->wlRequestCallEnd(CurCallCmd);
+	}
+		break;
+	default:
+		break;
 	}
 }

@@ -371,7 +371,7 @@ inline void wlConnectActionHandler(CRemotePeer* pRemote, const std::string& para
 	}
 	catch (std::exception* e)
 	{
-		printf_s("conect response send error");
+		printf_s("conect response send error,%s", e->what());
 	}
 	catch (...)
 	{
@@ -511,7 +511,7 @@ inline void wlCallActionHandler(CRemotePeer* pRemote, const std::string& param, 
 	}
 	catch (std::exception* e)
 	{
-		printf_s("call response send error");
+		printf_s("call response send error,%s", e->what());
 	}
 	catch (...)
 	{
@@ -542,7 +542,7 @@ inline void wlCallStatusActionHandler(CRemotePeer* pRemote, const std::string& p
 	}
 	catch (std::exception* e)
 	{
-		printf_s("call response send error");
+		printf_s("call response send error,%s", e->what());
 	}
 	catch (...)
 	{
@@ -609,7 +609,7 @@ inline void wlPlayActionHandler(CRemotePeer* pRemote, const std::string& param, 
 	}
 	catch (std::exception* e)
 	{
-		printf_s("call response send error");
+		printf_s("call response send error,%s", e->what());
 	}
 	catch (...)
 	{
@@ -741,7 +741,7 @@ inline void wlInfoActionHandler(CRemotePeer* pRemote, const std::string& param, 
 	}
 	catch (std::exception* e)
 	{
-		printf_s("call response send error");
+		printf_s("call response send error,%s", e->what());
 	}
 	catch (...)
 	{
@@ -807,7 +807,7 @@ inline void wlMnisQueryGpsActionHandler(CRemotePeer* pRemote, const std::string&
 	}
 	catch (std::exception* e)
 	{
-		printf_s("call response send error");
+		printf_s("call response send error,%s", e->what());
 	}
 	catch (...)
 	{
@@ -872,7 +872,7 @@ inline void wlMnisMessageHandler(CRemotePeer* pRemote, const std::string& param,
 	}
 	catch (std::exception* e)
 	{
-		printf_s("call response send error");
+		printf_s("call response send error,%s", e->what());
 	}
 	catch (...)
 	{
@@ -933,7 +933,7 @@ inline void wlMnisStatusHandler(CRemotePeer* pRemote, const std::string& param, 
 	}
 	catch (std::exception* e)
 	{
-		printf_s("call response send error");
+		printf_s("call response send error,%s", e->what());
 	}
 	catch (...)
 	{
@@ -988,7 +988,7 @@ inline void wlLicenseHandler(CRemotePeer* pRemote, const std::string& param, uin
 	}
 	catch (std::exception* e)
 	{
-		printf_s("call response send error");
+		printf_s("call response send error,%s", e->what());
 	}
 	catch (...)
 	{
@@ -1046,7 +1046,7 @@ inline void wlMnisLocationIndoorHandler(CRemotePeer* pRemote, const std::string&
 	}
 	catch (std::exception* e)
 	{
-		printf_s("call response send error");
+		printf_s("call response send error,%s",e->what());
 	}
 	catch (...)
 	{
