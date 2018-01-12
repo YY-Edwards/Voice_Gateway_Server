@@ -153,10 +153,10 @@ int NSWLNet::StartNet(StartNetParam* p)
 
 		if (NULL == m_pMasterXqttnet)
 		{
-			m_pLog->AddLog("connectServer fail,will try agin");
+			m_pLog->AddLog(Ns_Log_Error, "connectServer fail,will try agin");
 			if (0xffff == m_netParam.local_port)
 			{
-				m_pLog->AddLog("no udp port can use");
+				m_pLog->AddLog(Ns_Log_Error, "no udp port can use");
 				return -1;
 			}
 			else
@@ -174,7 +174,7 @@ int NSWLNet::StartNet(StartNetParam* p)
 		param.pSockaddrMaster = &m_sockaddrMaster;
 		if (0 != m_pSerial->Start(&param))
 		{
-			m_pLog->AddLog("m_pSerial Start fail");
+			m_pLog->AddLog(Ns_Log_Info, "m_pSerial Start fail");
 			return -1;
 		}
 
@@ -442,18 +442,18 @@ void NSWLNet::onRecive(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient, con
 
 void NSWLNet::onDisconn(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient, int errCode)
 {
-	m_pLog->AddLog("onDisconn,errCode:%d", errCode);
+	m_pLog->AddLog(Ns_Log_Error, "onDisconn,errCode:%d", errCode);
 	clearMasterXqttnet();
 }
 
 void NSWLNet::onSendComplete(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient)
 {
-	m_pLog->AddLog("onSendComplete");
+	m_pLog->AddLog(Ns_Log_Info, "onSendComplete");
 }
 
 void NSWLNet::onError(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient, int errCode)
 {
-	m_pLog->AddLog("onError,errCode:%d,will try connect net", errCode);
+	m_pLog->AddLog(Ns_Log_Error, "onError,errCode:%d,will try connect net", errCode);
 	clearMasterXqttnet();
 	StartNet(&m_netParam);
 }
@@ -476,7 +476,7 @@ int NSWLNet::allThreadStart()
 		);
 	if (NULL == m_pWorkThread)
 	{
-		m_pLog->AddLog("WorkThreadProc create fail");
+		m_pLog->AddLog(Ns_Log_Error,"WorkThreadProc create fail");
 		return -1;
 	}
 	/*超时线程*/
@@ -490,7 +490,7 @@ int NSWLNet::allThreadStart()
 		);
 	if (NULL == m_pTimeOutThread)
 	{
-		m_pLog->AddLog("TimeOutThreadProc create fail");
+		m_pLog->AddLog(Ns_Log_Error,"TimeOutThreadProc create fail");
 		return -1;
 	}
 	/*Ambe数据处理线程*/
@@ -504,7 +504,7 @@ int NSWLNet::allThreadStart()
 		);
 	if (NULL == m_pAmbeDataThread)
 	{
-		m_pLog->AddLog("AmbeDataThreadProc create fail");
+		m_pLog->AddLog(Ns_Log_Error,"AmbeDataThreadProc create fail");
 		return -1;
 	}
 	/*获取序列号线程*/
@@ -518,7 +518,7 @@ int NSWLNet::allThreadStart()
 		);
 	if (NULL == m_pCheckRecordsThread)
 	{
-		m_pLog->AddLog("CheckRecordsThreadProc create fail");
+		m_pLog->AddLog(Ns_Log_Error,"CheckRecordsThreadProc create fail");
 		return -1;
 	}
 	/*通话线程*/
@@ -532,7 +532,7 @@ int NSWLNet::allThreadStart()
 		);
 	if (NULL == m_pCallThread)
 	{
-		m_pLog->AddLog("CallThreadProc create fail");
+		m_pLog->AddLog(Ns_Log_Error,"CallThreadProc create fail");
 		return -1;
 	}
 	///*获取序列号线程*/
@@ -619,7 +619,7 @@ unsigned int __stdcall NSWLNet::WorkThreadProc(void* pArguments)
 
 void NSWLNet::WorkThread()
 {
-	m_pLog->AddLog("WorkThread start");
+	m_pLog->AddLog(Ns_Log_Info, "WorkThread start");
 	work_mode_enum workMode = m_netParam.work_mode;
 	find_peer_condition_t condition = { 0 };
 	item_oprate_enum OpreateFlag = Oprate_Del;
@@ -680,7 +680,7 @@ void NSWLNet::WorkThread()
 			curItem = NULL;
 		}
 	}
-	m_pLog->AddLog("WorkThread exit");
+	m_pLog->AddLog(Ns_Log_Info, "WorkThread exit");
 }
 
 unsigned int __stdcall NSWLNet::TimeOutThreadProc(void* pArguments)
@@ -695,7 +695,7 @@ unsigned int __stdcall NSWLNet::TimeOutThreadProc(void* pArguments)
 
 void NSWLNet::TimeOutThread()
 {
-	m_pLog->AddLog("TimeOutThread start");
+	m_pLog->AddLog(Ns_Log_Info, "TimeOutThread start");
 	work_mode_enum workMode = m_netParam.work_mode;
 	find_peer_condition_t condition = { 0 };
 	char Opcode = '\0';
@@ -786,7 +786,7 @@ void NSWLNet::TimeOutThread()
 		/*规定时间范围内处理一次超时*/
 		Sleep(SLEEP_TIMEOUT_THREAD);
 	}
-	m_pLog->AddLog("TimeOutThread exit");
+	m_pLog->AddLog(Ns_Log_Info, "TimeOutThread exit");
 }
 
 unsigned int __stdcall NSWLNet::AmbeDataThreadProc(void* pArguments)
@@ -801,7 +801,7 @@ unsigned int __stdcall NSWLNet::AmbeDataThreadProc(void* pArguments)
 
 void NSWLNet::AmbeDataThread()
 {
-	m_pLog->AddLog("AmbeDataThread start");
+	m_pLog->AddLog(Ns_Log_Info,"AmbeDataThread start");
 	item_oprate_enum OpreateFlag = Oprate_Del;
 	work_item_t* curItem = NULL;
 	moto_protocol_wl_t* protocol = NULL;
@@ -897,7 +897,7 @@ void NSWLNet::AmbeDataThread()
 										  condition.call_id = call_id;
 										  condition.src_radio = src_radio;
 										  condition.target_radio = target_radio;
-										  m_pLog->AddLog("%s From %lu To %lu", (Call_Session_End == callSessionStatus) ? "Call_Session_End" : "Call_Session_Call_Hang", src_radio, target_radio);
+										  m_pLog->AddLog(Ns_Log_Info,"%s From %lu To %lu", (Call_Session_End == callSessionStatus) ? "Call_Session_End" : "Call_Session_Call_Hang", src_radio, target_radio);
 										  if (Call_Session_Call_Hang == callSessionStatus)
 										  {
 											  /*增加到回叫队列*/
@@ -958,7 +958,7 @@ void NSWLNet::AmbeDataThread()
 			curItem = NULL;
 		}
 	}
-	m_pLog->AddLog("AmbeDataThread exit");
+	m_pLog->AddLog(Ns_Log_Info,"AmbeDataThread exit");
 }
 
 //unsigned int __stdcall WLNet::GetSerialThreadProc(void* pArguments)
@@ -1127,7 +1127,7 @@ void NSWLNet::SetLeStatus(le_status_enum value)
 		le_status_enum old = m_leStatus;
 		char temp[64] = { 0 };
 		sprintf_s(temp, "=====Le Status From %d To %d=====", m_leStatus, value);
-		m_pLog->AddLog(temp);
+		m_pLog->AddLog(Ns_Log_Info, temp);
 		m_leStatus = value;
 		if (m_leStatus > WAITFOR_MAP_REQUEST_TX)
 		{
@@ -1205,7 +1205,7 @@ void NSWLNet::clearWorkItems()
 				Opcode = p->data.send_data.protocol.le.PROTOCOL_90.Opcode;
 				sprintf_s(temp, "Send Opcode:0x%02x Delete", Opcode);
 			}
-			m_pLog->AddLog(temp);
+			m_pLog->AddLog(Ns_Log_Info, temp);
 #endif // _DEBUG
 
 			delete p;
@@ -1378,7 +1378,7 @@ void NSWLNet::clearWorkTimeOutItems()
 				Opcode = p->data.send_data.protocol.le.PROTOCOL_90.Opcode;
 				sprintf_s(temp, "TimeOut Send Opcode:0x%02x Delete", Opcode);
 			}
-			m_pLog->AddLog(temp);
+			m_pLog->AddLog(Ns_Log_Info, temp);
 #endif // _DEBUG
 
 			delete p;
@@ -1536,7 +1536,7 @@ void NSWLNet::Build_WorkItem_LE_96(work_item_t* p, unsigned long timing)
 	}
 	char temp[64] = { 0 };
 	sprintf_s(temp, "LE_MASTER_PEER_KEEP_ALIVE_REQUEST Send After %.1fs", timing / 1000.0f);
-	m_pLog->AddLog(temp);
+	m_pLog->AddLog(Ns_Log_Info,temp);
 	p->type = Send;
 	p->data.send_data.send_to = &m_sockaddrMaster;
 	p->data.send_data.timeout_try = TIMEOUT_TRY_COUNT;
@@ -2595,7 +2595,7 @@ void NSWLNet::Handle_Wl_Status_Alive_Recive(const char Opcode, work_item_t* &cur
 								   {
 								   case Channel_Control_Request_Status_Grant:
 								   {
-																				m_pLog->AddLog("Channel_Control_Request_Status_Grant");
+																				m_pLog->AddLog(Ns_Log_Info, "Channel_Control_Request_Status_Grant");
 																				/*设定当前peer为发送voice peer*/
 																				if (CallThreadStatus() == Call_Thread_Wait_Reply)
 																				{
@@ -2614,7 +2614,7 @@ void NSWLNet::Handle_Wl_Status_Alive_Recive(const char Opcode, work_item_t* &cur
 																				   if (Call_Thread_Status_Idle != CallThreadStatus() ||
 																					   Call_Thread_Author_No != CallThreadStatus())
 																				   {
-																					   m_pLog->AddLog("Channel_Control_Request_Status_Declined ReasonCode:%s,FailureScenarios:%s", m_callFailInfo.ReasonCode, m_callFailInfo.FailureScenarios);
+																					   m_pLog->AddLog(Ns_Log_Error, "Channel_Control_Request_Status_Declined ReasonCode:%s,FailureScenarios:%s", m_callFailInfo.ReasonCode, m_callFailInfo.FailureScenarios);
 																					   setCallThreadStatus(Call_Thread_Call_Fail);
 																				   }
 								   }
@@ -2704,7 +2704,7 @@ void NSWLNet::Handle_Le_Status_Alive_TimeOut_Recive(const char Opcode, work_item
 	{
 										  char temp[64] = { 0 };
 										  sprintf_s(temp, "LE_MASTER_KEEP_ALIVE_RESPONSE Recive");
-										  m_pLog->AddLog(temp);
+										  m_pLog->AddLog(Ns_Log_Info, temp);
 										  /*删除0x96*/
 										  findTimeOutItemAndDelete(m_netParam.matser_peer_id, LE_MASTER_KEEP_ALIVE_REQUEST, 0x00, Send);
 										  /*定时发送0x96*/
@@ -3016,7 +3016,7 @@ void NSWLNet::Unpack_WL(const char* pData, int len, moto_protocol_wl_t* &p, item
 	{
 									/*理论上来说不存在向第三方应用进行WL注册*/
 									sprintf_s(temp, "WL_REGISTRATION_REQUEST no handle");
-									m_pLog->AddLog(temp);
+									m_pLog->AddLog(Ns_Log_Info, temp);
 									OpreateFlag = Oprate_Del;
 	}
 		break;
@@ -3048,7 +3048,7 @@ void NSWLNet::Unpack_WL(const char* pData, int len, moto_protocol_wl_t* &p, item
 	{
 									/*理论上来说不存在向第三方应用进行通话申请*/
 									sprintf_s(temp, "WL_VC_CHNL_CTRL_REQUEST no handle");
-									m_pLog->AddLog(temp);
+									m_pLog->AddLog(Ns_Log_Info, temp);
 									OpreateFlag = Oprate_Del;
 	}
 		break;
@@ -3261,7 +3261,7 @@ unsigned int __stdcall NSWLNet::CheckRecordsThreadProc(void* pArguments)
 
 void NSWLNet::CheckRecordsThread()
 {
-	m_pLog->AddLog("CheckRecordsThread Start");
+	m_pLog->AddLog(Ns_Log_Info, "CheckRecordsThread Start");
 	NSRecordFile* record = NULL;
 	pLinkItem curItem = NULL;
 	while (m_bThreadWork)
@@ -3316,7 +3316,7 @@ void NSWLNet::CheckRecordsThread()
 		RELEASELOCK(m_mutexRecords);
 		Sleep(SLEEP_CHECK_AMBE_THREAD);
 	}
-	m_pLog->AddLog("CheckRecordsThread End");
+	m_pLog->AddLog(Ns_Log_Info, "CheckRecordsThread End");
 }
 
 work_item_t* NSWLNet::findTimeOutItemAndRemove(unsigned long peerId, const char Opcode, const char wlOpcode, work_item_type_enum type)
@@ -3499,7 +3499,7 @@ void NSWLNet::setCallThreadStatus(call_thread_status_enum value)
 {
 	if (value != m_callThreadStatus)
 	{
-		m_pLog->AddLog("====Call Thread Status From %d To %d====", m_callThreadStatus, value);
+		m_pLog->AddLog(Ns_Log_Info, "====Call Thread Status From %d To %d====", m_callThreadStatus, value);
 		m_callThreadStatus = value;
 		ContinueCallThread();
 	}
@@ -3527,7 +3527,7 @@ unsigned int __stdcall NSWLNet::CallThreadProc(void* pArguments)
 
 void NSWLNet::CallThread()
 {
-	m_pLog->AddLog("CallThread Start");
+	m_pLog->AddLog(Ns_Log_Info,"CallThread Start");
 	m_callThreadTimer = CreateEvent(NULL, FALSE, FALSE, NULL);
 	while (m_bThreadWork)
 	{
@@ -3572,7 +3572,7 @@ void NSWLNet::CallThread()
 		WaitForSingleObject(m_callThreadTimer, INFINITE);
 	}
 	m_callThreadTimer = NULL;
-	m_pLog->AddLog("CallThread End");
+	m_pLog->AddLog(Ns_Log_Info, "CallThread End");
 }
 
 
@@ -3580,7 +3580,7 @@ void NSWLNet::Make_Call(make_call_param_t* p)
 {
 	if (p == NULL || p->targetID == 0)
 	{
-		m_pLog->AddLog("invalid call param");
+		m_pLog->AddLog(Ns_Log_Info, "invalid call param");
 		setCallThreadStatus(Call_Thread_Call_Fail);
 	}
 	else
@@ -3607,7 +3607,7 @@ void NSWLNet::Make_Call(make_call_param_t* p)
 				peer = FindCallBacksItemAndRemove(p);
 				if (peer)
 				{
-					m_pLog->AddLog("This is a CallBack");
+					m_pLog->AddLog(Ns_Log_Info, "This is a CallBack");
 					p->slotNumber = peer->SlotNumber();
 					work_item_t* item = peer->Build_WL_VC_CHNL_CTRL_REQUEST(p);
 					sendWorkItemNetData(item);
@@ -3620,7 +3620,7 @@ void NSWLNet::Make_Call(make_call_param_t* p)
 				}
 				else
 				{
-					m_pLog->AddLog("This is a NewCall");
+					m_pLog->AddLog(Ns_Log_Info, "This is a NewCall");
 					if (IPSC == work_mode)
 					{
 						find_peer_condition_t condition = { 0 };
@@ -3644,7 +3644,7 @@ void NSWLNet::Make_Call(make_call_param_t* p)
 					}
 					else
 					{
-						m_pLog->AddLog("peer is null,maybe no map broadcast,wait little minuts try");
+						m_pLog->AddLog(Ns_Log_Error, "peer is null,maybe no map broadcast,wait little minuts try");
 						setCallThreadStatus(Call_Thread_Call_Fail);
 					}
 				}
@@ -3652,13 +3652,13 @@ void NSWLNet::Make_Call(make_call_param_t* p)
 			}
 			else
 			{
-				m_pLog->AddLog("peer %lu wl reg fail or unreg", peer->PeerId());
+				m_pLog->AddLog(Ns_Log_Error, "peer %lu wl reg fail or unreg", peer->PeerId());
 				setCallThreadStatus(Call_Thread_Call_Fail);
 			}
 		}
 		else
 		{
-			m_pLog->AddLog("peer is null,maybe no map broadcast,wait little minuts try");
+			m_pLog->AddLog(Ns_Log_Error, "peer is null,maybe no map broadcast,wait little minuts try");
 			setCallThreadStatus(Call_Thread_Call_Fail);
 		}
 	}
@@ -3811,7 +3811,7 @@ int NSWLNet::sendNetDataBase(const char* pData, int len, void* send_to)
 {
 	if (NULL == m_pMasterXqttnet)
 	{
-		m_pLog->AddLog("sendNetDataBase fail,m_pMasterXqttnet is null");
+		m_pLog->AddLog(Ns_Log_Error, "sendNetDataBase fail,m_pMasterXqttnet is null");
 		return 0;
 	}
 	int rlt = 0;
@@ -3981,7 +3981,7 @@ void NSWLNet::CallStop()
 	}
 	else
 	{
-		m_pLog->AddLog("no call need stop");
+		m_pLog->AddLog(Ns_Log_Info,"no call need stop");
 		oncallstatus_info_t info = { 0 };
 		info.status = STATUS_CALL_END | REMOTE_CMD_SUCCESS;
 		NS_SafeCallStatusEvent(&info);
@@ -4039,7 +4039,7 @@ void NSWLNet::HandleAmbeData(void* pData, unsigned long length)
 			  }
 			  else
 			  {
-				  m_pLog->AddLog("no add a frame,will end call");
+				  m_pLog->AddLog(Ns_Log_Error, "no add a frame,will end call");
 				  setCallThreadStatus(Call_Thread_Call_Fail);
 			  }
 			  m_TxSubCount = 0;
@@ -4121,7 +4121,7 @@ void NSWLNet::SendAmbeData()
 				{
 					g_pNSSound->DongleInfo(temp);
 				}
-				m_pLog->AddLog("not pop a frame,will send empty 60ms ambe,%s", temp);
+				m_pLog->AddLog(Ns_Log_Error, "not pop a frame,will send empty 60ms ambe,%s", temp);
 				Build_T_WL_PROTOCOL_21(m_vcBurst, false);
 				m_vcBurst.AMBEVoiceEncodedFrames = m_startAmbe.ambe;
 				m_sendBuffer.net_length = Build_WL_VC_VOICE_BURST(m_sendBuffer.net_data, &m_vcBurst);
@@ -4131,7 +4131,7 @@ void NSWLNet::SendAmbeData()
 		}
 		else
 		{
-			m_pLog->AddLog("peer is null");
+			m_pLog->AddLog(Ns_Log_Error, "peer is null");
 		}
 	}
 	else if (Call_Thread_Send_End == status)
@@ -4163,7 +4163,7 @@ void NSWLNet::SendAmbeData()
 		}
 		else
 		{
-			m_pLog->AddLog("peer is null");
+			m_pLog->AddLog(Ns_Log_Error, "peer is null");
 			g_pNSSound->setMicStatus(Mic_Stop);
 			setCallThreadStatus(Call_Thread_Status_Idle);
 		}

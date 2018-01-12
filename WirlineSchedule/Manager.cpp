@@ -665,7 +665,7 @@ int CManager::config(REMOTE_TASK* pTask)
 	}
 	else
 	{
-		NSLog::instance()->AddLog("recive config,but this is not first load,please restart service");
+		NSLog::instance()->AddLog(Ns_Log_Error, "recive config,but this is not first load,please restart service");
 
 		//if (!Env_SoundIsOk)
 		//{
@@ -779,7 +779,7 @@ void CManager::handleRemoteTask()
 			{
 			case REMOTE_CMD_CONFIG:
 			{
-									  NSLog::instance()->AddLog("Handle REMOTE_CMD_CONFIG");
+									  NSLog::instance()->AddLog(Ns_Log_Info, "Handle REMOTE_CMD_CONFIG");
 									  config(&task);
 			}
 				break;
@@ -787,11 +787,11 @@ void CManager::handleRemoteTask()
 			{
 									if (license_status_nopass == g_license_status)
 									{
-										NSLog::instance()->AddLog("REMOTE_CMD_CALL fail,license_status_nopass");
+										NSLog::instance()->AddLog(Ns_Log_Error, "REMOTE_CMD_CALL fail,license_status_nopass");
 										g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL);
 										continue;
 									}
-									NSLog::instance()->AddLog("Handle REMOTE_CMD_CALL");
+									NSLog::instance()->AddLog(Ns_Log_Info, "Handle REMOTE_CMD_CALL");
 									mic_status_enum micStatus = g_pNSSound->MicStatus();
 									setCurrentTask(&task);
 									CALL_OPERATE_PARAM cmdInfo = task.param.info.callParam.operateInfo;
@@ -807,7 +807,7 @@ void CManager::handleRemoteTask()
 									}
 									else
 									{
-										NSLog::instance()->AddLog("CallThreadStatus is not idle or MicStatus is not idle");
+										NSLog::instance()->AddLog(Ns_Log_Info, "CallThreadStatus is not idle or MicStatus is not idle");
 										g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL);
 									}
 			}
@@ -816,11 +816,11 @@ void CManager::handleRemoteTask()
 			{
 											 if (license_status_nopass == g_license_status)
 											 {
-												 NSLog::instance()->AddLog("REMOTE_CMD_SET_PLAY_CALL fail,license_status_nopass");
+												 NSLog::instance()->AddLog(Ns_Log_Error, "REMOTE_CMD_SET_PLAY_CALL fail,license_status_nopass");
 												 g_pNet->wlPlayStatus(CMD_FAIL, task.param.info.setCareCallParam.playParam.targetId);
 												 continue;
 											 }
-											 NSLog::instance()->AddLog("Handle REMOTE_CMD_SET_PLAY_CALL");
+											 NSLog::instance()->AddLog(Ns_Log_Info, "Handle REMOTE_CMD_SET_PLAY_CALL");
 											 setCurrentTask(&task);
 											 setPlayCallOfCare(task.param.info.setCareCallParam.playParam.callType, task.param.info.setCareCallParam.playParam.targetId);
 											 g_pNet->wlPlayStatus(CMD_SUCCESS, task.param.info.setCareCallParam.playParam.targetId);
@@ -830,11 +830,11 @@ void CManager::handleRemoteTask()
 			{
 										 if (license_status_nopass == g_license_status)
 										 {
-											 NSLog::instance()->AddLog("REMOTE_CMD_STOP_CALL fail,license_status_nopass");
+											 NSLog::instance()->AddLog(Ns_Log_Error, "REMOTE_CMD_STOP_CALL fail,license_status_nopass");
 											 g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, task.param.info.callParam.operateInfo.source, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS, task.param.info.callParam.operateInfo.SessionId);
 											 continue;
 										 }
-										 NSLog::instance()->AddLog("Handle REMOTE_CMD_STOP_CALL");
+										 NSLog::instance()->AddLog(Ns_Log_Info, "Handle REMOTE_CMD_STOP_CALL");
 										 setCurrentTask(&task);
 										 pNSNet = (NSWLNet*)g_pNSNet;
 										 //pNSNet->CurCallCmd = task.param.info.callParam.operateInfo;
@@ -844,7 +844,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_GET_CONN_STATUS:
 			{
-											   NSLog::instance()->AddLog("Handle REMOTE_CMD_GET_CONN_STATUS");
+											   NSLog::instance()->AddLog(Ns_Log_Info, "Handle REMOTE_CMD_GET_CONN_STATUS");
 											   pNSNet = (NSWLNet*)g_pNSNet;
 											   FieldValue info(FieldValue::TInt);
 											   if (pNSNet->LeStatus() == ALIVE)
@@ -860,7 +860,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_SESSION_STATUS:
 			{
-											  NSLog::instance()->AddLog("Handle REMOTE_CMD_SESSION_STATUS");
+											  NSLog::instance()->AddLog(Ns_Log_Info, "Handle REMOTE_CMD_SESSION_STATUS");
 											  FieldValue value(FieldValue::TArray);
 											  GET_INFO_PARAM info = task.param.info.getInfoParam.getInfo;
 											  /*获取当前已经处理的会话任务状态*/
@@ -873,7 +873,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_SYSTEM_STATUS:
 			{
-											 NSLog::instance()->AddLog("Handle REMOTE_CMD_SYSTEM_STATUS");
+											 NSLog::instance()->AddLog(Ns_Log_Info, "Handle REMOTE_CMD_SYSTEM_STATUS");
 											 GET_INFO_PARAM info = task.param.info.getInfoParam.getInfo;
 											 FieldValue value(FieldValue::TObject);
 											 value.setKeyVal("MnisStatus", FieldValue(MnisStatus()));//mnis状态-Tserver侧修改
@@ -891,10 +891,10 @@ void CManager::handleRemoteTask()
 			{
 											  if (license_status_nopass == g_license_status)
 											  {
-												  NSLog::instance()->AddLog("REMOTE_CMD_MNIS_QUERY_GPS fail,license_status_nopass");
+												  NSLog::instance()->AddLog(Ns_Log_Error, "REMOTE_CMD_MNIS_QUERY_GPS fail,license_status_nopass");
 												  continue;
 											  }
-											  NSLog::instance()->AddLog("Handle REMOTE_CMD_MNIS_QUERY_GPS");
+											  NSLog::instance()->AddLog(Ns_Log_Info, "Handle REMOTE_CMD_MNIS_QUERY_GPS");
 											  QUERY_GPS gps = task.param.info.queryGpsParam;
 											  switch (gps.Operate)
 											  {
@@ -918,16 +918,16 @@ void CManager::handleRemoteTask()
 			{
 										if (license_status_nopass == g_license_status)
 										{
-											NSLog::instance()->AddLog("REMOTE_CMD_MNIS_MSG fail,license_status_nopass");
+											NSLog::instance()->AddLog(Ns_Log_Error, "REMOTE_CMD_MNIS_MSG fail,license_status_nopass");
 											continue;
 										}
-										NSLog::instance()->AddLog("Handle REMOTE_CMD_MNIS_MSG");
+										NSLog::instance()->AddLog(Ns_Log_Info, "Handle REMOTE_CMD_MNIS_MSG");
 										m_pMnis->radioSendMsg(task.param.info.msgParam.Contents, task.param.info.msgParam.Target, task.param.info.msgParam.Type, task.param.info.msgParam.SessionId);
 			}
 				break;
 			case REMOTE_CMD_MNIS_STATUS:
 			{
-										   NSLog::instance()->AddLog("Handle REMOTE_CMD_MNIS_STATUS");
+										   NSLog::instance()->AddLog(Ns_Log_Info, "Handle REMOTE_CMD_MNIS_STATUS");
 										   switch (task.param.info.mnisStatusParam.getType)
 										   {
 										   case MNIS_GET_TYPE_CONNECT:
@@ -948,7 +948,7 @@ void CManager::handleRemoteTask()
 										   {
 													  if (license_status_nopass == g_license_status)
 													  {
-														  NSLog::instance()->AddLog("getRadioStatus fail,license_status_nopass");
+														  NSLog::instance()->AddLog(Ns_Log_Error, "getRadioStatus fail,license_status_nopass");
 														  continue;
 													  }
 													  m_pMnis->getRadioStatus(task.param.info.mnisStatusParam.getType, task.param.info.mnisStatusParam.SessionId);
@@ -962,15 +962,15 @@ void CManager::handleRemoteTask()
 			{
 														   if (license_status_nopass == g_license_status)
 														   {
-															   NSLog::instance()->AddLog("REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG fail,license_status_nopass");
+															   NSLog::instance()->AddLog(Ns_Log_Error, "REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG fail,license_status_nopass");
 															   continue;
 														   }
-														   NSLog::instance()->AddLog("Handle REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG");
+														   NSLog::instance()->AddLog(Ns_Log_Info, "Handle REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG");
 														   m_pMnis->locationIndoorConfig(task.param.info.locationParam.internal, task.param.info.locationParam.ibconNum, task.param.info.locationParam.isEmergency);
 			}
 				break;
 			default:
-				NSLog::instance()->AddLog("Handle Unknown %d", task.cmd);
+				NSLog::instance()->AddLog(Ns_Log_Error, "Handle Unknown %d", task.cmd);
 				break;
 			}
 		}
@@ -992,18 +992,18 @@ void CManager::stop()
 
 void CManager::getCurrentTask(REMOTE_TASK &task)
 {
-	NSLog::instance()->AddLog("Lock m_mutexCurTask");
+	NSLog::instance()->AddLog(Ns_Log_Info, "Lock m_mutexCurTask");
 	std::lock_guard <std::mutex> locker(m_mutexCurTask);
 	task = m_currentTask;
-	NSLog::instance()->AddLog("UnLock m_mutexCurTask");
+	NSLog::instance()->AddLog(Ns_Log_Info, "UnLock m_mutexCurTask");
 }
 
 void CManager::setCurrentTask(REMOTE_TASK* value)
 {
-	NSLog::instance()->AddLog("Lock m_mutexCurTask");
+	NSLog::instance()->AddLog(Ns_Log_Info, "Lock m_mutexCurTask");
 	std::lock_guard <std::mutex> locker(m_mutexCurTask);
 	m_currentTask = *value;
-	NSLog::instance()->AddLog("UnLock m_mutexCurTask");
+	NSLog::instance()->AddLog(Ns_Log_Info, "UnLock m_mutexCurTask");
 }
 
 void CManager::OnConnect(CRemotePeer* pRemotePeer)
@@ -1403,14 +1403,14 @@ void CManager::setbNeedStopCall(bool value)
 
 void CManager::getCurrentTaskInfo(int srcId, std::string &sessionid, int &cmd)
 {
-	NSLog::instance()->AddLog("Lock m_mutexCurTask");
+	NSLog::instance()->AddLog(Ns_Log_Info, "Lock m_mutexCurTask");
 	std::lock_guard<std::mutex> locker(m_mutexCurTask);
 	if (m_currentTask.cmd != 0 && sessionid == "" && srcId == CONFIG_LOCAL_RADIO_ID)
 	{
 		sessionid = m_currentTask.param.info.callParam.operateInfo.SessionId;
 		cmd = m_currentTask.cmd;
 	}
-	NSLog::instance()->AddLog("UnLock m_mutexCurTask");
+	NSLog::instance()->AddLog(Ns_Log_Info, "UnLock m_mutexCurTask");
 }
 
 void CManager::handleCurTaskTimeOut()
@@ -1738,7 +1738,7 @@ void CManager::OnCall(void* param, oncall_info_t* info)
 
 void CManager::onCall(oncall_info_t* info)
 {
-	NSLog::instance()->AddLog("OnCall callType:0x%02x,srcId:%lu,tgtId:%lu,status:%d,isCurrent:%s", info->callType, info->srcId, info->tgtId, info->status, info->isCurrent ? "TRUE" : "FALSE");
+	NSLog::instance()->AddLog(Ns_Log_Info, "OnCall callType:0x%02x,srcId:%lu,tgtId:%lu,status:%d,isCurrent:%s", info->callType, info->srcId, info->tgtId, info->status, info->isCurrent ? "TRUE" : "FALSE");
 	g_pNet->wlCall(info->callType, info->srcId, info->tgtId, info->status, info->isCurrent);
 }
 
@@ -1753,7 +1753,7 @@ void CManager::OnCallStatus(void* param, oncallstatus_info_t* info)
 
 void CManager::onCallStatus(oncallstatus_info_t* info)
 {
-	NSLog::instance()->AddLog("onCallStatus callType:0x%02x,srcId:%lu,tgtId:%lu,status:%d", info->callType, info->srcId, info->tgtId, info->status);
+	NSLog::instance()->AddLog(Ns_Log_Info, "onCallStatus callType:0x%02x,srcId:%lu,tgtId:%lu,status:%d", info->callType, info->srcId, info->tgtId, info->status);
 	REMOTE_TASK task = { 0 };
 	getCurrentTask(task);
 	CALL_OPERATE_PARAM CurCallCmd = task.param.info.callParam.operateInfo;
@@ -1771,7 +1771,7 @@ void CManager::OnSystemStatusChange(void* param, onsystemstatuschange_info_t* in
 
 void CManager::onSystemStatusChange(onsystemstatuschange_info_t* info)
 {
-	NSLog::instance()->AddLog("onSystemStatusChange type:%d,value:%d", info->type, info->value);
+	NSLog::instance()->AddLog(Ns_Log_Info, "onSystemStatusChange type:%d,value:%d", info->type, info->value);
 	switch (info->type)
 	{
 	case System_WorkMode:

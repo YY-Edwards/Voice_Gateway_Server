@@ -39,7 +39,7 @@ NSRecordFile::~NSRecordFile()
 #if _DEBUG
 	char temp[1024] = { 0 };
 	sprintf_s(temp, "Voice Record CallId %lu From %lu To %lu On Peer:%lu in Slot 0x%02x Delete", call_id, src_radio, target_radio, src_peer_id, src_slot);
-	m_pLog->AddLog(temp);
+	m_pLog->AddLog(Ns_Log_Info, temp);
 #endif
 	if (m_pAmbe)
 	{
@@ -61,7 +61,7 @@ void NSRecordFile::WriteVoiceFrame(const char* pAmbe, int size, bool needDongle 
 
 	if (license_status_nopass == g_license_status)
 	{
-		m_pLog->AddLog("WriteVoiceFrame fail,license_status_nopass");
+		m_pLog->AddLog(Ns_Log_Error, "WriteVoiceFrame fail,license_status_nopass");
 		return;
 	}
 	if (needDongle &&
@@ -78,7 +78,7 @@ void NSRecordFile::WriteVoiceFrame(const char* pAmbe, int size, bool needDongle 
 		}
 		else
 		{
-			m_pLog->AddLog("m_pAmbe is null");
+			m_pLog->AddLog(Ns_Log_Error, "m_pAmbe is null");
 		}
 	}
 
@@ -101,7 +101,7 @@ bool NSRecordFile::TimeOut()
 	{
 		char temp[64] = { 0 };
 		sprintf_s(temp, "TimeOut:%d", GetTickCount() - timeout);
-		m_pLog->AddLog(temp);
+		m_pLog->AddLog(Ns_Log_Info, temp);
 	}
 #endif
 	return (timeout < GetTickCount());
@@ -139,7 +139,7 @@ void NSRecordFile::setCallStatus(int value)
 	if (value != call_status)
 	{
 #if _DEBUG
-		m_pLog->AddLog("====CallStatus From %d To %d On CallId %d====",call_status, value, call_id);
+		m_pLog->AddLog(Ns_Log_Info, "====CallStatus From %d To %d On CallId %d====", call_status, value, call_id);
 #endif
 		call_status = value;
 		if (VOICE_START == call_status)
@@ -171,7 +171,7 @@ void NSRecordFile::setCallStatus(int value)
 #if _DEBUG
 			char temp[1024] = { 0 };
 			sprintf_s(temp, "Voice Record CallId %lu From %lu To %lu On Peer:%lu in Slot 0x%02x VOICE_BURST", call_id, src_radio, target_radio, src_peer_id, src_slot);
-			m_pLog->AddLog(temp);
+			m_pLog->AddLog(Ns_Log_Info, temp);
 #endif
 		}
 		else if (CALL_SESSION_STATUS_HANG == call_status)
@@ -210,7 +210,7 @@ void NSRecordFile::WriteToDb()
 {
 	if (license_status_nopass == g_license_status)
 	{
-		m_pLog->AddLog("WriteToDb fail,license_status_nopass");
+		m_pLog->AddLog(Ns_Log_Error, "WriteToDb fail,license_status_nopass");
 		return;
 	}
 	if (g_pDb)
@@ -221,7 +221,7 @@ void NSRecordFile::WriteToDb()
 		{
 			if (!CreateNewFileByYearMonth())
 			{
-				m_pLog->AddLog("CreateNewFileByYearMonth fail");
+				m_pLog->AddLog(Ns_Log_Error, "CreateNewFileByYearMonth fail");
 			}
 			else
 			{
@@ -231,7 +231,7 @@ void NSRecordFile::WriteToDb()
 				offset = GetFileSize(m_hOpenFile, NULL);
 				if (FALSE == WriteFile(m_hOpenFile, buffer, length, &dwWrite, NULL))
 				{
-					m_pLog->AddLog("Record WriteFile fail");
+					m_pLog->AddLog(Ns_Log_Error, "Record WriteFile fail");
 				}
 				else
 				{
@@ -298,7 +298,7 @@ void NSRecordFile::WriteToDb()
 	}
 	else
 	{
-		m_pLog->AddLog("An unknown database error has occurred,pointer of db is null");
+		m_pLog->AddLog(Ns_Log_Error, "An unknown database error has occurred,pointer of db is null");
 	}
 }
 

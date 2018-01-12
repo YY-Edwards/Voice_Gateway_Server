@@ -30,7 +30,7 @@ NSWLPeer::NSWLPeer(wl_peer_build_param_t* p)
 	addr.S_un.S_addr = p->addr;
 	char temp[128] = { 0 };
 	sprintf_s(temp, "m_peerId:%lu,ip:%s,port:%u", m_peerId, inet_ntoa(addr), p->port);
-	m_pLog->AddLog(temp);
+	m_pLog->AddLog(Ns_Log_Info, temp);
 #endif // _DEBUG
 
 }
@@ -594,7 +594,7 @@ void NSWLPeer::setWlRegStatus(wl_reg_status value)
 	{
 		char temp[128] = { 0 };
 		sprintf_s(temp, "=====PeerId %lu WlRegStatus from %d to %d=====", PeerId(), m_wlRegStatus, value);
-		m_pLog->AddLog(temp);
+		m_pLog->AddLog(Ns_Log_Info, temp);
 		m_wlRegStatus = value;
 		if (WL_REG_SUCCESS == m_wlRegStatus)
 		{

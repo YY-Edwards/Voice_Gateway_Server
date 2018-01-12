@@ -89,7 +89,7 @@ DWORD NSSound::InitSoundOut()
 	/*检测音频输出设备是否正常*/
 	if (waveOutOpen(NULL, WAVE_MAPPER, &m_outFormat, 0, 0, WAVE_FORMAT_QUERY) != MMSYSERR_NOERROR)
 	{
-		m_pLog->AddLog("waveOutOpen fail");
+		m_pLog->AddLog(Ns_Log_Error, "waveOutOpen fail");
 		return 1;
 	}
 	m_pThreadOut = (HANDLE)_beginthreadex(
@@ -102,7 +102,7 @@ DWORD NSSound::InitSoundOut()
 		);
 	if (NULL == m_pThreadOut)
 	{
-		m_pLog->AddLog("SoundOutThredProc fail");
+		m_pLog->AddLog(Ns_Log_Error, "SoundOutThredProc fail");
 		return 1;
 	}
 	m_bOutWork = true;
@@ -122,7 +122,7 @@ UINT WINAPI NSSound::SoundOutThredProc(LPVOID pParam)
 
 void NSSound::SoundOutThread()
 {
-	m_pLog->AddLog("SoundOutThred start");
+	m_pLog->AddLog(Ns_Log_Info, "SoundOutThred start");
 	out_data_pcm_t pcm = { 0 };
 	int unit_size = sizeof(pcm._head);
 	/*内存申请*/
@@ -131,7 +131,7 @@ void NSSound::SoundOutThread()
 	if (NULL == m_pWaveOutBlocks)
 	{
 		DeleteCriticalSection(&m_waveCriticalSection);
-		m_pLog->AddLog("allocateBlocks fail");
+		m_pLog->AddLog(Ns_Log_Error, "allocateBlocks fail");
 		goto SoundOutThread_End;
 		return;
 	}
@@ -142,7 +142,7 @@ void NSSound::SoundOutThread()
 	{
 		DeleteCriticalSection(&m_waveCriticalSection);
 		freeBlocks(m_pWaveOutBlocks);
-		m_pLog->AddLog("waveOutOpen fail");
+		m_pLog->AddLog(Ns_Log_Error, "waveOutOpen fail");
 		goto SoundOutThread_End;
 		return;
 	}
@@ -175,7 +175,7 @@ void NSSound::SoundOutThread()
 	waveOutClose(m_hWaveOut);
 SoundOutThread_End:
 	m_bOutWork = false;
-	m_pLog->AddLog("SoundOutThred End");
+	m_pLog->AddLog(Ns_Log_Info, "SoundOutThred End");
 }
 
 void NSSound::WritePcm(const char* pData, int length)
@@ -198,7 +198,7 @@ void NSSound::WritePcm(const char* pData, int length)
 		}
 		else
 		{
-			m_pLog->AddLog("sizeFreeRingOut is 0 will drop");
+			m_pLog->AddLog(Ns_Log_Info, "sizeFreeRingOut is 0 will drop");
 		}
 		index++;
 	}
@@ -245,7 +245,7 @@ WAVEHDR* NSSound::allocateBlocks(int size, int count)
 	DWORD totalBufferSize = (size + sizeof(WAVEHDR)) * count;
 	if ((buffer = (unsigned char*)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, totalBufferSize)) == NULL)
 	{
-		m_pLog->AddLog("Memory allocationerror");
+		m_pLog->AddLog(Ns_Log_Error,"Memory allocationerror");
 		return NULL;
 	}
 	blocks = (WAVEHDR*)buffer;
@@ -348,7 +348,7 @@ void NSSound::temp(char* pdata, int length)
 	{
 		//sprintf_s(m_reportMsg, "waveOutOpen fail");
 		//sendLogToWindow();
-		m_pLog->AddLog("waveOutOpen fail");
+		m_pLog->AddLog(Ns_Log_Error,"waveOutOpen fail");
 		return;
 	}
 
@@ -403,7 +403,7 @@ DWORD NSSound::InitSoundIn()
 		);
 	if (NULL == m_pThreadIn)
 	{
-		m_pLog->AddLog("SoundInThredProc fail");
+		m_pLog->AddLog(Ns_Log_Error, "SoundInThredProc fail");
 		return 1;
 	}
 	m_bInWork = true;
@@ -424,7 +424,7 @@ UINT WINAPI NSSound::SoundInThredProc(LPVOID pParam)
 
 void NSSound::SoundInThread()
 {
-	m_pLog->AddLog("SoundInThread Start");
+	m_pLog->AddLog(Ns_Log_Info, "SoundInThread Start");
 	m_inThreadTimer = CreateEvent(NULL, FALSE, FALSE, NULL);
 	while (m_bInWork)
 	{
@@ -447,7 +447,7 @@ void NSSound::SoundInThread()
 						  /*打开扬声器*/
 						  if (waveInOpen(&m_hWaveIn, WAVE_MAPPER, &m_inputFormat, (DWORD_PTR)waveInProc, (DWORD_PTR)this, CALLBACK_FUNCTION) != MMSYSERR_NOERROR)
 						  {
-							  m_pLog->AddLog("waveInOpen fail");
+							  m_pLog->AddLog(Ns_Log_Error, "waveInOpen fail");
 							  setMicStatus(Mic_Error);
 							  goto SoundInThread_End;
 						  }
@@ -468,7 +468,7 @@ void NSSound::SoundInThread()
 						  /*开始录音*/
 						  if (MMSYSERR_NOERROR != waveInStart(m_hWaveIn))
 						  {
-							  m_pLog->AddLog("waveInOpen fail");
+							  m_pLog->AddLog(Ns_Log_Error, "waveInOpen fail");
 							  setMicStatus(Mic_Error);
 							  goto SoundInThread_End;
 						  }
@@ -496,7 +496,7 @@ void NSSound::SoundInThread()
 SoundInThread_End:
 	m_bInWork = false;
 	m_inThreadTimer = NULL;
-	m_pLog->AddLog("SoundInThread End");
+	m_pLog->AddLog(Ns_Log_Info, "SoundInThread End");
 }
 
 void CALLBACK NSSound::waveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwInstance, DWORD_PTR dwParam1, DWORD_PTR dwParam2)
@@ -545,7 +545,7 @@ void NSSound::handleWaveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwParam1, DWORD
 						 }
 						 else
 						 {
-							 m_pLog->AddLog("m_pAmbe is null");
+							 m_pLog->AddLog(Ns_Log_Error, "m_pAmbe is null");
 							 bError = true;
 						 }
 						 m_bufflag = (m_bufflag + 1) % BUFFER_NUM;
@@ -565,7 +565,7 @@ void NSSound::handleWaveInProc(HWAVEIN hwi, UINT uMsg, DWORD_PTR dwParam1, DWORD
 							 }
 							 else
 							 {
-								 m_pLog->AddLog("m_pAmbe is null");
+								 m_pLog->AddLog(Ns_Log_Error, "m_pAmbe is null");
 								 bError = true;
 							 }
 						 }
@@ -591,7 +591,7 @@ void NSSound::setMicStatus(mic_status_enum value)
 {
 	if (m_micStatus != value)
 	{
-		m_pLog->AddLog("====Mic Status From %d To %d====", m_micStatus, value);
+		m_pLog->AddLog(Ns_Log_Info, "====Mic Status From %d To %d====", m_micStatus, value);
 		m_micStatus = value;
 		ContinueInThread();
 	}

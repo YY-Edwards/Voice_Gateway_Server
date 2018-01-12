@@ -91,7 +91,7 @@ void NSLog::Logthread()
 			log_t* p = (log_t*)it->data;
 			if (p)
 			{
-				handleMsg(p->message, true);
+				handleMsg(p->message, true, p->type);
 				delete p;
 				p = NULL;
 			}
@@ -103,15 +103,34 @@ void NSLog::Logthread()
 	}
 }
 
-void NSLog::handleMsg(char* pMsg, bool bPrint)
+void NSLog::handleMsg(char* pMsg, bool bPrint, log_type_enum type)
 {
-#if _DEBUG
-	if (bPrint)
+	switch (type)
 	{
-		printf("%s", pMsg);
+	case Ns_Log_Error:
+	{
+						 if (bPrint)
+						 {
+							 printf("%s", pMsg);
+						 }
+						 LOG(INFO) << pMsg;
 	}
-	LOG(INFO) << pMsg;
+		break;
+	case Ns_Log_Info:
+	{
+#if _DEBUG
+						if (bPrint)
+						{
+							printf("%s", pMsg);
+						}
+						LOG(INFO) << pMsg;
 #endif // _DEBUG
+	}
+		break;
+	default:
+		break;
+	}
+
 }
 
 void NSLog::Stop()
@@ -126,7 +145,7 @@ void NSLog::Stop()
 	}
 }
 
-void NSLog::AddLog(const char* format, ...)
+void NSLog::AddLog(log_type_enum type,const char* format, ...)
 {
 	if (NULL == format)
 	{
@@ -145,9 +164,17 @@ void NSLog::AddLog(const char* format, ...)
 		return;
 	}
 	log_t* pLog = new log_t;
+	pLog->type = type;
 	time_t t = time(0);
 	struct tm ttt = *localtime(&t);
-	sprintf(pLog->message, "[INFO] [%5d %4d-%02d-%02d %02d:%02d:%02d %03d] %s\n", GetCurrentProcessId(), ttt.tm_year + 1900, ttt.tm_mon + 1, ttt.tm_mday, ttt.tm_hour, ttt.tm_min, ttt.tm_sec, GetTickCount() % 1000, buf);
+	if (Ns_Log_Error == type)
+	{
+		sprintf(pLog->message, "[ERRO] [%5d %4d-%02d-%02d %02d:%02d:%02d %03d] %s\n", GetCurrentProcessId(), ttt.tm_year + 1900, ttt.tm_mon + 1, ttt.tm_mday, ttt.tm_hour, ttt.tm_min, ttt.tm_sec, GetTickCount() % 1000, buf);
+	}
+	else
+	{
+		sprintf(pLog->message, "[INFO] [%5d %4d-%02d-%02d %02d:%02d:%02d %03d] %s\n", GetCurrentProcessId(), ttt.tm_year + 1900, ttt.tm_mon + 1, ttt.tm_mday, ttt.tm_hour, ttt.tm_min, ttt.tm_sec, GetTickCount() % 1000, buf);
+	}
 	AddLogsItem(pLog);
 }
 
@@ -160,7 +187,7 @@ void NSLog::clearLogs()
 		log_t* p = (log_t*)it->data;
 		if (p)
 		{
-			handleMsg(p->message, false);
+			handleMsg(p->message, false, p->type);
 			delete p;
 			p = NULL;
 		}

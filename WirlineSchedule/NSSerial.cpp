@@ -60,7 +60,7 @@ int NSSerial::Start(StartSerialParam *param)
 		);
 	if (NULL == m_getSerailThread)
 	{
-		m_pLog->AddLog("GetSerialThreadProc create fail");
+		m_pLog->AddLog(Ns_Log_Error, "GetSerialThreadProc create fail");
 		return -1;
 	}
 	m_bThreadWork = true;
@@ -82,7 +82,7 @@ unsigned int __stdcall NSSerial::GetSerialThreadProc(void* pArguments)
 void NSSerial::GetSerialThread()
 {
 	NSLog* m_log = m_pLog;
-	m_log->AddLog("get serial Thread start");
+	m_log->AddLog(Ns_Log_Info, "get serial Thread start");
 	while (m_bThreadWork)
 	{
 		work_item_t* currentItem = PopSerialItem();
@@ -216,7 +216,7 @@ void NSSerial::GetSerialThread()
 			break;
 		}
 	}
-	m_log->AddLog("get serial Thread end");
+	m_log->AddLog(Ns_Log_Info, "get serial Thread end");
 }
 
 work_item_t * NSSerial::PopSerialItem()
@@ -255,7 +255,7 @@ void NSSerial::SetSerialNumber(unsigned char* pSerial)
 		index++;
 	}
 	strcpy(&temp[index], " Serial Number");
-	m_pLog->AddLog(temp);
+	m_pLog->AddLog(Ns_Log_Info, temp);
 }
 
 void NSSerial::SEND_LE_XCMP_XNL_DEVICE_MASTER_QUERY(work_item_t* w)
@@ -779,7 +779,7 @@ void NSSerial::SetXnlStatus(xnl_status_enum value)
 	{
 		char temp[64] = { 0 };
 		sprintf_s(temp, "=====Serial Status From %d To %d=====", m_xnl_status_enum, value);
-		m_pLog->AddLog(temp);
+		m_pLog->AddLog(Ns_Log_Info, temp);
 		m_xnl_status_enum = value;
 		if (GET_SERIAL_SUCCESS == m_xnl_status_enum)
 		{

@@ -5,8 +5,15 @@
 
 #define SIZE_MAX_MSG 5118
 
+typedef enum _log_type_enum
+{
+	Ns_Log_Info,//一般log,仅在Debug模式下处理
+	Ns_Log_Error//错误log,任何时候都要处理
+}log_type_enum;
+
 typedef struct _log_t
 {
+	log_type_enum type;
 	char message[SIZE_MAX_MSG];
 }log_t;
 
@@ -17,7 +24,7 @@ public:
 
 	static NSLog* instance();
 	void Stop();
-	void AddLog(const char* format, ...);
+	void AddLog(log_type_enum type,const char* format, ...);
 protected:
 	NSLog();
 private:
@@ -33,7 +40,7 @@ private:
 	void Logthread();
 	void clearLogs();
 	void AddLogsItem(log_t* log);
-	void handleMsg(char* pMsg,bool bPrint);
+	void handleMsg(char* pMsg, bool bPrint, log_type_enum type);
 };
 
 

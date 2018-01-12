@@ -66,7 +66,7 @@ int NSDongle::Initialize(dongle_t* p)
 		);
 	if (NULL == m_pSerialRxThread)
 	{
-		m_pLog->AddLog("%s create SerialRxThreadProc fail", m_self.strname);
+		m_pLog->AddLog(Ns_Log_Error, "%s create SerialRxThreadProc fail", m_self.strname);
 		stopDongle(&m_self);
 		return WL_FAIL;
 	}
@@ -81,7 +81,7 @@ int NSDongle::Initialize(dongle_t* p)
 		);
 	if (NULL == m_pSerialTxThread)
 	{
-		m_pLog->AddLog("%s create SerialTxThreadProc fail", m_self.strname);
+		m_pLog->AddLog(Ns_Log_Error, "%s create SerialTxThreadProc fail", m_self.strname);
 		stopDongle(&m_self);
 		return WL_FAIL;
 	}
@@ -90,13 +90,13 @@ int NSDongle::Initialize(dongle_t* p)
 	m_hReadSerialEvent = CreateEvent(NULL, FALSE, FALSE, NULL); //Manual Reset
 	if (NULL == m_hReadSerialEvent)
 	{
-		m_pLog->AddLog("%s create m_hReadSerialEvent fail", m_self.strname);
+		m_pLog->AddLog(Ns_Log_Error, "%s create m_hReadSerialEvent fail", m_self.strname);
 		stopDongle(&m_self);
 		return WL_FAIL;
 	}
 	m_hWriteSerialEvent = CreateEvent(NULL, FALSE, FALSE, NULL); //Manual Reset,
 	if (NULL == m_hWriteSerialEvent){
-		m_pLog->AddLog("%s create m_hWriteSerialEvent fail", m_self.strname);
+		m_pLog->AddLog(Ns_Log_Error, "%s create m_hWriteSerialEvent fail", m_self.strname);
 		stopDongle(&m_self);
 		return WL_FAIL;
 	}
@@ -140,7 +140,7 @@ bool NSDongle::purgeCommDongle(dongle_t* p)
 		int rlt = PurgeComm(p->hcom, PURGE_RXABORT | PURGE_RXCLEAR | PURGE_TXABORT | PURGE_TXCLEAR);
 		if (0 == rlt)
 		{
-			m_pLog->AddLog("%s PurgeComm fail:%d", m_self.strname, GetLastError());
+			m_pLog->AddLog(Ns_Log_Info, "%s PurgeComm fail:%d", m_self.strname, GetLastError());
 			return false;
 		}
 		return true;
@@ -166,7 +166,7 @@ bool NSDongle::openDongle(dongle_t* p)
 		);
 	if (p->hcom == INVALID_HANDLE_VALUE)
 	{
-		m_pLog->AddLog("%s CreateFile fail:%d", m_self.strname, GetLastError());
+		m_pLog->AddLog(Ns_Log_Error, "%s CreateFile fail:%d", m_self.strname, GetLastError());
 		stopDongle(p);
 		return false;
 	}
@@ -174,7 +174,7 @@ bool NSDongle::openDongle(dongle_t* p)
 	result = setupDongle(p);
 	if (0 != result)
 	{
-		m_pLog->AddLog("%s SetupDongle fail:%d", m_self.strname, result);
+		m_pLog->AddLog(Ns_Log_Error, "%s SetupDongle fail:%d", m_self.strname, result);
 		stopDongle(p);
 		return false;
 	}
@@ -182,7 +182,7 @@ bool NSDongle::openDongle(dongle_t* p)
 	result = purgeDongle(p, PURGE_RXABORT | PURGE_RXCLEAR | PURGE_TXCLEAR | PURGE_TXABORT);
 	if (0 != result)
 	{
-		m_pLog->AddLog("%s PurgeDongle fail:%d", m_self.strname, result);
+		m_pLog->AddLog(Ns_Log_Error, "%s PurgeDongle fail:%d", m_self.strname, result);
 		stopDongle(p);
 		return false;
 	}
@@ -336,13 +336,13 @@ void NSDongle::SerialTxThread()
 {
 	unsigned long result = 0;
 	unsigned long dwWritten = 0;
-	m_pLog->AddLog("%s SerialTxThread Start", m_self.strname);
+	m_pLog->AddLog(Ns_Log_Info, "%s SerialTxThread Start", m_self.strname);
 	while (true)
 	{
 		unsigned long rlt = WaitForSingleObject(m_hWriteSerialEvent, RX_TX_TIMEOUT);
 		if (!m_bRun)
 		{
-			m_pLog->AddLog("%s SerialTxThread will exit", m_self.strname);
+			m_pLog->AddLog(Ns_Log_Info, "%s SerialTxThread will exit", m_self.strname);
 			break;
 		}
 		if (rlt == WAIT_TIMEOUT)
@@ -351,12 +351,12 @@ void NSDongle::SerialTxThread()
 		}
 		initRead();
 	}
-	m_pLog->AddLog("%s SerialTxThread End", m_self.strname);
+	m_pLog->AddLog(Ns_Log_Info, "%s SerialTxThread End", m_self.strname);
 }
 
 void NSDongle::SerialRxThread()
 {
-	m_pLog->AddLog("%s SerialRxThread Start", m_self.strname);
+	m_pLog->AddLog(Ns_Log_Info, "%s SerialRxThread Start", m_self.strname);
 	unsigned long dwBytesConsumed = 0;
 	unsigned long result = 0;
 	unsigned long dwRead = 0;
@@ -365,7 +365,7 @@ void NSDongle::SerialRxThread()
 		unsigned long rlt = WaitForSingleObject(m_hReadSerialEvent, RX_TX_TIMEOUT);
 		if (!m_bRun)
 		{
-			m_pLog->AddLog("%s SerialRxThread will exit", m_self.strname);
+			m_pLog->AddLog(Ns_Log_Info, "%s SerialRxThread will exit", m_self.strname);
 			break;
 		}
 		if (rlt == WAIT_TIMEOUT)
@@ -375,7 +375,7 @@ void NSDongle::SerialRxThread()
 		}
 		if (!GetOverlappedResult(m_self.hcom, &m_osReader, &dwRead, FALSE))
 		{
-			m_pLog->AddLog("%s GetOverlappedResult error", m_self.strname);
+			m_pLog->AddLog(Ns_Log_Info, "%s GetOverlappedResult error", m_self.strname);
 			result = GetLastError();
 			result = purgeDongle(&m_self, PURGE_RXABORT | PURGE_RXCLEAR);
 		}
@@ -392,7 +392,7 @@ void NSDongle::SerialRxThread()
 		}
 		initWrite();
 	}
-	m_pLog->AddLog("%s SerialRxThread End", m_self.strname);
+	m_pLog->AddLog(Ns_Log_Info, "%s SerialRxThread End", m_self.strname);
 }
 
 tAMBEFrame* NSDongle::getFreeAmbeBuffer(void)
@@ -412,7 +412,7 @@ void NSDongle::WriteAmbe(void* src, int dataLen, pOnData fun, void* param)
 {
 	if (NULL == src || 0 >= dataLen)
 	{
-		m_pLog->AddLog("%s src is NULL", m_self.strname);
+		m_pLog->AddLog(Ns_Log_Error, "%s src is NULL", m_self.strname);
 		return;
 	}
 	char *pBuffer = (char*)src;
@@ -426,7 +426,7 @@ void NSDongle::WriteAmbe(void* src, int dataLen, pOnData fun, void* param)
 		change_data_t* item = getFreeAmbeChangeDataBuffer(fun, param);
 		if (NULL == item)
 		{
-			m_pLog->AddLog("%s getFreeAmbeChangeDataBuffer fail", m_self.strname);
+			m_pLog->AddLog(Ns_Log_Error, "%s getFreeAmbeChangeDataBuffer fail", m_self.strname);
 			m_idxIdle--;
 			return;
 		}
@@ -460,7 +460,7 @@ void NSDongle::WriteAmbe(void* src, int dataLen, pOnData fun, void* param)
 			{
 				char temp[1024] = { 0 };
 				StatusInfo(temp);
-				m_pLog->AddLog("ambe ring buffer push fail,%s", temp);
+				m_pLog->AddLog(Ns_Log_Error, "ambe ring buffer push fail,%s", temp);
 				m_idxIdle--;
 				break;
 			}
@@ -469,7 +469,7 @@ void NSDongle::WriteAmbe(void* src, int dataLen, pOnData fun, void* param)
 		{
 			char temp[1024] = { 0 };
 			StatusInfo(temp);
-			m_pLog->AddLog("ambe ring buffer full,%s", temp);
+			m_pLog->AddLog(Ns_Log_Error, "ambe ring buffer full,%s", temp);
 			m_idxIdle--;
 			break;
 		}
@@ -638,7 +638,7 @@ void NSDongle::parseDVSImsg(DVSI3000struct* pMsg)
 		break;
 	case AMBE3000_CCP_TYPE_BYTE:
 	{
-								   m_pLog->AddLog("%s ParseDVSImsg,DONGLE_EVENT:%c", pMsg->base.empty[0], m_self.strname);
+								   m_pLog->AddLog(Ns_Log_Info, "%s ParseDVSImsg,DONGLE_EVENT:%c", pMsg->base.empty[0], m_self.strname);
 
 	}
 		break;
@@ -680,7 +680,7 @@ void NSDongle::initRead()
 		if (ERROR_IO_PENDING != result)
 		{
 			/*发生意外错误,清空当前*/
-			m_pLog->AddLog("%s Dongle ReadFile fail:%d", m_self.strname, result);
+			m_pLog->AddLog(Ns_Log_Info, "%s Dongle ReadFile fail:%d", m_self.strname, result);
 			result = purgeDongle(&m_self, PURGE_RXABORT | PURGE_RXCLEAR);
 		}
 	}
@@ -720,7 +720,7 @@ void NSDongle::initWrite()
 		if (ERROR_IO_PENDING != result)
 		{
 			/*发生意外错误,清空当前*/
-			m_pLog->AddLog("%s Dongle WriteFile fail:%d", m_self.strname, result);
+			m_pLog->AddLog(Ns_Log_Info, "%s Dongle WriteFile fail:%d", m_self.strname, result);
 			result = purgeDongle(&m_self, PURGE_TXABORT | PURGE_TXCLEAR);
 		}
 	}
@@ -747,12 +747,12 @@ void NSDongle::handleOutPcm(unsigned __int8* pSamples)
 		}
 		else
 		{
-			m_pLog->AddLog("m_pCurHanleRing->pOnData is null");
+			m_pLog->AddLog(Ns_Log_Error, "m_pCurHanleRing->pOnData is null");
 		}
 	}
 	else
 	{
-		m_pLog->AddLog("m_pCurHanleRing is null");
+		m_pLog->AddLog(Ns_Log_Error, "m_pCurHanleRing is null");
 	}
 }
 
@@ -820,7 +820,7 @@ void NSDongle::handleEndWork()
 			}
 			else
 			{
-				m_pLog->AddLog("%s is bad,maybe you need Re-plug dongle device.if invalid,please replace dongle device", Name());
+				m_pLog->AddLog(Ns_Log_Error, "%s is bad,maybe you need Re-plug dongle device.if invalid,please replace dongle device", Name());
 			}
 			if (m_pCurHanleRing)
 			{
@@ -856,7 +856,7 @@ void NSDongle::WritePcm(void* src, int dataLen, pOnData fun, void* param)
 
 	if (NULL == src || 0 >= dataLen)
 	{
-		m_pLog->AddLog("%s src is NULL", m_self.strname);
+		m_pLog->AddLog(Ns_Log_Info, "%s src is NULL", m_self.strname);
 		return;
 	}
 	//m_pLog->AddLog("%s pcm to ambe start", m_self.strname);
@@ -874,7 +874,7 @@ void NSDongle::WritePcm(void* src, int dataLen, pOnData fun, void* param)
 		change_data_t* item = getFreePcmChangeDataBuffer(fun, param);
 		if (NULL == item)
 		{
-			m_pLog->AddLog("%s getFreePcmChangeDataBuffer fail", m_self.strname);
+			m_pLog->AddLog(Ns_Log_Error, "%s getFreePcmChangeDataBuffer fail", m_self.strname);
 			m_idxIdle--;
 			return;
 		}
@@ -909,7 +909,7 @@ void NSDongle::WritePcm(void* src, int dataLen, pOnData fun, void* param)
 			{
 				char temp[1024] = { 0 };
 				StatusInfo(temp);
-				m_pLog->AddLog("pcm ring buffer push fail,%s", temp);
+				m_pLog->AddLog(Ns_Log_Error, "pcm ring buffer push fail,%s", temp);
 				m_idxIdle--;
 				break;
 			}
@@ -918,7 +918,7 @@ void NSDongle::WritePcm(void* src, int dataLen, pOnData fun, void* param)
 		{
 			char temp[1024] = { 0 };
 			StatusInfo(temp);
-			m_pLog->AddLog("pcm ring buffer full,%s", temp);
+			m_pLog->AddLog(Ns_Log_Error, "pcm ring buffer full,%s", temp);
 			m_idxIdle--;
 			break;
 		}
@@ -949,12 +949,12 @@ void NSDongle::handleOutAmbe(unsigned __int8* pSamples)
 		}
 		else
 		{
-			m_pLog->AddLog("m_pCurHanleRing->pOnData is null");
+			m_pLog->AddLog(Ns_Log_Error, "m_pCurHanleRing->pOnData is null");
 		}
 	}
 	else
 	{
-		m_pLog->AddLog("m_pCurHanleRing is null");
+		m_pLog->AddLog(Ns_Log_Error, "m_pCurHanleRing is null");
 	}
 }
 
@@ -993,7 +993,7 @@ void NSDongle::StatusInfo(char* msg)
 }
 void NSDongle::ReadyUse()
 {
-	m_pLog->AddLog("%s reset start",Name());
+	m_pLog->AddLog(Ns_Log_Info, "%s reset start", Name());
 	m_idxIdle = 0;
 	change_data_t item = { 0 };
 	change_data_t* pItem = &item;
@@ -1002,7 +1002,7 @@ void NSDongle::ReadyUse()
 		popRingItem(pItem);
 	}
 	pItem = NULL;
-	m_pLog->AddLog("%s reset end", Name());
+	m_pLog->AddLog(Ns_Log_Info, "%s reset end", Name());
 }
 
 void NSDongle::alive()
