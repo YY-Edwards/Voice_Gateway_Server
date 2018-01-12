@@ -903,26 +903,10 @@ void NSWLNet::AmbeDataThread()
 											  /*增加到回叫队列*/
 											  AddCallBacksItem(peer);
 										  }
-										  record = FindRecordsItem(&condition);
-										  if (record)
+										  //record = FindRecordsItem(&condition);
+										  if (Handle_WL_PROTOCOL_20(&condition, callSessionStatus))
 										  {
-											  if (Call_Session_End == callSessionStatus)
-											  {
-												  /*更新通话状态*/
-												  record->setCallStatus(CALL_SESSION_STATUS_END);
-												  /*更新通话状态到数据库*/
-												  record->WriteToDb();
-												  /*从处理容器中移除*/
-												  RemoveRecordsItem(record);
-												  /*删除此记录*/
-												  delete record;
-												  record = NULL;
-											  }
-											  else if (Call_Session_Call_Hang == callSessionStatus)
-											  {
-												  /*更新通话状态*/
-												  record->setCallStatus(CALL_SESSION_STATUS_HANG);
-											  }
+											  //do nothing
 										  }
 										  /*如果是由本地发出的通话*/
 										  else if (src_radio == m_netParam.local_radio_id)
@@ -4260,4 +4244,40 @@ void NSWLNet::clearCallBacks()
 	freeList(m_callBackPeers);
 	m_callBackPeers = NULL;
 	RELEASELOCK(m_mutexCallBackPeers);
+}
+
+bool NSWLNet::Handle_WL_PROTOCOL_20(find_record_condition_t* condition, unsigned char callSessionStatus)
+{
+	NSRecordFile* record = NULL;
+	TRYLOCK(m_mutexRecords);
+	pLinkItem item = findItem(m_records, condition, &FuncFindRecord);
+	if (NULL != item)
+	{
+		if (NULL != item->data)
+		{
+			record = (NSRecordFile*)item->data;
+		}
+	}
+	if (record)
+	{
+		if (Call_Session_End == callSessionStatus)
+		{
+			/*更新通话状态*/
+			record->setCallStatus(CALL_SESSION_STATUS_END);
+			/*更新通话状态到数据库*/
+			record->WriteToDb();
+			/*从处理容器中移除*/
+			RemoveRecordsItem(record);
+			/*删除此记录*/
+			delete record;
+			record = NULL;
+		}
+		else if (Call_Session_Call_Hang == callSessionStatus)
+		{
+			/*更新通话状态*/
+			record->setCallStatus(CALL_SESSION_STATUS_HANG);
+		}
+	}
+	RELEASELOCK(m_mutexRecords);
+	return (NULL != record);
 }

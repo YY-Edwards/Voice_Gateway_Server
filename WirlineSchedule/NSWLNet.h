@@ -320,6 +320,8 @@ private:
 	void AddAmbesItem(work_item_t* p);
 	/*弹出ambe集子项*/
 	work_item_t* PopAmbesItem();
+	/*处理通话Session*/
+	bool Handle_WL_PROTOCOL_20(find_record_condition_t* condition, unsigned char callSessionStatus);
 
 };
 #endif
