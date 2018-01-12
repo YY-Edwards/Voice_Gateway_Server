@@ -153,8 +153,17 @@ int NSWLNet::StartNet(StartNetParam* p)
 
 		if (NULL == m_pMasterXqttnet)
 		{
-			m_pLog->AddLog("connectServer fail");
-			return -1;
+			m_pLog->AddLog("connectServer fail,will try agin");
+			if (0xffff == m_netParam.local_port)
+			{
+				m_pLog->AddLog("no udp port can use");
+				return -1;
+			}
+			else
+			{
+				m_netParam.local_port = m_netParam.local_port + 1;
+				return StartNet(&m_netParam);
+			}
 		}
 
 		StartSerialParam param = { 0 };
@@ -182,142 +191,6 @@ int NSWLNet::StartNet(StartNetParam* p)
 			memset(p, 0, sizeof(work_item_t));
 			Build_WorkItem_LE_90(p);
 			AddWorkItem(p);
-			//int size = sizeof(work_item_t);
-			//char temp[64] = { 0 };
-			//sprintf_s(temp, "work_item_t size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_90);
-			//sprintf_s(temp, "T_LE_PROTOCOL_90 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_91);
-			//sprintf_s(temp, "T_LE_PROTOCOL_91 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_92);
-			//sprintf_s(temp, "T_LE_PROTOCOL_92 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_93);
-			//sprintf_s(temp, "T_LE_PROTOCOL_93 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_94);
-			//sprintf_s(temp, "T_LE_PROTOCOL_94 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_95);
-			//sprintf_s(temp, "T_LE_PROTOCOL_95 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_96);
-			//sprintf_s(temp, "T_LE_PROTOCOL_96 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_97);
-			//sprintf_s(temp, "T_LE_PROTOCOL_97 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_98);
-			//sprintf_s(temp, "T_LE_PROTOCOL_98 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_99);
-			//sprintf_s(temp, "T_LE_PROTOCOL_99 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_9A);
-			//sprintf_s(temp, "T_LE_PROTOCOL_9A size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_90_LCP);
-			//sprintf_s(temp, "T_LE_PROTOCOL_90_LCP size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_91_LCP);
-			//sprintf_s(temp, "T_LE_PROTOCOL_91_LCP size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_92_LCP);
-			//sprintf_s(temp, "T_LE_PROTOCOL_92_LCP size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_93_LCP);
-			//sprintf_s(temp, "T_LE_PROTOCOL_93_LCP size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_94);
-			//sprintf_s(temp, "T_LE_PROTOCOL_94_LCP size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_95);
-			//sprintf_s(temp, "T_LE_PROTOCOL_95_LCP size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_96_LCP);
-			//sprintf_s(temp, "T_LE_PROTOCOL_96_LCP size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_97_LCP);
-			//sprintf_s(temp, "T_LE_PROTOCOL_97_LCP size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_98_LCP);
-			//sprintf_s(temp, "T_LE_PROTOCOL_98_LCP size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_99_LCP);
-			//sprintf_s(temp, "T_LE_PROTOCOL_99_LCP size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_LE_PROTOCOL_9A_LCP);
-			//sprintf_s(temp, "T_LE_PROTOCOL_9A_LCP size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_WL_PROTOCOL_01);
-			//sprintf_s(temp, "T_WL_PROTOCOL_01 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_WL_PROTOCOL_02);
-			//sprintf_s(temp, "T_WL_PROTOCOL_02 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_WL_PROTOCOL_03);
-			//sprintf_s(temp, "T_WL_PROTOCOL_03 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_WL_PROTOCOL_11);
-			//sprintf_s(temp, "T_WL_PROTOCOL_11 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_WL_PROTOCOL_12);
-			//sprintf_s(temp, "T_WL_PROTOCOL_12 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_WL_PROTOCOL_13);
-			//sprintf_s(temp, "T_WL_PROTOCOL_13 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_WL_PROTOCOL_16);
-			//sprintf_s(temp, "T_WL_PROTOCOL_16 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_WL_PROTOCOL_18);
-			//sprintf_s(temp, "T_WL_PROTOCOL_18 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_WL_PROTOCOL_19);
-			//sprintf_s(temp, "T_WL_PROTOCOL_19 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_WL_PROTOCOL_20);
-			//sprintf_s(temp, "T_WL_PROTOCOL_20 size %d bytes", size);
-			//m_pLog->AddLog(temp);
-
-			//size = sizeof(T_WL_PROTOCOL_21);
-			//sprintf_s(temp, "T_WL_PROTOCOL_21 size %d bytes", size);
-			//m_pLog->AddLog(temp);
 		}
 	}
 	return 0;
@@ -580,8 +453,9 @@ void NSWLNet::onSendComplete(struct _xqtt_net* pNet, struct _xqtt_net* pNetClien
 
 void NSWLNet::onError(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient, int errCode)
 {
-	m_pLog->AddLog("onError");
+	m_pLog->AddLog("onError,errCode:%d,will try connect net", errCode);
 	clearMasterXqttnet();
+	StartNet(&m_netParam);
 }
 
 int NSWLNet::allThreadStart()
