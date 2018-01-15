@@ -1628,7 +1628,7 @@ void NSWLNet::sendWorkItemNetData(work_item_t* p)
 {
 	send_data_t* pSend = &p->data.send_data;
 	sendNetDataBase(pSend->net_data, pSend->net_lenth, pSend->send_to);
-	m_pLog->AddLog(Ns_Log_Info, "Opcode:0x%02x", pSend->protocol.le.PROTOCOL_90.Opcode);
+	m_pLog->AddLog(Ns_Log_Info, "Opcode:0x%02x Send", pSend->protocol.le.PROTOCOL_90.Opcode);
 }
 
 void NSWLNet::clearPeers()
