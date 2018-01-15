@@ -86,7 +86,7 @@ void NSLog::Logthread()
 	{
 		TRYLOCK(m_mutexLog);
 		it = popFront(&m_logs);
-		while (it)
+		if (it)
 		{
 			log_t* p = (log_t*)it->data;
 			if (p)
@@ -96,9 +96,14 @@ void NSLog::Logthread()
 				p = NULL;
 			}
 			freeList(it);
-			it = popFront(&m_logs);
 		}
 		RELEASELOCK(m_mutexLog);
+		/*log´¦Àí¼äÏ¶*/
+		Sleep(SLEEP_LOG_THREAD);
+		if (Size() > 0)
+		{
+			SetEvent(m_waitLogEvent);
+		}
 		WaitForSingleObject(m_waitLogEvent, INFINITE);
 	}
 }
@@ -203,4 +208,13 @@ void NSLog::AddLogsItem(log_t* log)
 	appendData(&m_logs, log);
 	RELEASELOCK(m_mutexLog);
 	SetEvent(m_waitLogEvent);
+}
+
+int NSLog::Size()
+{
+	int rlt = 0;
+	TRYLOCK(m_mutexLog);
+	rlt = listSize(m_logs);
+	RELEASELOCK(m_mutexLog);
+	return rlt;
 }

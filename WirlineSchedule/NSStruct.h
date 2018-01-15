@@ -20,11 +20,12 @@ class NSManager;
 #define TIMEOUT_TRY_COUNT_98 10
 #define TIMEOUT_LE_98 (6*1000)
 #define SLEEP_WORK_THREAD 10
-#define SLEEP_TIMEOUT_THREAD 100
 #define SLEEP_AMBE_THREAD 10
+#define SLEEP_TIMEOUT_THREAD 100
+#define SLEEP_SOUNDOUT_THREAD 120
 #define SLEEP_CHECK_AMBE_THREAD (100*3)
 #define SLEEP_GETSERIAL_THREAD 1000
-#define SLEEP_SOUNDOUT_THREAD 120
+#define SLEEP_LOG_THREAD 100 //log线程的处理间隔
 #define Mode_Net_P2P (unsigned short)0x0000
 #define Mode_Net_WL (unsigned short)0x0100
 #define Mode_Net_Mask (unsigned short)0xff00
