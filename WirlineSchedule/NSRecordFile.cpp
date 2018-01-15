@@ -326,6 +326,11 @@ int NSRecordFile::CallStatus()
 	return call_status;
 }
 
+void NSRecordFile::setPeer(NSWLPeer* value)
+{
+	m_peer = value;
+}
+
 //bool CRecordFile::TimeOutUpdateStatusToDb()
 //{
 //	return (timeout_status < GetTickCount());

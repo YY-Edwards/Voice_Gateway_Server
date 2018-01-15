@@ -951,7 +951,9 @@ void CManager::handleRemoteTask()
 														  NSLog::instance()->AddLog(Ns_Log_Error, "getRadioStatus fail,license_status_nopass");
 														  continue;
 													  }
+													  NSLog::instance()->AddLog(Ns_Log_Info, "getRadioStatus call start");
 													  m_pMnis->getRadioStatus(task.param.info.mnisStatusParam.getType, task.param.info.mnisStatusParam.SessionId);
+													  NSLog::instance()->AddLog(Ns_Log_Info, "getRadioStatus call end");
 										   }
 											   break;
 										   }

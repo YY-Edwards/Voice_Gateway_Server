@@ -41,6 +41,7 @@ private:
 	void clearLogs();
 	void AddLogsItem(log_t* log);
 	void handleMsg(char* pMsg, bool bPrint, log_type_enum type);
+	int Size();
 };
 
 

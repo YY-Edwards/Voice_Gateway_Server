@@ -3,6 +3,7 @@
 #include "NSWLNet.h"
 #include "HMAC_SHA1.h"
 #include "NSLog.h"
+#include "NSRecordFile.h"
 //#include "Manager.h"
 
 #define AUTHENTIC_ID_SIZE	4
@@ -37,7 +38,17 @@ NSWLPeer::NSWLPeer(wl_peer_build_param_t* p)
 
 NSWLPeer::~NSWLPeer()
 {
-	m_recordFile = NULL;
+	m_pLog->AddLog(Ns_Log_Info, "%lu ~NSWLPeer", PeerId());
+	if (m_pNet)
+	{
+		m_pNet->TimeoutsItemDeleteAboutPeer(this);
+		m_pNet = NULL;
+	}
+	if (m_recordFile)
+	{
+		m_recordFile->setPeer(NULL);
+		m_recordFile = NULL;
+	}
 }
 
 unsigned long NSWLPeer::PeerId()
@@ -55,11 +66,13 @@ void NSWLPeer::WL_REGISTRATION()
 	Build_WorkItem_WL_01(pItem1, pItem2);
 	if (pItem1)
 	{
-		m_pNet->AddWorkItem(pItem1);
+		//m_pNet->AddWorkItem(pItem1);
+		m_pNet->SendQuestToMasterAndAddWorkTimeOutsItem(pItem1);
 	}
 	if (pItem2)
 	{
-		m_pNet->AddWorkItem(pItem2);
+		//m_pNet->AddWorkItem(pItem2);
+		m_pNet->SendQuestToMasterAndAddWorkTimeOutsItem(pItem2);
 	}
 }
 
@@ -274,7 +287,8 @@ void NSWLPeer::LE_PEER_REGISTRATION()
 	work_item_t* p = new work_item_t;
 	memset(p, 0, sizeof(work_item_t));
 	Build_WorkItem_LE_94(p);
-	m_pNet->AddWorkItem(p);
+	//m_pNet->AddWorkItem(p);
+	m_pNet->SendQuestToMasterAndAddWorkTimeOutsItem(p);
 }
 
 void NSWLPeer::Build_WorkItem_LE_94(work_item_t* p)
@@ -399,7 +413,8 @@ void NSWLPeer::Handle_LE_PEER_REGISTRATION_RESPONSE_Recive()
 	work_item_t* p = new work_item_t;
 	memset(p, 0, sizeof(work_item_t));
 	Build_WorkItem_LE_98(p);
-	m_pNet->AddWorkItem(p);
+	//m_pNet->AddWorkItem(p);
+	m_pNet->SendQuestToMasterAndAddWorkTimeOutsItem(p, TIMEOUT_LE_98);
 }
 
 void NSWLPeer::Build_WorkItem_LE_98(work_item_t* p, unsigned long timing /*= 0*/)
