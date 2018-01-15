@@ -20,7 +20,7 @@ NSAmbe::NSAmbe(NSManager* pManager)
 
 NSAmbe::~NSAmbe()
 {
-	m_pLog->AddLog("~NSAmbe");
+	m_pLog->AddLog(Ns_Log_Info,"~NSAmbe");
 #if _DEBUG	
 	if (m_outFile)
 	{
@@ -44,7 +44,7 @@ void NSAmbe::Ambe2Pcm(void* pBuffer, unsigned long length)
 	}
 	else
 	{
-		m_pLog->AddLog("no useable dongle");
+		m_pLog->AddLog(Ns_Log_Error,"no useable dongle");
 	}
 }
 
@@ -68,7 +68,7 @@ void NSAmbe::OnDataPcm(void* pData, unsigned long length, unsigned long index)
 	}
 	else
 	{
-		m_pLog->AddLog("ambe to pcm end");
+		m_pLog->AddLog(Ns_Log_Info, "ambe to pcm end");
 		m_bReciveEnd = true;
 		m_useDongle = NULL;
 		canDeleteSelf();
@@ -85,7 +85,7 @@ int NSAmbe::Pcm2Ambe(void* pBuffer, unsigned long length)
 	}
 	else
 	{
-		m_pLog->AddLog("no useable dongle");
+		m_pLog->AddLog(Ns_Log_Error, "no useable dongle");
 		rlt = 1;
 	}
 	return rlt;
@@ -96,15 +96,13 @@ void NSAmbe::OnDataAmbe(void* pData, unsigned long length, unsigned long index)
 	//LOG_INFO("Recive index:%d ambe package", index);
 	if (pData)
 	{
-		if (m_pManager 
-			//&& 0xfeeefeee != *(unsigned int*)m_pManager
-			)
+		if (m_pManager)
 		{
 			m_pManager->HandleAmbeData(pData, length);
 		}
 		else
 		{
-			m_pLog->AddLog("m_pManager is null");
+			m_pLog->AddLog(Ns_Log_Error, "m_pManager is null");
 		}
 #if _DEBUG
 		if (m_outFile)
@@ -117,7 +115,7 @@ void NSAmbe::OnDataAmbe(void* pData, unsigned long length, unsigned long index)
 	}
 	else
 	{
-		m_pLog->AddLog("pcm to ambe end");
+		m_pLog->AddLog(Ns_Log_Info, "pcm to ambe end");
 		m_bReciveEnd = true;
 		m_useDongle = NULL;
 		canDeleteSelf();

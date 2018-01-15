@@ -8,7 +8,7 @@
 #include "NSAmbe.h"
 #include "NSManager.h"
 #include "NSWLPeer.h"
-#include "WLNet.h"
+//#include "WLNet.h"
 
 #define MAX_RECORD_BUFFER_SIZE (100*1024)
 
@@ -39,7 +39,7 @@ NSRecordFile::~NSRecordFile()
 #if _DEBUG
 	char temp[1024] = { 0 };
 	sprintf_s(temp, "Voice Record CallId %lu From %lu To %lu On Peer:%lu in Slot 0x%02x Delete", call_id, src_radio, target_radio, src_peer_id, src_slot);
-	m_pLog->AddLog(temp);
+	m_pLog->AddLog(Ns_Log_Info, temp);
 #endif
 	if (m_pAmbe)
 	{
@@ -57,6 +57,13 @@ NSRecordFile::~NSRecordFile()
 
 void NSRecordFile::WriteVoiceFrame(const char* pAmbe, int size, bool needDongle /*= true*/)
 {
+	timeout = GetTickCount() + TIMEOUT_VOICE_FRAME;//等待Voice_Burst或者Voice_End标识
+
+	if (license_status_nopass == g_license_status)
+	{
+		m_pLog->AddLog(Ns_Log_Error, "WriteVoiceFrame fail,license_status_nopass");
+		return;
+	}
 	if (needDongle &&
 		g_playCalltype == call_type &&
 		g_playTargetId == target_radio)
@@ -71,7 +78,7 @@ void NSRecordFile::WriteVoiceFrame(const char* pAmbe, int size, bool needDongle 
 		}
 		else
 		{
-			m_pLog->AddLog("m_pAmbe is null");
+			m_pLog->AddLog(Ns_Log_Error, "m_pAmbe is null");
 		}
 	}
 
@@ -85,8 +92,6 @@ void NSRecordFile::WriteVoiceFrame(const char* pAmbe, int size, bool needDongle 
 		memcpy(buffer + length, pAmbe, size);
 		length += size;
 	}
-
-	timeout = GetTickCount() + TIMEOUT_VOICE_FRAME;//等待Voice_Burst或者Voice_End标识
 }
 
 bool NSRecordFile::TimeOut()
@@ -96,7 +101,7 @@ bool NSRecordFile::TimeOut()
 	{
 		char temp[64] = { 0 };
 		sprintf_s(temp, "TimeOut:%d", GetTickCount() - timeout);
-		m_pLog->AddLog(temp);
+		m_pLog->AddLog(Ns_Log_Info, temp);
 	}
 #endif
 	return (timeout < GetTickCount());
@@ -134,18 +139,31 @@ void NSRecordFile::setCallStatus(int value)
 	if (value != call_status)
 	{
 #if _DEBUG
-		m_pLog->AddLog("====CallStatus From %d To %d On CallId %d====",call_status, value, call_id);
+		m_pLog->AddLog(Ns_Log_Info, "====CallStatus From %d To %d On CallId %d====", call_status, value, call_id);
 #endif
 		call_status = value;
 		if (VOICE_START == call_status)
 		{
 			if (src_radio == CONFIG_LOCAL_RADIO_ID)
 			{
-				g_pNet->wlCallStatus(call_type, src_radio, target_radio, STATUS_CALL_START | REMOTE_CMD_SUCCESS, SessionId);
+					oncallstatus_info_t info = { 0 };
+					info.callType = call_type;
+					info.srcId = src_radio;
+					info.tgtId = target_radio;
+					info.status = STATUS_CALL_START | REMOTE_CMD_SUCCESS;
+					NS_SafeCallStatusEvent(&info);
+				//g_pNet->wlCallStatus(call_type, src_radio, target_radio, STATUS_CALL_START | REMOTE_CMD_SUCCESS, SessionId);
 			}
 			else
 			{
-				g_pNet->wlCall(call_type, src_radio, target_radio, OPERATE_CALL_START, (call_type == g_playCalltype && target_radio == g_playTargetId));
+					oncall_info_t info = { 0 };
+					info.callType = call_type;
+					info.srcId = src_radio;
+					info.tgtId = target_radio;
+					info.status = OPERATE_CALL_START;
+					info.isCurrent = (call_type == g_playCalltype && target_radio == g_playTargetId);
+					NS_SafeCallEvent(&info);
+				//g_pNet->wlCall(call_type, src_radio, target_radio, OPERATE_CALL_START, (call_type == g_playCalltype && target_radio == g_playTargetId));
 			}
 		}
 		else if (VOICE_BURST == call_status)
@@ -153,7 +171,7 @@ void NSRecordFile::setCallStatus(int value)
 #if _DEBUG
 			char temp[1024] = { 0 };
 			sprintf_s(temp, "Voice Record CallId %lu From %lu To %lu On Peer:%lu in Slot 0x%02x VOICE_BURST", call_id, src_radio, target_radio, src_peer_id, src_slot);
-			m_pLog->AddLog(temp);
+			m_pLog->AddLog(Ns_Log_Info, temp);
 #endif
 		}
 		else if (CALL_SESSION_STATUS_HANG == call_status)
@@ -161,11 +179,24 @@ void NSRecordFile::setCallStatus(int value)
 			timeout = GetTickCount() + g_hang_time;//等待Session_End标识
 			if (src_radio == CONFIG_LOCAL_RADIO_ID)
 			{
-				g_pNet->wlCallStatus(call_type, src_radio, target_radio, STATUS_CALL_END | REMOTE_CMD_SUCCESS, SessionId);
+					oncallstatus_info_t info = { 0 };
+					info.callType = call_type;
+					info.srcId = src_radio;
+					info.tgtId = target_radio;
+					info.status = STATUS_CALL_END | REMOTE_CMD_SUCCESS;
+					NS_SafeCallStatusEvent(&info);
+				//g_pNet->wlCallStatus(call_type, src_radio, target_radio, STATUS_CALL_END | REMOTE_CMD_SUCCESS, SessionId);
 			}
 			else
 			{
-				g_pNet->wlCall(call_type, src_radio, target_radio, OPERATE_CALL_END, (call_type == g_playCalltype && target_radio == g_playTargetId));
+					oncall_info_t info = { 0 };
+					info.callType = call_type;
+					info.srcId = src_radio;
+					info.tgtId = target_radio;
+					info.status = OPERATE_CALL_END;
+					info.isCurrent = (call_type == g_playCalltype && target_radio == g_playTargetId);
+					NS_SafeCallEvent(&info);
+				//g_pNet->wlCall(call_type, src_radio, target_radio, OPERATE_CALL_END, (call_type == g_playCalltype && target_radio == g_playTargetId));
 			}
 		}
 		else if (VOICE_END_BURST == call_status)
@@ -177,6 +208,11 @@ void NSRecordFile::setCallStatus(int value)
 
 void NSRecordFile::WriteToDb()
 {
+	if (license_status_nopass == g_license_status)
+	{
+		m_pLog->AddLog(Ns_Log_Error, "WriteToDb fail,license_status_nopass");
+		return;
+	}
 	if (g_pDb)
 	{
 		std::map < std::string, std::string > voiceRecord;
@@ -185,7 +221,7 @@ void NSRecordFile::WriteToDb()
 		{
 			if (!CreateNewFileByYearMonth())
 			{
-				m_pLog->AddLog("CreateNewFileByYearMonth fail");
+				m_pLog->AddLog(Ns_Log_Error, "CreateNewFileByYearMonth fail");
 			}
 			else
 			{
@@ -195,7 +231,7 @@ void NSRecordFile::WriteToDb()
 				offset = GetFileSize(m_hOpenFile, NULL);
 				if (FALSE == WriteFile(m_hOpenFile, buffer, length, &dwWrite, NULL))
 				{
-					m_pLog->AddLog("Record WriteFile fail");
+					m_pLog->AddLog(Ns_Log_Error, "Record WriteFile fail");
 				}
 				else
 				{
@@ -262,7 +298,7 @@ void NSRecordFile::WriteToDb()
 	}
 	else
 	{
-		m_pLog->AddLog("An unknown database error has occurred,pointer of db is null");
+		m_pLog->AddLog(Ns_Log_Error, "An unknown database error has occurred,pointer of db is null");
 	}
 }
 

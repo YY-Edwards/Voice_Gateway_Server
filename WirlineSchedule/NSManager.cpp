@@ -69,7 +69,7 @@ int NSManager::Initialize(NSNetBase* &pNet)
 	if (0 == result.num)
 	{
 		//LOG_ERR("AMBE DONGLE ZERO");
-		m_pLog->AddLog("AMBE DONGLE ZERO,will not play and call");
+		m_pLog->AddLog(Ns_Log_Error, "AMBE DONGLE ZERO,will not play and call");
 		return WL_FAIL_AMBE_DONGLE_ZERO;
 	}
 	else
@@ -98,7 +98,7 @@ void NSManager::test_ambe_2_pcm(FILE* pIn,FILE* pOut)
 	if (NULL == m_pHandleThread)
 	{
 		//LOG_ERR("create test_ambe_2_pcmProc fail");
-		m_pLog->AddLog("create test_ambe_2_pcmProc fail");
+		m_pLog->AddLog(Ns_Log_Info, "create test_ambe_2_pcmProc fail");
 	}
 	else
 	{
@@ -125,7 +125,7 @@ void NSManager::test_pcm_2_ambe(FILE* pIn, FILE* pOut)
 		);
 	if (NULL == m_pHandleThread)
 	{
-		m_pLog->AddLog("create test_pcm_2_ambeProc fail");
+		m_pLog->AddLog(Ns_Log_Info, "create test_pcm_2_ambeProc fail");
 	}
 	else
 	{
@@ -136,20 +136,20 @@ void NSManager::test_pcm_2_ambe(FILE* pIn, FILE* pOut)
 void NSManager::OnUpdateUsb(DWORD operateType)
 {
 	//LOG_INFO("OnUpdateUsb");
-	m_pLog->AddLog("OnUpdateUsb");
+	m_pLog->AddLog(Ns_Log_Info, "OnUpdateUsb");
 	switch (operateType)
 	{
 	case USB_ADD:
 	{
 					//LOG_INFO("USB_ADD");
-					m_pLog->AddLog("USB_ADD");
+					m_pLog->AddLog(Ns_Log_Info, "USB_ADD");
 					handleUsbAdd();
 	}
 		break;
 	case USB_DEL:
 	{
 					//LOG_INFO("USB_DEL");
-					m_pLog->AddLog("USB_DEL");
+					m_pLog->AddLog(Ns_Log_Info, "USB_DEL");
 					handleUsbDel();
 	}
 		break;
@@ -161,13 +161,13 @@ void NSManager::OnUpdateUsb(DWORD operateType)
 void NSManager::handle_test_ambe_2_pcm(FILE* pIn, FILE* pOut)
 {
 	//LOG_INFO("handle_test_ambe_2_pcm Start");
-	m_pLog->AddLog("handle_test_ambe_2_pcm Start");
+	m_pLog->AddLog(Ns_Log_Info, "handle_test_ambe_2_pcm Start");
 	/*指定文件传AMBE*/
 	FILE *fp = pIn;
 	if (NULL == fp)
 	{
 		//LOG_ERR("Error on open pIn!", );
-		m_pLog->AddLog("Error on open pIn!");
+		m_pLog->AddLog(Ns_Log_Info, "Error on open pIn!");
 		return;
 	}
 	fseek(fp, 0, SEEK_END);
@@ -188,19 +188,19 @@ void NSManager::handle_test_ambe_2_pcm(FILE* pIn, FILE* pOut)
 		pBuffer = NULL;
 	}
 	//LOG_INFO("handle_test_ambe_2_pcm End");
-	m_pLog->AddLog("handle_test_ambe_2_pcm End");
+	m_pLog->AddLog(Ns_Log_Info, "handle_test_ambe_2_pcm End");
 }
 
 void NSManager::handle_test_pcm_2_ambe(FILE* pIn, FILE* pOut)
 {
 	//LOG_INFO("handle_test_pcm_2_ambe Start");
-	m_pLog->AddLog("handle_test_pcm_2_ambe Start");
+	m_pLog->AddLog(Ns_Log_Info, "handle_test_pcm_2_ambe Start");
 	/*指定文件传PCM*/
 	FILE *fp = pIn;
 	if (NULL == fp)
 	{
 		//LOG_ERR("Error on open pIn!", );
-		m_pLog->AddLog("Error on open pIn!");
+		m_pLog->AddLog(Ns_Log_Info, "Error on open pIn!");
 	}
 	fseek(fp, 0, SEEK_END);
 	long size = ftell(fp);
@@ -219,7 +219,7 @@ void NSManager::handle_test_pcm_2_ambe(FILE* pIn, FILE* pOut)
 		pBuffer = NULL;
 	}
 	//LOG_INFO("handle_test_pcm_2_ambe End");
-	m_pLog->AddLog("handle_test_pcm_2_ambe End");
+	m_pLog->AddLog(Ns_Log_Info, "handle_test_pcm_2_ambe End");
 }
 
 unsigned int __stdcall NSManager::test_ambe_2_pcmProc(void* pArguments)
@@ -283,7 +283,7 @@ NSDongle* NSManager::PopIdleDonglesItem()
 		{
 			p = (NSDongle*)item->data;
 			p->ReadyUse();
-			m_pLog->AddLog("dongle %s use start", p->Name());
+			m_pLog->AddLog(Ns_Log_Info, "dongle %s use start", p->Name());
 		}
 		freeList(item);
 	}
@@ -381,13 +381,13 @@ void NSManager::handleUsbDel()
 			{
 				if (!rItem->IsIdle())
 				{
-					m_pLog->AddLog("%s is remove，work will stop", rItem->Name());
+					m_pLog->AddLog(Ns_Log_Info, "%s is remove，work will stop", rItem->Name());
 				}
 				delete rItem;
 			}
 			else
 			{
-				m_pLog->AddLog("%s is remove，but don't found", it->Name());
+				m_pLog->AddLog(Ns_Log_Info, "%s is remove，but don't found", it->Name());
 			}
 			header = item->pNext;
 			item->pNext = NULL;
@@ -428,7 +428,7 @@ NSDongle* NSManager::FindDonglesItem(const void* condition, LinkMatchFunc fun)
 
 void NSManager::AddIdleDonglesItem(NSDongle* p)
 {
-	m_pLog->AddLog("dongle %s use end", p->Name());
+	m_pLog->AddLog(Ns_Log_Info, "dongle %s use end", p->Name());
 	TRYLOCK(m_mutexIdleDongles);
 	appendData(&m_idleDongles, p);
 	RELEASELOCK(m_mutexIdleDongles);
@@ -444,12 +444,12 @@ void NSManager::HandleAmbeData(void* pData, unsigned long length)
 		}
 		else
 		{
-			m_pLog->AddLog("m_pNet is null");
+			m_pLog->AddLog(Ns_Log_Error, "m_pNet is null");
 		}
 	}
 	else
 	{
-		m_pLog->AddLog("m_ppNet is null");
+		m_pLog->AddLog(Ns_Log_Error, "m_ppNet is null");
 	}
 }
 

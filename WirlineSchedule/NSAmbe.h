@@ -1,9 +1,6 @@
 #ifndef CAMBE_H
 #define CAMBE_H
 
-#include "mutex.h"
-#include "linklist.h"
-
 class NSManager;
 class NSDongle;
 class NSLog;

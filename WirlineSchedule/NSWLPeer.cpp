@@ -3,7 +3,7 @@
 #include "NSWLNet.h"
 #include "HMAC_SHA1.h"
 #include "NSLog.h"
-#include "Manager.h"
+//#include "Manager.h"
 
 #define AUTHENTIC_ID_SIZE	4
 #define VENDER_KEY_SIZE		20
@@ -30,7 +30,7 @@ NSWLPeer::NSWLPeer(wl_peer_build_param_t* p)
 	addr.S_un.S_addr = p->addr;
 	char temp[128] = { 0 };
 	sprintf_s(temp, "m_peerId:%lu,ip:%s,port:%u", m_peerId, inet_ntoa(addr), p->port);
-	m_pLog->AddLog(temp);
+	m_pLog->AddLog(Ns_Log_Info, temp);
 #endif // _DEBUG
 
 }
@@ -385,18 +385,21 @@ DWORD NSWLPeer::Build_LE_PEER_REGISTRATION_RESPONSE(CHAR* pPacket, T_LE_PROTOCOL
 
 void NSWLPeer::Handle_LE_PEER_REGISTRATION_REQUEST_Recive()
 {
+	/*立即发送0x95*/
 	work_item_t* p = new work_item_t;
 	memset(p, 0, sizeof(work_item_t));
 	Build_WorkItem_LE_95(p);
-	m_pNet->AddWorkItem(p);
+	m_pNet->sendNetDataBase(p->data.send_data.net_data, p->data.send_data.net_lenth, &m_sockaddr);
+	delete p;
+	p = NULL;
 }
 
 void NSWLPeer::Handle_LE_PEER_REGISTRATION_RESPONSE_Recive()
 {
 	work_item_t* p = new work_item_t;
 	memset(p, 0, sizeof(work_item_t));
-	Build_WorkItem_LE_98(p, g_timing_alive_time_peer);
-	m_pNet->AddWorkTimeOutItem(p);
+	Build_WorkItem_LE_98(p);
+	m_pNet->AddWorkItem(p);
 }
 
 void NSWLPeer::Build_WorkItem_LE_98(work_item_t* p, unsigned long timing /*= 0*/)
@@ -409,7 +412,7 @@ void NSWLPeer::Build_WorkItem_LE_98(work_item_t* p, unsigned long timing /*= 0*/
 	send_data_t* pSendData = &p->data.send_data;
 	p->type = Send;
 	pSendData->send_to = &m_sockaddr;
-	pSendData->timeout_try = TIMEOUT_TRY_COUNT;
+	pSendData->timeout_try = TIMEOUT_TRY_COUNT_98;
 	pSendData->pFrom = this;
 	if (0 != timing)
 	{
@@ -488,12 +491,9 @@ void NSWLPeer::Handle_LE_PEER_KEEP_ALIVE_REQUEST_Recive()
 	work_item_t* p = new work_item_t;
 	memset(p, 0, sizeof(work_item_t));
 	Build_WorkItem_LE_99(p);
-	m_pNet->AddWorkItem(p);
-	/*立即发送0x98*/
-	p = new work_item_t;
-	memset(p, 0, sizeof(work_item_t));
-	Build_WorkItem_LE_98(p);
-	m_pNet->AddWorkItem(p);
+	m_pNet->sendNetDataBase(p->data.send_data.net_data, p->data.send_data.net_lenth, &m_sockaddr);
+	delete p;
+	p = NULL;
 }
 
 void NSWLPeer::Build_WorkItem_LE_99(work_item_t* p)
@@ -576,7 +576,11 @@ DWORD NSWLPeer::Build_LE_PEER_KEEP_ALIVE_RESPONSE(CHAR* pPacket, T_LE_PROTOCOL_9
 
 void NSWLPeer::Handle_LE_PEER_KEEP_ALIVE_RESPONSE_Recive()
 {
-	Handle_LE_PEER_REGISTRATION_RESPONSE_Recive();
+	/*定时发送*/
+	work_item_t* p = new work_item_t;
+	memset(p, 0, sizeof(work_item_t));
+	Build_WorkItem_LE_98(p, g_timing_alive_time_peer);
+	m_pNet->AddWorkTimeOutItem(p);
 }
 
 wl_reg_status NSWLPeer::WlRegStatus()
@@ -590,21 +594,30 @@ void NSWLPeer::setWlRegStatus(wl_reg_status value)
 	{
 		char temp[128] = { 0 };
 		sprintf_s(temp, "=====PeerId %lu WlRegStatus from %d to %d=====", PeerId(), m_wlRegStatus, value);
-		m_pLog->AddLog(temp);
+		m_pLog->AddLog(Ns_Log_Info, temp);
 		m_wlRegStatus = value;
 		if (WL_REG_SUCCESS == m_wlRegStatus)
 		{
-			if (g_manager)
-			{
-				g_manager->setWireLanStatus(WL_REGISTER_SUC);
-			}
+			onsystemstatuschange_info_t info = { 0 };
+			info.type = System_WireLanStatus;
+			info.value = WL_REGISTER_SUC;
+			NS_SafeSystemStatusChangeEvent(&info);
+			//if (g_manager)
+			//{
+			//	g_manager->setWireLanStatus(WL_REGISTER_SUC);
+			//}
 		}
 		else
 		{
-			if (g_manager)
-			{
-				g_manager->setWireLanStatus(WL_REGISTER_FAL);
-			}
+
+			onsystemstatuschange_info_t info = { 0 };
+			info.type = System_WireLanStatus;
+			info.value = WL_REGISTER_FAL;
+			NS_SafeSystemStatusChangeEvent(&info);
+			//if (g_manager)
+			//{
+			//	g_manager->setWireLanStatus(WL_REGISTER_FAL);
+			//}
 		}
 	}
 }

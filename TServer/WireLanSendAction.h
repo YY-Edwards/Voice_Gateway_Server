@@ -277,32 +277,41 @@ void wlReadSerialAction(CRemotePeer* pRemote, const std::string& param, uint64_t
 			SerialInformation s = CBroker::instance()->getSerialInformation();
 			memcpy(s.licType, "TrboX 3.0", 12);
 			std::string serial = d["serial"].GetString();
-			if (type == "radio")
+			if (serial.length() != 0)
 			{
-				s.deviceType = CRADIO;    //DeviceType：设备类型(1:车载台，2：中继台，3：对讲机， 4：PC)
-				if (serial.length() == 10)
+				if (type == "radio")
 				{
-					memcpy(s.radioSerial, serial.c_str(), 16);
-				}
-				else if (serial.length() == 12)
-				{
-					memcpy(s.radioMode, serial.c_str(), 16);
-				}
+					s.deviceType = CRADIO;    //DeviceType：设备类型(1:车载台，2：中继台，3：对讲机， 4：PC)
+					if (serial.length() == 10)
+					{
+						memcpy(s.radioSerial, serial.c_str(), 16);
+					}
+					else if (serial.length() == 12)
+					{
+						memcpy(s.radioMode, serial.c_str(), 16);
+					}
 
-				CBroker::instance()->setSerialInformation(s);
-			}
-			else if (type == "wl")
-			{
-				s.deviceType = REPEATER;
-				if (serial.length() == 10)
-				{
-					memcpy(s.repeaterSerial, serial.c_str(), 16);
-					memcpy(s.repeaterMode, "AZH69JDC9KA2AN", 16);
+					CBroker::instance()->setSerialInformation(s);
 				}
+				else if (type == "wl")
+				{
+					s.deviceType = REPEATER;
+					if (serial.length() == 10)
+					{
+						memcpy(s.repeaterSerial, serial.c_str(), 16);
+						memcpy(s.repeaterMode, "AZH69JDC9KA2AN", 16);
+					}
 				
-				CBroker::instance()->setSerialInformation(s);
+					CBroker::instance()->setSerialInformation(s);
+				}
+				readSerial();
+			}
+			else
+			{
+				CBroker::instance()->setLicenseStatus(2);   //正在连接设备获取序列号
 			}
 
+			CBroker::instance()->sendLicenseToWlClient();  //发送授权结果到wl
 			std::string strResp = CRpcJsonParser::buildResponse("success", callId, 200, "", ArgumentType());
 			pRemote->sendResponse(strResp.c_str(), strResp.size());
 			readSerial();

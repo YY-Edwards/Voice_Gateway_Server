@@ -3,7 +3,7 @@
 #include "NSLog.h"
 #include <process.h>
 #include "NSNetBase.h"
-#include "Manager.h"
+//#include "Manager.h"
 
 NSSerial::NSSerial()
 :m_bThreadWork(false)
@@ -60,7 +60,7 @@ int NSSerial::Start(StartSerialParam *param)
 		);
 	if (NULL == m_getSerailThread)
 	{
-		m_pLog->AddLog("GetSerialThreadProc create fail");
+		m_pLog->AddLog(Ns_Log_Error, "GetSerialThreadProc create fail");
 		return -1;
 	}
 	m_bThreadWork = true;
@@ -82,7 +82,7 @@ unsigned int __stdcall NSSerial::GetSerialThreadProc(void* pArguments)
 void NSSerial::GetSerialThread()
 {
 	NSLog* m_log = m_pLog;
-	m_log->AddLog("get serial Thread start");
+	m_log->AddLog(Ns_Log_Info, "get serial Thread start");
 	while (m_bThreadWork)
 	{
 		work_item_t* currentItem = PopSerialItem();
@@ -205,18 +205,18 @@ void NSSerial::GetSerialThread()
 						   }
 						   break;
 					   }
-			if (NULL != currentItem)
-			{
-				delete currentItem;
-				currentItem = NULL;
-			}
+					   if (NULL != currentItem)
+					   {
+						   delete currentItem;
+						   currentItem = NULL;
+					   }
 		}
 			break;
 		default:
 			break;
 		}
 	}
-	m_log->AddLog("get serial Thread end");
+	m_log->AddLog(Ns_Log_Info, "get serial Thread end");
 }
 
 work_item_t * NSSerial::PopSerialItem()
@@ -255,7 +255,7 @@ void NSSerial::SetSerialNumber(unsigned char* pSerial)
 		index++;
 	}
 	strcpy(&temp[index], " Serial Number");
-	m_pLog->AddLog(temp);
+	m_pLog->AddLog(Ns_Log_Info, temp);
 }
 
 void NSSerial::SEND_LE_XCMP_XNL_DEVICE_MASTER_QUERY(work_item_t* w)
@@ -753,7 +753,7 @@ void NSSerial::SendXnlToMaster(work_item_t *w, unsigned long timeout /*= TIMEOUT
 	send_data_t* pSend = &w->data.send_data;
 	//if (sendDataUdp(m_pMasterXqttnet, pSend->net_data, pSend->net_lenth, (SOCKADDR_IN*)pSend->send_to, sizeof(SOCKADDR_IN)))
 	//{
-	if (m_pCallParam->sendNetDataBase(pSend->net_data,pSend->net_lenth,pSend->send_to))
+	if (m_pCallParam->sendNetDataBase(pSend->net_data, pSend->net_lenth, pSend->send_to))
 	{
 		if (0 != timeout)
 		{
@@ -779,21 +779,29 @@ void NSSerial::SetXnlStatus(xnl_status_enum value)
 	{
 		char temp[64] = { 0 };
 		sprintf_s(temp, "=====Serial Status From %d To %d=====", m_xnl_status_enum, value);
-		m_pLog->AddLog(temp);
+		m_pLog->AddLog(Ns_Log_Info, temp);
 		m_xnl_status_enum = value;
 		if (GET_SERIAL_SUCCESS == m_xnl_status_enum)
 		{
-			if (g_manager)
-			{
-				g_manager->setDeviceInfoStatus(WL_SERIL_SUC);
-			}
+				onsystemstatuschange_info_t info = { 0 };
+				info.type = System_DeviceInfoStatus;
+				info.value = WL_SERIL_SUC;
+				NS_SafeSystemStatusChangeEvent(&info);
+			//if (g_manager)
+			//{
+			//	g_manager->setDeviceInfoStatus(WL_SERIL_SUC);
+			//}
 		}
 		else
 		{
-			if (g_manager)
-			{
-				g_manager->setDeviceInfoStatus(WL_SERIL_FAL);
-			}
+				onsystemstatuschange_info_t info = { 0 };
+				info.type = System_DeviceInfoStatus;
+				info.value = WL_SERIL_FAL;
+				NS_SafeSystemStatusChangeEvent(&info);
+			//if (g_manager)
+			//{
+			//	g_manager->setDeviceInfoStatus(WL_SERIL_FAL);
+			//}
 		}
 	}
 }

@@ -15,14 +15,17 @@ class NSManager;
 #define SIZE_RING_TX 64
 #define SIZE_POOL SIZE_RING_TX
 #define RX_TX_TIMEOUT 25 //必须大于20
-#define MILSECONDS_IDLE_REAL 100 //网络数据间隔为60ms这里设置100ms来判定解密结束
+#define MILSECONDS_IDLE_REAL (60*2) //网络数据间隔为60ms这里设置120ms来判定解密结束
 #define TIMEOUT_TRY_COUNT 3
+#define TIMEOUT_TRY_COUNT_98 10
+#define TIMEOUT_LE_98 (6*1000)
 #define SLEEP_WORK_THREAD 10
-#define SLEEP_TIMEOUT_THREAD 100
 #define SLEEP_AMBE_THREAD 10
+#define SLEEP_TIMEOUT_THREAD 100
+#define SLEEP_SOUNDOUT_THREAD 120
 #define SLEEP_CHECK_AMBE_THREAD (100*3)
 #define SLEEP_GETSERIAL_THREAD 1000
-#define SLEEP_SOUNDOUT_THREAD 120
+#define SLEEP_LOG_THREAD 100 //log线程的处理间隔
 #define Mode_Net_P2P (unsigned short)0x0000
 #define Mode_Net_WL (unsigned short)0x0100
 #define Mode_Net_Mask (unsigned short)0xff00
@@ -31,6 +34,20 @@ class NSManager;
 #define Mode_Work_LCP (unsigned short)0x0002
 #define Mode_Work_Mask (unsigned short)0x00ff
 #define TIMEOUT_VOICE_FRAME (600*2)//600ms为官方文档推荐的数据,实际情况可能需要比这个数据大
+#define System_WorkMode 0x01
+#define System_ServerStatus 0x02
+#define System_DeviceStatus 0x03
+#define System_MnisStatus 0x04
+#define System_DatabaseStatus 0x05
+#define System_DongleCount 0x06
+#define System_MicphoneStatus 0x07
+#define System_SpeakerStatus 0x08
+#define System_LEStatus 0x09
+#define System_WireLanStatus 0x0A
+#define System_DeviceInfoStatus 0x0B
+#define System_RepeaterStatus 0x0C
+#define System_SendSerial 0x0D
+#define System_SendTimeOutCallEnd 0x0E
 
 const int OUT_SAMPLES_PER_20mS = 160;
 const DWORD  INTERNALCOMBUFFSIZE = 2048;
@@ -38,9 +55,6 @@ const DWORD  DONGLEBAUDRATE = 230400;
 const __int8 DONGLEBITS = 8;
 const __int8 DONGLEPARITY = NOPARITY;
 const __int8 DONGLESTOP = ONESTOPBIT;
-
-typedef void(*pOnSerialCallFunc)(unsigned char* pSerial, void* param);//获取序列号的回调
-typedef void(*pOnData)(void* pDataCallBack, unsigned long length, unsigned long index, void* param);//转换后数据的回调
 
 typedef struct _find_item_condition_t
 {
@@ -200,6 +214,9 @@ typedef enum _xnl_status_enum
 	WAITFOR_XNL_XCMP_READ_SERIAL_RESULT,
 	GET_SERIAL_SUCCESS
 }xnl_status_enum;
+
+typedef void(*pOnSerialCallFunc)(unsigned char* pSerial, void* param);//获取序列号的回调
+typedef void(*pOnData)(void* pDataCallBack, unsigned long length, unsigned long index, void* param);//转换后数据的回调
 
 class NSWLNet;
 class CP2PNet;
