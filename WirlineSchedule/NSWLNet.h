@@ -32,7 +32,7 @@ public:
 	/*设置SitePeer*/
 	void SetSitePeer(NSWLPeer* pVlaue);
 	/*udp发送数据*/
-	void SendDataToMaster(work_item_t* p, unsigned long timeOut = TIMEOUT_LE);
+	void SendQuestToMasterAndAddWorkTimeOutsItem(work_item_t* p, unsigned long timeOut = TIMEOUT_LE);
 	/*增加超时或定时工作集子项*/
 	void AddWorkTimeOutItem(work_item_t* p);
 	void CallStart(make_call_param_t *p);
@@ -42,6 +42,8 @@ public:
 	call_thread_status_enum CallThreadStatus();
 	//CALL_OPERATE_PARAM CurCallCmd;
 	void CallStopUnnormal();
+	/*当peer更新时,同时删除Timeout中相关的item*/
+	void TimeoutsItemDeleteAboutPeer(NSWLPeer* peer);
 private:
 	StartNetParam m_netParam;//配置参数
 	pXQTTNet m_pMasterXqttnet;//主中继持有指针

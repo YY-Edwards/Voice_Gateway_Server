@@ -190,7 +190,8 @@ int NSWLNet::StartNet(StartNetParam* p)
 			work_item_t* p = new work_item_t;
 			memset(p, 0, sizeof(work_item_t));
 			Build_WorkItem_LE_90(p);
-			AddWorkItem(p);
+			//AddWorkItem(p);
+			SendQuestToMasterAndAddWorkTimeOutsItem(p);
 		}
 	}
 	return 0;
@@ -1227,25 +1228,24 @@ void NSWLNet::SetXnlStatus(xnl_status_enum value)
 
 void NSWLNet::AddWorkItem(work_item_t* p)
 {
-	if (Send == p->type)
-	{
-		switch ((char)p->data.send_data.protocol.le.PROTOCOL_90.Opcode)
-		{
-		case LE_PEER_KEEP_ALIVE_REQUEST:
-			SendDataToMaster(p, TIMEOUT_LE_98);
-			break;
-		default:
-			SendDataToMaster(p);
-			break;
-		}
-	}
-	else
-	{
-		TRYLOCK(m_mutexWorkItems);
-		appendData(&m_workItems, p);
-		RELEASELOCK(m_mutexWorkItems);
-	}
-
+	//if (Send == p->type)
+	//{
+	//	switch ((char)p->data.send_data.protocol.le.PROTOCOL_90.Opcode)
+	//	{
+	//	case LE_PEER_KEEP_ALIVE_REQUEST:
+	//		SendQuestToMasterAndAddWorkTimeOutsItem(p, TIMEOUT_LE_98);
+	//		break;
+	//	default:
+	//		SendQuestToMasterAndAddWorkTimeOutsItem(p);
+	//		break;
+	//	}
+	//}
+	//else
+	//{
+	TRYLOCK(m_mutexWorkItems);
+	appendData(&m_workItems, p);
+	RELEASELOCK(m_mutexWorkItems);
+	//}
 }
 
 void NSWLNet::Build_WorkItem_LE_90(work_item_t* p)
@@ -1610,7 +1610,7 @@ DWORD NSWLNet::Build_LE_MASTER_PEER_KEEP_ALIVE_REQUEST(CHAR* pPacket, T_LE_PROTO
 	return size;
 }
 
-void NSWLNet::SendDataToMaster(work_item_t* p, unsigned long timeOut /*= TIMEOUT_LE*/)
+void NSWLNet::SendQuestToMasterAndAddWorkTimeOutsItem(work_item_t* p, unsigned long timeOut /*= TIMEOUT_LE*/)
 {
 	/*发送数据*/
 	sendWorkItemNetData(p);
@@ -2247,7 +2247,8 @@ void NSWLNet::Handle_Le_Status_Starting_Recive(const char Opcode, work_item_t* &
 			work_item_t* temp = new work_item_t;
 			memset(temp, 0, sizeof(work_item_t));
 			Build_WorkItem_LE_96(temp);
-			AddWorkItem(temp);
+			//AddWorkItem(temp);
+			SendQuestToMasterAndAddWorkTimeOutsItem(temp);
 			SetLeStatus(ALIVE);
 		}
 		else
@@ -2256,7 +2257,8 @@ void NSWLNet::Handle_Le_Status_Starting_Recive(const char Opcode, work_item_t* &
 			work_item_t* temp = new work_item_t;
 			memset(temp, 0, sizeof(work_item_t));
 			Build_WorkItem_LE_92(temp);
-			AddWorkItem(temp);
+			//AddWorkItem(temp);
+			SendQuestToMasterAndAddWorkTimeOutsItem(temp);
 			SetLeStatus(WAITFOR_LE_NOTIFICATION_MAP_BROADCAST);
 		}
 		SetXnlStatus(XNL_CONNECT);
@@ -2287,7 +2289,8 @@ void NSWLNet::Handle_Le_Status_WaitMap_Recive(const char Opcode, work_item_t* &c
 		work_item_t* temp = new work_item_t;
 		memset(temp, 0, sizeof(work_item_t));
 		Build_WorkItem_LE_96(temp);
-		AddWorkItem(temp);
+		//AddWorkItem(temp);
+		SendQuestToMasterAndAddWorkTimeOutsItem(temp);
 		SetLeStatus(ALIVE);
 		OpreateFlag = Oprate_Add;
 	}
@@ -2418,7 +2421,8 @@ void NSWLNet::Handle_Le_Status_WaitMap_TimeOut_Send(const char Opcode, work_item
 											work_item_t* p = new work_item_t;
 											memset(p, 0, sizeof(work_item_t));
 											Build_WorkItem_LE_90(p);
-											AddWorkItem(p);
+											//AddWorkItem(p);
+											SendQuestToMasterAndAddWorkTimeOutsItem(p);
 										}
 
 	}
@@ -2448,7 +2452,8 @@ void NSWLNet::Handle_Le_Status_Alive_TimeOut_Send(const char Opcode, work_item_t
 											  work_item_t* p = new work_item_t;
 											  memset(p, 0, sizeof(work_item_t));
 											  Build_WorkItem_LE_90(p);
-											  AddWorkItem(p);
+											  //AddWorkItem(p);
+											  SendQuestToMasterAndAddWorkTimeOutsItem(p);
 										  }
 	}
 		break;
@@ -2493,7 +2498,8 @@ bool NSWLNet::HandleRetryAndTimingSend(work_item_t* curItem, item_oprate_enum &O
 		{
 			/*现在发送*/
 			pSend->timing = 0;
-			AddWorkItem(curItem);
+			//AddWorkItem(curItem);
+			SendQuestToMasterAndAddWorkTimeOutsItem(curItem);
 		}
 		else
 		{
@@ -2509,7 +2515,8 @@ bool NSWLNet::HandleRetryAndTimingSend(work_item_t* curItem, item_oprate_enum &O
 			{
 				OpreateFlag = Oprate_Other;
 				pSend->timeout_send = 0;
-				AddWorkItem(curItem);
+				//AddWorkItem(curItem);
+				SendQuestToMasterAndAddWorkTimeOutsItem(curItem);
 			}
 			else
 			{
@@ -4023,7 +4030,7 @@ void NSWLNet::HandleAmbeData(void* pData, unsigned long length)
 			  }
 			  else
 			  {
-				  m_pLog->AddLog(Ns_Log_Error, "no add a frame,will end call");
+				  m_pLog->AddLog(Ns_Log_Error, "no add a frame,will end call,maybe relay station not response a flag of call start after call request");
 				  setCallThreadStatus(Call_Thread_Call_Fail);
 			  }
 			  m_TxSubCount = 0;
@@ -4280,4 +4287,62 @@ bool NSWLNet::Handle_WL_PROTOCOL_20(find_record_condition_t* condition, unsigned
 	}
 	RELEASELOCK(m_mutexRecords);
 	return (NULL != record);
+}
+
+void NSWLNet::TimeoutsItemDeleteAboutPeer(NSWLPeer* peer)
+{
+	unsigned long peerId = peer->PeerId();
+	pLinkItem temp = NULL;
+	TRYLOCK(m_mutexWorkTimeOutItems);
+	pLinkItem item = m_workTimeOutItems;
+	while (item)
+	{
+		if (item->data)
+		{
+			work_item_t* p = (work_item_t*)item->data;
+			if (p)
+			{
+				if (Send == p->type)
+				{
+					if (p->data.send_data.pFrom)
+					{
+						NSWLPeer* pFrom = (NSWLPeer*)p->data.send_data.pFrom;
+						if (pFrom)
+						{
+							if (peerId == pFrom->PeerId())
+							{
+								m_pLog->AddLog(Ns_Log_Info, "TimeoutsItemDeleteAboutPeer %lu,Opcode:0x%02x", peerId, p->data.send_data.protocol.le.PROTOCOL_90.Opcode);
+								temp = item->pNext;
+								removeItem(&m_workTimeOutItems, p);
+								item->pNext = NULL;
+								freeList(item);
+							}
+							else
+							{
+								temp = item->pNext;
+							}
+						}
+						else
+						{
+							temp = item->pNext;
+						}
+					}
+					else
+					{
+						temp = item->pNext;
+					}
+				}
+				else
+				{
+					temp = item->pNext;
+				}
+			}
+			else
+			{
+				temp = item->pNext;
+			}
+		}
+		item = temp;
+	}
+	RELEASELOCK(m_mutexWorkTimeOutItems);
 }

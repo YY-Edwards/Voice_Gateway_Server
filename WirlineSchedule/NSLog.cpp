@@ -123,13 +123,13 @@ void NSLog::handleMsg(char* pMsg, bool bPrint, log_type_enum type)
 		break;
 	case Ns_Log_Info:
 	{
-#if _DEBUG
+						//#if _DEBUG
 						if (bPrint)
 						{
 							printf("%s", pMsg);
 						}
 						LOG(INFO) << pMsg;
-#endif // _DEBUG
+						//#endif // _DEBUG
 	}
 		break;
 	default:

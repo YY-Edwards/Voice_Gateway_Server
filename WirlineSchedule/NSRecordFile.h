@@ -21,6 +21,7 @@ public:
 	void setCallStatus(int value);
 	int CallStatus();
 	void WriteToDb();
+	void setPeer(NSWLPeer* value);
 
 	unsigned long src_radio;
 	unsigned long target_radio;
