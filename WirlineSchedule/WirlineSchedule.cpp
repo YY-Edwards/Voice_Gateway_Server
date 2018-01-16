@@ -419,6 +419,12 @@ int _tmain(int argc, _TCHAR* argv[])
 			/************************************************************************/
 			/* ×ÊÔ´ÊÍ·Å
 			/************************************************************************/
+			if (m_pRpcServer)
+			{
+				m_pRpcServer->stop();
+				delete m_pRpcServer;
+				m_pRpcServer = NULL;
+			}
 			if (m_pManager)
 			{
 				//m_pManager->stop();
@@ -446,12 +452,6 @@ int _tmain(int argc, _TCHAR* argv[])
 					delete p;
 					p = NULL;
 				}
-			}
-			if (m_pRpcServer)
-			{
-				m_pRpcServer->stop();
-				delete m_pRpcServer;
-				m_pRpcServer = NULL;
 			}
 
 			if (g_pSound)
