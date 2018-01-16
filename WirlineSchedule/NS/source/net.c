@@ -13,8 +13,8 @@
 #include <fcntl.h>
 #endif // Linux
 
-#include "net.h"
-#include "linklist.h"
+#include "../include/net.h"
+#include "../include/linklist.h"
 
 #ifndef SOCKET_ERROR
 #define SOCKET_ERROR -1

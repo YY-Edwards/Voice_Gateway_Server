@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "Manager.h"
-#include "MySQL.h"
+#include "NS/include/MySQL.h"
 #include "../lib/rpc/include/RpcServer.h"
 #include "actionHandler.h"
 #include "WLNet.h"
 #include "../lib/radio/DataScheduling.h"
 #include "../lib/service/service.h"
-#include "NSLog.h"
+#include "NS/include/NSLog.h"
 #include <exception>
 
 #include <shlobj.h> 

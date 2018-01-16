@@ -6,11 +6,11 @@
 #include "Sound.h"
 #include "WLNet.h"
 #include "actionHandler.h"
-#include "WDK_VidPidQuery.h"
-#include "NSManager.h"
-#include "NSWLNet.h"
-#include "NSLog.h"
-#include "NSSound.h"
+#include "NS/include/WDK_VidPidQuery.h"
+#include "NS/include/NSManager.h"
+#include "NS/include/NSWLNet.h"
+#include "NS/include/NSLog.h"
+#include "NS/include/NSSound.h"
 
 //temp delete
 //#include "Net.h"

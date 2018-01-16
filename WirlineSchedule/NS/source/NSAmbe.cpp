@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "NSAmbe.h"
-#include "NSDongle.h"
-#include "NSManager.h"
-#include "NSLog.h"
-#include "NSSound.h"
+#include "../include/NSAmbe.h"
+#include "../include/NSDongle.h"
+#include "../include/NSManager.h"
+#include "../include/NSLog.h"
+#include "../include/NSSound.h"
 
 NSAmbe::NSAmbe(NSManager* pManager)
 :m_pManager(pManager)

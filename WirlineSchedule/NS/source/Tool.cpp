@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Tool.h"
+#include "../include/Tool.h"
 #include <stdio.h>
 
 CTool::CTool()

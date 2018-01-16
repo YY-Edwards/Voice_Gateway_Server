@@ -1,6 +1,6 @@
 #ifndef CMANAGER_H
 #define CMANAGER_H
-#include "NS\mutex.h"
+#include "mutex.h"
 #include "linklist.h"
 
 class NSAmbe;

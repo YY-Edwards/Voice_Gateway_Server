@@ -1,13 +1,13 @@
 #include "stdafx.h"
-#include "NSRecordFile.h"
-#include "NSLog.h"
+#include "../include/NSRecordFile.h"
+#include "../include/NSLog.h"
 #include <string>
 #include <map>
-#include "Tool.h"
-#include "MySQL.h"
-#include "NSAmbe.h"
-#include "NSManager.h"
-#include "NSWLPeer.h"
+#include "../include/Tool.h"
+#include "../include/MySQL.h"
+#include "../include/NSAmbe.h"
+#include "../include/NSManager.h"
+#include "../include/NSWLPeer.h"
 //#include "WLNet.h"
 
 #define MAX_RECORD_BUFFER_SIZE (100*1024)

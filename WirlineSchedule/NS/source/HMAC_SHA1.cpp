@@ -6,7 +6,7 @@
 #include "stdafx.h"
 #include <iostream>
 #include <memory>
-#include "HMAC_SHA1.h"
+#include "../include/HMAC_SHA1.h"
 
 
 void CHMAC_SHA1::HMAC_SHA1(BYTE *text, int text_len, BYTE *key, int key_len, BYTE *digest)

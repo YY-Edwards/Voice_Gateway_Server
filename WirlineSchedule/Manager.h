@@ -1,7 +1,7 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include "MySQL.h"
+#include "NS/include/MySQL.h"
 #include "../lib/radio/common.h"
 #include "../lib/radio/DataScheduling.h"
 

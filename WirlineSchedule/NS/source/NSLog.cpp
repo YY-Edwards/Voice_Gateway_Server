@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "NSLog.h"
+#include "../include/NSLog.h"
 #include <process.h>
 #include <time.h>
 

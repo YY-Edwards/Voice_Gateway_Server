@@ -3,8 +3,8 @@
 
 #include "NSNetBase.h"
 #include "linklist.h"
-#include "NS\mutex.h"
-#include "..\lib\rpc\include\ringbuffer.h"
+#include "mutex.h"
+#include "ringbuffer.h"
 
 #define RING_SIZE_AMBE_SEND 64
 

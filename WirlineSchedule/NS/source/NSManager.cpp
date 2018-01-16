@@ -1,14 +1,14 @@
 #include "stdafx.h"
-#include "NSManager.h"
-#include "NSAmbe.h"
+#include "../include/NSManager.h"
+#include "../include/NSAmbe.h"
 #include <process.h>
-#include "NSDongle.h"
-#include "WDK_VidPidQuery.h"
-#include "Tool.h"
-#include "NSLog.h"
+#include "../include/NSDongle.h"
+#include "../include/WDK_VidPidQuery.h"
+#include "../include/Tool.h"
+#include "../include/NSLog.h"
 #include <Dbt.h>
 #pragma comment(lib, "winmm.lib")
-#include "NSNetBase.h"
+#include "../include/NSNetBase.h"
 
 NSManager::NSManager()
 :m_mutexDongles(INITLOCKER())

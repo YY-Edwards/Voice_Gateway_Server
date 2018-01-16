@@ -1,6 +1,6 @@
 #ifndef NSLOG_H
 #define NSLOG_H
-#include "NS\mutex.h"
+#include "mutex.h"
 #include "linklist.h"
 
 #define SIZE_MAX_MSG 5118

@@ -1,6 +1,6 @@
 #ifndef NSSERIAL_H
 #define NSSERIAL_H
-#include "NS\mutex.h"
+#include "mutex.h"
 #include "NSStruct.h"
 #include "linklist.h"
 

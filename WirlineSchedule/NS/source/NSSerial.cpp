@@ -1,8 +1,8 @@
 #include "stdafx.h"
-#include "NSSerial.h"
-#include "NSLog.h"
+#include "../include/NSSerial.h"
+#include "../include/NSLog.h"
 #include <process.h>
-#include "NSNetBase.h"
+#include "../include/NSNetBase.h"
 //#include "Manager.h"
 
 NSSerial::NSSerial()

@@ -1,6 +1,6 @@
 #ifndef IPSCPEER_H
 #define IPSCPEER_H
-#include "HMAC_SHA1.h"
+#include "NS/include/HMAC_SHA1.h"
 
 //enum SlotConfiguration
 //{

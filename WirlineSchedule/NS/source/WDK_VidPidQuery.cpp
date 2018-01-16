@@ -1,5 +1,5 @@
 #include "stdafx.h"  
-#include "WDK_VidPidQuery.h"  
+#include "../include/WDK_VidPidQuery.h"  
 #include <tchar.h>  
 #include <setupapi.h>  
 #include <string>  

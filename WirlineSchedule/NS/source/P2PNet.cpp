@@ -1,6 +1,6 @@
 #include "stdafx.h"
-#include "P2pNet.h"
-#include "NSRecordFile.h"
+#include "../include/P2pNet.h"
+#include "../include/NSRecordFile.h"
 #include <process.h>
 CP2PNet::CP2PNet(NSManager* pManager)
 :  m_isWork(false)
@@ -174,7 +174,7 @@ int CP2PNet::StartNet(StartNetParam* p)
 		}
 		if (NULL == m_pXQTTNet)
 		{
-			m_log->AddLog("connectServer failed!");
+			m_log->AddLog(Ns_Log_Info,"connectServer failed!");
 			return -1;
 		}
 		/*»ñÈ¡ÐòÁÐºÅ*/
@@ -394,7 +394,7 @@ unsigned int __stdcall CP2PNet::WorkThreadProc(void* pParam)
 }
 void CP2PNet::WorkThread()
 {
-	m_log->AddLog("work thread start!");
+	m_log->AddLog(Ns_Log_Info, "work thread start!");
 	item_oprate_enum OpreateFlag = Oprate_Del;
 	while (m_isWork)
 	{
@@ -453,7 +453,7 @@ void CP2PNet::WorkThread()
 		}
 
 	}
-	m_log->AddLog("work thread end");
+	m_log->AddLog(Ns_Log_Info, "work thread end");
 }
 unsigned int __stdcall CP2PNet::TimeoutThreadProc(void* pParam)
 {
@@ -466,7 +466,7 @@ unsigned int __stdcall CP2PNet::TimeoutThreadProc(void* pParam)
 }
 void CP2PNet::TimeoutThread()
 {
-	m_log->AddLog("time out thread start");
+	m_log->AddLog(Ns_Log_Info, "time out thread start");
 	item_oprate_enum OpreateFlag = Oprate_Del;
 	while (m_isTimeoutWork)
 	{
@@ -539,7 +539,7 @@ void CP2PNet::TimeoutThread()
 		}
 		Sleep(SLEEP_TIMEOUT_THREAD);
 	}
-	m_log->AddLog("time out thread end");
+	m_log->AddLog(Ns_Log_Info, "time out thread end");
 }
 unsigned int __stdcall CP2PNet::AmbeDataThreadProc(void* pParam)
 {
@@ -552,7 +552,7 @@ unsigned int __stdcall CP2PNet::AmbeDataThreadProc(void* pParam)
 }
 void CP2PNet::AmbeDataThread()
 {
-	m_log->AddLog("ambe thread start!");
+	m_log->AddLog(Ns_Log_Info, "ambe thread start!");
 	item_oprate_enum OpreateFlag = Oprate_Del;
 	NSRecordFile* m_recordFile = NULL;     
 	find_record_condition_t condition = { 0 };
@@ -668,7 +668,7 @@ void CP2PNet::AmbeDataThread()
 			currentItem = NULL;
 		}
 	}
-	m_log->AddLog("ambe thread end!");
+	m_log->AddLog(Ns_Log_Info, "ambe thread end!");
 }
 unsigned int __stdcall CP2PNet::CheckRecordsThreadProc(void* pParam)
 {
@@ -681,7 +681,7 @@ unsigned int __stdcall CP2PNet::CheckRecordsThreadProc(void* pParam)
 }
 void CP2PNet::CheckRecordsThread()
 {
-	m_log->AddLog("CheckRecordsThread Start");
+	m_log->AddLog(Ns_Log_Info, "CheckRecordsThread Start");
 	NSRecordFile* record = NULL;
 	pLinkItem curItem = NULL;
 	while (m_isCheckRecords)
@@ -722,7 +722,7 @@ void CP2PNet::CheckRecordsThread()
 		RELEASELOCK(m_recordMutex);
 		Sleep(SLEEP_CHECK_AMBE_THREAD);
 	}
-	m_log->AddLog("CheckRecordsThread End");
+	m_log->AddLog(Ns_Log_Info, "CheckRecordsThread End");
 }
 //unsigned int __stdcall CP2PNet::GetSerialThreadProc(void* pParam)
 //{
@@ -1320,7 +1320,7 @@ void CP2PNet::OnSendComplete(struct _xqtt_net* pNet, struct _xqtt_net* pNetClien
 
 void CP2PNet::onRecv(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient, const char* pData, int len)
 {
-	m_log->AddLog("onRecv");
+	m_log->AddLog(Ns_Log_Info, "onRecv");
 	if (NULL == pData)
 	{
 		return;
@@ -1452,17 +1452,17 @@ void CP2PNet::onRecv(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient, const
 }
 void CP2PNet::onDisconn(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient, int errCode)
 {
-	m_log->AddLog("onDisconn");
+	m_log->AddLog(Ns_Log_Info, "onDisconn");
 	UnInit();
 }
 void CP2PNet::onError(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient, int errCode)
 {
-	m_log->AddLog("onError");
+	m_log->AddLog(Ns_Log_Info, "onError");
 	UnInit();
 }
 void CP2PNet::onSendComplete(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient)
 {
-	m_log->AddLog("onSendComplete");
+	m_log->AddLog(Ns_Log_Info, "onSendComplete");
 }
 void CP2PNet::SEND_LE_MASTER_PEER_REGISTRATION_REQUEST(work_item_t* w)
 {
@@ -2296,7 +2296,7 @@ void CP2PNet::SetLeStatus(le_status_enum value)
 	{
 		char temp[64] = { 0 };
 		sprintf_s(temp, "=====Le Status From %d To %d=====", m_le_status_enum, value);
-		m_log->AddLog(temp);
+		m_log->AddLog(Ns_Log_Info, temp);
 		m_le_status_enum = value;
 	}
 }
@@ -2338,7 +2338,7 @@ void CP2PNet::SendDataToMaster(work_item_t *w, unsigned long timeout/* = TIMEOUT
 			pSend->timeout_send = GetTickCount() + timeout;
 		}
 		AddTimeoutItem(w);
-		m_log->AddLog("send data to master !");
+		m_log->AddLog(Ns_Log_Info, "send data to master !");
 	}
 	else
 	{
@@ -2354,7 +2354,7 @@ void CP2PNet::SendXnlToMaster(work_item_t *w, unsigned long timeout/* = TIMEOUT_
 		{
 			pSend->timeout_send = GetTickCount() + timeout;
 		}
-		m_log->AddLog("send xnl to master !");
+		m_log->AddLog(Ns_Log_Info, "send xnl to master !");
 	}
 }
 void CP2PNet::AddTimeoutItem(work_item_t* p)
@@ -2515,7 +2515,7 @@ void CP2PNet::FindTimeOutItemAndDelete(unsigned long peerId, const char Opcode)
 				Opcode = p->data.send_data.protocol.le.PROTOCOL_90.Opcode;
 				sprintf_s(temp, "Rely Success TimeOut Send Opcode:0x%02x Delete", Opcode);
 			}
-			m_log->AddLog(temp);
+			m_log->AddLog(Ns_Log_Info, temp);
 #endif // _DEBUG
 			removeItem(&m_p2pTimeoutDataLink, p);
 			delete p;
