@@ -746,8 +746,8 @@ void CRadioGps::RecvData()
 							memcpy(bcon.uuid, &(m_ThreadGps->RcvBuffer[index+2 + i * 24]), 16);
 							bcon.Major = ntohs(*((unsigned short *)&m_ThreadGps->RcvBuffer[index+2+16+i*24]));
 							bcon.Minor = ntohs(*((unsigned short *)&m_ThreadGps->RcvBuffer[index+2+18 + i * 24]));
-							bcon.TXPower = ntohs(*((unsigned short *)&m_ThreadGps->RcvBuffer[index+2+19 + i * 24]));
-							bcon.RSSI = ntohs(*((unsigned short *)&m_ThreadGps->RcvBuffer[index+2+20 + i * 24]));
+							bcon.TXPower = (unsigned char)m_ThreadGps->RcvBuffer[index + 2 + 19 + i * 24];
+							bcon.RSSI = (unsigned char)m_ThreadGps->RcvBuffer[index + 2 + 20 + i * 24];
 							bcon.TimeStamp = ntohs(*((unsigned short *)&m_ThreadGps->RcvBuffer[index+2+22+i*24]));
 							mBcon.push_back(bcon);
 							if (bcon.Major > 1)

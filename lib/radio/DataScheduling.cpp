@@ -246,7 +246,7 @@ void CDataScheduling::connect()
 		LOG(INFO) << "数据连接失败！";
 #endif 
 	}
-	pRadioGPS->locationIndoorConfig(m_locationIndoorCfg.Interval, m_locationIndoorCfg.iBeaconNumber,m_locationIndoorCfg.IsEmergency);
+	pRadioGPS->locationIndoorConfig((int)m_locationIndoorCfg.Interval, m_locationIndoorCfg.iBeaconNumber,m_locationIndoorCfg.IsEmergency);
 	Respone r = { 0 };
 	r.connectStatus = result;
 	onData(myCallBackFunc,  CONNECT_STATUS, r);
