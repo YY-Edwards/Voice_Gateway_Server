@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "../include/NS.h"
 #include "../include/NSWLNet.h"
+#include "../include/NSSound.h"
+#include "../include/NSManager.h"
 
 NS::NS(const void* param, OnCall oncall, OnCallStatus onCallStatus, OnNSSystemStatusChange onSystemChange)
 {

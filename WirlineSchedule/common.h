@@ -68,13 +68,6 @@ extern WLSocketLog *g_pWLlog;
 #define WL_SERIL_SUC 0
 #define WL_SERIL_FAL 1
 
-
-typedef struct _com_use_t
-{
-	char coms[255][8];
-	int num;
-}com_use_t;
-
 /************************************************************************/
 /* MNIS
 /************************************************************************/

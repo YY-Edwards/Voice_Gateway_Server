@@ -56,6 +56,11 @@ const __int8 DONGLEBITS = 8;
 const __int8 DONGLEPARITY = NOPARITY;
 const __int8 DONGLESTOP = ONESTOPBIT;
 
+typedef struct _com_use_t
+{
+	char coms[255][8];
+	int num;
+}com_use_t;
 typedef struct _find_item_condition_t
 {
 	unsigned long peerId;
