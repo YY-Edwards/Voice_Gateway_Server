@@ -130,6 +130,9 @@
     <ClCompile Include="NS\source\ringbuffer.c">
       <Filter>NS\source</Filter>
     </ClCompile>
+    <ClCompile Include="NS\source\NS.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="common.h">
@@ -301,6 +304,9 @@
       <Filter>NS\include</Filter>
     </ClInclude>
     <ClInclude Include="NS\include\ringbuffer.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NS\include\NS.h">
       <Filter>NS\include</Filter>
     </ClInclude>
   </ItemGroup>

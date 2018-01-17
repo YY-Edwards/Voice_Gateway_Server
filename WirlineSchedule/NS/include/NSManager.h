@@ -6,7 +6,6 @@
 class NSAmbe;
 class NSDongle;
 class NSLog;
-class NSNetBase;
 
 class NSManager
 {
@@ -14,7 +13,7 @@ public:
 	NSManager();
 	~NSManager();
 
-	int Initialize(NSNetBase* &pNet);
+	int Initialize();
 	/*²âÊÔAMBE×ªPCM*/
 	void test_ambe_2_pcm(FILE* pIn, FILE* pOut);
 	/*²âÊÔPCM×ªAMBE*/
@@ -34,7 +33,7 @@ private:
 	LOCKERTYPE m_mutexIdleDongles;//¿ÕÏÐdongle³Ø»¥³âËø
 	pLinkList m_idleDongles;//¿ÕÏÐdongle³Ø
 	NSLog* m_pLog;
-	NSNetBase** m_ppNet;
+	//NSNetBase** m_ppNet;
 	int m_sizeDongle;
 
 	void setSizeDongle(int value);

@@ -4,6 +4,7 @@
 #include <string>
 #include "../lib/type.h"
 #include "Manager.h"
+#include "NS/include/NS.h"
 
 
 /************************************************************************/
@@ -966,15 +967,18 @@ inline void wlLicenseHandler(CRemotePeer* pRemote, const std::string& param, uin
 				int result = d["result"].GetInt();
 				if (0 == result)
 				{
-					g_license_status = license_status_enum::license_status_pass;
+					//g_license_status = license_status_enum::license_status_pass;
+					NS::setLicenseStatus(license_status_pass);
 				}
 				else if (1 == result)
 				{
-					g_license_status = license_status_enum::license_status_nopass;
+					//g_license_status = license_status_enum::license_status_nopass;
+					NS::setLicenseStatus(license_status_nopass);
 				}
 				else
 				{
-					g_license_status = license_status_enum::license_status_unknown;
+					//g_license_status = license_status_enum::license_status_unknown;
+					NS::setLicenseStatus(license_status_unknown);
 				}
 			}
 		}

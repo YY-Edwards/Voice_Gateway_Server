@@ -518,7 +518,7 @@ BOOL CWLNet::StartNet(DWORD dwMasterIp
 	for (int port = 40000; port <= 50000; port++)
 	{
 		m_locaAddr.sin_port = htons(port);
-		int res = bind(m_socket, (struct sockaddr*)&m_locaAddr, sizeof(SOCKADDR_IN));
+		int res =::bind(m_socket, (struct sockaddr*)&m_locaAddr, sizeof(SOCKADDR_IN));
 		if (SOCKET_ERROR == res)
 		{
 			if (port == 50000)

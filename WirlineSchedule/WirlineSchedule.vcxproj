@@ -115,6 +115,7 @@
     <ClInclude Include="NS\include\MySQL.h" />
     <ClInclude Include="NS\include\net.h" />
     <ClInclude Include="NS\include\NetStruct.h" />
+    <ClInclude Include="NS\include\NS.h" />
     <ClInclude Include="NS\include\NSAmbe.h" />
     <ClInclude Include="NS\include\NSDongle.h" />
     <ClInclude Include="NS\include\NSGlobal.h" />
@@ -165,15 +166,19 @@
     <ClCompile Include="NS\source\HMAC_SHA1.cpp" />
     <ClCompile Include="NS\source\linklist.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="NS\source\MySQL.cpp" />
     <ClCompile Include="NS\source\net.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="NS\source\NS.cpp" />
     <ClCompile Include="NS\source\NSAmbe.cpp" />
     <ClCompile Include="NS\source\NSDongle.cpp" />
     <ClCompile Include="NS\source\NSGlobal.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="NS\source\NSLog.cpp" />
     <ClCompile Include="NS\source\NSManager.cpp" />
@@ -186,6 +191,7 @@
     <ClCompile Include="NS\source\P2PPeer.cpp" />
     <ClCompile Include="NS\source\ringbuffer.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="NS\source\SHA1.cpp" />
     <ClCompile Include="NS\source\Tool.cpp" />

@@ -6,11 +6,12 @@
 #include "Sound.h"
 #include "WLNet.h"
 #include "actionHandler.h"
-#include "NS/include/WDK_VidPidQuery.h"
-#include "NS/include/NSManager.h"
-#include "NS/include/NSWLNet.h"
-#include "NS/include/NSLog.h"
-#include "NS/include/NSSound.h"
+//#include "NS/include/WDK_VidPidQuery.h"
+//#include "NS/include/NSManager.h"
+//#include "NS/include/NSWLNet.h"
+//#include "NS/include/NSLog.h"
+//#include "NS/include/NSSound.h"
+#include "NS/include/NS.h"
 
 //temp delete
 //#include "Net.h"
@@ -32,15 +33,15 @@ CManager::CManager(CMySQL *pDb, CDataScheduling* pMnis, std::wstring& defaultAud
 , m_deviceInfoStatus(WL_SERIL_FAL)
 , m_mnisStatus(WL_SYSTEM_DISCONNECT)
 {
-	g_pNSTool = new CTool();
-	g_pNSManager = new NSManager();
-	g_pNSSound = new NSSound();
-	g_pNSNet = new NSWLNet(g_pNSManager);
-
+	//g_pNSTool = new CTool();
+	//g_pNSManager = new NSManager();
+	//g_pNSSound = new NSSound();
+	//g_pNSNet = new NSWLNet(g_pNSManager);
 	/*注册事件*/
-	NS_RegCallEvent(this, &OnCall);
-	NS_RegCallStatusEvent(this, &OnCallStatus);
-	NS_RegSystemStatusChangeEvent(this, &OnSystemStatusChange);
+	//NS_RegCallEvent(this, &OnCall);
+	//NS_RegCallStatusEvent(this, &OnCallStatus);
+	//NS_RegSystemStatusChangeEvent(this, &OnSystemStatusChange);
+	m_pModelNs = new NS(this, &OnCall, &OnCallStatus, &OnSystemStatusChange);
 
 	g_pNet = new CWLNet(pDb, this, defaultAudioPath);
 	g_pDongle = new CSerialDongle();
@@ -85,35 +86,40 @@ CManager::~CManager()
 		timeKillEvent(m_idTaskOnTimerProc);
 		m_idTaskOnTimerProc = 0;
 	}
+	if (m_pModelNs)
+	{
+		delete m_pModelNs;
+		m_pModelNs = NULL;
+	}
 	stop();
-	/*注销事件*/
-	NS_UnregCallEvent();
-	NS_UnregCallStatusEvent();
-	NS_UnregSystemStatusChangeEvent();
+	///*注销事件*/
+	//NS_UnregCallEvent();
+	//NS_UnregCallStatusEvent();
+	//NS_UnregSystemStatusChangeEvent();
 
-	if (g_pNSSound)
-	{
-		delete g_pNSSound;
-		g_pNSSound = NULL;
-	}
-	if (g_pNSManager)
-	{
-		delete g_pNSManager;
-		g_pNSManager = NULL;
-	}
-	if (g_pNSNet)
-	{
-		if (WL == g_repeater_net_mode)
-		{
-			delete (NSWLNet*)g_pNSNet;
-			g_pNSNet = NULL;
-		}
-	}
-	if (g_pNSTool)
-	{
-		delete g_pNSTool;
-		g_pNSTool = NULL;
-	}
+	//if (g_pNSSound)
+	//{
+	//	delete g_pNSSound;
+	//	g_pNSSound = NULL;
+	//}
+	//if (g_pNSManager)
+	//{
+	//	delete g_pNSManager;
+	//	g_pNSManager = NULL;
+	//}
+	//if (g_pNSNet)
+	//{
+	//	if (WL == g_repeater_net_mode)
+	//	{
+	//		delete (NSWLNet*)g_pNSNet;
+	//		g_pNSNet = NULL;
+	//	}
+	//}
+	//if (g_pNSTool)
+	//{
+	//	delete g_pNSTool;
+	//	g_pNSTool = NULL;
+	//}
 }
 
 // int CManager::initSys()
@@ -489,18 +495,22 @@ int CManager::SendFile(unsigned int length, char* pData)
 
 int CManager::setPlayCallOfCare(unsigned char calltype, unsigned long targetId)
 {
-	g_playCalltype = calltype;
+	//g_playCalltype = calltype;
+	m_pModelNs->setPlayCallType(calltype);
 	if (PRIVATE_CALL == calltype)
 	{
-		g_playTargetId = CONFIG_LOCAL_RADIO_ID;
+		//g_playTargetId = CONFIG_LOCAL_RADIO_ID;
+		m_pModelNs->setPlayTargetId(CONFIG_LOCAL_RADIO_ID);
 	}
 	else if (ALL_CALL == calltype)
 	{
-		g_playTargetId = ALL_CALL_ID;
+		//g_playTargetId = ALL_CALL_ID;
+		m_pModelNs->setPlayTargetId(CONFIG_LOCAL_RADIO_ID);
 	}
 	else
 	{
-		g_playTargetId = targetId;
+		//g_playTargetId = targetId;
+		m_pModelNs->setPlayTargetId(CONFIG_LOCAL_RADIO_ID);
 	}
 	return g_pNet->setPlayCallOfCare(calltype, targetId);
 }
@@ -554,7 +564,9 @@ int CManager::config(REMOTE_TASK* pTask)
 		}
 	}
 	CONFIG_DEFAULT_GROUP = pConfig->reapeater.DefaultGroupId;
-	g_playTargetId = CONFIG_DEFAULT_GROUP;
+	//g_playTargetId = CONFIG_DEFAULT_GROUP;
+	m_pModelNs->setPlayCallType(GROUP_CALL);
+	m_pModelNs->setPlayTargetId(CONFIG_DEFAULT_GROUP);
 	if (CONFIG_DONGLE_PORT != pConfig->reapeater.Dongle.donglePort)
 	{
 		CONFIG_DONGLE_PORT = pConfig->reapeater.Dongle.donglePort;
@@ -582,13 +594,17 @@ int CManager::config(REMOTE_TASK* pTask)
 		param.peer_firewall_time = (unsigned short)CONFIG_PEER_HEART_AND_REG_TIME;
 		param.work_mode = CONFIG_RECORD_TYPE;
 		/*初始化网络*/
-		rlt = g_pNSNet->StartNet(&param);
+		//rlt = g_pNSNet->StartNet(&param);
+		rlt = m_pModelNs->StartNet(&param);
 		/*初始化Dongle*/
-		g_pNSManager->Initialize(g_pNSNet);
-		setDongleCount(g_pNSManager->SizeDongle());
+		//g_pNSManager->Initialize();
+		m_pModelNs->InitializeDongleModel();
+		//setDongleCount(g_pNSManager->SizeDongle());
+		setDongleCount(m_pModelNs->SizeDongle());
 		Env_DongleIsOk = (0 != DongCount());
 		/*初始化声卡*/
-		if (0 != g_pNSSound->InitSoundIn())
+		//if (0 != g_pNSSound->InitSoundIn())
+		if (0 != m_pModelNs->InitSoundIn())
 		{
 			setMicphoneStatus(WL_SYSTEM_DISCONNECT);
 		}
@@ -596,7 +612,8 @@ int CManager::config(REMOTE_TASK* pTask)
 		{
 			setMicphoneStatus(WL_SYSTEM_CONNECT);
 		}
-		if (0 != g_pNSSound->InitSoundOut())
+		//if (0 != g_pNSSound->InitSoundOut())
+		if (0 != m_pModelNs->InitSoundOut())
 		{
 			setSpeakerStatus(WL_SYSTEM_DISCONNECT);
 		}
@@ -767,7 +784,7 @@ unsigned __stdcall CManager::HandleRemoteTaskProc(void * pThis)
 void CManager::handleRemoteTask()
 {
 	REMOTE_TASK task = { 0 };
-	NSWLNet* pNSNet = NULL;
+	//NSWLNet* pNSNet = NULL;
 	while (m_bRemoteTaskThreadRun)
 	{
 		while (size_task() > 0)
@@ -785,25 +802,28 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_CALL:
 			{
-									if (license_status_nopass == g_license_status)
+									if (license_status_nopass == NS::LicenseStatus())
 									{
 										NSLog::instance()->AddLog(Ns_Log_Error, "REMOTE_CMD_CALL fail,license_status_nopass");
 										g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, CONFIG_LOCAL_RADIO_ID, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_FAIL);
 										continue;
 									}
 									NSLog::instance()->AddLog(Ns_Log_Info, "Handle REMOTE_CMD_CALL");
-									mic_status_enum micStatus = g_pNSSound->MicStatus();
+									//mic_status_enum micStatus = g_pNSSound->MicStatus();
+									mic_status_enum micStatus = m_pModelNs->MicStatus();
 									setCurrentTask(&task);
 									CALL_OPERATE_PARAM cmdInfo = task.param.info.callParam.operateInfo;
-									pNSNet = (NSWLNet*)g_pNSNet;
-									call_thread_status_enum callStatus = pNSNet->CallThreadStatus();
+									//pNSNet = (NSWLNet*)g_pNSNet;
+									//call_thread_status_enum callStatus = pNSNet->CallThreadStatus();
+									call_thread_status_enum callStatus = m_pModelNs->CallThreadStatus();
 									if (Call_Thread_Status_Idle == callStatus && Mic_Idle == micStatus)
 									{
 										//pNSNet->CurCallCmd = cmdInfo;
 										make_call_param_t param = { 0 };
 										param.callType = cmdInfo.callType;
 										param.targetID = cmdInfo.tartgetId;
-										pNSNet->CallStart(&param);
+										//pNSNet->CallStart(&param);
+										m_pModelNs->CallStart(&param);
 									}
 									else
 									{
@@ -814,7 +834,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_SET_PLAY_CALL:
 			{
-											 if (license_status_nopass == g_license_status)
+											 if (license_status_nopass == NS::LicenseStatus())
 											 {
 												 NSLog::instance()->AddLog(Ns_Log_Error, "REMOTE_CMD_SET_PLAY_CALL fail,license_status_nopass");
 												 g_pNet->wlPlayStatus(CMD_FAIL, task.param.info.setCareCallParam.playParam.targetId);
@@ -828,7 +848,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_STOP_CALL:
 			{
-										 if (license_status_nopass == g_license_status)
+										 if (license_status_nopass == NS::LicenseStatus())
 										 {
 											 NSLog::instance()->AddLog(Ns_Log_Error, "REMOTE_CMD_STOP_CALL fail,license_status_nopass");
 											 g_pNet->wlCallStatus(task.param.info.callParam.operateInfo.callType, task.param.info.callParam.operateInfo.source, task.param.info.callParam.operateInfo.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS, task.param.info.callParam.operateInfo.SessionId);
@@ -836,18 +856,20 @@ void CManager::handleRemoteTask()
 										 }
 										 NSLog::instance()->AddLog(Ns_Log_Info, "Handle REMOTE_CMD_STOP_CALL");
 										 setCurrentTask(&task);
-										 pNSNet = (NSWLNet*)g_pNSNet;
+										 //pNSNet = (NSWLNet*)g_pNSNet;
 										 //pNSNet->CurCallCmd = task.param.info.callParam.operateInfo;
-										 pNSNet->CallStop();
+										 //pNSNet->CallStop();
+										 m_pModelNs->CallStop();
 
 			}
 				break;
 			case REMOTE_CMD_GET_CONN_STATUS:
 			{
 											   NSLog::instance()->AddLog(Ns_Log_Info, "Handle REMOTE_CMD_GET_CONN_STATUS");
-											   pNSNet = (NSWLNet*)g_pNSNet;
+											   //pNSNet = (NSWLNet*)g_pNSNet;
 											   FieldValue info(FieldValue::TInt);
-											   if (pNSNet->LeStatus() == ALIVE)
+											   //if (pNSNet->LeStatus() == ALIVE)
+											   if (m_pModelNs->LeStatus() == ALIVE)
 											   {
 												   info.setInt(REPEATER_CONNECT);
 											   }
@@ -889,7 +911,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_MNIS_QUERY_GPS:
 			{
-											  if (license_status_nopass == g_license_status)
+											  if (license_status_nopass == NS::LicenseStatus())
 											  {
 												  NSLog::instance()->AddLog(Ns_Log_Error, "REMOTE_CMD_MNIS_QUERY_GPS fail,license_status_nopass");
 												  continue;
@@ -916,7 +938,7 @@ void CManager::handleRemoteTask()
 				break;
 			case REMOTE_CMD_MNIS_MSG:
 			{
-										if (license_status_nopass == g_license_status)
+										if (license_status_nopass == NS::LicenseStatus())
 										{
 											NSLog::instance()->AddLog(Ns_Log_Error, "REMOTE_CMD_MNIS_MSG fail,license_status_nopass");
 											continue;
@@ -946,7 +968,7 @@ void CManager::handleRemoteTask()
 											   break;
 										   default:
 										   {
-													  if (license_status_nopass == g_license_status)
+													  if (license_status_nopass == NS::LicenseStatus())
 													  {
 														  NSLog::instance()->AddLog(Ns_Log_Error, "getRadioStatus fail,license_status_nopass");
 														  continue;
@@ -962,7 +984,7 @@ void CManager::handleRemoteTask()
 				//case is no use
 			case REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG:
 			{
-														   if (license_status_nopass == g_license_status)
+														   if (license_status_nopass == NS::LicenseStatus())
 														   {
 															   NSLog::instance()->AddLog(Ns_Log_Error, "REMOTE_CMD_MNIS_LOCATION_INDOOR_CONFIG fail,license_status_nopass");
 															   continue;
@@ -1560,8 +1582,10 @@ void CManager::setDeviceInfoStatus(int value)
 
 void CManager::OnUpdateUsb(DWORD type)
 {
-	g_pNSManager->OnUpdateUsb(type);
-	setDongleCount(g_pNSManager->SizeDongle());
+	//g_pNSManager->OnUpdateUsb(type);
+	//setDongleCount(g_pNSManager->SizeDongle());
+	m_pModelNs->OnUpdateUsb(type);
+	setDongleCount(m_pModelNs->SizeDongle());
 	//sprintf_s(m_reportMsg, "OnUpdateUsb");
 	//sendLogToWindow();
 	////LOG_INFO("OnUpdateUsb");
@@ -1831,3 +1855,14 @@ void CManager::onSystemStatusChange(onsystemstatuschange_info_t* info)
 		break;
 	}
 }
+
+void CManager::setDb(CMySQL* value)
+{
+	m_pModelNs->setDb(value);
+	m_pDb = value;
+}
+
+//void CManager::setAmbeDataPath(const wchar_t* value)
+//{
+//	m_pModelNs->setAmbeDataPath(value);
+//}

@@ -16,7 +16,7 @@ NSManager::NSManager()
 , m_mutexIdleDongles(INITLOCKER())
 , m_idleDongles(NULL)
 , m_pLog(NSLog::instance())
-, m_ppNet(NULL)
+//, m_ppNet(NULL)
 , m_sizeDongle(0)
 {
 }
@@ -27,14 +27,14 @@ NSManager::~NSManager()
 	//{
 	//	timeEndPeriod(m_theTimeCaps.wPeriodMin);//清除最小定时器精度
 	//}
-	m_ppNet = NULL;
+	//m_ppNet = NULL;
 	clearIdleDongles();
 	clearDongles();
 	DELETELOCKER(m_mutexDongles);
 	DELETELOCKER(m_mutexIdleDongles);
 }
 
-int NSManager::Initialize(NSNetBase* &pNet)
+int NSManager::Initialize()
 {
 	///*建立最小定时器精度*/
 	//memset(&m_theTimeCaps, 0, sizeof(TIMECAPS));
@@ -42,7 +42,7 @@ int NSManager::Initialize(NSNetBase* &pNet)
 	//{
 	//	timeBeginPeriod(m_theTimeCaps.wPeriodMin);//建立最小定时器精度
 	//}
-	m_ppNet = &pNet;
+	//m_ppNet = &pNet;
 	com_use_t result = { 0 };
 	WDK_WhoAllVidPid(VID_PID, &result);
 	setSizeDongle(result.num);
@@ -436,20 +436,28 @@ void NSManager::AddIdleDonglesItem(NSDongle* p)
 
 void NSManager::HandleAmbeData(void* pData, unsigned long length)
 {
-	if (m_ppNet)
+	//if (m_ppNet)
+	//{
+	//	if (*m_ppNet)
+	//	{
+	//		(*m_ppNet)->HandleAmbeData(pData, length);
+	//	}
+	//	else
+	//	{
+	//		m_pLog->AddLog(Ns_Log_Error, "m_pNet is null");
+	//	}
+	//}
+	//else
+	//{
+	//	m_pLog->AddLog(Ns_Log_Error, "m_ppNet is null");
+	//}
+	if (g_pNSNet)
 	{
-		if (*m_ppNet)
-		{
-			(*m_ppNet)->HandleAmbeData(pData, length);
-		}
-		else
-		{
-			m_pLog->AddLog(Ns_Log_Error, "m_pNet is null");
-		}
+		g_pNSNet->HandleAmbeData(pData, length);
 	}
 	else
 	{
-		m_pLog->AddLog(Ns_Log_Error, "m_ppNet is null");
+		m_pLog->AddLog(Ns_Log_Error, "g_pNSNet is null");
 	}
 }
 

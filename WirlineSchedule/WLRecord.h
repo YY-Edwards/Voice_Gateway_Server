@@ -3,7 +3,8 @@
 
 #include <deque>
 #include "AudioLog.h"
-#include "NS/include/MySQL.h"
+//#include "NS/include/MySQL.h"
+#include "NS/include/NS.h"
 //#include "WLNet.h"
 
 //extern CWLNet* g_pNet;
