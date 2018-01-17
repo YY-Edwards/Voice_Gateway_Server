@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "NSDongle.h"
-#include "NSAmbe.h"
+#include "../include/NSDongle.h"
+#include "../include/NSAmbe.h"
 #include <process.h>
-#include "NSManager.h"
-#include "NSLog.h"
+#include "../include/NSManager.h"
+#include "../include/NSLog.h"
 
 NSDongle::NSDongle(NSManager* pManager)
 : m_hReadSerialEvent(NULL)

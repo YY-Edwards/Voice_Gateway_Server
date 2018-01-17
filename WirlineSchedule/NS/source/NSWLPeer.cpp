@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "NSWLPeer.h"
-#include "NSWLNet.h"
-#include "HMAC_SHA1.h"
-#include "NSLog.h"
-#include "NSRecordFile.h"
+#include "../include/NSWLPeer.h"
+#include "../include/NSWLNet.h"
+#include "../include/HMAC_SHA1.h"
+#include "../include/NSLog.h"
+#include "../include/NSRecordFile.h"
 //#include "Manager.h"
 
 #define AUTHENTIC_ID_SIZE	4

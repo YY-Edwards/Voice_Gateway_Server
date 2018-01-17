@@ -1,8 +1,8 @@
 #ifndef NSSOUND_H
 #define NSSOUND_H
 
-#include "NS\mutex.h"
-#include "..\lib\rpc\include\ringbuffer.h"
+#include "mutex.h"
+#include "ringbuffer.h"
 
 #define BLOCK_SIZE 5120
 #define BLOCK_COUNT 20

@@ -1,5 +1,6 @@
 #ifdef _WIN32
 #include <stdbool.h>
+#define SIO_UDP_CONNRESET _WSAIOW(IOC_VENDOR, 12)
 #else		// _WIN32
 #include <pthread.h>
 #include <sys/socket.h>
@@ -12,8 +13,8 @@
 #include <fcntl.h>
 #endif // Linux
 
-#include "net.h"
-#include "linklist.h"
+#include "../include/net.h"
+#include "../include/linklist.h"
 
 #ifndef SOCKET_ERROR
 #define SOCKET_ERROR -1
@@ -561,6 +562,10 @@ pXQTTNet connectServerUdp(const char* pIp, unsigned short port, const char* pLoc
 	NET_MODE = WithSelectUdp;
 	f_bQuitFlag = false;
 #ifdef _WIN32
+	/*Windows UDP socket recvfrom返回10054错误的解决办法*/
+	BOOL bNewBehavior = FALSE;
+	DWORD dwBytesReturned = 0;
+	WSAIoctl(pNet->_netHandler, SIO_UDP_CONNRESET, &bNewBehavior, sizeof(bNewBehavior), NULL, 0, &dwBytesReturned, NULL, NULL);
 	f_hAcceptThreadId = CreateThread(
 		NULL,						// default security attributes
 		0,							// use default stack size  

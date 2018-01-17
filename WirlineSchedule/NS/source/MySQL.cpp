@@ -1,5 +1,5 @@
 #include "StdAfx.h"
-#include "MySQL.h"
+#include "../include/MySQL.h"
 
 #include <ostream>
 #include <sstream>

@@ -1,15 +1,15 @@
 #include "stdafx.h"
 #include <process.h>
-#include "NSWLNet.h"
-#include "NSLog.h"
-#include "NSWLPeer.h"
-#include "NSSerial.h"
-#include "NSRecordFile.h"
-#include "HMAC_SHA1.h"
-#include "NSSound.h"
+#include "../include/NSWLNet.h"
+#include "../include/NSLog.h"
+#include "../include/NSWLPeer.h"
+#include "../include/NSSerial.h"
+#include "../include/NSRecordFile.h"
+#include "../include/HMAC_SHA1.h"
+#include "../include/NSSound.h"
 //#include "Manager.h"
 //#include "WLNet.h"
-#include "NSManager.h"
+#include "../include/NSManager.h"
 
 #define AUTHENTIC_ID_SIZE	4
 #define VENDER_KEY_SIZE		20

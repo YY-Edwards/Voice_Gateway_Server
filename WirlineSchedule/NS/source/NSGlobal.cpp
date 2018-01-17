@@ -1,6 +1,6 @@
-#include "NSGlobal.h"
-#include "Tool.h"
-#include "NS/mutex.h"
+#include "../include/NSGlobal.h"
+#include "../include/Tool.h"
+#include "../include/mutex.h"
 
 NSNetBase* g_pNSNet = NULL;
 repeater_net_mode_enum g_repeater_net_mode = WL;

@@ -100,107 +100,46 @@
     <ClInclude Include="..\lib\rpc\include\RpcServer.h" />
     <ClInclude Include="..\lib\rpc\include\TcpServer.h" />
     <ClInclude Include="..\lib\service\service.h" />
-    <ClInclude Include="Ambe3000.h" />
     <ClInclude Include="AudioLog.h" />
     <ClInclude Include="common.h" />
     <ClInclude Include="actionHandler.h" />
-    <ClInclude Include="global.h" />
-    <ClInclude Include="HMAC_SHA1.h" />
     <ClInclude Include="IPSCPeer.h" />
-    <ClInclude Include="linklist.h" />
     <ClInclude Include="Manager.h" />
-    <ClInclude Include="MotoDefine.h" />
     <ClInclude Include="mutex.h" />
-    <ClInclude Include="mysql-connector-c\include\atomic\gcc_builtins.h" />
-    <ClInclude Include="mysql-connector-c\include\atomic\generic-msvc.h" />
-    <ClInclude Include="mysql-connector-c\include\atomic\nolock.h" />
-    <ClInclude Include="mysql-connector-c\include\atomic\rwlock.h" />
-    <ClInclude Include="mysql-connector-c\include\atomic\x86-gcc.h" />
-    <ClInclude Include="mysql-connector-c\include\base64.h" />
-    <ClInclude Include="mysql-connector-c\include\config-win.h" />
-    <ClInclude Include="mysql-connector-c\include\decimal.h" />
-    <ClInclude Include="mysql-connector-c\include\errmsg.h" />
-    <ClInclude Include="mysql-connector-c\include\hash.h" />
-    <ClInclude Include="mysql-connector-c\include\keycache.h" />
-    <ClInclude Include="mysql-connector-c\include\lf.h" />
-    <ClInclude Include="mysql-connector-c\include\myisampack.h" />
-    <ClInclude Include="mysql-connector-c\include\mysql.h" />
-    <ClInclude Include="mysql-connector-c\include\mysqld_error.h" />
-    <ClInclude Include="mysql-connector-c\include\mysql_com.h" />
-    <ClInclude Include="mysql-connector-c\include\mysql_time.h" />
-    <ClInclude Include="mysql-connector-c\include\mysql_version.h" />
-    <ClInclude Include="mysql-connector-c\include\mysys\rijndael.h" />
-    <ClInclude Include="mysql-connector-c\include\mysys_err.h" />
-    <ClInclude Include="mysql-connector-c\include\my_aes.h" />
-    <ClInclude Include="mysql-connector-c\include\my_alarm.h" />
-    <ClInclude Include="mysql-connector-c\include\my_alloc.h" />
-    <ClInclude Include="mysql-connector-c\include\my_atomic.h" />
-    <ClInclude Include="mysql-connector-c\include\my_attribute.h" />
-    <ClInclude Include="mysql-connector-c\include\my_base.h" />
-    <ClInclude Include="mysql-connector-c\include\my_bit.h" />
-    <ClInclude Include="mysql-connector-c\include\my_bitmap.h" />
-    <ClInclude Include="mysql-connector-c\include\my_charsets.h" />
-    <ClInclude Include="mysql-connector-c\include\my_config.h" />
-    <ClInclude Include="mysql-connector-c\include\my_dbug.h" />
-    <ClInclude Include="mysql-connector-c\include\my_dir.h" />
-    <ClInclude Include="mysql-connector-c\include\my_getopt.h" />
-    <ClInclude Include="mysql-connector-c\include\my_global.h" />
-    <ClInclude Include="mysql-connector-c\include\my_libwrap.h" />
-    <ClInclude Include="mysql-connector-c\include\my_list.h" />
-    <ClInclude Include="mysql-connector-c\include\my_md5.h" />
-    <ClInclude Include="mysql-connector-c\include\my_net.h" />
-    <ClInclude Include="mysql-connector-c\include\my_nosys.h" />
-    <ClInclude Include="mysql-connector-c\include\my_no_pthread.h" />
-    <ClInclude Include="mysql-connector-c\include\my_pthread.h" />
-    <ClInclude Include="mysql-connector-c\include\my_stacktrace.h" />
-    <ClInclude Include="mysql-connector-c\include\my_sys.h" />
-    <ClInclude Include="mysql-connector-c\include\my_time.h" />
-    <ClInclude Include="mysql-connector-c\include\my_tree.h" />
-    <ClInclude Include="mysql-connector-c\include\my_trie.h" />
-    <ClInclude Include="mysql-connector-c\include\my_uctype.h" />
-    <ClInclude Include="mysql-connector-c\include\my_vle.h" />
-    <ClInclude Include="mysql-connector-c\include\my_xml.h" />
-    <ClInclude Include="mysql-connector-c\include\m_ctype.h" />
-    <ClInclude Include="mysql-connector-c\include\m_string.h" />
-    <ClInclude Include="mysql-connector-c\include\queues.h" />
-    <ClInclude Include="mysql-connector-c\include\service_versions.h" />
-    <ClInclude Include="mysql-connector-c\include\sha1.h" />
-    <ClInclude Include="mysql-connector-c\include\sha2.h" />
-    <ClInclude Include="mysql-connector-c\include\sql_common.h" />
-    <ClInclude Include="mysql-connector-c\include\sslopt-case.h" />
-    <ClInclude Include="mysql-connector-c\include\sslopt-longopts.h" />
-    <ClInclude Include="mysql-connector-c\include\sslopt-vars.h" />
-    <ClInclude Include="mysql-connector-c\include\thr_alarm.h" />
-    <ClInclude Include="mysql-connector-c\include\thr_lock.h" />
-    <ClInclude Include="mysql-connector-c\include\typelib.h" />
-    <ClInclude Include="mysql-connector-c\include\t_ctype.h" />
-    <ClInclude Include="mysql-connector-c\include\violite.h" />
-    <ClInclude Include="mysql-connector-c\include\waiting_threads.h" />
-    <ClInclude Include="mysql-connector-c\include\wqueue.h" />
-    <ClInclude Include="MySQL.h" />
-    <ClInclude Include="net.h" />
-    <ClInclude Include="NSAmbe.h" />
-    <ClInclude Include="NSDongle.h" />
-    <ClInclude Include="NSGlobal.h" />
-    <ClInclude Include="NSLog.h" />
-    <ClInclude Include="NSManager.h" />
-    <ClInclude Include="NSNetBase.h" />
-    <ClInclude Include="NSRecordFile.h" />
-    <ClInclude Include="NSSerial.h" />
-    <ClInclude Include="NSSound.h" />
-    <ClInclude Include="NSStruct.h" />
-    <ClInclude Include="NSWLNet.h" />
-    <ClInclude Include="NSWLPeer.h" />
-    <ClInclude Include="NS\mutex.h" />
+    <ClInclude Include="NS\include\Ambe3000.h" />
+    <ClInclude Include="NS\include\global.h" />
+    <ClInclude Include="NS\include\HMAC_SHA1.h" />
+    <ClInclude Include="NS\include\linklist.h" />
+    <ClInclude Include="NS\include\MotoDefine.h" />
+    <ClInclude Include="NS\include\mutex.h" />
+    <ClInclude Include="NS\include\MySQL.h" />
+    <ClInclude Include="NS\include\net.h" />
+    <ClInclude Include="NS\include\NetStruct.h" />
+    <ClInclude Include="NS\include\NS.h" />
+    <ClInclude Include="NS\include\NSAmbe.h" />
+    <ClInclude Include="NS\include\NSDongle.h" />
+    <ClInclude Include="NS\include\NSGlobal.h" />
+    <ClInclude Include="NS\include\NSLog.h" />
+    <ClInclude Include="NS\include\NSManager.h" />
+    <ClInclude Include="NS\include\NSNetBase.h" />
+    <ClInclude Include="NS\include\NSRecordFile.h" />
+    <ClInclude Include="NS\include\NSSerial.h" />
+    <ClInclude Include="NS\include\NSSound.h" />
+    <ClInclude Include="NS\include\NSStruct.h" />
+    <ClInclude Include="NS\include\NSWLNet.h" />
+    <ClInclude Include="NS\include\NSWLPeer.h" />
+    <ClInclude Include="NS\include\P2PNet.h" />
+    <ClInclude Include="NS\include\P2PPeer.h" />
+    <ClInclude Include="NS\include\ringbuffer.h" />
+    <ClInclude Include="NS\include\SHA1.h" />
+    <ClInclude Include="NS\include\Tool.h" />
+    <ClInclude Include="NS\include\WDK_VidPidQuery.h" />
     <ClInclude Include="RecorderServer.h" />
     <ClInclude Include="SerialDongle.h" />
-    <ClInclude Include="SHA1.h" />
     <ClInclude Include="Sound.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="Tool.h" />
     <ClInclude Include="VoiceDefs.h" />
-    <ClInclude Include="WDK_VidPidQuery.h" />
     <ClInclude Include="WLNet.h" />
     <ClInclude Include="WLRecord.h" />
     <ClInclude Include="WLRecordFile.h" />
@@ -222,53 +161,60 @@
     <ClCompile Include="..\lib\service\service.cpp" />
     <ClCompile Include="AudioLog.cpp" />
     <ClCompile Include="common.cpp" />
-    <ClCompile Include="HMAC_SHA1.cpp" />
     <ClCompile Include="IPSCPeer.cpp" />
-    <ClCompile Include="linklist.c">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="Manager.cpp" />
-    <ClCompile Include="MySQL.cpp" />
-    <ClCompile Include="net.c">
+    <ClCompile Include="NS\source\HMAC_SHA1.cpp" />
+    <ClCompile Include="NS\source\linklist.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="NSAmbe.cpp" />
-    <ClCompile Include="NSDongle.cpp" />
-    <ClCompile Include="NSGlobal.cpp">
+    <ClCompile Include="NS\source\MySQL.cpp" />
+    <ClCompile Include="NS\source\net.c">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="NSLog.cpp" />
-    <ClCompile Include="NSManager.cpp" />
-    <ClCompile Include="NSRecordFile.cpp" />
-    <ClCompile Include="NSSerial.cpp" />
-    <ClCompile Include="NSSound.cpp" />
-    <ClCompile Include="NSWLNet.cpp" />
-    <ClCompile Include="NSWLPeer.cpp" />
+    <ClCompile Include="NS\source\NS.cpp" />
+    <ClCompile Include="NS\source\NSAmbe.cpp" />
+    <ClCompile Include="NS\source\NSDongle.cpp" />
+    <ClCompile Include="NS\source\NSGlobal.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="NS\source\NSLog.cpp" />
+    <ClCompile Include="NS\source\NSManager.cpp" />
+    <ClCompile Include="NS\source\NSRecordFile.cpp" />
+    <ClCompile Include="NS\source\NSSerial.cpp" />
+    <ClCompile Include="NS\source\NSSound.cpp" />
+    <ClCompile Include="NS\source\NSWLNet.cpp" />
+    <ClCompile Include="NS\source\NSWLPeer.cpp" />
+    <ClCompile Include="NS\source\P2PNet.cpp" />
+    <ClCompile Include="NS\source\P2PPeer.cpp" />
+    <ClCompile Include="NS\source\ringbuffer.c">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="NS\source\SHA1.cpp" />
+    <ClCompile Include="NS\source\Tool.cpp" />
+    <ClCompile Include="NS\source\WDK_VidPidQuery.cpp" />
     <ClCompile Include="RecorderServer.cpp" />
-    <ClCompile Include="WDK_VidPidQuery.cpp" />
-    <ClCompile Include="WirlineSchedule.cpp" />
     <ClCompile Include="SerialDongle.cpp" />
-    <ClCompile Include="SHA1.cpp" />
     <ClCompile Include="Sound.cpp" />
+    <ClCompile Include="WirlineSchedule.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Tool.cpp" />
     <ClCompile Include="WLNet.cpp" />
     <ClCompile Include="WLRecord.cpp" />
     <ClCompile Include="WLRecordFile.cpp" />
     <ClCompile Include="WLSocketLog.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="mysql-connector-c\lib\libmysql.dll" />
+    <None Include="NS\include\mysql-connector-c\lib\libmysql.dll" />
   </ItemGroup>
   <ItemGroup>
-    <Library Include="mysql-connector-c\lib\libmysql.lib" />
-    <Library Include="mysql-connector-c\lib\mysqlclient.lib" />
+    <Library Include="NS\include\mysql-connector-c\lib\libmysql.lib" />
+    <Library Include="NS\include\mysql-connector-c\lib\mysqlclient.lib" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

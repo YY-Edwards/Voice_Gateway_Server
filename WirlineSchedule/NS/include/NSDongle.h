@@ -1,8 +1,8 @@
 #ifndef CDONGLE_H
 #define CDONGLE_H
 
-#include "..\lib\rpc\include\ringbuffer.h"
-#include "NS\mutex.h"
+#include "ringbuffer.h"
+#include "mutex.h"
 
 class NSAmbe;
 class NSManager;

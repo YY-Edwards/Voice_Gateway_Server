@@ -1,5 +1,5 @@
 #include <string.h>
-#include "linklist.h"
+#include "../include/linklist.h"
 
 #ifndef NULL
 #define NULL	((void*)0)

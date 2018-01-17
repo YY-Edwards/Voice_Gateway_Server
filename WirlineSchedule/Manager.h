@@ -1,7 +1,7 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include "MySQL.h"
+//#include "NS/include/MySQL.h"
 #include "../lib/radio/common.h"
 #include "../lib/radio/DataScheduling.h"
 
@@ -9,6 +9,7 @@ class CSerialDongle;
 class CSound;
 class CTool;
 class CWLNet;
+class NS;
 
 extern BOOL g_bPTT;      //Set or cleared by user interface.
 
@@ -94,7 +95,11 @@ public:
 	void OnUpdateUsb(DWORD type);
 
 	static void OnUpdateUsbService(bool type);
+
+	void setDb(CMySQL* value);
+	//void setAmbeDataPath(const wchar_t* value);
 private:
+	NS* m_pModelNs;
 	PLogReport m_report;
 	//HWND m_hwnd;
 	char m_reportMsg[WL_LOG_SIZE];

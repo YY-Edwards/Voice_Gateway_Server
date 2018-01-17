@@ -1,9 +1,9 @@
 #include "stdafx.h"
-#include "NSSound.h"
-#include "NSLog.h"
+#include "../include/NSSound.h"
+#include "../include/NSLog.h"
 #include <process.h>
-#include "NSAmbe.h"
-#include "NSWLNet.h"
+#include "../include/NSAmbe.h"
+#include "../include/NSWLNet.h"
 
 #define RING_SIZE_OUT 64
 

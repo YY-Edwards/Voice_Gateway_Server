@@ -1,13 +1,13 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include "NSGlobal.h"
-#include "MotoDefine.h"
-#include "NetStruct.h"
-#include "NSStruct.h"
+#include "NS/include/NSGlobal.h"
+#include "NS/include/MotoDefine.h"
+#include "NS/include/NetStruct.h"
+#include "NS/include/NSStruct.h"
 #include <dbt.h>
 #include <process.h>
-#include "Ambe3000.h"
+#include "NS/include/Ambe3000.h"
 #include <MMSystem.h>
 #pragma comment(lib, "winmm.lib")
 #include "VoiceDefs.h"
@@ -15,7 +15,7 @@
 #include <winsock2.h>
 #pragma comment(lib, "ws2_32.lib")
 
-#include "Tool.h"
+#include "NS/include/Tool.h"
 #include <list>
 #include "../lib/rpc/include/TcpServer.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
@@ -25,7 +25,7 @@
 
 #include "WLSocketLog.h"
 #include "../lib/radio/common.h"
-#include "NS/mutex.h"
+#include "NS/include/mutex.h"
 
 #ifdef _DEBUG
 #define DEBUG_CLIENTBLOCK new( _CLIENT_BLOCK, __FILE__, __LINE__)

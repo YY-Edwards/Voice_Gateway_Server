@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "P2PPeer.h"
-#include "P2PNet.h"
-#include "NSLog.h"
+#include "../include/P2PPeer.h"
+#include "../include/P2PNet.h"
+#include "../include/NSLog.h"
 
 
 CP2PPeer::CP2PPeer(p2p_peer_build_param_t* p)
