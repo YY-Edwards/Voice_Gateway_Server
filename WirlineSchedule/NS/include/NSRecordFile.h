@@ -11,7 +11,7 @@ class NSWLPeer;
 class  NSRecordFile
 {
 public:
-	NSRecordFile(NSManager* pManager, NSWLPeer* peer);
+	NSRecordFile(NSWLPeer* peer);
 	~NSRecordFile();
 public:
 	void WriteVoiceFrame(const char* pAmbe, int size, bool needDongle = true);
@@ -43,7 +43,7 @@ private:
 	wchar_t m_strCurrentFilePath[PATH_FILE_MAXSIZE];
 	NSAmbe* m_pAmbe;
 	NSWLPeer* m_peer;//此条语音记录的产生者
-	NSManager* m_pManager;
+	//NSManager* m_pManager;
 	//char* m_fullBuffer;
 
 	BOOL CreateNewFileByYearMonth();

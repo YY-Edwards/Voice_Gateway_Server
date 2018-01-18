@@ -505,12 +505,12 @@ int CManager::setPlayCallOfCare(unsigned char calltype, unsigned long targetId)
 	else if (ALL_CALL == calltype)
 	{
 		//g_playTargetId = ALL_CALL_ID;
-		m_pModelNs->setPlayTargetId(CONFIG_LOCAL_RADIO_ID);
+		m_pModelNs->setPlayTargetId(ALL_CALL_ID);
 	}
 	else
 	{
 		//g_playTargetId = targetId;
-		m_pModelNs->setPlayTargetId(CONFIG_LOCAL_RADIO_ID);
+		m_pModelNs->setPlayTargetId(targetId);
 	}
 	return g_pNet->setPlayCallOfCare(calltype, targetId);
 }

@@ -179,7 +179,7 @@ void NSManager::handle_test_ambe_2_pcm(FILE* pIn, FILE* pOut)
 	fp = NULL;
 	fp = pOut;
 	//m_ambeSchdule->Ambe2Pcm(pBuffer, readLen, fp);
-	NSAmbe* ambe = new NSAmbe(this);
+	NSAmbe* ambe = new NSAmbe();
 	ambe->Ambe2Pcm(pBuffer, readLen);
 	ambe->WirteEnd();
 	if (pBuffer)
@@ -210,7 +210,7 @@ void NSManager::handle_test_pcm_2_ambe(FILE* pIn, FILE* pOut)
 	fclose(fp);
 	fp = NULL;
 	fp = pOut;
-	NSAmbe* ambe = new NSAmbe(this);
+	NSAmbe* ambe = new NSAmbe();
 	ambe->Pcm2Ambe(pBuffer, readLen);
 	ambe->WirteEnd();
 	if (pBuffer)

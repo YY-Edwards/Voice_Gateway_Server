@@ -5,9 +5,9 @@
 #include "../include/NSLog.h"
 #include "../include/NSSound.h"
 
-NSAmbe::NSAmbe(NSManager* pManager)
-:m_pManager(pManager)
-, m_bWriteEnd(false)
+NSAmbe::NSAmbe()
+//:m_pManager(pManager)
+:m_bWriteEnd(false)
 , m_bReciveEnd(false)
 , m_useDongle(NULL)
 , m_pLog(NSLog::instance())
@@ -29,7 +29,7 @@ NSAmbe::~NSAmbe()
 		m_outFile = NULL;
 	}
 #endif
-	m_pManager = NULL;
+	//m_pManager = NULL;
 	m_bWriteEnd = false;
 	m_bReciveEnd = false;
 	m_useDongle = NULL;
@@ -37,14 +37,21 @@ NSAmbe::~NSAmbe()
 
 void NSAmbe::Ambe2Pcm(void* pBuffer, unsigned long length)
 {
-	if (NULL == m_useDongle) m_useDongle = m_pManager->PopIdleDonglesItem();
-	if (m_useDongle)
+	if (g_pNSManager)
 	{
-		m_useDongle->WriteAmbe(pBuffer, length, &OnDataPcmFun, this);
+		if (NULL == m_useDongle) m_useDongle = g_pNSManager->PopIdleDonglesItem();
+		if (m_useDongle)
+		{
+			m_useDongle->WriteAmbe(pBuffer, length, &OnDataPcmFun, this);
+		}
+		else
+		{
+			m_pLog->AddLog(Ns_Log_Error, "no useable dongle");
+		}
 	}
 	else
 	{
-		m_pLog->AddLog(Ns_Log_Error,"no useable dongle");
+		m_pLog->AddLog(Ns_Log_Error, "g_pNSManager is null");
 	}
 }
 
@@ -78,15 +85,23 @@ void NSAmbe::OnDataPcm(void* pData, unsigned long length, unsigned long index)
 int NSAmbe::Pcm2Ambe(void* pBuffer, unsigned long length)
 {
 	int rlt = 0;
-	if (NULL == m_useDongle) m_useDongle = m_pManager->PopIdleDonglesItem();
-	if (m_useDongle)
+	if (g_pNSManager)
 	{
-		m_useDongle->WritePcm(pBuffer, length, &OnDataAmbeFun, this);
+		if (NULL == m_useDongle) m_useDongle = g_pNSManager->PopIdleDonglesItem();
+		if (m_useDongle)
+		{
+			m_useDongle->WritePcm(pBuffer, length, &OnDataAmbeFun, this);
+		}
+		else
+		{
+			m_pLog->AddLog(Ns_Log_Error, "no useable dongle");
+			rlt = 1;
+		}
 	}
 	else
 	{
-		m_pLog->AddLog(Ns_Log_Error, "no useable dongle");
-		rlt = 1;
+		m_pLog->AddLog(Ns_Log_Error, "g_pNSManager is null");
+		rlt = 2;
 	}
 	return rlt;
 }
@@ -96,13 +111,13 @@ void NSAmbe::OnDataAmbe(void* pData, unsigned long length, unsigned long index)
 	//LOG_INFO("Recive index:%d ambe package", index);
 	if (pData)
 	{
-		if (m_pManager)
+		if (g_pNSManager)
 		{
-			m_pManager->HandleAmbeData(pData, length);
+			g_pNSManager->HandleAmbeData(pData, length);
 		}
 		else
 		{
-			m_pLog->AddLog(Ns_Log_Error, "m_pManager is null");
+			m_pLog->AddLog(Ns_Log_Error, "g_pNSManager is null");
 		}
 #if _DEBUG
 		if (m_outFile)

@@ -8,7 +8,7 @@ class NSLog;
 class NSAmbe
 {
 public:
-	NSAmbe(NSManager* pManager);
+	NSAmbe();
 	~NSAmbe();
 
 	/*测试AMBE转PCM并把PCM文件写入指定文件*/
@@ -30,7 +30,7 @@ public:
 	/*当前dongle的工作状态*/
 	void AboutInfo(char* info);
 private:
-	NSManager* m_pManager;
+	//NSManager* m_pManager;
 	bool m_bWriteEnd;
 	bool m_bReciveEnd;
 	NSDongle* m_useDongle;

@@ -12,7 +12,7 @@
 
 #define MAX_RECORD_BUFFER_SIZE (100*1024)
 
-NSRecordFile::NSRecordFile(NSManager* pManager, NSWLPeer* peer)
+NSRecordFile::NSRecordFile(NSWLPeer* peer)
 :src_radio(0)
 , target_radio(0)
 , length(0)
@@ -27,7 +27,7 @@ NSRecordFile::NSRecordFile(NSManager* pManager, NSWLPeer* peer)
 , m_hOpenFile(NULL)
 , m_pAmbe(NULL)
 , m_peer(peer)
-, m_pManager(pManager)
+//, m_pManager(pManager)
 , buffer((char*)malloc(MAX_RECORD_BUFFER_SIZE))
 {
 	if (m_peer) m_peer->setRecordFile(this);
@@ -70,7 +70,7 @@ void NSRecordFile::WriteVoiceFrame(const char* pAmbe, int size, bool needDongle 
 	{
 		if (NULL == m_pAmbe)
 		{
-			m_pAmbe = new NSAmbe(m_pManager);
+			m_pAmbe = new NSAmbe();
 		}
 		if (m_pAmbe)
 		{

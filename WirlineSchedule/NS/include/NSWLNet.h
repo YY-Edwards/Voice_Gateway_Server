@@ -17,7 +17,7 @@ class NSManager;
 class NSWLNet :public NSNetBase
 {
 public:
-	NSWLNet(NSManager* pManager);
+	NSWLNet();
 	~NSWLNet();
 	
 	/*启动net模块*/
@@ -74,7 +74,7 @@ private:
 	local_ip_list_t m_localIpList;//本机IP地址池
 	unsigned char m_serialNumber[SIZE_SERIAL];//序列号
 	NSSerial* m_pSerial;//序列号类
-	NSManager* m_pManager;
+	//NSManager* m_pManager;
 	decline_reason_code_info_t m_callFailInfo;
 	NSWLPeer* m_currentSendVoicePeer;
 	unsigned long m_callId;

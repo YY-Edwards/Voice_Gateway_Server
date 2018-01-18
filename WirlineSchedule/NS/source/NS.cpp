@@ -9,7 +9,7 @@ NS::NS(const void* param, OnCall oncall, OnCallStatus onCallStatus, OnNSSystemSt
 	g_pNSTool = new CTool();
 	g_pNSManager = new NSManager();
 	g_pNSSound = new NSSound();
-	g_pNSNet = new NSWLNet(g_pNSManager);
+	g_pNSNet = new NSWLNet();
 
 	NS_RegCallEvent((void*)param, oncall);
 	NS_RegCallStatusEvent((void*)param, onCallStatus);

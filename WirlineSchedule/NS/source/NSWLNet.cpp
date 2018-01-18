@@ -18,7 +18,7 @@ static const unsigned char VenderKey[VENDER_KEY_SIZE] = { 0x6b, 0xe5, 0xff, 0x95
 
 #define SEND_VOICE_INTERVAL 60
 
-NSWLNet::NSWLNet(NSManager* pManager)
+NSWLNet::NSWLNet()
 :m_pMasterXqttnet(NULL)
 , m_pLog(NSLog::instance())
 , m_pWorkThread(NULL)
@@ -41,7 +41,7 @@ NSWLNet::NSWLNet(NSManager* pManager)
 , m_mutexRecords(INITLOCKER())
 , m_records(NULL)
 , m_pCheckRecordsThread(NULL)
-, m_pManager(pManager)
+//, m_pManager(pManager)
 , m_currentSendVoicePeer(NULL)
 , m_callThreadStatus(Call_Thread_Status_Idle)
 , m_callId(1)
@@ -842,7 +842,8 @@ void NSWLNet::AmbeDataThread()
 		case WL_VC_VOICE_START:
 		{
 								  T_WL_PROTOCOL_18* handleData = &protocol->PROTOCOL_18;
-								  record = new NSRecordFile(m_pManager, peer);
+								  //record = new NSRecordFile(m_pManager, peer);
+								  record = new NSRecordFile(peer);
 								  record->src_peer_id = src_peer_id;
 								  record->src_radio = src_radio;
 								  record->target_radio = target_radio;
@@ -3191,7 +3192,8 @@ NSRecordFile* NSWLNet::FindOrAddRecordsItem(find_record_condition_t* condition, 
 	if (NULL == p)
 	{
 		bFind = false;
-		p = new NSRecordFile(m_pManager, peer);
+		//p = new NSRecordFile(m_pManager, peer);
+		p = new NSRecordFile(peer);
 		AddRecordsItem(p);
 	}
 	return p;
@@ -4079,7 +4081,8 @@ void NSWLNet::SendAmbeData()
 						delete m_localRecordFile;
 						m_localRecordFile = NULL;
 					}
-					m_localRecordFile = new NSRecordFile(m_pManager, peer);
+					//m_localRecordFile = new NSRecordFile(m_pManager, peer);
+					m_localRecordFile = new NSRecordFile(peer);
 					m_localRecordFile->src_peer_id = m_netParam.local_peer_id;
 					m_localRecordFile->src_radio = m_netParam.local_radio_id;
 					m_localRecordFile->target_radio = m_makeCallParam.targetID;

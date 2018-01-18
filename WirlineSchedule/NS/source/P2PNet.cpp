@@ -2935,7 +2935,8 @@ NSRecordFile* CP2PNet::FindOrAddRecordsItem(find_record_condition_t* condition, 
 	if (NULL == p)
 	{
 		bFind = false;
-		p = new NSRecordFile(m_manager, NULL);
+		//p = new NSRecordFile(m_manager, NULL);
+		p = new NSRecordFile(NULL);
 		AddRecordItem(p);
 	}
 	return p;
