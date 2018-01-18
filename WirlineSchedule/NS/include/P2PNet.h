@@ -53,7 +53,7 @@ private:
 	local_ip_list_t m_localIpList;
 	unsigned char m_serialNumber[SIZE_SERIAL];
 	NSSerial* m_pSerial;
-	NSManager *m_manager;
+	//NSManager *m_manager;
 	/*初始化，创建所有线程并启动*/
 	void Init();
 	/*停止线程，释放资源*/

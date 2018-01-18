@@ -27,7 +27,7 @@ CP2PNet::CP2PNet(NSManager* pManager)
 //, m_sourceAddress(0)
 //, m_trascationId(0)
 , m_pSerial(new NSSerial())
-, m_manager(pManager)
+//, m_manager(pManager)
 {
 	m_workThread = NULL;
 	m_timeoutThread = NULL;
