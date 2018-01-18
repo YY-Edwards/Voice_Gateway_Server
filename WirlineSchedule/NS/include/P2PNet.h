@@ -14,7 +14,7 @@ class CP2PNet :
 	public NSNetBase
 {
 public:
-	CP2PNet(NSManager* pManager);
+	CP2PNet();
 	~CP2PNet();
 	virtual int StartNet(StartNetParam* p);
 	virtual void GetSerial(char* &pSerial, int &length);

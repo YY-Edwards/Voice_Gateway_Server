@@ -2,7 +2,7 @@
 #include "../include/P2pNet.h"
 #include "../include/NSRecordFile.h"
 #include <process.h>
-CP2PNet::CP2PNet(NSManager* pManager)
+CP2PNet::CP2PNet()
 :  m_isWork(false)
 , m_isTimeoutWork(false)
 , m_isAmbeDataWork(false)

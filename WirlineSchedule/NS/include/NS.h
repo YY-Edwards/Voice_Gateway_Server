@@ -20,7 +20,7 @@ public:
 	void CallStart(make_call_param_t *p);
 	void CallStop();
 	le_status_enum LeStatus();
-	void setDb(CMySQL* value);
+	static void setDb(CMySQL* value);
 	static void setAmbeDataPath(const wchar_t* value);
 	mic_status_enum MicStatus();
 	void OnUpdateUsb(DWORD operateType);
