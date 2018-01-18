@@ -3001,3 +3001,11 @@ le_status_enum CP2PNet::LeStatus()
 {
 	return GetLeStatus();
 }
+
+void CP2PNet::GetStartNetParam(StartNetParam* p)
+{
+	if (p)
+	{
+		*p = m_netParam;
+	}
+}

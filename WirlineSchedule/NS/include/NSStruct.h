@@ -1,6 +1,7 @@
 #ifndef NSSTRUCT_H
 #define NSSTRUCT_H
 
+#include <dbt.h>
 #include "net.h"
 #include "NetStruct.h"
 
@@ -49,6 +50,17 @@ class NSManager;
 #define System_RepeaterStatus 0x0C
 #define System_SendSerial 0x0D
 #define System_SendTimeOutCallEnd 0x0E
+#define VID_PID "VID_03EB&PID_2307"
+#define USB_DEL DBT_DEVICEREMOVECOMPLETE
+#define USB_ADD DBT_DEVICEARRIVAL
+#define REPEATER_CONNECT 0
+#define REPEATER_DISCONNECT 1
+#define WL_SYSTEM_CONNECT 0
+#define WL_SYSTEM_DISCONNECT 1
+#define WL_REGISTER_SUC 0
+#define WL_REGISTER_FAL 1
+#define WL_SERIL_SUC 0
+#define WL_SERIL_FAL 1
 
 const int OUT_SAMPLES_PER_20mS = 160;
 const DWORD  INTERNALCOMBUFFSIZE = 2048;

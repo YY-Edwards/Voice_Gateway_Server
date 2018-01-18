@@ -1,6 +1,8 @@
 #ifndef NSGLOBAL_H
 #define NSGLOBAL_H
 
+#include <string>
+
 class CMySQL;
 class CTool;
 class NSSound;
@@ -59,6 +61,7 @@ extern unsigned char g_playCalltype;
 extern unsigned long g_playTargetId;
 extern int g_should_delete;
 extern license_status_enum g_license_status;
+extern std::string repeaterSerial;
 //extern void* onCallParam;
 //extern OnCall g_event_oncall;
 //extern void* onCallStatusParam;

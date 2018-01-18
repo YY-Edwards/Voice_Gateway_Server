@@ -10,6 +10,7 @@ public:
 	virtual int sendNetDataBase(const char* pData, int len, void* send_to) = 0;
 	virtual void HandleAmbeData(void* pData, unsigned long length)=0;
 	virtual le_status_enum LeStatus() = 0;
+	virtual void GetStartNetParam(StartNetParam* p) = 0;
 private:
 };
 

@@ -8,6 +8,7 @@
 #include "../include/NSAmbe.h"
 #include "../include/NSManager.h"
 #include "../include/NSWLPeer.h"
+#include "../include/NSNetBase.h"
 //#include "WLNet.h"
 
 #define MAX_RECORD_BUFFER_SIZE (100*1024)
@@ -135,7 +136,8 @@ unsigned int NSRecordFile::Length()
 
 void NSRecordFile::setCallStatus(int value)
 {
-
+	StartNetParam param = { 0 };
+	g_pNSNet->GetStartNetParam(&param);
 	if (value != call_status)
 	{
 #if _DEBUG
@@ -144,25 +146,31 @@ void NSRecordFile::setCallStatus(int value)
 		call_status = value;
 		if (VOICE_START == call_status)
 		{
-			if (src_radio == CONFIG_LOCAL_RADIO_ID)
+			if (src_radio == param.local_radio_id)
 			{
-					oncallstatus_info_t info = { 0 };
-					info.callType = call_type;
-					info.srcId = src_radio;
-					info.tgtId = target_radio;
-					info.status = STATUS_CALL_START | REMOTE_CMD_SUCCESS;
-					NS_SafeCallStatusEvent(&info);
+				oncallstatus_info_t info = { 0 };
+				info.callType = call_type;
+				info.srcId = src_radio;
+				info.tgtId = target_radio;
+#ifdef STATUS_CALL_START
+#ifdef REMOTE_CMD_SUCCESS
+				info.status = STATUS_CALL_START | REMOTE_CMD_SUCCESS;
+#endif // REMOTE_CMD_SUCCESS
+#endif // STATUS_CALL_START
+				NS_SafeCallStatusEvent(&info);
 				//g_pNet->wlCallStatus(call_type, src_radio, target_radio, STATUS_CALL_START | REMOTE_CMD_SUCCESS, SessionId);
 			}
 			else
 			{
-					oncall_info_t info = { 0 };
-					info.callType = call_type;
-					info.srcId = src_radio;
-					info.tgtId = target_radio;
-					info.status = OPERATE_CALL_START;
-					info.isCurrent = (call_type == g_playCalltype && target_radio == g_playTargetId);
-					NS_SafeCallEvent(&info);
+				oncall_info_t info = { 0 };
+				info.callType = call_type;
+				info.srcId = src_radio;
+				info.tgtId = target_radio;
+#ifdef OPERATE_CALL_START
+				info.status = OPERATE_CALL_START;
+#endif // OPERATE_CALL_START
+				info.isCurrent = (call_type == g_playCalltype && target_radio == g_playTargetId);
+				NS_SafeCallEvent(&info);
 				//g_pNet->wlCall(call_type, src_radio, target_radio, OPERATE_CALL_START, (call_type == g_playCalltype && target_radio == g_playTargetId));
 			}
 		}
@@ -177,13 +185,17 @@ void NSRecordFile::setCallStatus(int value)
 		else if (CALL_SESSION_STATUS_HANG == call_status)
 		{
 			timeout = GetTickCount() + g_hang_time;//µÈ´ýSession_End±êÊ¶
-			if (src_radio == CONFIG_LOCAL_RADIO_ID)
+			if (src_radio == param.local_radio_id)
 			{
 					oncallstatus_info_t info = { 0 };
 					info.callType = call_type;
 					info.srcId = src_radio;
 					info.tgtId = target_radio;
+#ifdef STATUS_CALL_END
+#ifdef REMOTE_CMD_SUCCESS
 					info.status = STATUS_CALL_END | REMOTE_CMD_SUCCESS;
+#endif // REMOTE_CMD_SUCCESS
+#endif // STATUS_CALL_END
 					NS_SafeCallStatusEvent(&info);
 				//g_pNet->wlCallStatus(call_type, src_radio, target_radio, STATUS_CALL_END | REMOTE_CMD_SUCCESS, SessionId);
 			}
@@ -193,7 +205,9 @@ void NSRecordFile::setCallStatus(int value)
 					info.callType = call_type;
 					info.srcId = src_radio;
 					info.tgtId = target_radio;
+#ifdef OPERATE_CALL_END
 					info.status = OPERATE_CALL_END;
+#endif // OPERATE_CALL_END
 					info.isCurrent = (call_type == g_playCalltype && target_radio == g_playTargetId);
 					NS_SafeCallEvent(&info);
 				//g_pNet->wlCall(call_type, src_radio, target_radio, OPERATE_CALL_END, (call_type == g_playCalltype && target_radio == g_playTargetId));
@@ -252,7 +266,7 @@ void NSRecordFile::WriteToDb()
 					sprintf_s(temp, "%lu", offset);
 					voiceRecord["offset"] = temp;
 					/*file_path*/
-					voiceRecord["file_path"] = g_pTool->UnicodeToANSI(m_strCurrentFilePath);
+					voiceRecord["file_path"] = g_pNSTool->UnicodeToANSI(m_strCurrentFilePath);
 					/*src_peer_id*/
 					sprintf_s(temp, "%lu", src_peer_id);
 					voiceRecord["src_peer_id"] = temp;

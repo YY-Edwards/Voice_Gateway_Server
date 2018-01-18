@@ -118,7 +118,10 @@ void NSLog::handleMsg(char* pMsg, bool bPrint, log_type_enum type)
 						 {
 							 printf("%s", pMsg);
 						 }
+#ifdef LOG
 						 LOG(INFO) << pMsg;
+#endif // LOG
+
 	}
 		break;
 	case Ns_Log_Info:
@@ -128,7 +131,9 @@ void NSLog::handleMsg(char* pMsg, bool bPrint, log_type_enum type)
 						{
 							printf("%s", pMsg);
 						}
+#ifdef LOG
 						LOG(INFO) << pMsg;
+#endif // LOG
 						//#endif // _DEBUG
 	}
 		break;

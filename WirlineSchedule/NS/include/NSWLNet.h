@@ -29,6 +29,7 @@ public:
 	virtual void HandleAmbeData(void* pData, unsigned long length);
 	/*获取当前LE状态*/
 	virtual le_status_enum LeStatus();
+	virtual void GetStartNetParam(StartNetParam* p);
 	/*增加工作集子项*/
 	void AddWorkItem(work_item_t* p);
 	/*设置SitePeer*/

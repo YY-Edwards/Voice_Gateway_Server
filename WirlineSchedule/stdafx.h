@@ -20,7 +20,6 @@
 
 extern CTool* g_pTool;
 extern decline_reason_code_info_t g_callRequstDeclineReasonCodeInfo;
-extern std::string repeaterSerial;
 extern std::string repeaterMode;
 
 

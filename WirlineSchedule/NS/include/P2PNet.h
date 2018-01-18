@@ -23,6 +23,7 @@ public:
 	virtual int sendNetDataBase(const char* pData, int len, void* send_to);
 	/*获取当前LE状态*/
 	virtual le_status_enum LeStatus();
+	virtual void GetStartNetParam(StartNetParam* p);
 	void AddWorkItem(work_item_t* p);
 private:
 	StartNetParam m_netParam;

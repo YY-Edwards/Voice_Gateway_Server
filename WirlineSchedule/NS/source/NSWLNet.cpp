@@ -3282,7 +3282,9 @@ void NSWLNet::CheckRecordsThread()
 						info.callType = record->call_type;
 						info.srcId = record->src_radio;
 						info.tgtId = record->target_radio;
+#ifdef OPERATE_CALL_END
 						info.status = OPERATE_CALL_END;
+#endif // OPERATE_CALL_END
 						info.isCurrent = (record->call_type == g_playCalltype && record->target_radio == g_playTargetId);
 						NS_SafeCallEvent(&info);
 						//g_pNet->wlCall(record->call_type, record->src_radio, record->target_radio, OPERATE_CALL_END, (record->call_type == g_playCalltype && record->target_radio == g_playTargetId));
@@ -3977,7 +3979,11 @@ void NSWLNet::CallStop()
 	{
 		m_pLog->AddLog(Ns_Log_Info,"no call need stop");
 		oncallstatus_info_t info = { 0 };
+#ifdef STATUS_CALL_END
+#ifdef REMOTE_CMD_SUCCESS
 		info.status = STATUS_CALL_END | REMOTE_CMD_SUCCESS;
+#endif // REMOTE_CMD_SUCCESS
+#endif // STATUS_CALL_END
 		NS_SafeCallStatusEvent(&info);
 		//g_pNet->wlCallStatus(CurCallCmd.callType, m_netParam.local_radio_id, CurCallCmd.tartgetId, STATUS_CALL_END | REMOTE_CMD_SUCCESS, CurCallCmd.SessionId);
 	}
@@ -4349,4 +4355,12 @@ void NSWLNet::TimeoutsItemDeleteAboutPeer(NSWLPeer* peer)
 		item = temp;
 	}
 	RELEASELOCK(m_mutexWorkTimeOutItems);
+}
+
+void NSWLNet::GetStartNetParam(StartNetParam* p)
+{
+	if (p)
+	{
+		*p = m_netParam;
+	}
 }
