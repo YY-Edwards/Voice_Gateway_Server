@@ -3,7 +3,6 @@
 
 #include "NS/include/NSGlobal.h"
 #include "NS/include/MotoDefine.h"
-#include "NS/include/NetStruct.h"
 #include "NS/include/NSStruct.h"
 #include <dbt.h>
 #include <process.h>
@@ -423,7 +422,6 @@ extern long GO_BACK_DEFAULT_GROUP_TIME;//处于非调度组的时间
 #define VOICE_STATUS_CALLBACK 1
 #define VOICE_STATUS_END 2
 
-#define DATA_TABLE_NAME_SIZE 64
 #define FILE_NAME_MAXSIZE 64
 typedef void(*PLogReport)(char* log_msg);
 //enum    ScrambleDirection  {

@@ -2,6 +2,7 @@
 #define NSSTRUCT_H
 
 #include "net.h"
+#include "NetStruct.h"
 
 class NSManager;
 

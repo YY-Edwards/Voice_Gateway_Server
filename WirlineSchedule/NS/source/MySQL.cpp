@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "../include/MySQL.h"
+#include "../include/NSLog.h"
 
 #include <ostream>
 #include <sstream>
@@ -16,8 +17,8 @@ CMySQL::CMySQL(void)
 	m_mutxDbLocker = CreateMutex(NULL, FALSE, NULL);
 	//m_strCurrentTableName = "";
 	ZeroMemory(m_strCurrentTableName, DATA_TABLE_NAME_SIZE);
-	m_report = NULL;
-	ZeroMemory(m_reportMsg, 512);
+	//m_report = NULL;
+	//ZeroMemory(m_reportMsg, 512);
 }
 
 
@@ -601,8 +602,9 @@ std::string CMySQL::CreateCurrentTableByYearMonth()
 		if (!ret)
 		{
 			//AfxMessageBox(_T("´´½¨±íÊ§°Ü"));
-			sprintf_s(m_reportMsg, "build table %s fail", m_strCurrentTableName);
-			sendLogToWindow();
+			//sprintf_s(m_reportMsg, "build table %s fail", m_strCurrentTableName);
+			//sendLogToWindow();
+			NSLog::instance()->AddLog(Ns_Log_Error, "build table %s fail", m_strCurrentTableName);
 		}
 	}
 
@@ -724,18 +726,18 @@ BOOL CMySQL::DeleteTable(LPCSTR pstrSQL)
 	return TRUE;
 }
 
-void CMySQL::SetLogPtr(PLogReport value)
-{
-	m_report = value;
-}
+//void CMySQL::SetLogPtr(PLogReport value)
+//{
+//	m_report = value;
+//}
 
-void CMySQL::sendLogToWindow()
-{
-	if (m_report)
-	{
-		m_report(m_reportMsg);
-	}
-}
+//void CMySQL::sendLogToWindow()
+//{
+//	if (m_report)
+//	{
+//		m_report(m_reportMsg);
+//	}
+//}
 
 unsigned long CMySQL::GetLastVoiceRowId()
 {

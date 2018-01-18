@@ -134,6 +134,8 @@
     <ClInclude Include="NS\include\SHA1.h" />
     <ClInclude Include="NS\include\Tool.h" />
     <ClInclude Include="NS\include\WDK_VidPidQuery.h" />
+    <ClInclude Include="NS\source\stdafx.h" />
+    <ClInclude Include="NS\source\targetver.h" />
     <ClInclude Include="RecorderServer.h" />
     <ClInclude Include="SerialDongle.h" />
     <ClInclude Include="Sound.h" />

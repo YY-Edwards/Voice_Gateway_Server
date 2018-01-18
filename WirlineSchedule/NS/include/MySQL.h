@@ -5,6 +5,8 @@
 #include <vector>
 #include "mysql-connector-c/include/mysql.h"
 
+#define DATA_TABLE_NAME_SIZE 64
+
 #undef ERROR
 
 class CMySQL
@@ -22,13 +24,13 @@ private:
 	HANDLE m_mutxDbLocker;
 	char m_strCurrentTableName[DATA_TABLE_NAME_SIZE];
 
-	PLogReport m_report;
-	char m_reportMsg[WL_LOG_SIZE];
+	//PLogReport m_report;
+	//char m_reportMsg[WL_LOG_SIZE];
 
 private:
 	std::string CreateCurrentTableByYearMonth();
 
-	void sendLogToWindow();//将log显示至前台窗口
+	//void sendLogToWindow();//将log显示至前台窗口
 
 public:
 	static DWORD WINAPI PingThread(LPVOID pMysql);
@@ -66,6 +68,6 @@ public: // derived from CDbInterface
 
 	BOOL InsertLogRecord(std::string logRecord);
 
-	void SetLogPtr(PLogReport value);
+	//void SetLogPtr(PLogReport value);
 };
 

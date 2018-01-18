@@ -309,6 +309,12 @@
     <ClInclude Include="NS\include\NS.h">
       <Filter>NS\include</Filter>
     </ClInclude>
+    <ClInclude Include="NS\source\stdafx.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NS\source\targetver.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />

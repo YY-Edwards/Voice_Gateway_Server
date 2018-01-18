@@ -300,7 +300,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 			/*设置基本参数*/
 			m_report = handleLog;
-			m_pDb->SetLogPtr(m_report);
+			//m_pDb->SetLogPtr(m_report);
 			m_pManager->setLogPtr(m_report);
 			/*开启远程任务处理线程*/
 			m_pManager->startHandleRemoteTask();
