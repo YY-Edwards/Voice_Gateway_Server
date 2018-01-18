@@ -3,13 +3,21 @@
 #include "../include/NSWLNet.h"
 #include "../include/NSSound.h"
 #include "../include/NSManager.h"
+#include "../include/P2PNet.h"
 
 NS::NS(const void* param, OnCall oncall, OnCallStatus onCallStatus, OnNSSystemStatusChange onSystemChange)
 {
 	g_pNSTool = new CTool();
 	g_pNSManager = new NSManager();
 	g_pNSSound = new NSSound();
-	g_pNSNet = new NSWLNet();
+	if (WL == g_repeater_net_mode)
+	{
+		g_pNSNet = new NSWLNet();
+	}
+	else
+	{
+		g_pNSNet = new CP2PNet();
+	}
 
 	NS_RegCallEvent((void*)param, oncall);
 	NS_RegCallStatusEvent((void*)param, onCallStatus);
@@ -28,6 +36,11 @@ NS::~NS()
 		if (WL == g_repeater_net_mode)
 		{
 			delete (NSWLNet*)g_pNSNet;
+			g_pNSNet = NULL;
+		}
+		else
+		{
+			delete (CP2PNet*)g_pNSNet;
 			g_pNSNet = NULL;
 		}
 	}
@@ -104,15 +117,7 @@ void NS::CallStop()
 
 le_status_enum NS::LeStatus()
 {
-	if (WL == g_repeater_net_mode)
-	{
-		return ((NSWLNet*)g_pNSNet)->LeStatus();
-	}
-	else
-	{
-		/*ÔÝÊ±²»¿¼ÂÇp2p*/
-		return STARTING;
-	}
+	return g_pNSNet->LeStatus();
 }
 
 void NS::setDb(CMySQL* value)
@@ -153,4 +158,9 @@ license_status_enum NS::LicenseStatus()
 void NS::setLicenseStatus(license_status_enum value)
 {
 	g_license_status = value;
+}
+
+void NS::setRepeaterNetMode(repeater_net_mode_enum value)
+{
+	g_repeater_net_mode = value;
 }

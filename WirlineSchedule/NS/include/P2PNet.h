@@ -21,6 +21,8 @@ public:
 	virtual void HandleAmbeData(void* pData, unsigned long length);
 	/*发送网络数据*/
 	virtual int sendNetDataBase(const char* pData, int len, void* send_to);
+	/*获取当前LE状态*/
+	virtual le_status_enum LeStatus();
 	void AddWorkItem(work_item_t* p);
 private:
 	StartNetParam m_netParam;

@@ -27,6 +27,8 @@ public:
 	/*发送网络数据*/
 	virtual int sendNetDataBase(const char* pData, int len, void* send_to);
 	virtual void HandleAmbeData(void* pData, unsigned long length);
+	/*获取当前LE状态*/
+	virtual le_status_enum LeStatus();
 	/*增加工作集子项*/
 	void AddWorkItem(work_item_t* p);
 	/*设置SitePeer*/
@@ -37,8 +39,6 @@ public:
 	void AddWorkTimeOutItem(work_item_t* p);
 	void CallStart(make_call_param_t *p);
 	void CallStop();
-	/*获取当前LE状态*/
-	le_status_enum LeStatus();
 	call_thread_status_enum CallThreadStatus();
 	//CALL_OPERATE_PARAM CurCallCmd;
 	void CallStopUnnormal();

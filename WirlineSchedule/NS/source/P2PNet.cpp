@@ -2996,3 +2996,8 @@ void CP2PNet::HandleAmbeData(void* pData, unsigned long length)
 {
 	/*do nothing in p2p*/
 }
+
+le_status_enum CP2PNet::LeStatus()
+{
+	return GetLeStatus();
+}

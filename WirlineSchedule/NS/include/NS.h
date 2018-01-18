@@ -28,6 +28,7 @@ public:
 	void setPlayTargetId(unsigned long value);
 	static license_status_enum LicenseStatus();
 	static void setLicenseStatus(license_status_enum value);
+	static void setRepeaterNetMode(repeater_net_mode_enum value);
 private:
 };
 #endif
