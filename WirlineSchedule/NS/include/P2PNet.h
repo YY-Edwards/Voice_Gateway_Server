@@ -153,6 +153,7 @@ private:
 	bool HandleRetryAndTimingSend(work_item_t* curItem, item_oprate_enum &OpreateFlag);
 	/*解析接收到的p2p 语音*/
 	void Handle_P2P_Call(char *dst, const char* pAmbePacket);
+	bool Handle_P2P_Call_End(find_record_condition_t* condition);
 	/*发送数据到中继台*/
 	void SendDataToMaster(work_item_t *w ,unsigned long timeout = TIMEOUT_LE);
 	/*发送xnl数据到中继台*/
