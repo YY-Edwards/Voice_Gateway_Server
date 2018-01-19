@@ -622,7 +622,6 @@ void CP2PNet::AmbeDataThread()
 			condition.call_id = CallSequenceNumber;
 			condition.src_radio = CallSrcID;
 			condition.target_radio = CallTgtID;
-			TRYLOCK(m_recordMutex);
 			m_recordFile = FindOrAddRecordsItem(&condition, bFind);
 			if (!bFind)
 			{
@@ -635,7 +634,6 @@ void CP2PNet::AmbeDataThread()
 				m_recordFile->call_type = call_type;
 				//AddRecordItem(m_recordFile);
 			}
-			RELEASELOCK(m_recordMutex);
 			
 		}
 			break;
@@ -644,7 +642,6 @@ void CP2PNet::AmbeDataThread()
 			condition.call_id = CallSequenceNumber;
 			condition.src_radio = CallSrcID;
 			condition.target_radio = CallTgtID;
-			TRYLOCK(m_recordMutex);
 			m_recordFile = FindOrAddRecordsItem(&condition, bFind);
 			if (!bFind)
 			{
@@ -657,7 +654,6 @@ void CP2PNet::AmbeDataThread()
 			}
 			m_recordFile->setCallStatus(VOICE_BURST);
 			m_recordFile->WriteVoiceFrame(voiceFrame, 21);
-			RELEASELOCK(m_recordMutex);
 			break;
 		case DATA_TYPE_VOICE_TERMINATOR:
 			
@@ -665,21 +661,7 @@ void CP2PNet::AmbeDataThread()
 			condition.call_id = CallSequenceNumber;
 			condition.src_radio = CallSrcID;
 			condition.target_radio = CallTgtID;
-			TRYLOCK(m_recordMutex);
-			m_recordFile = FindRecordsItem(&condition);
-			if (m_recordFile)
-			{
-				m_recordFile->setCallStatus(VOICE_END_BURST);
-				m_recordFile->WriteVoiceFrame(voiceFrame, 21);
-				/*写入数据库*/
-				m_recordFile->WriteToDb();
-				/*从处理容器中移除*/
-				RemoveRecordsItem(m_recordFile);
-				/*删除此记录*/
-				delete m_recordFile;
-				m_recordFile = NULL;
-			}
-			RELEASELOCK(m_recordMutex);
+			Handle_P2P_Call_End(&condition);
 			break;
 		default:
 			break;
@@ -3088,4 +3070,30 @@ void CP2PNet::GetStartNetParam(StartNetParam* p)
 	{
 		*p = m_netParam;
 	}
+}
+bool CP2PNet::Handle_P2P_Call_End(find_record_condition_t* condition)
+{
+	NSRecordFile* record = NULL;
+	TRYLOCK(m_recordMutex);
+	pLinkItem item = findItem(m_recordLink, condition, &FuncFindRecord);
+	if (NULL != item)
+	{
+		if (NULL != item->data)
+		{
+			record = (NSRecordFile*)item->data;
+		}
+	}
+	if (record)
+	{
+		record->setCallStatus(VOICE_END_BURST);
+		/*写入数据库*/
+		record->WriteToDb();
+		/*从处理容器中移除*/
+		RemoveRecordsItem(record);
+		/*删除此记录*/
+		delete record;
+		record = NULL;
+	}
+	RELEASELOCK(m_recordMutex);
+	return (NULL != record);
 }
