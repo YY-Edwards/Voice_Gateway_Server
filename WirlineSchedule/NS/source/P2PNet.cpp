@@ -593,7 +593,7 @@ void CP2PNet::AmbeDataThread()
 		CallSrcID =call_header.CallSrcID;            
 		CallTgtID =call_header.CallTgtID;             
 		RTPTimeStamp =call_header.RTPTimeStamp;
-		src_slot = (CallControlInformation & 0x20) >> 5;
+		src_slot = ((CallControlInformation & 0x20))+1 >> 5;
 		call_type = m_moto_protocol_p2p_t.P2PCall.CallType;
 		//FillThisCall(call_header);
 		char voiceFrame[21] = { 0 };
@@ -1423,13 +1423,13 @@ void CP2PNet::onRecv(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient, const
 	case LE_DEREGISTRATION_RESPONSE:
 		break;
 	case P2P_GRP_VOICE_CALL:
-		m_callType = GroupCall;
+		m_callType = GROUP_CALL;
 	case P2P_PVT_VOICE_CALL:
-		m_callType = IndividualCall;
+		m_callType = PRIVATE_CALL;
 	case P2P_GRP_DATA_CALL:
-		m_callType = GroupCall;
+		m_callType = GROUP_CALL;
 	case P2P_PVT_DATA_CALL:
-		m_callType = IndividualCall;
+		m_callType = PRIVATE_CALL;
 	{
 		work_item_t* temp = new work_item_t;
 		memset(temp, 0, sizeof(work_item_t));
