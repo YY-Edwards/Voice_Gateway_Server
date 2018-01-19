@@ -4,6 +4,7 @@
 #include "../include/HMAC_SHA1.h"
 #include "../include/MySQL.h"
 #include "../include/WDK_VidPidQuery.h"
+#include "../Include/Tool.h"
 
 class NS
 {
@@ -29,6 +30,7 @@ public:
 	static license_status_enum LicenseStatus();
 	static void setLicenseStatus(license_status_enum value);
 	static void setRepeaterNetMode(repeater_net_mode_enum value);
+	static const char* GetSerialNumber();
 private:
 };
 #endif

@@ -28,6 +28,7 @@ typedef struct _onsystemstatuschange_info_t
 {
 	int type;
 	int value;
+	int idx;
 }onsystemstatuschange_info_t;
 
 typedef enum _license_status_enum

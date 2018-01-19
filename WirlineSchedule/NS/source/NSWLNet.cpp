@@ -1467,6 +1467,19 @@ void NSWLNet::Handle_MapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLc
 			param.pNet = this;
 			param.pNetParam = &m_netParam;
 			param.port = pMapInfo->remotePort;
+
+			onsystemstatuschange_info_t info = { 0 };
+			info.type = System_PeerAddr;
+			info.idx = i + 1;
+			info.value = param.addr;
+			NS_SafeSystemStatusChangeEvent(&info);
+			info.type = System_PeerPort;
+			info.value = param.port;
+			NS_SafeSystemStatusChangeEvent(&info);
+			info.type = System_PeerPeerid;
+			info.value = param.peerId;
+			NS_SafeSystemStatusChangeEvent(&info);
+
 			if (!FindLocalIP(param.addr))
 			{
 				condition.peer_id = param.peerId;
@@ -1492,6 +1505,19 @@ void NSWLNet::Handle_MapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLc
 			param.pNet = this;
 			param.pNetParam = &m_netParam;
 			param.port = pMapInfo->remotePort;
+
+			onsystemstatuschange_info_t info = { 0 };
+			info.type = System_PeerAddr;
+			info.idx = i + 1;
+			info.value = param.addr;
+			NS_SafeSystemStatusChangeEvent(&info);
+			info.type = System_PeerPort;
+			info.value = param.port;
+			NS_SafeSystemStatusChangeEvent(&info);
+			info.type = System_PeerPeerid;
+			info.value = param.peerId;
+			NS_SafeSystemStatusChangeEvent(&info);
+
 			if (!FindLocalIP(param.addr))
 			{
 				condition.peer_id = param.peerId;
@@ -2234,6 +2260,10 @@ void NSWLNet::Handle_Le_Status_Starting_Recive(const char Opcode, work_item_t* &
 			ExpectedPeers = pProtocol->numPeers;
 			m_netParam.matser_peer_id = pProtocol->peerID;
 		}
+		onsystemstatuschange_info_t info = { 0 };
+		info.type = System_PeerCount;
+		info.value = ExpectedPeers;
+		NS_SafeSystemStatusChangeEvent(&info);
 		if (0 == ExpectedPeers)
 		{
 			/*主中继进行WireLine注册*/
