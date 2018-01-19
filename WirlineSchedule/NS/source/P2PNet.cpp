@@ -622,6 +622,7 @@ void CP2PNet::AmbeDataThread()
 			condition.call_id = CallSequenceNumber;
 			condition.src_radio = CallSrcID;
 			condition.target_radio = CallTgtID;
+			TRYLOCK(m_recordMutex);
 			m_recordFile = FindOrAddRecordsItem(&condition, bFind);
 			if (!bFind)
 			{
@@ -634,6 +635,7 @@ void CP2PNet::AmbeDataThread()
 				m_recordFile->call_type = call_type;
 				//AddRecordItem(m_recordFile);
 			}
+			RELEASELOCK(m_recordMutex);
 			
 		}
 			break;
@@ -642,6 +644,7 @@ void CP2PNet::AmbeDataThread()
 			condition.call_id = CallSequenceNumber;
 			condition.src_radio = CallSrcID;
 			condition.target_radio = CallTgtID;
+			TRYLOCK(m_recordMutex);
 			m_recordFile = FindOrAddRecordsItem(&condition, bFind);
 			if (!bFind)
 			{
@@ -654,6 +657,7 @@ void CP2PNet::AmbeDataThread()
 			}
 			m_recordFile->setCallStatus(VOICE_BURST);
 			m_recordFile->WriteVoiceFrame(voiceFrame, 21);
+			RELEASELOCK(m_recordMutex);
 			break;
 		case DATA_TYPE_VOICE_TERMINATOR:
 			
@@ -661,6 +665,7 @@ void CP2PNet::AmbeDataThread()
 			condition.call_id = CallSequenceNumber;
 			condition.src_radio = CallSrcID;
 			condition.target_radio = CallTgtID;
+			TRYLOCK(m_recordMutex);
 			m_recordFile = FindRecordsItem(&condition);
 			if (m_recordFile)
 			{
@@ -674,6 +679,7 @@ void CP2PNet::AmbeDataThread()
 				delete m_recordFile;
 				m_recordFile = NULL;
 			}
+			RELEASELOCK(m_recordMutex);
 			break;
 		default:
 			break;
