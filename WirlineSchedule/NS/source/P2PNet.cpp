@@ -2294,10 +2294,41 @@ void CP2PNet::SetLeStatus(le_status_enum value)
 {
 	if (m_le_status_enum != value)
 	{
+		le_status_enum old = m_le_status_enum;
 		char temp[64] = { 0 };
 		sprintf_s(temp, "=====Le Status From %d To %d=====", m_le_status_enum, value);
 		m_log->AddLog(Ns_Log_Info, temp);
 		m_le_status_enum = value;
+		if (m_le_status_enum > WAITFOR_MAP_REQUEST_TX)
+		{
+			onsystemstatuschange_info_t info = { 0 };
+			info.type = System_LEStatus;
+			info.value = P2P_SYSTEM_CONNECT;
+			NS_SafeSystemStatusChangeEvent(&info);
+		}
+		else
+		{
+			onsystemstatuschange_info_t info = { 0 };
+			info.type = System_LEStatus;
+			info.value = P2P_SYSTEM_DISCONNECT;
+			NS_SafeSystemStatusChangeEvent(&info);
+		}
+		/*连接成功*/
+		if (ALIVE == m_le_status_enum)
+		{
+			onsystemstatuschange_info_t info = { 0 };
+			info.type = System_RepeaterStatus;
+			info.value = REPEATER_CONNECT;
+			NS_SafeSystemStatusChangeEvent(&info);
+		}
+		/*断开连接*/
+		if (ALIVE == old)
+		{
+			onsystemstatuschange_info_t info = { 0 };
+			info.type = System_RepeaterStatus;
+			info.value = REPEATER_DISCONNECT;
+			NS_SafeSystemStatusChangeEvent(&info);
+		}
 	}
 }
 //xnl_status_enum CP2PNet::GetXnlStatus()
@@ -2612,6 +2643,12 @@ CP2PPeer* CP2PNet::FindPeersItem(find_peer_condition_t* pCondition)
 void CP2PNet::SetSerialNumber(unsigned char* pSerial)
 {
 	memcpy(m_serialNumber, pSerial, sizeof(m_serialNumber));
+	char temp[11] = { 0 };
+	memcpy(temp, m_serialNumber, sizeof(m_serialNumber));
+	repeaterSerial = temp;
+	onsystemstatuschange_info_t info = { 0 };
+	info.type = System_SendSerial;
+	NS_SafeSystemStatusChangeEvent(&info);
 }
 void CP2PNet::SetSerialNumberCallback(unsigned char* pData, void* pArguments)
 {
