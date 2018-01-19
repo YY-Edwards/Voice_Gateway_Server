@@ -168,6 +168,21 @@ int CP2PNet::StartNet(StartNetParam* p)
 	if (p != NULL)
 	{
 		m_netParam = *p;
+		/*决定当前的工作模式*/
+		g_network_mode = 0x0000;
+		g_network_mode = g_network_mode | Mode_Net_P2P;
+		if (IPSC == m_netParam.work_mode)
+		{
+			g_network_mode = g_network_mode | Mode_Work_IPSC;
+		}
+		else if (CPC == m_netParam.work_mode)
+		{
+			g_network_mode = g_network_mode | Mode_Work_CPC;
+		}
+		else
+		{
+			g_network_mode = g_network_mode | Mode_Work_LCP;
+		}
 		if (NULL == m_pXQTTNet)
 		{
 			m_pXQTTNet = connectServerUdp(m_netParam.master_ip, m_netParam.master_port, m_netParam.local_ip, m_netParam.local_port, &m_masterSocket);
@@ -593,7 +608,8 @@ void CP2PNet::AmbeDataThread()
 		CallSrcID =call_header.CallSrcID;            
 		CallTgtID =call_header.CallTgtID;             
 		RTPTimeStamp =call_header.RTPTimeStamp;
-		src_slot = ((CallControlInformation & 0x20))+1 >> 5;
+		src_slot = ((CallControlInformation & 0x20)) >> 5;
+		src_slot++;
 		call_type = m_moto_protocol_p2p_t.P2PCall.CallType;
 		//FillThisCall(call_header);
 		char voiceFrame[21] = { 0 };
@@ -1424,10 +1440,31 @@ void CP2PNet::onRecv(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient, const
 		break;
 	case P2P_GRP_VOICE_CALL:
 		m_callType = GROUP_CALL;
+		{
+			work_item_t* temp = new work_item_t;
+			memset(temp, 0, sizeof(work_item_t));
+			RECV_VOICE_CALL(temp, pData, m_callType);
+			AddWorkItem(temp);
+		}
+		break;
 	case P2P_PVT_VOICE_CALL:
 		m_callType = PRIVATE_CALL;
+		{
+			work_item_t* temp = new work_item_t;
+			memset(temp, 0, sizeof(work_item_t));
+			RECV_VOICE_CALL(temp, pData, m_callType);
+			AddWorkItem(temp);
+		}
+		break;
 	case P2P_GRP_DATA_CALL:
 		m_callType = GROUP_CALL;
+		{
+			work_item_t* temp = new work_item_t;
+			memset(temp, 0, sizeof(work_item_t));
+			RECV_VOICE_CALL(temp, pData, m_callType);
+			AddWorkItem(temp);
+		}
+		break;
 	case P2P_PVT_DATA_CALL:
 		m_callType = PRIVATE_CALL;
 	{

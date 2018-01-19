@@ -164,3 +164,8 @@ void NS::setRepeaterNetMode(repeater_net_mode_enum value)
 {
 	g_repeater_net_mode = value;
 }
+
+const char* NS::GetSerialNumber()
+{
+	return repeaterSerial.c_str();
+}

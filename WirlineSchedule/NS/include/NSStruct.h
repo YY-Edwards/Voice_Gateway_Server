@@ -50,6 +50,11 @@ class NSManager;
 #define System_RepeaterStatus 0x0C
 #define System_SendSerial 0x0D
 #define System_SendTimeOutCallEnd 0x0E
+#define System_PeerCount 0x0F
+//#define System_PeerIdx 0x10
+#define System_PeerAddr 0x10
+#define System_PeerPort 0x11
+#define System_PeerPeerid 0x12
 #define VID_PID "VID_03EB&PID_2307"
 #define USB_DEL DBT_DEVICEREMOVECOMPLETE
 #define USB_ADD DBT_DEVICEARRIVAL
