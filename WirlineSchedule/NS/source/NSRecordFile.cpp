@@ -268,7 +268,16 @@ void NSRecordFile::WriteToDb()
 					/*file_path*/
 					voiceRecord["file_path"] = g_pNSTool->UnicodeToANSI(m_strCurrentFilePath);
 					/*src_peer_id*/
-					sprintf_s(temp, "%lu", src_peer_id);
+					StartNetParam param = { 0 };
+					g_pNSNet->GetStartNetParam(&param);
+					if (LCP == param.work_mode)
+					{
+						sprintf_s(temp, "%lu", src_peer_id&LCP_PEERID_MASK);
+					}
+					else
+					{
+						sprintf_s(temp, "%lu", src_peer_id);
+					}
 					voiceRecord["src_peer_id"] = temp;
 					/*src_slot*/
 					sprintf_s(temp, "%d", src_slot);

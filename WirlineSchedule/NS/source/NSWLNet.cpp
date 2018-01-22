@@ -3678,7 +3678,14 @@ void NSWLNet::Make_Call(make_call_param_t* p)
 			}
 			else
 			{
-				m_pLog->AddLog(Ns_Log_Error, "peer %lu wl reg fail or unreg", peer->PeerId());
+				if (LCP == m_netParam.work_mode)
+				{
+					m_pLog->AddLog(Ns_Log_Error, "peer %lu wl reg fail or unreg", peer->PeerId()&LCP_PEERID_MASK);
+				}
+				else
+				{
+					m_pLog->AddLog(Ns_Log_Error, "peer %lu wl reg fail or unreg", peer->PeerId());
+				}
 				setCallThreadStatus(Call_Thread_Call_Fail);
 			}
 		}
@@ -4351,7 +4358,14 @@ void NSWLNet::TimeoutsItemDeleteAboutPeer(NSWLPeer* peer)
 						{
 							if (peerId == pFrom->PeerId())
 							{
-								m_pLog->AddLog(Ns_Log_Info, "TimeoutsItemDeleteAboutPeer %lu,Opcode:0x%02x", peerId, p->data.send_data.protocol.le.PROTOCOL_90.Opcode);
+								if (LCP == m_netParam.work_mode)
+								{
+									m_pLog->AddLog(Ns_Log_Info, "TimeoutsItemDeleteAboutPeer %lu,Opcode:0x%02x", peerId&LCP_PEERID_MASK, p->data.send_data.protocol.le.PROTOCOL_90.Opcode);
+								}
+								else
+								{
+									m_pLog->AddLog(Ns_Log_Info, "TimeoutsItemDeleteAboutPeer %lu,Opcode:0x%02x", peerId, p->data.send_data.protocol.le.PROTOCOL_90.Opcode);
+								}
 								temp = item->pNext;
 								removeItem(&m_workTimeOutItems, p);
 								item->pNext = NULL;

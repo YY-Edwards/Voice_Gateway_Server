@@ -30,15 +30,30 @@ NSWLPeer::NSWLPeer(wl_peer_build_param_t* p)
 	in_addr addr;
 	addr.S_un.S_addr = p->addr;
 	char temp[128] = { 0 };
-	sprintf_s(temp, "m_peerId:%lu,ip:%s,port:%u", m_peerId, inet_ntoa(addr), p->port);
-	m_pLog->AddLog(Ns_Log_Info, temp);
+	if (LCP == m_netParam.work_mode)
+	{
+		sprintf_s(temp, "m_peerId:%lu,ip:%s,port:%u", m_peerId & LCP_PEERID_MASK, inet_ntoa(addr), p->port);
+		m_pLog->AddLog(Ns_Log_Info, temp);
+	}
+	else
+	{
+		sprintf_s(temp, "m_peerId:%lu,ip:%s,port:%u", m_peerId, inet_ntoa(addr), p->port);
+		m_pLog->AddLog(Ns_Log_Info, temp);
+	}
 #endif // _DEBUG
 
 }
 
 NSWLPeer::~NSWLPeer()
 {
-	m_pLog->AddLog(Ns_Log_Info, "%lu ~NSWLPeer", PeerId());
+	if (LCP == m_netParam.work_mode)
+	{
+		m_pLog->AddLog(Ns_Log_Info, "%lu ~NSWLPeer", PeerId()&LCP_PEERID_MASK);
+	}
+	else
+	{
+		m_pLog->AddLog(Ns_Log_Info, "%lu ~NSWLPeer", PeerId());
+	}
 	if (m_pNet)
 	{
 		m_pNet->TimeoutsItemDeleteAboutPeer(this);
@@ -608,7 +623,14 @@ void NSWLPeer::setWlRegStatus(wl_reg_status value)
 	if (m_wlRegStatus != value)
 	{
 		char temp[128] = { 0 };
-		sprintf_s(temp, "=====PeerId %lu WlRegStatus from %d to %d=====", PeerId(), m_wlRegStatus, value);
+		if (LCP == m_netParam.work_mode)
+		{
+			sprintf_s(temp, "=====PeerId %lu WlRegStatus from %d to %d=====", PeerId()&LCP_PEERID_MASK, m_wlRegStatus, value);
+		}
+		else
+		{
+			sprintf_s(temp, "=====PeerId %lu WlRegStatus from %d to %d=====", PeerId(), m_wlRegStatus, value);
+		}
 		m_pLog->AddLog(Ns_Log_Info, temp);
 		m_wlRegStatus = value;
 		if (WL_REG_SUCCESS == m_wlRegStatus)

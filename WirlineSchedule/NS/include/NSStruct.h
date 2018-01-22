@@ -68,6 +68,7 @@ class NSManager;
 #define WL_SERIL_FAL 1
 #define P2P_SYSTEM_CONNECT 0
 #define P2P_SYSTEM_DISCONNECT 1
+#define LCP_PEERID_MASK 0x00ffffff
 
 const int OUT_SAMPLES_PER_20mS = 160;
 const DWORD  INTERNALCOMBUFFSIZE = 2048;
