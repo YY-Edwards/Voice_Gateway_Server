@@ -318,6 +318,10 @@ void NSWLNet::onRecive(struct _xqtt_net* pNet, struct _xqtt_net* pNetClient, con
 										  {
 											  pProtocol->le_lcp.PROTOCOL_93_LCP.length = len;
 											  Unpack_LE_NOTIFICATION_MAP_BROADCAST((char*)pData, pProtocol->le_lcp.PROTOCOL_93_LCP);
+											  if (System_Wide_Map_Type != pProtocol->le_lcp.PROTOCOL_93_LCP.mapType)
+											  {
+												  OperateFlag = Oprate_Del;
+											  }
 										  }
 										  else
 										  {
@@ -1391,7 +1395,7 @@ void NSWLNet::Build_WorkItem_LE_92(work_item_t* p)
 		send_data_t* pSendData = &p->data.send_data;
 		pNetworkData = &pSendData->protocol.le_lcp.PROTOCOL_92_LCP;
 		pNetworkData->acceptedLinkProtocolVersion = LCP_CURRENTLPVERSION;
-		pNetworkData->mapType = MAP_TYPE;
+		pNetworkData->mapType = System_Wide_Map_Type;
 		pNetworkData->oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 		pNetworkData->Opcode = LE_NOTIFICATION_MAP_REQUEST;
 		pNetworkData->peerID = m_netParam.local_peer_id;
@@ -1477,7 +1481,14 @@ void NSWLNet::Handle_MapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLc
 			info.value = param.port;
 			NS_SafeSystemStatusChangeEvent(&info);
 			info.type = System_PeerPeerid;
-			info.value = param.peerId;
+			if (LCP == m_netParam.work_mode)
+			{
+				info.value = param.peerId&LCP_PEERID_MASK;
+			}
+			else
+			{
+				info.value = param.peerId;
+			}
 			NS_SafeSystemStatusChangeEvent(&info);
 
 			if (!FindLocalIP(param.addr))
@@ -1515,7 +1526,14 @@ void NSWLNet::Handle_MapBroadcast(T_LE_PROTOCOL_93* p, T_LE_PROTOCOL_93_LCP* pLc
 			info.value = param.port;
 			NS_SafeSystemStatusChangeEvent(&info);
 			info.type = System_PeerPeerid;
-			info.value = param.peerId;
+			if (LCP == m_netParam.work_mode)
+			{
+				info.value = param.peerId&LCP_PEERID_MASK;
+			}
+			else
+			{
+				info.value = param.peerId;
+			}
 			NS_SafeSystemStatusChangeEvent(&info);
 
 			if (!FindLocalIP(param.addr))
@@ -1815,7 +1833,7 @@ void NSWLNet::Unpack_LE_NOTIFICATION_MAP_BROADCAST(char* pData, T_LE_PROTOCOL_93
 	char mapType = networkData.mapType;
 	unsigned short index = 0;
 	int length = dataLength;
-	if (MAP_TYPE == mapType)
+	if (System_Wide_Map_Type == mapType)
 	{
 		length -= 12;
 		while (length)

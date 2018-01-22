@@ -419,6 +419,7 @@ void NSWLPeer::Handle_LE_PEER_REGISTRATION_REQUEST_Recive()
 	memset(p, 0, sizeof(work_item_t));
 	Build_WorkItem_LE_95(p);
 	m_pNet->sendNetDataBase(p->data.send_data.net_data, p->data.send_data.net_lenth, &m_sockaddr);
+	m_pLog->AddLog(Ns_Log_Info, "Opcode:0x95 Send");
 	delete p;
 	p = NULL;
 }
@@ -522,6 +523,7 @@ void NSWLPeer::Handle_LE_PEER_KEEP_ALIVE_REQUEST_Recive()
 	memset(p, 0, sizeof(work_item_t));
 	Build_WorkItem_LE_99(p);
 	m_pNet->sendNetDataBase(p->data.send_data.net_data, p->data.send_data.net_lenth, &m_sockaddr);
+	m_pLog->AddLog(Ns_Log_Info, "Opcode:0x99 Send");
 	delete p;
 	p = NULL;
 }

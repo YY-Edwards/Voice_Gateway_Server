@@ -560,7 +560,7 @@ typedef struct SendVoiceStruct
 #define NUMBER_REGIS_ENTRIES 2
 #define CSBK_ARGUMENTS 0x0000000000000000	//in voice call csbk auguments should set 0
 #define PREAMBLE_DURATION 0x00	//Preamble Duration. For voice call set it to 0.
-#define MAP_TYPE 0x01	//0:System wide map;2:master peer pragramming map
+//#define System_Wide_Map_Type 0x00	//0:System wide map;2:master peer pragramming map
 
 
 /*×Ô¶¨Òåcase*/

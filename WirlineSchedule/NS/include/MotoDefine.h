@@ -103,7 +103,11 @@ static const  char WL_VC_PRIVACY_BURST = 0x22;
 #define Call_Session_End	0x0b
 
 #define LEADING_CHANNEL_ID 0x00 //Refer to CPS configuration.
-#define MAP_TYPE 0x01	//0:System wide map;2:master peer pragramming map
+/*0:System wide map;2:master peer pragramming map;4:Voter Map;7:Map Continuation Indicator《adk_link_establishment_spec_0101.pdf》-line1174,实际情况于此不符*/
+#define System_Wide_Map_Type 0x01
+#define Master_Peer_Programming_Map_Type 0x04
+#define Voter_Map_Type 0x10
+#define Map_Continuation_Indicator_Type 0x80
 
 static const unsigned char Channel_Control_Request_Status_Received = 0x01;
 static const unsigned char Channel_Control_Request_Status_Transmitting = 0x02;
