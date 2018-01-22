@@ -39,7 +39,16 @@ NSRecordFile::~NSRecordFile()
 {
 #if _DEBUG
 	char temp[1024] = { 0 };
-	sprintf_s(temp, "Voice Record CallId %lu From %lu To %lu On Peer:%lu in Slot 0x%02x Delete", call_id, src_radio, target_radio, src_peer_id, src_slot);
+	StartNetParam param = { 0 };
+	g_pNSNet->GetStartNetParam(&param);
+	if (LCP == param.work_mode)
+	{
+		sprintf_s(temp, "Voice Record CallId %lu From %lu To %lu On Peer:%lu in Slot 0x%02x Delete", call_id, src_radio, target_radio, src_peer_id&LCP_PEERID_MASK, src_slot);
+	}
+	else
+	{
+		sprintf_s(temp, "Voice Record CallId %lu From %lu To %lu On Peer:%lu in Slot 0x%02x Delete", call_id, src_radio, target_radio, src_peer_id, src_slot);
+	}
 	m_pLog->AddLog(Ns_Log_Info, temp);
 #endif
 	if (m_pAmbe)
@@ -178,7 +187,16 @@ void NSRecordFile::setCallStatus(int value)
 		{
 #if _DEBUG
 			char temp[1024] = { 0 };
-			sprintf_s(temp, "Voice Record CallId %lu From %lu To %lu On Peer:%lu in Slot 0x%02x VOICE_BURST", call_id, src_radio, target_radio, src_peer_id, src_slot);
+			StartNetParam param = { 0 };
+			g_pNSNet->GetStartNetParam(&param);
+			if (LCP == param.work_mode)
+			{
+				sprintf_s(temp, "Voice Record CallId %lu From %lu To %lu On Peer:%lu in Slot 0x%02x VOICE_BURST", call_id, src_radio, target_radio, src_peer_id&LCP_PEERID_MASK, src_slot);
+			}
+			else
+			{
+				sprintf_s(temp, "Voice Record CallId %lu From %lu To %lu On Peer:%lu in Slot 0x%02x VOICE_BURST", call_id, src_radio, target_radio, src_peer_id, src_slot);
+			}
 			m_pLog->AddLog(Ns_Log_Info, temp);
 #endif
 		}
