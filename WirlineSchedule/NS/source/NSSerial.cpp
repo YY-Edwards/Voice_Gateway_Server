@@ -14,6 +14,9 @@ NSSerial::NSSerial()
 , m_xnl_status_enum(WAITLE)
 , m_pSerialCallBack(NULL)
 , m_serialLink(NULL)
+, m_desAddress(0)
+, m_sourceAddress(0)
+, m_trascationId(0)
 {
 
 }

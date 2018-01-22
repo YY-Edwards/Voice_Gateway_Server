@@ -73,8 +73,8 @@ const char  LE_XNL_XCMP_READ_SERIAL_SUCCESS = (const char)0x00;
 
 #define LCP_CURRENTLPVERSION 0x1005
 #define LCP_OLDESTPVERSION 0x1005
-#define LCP_MODE 0x009A
-#define LCP_SERVICES 0x000020a0  //0x00000000
+#define LCP_MODE 0x019A
+#define LCP_SERVICES 0x00002060  //0x00000000
 
 #define Wireline_Protocol_Version 0x04
 #define REGISTRATION_PDU_ID 2
