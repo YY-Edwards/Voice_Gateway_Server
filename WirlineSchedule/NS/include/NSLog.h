@@ -17,6 +17,8 @@ typedef struct _log_t
 	char message[SIZE_MAX_MSG];
 }log_t;
 
+typedef void(*pHandleLog)(char* msg, void* param);
+
 class NSLog
 {
 public:
@@ -25,6 +27,7 @@ public:
 	static NSLog* instance();
 	void Stop();
 	void AddLog(log_type_enum type,const char* format, ...);
+	void setHandleLog(pHandleLog handleLogFunc,void* param);
 protected:
 	NSLog();
 private:
@@ -34,6 +37,8 @@ private:
 	LOCKERTYPE m_mutexLog;
 	pLinkList m_logs;
 	HANDLE m_waitLogEvent;
+	pHandleLog m_pHandleLog;
+	void* m_handleLogParam;
 
 	void Initialize();
 	static unsigned int __stdcall LogthreadProc(void* pArguments);

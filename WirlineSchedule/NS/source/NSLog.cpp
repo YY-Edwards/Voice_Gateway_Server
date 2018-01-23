@@ -27,12 +27,16 @@ NSLog::NSLog()
 , m_mutexLog(INITLOCKER())
 , m_logs(NULL)
 , m_waitLogEvent(CreateEvent(NULL,FALSE,FALSE,NULL))
+, m_pHandleLog(NULL)
+, m_handleLogParam(NULL)
 {
 
 }
 
 NSLog::~NSLog()
 {
+	m_handleLogParam = NULL;
+	m_pHandleLog = NULL;
 	Stop();
 	clearLogs();
 	DELETELOCKER(m_mutexLog);
@@ -114,6 +118,10 @@ void NSLog::handleMsg(char* pMsg, bool bPrint, log_type_enum type)
 	{
 	case Ns_Log_Error:
 	{
+						 if (m_pHandleLog)
+						 {
+							 (*m_pHandleLog)(pMsg, m_handleLogParam);
+						 }
 						 if (bPrint)
 						 {
 							 printf("%s", pMsg);
@@ -127,6 +135,10 @@ void NSLog::handleMsg(char* pMsg, bool bPrint, log_type_enum type)
 	case Ns_Log_Info:
 	{
 						//#if _DEBUG
+						if (m_pHandleLog)
+						{
+							(*m_pHandleLog)(pMsg, m_handleLogParam);
+						}
 						if (bPrint)
 						{
 							printf("%s", pMsg);
@@ -222,4 +234,10 @@ int NSLog::Size()
 	rlt = listSize(m_logs);
 	RELEASELOCK(m_mutexLog);
 	return rlt;
+}
+
+void NSLog::setHandleLog(pHandleLog handleLogFunc, void* param)
+{
+	m_pHandleLog = handleLogFunc;
+	m_handleLogParam = param;
 }
