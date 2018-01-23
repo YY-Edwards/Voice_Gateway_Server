@@ -4,6 +4,7 @@
 #include <process.h>
 #include "../include/NSManager.h"
 #include "../include/NSLog.h"
+#include "../include/NSGlobal.h"
 
 NSDongle::NSDongle(NSManager* pManager)
 : m_hReadSerialEvent(NULL)

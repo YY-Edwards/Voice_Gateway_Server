@@ -4,6 +4,7 @@
 #include <process.h>
 #include "../include/NSAmbe.h"
 #include "../include/NSWLNet.h"
+#include "../include/NSGlobal.h"
 
 #define RING_SIZE_OUT 64
 

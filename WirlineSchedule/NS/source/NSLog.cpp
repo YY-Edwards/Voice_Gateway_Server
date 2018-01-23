@@ -2,6 +2,7 @@
 #include "../include/NSLog.h"
 #include <process.h>
 #include <time.h>
+#include "../include/NSStruct.h"
 
 //#define LOG_INFO(format, ...)                                                                           \
 //{                                                                                                       \

@@ -9,6 +9,7 @@
 #include "../include/NSManager.h"
 #include "../include/NSWLPeer.h"
 #include "../include/NSNetBase.h"
+#include "../include/NSGlobal.h"
 //#include "WLNet.h"
 
 #define MAX_RECORD_BUFFER_SIZE (100*1024)

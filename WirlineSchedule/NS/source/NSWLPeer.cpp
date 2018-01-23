@@ -4,6 +4,8 @@
 #include "../include/HMAC_SHA1.h"
 #include "../include/NSLog.h"
 #include "../include/NSRecordFile.h"
+#include "../include/MotoDefine.h"
+#include "../include/NSGlobal.h"
 //#include "Manager.h"
 
 #define AUTHENTIC_ID_SIZE	4

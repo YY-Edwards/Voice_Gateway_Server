@@ -5,6 +5,7 @@
 #include "../include/MySQL.h"
 #include "../include/WDK_VidPidQuery.h"
 #include "../Include/Tool.h"
+#include "../include/NSGlobal.h"
 
 class NS
 {

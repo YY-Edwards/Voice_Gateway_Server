@@ -10,6 +10,8 @@
 //#include "Manager.h"
 //#include "WLNet.h"
 #include "../include/NSManager.h"
+#include "../include/NSGlobal.h"
+#include "../include/MotoDefine.h"
 
 #define AUTHENTIC_ID_SIZE	4
 #define VENDER_KEY_SIZE		20

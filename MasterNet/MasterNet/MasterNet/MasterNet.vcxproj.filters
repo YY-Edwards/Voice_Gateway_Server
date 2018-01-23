@@ -1,0 +1,217 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="NS">
+      <UniqueIdentifier>{2d5a3435-b74f-4d69-a295-7d6a60c8e2d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\include">
+      <UniqueIdentifier>{1797fcb3-003f-4688-a9fb-b90ce9236ada}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\source">
+      <UniqueIdentifier>{56bca77f-dd91-4cd4-b65a-75b27ae3390e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\include\mysql-connector-c">
+      <UniqueIdentifier>{b7a799a9-3ab0-4534-8370-cfd41143a639}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\include\mysql-connector-c\lib">
+      <UniqueIdentifier>{1a4bd52e-1bf2-4535-80e7-b4285225ab0f}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\Ambe3000.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\global.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\HMAC_SHA1.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\linklist.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\MotoDefine.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\mutex.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\MySQL.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\net.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\NetStruct.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\NS.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\NSAmbe.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\NSDongle.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\NSGlobal.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\NSLog.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\NSManager.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\NSNetBase.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\NSRecordFile.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\NSSerial.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\NSSound.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\NSStruct.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\NSWLNet.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\NSWLPeer.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\P2PNet.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\P2PPeer.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\ringbuffer.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\SHA1.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\Tool.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\include\WDK_VidPidQuery.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\source\stdafx.h">
+      <Filter>NS\source</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\WirlineSchedule\NS\source\targetver.h">
+      <Filter>NS\source</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MasterNet.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\HMAC_SHA1.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\linklist.c">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\MySQL.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\net.c">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\NS.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\NSAmbe.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\NSDongle.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\NSGlobal.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\NSLog.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\NSManager.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\NSRecordFile.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\NSSerial.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\NSSound.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\NSWLNet.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\NSWLPeer.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\P2PNet.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\P2PPeer.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\ringbuffer.c">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\SHA1.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\Tool.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\WirlineSchedule\NS\source\WDK_VidPidQuery.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\WirlineSchedule\NS\include\mysql-connector-c\lib\libmysql.dll">
+      <Filter>NS\include\mysql-connector-c\lib</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\..\..\WirlineSchedule\NS\include\mysql-connector-c\lib\libmysql.lib">
+      <Filter>NS\include\mysql-connector-c\lib</Filter>
+    </Library>
+    <Library Include="..\..\..\WirlineSchedule\NS\include\mysql-connector-c\lib\mysqlclient.lib">
+      <Filter>NS\include\mysql-connector-c\lib</Filter>
+    </Library>
+  </ItemGroup>
+</Project>
