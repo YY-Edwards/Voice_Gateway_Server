@@ -675,7 +675,7 @@ namespace Dispatcher.ViewsModules
                     }
                     break;
                 case CallOperatedType_t.Stop:
-                    if (_dispatcher != null)
+                    if (_dispatcher != null && IsInCall)
                     {
                         if (_type == TargetType_t.Group && Group.IsAllTarget) _dispatcher.StopCall(-1, TargetMode_t.All);
                         else if (_type == TargetType_t.Group) _dispatcher.StopCall(Group.GroupID, TargetMode_t.Group);
