@@ -47,7 +47,7 @@ namespace Dispatcher.Service
                 {
                     for(int i = 0; i<_operateList.Count; ++i)
                     {
-                        if(_operateList[i].SendTime > DateTime.Now.AddSeconds(-FunctionConfigure.TimeoutSeconds).Ticks)
+                        if(_operateList[i].SendTime < DateTime.Now.AddSeconds(-FunctionConfigure.TimeoutSeconds).Ticks)
                         {
                             if(DispatcherFailure != null)DispatcherFailure(_operateList[i], Status.Timeout);
                             willRemove.Add(i);

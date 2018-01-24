@@ -204,11 +204,11 @@ namespace Dispatcher.Service
                 {
                     case FunctionConfigure.Mode_t.Repeater:
                     case FunctionConfigure.Mode_t.RepeaterWithMnis:
-                        if (!TServer.IsConnected || !SystemStatus.IsReady) return new ServerStatus_t(Repeater.Host, Repeater.Port, false);
+                        if (!TServer.IsConnected ||  SystemStatus == null || !SystemStatus.IsReady) return new ServerStatus_t(Repeater.Host, Repeater.Port, false);
                         else return Repeater;
                     case FunctionConfigure.Mode_t.VehicleStation:
                     case FunctionConfigure.Mode_t.VehicleStationWithMnis:
-                        if (!TServer.IsConnected || !SystemStatus.IsReady) return new ServerStatus_t(VehicleStation.Host, VehicleStation.Port, false);
+                        if (!TServer.IsConnected || SystemStatus == null || !SystemStatus.IsReady) return new ServerStatus_t(VehicleStation.Host, VehicleStation.Port, false);
                         else return VehicleStation;
                     default:
                         return new ServerStatus_t("", 0, false);
@@ -224,10 +224,10 @@ namespace Dispatcher.Service
                 {
                     case FunctionConfigure.Mode_t.RepeaterWithMnis:
                     case FunctionConfigure.Mode_t.VehicleStationWithMnis:
-                        if (!TServer.IsConnected || !SystemStatus.IsReady) return new ServerStatus_t(Mnis.Host, Mnis.Port, false);
+                        if (!TServer.IsConnected || SystemStatus == null || !SystemStatus.IsReady) return new ServerStatus_t(Mnis.Host, Mnis.Port, false);
                         else return Mnis;
                     case FunctionConfigure.Mode_t.VehicleStation:
-                        if (!TServer.IsConnected || !SystemStatus.IsReady) return new ServerStatus_t(VehicleStation.Host, VehicleStation.Port, false);
+                        if (!TServer.IsConnected || SystemStatus == null || !SystemStatus.IsReady) return new ServerStatus_t(VehicleStation.Host, VehicleStation.Port, false);
                         else return VehicleStation;
                     case FunctionConfigure.Mode_t.Repeater:
                     default:

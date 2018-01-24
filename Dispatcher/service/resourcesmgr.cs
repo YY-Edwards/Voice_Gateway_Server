@@ -202,9 +202,10 @@ namespace Dispatcher.Service
                                 {
                                     if (staff != null)
                                     {
+                                        VMTarget group = Groups != null ? Groups.Find(p => p.ID == (staff.DepartmentID | GroupMask)) : null;
                                         Members.Add(new VMTarget(new CMember()
                                         {
-                                            GroupID = staff.DepartmentID,
+                                            GroupID = group == null ? 0 : group.Group.GroupID,
                                             ManCarName = staff.Name,
                                             ManCarID = staff.ID | ManCarMask,
                                         }
