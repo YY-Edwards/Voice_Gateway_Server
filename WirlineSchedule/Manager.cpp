@@ -12,6 +12,8 @@
 //#include "NS/include/NSLog.h"
 //#include "NS/include/NSSound.h"
 #include "NS/include/NS.h"
+#include <Shlwapi.h>
+#pragma comment(lib,"Shlwapi.lib")
 
 //temp delete
 //#include "Net.h"
@@ -530,7 +532,7 @@ int CManager::config(REMOTE_TASK* pTask)
 		return 0;
 	}
 	CONFIG_MNIS_ID = pConfig->mnis.ID;
-	g_pNet->setAudioPath(pConfig->reapeater.AudioPath);
+	//g_pNet->setAudioPath(pConfig->reapeater.AudioPath);
 	if (0 != strcmp(CONFIG_MASTER_IP, pConfig->reapeater.Master.ip))
 	{
 		strcpy_s(CONFIG_MASTER_IP, pConfig->reapeater.Master.ip);
@@ -551,7 +553,7 @@ int CManager::config(REMOTE_TASK* pTask)
 		CONFIG_LOCAL_PEER_ID = pConfig->reapeater.LocalPeerId;
 		if (!bMasterChange)
 		{
-			g_pNet->setWlStatus(STARTING);
+			//g_pNet->setWlStatus(STARTING);
 		}
 	}
 	CONFIG_LOCAL_RADIO_ID = pConfig->reapeater.LocalRadioId;
@@ -560,7 +562,7 @@ int CManager::config(REMOTE_TASK* pTask)
 		CONFIG_RECORD_TYPE = pConfig->reapeater.recordType;
 		if (!bMasterChange)
 		{
-			g_pNet->setWlStatus(STARTING);
+			//g_pNet->setWlStatus(STARTING);
 		}
 	}
 	CONFIG_DEFAULT_GROUP = pConfig->reapeater.DefaultGroupId;
@@ -593,6 +595,9 @@ int CManager::config(REMOTE_TASK* pTask)
 		param.master_port = CONFIG_MASTER_PORT;
 		param.peer_firewall_time = (unsigned short)CONFIG_PEER_HEART_AND_REG_TIME;
 		param.work_mode = CONFIG_RECORD_TYPE;
+		/*handle audio path*/
+		HandleAudioPath(pConfig->reapeater.AudioPath);
+
 		/*³õÊ¼»¯ÍøÂç*/
 		//rlt = g_pNSNet->StartNet(&param);
 		rlt = m_pModelNs->StartNet(&param);
@@ -1860,6 +1865,42 @@ void CManager::setDb(CMySQL* value)
 {
 	m_pModelNs->setDb(value);
 	m_pDb = value;
+}
+
+void CManager::HandleAudioPath(const char* strpath)
+{
+	std::wstring path = g_pNSTool->ANSIToUnicode(strpath);
+	if (path.empty())
+	{
+		NSLog::instance()->AddLog(Ns_Log_Error, "error:audio path is null,there will used default audio path");
+	}
+	else
+	{
+		path += L"\\";
+		if (!PathFileExists(path.c_str()))
+		{
+			std::string str = g_pTool->UnicodeToANSI(path);
+			NSLog::instance()->AddLog(Ns_Log_Error, "error:audio path %s not exist,there will used default audio path", str.c_str());
+		}
+		else
+		{
+			path += L"Voice\\";
+			int createFileRlt = 0;
+			if (!PathFileExists(path.c_str()))
+			{
+				createFileRlt = _wmkdir(path.c_str());
+			}
+			if (0 == createFileRlt)
+			{
+				NS::setAmbeDataPath(path.c_str());
+			}
+			else
+			{
+				std::string str = g_pTool->UnicodeToANSI(path);
+				NSLog::instance()->AddLog(Ns_Log_Error, "error:create file %s fail,there will used default audio path", str.c_str());
+			}
+		}
+	}
 }
 
 //void CManager::setAmbeDataPath(const wchar_t* value)
