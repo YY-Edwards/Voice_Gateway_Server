@@ -15,7 +15,7 @@ using Dispatcher;
 
 namespace Dispatcher.Service
 {
-    public class CTServer:TRX
+    public class CTServer : Transceiver
     {
         private CTcpClient s_Tcp;
 
@@ -26,7 +26,7 @@ namespace Dispatcher.Service
         private string m_ImageFolder = "images";
         public string ImageUrl { get { return "http://" + m_Host + ":" + m_ImagePort.ToString() + "/" + m_ImageFolder + "/"; } }
 
-
+        private int TimoutTimes = 0;
         public string Host { get { return m_Host; } }
         public int Port { get { return m_Port; } }
 
@@ -94,6 +94,18 @@ namespace Dispatcher.Service
                     }
 
                     Log.Error(string.Format("Request:{0} Response Timeout!", seq));
+
+
+                    if (++TimoutTimes > 100)
+                    {
+                        TimoutTimes = 0;
+                        s_Tcp = new CTcpClient();
+
+                        s_Tcp.OnConnected += delegate { if (OnStatusChanged != null)OnStatusChanged(true); };
+                        s_Tcp.OnDisconnected += delegate { if (OnStatusChanged != null)OnStatusChanged(false); };
+                        s_Tcp.OnRecvData += OnReceiveBytes;
+                    }
+
                 };
                 base.WaitReplyTimeout += delegate(long seq) {
                     if (_requestList.ContainsKey(seq))
@@ -102,6 +114,16 @@ namespace Dispatcher.Service
                         _requestList.Remove(seq);
                     }
                     Log.Error(string.Format("Request:{0} Reply Timeout!", seq));
+
+                    if (++TimoutTimes > 100)
+                    {
+                        TimoutTimes = 0;
+                        s_Tcp = new CTcpClient();
+
+                        s_Tcp.OnConnected += delegate { if (OnStatusChanged != null)OnStatusChanged(true); };
+                        s_Tcp.OnDisconnected += delegate { if (OnStatusChanged != null)OnStatusChanged(false); };
+                        s_Tcp.OnRecvData += OnReceiveBytes;
+                    }
                 };                           
             }
 

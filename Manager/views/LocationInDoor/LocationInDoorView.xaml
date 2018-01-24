@@ -7,9 +7,9 @@
              xmlns:ViewModels="clr-namespace:Manager.ViewModels" x:Class="Manager.Views.LocationInDoorView" 
              mc:Ignorable="d" 
              d:DesignHeight="1600" d:DesignWidth="800" Title="室内位置">
-    <Views:ManageView.DataContext>
+    <!--<Views:ManageView.DataContext>
         <ViewModels:LocationInDoorViewModel/>
-    </Views:ManageView.DataContext>
+    </Views:ManageView.DataContext>-->
 
     <DockPanel>
         <DockPanel DockPanel.Dock="Top"  Margin="0,20">

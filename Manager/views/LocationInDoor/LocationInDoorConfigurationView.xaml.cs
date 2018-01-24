@@ -12,5 +12,10 @@ namespace Manager.Views
         {
             InitializeComponent();
         }
+
+        private void intervalList_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int i = 0;
+        }
     }
 }

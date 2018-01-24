@@ -131,11 +131,11 @@ namespace Dispatcher.Service
                     try
                     {
                         _groupmgr.Query();
-                        _waitloadedresources.WaitOne();
+                        _waitloadedresources.WaitOne(10 * 1000);
                         _radiomgr.Query();
-                        _waitloadedresources.WaitOne();
+                        _waitloadedresources.WaitOne(10 * 1000);
                         _staffmgr.Query();
-                        _waitloadedresources.WaitOne();
+                        _waitloadedresources.WaitOne(10 * 1000);
                         // CDepartmentMgr
 
                         Groups.Clear();
@@ -202,9 +202,10 @@ namespace Dispatcher.Service
                                 {
                                     if (staff != null)
                                     {
+                                        VMTarget group = Groups != null ? Groups.Find(p => p.ID == (staff.DepartmentID | GroupMask)) : null;
                                         Members.Add(new VMTarget(new CMember()
                                         {
-                                            GroupID = staff.DepartmentID,
+                                            GroupID = group == null ? 0 : group.Group.GroupID,
                                             ManCarName = staff.Name,
                                             ManCarID = staff.ID | ManCarMask,
                                         }
@@ -230,10 +231,10 @@ namespace Dispatcher.Service
 
 
                         _areamgr.Query();
-                        _waitloadedresources.WaitOne();
+                        _waitloadedresources.WaitOne(10 * 1000);
 
                         _beaconmgr.Query();
-                        _waitloadedresources.WaitOne();
+                        _waitloadedresources.WaitOne(10 * 1000);
 
                         if (_areamgr.List != null) foreach (CArea area in _areamgr.List) Areas.Add(new VMArea(area));
                         if (_beaconmgr.List != null) foreach (CBeacon bracon in _beaconmgr.List) Beacons.Add(new VMBeacon(bracon));

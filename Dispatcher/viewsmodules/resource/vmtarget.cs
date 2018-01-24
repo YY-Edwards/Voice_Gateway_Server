@@ -522,10 +522,54 @@ namespace Dispatcher.ViewsModules
                 }
             }
 
+            RecoverStatus(operate);
+
             NotifyPropertyChanged("WaitIconVisible");
             NotifyPropertyChanged("FailureIconVisible");
         }
 
+
+        private void RecoverStatus(CDispatcher.OperateContent_t operate)
+        {
+            switch (operate.Opcode)
+            {
+                case RequestOpcode.call:
+                    CallParameter callParam = operate.Parameter as CallParameter;
+                    if(callParam.Operate == ExecType_t.Start) ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Idle));
+                    else if (callParam.Operate == ExecType_t.Stop) ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Tx));
+                    break;
+                case RequestOpcode.wlCall:
+                    RepeaterCallParameter repeatercallParam = operate.Parameter as RepeaterCallParameter;
+                    if (repeatercallParam.operate == ExecType_t.Start) ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Idle));
+                    else if (repeatercallParam.operate == ExecType_t.Stop) ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.CallStatus, CallStatus_t.Tx));
+                    break;
+                case RequestOpcode.message:
+                    ShortMessageParameter shortMessageParam = operate.Parameter as ShortMessageParameter;
+                    break;
+                case RequestOpcode.location:
+                    LocationParameter locationParam = operate.Parameter as LocationParameter;
+                    if (locationParam != null)
+                    {
+                        switch (locationParam.Type)
+                        {
+                            case QueryLocationType_t.LocationGps:
+                                if (locationParam.Operate == LocationType_t.Immediate) { }
+                                else if (locationParam.Operate == LocationType_t.StartTriggered) ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.Idle));
+                                else if (locationParam.Operate == LocationType_t.StopTriggered) ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationStatus, LocationStatus_t.Cycle));
+                                break;
+                            case QueryLocationType_t.LocationInDoor:
+                                if (locationParam.Operate == LocationType_t.Immediate) { }
+                                else if (locationParam.Operate == LocationType_t.StartTriggered) ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationStatus_t.Idle));
+                                else if (locationParam.Operate == LocationType_t.StopTriggered) ChangeValueExec(new TargetStatusChangedEventArgs(ChangedKey_t.LocationInDoorStatus, LocationStatus_t.Cycle));
+                                break;
+                        }
+                    }
+                    break;
+                case RequestOpcode.control:
+                    ControlParameter controlParam = operate.Parameter as ControlParameter;                  
+                    break;
+            }
+        }
         private void ChangeValueExec(object parameter)
         {
             if (parameter != null && parameter is TargetStatusChangedEventArgs)
@@ -631,7 +675,7 @@ namespace Dispatcher.ViewsModules
                     }
                     break;
                 case CallOperatedType_t.Stop:
-                    if (_dispatcher != null)
+                    if (_dispatcher != null && IsInCall)
                     {
                         if (_type == TargetType_t.Group && Group.IsAllTarget) _dispatcher.StopCall(-1, TargetMode_t.All);
                         else if (_type == TargetType_t.Group) _dispatcher.StopCall(Group.GroupID, TargetMode_t.Group);

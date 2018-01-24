@@ -4,6 +4,7 @@
 #include "../include/NSManager.h"
 #include "../include/NSLog.h"
 #include "../include/NSSound.h"
+#include "../include/NSGlobal.h"
 
 NSAmbe::NSAmbe()
 //:m_pManager(pManager)

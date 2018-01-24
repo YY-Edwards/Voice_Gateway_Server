@@ -14,10 +14,10 @@ namespace Dispatcher.Service
         public enum Mode_t
         {
             UnKnown =0 ,
-            Repeater = 3,
+            Repeater = 2,
             RepeaterWithMnis = 4,
             VehicleStation = 1,
-            VehicleStationWithMnis = 2,
+            VehicleStationWithMnis = 3,
             Debug = 5,
         }
 

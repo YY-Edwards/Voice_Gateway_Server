@@ -3,6 +3,8 @@
 #include "../include/NSLog.h"
 #include <process.h>
 #include "../include/NSNetBase.h"
+#include "../include/MotoDefine.h"
+#include "../include/NSGlobal.h"
 //#include "Manager.h"
 
 NSSerial::NSSerial()

@@ -1,7 +1,7 @@
 ﻿using Manager.Models;
 using Manager.ViewModels;
 using Sigmar;
-using Sigmar.Logger;
+//using Sigmar.Logger;
 using System;
 using System.Windows;
 using System.Windows.Input;
@@ -12,7 +12,7 @@ namespace Manager.Views
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>
-    public partial class Main : Window, IToggleLogable
+    public partial class Main : Window //, IToggleLogable
     {
         private MainViewModel MainViewModels;
 
@@ -52,7 +52,7 @@ namespace Manager.Views
 
         private void WindowLoaded(object sender, RoutedEventArgs e)
         {
-            Logs.SetToggleWindow(this);
+           // Logs.SetToggleWindow(this);
             MainViewModels.ConnectServer.Execute(null);
         }
 

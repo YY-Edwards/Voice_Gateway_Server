@@ -62,6 +62,26 @@ namespace Dispatcher.Service
         [JsonIgnore]
         public bool IsDeviceInfoUpdated { get { return DeviceInfoStatus == 0; } }
 
+        [JsonIgnore]
+        public bool IsReady { 
+            get 
+            {
+                if (WorkMode == FunctionConfigure.Mode_t.UnKnown) return false;
+                else if (WorkMode == FunctionConfigure.Mode_t.Debug) return true;
+
+                if ((WorkMode == FunctionConfigure.Mode_t.RepeaterWithMnis || WorkMode == FunctionConfigure.Mode_t.VehicleStationWithMnis) && !IsMnisConnected) return false;
+
+                if (WorkMode == FunctionConfigure.Mode_t.VehicleStation || WorkMode == FunctionConfigure.Mode_t.VehicleStationWithMnis)
+                {
+                    return IsDatabaseConnected && IsDeviceInfoUpdated && IsServerConnected && IsDeviceConnected;               
+                }
+                else
+                {
+                    return IsDatabaseConnected && IsDeviceInfoUpdated && IsMicphoneConnected && IsSpeakerConnected && IsLEConnected && IsWireLanConnected && IsDeviceInfoUpdated && IsServerConnected && IsDeviceConnected;                  
+                }
+            }
+        }
+
         public new string ToString()
         {
             if (WorkMode == FunctionConfigure.Mode_t.UnKnown) return "离线模式";
@@ -184,11 +204,11 @@ namespace Dispatcher.Service
                 {
                     case FunctionConfigure.Mode_t.Repeater:
                     case FunctionConfigure.Mode_t.RepeaterWithMnis:
-                        if (!TServer.IsConnected) return new ServerStatus_t(Repeater.Host, Repeater.Port, false);
+                        if (!TServer.IsConnected ||  SystemStatus == null || !SystemStatus.IsReady) return new ServerStatus_t(Repeater.Host, Repeater.Port, false);
                         else return Repeater;
                     case FunctionConfigure.Mode_t.VehicleStation:
                     case FunctionConfigure.Mode_t.VehicleStationWithMnis:
-                        if (!TServer.IsConnected) return new ServerStatus_t(VehicleStation.Host, VehicleStation.Port, false);
+                        if (!TServer.IsConnected || SystemStatus == null || !SystemStatus.IsReady) return new ServerStatus_t(VehicleStation.Host, VehicleStation.Port, false);
                         else return VehicleStation;
                     default:
                         return new ServerStatus_t("", 0, false);
@@ -204,10 +224,10 @@ namespace Dispatcher.Service
                 {
                     case FunctionConfigure.Mode_t.RepeaterWithMnis:
                     case FunctionConfigure.Mode_t.VehicleStationWithMnis:
-                        if (!TServer.IsConnected) return new ServerStatus_t(Mnis.Host, Mnis.Port, false);
+                        if (!TServer.IsConnected || SystemStatus == null || !SystemStatus.IsReady) return new ServerStatus_t(Mnis.Host, Mnis.Port, false);
                         else return Mnis;
                     case FunctionConfigure.Mode_t.VehicleStation:
-                        if (!TServer.IsConnected) return new ServerStatus_t(VehicleStation.Host, VehicleStation.Port, false);
+                        if (!TServer.IsConnected || SystemStatus == null || !SystemStatus.IsReady) return new ServerStatus_t(VehicleStation.Host, VehicleStation.Port, false);
                         else return VehicleStation;
                     case FunctionConfigure.Mode_t.Repeater:
                     default:

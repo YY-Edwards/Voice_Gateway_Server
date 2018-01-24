@@ -13,7 +13,8 @@ WDK_WhoAllVidPid
 #pragma once  
 #include <string>  
 using namespace std;
-#include <windows.h>  
+#include <windows.h>
+#include "NSStruct.h"
 
 
 #ifndef MACRO_HIDD_VIDPID  

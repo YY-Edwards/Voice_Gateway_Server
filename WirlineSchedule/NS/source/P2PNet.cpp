@@ -2,6 +2,8 @@
 #include "../include/P2pNet.h"
 #include "../include/NSRecordFile.h"
 #include <process.h>
+#include "../include/NSGlobal.h"
+#include "../include/MotoDefine.h"
 CP2PNet::CP2PNet()
 :  m_isWork(false)
 , m_isTimeoutWork(false)

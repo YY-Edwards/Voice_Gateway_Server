@@ -35,12 +35,31 @@ namespace Dispatcher.Service
             this.DispatcherCompleted += new Action<CDispatcher.OperateContent_t>(OnDispatcherCompleted);
             this.DispatcherFailure += new Action<CDispatcher.OperateContent_t, CDispatcher.Status>(OnDispatcherFailure);
 
-
-            //Timeout judgment Process
-            //new Task(DispatchProcess).Start();
+            new Task(SessionCheck).Start();
         }
 
+        private void SessionCheck()
+        {
+            while(true)
+            {                   
+                List<int> willRemove = new List<int>();
+                lock(_operateList)
+                {
+                    for(int i = 0; i<_operateList.Count; ++i)
+                    {
+                        if(_operateList[i].SendTime < DateTime.Now.AddSeconds(-FunctionConfigure.TimeoutSeconds).Ticks)
+                        {
+                            if(DispatcherFailure != null)DispatcherFailure(_operateList[i], Status.Timeout);
+                            willRemove.Add(i);
+                        }
+                    }
 
+                    foreach(int index in willRemove)_operateList.RemoveAt(index);
+                }
+
+                Thread.Sleep(500);
+            }
+        }
         private void OnDispatcherBegin(CDispatcher.OperateContent_t operate)
         {
             if (operate.Opcode == RequestOpcode.status || operate.Opcode == RequestOpcode.wlInfo)
@@ -76,31 +95,6 @@ namespace Dispatcher.Service
         }
 
 
-        private void DispatchProcess()
-        {
-            while (true)
-            {
-                lock (_operateList)
-                {
-                    for (int i = _operateList.Count - 1; i >= 0; i-- )
-                    {
-                        OperateContent_t operate = _operateList[i];
-                        if (DateTime.Now.AddSeconds(-FunctionConfigure.TimeoutSeconds).Ticks - operate.SendTime > 0)//1 minute
-                        //if (DateTime.Now.AddSeconds(-10).Ticks - operate.SendTime > 0)//1 minute
-                        {
-                            //Log.Info(string.Format("操作超时：{0},TIME{1}", operate.Dept, DateTime.Now.ToString()));
-                            _operateList.RemoveAt(i);
-
-                            if (DispatcherFailure != null) DispatcherFailure(operate, Status.Timeout);
-                        }
-                    }                      
-                }
-
-
-                Thread.Sleep(100);
-            }
-        }
-
 
         private void OperateCompleted(string sessionId)
         {
@@ -115,7 +109,6 @@ namespace Dispatcher.Service
                 _operateList.RemoveAll(p => p.SessionId == sessionId);
             }
         }
-
 
 
         private void ReceiveRequest(RequestOpcode call, RequestType type, object param)
@@ -718,15 +711,15 @@ namespace Dispatcher.Service
                 try
                 {
                     if (isSession)
-                    {
-                        if (DispatcherBegin != null) DispatcherBegin(operateContent);
-
+                    {                     
                         //Console.WriteLine(operateContent.Dept);
 
                         lock (_operateList)
                         {
                             _operateList.Add(operateContent);
+
                         }
+                        if (DispatcherBegin != null) DispatcherBegin(operateContent);
 
                     }
                     string[] reply = CTServer.Instance().Request(opcode, _type, parameter);

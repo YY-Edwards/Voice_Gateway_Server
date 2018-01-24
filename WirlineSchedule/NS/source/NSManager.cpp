@@ -9,6 +9,7 @@
 #include <Dbt.h>
 #pragma comment(lib, "winmm.lib")
 #include "../include/NSNetBase.h"
+#include "../include/NSGlobal.h"
 
 NSManager::NSManager()
 :m_mutexDongles(INITLOCKER())

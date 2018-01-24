@@ -3,6 +3,7 @@
 
 #include "mutex.h"
 #include "ringbuffer.h"
+#include "NSStruct.h"
 
 #define BLOCK_SIZE 5120
 #define BLOCK_COUNT 20

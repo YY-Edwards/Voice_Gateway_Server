@@ -2,6 +2,7 @@
 #include "../include/P2PPeer.h"
 #include "../include/P2PNet.h"
 #include "../include/NSLog.h"
+#include "../include/MotoDefine.h"
 
 
 CP2PPeer::CP2PPeer(p2p_peer_build_param_t* p)
