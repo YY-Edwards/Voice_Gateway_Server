@@ -156,7 +156,7 @@ namespace Dispatcher.ViewsModules
             }
             catch (Exception ex)
             {
-                Log.Warning("Release Semaphore Failure", ex);
+                Log.Warning("Wait Login Release Semaphore Failure", ex);
             }
         }
 
@@ -284,7 +284,7 @@ namespace Dispatcher.ViewsModules
                 _waitlogin = new Semaphore(0, 1);
 
                 _user.Auth(uid, psd);
-                _waitlogin.WaitOne();
+                _waitlogin.WaitOne(10 * 1000);
                 if (!_issuccess)
                 {
                     return;
@@ -302,7 +302,7 @@ namespace Dispatcher.ViewsModules
                 AddInitilizeContents("账号验证成功...");
                 AddInitilizeContents("获取注册信息...");
                 _register.Get();
-                _waitlogin.WaitOne();
+                _waitlogin.WaitOne(10 * 1000);
                 if (!_issuccess)
                 {
                     AddInitilizeContents("获取注册信息失败...");
@@ -335,31 +335,31 @@ namespace Dispatcher.ViewsModules
         {
             AddInitilizeContents("获取基本配置信息...");
             _base.Get();
-            _waitlogin.WaitOne();
+            _waitlogin.WaitOne(10 * 1000);
             if (!_issuccess) return false;
 
             AddInitilizeContents("获取车载台配置信息...");
             _vehiclestation.Get();
-            _waitlogin.WaitOne();
+            _waitlogin.WaitOne(10 * 1000);
             if (!_issuccess) return false;
 
             AddInitilizeContents("获取中继台配置信息...");
             _repeater.Get();
-            _waitlogin.WaitOne();
+            _waitlogin.WaitOne(10 * 1000);
             if (!_issuccess) return false;
 
             AddInitilizeContents("获取MNIS配置信息...");
             _mnis.Get();
-            _waitlogin.WaitOne();
+            _waitlogin.WaitOne(10 * 1000);
             if (!_issuccess) return false;
 
             AddInitilizeContents("获取GPS位置查询配置信息...");
             _location.Get();
-            _waitlogin.WaitOne();
+            _waitlogin.WaitOne(10 * 1000);
             if (!_issuccess) return false;
             AddInitilizeContents("获取室内位置查询配置信息...");
             _locationInDoor.Get();
-            _waitlogin.WaitOne();
+            _waitlogin.WaitOne(10 * 1000);
             if (!_issuccess) return false;
 
             return true;

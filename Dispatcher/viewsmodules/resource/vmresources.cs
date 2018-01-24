@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
 
 using System.Windows;
 using System.Windows.Controls;
@@ -78,7 +79,9 @@ namespace Dispatcher.ViewsModules
         private void LoadedExec(object parameter)
         {
             //_resource.RegisterLoggerEvents(this);
-            if (!_resource.IsInitialized) _resource.InitializeResources(this);            
+            new Task(() => {
+                if (!_resource.IsInitialized) _resource.InitializeResources(this);            
+            }).Start();
         }
 
 

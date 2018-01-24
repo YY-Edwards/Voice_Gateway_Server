@@ -592,43 +592,7 @@ namespace Dispatcher.ViewsModules
 
             private void ReceiveRequest(RequestOpcode call, object param)
         {
-            //string parameter = param == null ? null : JsonConvert.SerializeObject(param);
-            //switch (call)
-            //{
-            //    case RequestOpcode.status:
-            //    case RequestOpcode.wlInfo:
-            //        OnStatusUpdate(parameter);
-            //        break;
-            //    case RequestOpcode.callStatus:
-            //    case RequestOpcode.wlCallStatus:
-            //        OnCallResponse(parameter);
-            //        break;
-            //    case RequestOpcode.messageStatus:
-            //        OnShortMessageResponse(parameter);
-            //        break;
-            //    case RequestOpcode.message:
-            //        OnShortMessageRequest(parameter);
-            //        break;
-            //    case RequestOpcode.sendArs:
-            //        OnArsRequest(parameter);
-            //        break;
-            //    case RequestOpcode.controlStatus:
-            //        OnControlResponse(parameter);
-            //        break;
-            //    case RequestOpcode.queryGpsStatus:
-            //        OnLocationQueryResponse(parameter);
-            //        break;
-            //    case RequestOpcode.sendGps:
-            //        OnLocationReport(parameter);
-            //        break;
-            //    case RequestOpcode.locationIndoor:
-            //        OnLocationInDoorReport(parameter);
-            //        break;
-            //    default:
-            //        CustomRequest(call,  parameter);
-            //        break;
-
-            //}
+           
         }
 
         private void Timeout(object sender, EventArgs e)

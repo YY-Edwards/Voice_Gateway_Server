@@ -147,7 +147,7 @@
     <Compile Include="modules\runtime.cs" />
     <Compile Include="modules\mancar.cs" />
     <Compile Include="service\savework.cs" />
-    <Compile Include="service\sender.cs" />
+    <Compile Include="service\Transceiver.cs" />
     <Compile Include="service\tserver\mnissetting.cs" />
     <Compile Include="service\tserver\locationsetting.cs" />
     <Compile Include="service\tserver\basesetting.cs" />

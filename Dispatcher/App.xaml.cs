@@ -14,14 +14,18 @@ using Dispatcher;
 
 using Dispatcher.Views;
 
+
 namespace Dispatcher
 {
 
     public class Log
     {
+
+        private static bool ShowLog = false;
+
         public static void Initialize(string dir, string title, int buffersize = 100)
         {
-            //Log.Initialize(dir,name);
+            if (ShowLog)Sigmar.Logger.Log.Initialize(dir, title, buffersize);
         }
         private static Action<LogContent> Onmessage;
         public static void BindingMessage(Action<LogContent> onnotify)
@@ -31,58 +35,72 @@ namespace Dispatcher
 
         public static void Message(string message)
         {
-            if (Onmessage != null) Onmessage(new  LogContent(LogMode_t.MESSAGE, message));
+            if (Onmessage != null) Onmessage(new LogContent(LogMode_t.MESSAGE, message));
+
+            if (ShowLog) Sigmar.Logger.Log.Message(message);
         }
 
         public static void Info(string info)
         {
+            if (ShowLog) Sigmar.Logger.Log.Info(info);
         }
 
         public static void Debug(string debug)
         {
+            if (ShowLog) Sigmar.Logger.Log.Debug(debug);
         }
 
 
         public static void Warning(Exception ex)
         {
+            if (ShowLog) Sigmar.Logger.Log.Warning(ex);
         }
 
 
         public static void Error(Exception ex)
         {
+            if (ShowLog) Sigmar.Logger.Log.Error(ex);
         }
 
 
         public static void Fatal(Exception ex)
         {
+            if (ShowLog) Sigmar.Logger.Log.Fatal(ex);
         }
         public static void Warning(string warning = null, Exception ex = null)
         {
+            if (ShowLog) Sigmar.Logger.Log.Warning(warning, ex);
         }
 
 
         public static void Error(string error, Exception ex = null)
         {
+            if (ShowLog) Sigmar.Logger.Log.Error(error, ex);
         }
 
 
         public static void Fatal(string fatal, Exception ex = null)
         {
+            if (ShowLog) Sigmar.Logger.Log.Fatal(fatal, ex);
         }
 
         public static void Report(string str, bool istx = true)
         {
+            if (ShowLog) Sigmar.Logger.Log.Report(str, istx);
         }
 
         public static void Report(byte[] bytes, bool istx = true)
         {
+            if (ShowLog) Sigmar.Logger.Log.Report(bytes, istx);
         }
         public static void Report(ReportType_t type, byte[] bytes, bool istx, string source, string target, string parse = null)
         {
+           // if (ShowLog) Sigmar.Logger.Log.Report(type, bytes, istx, source, target, parse);
         }
 
         public static void Report(ReportType_t type, string str, bool istx, string source, string target, string parse = null)
         {
+            //if (ShowLog) Sigmar.Logger.Log.Report(type, str, istx, source, target, parse);
         }
     }
 

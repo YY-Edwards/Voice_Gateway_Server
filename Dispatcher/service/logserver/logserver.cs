@@ -13,7 +13,7 @@ using Dispatcher;
 
 namespace Dispatcher.Service
 {
-    public class CLogServer:TRX
+    public class CLogServer:Transceiver
     {
         private CTcpClient s_Tcp;
 
@@ -23,6 +23,8 @@ namespace Dispatcher.Service
 
         private long s_CallID = 0;
         private bool s_IsInitialized = false;
+
+        private int TimoutTimes = 0;
 
         public string Host { get { return m_Host; } }
         public int Port { get { return m_Port; } }
@@ -131,10 +133,32 @@ namespace Dispatcher.Service
                base.WaitResponseTimeout += delegate(long seq) {
                     if (Timeout != null) Timeout(this, new EventArgs());
                     Log.Error(string.Format("Request:{0} Response Timeout!", seq));
+
+                   if(++TimoutTimes > 100)
+                   {
+                       TimoutTimes = 0;
+                       s_Tcp = new CTcpClient();
+
+                       s_Tcp.OnConnected += delegate { if (OnStatusChanged != null)OnStatusChanged(true); };
+                       s_Tcp.OnDisconnected += delegate { if (OnStatusChanged != null)OnStatusChanged(false); };
+                       s_Tcp.OnRecvData += OnReceiveBytes;
+                   }
+
+                
                 };
                 base.WaitReplyTimeout += delegate(long seq) {
                     if (Timeout != null) Timeout(this, new EventArgs());
                     Log.Error(string.Format("Request:{0} Reply Timeout!", seq));
+
+                    if (++TimoutTimes > 100)
+                    {
+                        TimoutTimes = 0;
+                        s_Tcp = new CTcpClient();
+
+                        s_Tcp.OnConnected += delegate { if (OnStatusChanged != null)OnStatusChanged(true); };
+                        s_Tcp.OnDisconnected += delegate { if (OnStatusChanged != null)OnStatusChanged(false); };
+                        s_Tcp.OnRecvData += OnReceiveBytes;
+                    }
                 }; 
             }
 
@@ -172,12 +196,15 @@ namespace Dispatcher.Service
                             LogServerResponse response = JsonConvert.DeserializeObject<LogServerResponse>(jsonstr);
 
                             if (response != null) OnReceiveResponse(response.callId, response);
+
+                            Log.Info(string.Format("Log Receive Response:{0}.", response.callId));
                             
                         }
                         else
                         {
                             //request
                             LogServerRequest rxrequest = JsonConvert.DeserializeObject<LogServerRequest>(jsonstr);
+                            Log.Info(string.Format("Log Receive Request:{0}.", rxrequest.Call.ToString()));
 
                             if (rxrequest != null)
                             {
@@ -238,6 +265,8 @@ namespace Dispatcher.Service
                     if (json != string.Empty)
                     {
                         LogServerResponse res = RequestWithoutReply<LogServerResponse>(s_CallID, Encoding.UTF8.GetBytes(json));
+
+                        Log.Info(string.Format("Log Request:{0}({1}).", call.ToString(), s_CallID));
 
                         if (res == null) return null;
                         return new string[2] { res.status, JsonConvert.SerializeObject(res.contents, Formatting.None) };

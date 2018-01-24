@@ -48,8 +48,8 @@ namespace Dispatcher.Service
         {
             if (m_Host == host && m_Port == port && m_IsConnect)
             {
-                if (OnConnected != null) OnConnected(this);
-                return;
+                //if (OnConnected != null) OnConnected(this);
+                //return;
             }
 
             m_Host = host;
@@ -72,7 +72,7 @@ namespace Dispatcher.Service
                 }
                 catch (Exception ex)
                 {
-
+                    Log.Error(string.Format("TCP Conntet:{0}:{1} Failure->{2}", m_Host, m_Port, ex.Message));
                 }
 
             })).Start();
@@ -105,7 +105,7 @@ namespace Dispatcher.Service
                         new Thread(new ThreadStart(delegate()
                         {
                             byte[] receivebytes = result.Take(receiveLength).ToArray();
-                            Log.Report(ReportType_t.Json, Encoding.UTF8.GetString(receivebytes),false, Host + ":" + Port.ToString(), "127.0.0.1");
+                            //Log.Report(ReportType_t.Json, Encoding.UTF8.GetString(receivebytes),false, Host + ":" + Port.ToString(), "127.0.0.1");
                             if (OnRecvData != null) OnRecvData(this, receivebytes);
 
                         })).Start();
@@ -131,7 +131,7 @@ namespace Dispatcher.Service
                         if (m_IsConnect)
                         {
                             m_Socket.Send(bytes);
-                            Log.Report(ReportType_t.Json, Encoding.UTF8.GetString(bytes),true, "127.0.0.1", Host + ":" + Port.ToString());
+                            //Log.Report(ReportType_t.Json, Encoding.UTF8.GetString(bytes),true, "127.0.0.1", Host + ":" + Port.ToString());
                         }
                     }
                 }

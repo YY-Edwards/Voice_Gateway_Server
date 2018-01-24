@@ -131,11 +131,11 @@ namespace Dispatcher.Service
                     try
                     {
                         _groupmgr.Query();
-                        _waitloadedresources.WaitOne();
+                        _waitloadedresources.WaitOne(10 * 1000);
                         _radiomgr.Query();
-                        _waitloadedresources.WaitOne();
+                        _waitloadedresources.WaitOne(10 * 1000);
                         _staffmgr.Query();
-                        _waitloadedresources.WaitOne();
+                        _waitloadedresources.WaitOne(10 * 1000);
                         // CDepartmentMgr
 
                         Groups.Clear();
@@ -230,10 +230,10 @@ namespace Dispatcher.Service
 
 
                         _areamgr.Query();
-                        _waitloadedresources.WaitOne();
+                        _waitloadedresources.WaitOne(10 * 1000);
 
                         _beaconmgr.Query();
-                        _waitloadedresources.WaitOne();
+                        _waitloadedresources.WaitOne(10 * 1000);
 
                         if (_areamgr.List != null) foreach (CArea area in _areamgr.List) Areas.Add(new VMArea(area));
                         if (_beaconmgr.List != null) foreach (CBeacon bracon in _beaconmgr.List) Beacons.Add(new VMBeacon(bracon));
