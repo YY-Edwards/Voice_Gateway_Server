@@ -34,6 +34,11 @@ namespace Manager.ViewModels
         public string Password { set { Element.Password = value; } get { return Element.Password; } }
         public int TypeIndex { set { Element.Type = value == 1 ? User.UserType.admin : User.UserType.guest; } get { return Element.Type == User.UserType.admin ? 1 : 0; } }
 
+
+        protected override void CreateElement()
+        {
+            if (UserName != null && UserName != "") base.CreateElement();
+        }
         protected override void OnResourceChanged()
         {          
         }

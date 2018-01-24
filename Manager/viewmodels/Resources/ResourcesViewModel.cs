@@ -126,7 +126,7 @@ namespace Manager.ViewModels
 
         protected abstract void OnResourceChanged();
         protected abstract void OnSelectedChanged();
-        private void CreateElement()
+        protected virtual void CreateElement()
         {
             Element.ID = (DateTime.Now - new DateTime(2000, 1,1)).Ticks;
             _resources.Insert(Element);

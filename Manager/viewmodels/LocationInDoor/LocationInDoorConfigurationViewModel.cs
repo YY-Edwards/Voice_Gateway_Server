@@ -33,14 +33,12 @@ namespace Manager.ViewModels
             _IntervalList = Utility.GeneralQueryIntervals;        
         }
 
-
-        public Configuration.LocationQueryType_t QueryType { get { return _queryType; } set { _queryType = value; SetQueryType(value); } }
+        public Configuration.LocationQueryType_t QueryType { get { return _queryType; } set {_queryType = value; SetQueryType(value); } }
         public ICollectionView Intervals { get { return new ListCollectionView(_IntervalList); } }
 
         public bool IsEnable { get { return _configuration.IsEnable; } set { _configuration.IsEnable = value; IsChanged = true; } }
 
-
-        public int IntervalIndex { get { return _IntervalList.FindIndex(p => p == _configuration.Interval); } set { _configuration.Interval = _IntervalList[value]; IsChanged = true; } }
+        public int IntervalIndex { get {return _IntervalList.FindIndex(p => p == _configuration.Interval); } set {_configuration.Interval = _IntervalList[value]; IsChanged = true; } }
 
         public int iBeaconNumber { get { return _configuration.iBeaconNumber; } set { _configuration.iBeaconNumber = value; IsChanged = true; } }
 

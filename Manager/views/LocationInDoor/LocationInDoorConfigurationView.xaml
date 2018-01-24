@@ -7,9 +7,9 @@
              xmlns:ViewModels="clr-namespace:Manager.ViewModels" x:Class="Manager.Views.LocationInDoorConfigurationView" 
              mc:Ignorable="d" 
              d:DesignHeight="1600" d:DesignWidth="800"  Background="#FF313133">
-    <UserControl.DataContext>
+    <!--<UserControl.DataContext>
         <ViewModels:LocationInDoorViewModel/>
-    </UserControl.DataContext>
+    </UserControl.DataContext>-->
     <DockPanel LastChildFill="False" DockPanel.Dock="Top" VerticalAlignment="Top">
         <DockPanel Height="24"  DockPanel.Dock="Top">
             <Image Height="10" VerticalAlignment="Center" Width="13" Source="../images/double_arrow_13_10.png"/>
@@ -30,7 +30,7 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <Label Content="查询周期 :" VerticalAlignment="Center" Margin="0" HorizontalAlignment="Right" Foreground="#FFBFBFBF" FontSize="13"/>
-            <ComboBox x:Name="intervalList"  HorizontalAlignment="Left" Width="263" Grid.Column="1" Height="30" VerticalContentAlignment="Center" Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource ComboBoxStyleNormal}" VerticalAlignment="Center" SelectedIndex="{Binding IntervalIndex}" ItemsSource="{Binding Intervals}" />
+            <ComboBox x:Name="intervalList"  HorizontalAlignment="Left" Width="263" Grid.Column="1" Height="30" VerticalContentAlignment="Center" Foreground="#FFBFBFBF" FontSize="13" Style="{DynamicResource ComboBoxStyleNormal}" VerticalAlignment="Center" SelectedIndex="{Binding IntervalIndex}" ItemsSource="{Binding Intervals}" SelectionChanged="intervalList_SelectionChanged" />
         </Grid>
         <TextBlock TextWrapping="Wrap" Text="室内位置查询时，单次上报最大信标数" Margin="20,6,0,6" Width="551.087" DockPanel.Dock="Top" HorizontalAlignment="Left" Foreground="#FFBFBFBF" FontSize="13"/>
         <Grid DockPanel.Dock="Top" VerticalAlignment="Top"  Height="36">
