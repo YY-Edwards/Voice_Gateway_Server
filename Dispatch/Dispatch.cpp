@@ -133,6 +133,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		printf("press any key to end\r\n");
 		scanf_s("%c", &temp, 1);
 #endif
+		rpcServer.stop();
 		dis.disConnect();
 		while (rmtPeerList.size() > 0)
 		{
@@ -143,8 +144,7 @@ int _tmain(int argc, _TCHAR* argv[])
 				delete p;
 				p = NULL;
 			}
-		}
-		rpcServer.stop();
+		}	
 #if SERVER_CODE	
 	}
 	);

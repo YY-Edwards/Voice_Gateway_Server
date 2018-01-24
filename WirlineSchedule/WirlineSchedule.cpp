@@ -1,12 +1,12 @@
 #include "stdafx.h"
 #include "Manager.h"
-#include "MySQL.h"
+//#include "NS/include/MySQL.h"
 #include "../lib/rpc/include/RpcServer.h"
 #include "actionHandler.h"
 #include "WLNet.h"
 #include "../lib/radio/DataScheduling.h"
 #include "../lib/service/service.h"
-#include "NSLog.h"
+//#include "NS/include/NSLog.h"
 #include <exception>
 
 #include <shlobj.h> 
@@ -240,7 +240,9 @@ int _tmain(int argc, _TCHAR* argv[])
 			createFileRlt = _wmkdir(appFolder.c_str());
 		}
 
-		wcscpy(g_ambedata_path, appFolder.c_str());
+		//wcscpy(g_ambedata_path, appFolder.c_str());
+		//m_pManager->setAmbeDataPath(appFolder.c_str());
+		NS::setAmbeDataPath(appFolder.c_str());
 		std::wstring defaultAudioPath = appFolder;
 		//defaultAudioPath += L"\\Voice";
 		appFolder = appFolder + L"\\" + AppNameSub;
@@ -298,7 +300,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 			/*设置基本参数*/
 			m_report = handleLog;
-			m_pDb->SetLogPtr(m_report);
+			//m_pDb->SetLogPtr(m_report);
 			m_pManager->setLogPtr(m_report);
 			/*开启远程任务处理线程*/
 			m_pManager->startHandleRemoteTask();
@@ -320,7 +322,13 @@ int _tmain(int argc, _TCHAR* argv[])
 			m_ret = m_pDb->Open(DB_HOST, DB_PORT, DB_USER, DB_PWD, DB_NAME);
 			if (m_ret)
 			{
-				g_pDb = m_pDb;
+				//g_pDb = m_pDb;
+				m_pManager->setDb(m_pDb);
+			}
+			else
+			{
+				delete m_pDb;
+				m_pDb = NULL;
 			}
 
 #if SERVICE_CODDE
@@ -419,6 +427,12 @@ int _tmain(int argc, _TCHAR* argv[])
 			/************************************************************************/
 			/* 资源释放
 			/************************************************************************/
+			if (m_pRpcServer)
+			{
+				m_pRpcServer->stop();
+				delete m_pRpcServer;
+				m_pRpcServer = NULL;
+			}
 			if (m_pManager)
 			{
 				//m_pManager->stop();
@@ -446,12 +460,6 @@ int _tmain(int argc, _TCHAR* argv[])
 					delete p;
 					p = NULL;
 				}
-			}
-			if (m_pRpcServer)
-			{
-				m_pRpcServer->stop();
-				delete m_pRpcServer;
-				m_pRpcServer = NULL;
 			}
 
 			if (g_pSound)

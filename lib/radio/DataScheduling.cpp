@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "DataScheduling.h"
-
 void(*myCallBackFunc)( int,  Respone);
 void onData(void(*func)(int,Respone),int call, Respone data);
 std::mutex m_timeOutListLocker;
@@ -247,7 +246,7 @@ void CDataScheduling::connect()
 		LOG(INFO) << "数据连接失败！";
 #endif 
 	}
-	pRadioGPS->locationIndoorConfig(m_locationIndoorCfg.Interval, m_locationIndoorCfg.iBeaconNumber,m_locationIndoorCfg.IsEmergency);
+	pRadioGPS->locationIndoorConfig((int)m_locationIndoorCfg.Interval, m_locationIndoorCfg.iBeaconNumber,m_locationIndoorCfg.IsEmergency);
 	Respone r = { 0 };
 	r.connectStatus = result;
 	onData(myCallBackFunc,  CONNECT_STATUS, r);
@@ -311,6 +310,7 @@ void onData(void(*func)( int, Respone),  int call, Respone data)
 }
 void CDataScheduling::addUdpCommand(int command, std::string radioIP, std::string gpsIP, int id, std::string text, double cycle, int querymode,std::string sessionId)
 {
+	std::lock_guard<std::mutex> locker(m_addCommandLocker);
 	Command      m_command;
 	m_command.command = command;
 	m_command.ackNum = 0;
@@ -325,27 +325,112 @@ void CDataScheduling::addUdpCommand(int command, std::string radioIP, std::strin
 	m_command.sessionId = sessionId;
 	m_command.status = -1;
 
-	//过滤掉客户端的超时重发
-	std::list<Command>::iterator it;
-	std::lock_guard <std::mutex> locker(m_timeOutListLocker);
+	//	//过滤掉客户端的超时重发
+	//	std::list<Command>::iterator it;
+	//#if _DEBUG
+	//	LOG(INFO) << "addUdpCommand------m_timeOutListLocker lock\r\n" ;
+	//	printf("addUdpCommand------m_timeOutListLocker lock\r\n");
+	//#endif
+	//	//std::lock_guard <std::mutex> locker(m_timeOutListLocker);
+	//	m_timeOutListLocker.lock();
+	//	int count = 0;
+	//	for (it = timeOutList.begin(); it != timeOutList.end(); ++it)
+	//	{
+	//		if (it->sessionId == sessionId)
+	//		{
+	//			++count;
+	//			break;
+	//		}
+	//	}
+	//	if (count == 0)
+	//	{
+	//		timeOutList.push_back(m_command);
+	//		m_timeOutListLocker.unlock();
+	//#if _DEBUG
+	//		LOG(INFO) << "addUdpCommand------m_timeOutListLocker unlock\r\n";
+	//		printf("addUdpCommand------m_timeOutListLocker unlock \r\n");
+	//#endif
+	HandleUdpCommand(&m_command);
+	//	addWorkCommand(m_command);
+	//}
+
+
+}
+void CDataScheduling::addWorkCommand(Command &command)
+{
+
+	//std::lock_guard <std::mutex> wlocker(m_workListLocker);
+	LockWorkList();
+	workList.push_back(command);
+	UnLockWorkList();
+}
+void CDataScheduling::LockWorkList()
+{
+//#if _DEBUG
+//	LOG(INFO) << "LockWorkList------m_workListLocker lock \r\n";
+//	printf("LockWorkList------m_workListLocker lock\r\n");
+//#endif
+	m_workListLocker.lock();
+}
+void CDataScheduling::UnLockWorkList()
+{
+//#if _DEBUG
+//	LOG(INFO) << "UnLockWorkList------m_workListLocker unlock\r\n";
+//	printf("UnLockWorkList------m_workListLocker unlock\r\n");
+//#endif
+	m_workListLocker.unlock();
+}
+void CDataScheduling::HandleUdpCommand(Command* p)
+{
 	int count = 0;
+	if (!RepeatTimeOutListItem(p, count))
+	{
+		AddtimeOutListItem(p);
+		addWorkCommand(*p);
+	}
+}
+
+void CDataScheduling::LockTimeOutList()
+{
+//#if _DEBUG
+//	LOG(INFO) << "LockTimeOutList------m_timeOutListLocker lock\r\n";
+//	printf("LockTimeOutList------m_timeOutListLocker lock\r\n");
+//#endif
+	m_timeOutListLocker.lock();
+}
+void CDataScheduling::UnlockTimeOutList()
+{
+//#if _DEBUG
+//	LOG(INFO) << "UnlockTimeOutList------m_timeOutListLocker unlock\r\n";
+//	printf("UnlockTimeOutList------m_timeOutListLocker unlock \r\n");
+//#endif
+	m_timeOutListLocker.unlock();
+}
+
+void CDataScheduling::AddtimeOutListItem(Command* p)
+{
+	LockTimeOutList();
+	timeOutList.push_back(*p);
+	UnlockTimeOutList();
+}
+
+bool CDataScheduling::RepeatTimeOutListItem(Command* p, int &count)
+{
+	std::list<Command>::iterator it;
+	count = 0;
+	LockTimeOutList();
 	for (it = timeOutList.begin(); it != timeOutList.end(); ++it)
 	{
-		if (it->sessionId == sessionId)
+		if (it->sessionId == p->sessionId)
 		{
 			++count;
 			break;
 		}
 	}
-	if (count == 0)
-	{
-		timeOutList.push_back(m_command);
-		std::lock_guard <std::mutex> wlocker(m_workListLocker);
-		workList.push_back(m_command);
-	}
-
-
+	UnlockTimeOutList();
+	return (0 != count);
 }
+
 DWORD WINAPI CDataScheduling::timeOutThread(LPVOID lpParam)
 {
 	CDataScheduling * p = (CDataScheduling *)(lpParam);
@@ -369,7 +454,9 @@ void CDataScheduling::workThreadFunc()
 {
 	while (m_workThread)
 	{
-		std::lock_guard <std::mutex> locker(m_workListLocker);
+		//std::lock_guard <std::mutex> locker(m_workListLocker);
+		//m_workListLocker.lock();
+		LockWorkList();
 		std::list<Command>::iterator it;
 		for (it = workList.begin(); it != workList.end(); ++it)
 		{
@@ -441,6 +528,8 @@ void CDataScheduling::workThreadFunc()
 			it = workList.erase(it);
 			break;
 		}
+		//m_workListLocker.unlock();
+		UnLockWorkList();
 		Sleep(100);
 	}
 }
@@ -450,7 +539,13 @@ void CDataScheduling::timeOut()
 	while (m_timeoutThread)
 	{
 		std::list<Command>::iterator it;
-		std::lock_guard <std::mutex> locker(m_timeOutListLocker);
+		//std::lock_guard <std::mutex> locker(m_timeOutListLocker);
+//#if _DEBUG
+//		LOG(INFO) << "m_timeOutListLocker lock\r\n";
+//		printf("m_timeOutListLocker lock\r\n");
+//#endif
+		//m_timeOutListLocker.lock();
+		LockTimeOutList();
 		Respone r = { 0 };
 		for (it = timeOutList.begin(); it != timeOutList.end(); ++it)
 		{
@@ -560,6 +655,12 @@ void CDataScheduling::timeOut()
 				//break;
 			}
 		}
+		UnlockTimeOutList();
+		//m_timeOutListLocker.unlock();
+//#if _DEBUG
+//		LOG(INFO) << "m_timeOutListLocker unlock\r\n";
+//		printf("m_timeOutListLocker unlock\r\n");
+//#endif
 		Sleep(100);
 	}
 }
@@ -585,7 +686,9 @@ void CDataScheduling::sendConnectStatusToClient()
 void CDataScheduling::sendRadioStatusToClient()
 {
 	std::list<Command>::iterator it;
-	std::lock_guard <std::mutex> locker(m_timeOutListLocker);
+	//std::lock_guard <std::mutex> locker(m_timeOutListLocker);
+	//m_timeOutListLocker.lock();
+	LockTimeOutList();
 	for (it = timeOutList.begin(); it != timeOutList.end(); it++)
 	{
 		if (RADIO_STATUS == it->command)
@@ -598,11 +701,15 @@ void CDataScheduling::sendRadioStatusToClient()
 			break;
 		}
 	}
+	//m_timeOutListLocker.unlock();
+	UnlockTimeOutList();
 }
 void CDataScheduling::sendSessionStatusToClient()
 {
 	std::list<Command>::iterator it;
-	std::lock_guard <std::mutex> locker(m_timeOutListLocker);
+	//std::lock_guard <std::mutex> locker(m_timeOutListLocker);
+	//m_timeOutListLocker.lock();
+	LockTimeOutList();
 	Respone r = { 0 };
 	r.timeOutList = timeOutList;
 	for (it = timeOutList.begin(); it != timeOutList.end(); it++)
@@ -618,6 +725,8 @@ void CDataScheduling::sendSessionStatusToClient()
 			break;
 		}
 	}
+	//m_timeOutListLocker.unlock();
+	UnlockTimeOutList();
 }
 void CDataScheduling::updateOnLineRadioInfo(int radioId, int status, int gpsQueryMode)
 {

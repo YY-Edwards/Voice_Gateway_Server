@@ -52,6 +52,15 @@ private:
 	mnis_t m_mnisCfg;
 	location_t m_locationCfg;
 	locationindoor_t m_locationIndoorCfg;
+	std::mutex   m_addCommandLocker;
+	void addWorkCommand(Command &c);
+	void AddtimeOutListItem(Command* p);
+	bool RepeatTimeOutListItem(Command* p, int &count);
+	void HandleUdpCommand(Command* p);
+	void LockTimeOutList();
+	void UnlockTimeOutList();
+	void LockWorkList();
+	void UnLockWorkList();
 	
 };
 

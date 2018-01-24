@@ -518,7 +518,7 @@ BOOL CWLNet::StartNet(DWORD dwMasterIp
 	for (int port = 40000; port <= 50000; port++)
 	{
 		m_locaAddr.sin_port = htons(port);
-		int res = bind(m_socket, (struct sockaddr*)&m_locaAddr, sizeof(SOCKADDR_IN));
+		int res =::bind(m_socket, (struct sockaddr*)&m_locaAddr, sizeof(SOCKADDR_IN));
 		if (SOCKET_ERROR == res)
 		{
 			if (port == 50000)
@@ -943,7 +943,7 @@ void CWLNet::Net_WAITFOR_LE_MASTER_PEER_REGISTRATION_RESPONSE(DWORD eveintIndex)
 					{
 						T_LE_PROTOCOL_92_LCP networkData = { 0 };
 						networkData.acceptedLinkProtocolVersion = LCP_CURRENTLPVERSION;
-						networkData.mapType = MAP_TYPE;
+						networkData.mapType = System_Wide_Map_Type;
 						networkData.oldestLinkProtocolVersion = LCP_OLDESTPVERSION;
 						networkData.Opcode = LE_NOTIFICATION_MAP_REQUEST;
 						networkData.peerID = CONFIG_LOCAL_PEER_ID;
@@ -7077,7 +7077,7 @@ void CWLNet::Unpack_LE_NOTIFICATION_MAP_BROADCAST(char* pData, T_LE_PROTOCOL_93_
 	char mapType = networkData.mapType;
 	unsigned short index = 0;
 	int length = dataLength;
-	if (MAP_TYPE == mapType)
+	if (System_Wide_Map_Type == mapType)
 	{
 		length -= 12;
 		while (length)

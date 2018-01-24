@@ -1,13 +1,12 @@
 #ifndef COMMON_H
 #define COMMON_H
 
-#include "NSGlobal.h"
-#include "MotoDefine.h"
-#include "NetStruct.h"
-#include "NSStruct.h"
-#include <dbt.h>
+#include "NS/include/NSGlobal.h"
+#include "NS/include/MotoDefine.h"
+#include "NS/include/NSStruct.h"
+//#include <dbt.h>
 #include <process.h>
-#include "Ambe3000.h"
+#include "NS/include/Ambe3000.h"
 #include <MMSystem.h>
 #pragma comment(lib, "winmm.lib")
 #include "VoiceDefs.h"
@@ -15,7 +14,7 @@
 #include <winsock2.h>
 #pragma comment(lib, "ws2_32.lib")
 
-#include "Tool.h"
+#include "NS/include/Tool.h"
 #include <list>
 #include "../lib/rpc/include/TcpServer.h"
 #include "../lib/rpc/include/RpcJsonParser.h"
@@ -25,7 +24,7 @@
 
 #include "WLSocketLog.h"
 #include "../lib/radio/common.h"
-#include "NS/mutex.h"
+#include "NS/include/mutex.h"
 
 #ifdef _DEBUG
 #define DEBUG_CLIENTBLOCK new( _CLIENT_BLOCK, __FILE__, __LINE__)
@@ -49,8 +48,6 @@
 
 extern WLSocketLog *g_pWLlog;
 
-#define USB_DEL DBT_DEVICEREMOVECOMPLETE
-#define USB_ADD DBT_DEVICEARRIVAL
 #define INTERVAL_CHECK_USB 500
 #define GPS_Immediate 0
 #define GPS_start_Triggered 1
@@ -60,20 +57,6 @@ extern WLSocketLog *g_pWLlog;
 #define SESSION_SIZE 64
 #define FLAG_NHANDLE 0 //超时处理未执行
 #define FLAG_HANDLED 1 //超时处理已执行
-#define VID_PID "VID_03EB&PID_2307"
-#define WL_SYSTEM_CONNECT 0
-#define WL_SYSTEM_DISCONNECT 1
-#define WL_REGISTER_SUC 0
-#define WL_REGISTER_FAL 1
-#define WL_SERIL_SUC 0
-#define WL_SERIL_FAL 1
-
-
-typedef struct _com_use_t
-{
-	char coms[255][8];
-	int num;
-}com_use_t;
 
 /************************************************************************/
 /* MNIS
@@ -111,11 +94,7 @@ typedef struct
 	//FieldValue info;
 }ARS;
 
-
-#define REPEATER_CONNECT 0
-#define REPEATER_DISCONNECT 1
 #define PATH_FILE_MAXSIZE 1024
-
 
 enum CLIENT_CALL_TYPE
 {
@@ -430,7 +409,6 @@ extern long GO_BACK_DEFAULT_GROUP_TIME;//处于非调度组的时间
 #define VOICE_STATUS_CALLBACK 1
 #define VOICE_STATUS_END 2
 
-#define DATA_TABLE_NAME_SIZE 64
 #define FILE_NAME_MAXSIZE 64
 typedef void(*PLogReport)(char* log_msg);
 //enum    ScrambleDirection  {
@@ -440,15 +418,6 @@ typedef void(*PLogReport)(char* log_msg);
 
 #define MAP_MAX_SIZE 128
 #define WL_REGISTRATION_ENTRY_MAX_SIZE 32
-
-const int IPSCTODONGLETABLE[49] =
-//0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12. 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48
-{ 0, 3, 6, 9, 12, 15, 18, 21, 24, 27, 30, 33, 36, 39, 41, 43, 45, 47, 1, 4, 7, 10, 13, 16, 19, 22, 25, 28, 31, 34, 37, 40, 42, 44, 46, 48, 2, 5, 8, 11, 14, 17, 20, 23, 26, 29, 32, 35, 38 };
-
-const int DONGLETOIPSCTABLE[49] =
-//0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11, 12. 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48
-{ 0, 18, 36, 1, 19, 37, 2, 20, 38, 3, 21, 39, 4, 22, 40, 5, 23, 41, 6, 24, 42, 7, 25, 43, 8, 26, 44, 9, 27, 45, 10, 28, 46, 11, 29, 47, 12, 30, 48, 13, 31, 14, 32, 15, 33, 16, 34, 17, 35 };
-
 
 #define VOICE_DATA_PATH L"D:\\Input.bit"
 #define INPUT_DATA_PATH "D:\\Input.bit"
@@ -591,7 +560,7 @@ typedef struct SendVoiceStruct
 #define NUMBER_REGIS_ENTRIES 2
 #define CSBK_ARGUMENTS 0x0000000000000000	//in voice call csbk auguments should set 0
 #define PREAMBLE_DURATION 0x00	//Preamble Duration. For voice call set it to 0.
-#define MAP_TYPE 0x01	//0:System wide map;2:master peer pragramming map
+//#define System_Wide_Map_Type 0x00	//0:System wide map;2:master peer pragramming map
 
 
 /*自定义case*/

@@ -626,16 +626,18 @@ void CSerialDongle::deObfuscate(ScrambleDirection theDirection, tAMBEFrame* pAMB
 	int  i, j;
 	int  InColumn, OutColumn;
 	const int * DirectionArray;
+	const int temp[4] = { 0 };
+	DirectionArray = &temp[0];
 	char theByte;
 
 	//Code to break apart and shuffle the bits.
 	switch (theDirection)
 	{
 	case AMBETODONGLE:
-		DirectionArray = &IPSCTODONGLETABLE[0];
+		//DirectionArray = &IPSCTODONGLETABLE[0];
 		break;
 	case DONGLETOAMBE:
-		DirectionArray = &DONGLETOIPSCTABLE[0];
+		//DirectionArray = &DONGLETOIPSCTABLE[0];
 		break;
 	default:
 		//Shouldn't happen.

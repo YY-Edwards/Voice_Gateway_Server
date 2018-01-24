@@ -4,50 +4,20 @@
     <ClCompile Include="common.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="HMAC_SHA1.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="SHA1.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="WirlineSchedule.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="MySQL.cpp">
-      <Filter>源文件\data</Filter>
-    </ClCompile>
     <ClCompile Include="RecorderServer.cpp">
       <Filter>源文件\wampserver</Filter>
-    </ClCompile>
-    <ClCompile Include="IPSCPeer.cpp">
-      <Filter>源文件\class</Filter>
-    </ClCompile>
-    <ClCompile Include="Manager.cpp">
-      <Filter>源文件\class</Filter>
-    </ClCompile>
-    <ClCompile Include="SerialDongle.cpp">
-      <Filter>源文件\class</Filter>
-    </ClCompile>
-    <ClCompile Include="Sound.cpp">
-      <Filter>源文件\class</Filter>
-    </ClCompile>
-    <ClCompile Include="Tool.cpp">
-      <Filter>源文件\class</Filter>
-    </ClCompile>
-    <ClCompile Include="WLNet.cpp">
-      <Filter>源文件\class</Filter>
     </ClCompile>
     <ClCompile Include="WLRecord.cpp">
       <Filter>源文件\data</Filter>
     </ClCompile>
     <ClCompile Include="AudioLog.cpp">
       <Filter>源文件\data</Filter>
-    </ClCompile>
-    <ClCompile Include="WLRecordFile.cpp">
-      <Filter>源文件\class</Filter>
     </ClCompile>
     <ClCompile Include="..\lib\rpc\src\TcpServer.cpp">
       <Filter>rpc\source</Filter>
@@ -76,63 +46,96 @@
     <ClCompile Include="..\lib\service\service.cpp">
       <Filter>rpc\source</Filter>
     </ClCompile>
-    <ClCompile Include="WLSocketLog.cpp">
-      <Filter>源文件\class</Filter>
-    </ClCompile>
     <ClCompile Include="..\lib\rpc\src\ringbuffer.c">
       <Filter>rpc\source</Filter>
     </ClCompile>
-    <ClCompile Include="WDK_VidPidQuery.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="linklist.c">
+    <ClCompile Include="NS\source\HMAC_SHA1.cpp">
       <Filter>NS\source</Filter>
     </ClCompile>
-    <ClCompile Include="net.c">
+    <ClCompile Include="NS\source\linklist.c">
       <Filter>NS\source</Filter>
     </ClCompile>
-    <ClCompile Include="NSAmbe.cpp">
+    <ClCompile Include="NS\source\MySQL.cpp">
       <Filter>NS\source</Filter>
     </ClCompile>
-    <ClCompile Include="NSDongle.cpp">
+    <ClCompile Include="NS\source\net.c">
       <Filter>NS\source</Filter>
     </ClCompile>
-    <ClCompile Include="NSGlobal.cpp">
+    <ClCompile Include="NS\source\NSAmbe.cpp">
       <Filter>NS\source</Filter>
     </ClCompile>
-    <ClCompile Include="NSLog.cpp">
+    <ClCompile Include="NS\source\NSDongle.cpp">
       <Filter>NS\source</Filter>
     </ClCompile>
-    <ClCompile Include="NSManager.cpp">
+    <ClCompile Include="NS\source\NSGlobal.cpp">
       <Filter>NS\source</Filter>
     </ClCompile>
-    <ClCompile Include="NSRecordFile.cpp">
+    <ClCompile Include="NS\source\NSLog.cpp">
       <Filter>NS\source</Filter>
     </ClCompile>
-    <ClCompile Include="NSSerial.cpp">
+    <ClCompile Include="NS\source\NSManager.cpp">
       <Filter>NS\source</Filter>
     </ClCompile>
-    <ClCompile Include="NSSound.cpp">
+    <ClCompile Include="NS\source\NSRecordFile.cpp">
       <Filter>NS\source</Filter>
     </ClCompile>
-    <ClCompile Include="NSWLNet.cpp">
+    <ClCompile Include="NS\source\NSSerial.cpp">
       <Filter>NS\source</Filter>
     </ClCompile>
-    <ClCompile Include="NSWLPeer.cpp">
+    <ClCompile Include="NS\source\NSSound.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NS\source\NSWLNet.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NS\source\NSWLPeer.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NS\source\P2PNet.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NS\source\P2PPeer.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NS\source\SHA1.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NS\source\Tool.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NS\source\WDK_VidPidQuery.cpp">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="IPSCPeer.cpp">
+      <Filter>源文件\class</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager.cpp">
+      <Filter>源文件\class</Filter>
+    </ClCompile>
+    <ClCompile Include="SerialDongle.cpp">
+      <Filter>源文件\class</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound.cpp">
+      <Filter>源文件\class</Filter>
+    </ClCompile>
+    <ClCompile Include="WLNet.cpp">
+      <Filter>源文件\class</Filter>
+    </ClCompile>
+    <ClCompile Include="WLRecordFile.cpp">
+      <Filter>源文件\class</Filter>
+    </ClCompile>
+    <ClCompile Include="WLSocketLog.cpp">
+      <Filter>源文件\class</Filter>
+    </ClCompile>
+    <ClCompile Include="NS\source\ringbuffer.c">
+      <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="NS\source\NS.cpp">
       <Filter>NS\source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Ambe3000.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="common.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="HMAC_SHA1.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="SHA1.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="stdafx.h">
@@ -144,209 +147,8 @@
     <ClInclude Include="VoiceDefs.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="MySQL.h">
-      <Filter>头文件\data</Filter>
-    </ClInclude>
     <ClInclude Include="RecorderServer.h">
       <Filter>头文件\wampserver</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\base64.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\config-win.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\decimal.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\errmsg.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\hash.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\keycache.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\lf.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\m_ctype.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\m_string.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_aes.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_alarm.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_alloc.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_atomic.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_attribute.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_base.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_bit.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_bitmap.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_charsets.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_config.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_dbug.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_dir.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_getopt.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_global.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_libwrap.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_list.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_md5.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_net.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_no_pthread.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_nosys.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_pthread.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_stacktrace.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_sys.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_time.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_tree.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_trie.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_uctype.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_vle.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\my_xml.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\myisampack.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\mysql.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\mysql_com.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\mysql_time.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\mysql_version.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\mysqld_error.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\mysys_err.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\queues.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\service_versions.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\sha1.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\sha2.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\sql_common.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\sslopt-case.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\sslopt-longopts.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\sslopt-vars.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\t_ctype.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\thr_alarm.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\thr_lock.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\typelib.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\violite.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\waiting_threads.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\wqueue.h">
-      <Filter>mysql-connector-c\include</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\atomic\gcc_builtins.h">
-      <Filter>mysql-connector-c\include\atomic</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\atomic\generic-msvc.h">
-      <Filter>mysql-connector-c\include\atomic</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\atomic\nolock.h">
-      <Filter>mysql-connector-c\include\atomic</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\atomic\rwlock.h">
-      <Filter>mysql-connector-c\include\atomic</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\atomic\x86-gcc.h">
-      <Filter>mysql-connector-c\include\atomic</Filter>
-    </ClInclude>
-    <ClInclude Include="mysql-connector-c\include\mysys\rijndael.h">
-      <Filter>mysql-connector-c\include\mysys</Filter>
     </ClInclude>
     <ClInclude Include="mutex.h">
       <Filter>头文件\wampserver</Filter>
@@ -358,9 +160,6 @@
       <Filter>头文件\class</Filter>
     </ClInclude>
     <ClInclude Include="Sound.h">
-      <Filter>头文件\class</Filter>
-    </ClInclude>
-    <ClInclude Include="Tool.h">
       <Filter>头文件\class</Filter>
     </ClInclude>
     <ClInclude Include="WLNet.h">
@@ -426,58 +225,94 @@
     <ClInclude Include="..\lib\rpc\include\ringbuffer.h">
       <Filter>rpc\include</Filter>
     </ClInclude>
-    <ClInclude Include="WDK_VidPidQuery.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="global.h">
+    <ClInclude Include="NS\include\Ambe3000.h">
       <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="linklist.h">
+    <ClInclude Include="NS\include\global.h">
       <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="MotoDefine.h">
+    <ClInclude Include="NS\include\HMAC_SHA1.h">
       <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="NS\mutex.h">
+    <ClInclude Include="NS\include\linklist.h">
       <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="net.h">
+    <ClInclude Include="NS\include\MotoDefine.h">
       <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="NSAmbe.h">
+    <ClInclude Include="NS\include\mutex.h">
       <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="NSDongle.h">
+    <ClInclude Include="NS\include\MySQL.h">
       <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="NSGlobal.h">
+    <ClInclude Include="NS\include\net.h">
       <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="NSLog.h">
+    <ClInclude Include="NS\include\NetStruct.h">
       <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="NSManager.h">
+    <ClInclude Include="NS\include\NSAmbe.h">
       <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="NSNetBase.h">
+    <ClInclude Include="NS\include\NSDongle.h">
       <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="NSRecordFile.h">
+    <ClInclude Include="NS\include\NSGlobal.h">
       <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="NSSerial.h">
+    <ClInclude Include="NS\include\NSLog.h">
       <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="NSSound.h">
+    <ClInclude Include="NS\include\NSManager.h">
       <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="NSStruct.h">
+    <ClInclude Include="NS\include\NSNetBase.h">
       <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="NSWLNet.h">
+    <ClInclude Include="NS\include\NSRecordFile.h">
       <Filter>NS\include</Filter>
     </ClInclude>
-    <ClInclude Include="NSWLPeer.h">
+    <ClInclude Include="NS\include\NSSerial.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NS\include\NSSound.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NS\include\NSStruct.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NS\include\NSWLNet.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NS\include\NSWLPeer.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NS\include\P2PNet.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NS\include\P2PPeer.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NS\include\SHA1.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NS\include\Tool.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NS\include\WDK_VidPidQuery.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NS\include\ringbuffer.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NS\include\NS.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NS\source\stdafx.h">
+      <Filter>NS\include</Filter>
+    </ClInclude>
+    <ClInclude Include="NS\source\targetver.h">
       <Filter>NS\include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -485,21 +320,6 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Filter Include="mysql-connector-c">
-      <UniqueIdentifier>{55d42700-df13-4f11-a354-db6263baa8f1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="mysql-connector-c\include">
-      <UniqueIdentifier>{cc485cff-8ecf-4f81-9432-7b3b2cd665b7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="mysql-connector-c\lib">
-      <UniqueIdentifier>{93fdc6c6-04d3-41ad-9194-e2c6e0a7e04e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="mysql-connector-c\include\atomic">
-      <UniqueIdentifier>{444c513a-bae5-4c34-b5d0-e2b534669cd9}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="mysql-connector-c\include\mysys">
-      <UniqueIdentifier>{0630fdfb-3a3d-40f8-a035-a6f44e86ce91}</UniqueIdentifier>
-    </Filter>
     <Filter Include="rpc">
       <UniqueIdentifier>{2489940c-fab1-4b66-8561-5c7c7e6424ad}</UniqueIdentifier>
     </Filter>
@@ -545,9 +365,6 @@
     <Filter Include="源文件\wampserver">
       <UniqueIdentifier>{73aefc18-6a16-43ca-aead-c0268dac440c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="源文件\class">
-      <UniqueIdentifier>{b9dd4ab9-dda9-41cf-a964-20d04b2cc208}</UniqueIdentifier>
-    </Filter>
     <Filter Include="NS">
       <UniqueIdentifier>{a8161e58-54de-4cf1-8305-77f9563fa69c}</UniqueIdentifier>
     </Filter>
@@ -557,18 +374,30 @@
     <Filter Include="NS\source">
       <UniqueIdentifier>{527b4355-347d-4722-8e91-0c87e374ba08}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NS\include\mysql-connector-c">
+      <UniqueIdentifier>{64f44f6e-d9d5-4ff2-bce0-cc5411713314}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\include\mysql-connector-c\include">
+      <UniqueIdentifier>{bc64ffc8-bb47-4b27-9bb5-686f23bc45a5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\include\mysql-connector-c\lib">
+      <UniqueIdentifier>{ce7bb663-aa63-4d89-b866-b4a9f0c0e64a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="源文件\class">
+      <UniqueIdentifier>{17713e6f-8ddd-4f34-80cb-cb8fd151d852}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="mysql-connector-c\lib\libmysql.dll">
-      <Filter>mysql-connector-c\lib</Filter>
+    <None Include="NS\include\mysql-connector-c\lib\libmysql.dll">
+      <Filter>NS\include\mysql-connector-c\lib</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Library Include="mysql-connector-c\lib\libmysql.lib">
-      <Filter>mysql-connector-c\lib</Filter>
+    <Library Include="NS\include\mysql-connector-c\lib\libmysql.lib">
+      <Filter>NS\include\mysql-connector-c\lib</Filter>
     </Library>
-    <Library Include="mysql-connector-c\lib\mysqlclient.lib">
-      <Filter>mysql-connector-c\lib</Filter>
+    <Library Include="NS\include\mysql-connector-c\lib\mysqlclient.lib">
+      <Filter>NS\include\mysql-connector-c\lib</Filter>
     </Library>
   </ItemGroup>
 </Project>
