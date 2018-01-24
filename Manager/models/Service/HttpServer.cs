@@ -7,7 +7,7 @@ using System.Threading;
 using System.Net;
 using System.IO;
 
-using Sigmar.Logger;
+//using Sigmar.Logger;
 namespace Manager.Models
 {
     public class HttpServer

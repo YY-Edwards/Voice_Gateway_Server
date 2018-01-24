@@ -12,7 +12,7 @@ using System.Diagnostics;
 using System.Reflection;
 
 using Newtonsoft.Json;
-using Sigmar.Logger;
+//using Sigmar.Logger;
 
 using Manager.Views;
 
@@ -29,11 +29,12 @@ namespace Manager
 
             CheckAdministrator();
 
-            Logs.SetStartUpWindow(typeof(Main));
-            Log.Initialize(runTimeDirectory, Name + Version);
-            StartupUri = new Uri("Views/Logger/Logs.xaml", UriKind.RelativeOrAbsolute);
-            Log.Info("Startup application in Administrator.");
-            
+            //Logs.SetStartUpWindow(typeof(Main));
+           // Log.Initialize(runTimeDirectory, Name + Version);
+            //StartupUri = new Uri("Views/Logger/Logs.xaml", UriKind.RelativeOrAbsolute);
+            //Log.Info("Startup application in Administrator.");
+
+            StartupUri = new Uri("Views/Main.xaml", UriKind.RelativeOrAbsolute);
 
         }  
         private void CheckAdministrator()

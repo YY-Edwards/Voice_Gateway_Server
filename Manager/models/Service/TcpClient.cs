@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Threading;
 
-using Sigmar.Logger;
+//using Sigmar.Logger;
 
 namespace Manager.Models
 {
@@ -98,7 +98,7 @@ namespace Manager.Models
                     lock (_Socket)
                     {
                         _Socket.Send(bytes);
-                        Log.Report(ReportType_t.Json, Encoding.UTF8.GetString(bytes), true, "127.0.0.1", Host + ":" + Port.ToString());
+                        //Log.Report(ReportType_t.Json, Encoding.UTF8.GetString(bytes), true, "127.0.0.1", Host + ":" + Port.ToString());
                     }
                 }
                 catch
@@ -122,7 +122,7 @@ namespace Manager.Models
                        rxbytes = rxbytes.Take(receiveLength).ToArray();
 
                         new Task(() => {
-                            Log.Report(ReportType_t.Json, Encoding.UTF8.GetString(rxbytes), false, Host + ":" + Port.ToString(), "127.0.0.1");
+                            //Log.Report(ReportType_t.Json, Encoding.UTF8.GetString(rxbytes), false, Host + ":" + Port.ToString(), "127.0.0.1");
 
                             if (ReceivedBytes != null) ReceivedBytes(this, rxbytes);
                         }).Start();
