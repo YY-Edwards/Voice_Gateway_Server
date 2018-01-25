@@ -9,6 +9,7 @@ using System.Windows.Media.Imaging;
 using System.ComponentModel;
 using System.Windows.Input;
 using System.Windows.Data;
+using System.Threading.Tasks;
 
 using Dispatcher.Modules;
 using Dispatcher.Service;
@@ -431,8 +432,43 @@ namespace Dispatcher.ViewsModules
             }
 
             ServerStatus.Instance().StatusChanged += delegate { UpdateAllStatus(); };
+
+            new Task(StatusCheckProcess).Start();
         }
 
+        private long LastWaitTimeoutTicks = 0;
+        private long LastProcessTicks = 0;
+        private void StatusCheckProcess()
+        {
+            while(true)
+            {
+                if (LastWaitTimeoutTicks > LastProcessTicks && DateTime.Now.Ticks > LastWaitTimeoutTicks)
+                {
+                    LastProcessTicks = LastWaitTimeoutTicks;
+                    _dispatcherStatus = CDispatcher.Status.Timeout;
+
+                    lock (_notices)
+                    {
+                        if (_notices.Count(p => p.DispatcherStatus == CDispatcher.Status.Begin) > 0)
+                        {
+                            for(int i = 0; i < _notices.Count; ++i)
+                            {
+                                if(_notices[i].DispatcherStatus == CDispatcher.Status.Begin)
+                                {
+                                    _notices[i].DispatcherStatus = CDispatcher.Status.Timeout;
+                                    NotifyPropertyChanged("INotices");
+                                }
+                            }
+
+                            NotifyPropertyChanged("WaitIconVisible");
+                            NotifyPropertyChanged("FailureIconVisible");
+                        }
+                    }                    
+                }
+
+                System.Threading.Thread.Sleep(500);
+            }
+        }
 
         private void OnDispatcherBegin(CDispatcher.OperateContent_t operate)
         {
@@ -475,9 +511,10 @@ namespace Dispatcher.ViewsModules
                 if (!_notices.Contains(p => p.OperateSessionId == operate.Parameter.guid))
                 {
                     _notices.Add(new VMNotify.VMNotice(operate.Parameter.guid, this, notice, true, CDispatcher.Status.Begin));
+
+                    LastWaitTimeoutTicks = DateTime.Now.AddSeconds(FunctionConfigure.TimeoutSeconds).Ticks;
                     NotifyPropertyChanged("INotices");
                 }
-
             }
 
             NotifyPropertyChanged("WaitIconVisible");
