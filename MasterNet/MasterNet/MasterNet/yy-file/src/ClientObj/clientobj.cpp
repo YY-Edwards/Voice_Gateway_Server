@@ -454,7 +454,7 @@ Start:
 			else
 			{
 				std::cout << "packet loss and wait to stick buff-3\n" << std::endl;
-				int i = 0;
+				uint32_t i = 0;
 				int index = 0;
 				for (i = (option.count); i < (option.count + recv_length); i++)//遍历数据包并找到下一包的头
 				{

@@ -4,8 +4,6 @@
 * Created: 2018/01/03
 * Author: EDWARDS
 */
-
-
 #include "stdafx.h"
 #include "myprotocol.h"
 
