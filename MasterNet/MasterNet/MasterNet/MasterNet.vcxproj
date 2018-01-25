@@ -52,10 +52,13 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <AdditionalIncludeDirectories>F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\lib\JsonWrap\include\json;F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\lib\jrtplib\include\jrtplib3;F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\src;F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\src\SynInterface;F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\src\SocketWrap;F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\src\MyRTP;F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\src\MyProtocol;F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\src\FifoQueue;F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\src\Common;F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\src\ClientObj;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>lib_json.lib;jrtplib_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -111,6 +114,15 @@
     <ClInclude Include="..\..\..\WirlineSchedule\NS\source\targetver.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="yy-file\src\ClientObj\clientobj.h" />
+    <ClInclude Include="yy-file\src\Common\common.h" />
+    <ClInclude Include="yy-file\src\FifoQueue\fifoqueue.h" />
+    <ClInclude Include="yy-file\src\myinclude.h" />
+    <ClInclude Include="yy-file\src\mymaster.h" />
+    <ClInclude Include="yy-file\src\MyProtocol\myprotocol.h" />
+    <ClInclude Include="yy-file\src\MyRTP\myrtp.h" />
+    <ClInclude Include="yy-file\src\SocketWrap\socketwrap.h" />
+    <ClInclude Include="yy-file\src\SynInterface\syninterface.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\WirlineSchedule\NS\source\HMAC_SHA1.cpp" />
@@ -147,6 +159,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="yy-file\src\ClientObj\clientobj.cpp" />
+    <ClCompile Include="yy-file\src\FifoQueue\fifoqueue.cpp" />
+    <ClCompile Include="yy-file\src\mymaster.cpp" />
+    <ClCompile Include="yy-file\src\MyProtocol\myprotocol.cpp" />
+    <ClCompile Include="yy-file\src\MyRTP\myrtp.cpp" />
+    <ClCompile Include="yy-file\src\SocketWrap\socketwrap.cpp" />
+    <ClCompile Include="yy-file\src\SynInterface\syninterface.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\WirlineSchedule\NS\include\mysql-connector-c\lib\libmysql.dll" />

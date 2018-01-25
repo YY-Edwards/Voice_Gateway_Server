@@ -28,6 +28,54 @@
     <Filter Include="NS\include\mysql-connector-c\lib">
       <UniqueIdentifier>{1a4bd52e-1bf2-4535-80e7-b4285225ab0f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NS\include\yyfile">
+      <UniqueIdentifier>{a71dec45-2d70-4252-993e-51614fe85455}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\include\yyfile\clientobj">
+      <UniqueIdentifier>{5af58084-dab5-4624-8def-9f271a78257d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\include\yyfile\common">
+      <UniqueIdentifier>{309f951c-9e2b-43ee-96d9-6d72a9b0e510}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\include\yyfile\fifoqueue">
+      <UniqueIdentifier>{adee88e4-c6fb-455c-80f0-f24e91fc8639}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\include\yyfile\myprotocol">
+      <UniqueIdentifier>{5a6b1782-cd43-4d90-81a5-0a44d3d51f5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\include\yyfile\myrtp">
+      <UniqueIdentifier>{b044183c-b744-4409-9207-d642d5cec450}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\include\yyfile\socketwrap">
+      <UniqueIdentifier>{d704eecc-6644-4423-b074-761f65f01efd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\include\yyfile\syninterface">
+      <UniqueIdentifier>{a2e54c2c-f6c5-473e-8fbb-062943552c71}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\source\yyfile">
+      <UniqueIdentifier>{4268fe87-e411-4be7-b61a-f288767a558c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\source\yyfile\clientobj">
+      <UniqueIdentifier>{37d18f63-519c-49ce-b435-180c84c07427}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\source\yyfile\common">
+      <UniqueIdentifier>{da319b3a-e2df-40b5-804a-adec34f88353}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\source\yyfile\fifoqueue">
+      <UniqueIdentifier>{9cccffb2-0ebb-4968-89bf-96c748206379}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\source\yyfile\myprotocol">
+      <UniqueIdentifier>{20a0a4c6-d5f1-475a-85ec-526ef24d9caa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\source\yyfile\myrtp">
+      <UniqueIdentifier>{5af8eba0-50e4-44e2-ac49-386664113848}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\source\yyfile\socketwrap">
+      <UniqueIdentifier>{6ca4434a-8a11-42c5-bf4f-ab63eec8b5e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\source\yyfile\syninterface">
+      <UniqueIdentifier>{5cd74c5c-6c0c-4a37-b6d4-4a03f9f2f0e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -129,6 +177,33 @@
     <ClInclude Include="..\..\..\WirlineSchedule\NS\source\targetver.h">
       <Filter>NS\source</Filter>
     </ClInclude>
+    <ClInclude Include="yy-file\src\ClientObj\clientobj.h">
+      <Filter>NS\include\yyfile\clientobj</Filter>
+    </ClInclude>
+    <ClInclude Include="yy-file\src\Common\common.h">
+      <Filter>NS\include\yyfile\common</Filter>
+    </ClInclude>
+    <ClInclude Include="yy-file\src\FifoQueue\fifoqueue.h">
+      <Filter>NS\include\yyfile\fifoqueue</Filter>
+    </ClInclude>
+    <ClInclude Include="yy-file\src\MyProtocol\myprotocol.h">
+      <Filter>NS\include\yyfile\myprotocol</Filter>
+    </ClInclude>
+    <ClInclude Include="yy-file\src\MyRTP\myrtp.h">
+      <Filter>NS\include\yyfile\myrtp</Filter>
+    </ClInclude>
+    <ClInclude Include="yy-file\src\SynInterface\syninterface.h">
+      <Filter>NS\include\yyfile\syninterface</Filter>
+    </ClInclude>
+    <ClInclude Include="yy-file\src\SocketWrap\socketwrap.h">
+      <Filter>NS\include\yyfile\socketwrap</Filter>
+    </ClInclude>
+    <ClInclude Include="yy-file\src\myinclude.h">
+      <Filter>NS\include\yyfile</Filter>
+    </ClInclude>
+    <ClInclude Include="yy-file\src\mymaster.h">
+      <Filter>NS\include\yyfile</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -199,6 +274,27 @@
     </ClCompile>
     <ClCompile Include="..\..\..\WirlineSchedule\NS\source\WDK_VidPidQuery.cpp">
       <Filter>NS\source</Filter>
+    </ClCompile>
+    <ClCompile Include="yy-file\src\ClientObj\clientobj.cpp">
+      <Filter>NS\source\yyfile\clientobj</Filter>
+    </ClCompile>
+    <ClCompile Include="yy-file\src\FifoQueue\fifoqueue.cpp">
+      <Filter>NS\source\yyfile\fifoqueue</Filter>
+    </ClCompile>
+    <ClCompile Include="yy-file\src\MyProtocol\myprotocol.cpp">
+      <Filter>NS\source\yyfile\myprotocol</Filter>
+    </ClCompile>
+    <ClCompile Include="yy-file\src\MyRTP\myrtp.cpp">
+      <Filter>NS\source\yyfile\myrtp</Filter>
+    </ClCompile>
+    <ClCompile Include="yy-file\src\SocketWrap\socketwrap.cpp">
+      <Filter>NS\source\yyfile\socketwrap</Filter>
+    </ClCompile>
+    <ClCompile Include="yy-file\src\SynInterface\syninterface.cpp">
+      <Filter>NS\source\yyfile\syninterface</Filter>
+    </ClCompile>
+    <ClCompile Include="yy-file\src\mymaster.cpp">
+      <Filter>NS\source\yyfile</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,4 +1,4 @@
-#include"stdafx.h"
+#include "stdafx.h"
 #include "mymaster.h"
 
 MyMasterServer *MyMasterServer::pThis = NULL;
