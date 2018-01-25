@@ -146,6 +146,7 @@ private:
 	void initialize();
 	void handleUsbAdd();
 	void handleUsbDel();
+	void HandleAudioPath(const char* strpath);
 };
 
 

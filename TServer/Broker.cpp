@@ -883,7 +883,7 @@ void CBroker::getSystemstatus(std::string type)
 	else
 	{
 		std::string content = "{\"SessionId\":\"93d7e65c-202b-4f15-b5d1-08405a7a028f\",\"getType\":4, \"info\" : \"\"}";
-		std::string strConnect = CSettings::instance()->getRequest("wlInfo", "wl", m_radioClient->getCallId(), content);
+		std::string strConnect = CSettings::instance()->getRequest("wlInfo", "wl", m_wirelanClient->getCallId(), content);
 		m_wirelanClient->send(strConnect.c_str(), strConnect.size());
 	}
 }
@@ -902,6 +902,6 @@ void CBroker::sendLicenseToWlClient()
 		content = "{\"result\":1}";   //failure
 		break;
 	}
-	std::string strConnect = CSettings::instance()->getRequest("wlLicense", "wl", m_radioClient->getCallId(), content);
+	std::string strConnect = CSettings::instance()->getRequest("wlLicense", "wl", m_wirelanClient->getCallId(), content);
 	m_wirelanClient->send(strConnect.c_str(), strConnect.size());
 }
