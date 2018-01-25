@@ -46,7 +46,7 @@ public:
 	/*
 	≈‰÷√ªÿ∏¥
 	*/
-	void ConfigReply(HSocket fd, int channel1_value, int channel2_value);
+	void ConfigReply(HSocket fd, Listening_Reply_Params_Channels_t channel_params);
 
 	/*
 	≤È—Øªÿ∏¥

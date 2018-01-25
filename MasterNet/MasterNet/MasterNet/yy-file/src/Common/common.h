@@ -32,7 +32,7 @@ using namespace std;
 #define						MAX_SPECIAL_GROUP						2	
 
 #define						CHANNEL1RTPBASEPORT_START				21200
-#define						CHANNEL1RTPDESTPORT_START				31200
+#define						CHANNEL1RTPDESTPORT_START				CHANNEL1RTPBASEPORT_START
 #define						CHANNEL1RTPSSRC_START					1973
 
 #define						CHANNEL2RTPBASEPORT_START				CHANNEL1RTPBASEPORT_START
@@ -72,6 +72,14 @@ typedef int HSocket;
 
 
 #pragma pack(1)
+
+//PROTOCOL State Master.
+typedef enum {
+	PROTOCOL_UNCONNECTEDWAITINGSTATUS,
+	PROTOCOL_UNCONNECTEDWAITINGSETLISTENING,
+	PROTOCOL_CONNECTED
+} ClientPRO_States_t;
+
 typedef struct{
 
 	uint16_t		rtp_portbase;
@@ -120,15 +128,19 @@ typedef struct ClientParams_t{
 }ClientParams_t;
 struct ResponeData
 {
+	ClientPRO_States_t CPRO_State;
 	HSocket socket_fd;
 	std::string identifier;
-	//std::string type;
-	//std::string name;
 	std::string key;
-
 	std::string channel_id;
-	int16_t channel1_group_id;
-	int16_t channel2_group_id;
+
+	int16_t		channel1_group_id;
+	int32_t	channel1_RTPportbase;
+	int32_t	channel1_RTPdestport;
+
+	int16_t		channel2_group_id;
+	int32_t	channel2_RTPportbase;
+	int32_t	channel2_RTPdestport;
 
 	int32_t src_id;
 	int32_t dst_id;
@@ -168,13 +180,6 @@ typedef struct{
 
 
 
-//PROTOCOL State Master.
-typedef enum {
-	PROTOCOL_UNCONNECTEDWAITINGSTATUS,
-	PROTOCOL_UNCONNECTEDWAITINGSETLISTENING,
-	PROTOCOL_CONNECTED
-} MASTER_States;
-
 
 //PROTOCOL Type Master.
 typedef enum {
@@ -192,7 +197,8 @@ typedef enum {
 	CALLREQUEST,
 	CALLRELEASE,
 	CALLSTART,
-	CALLEND
+	CALLEND,
+	DISCONNECT
 
 } PROTOCOL_Names;
 
@@ -233,6 +239,8 @@ typedef struct{
 	std::string status;
 	std::string reason;
 	uint32_t listening_group_id;
+	uint32_t RTPportbase;
+	uint32_t RTPdestport;
 
 }Listening_Reply_Params_Channels_Params_t;
 
@@ -355,7 +363,7 @@ typedef struct{
 typedef struct{
 
 	HSocket clientfd;//接收数据包的socket描述符，以便于socket发送时时使
-	PROTOCOL_Names MASTER_State;
+	//PROTOCOL_Names MASTER_State;
 	//MASTER_States MASTER_State;
 	PROTOCOL_Fixed_Header_t PROTOCOL_Fixed_Header;
 	//PROTOCOL_Types PROTOCOL_Type;

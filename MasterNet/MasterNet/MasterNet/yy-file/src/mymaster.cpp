@@ -173,6 +173,7 @@ void MyMasterServer::MasterOnData(int command, ResponeData data)
 void MyMasterServer::MasterOnDataFunc(int command, ResponeData data)
 {
 	std::string c_status = "success";
+	Listening_Reply_Params_Channels_t channel_params;
 	//char *sendVoiceBuff = {"abcdefghiojklmnopqrstuvwxyz"};
 	char sendVoiceBuff[50] = "abcdefghiojklmnopqrstuvwxyz";
 
@@ -180,81 +181,113 @@ void MyMasterServer::MasterOnDataFunc(int command, ResponeData data)
 	switch (pro_name)
 	{
 	case CONNECT:
-		mastergate->ConnectReply(data.socket_fd, "success", "fine!");
-		if (1)/*PTT Notice Enable*/
+		if (data.CPRO_State == PROTOCOL_UNCONNECTEDWAITINGSTATUS)
 		{
+			mastergate->ConnectReply(data.socket_fd, "success", "fine!");
+			if (1)/*PTT Notice Enable*/
+			{
 
+			}
+		}
+		else
+		{
+			mastergate->ConnectReply(data.socket_fd, "fail", "Already connected ");
 		}
 		break;
 
 
 	case LISTENING:
-		if (data.channel1_group_id != 0)
+
+		channel_params.channel1.listening_group_id = data.channel1_group_id;
+		channel_params.channel1.RTPportbase = data.channel1_RTPportbase;
+		channel_params.channel1.RTPdestport = data.channel1_RTPdestport;
+
+		channel_params.channel2.listening_group_id = data.channel2_group_id;
+		channel_params.channel2.RTPportbase = data.channel2_RTPportbase;
+		channel_params.channel2.RTPdestport = data.channel2_RTPdestport;
+
+
+		if (data.CPRO_State != PROTOCOL_UNCONNECTEDWAITINGSTATUS)
 		{
-			//if (channel1RTP == NULL){
-			//	channel1RTP = new MyRTP;
-			//	channel1RTP->RtpParamsInit(CHANNEL1RTPBASEPORT, CHANNEL1RTPDESTPORT, CHANNEL1RTPSSRC);//ÊÇ·ñÒþÊ½ÉèÖÃ£¿
-			//	channel1RTP->SetCallBackFunc(RTPChannel1OnData);
 
-			//	fp = fopen("E:\\CloudMusic\\master_recv_voice.pcm", "wb+");
-			//	if (fp == NULL){
-			//		printf("fp  fail\n");
-			//	}
-			//	fseek(fp, 0, SEEK_SET);
+			if (data.channel1_group_id != 0)
+			{
+				//	fp = fopen("E:\\CloudMusic\\master_recv_voice.pcm", "wb+");
+				//	if (fp == NULL){
+				//		printf("fp  fail\n");
+				//	}
+				//	fseek(fp, 0, SEEK_SET);
+				//}
 
-			//}
-			//TRACE(("set channel1 is:%d\n"), data.channel1_group_id);
-			std::cout << "set channel1 is:"<<dec<< data.channel1_group_id << endl;
+				std::cout << "set channel1 is:" << dec << data.channel1_group_id << endl;
+			}
+
+			if (data.channel2_group_id != 0)
+			{
+				std::cout << "set channel2 is:" << dec << data.channel2_group_id << endl;
+			}
+			if (data.channel1_group_id == 0 && data.channel2_group_id == 0)
+			{
+				std::cout << "No channel is set\n" << endl;
+			}
+
+			channel_params.channel1.status = "success";
+			channel_params.channel1.reason = "";
+
+			channel_params.channel2.status = "success";
+			channel_params.channel2.reason = "";
+
+		}
+		else
+		{
+			channel_params.channel1.status = "fail";
+			channel_params.channel1.reason = "Unconnected";
+
+			channel_params.channel2.status = "fail";
+			channel_params.channel2.reason = "Unconnected";
 
 		}
 
-		if (data.channel2_group_id != 0)
-		{
-			/*if (channel2RTP == NULL){
-				channel2RTP = new MyRTP;
-				channel2RTP->RtpParamsInit(CHANNEL2RTPBASEPORT, CHANNEL2RTPDESTPORT, CHANNEL2RTPSSRC);
-				channel2RTP->SetCallBackFunc(RTPChannel2OnData);
-			}*/
-			//TRACE(("set channel2 is:%d\n"), data.channel2_group_id);
-			std::cout << "set channel2 is:" << dec << data.channel2_group_id << endl;
-		}
-		if (data.channel1_group_id == 0 && data.channel2_group_id == 0)
-		{
-			//TRACE(_T("No channel is set\n"));
-			std::cout << "No channel is set\n" << endl;
-		}
-		mastergate->ConfigReply(data.socket_fd, data.channel1_group_id, data.channel2_group_id);
+			mastergate->ConfigReply(data.socket_fd, channel_params);
 		break;
 
 	case QUERY:
-		mastergate->QueryReply(data.socket_fd, data.channel1_group_id, data.channel2_group_id);
+		if (data.CPRO_State != PROTOCOL_UNCONNECTEDWAITINGSTATUS)
+		{
+			mastergate->QueryReply(data.socket_fd, data.channel1_group_id, data.channel2_group_id);
+		}
 		break;
 
 
 	case CALLREQUEST:
-		mastergate->CallRequestReply(data.socket_fd, "fail", "Unconnect");
-		if (c_status == "success")
+		if (data.CPRO_State == PROTOCOL_CONNECTED)
 		{
-			//TRACE(_T("Start to send RTP Voice\n"));
-			std::cout << "Start to send RTP Voice\n" << endl;
-			mastergate->CallStartNotify(data.socket_fd, data.src_id, data.dst_id, data.channel_id);
 
-			/*if ((data.channel_id == "channel1") && channel1RTP != NULL)
-				channel1RTP->SendRTPPayloadData(sendVoiceBuff, 24);
+			mastergate->CallRequestReply(data.socket_fd, "success", "");
+			if (c_status == "success")
+			{
+				std::cout << "Start to send RTP Voice\n" << endl;
+				mastergate->CallStartNotify(data.socket_fd, data.src_id, data.dst_id, data.channel_id);
 
-			if ((data.channel_id == "channel2") && channel2RTP != NULL)
-				channel2RTP->SendRTPPayloadData(sendVoiceBuff, 24);*/
+				/*if ((data.channel_id == "channel1") && channel1RTP != NULL)
+					channel1RTP->SendRTPPayloadData(sendVoiceBuff, 24);
 
+					if ((data.channel_id == "channel2") && channel2RTP != NULL)
+					channel2RTP->SendRTPPayloadData(sendVoiceBuff, 24);*/
+
+			}
 		}
 		break;
 
 	case CALLRELEASE:
-		mastergate->CallReleaseReply(data.socket_fd, "fail", "Unconnect");
-		if (c_status == "success")
+		if (data.CPRO_State == PROTOCOL_CONNECTED)
 		{
-			//TRACE(_T("Stop sending RTP Voice\n"));
-			std::cout << "Stop sending RTP Voice\n" << endl;
-			mastergate->CallEndNotify(data.socket_fd, data.src_id, data.dst_id, data.channel_id);
+			mastergate->CallReleaseReply(data.socket_fd, "success", "");
+			if (c_status == "success")
+			{
+				std::cout << "Stop sending RTP Voice\n" << endl;
+				mastergate->CallEndNotify(data.socket_fd, data.src_id, data.dst_id, data.channel_id);
+			}
 		}
 		break;
 	default:
@@ -264,7 +297,6 @@ void MyMasterServer::MasterOnDataFunc(int command, ResponeData data)
 
 	}
 
-	//TRACE(_T("MasterOnDataFunc finished\n"));
 	std::cout << "MasterOnDataFunc finished\n" << endl;
 
 }

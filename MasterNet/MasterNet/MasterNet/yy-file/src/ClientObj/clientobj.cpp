@@ -4,10 +4,18 @@
 
 ClientObj::ClientObj(ClientParams_t params, MultiCallBackFuncs_t callbacks)
 {
-	InitProtocolData();
+	InitProtocolData(params, callbacks);
 
-	RequestCallBackFunc = NULL;
+	CreatProtocolParseThread();
 
+	CreateProcessClientReqThread();
+
+
+}
+
+void ClientObj::InitProtocolData(ClientParams_t params, MultiCallBackFuncs_t callbacks)
+{
+	
 	RequestCallBackFunc = callbacks.RequestCallBackFunc;//回调设置
 
 	NotifyDeleteCallBackFunc = callbacks.ExitNotifyCallBackFunc;//回调设置
@@ -22,16 +30,7 @@ ClientObj::ClientObj(ClientParams_t params, MultiCallBackFuncs_t callbacks)
 
 	clientparams = params;
 
-	CreatProtocolParseThread();
 
-	CreateProcessClientReqThread();
-
-
-}
-
-void ClientObj::InitProtocolData()
-{
-	
 	memset(recvbuff, 0x00, BUFLENGTH);
 	memset(&temp_option, 0x00, sizeof(StickDismantleOptions_t)); 
 	
@@ -41,10 +40,11 @@ void ClientObj::InitProtocolData()
 	socketoption.recvtimeout = TIMEOUT_VALUE;
 	socketoption.sendtimeout = TIMEOUT_VALUE;
 	
-	//ondata_locker = new CriSection();
-	//deobj_locker = new CriSection();
 	process_client_thread_p = NULL;
 	parse_thread_p = NULL;
+
+	ClientPRO_State = PROTOCOL_UNCONNECTEDWAITINGSTATUS; 
+
 	//inset states
 	statemap.insert(std::pair<string, int>("Connect", CONNECT));
 	statemap.insert(std::pair<string, int>("Listening", LISTENING));
@@ -56,7 +56,7 @@ void ClientObj::InitProtocolData()
 
 	//init default protocol data
 	thePROTOCOL_Ctrlr.clientfd = INVALID_SOCKET;
-	thePROTOCOL_Ctrlr.MASTER_State = CONNECT;
+	//thePROTOCOL_Ctrlr.MASTER_State = CONNECT;
 	thePROTOCOL_Ctrlr.PROTOCOL_Fixed_Header.identifier = "";
 	thePROTOCOL_Ctrlr.PROTOCOL_Fixed_Header.type = "Request";
 	thePROTOCOL_Ctrlr.PROTOCOL_Fixed_Header.name = "Connect";
@@ -70,9 +70,14 @@ void ClientObj::InitProtocolData()
 	thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel1.reason = "timeout";
 	thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel1.status = "fail";
 	thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel1.listening_group_id = 0;
+	thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel1.RTPportbase = params.channel1.rtp_portbase;
+	thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel1.RTPdestport = params.channel1.rtp_destport;
+
 	thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel2.reason = "timeout";
 	thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel2.status = "fail";
 	thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel2.listening_group_id = 0;
+	thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel2.RTPportbase = params.channel2.rtp_portbase;
+	thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel2.RTPdestport = params.channel2.rtp_destport;
 
 	thePROTOCOL_Ctrlr.PROTOCOL_params.src = 9;
 	thePROTOCOL_Ctrlr.PROTOCOL_params.dst = 65536;
@@ -264,21 +269,89 @@ void ClientObj::DataProcessFunc()
 		break;
 	}
 
+	ProCallBackFunc(ClientPRO_State);
+
+	switch (ClientPRO_State)
+	{
+		case PROTOCOL_UNCONNECTEDWAITINGSTATUS:
+
+				if ((statemap.find(thePROTOCOL_Ctrlr.PROTOCOL_Fixed_Header.name)->second) == CONNECT)
+				{
+					ClientPRO_State = PROTOCOL_UNCONNECTEDWAITINGSETLISTENING;
+				}
+
+				break;
+		case PROTOCOL_UNCONNECTEDWAITINGSETLISTENING:
+
+				if ((statemap.find(thePROTOCOL_Ctrlr.PROTOCOL_Fixed_Header.name)->second) == LISTENING)
+				{
+					ClientPRO_State = PROTOCOL_CONNECTED;		
+				}
+
+				break;
+		case PROTOCOL_CONNECTED:
+						
+				if ((statemap.find(thePROTOCOL_Ctrlr.PROTOCOL_Fixed_Header.name)->second) == DISCONNECT)
+				{
+					ClientPRO_State = PROTOCOL_UNCONNECTEDWAITINGSTATUS;
+				}
+				break;
+
+			default:
+				break;
+	}
+
+	//if (RequestCallBackFunc != NULL)
+	//{
+	//	ResponeData r = { 
+	//		ClientPRO_State,
+	//		thePROTOCOL_Ctrlr.clientfd, 
+	//		thePROTOCOL_Ctrlr.PROTOCOL_Fixed_Header.identifier,
+	//		thePROTOCOL_Ctrlr.PROTOCOL_params.key,
+	//		thePROTOCOL_Ctrlr.PROTOCOL_params.channel,
+	//		thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Channels_Group.channel1_group_id,
+	//		thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel1.RTPportbase,
+	//		thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel1.RTPdestport,
+	//		thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Channels_Group.channel2_group_id,
+	//		thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel2.RTPportbase,
+	//		thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel2.RTPdestport,
+	//		thePROTOCOL_Ctrlr.PROTOCOL_params.src,
+	//		thePROTOCOL_Ctrlr.PROTOCOL_params.dst,
+	//		"", 
+	//		"" 
+	//	};
+	//	RequestCallBackFunc(statemap.find(thePROTOCOL_Ctrlr.PROTOCOL_Fixed_Header.name)->second, r);
+	//	//onData(RequestCallBackFunc, statemap.find(thePROTOCOL_Ctrlr.PROTOCOL_Fixed_Header.name)->second, r);//callback (*func)
+	//}
+
+
+}
+void ClientObj::ProCallBackFunc(ClientPRO_States_t State)
+{
 	if (RequestCallBackFunc != NULL)
 	{
-		ResponeData r = { thePROTOCOL_Ctrlr.clientfd, thePROTOCOL_Ctrlr.PROTOCOL_Fixed_Header.identifier, thePROTOCOL_Ctrlr.PROTOCOL_params.key,
-			thePROTOCOL_Ctrlr.PROTOCOL_params.channel, thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Channels_Group.channel1_group_id,
+		ResponeData r = {
+			State,
+			thePROTOCOL_Ctrlr.clientfd,
+			thePROTOCOL_Ctrlr.PROTOCOL_Fixed_Header.identifier,
+			thePROTOCOL_Ctrlr.PROTOCOL_params.key,
+			thePROTOCOL_Ctrlr.PROTOCOL_params.channel,
+			thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Channels_Group.channel1_group_id,
+			thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel1.RTPportbase,
+			thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel1.RTPdestport,
 			thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Channels_Group.channel2_group_id,
-			thePROTOCOL_Ctrlr.PROTOCOL_params.src, thePROTOCOL_Ctrlr.PROTOCOL_params.dst,
-			"", "" };
-
+			thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel2.RTPportbase,
+			thePROTOCOL_Ctrlr.PROTOCOL_params.Listening_Params_Channels_Params.channel2.RTPdestport,
+			thePROTOCOL_Ctrlr.PROTOCOL_params.src,
+			thePROTOCOL_Ctrlr.PROTOCOL_params.dst,
+			"",
+			""
+		};
 		RequestCallBackFunc(statemap.find(thePROTOCOL_Ctrlr.PROTOCOL_Fixed_Header.name)->second, r);
 		//onData(RequestCallBackFunc, statemap.find(thePROTOCOL_Ctrlr.PROTOCOL_Fixed_Header.name)->second, r);//callback (*func)
 	}
 
-
 }
-
 void ClientObj::onData(void(*func)(int, ResponeData), int command, ResponeData data)
 {
 	//ondata_locker->Lock();

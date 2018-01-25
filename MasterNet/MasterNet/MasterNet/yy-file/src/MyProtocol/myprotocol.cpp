@@ -526,7 +526,7 @@ void JProtocol::ConnectReply(HSocket dst_fd, std::string status, std::string rea
 	std::cout<<"Send ConnectReply\n"<<std::endl;
 
 }
-void JProtocol::ConfigReply(HSocket dst_fd, int channel1_value, int channel2_value)
+void JProtocol::ConfigReply(HSocket dst_fd, Listening_Reply_Params_Channels_t channel_params)
 {
 	Json::Value send_root;
 	Json::Value send_arrayObj1;
@@ -537,30 +537,19 @@ void JProtocol::ConfigReply(HSocket dst_fd, int channel1_value, int channel2_val
 	Json::Value send_item3;
 	Json::StyledWriter style_write;
 
-	if (channel1_value != 0)
-	{
-		send_item1["status"] = "success";
-		send_item1["reason"] = "";
-	}
-	else
-	{
-		send_item1["status"] = "fail";
-		send_item1["reason"] = "unset";
-	}
-	send_item1["value"] = channel1_value;
+
+	send_item1["status"] = channel_params.channel1.status;
+	send_item1["reason"] = channel_params.channel1.reason;
+	send_item1["RTPPortbase"] = channel_params.channel1.RTPportbase;
+	send_item1["RTPDestport"] = channel_params.channel1.RTPdestport;
+	send_item1["value"] = channel_params.channel1.listening_group_id;
 	send_arrayObj1.append(send_item1);
 
-	if (channel2_value != 0)
-	{
-		send_item2["status"] = "success";
-		send_item2["reason"] = "";
-	}
-	else
-	{
-		send_item2["status"] = "fail";
-		send_item2["reason"] = "unset";
-	}
-	send_item2["value"] = channel2_value;
+	send_item2["status"] = channel_params.channel2.status;
+	send_item2["reason"] = channel_params.channel2.reason;
+	send_item2["RTPPortbase"] = channel_params.channel2.RTPportbase;
+	send_item2["RTPDestport"] = channel_params.channel2.RTPdestport;
+	send_item2["value"] = channel_params.channel2.listening_group_id;;
 	send_arrayObj2.append(send_item2);
 
 	send_item3["channel1"] = send_arrayObj1;

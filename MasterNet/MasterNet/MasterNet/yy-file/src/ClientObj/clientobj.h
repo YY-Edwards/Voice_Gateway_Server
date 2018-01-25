@@ -43,7 +43,7 @@ private:
 	/*
 	初始化成员变量
 	*/
-	void InitProtocolData();
+	void InitProtocolData(ClientParams_t params, MultiCallBackFuncs_t callbacks);
 
 	void DataProcessFunc();
 
@@ -78,6 +78,8 @@ private:
 	static int ProtocolParseThread(void *p);
 	int ProtocolParseThreadFunc();
 
+	void ProCallBackFunc(ClientPRO_States_t State);
+
 
 	FifoQueue jqueue;//JSON data queue
 	//socket初始化变量结构体
@@ -85,6 +87,7 @@ private:
 
 	PROTOCOL_Ctrlr thePROTOCOL_Ctrlr;//协议结构
 	std::map <std::string, int>  statemap;//状态机
+	ClientPRO_States_t ClientPRO_State;
 	//ILock *ondata_locker;
 	//ILock *deobj_locker;
 	MyCreateThread * process_client_thread_p;
