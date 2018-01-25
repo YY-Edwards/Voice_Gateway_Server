@@ -16,6 +16,15 @@
 #include <semaphore.h> 
 #endif
 
+class ILock;
+class ISem;
+class ICond;
+class CriSection;
+class Mutex;
+class MySynSem;
+class MySynCond;
+class MyCreateThread;
+
 //
 typedef enum {
 	SYN_FAILED		=-2,
