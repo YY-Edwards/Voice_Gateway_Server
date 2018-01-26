@@ -42,7 +42,7 @@ namespace Dispatcher.Service
         {
             while(true)
             {                   
-                List<int> willRemove = new List<int>();
+                List<string> willRemoveGuid = new List<string>();
                 lock(_operateList)
                 {
                     for(int i = 0; i<_operateList.Count; ++i)
@@ -50,11 +50,10 @@ namespace Dispatcher.Service
                         if(_operateList[i].SendTime < DateTime.Now.AddSeconds(-FunctionConfigure.TimeoutSeconds).Ticks)
                         {
                             if(DispatcherFailure != null)DispatcherFailure(_operateList[i], Status.Timeout);
-                            willRemove.Add(i);
+                            willRemoveGuid.Add(_operateList[i].Parameter.guid);
                         }
                     }
-
-                    foreach(int index in willRemove)_operateList.RemoveAt(index);
+                    _operateList.RemoveAll(p => willRemoveGuid.Contains(x => x == p.Parameter.guid));
                 }
 
                 Thread.Sleep(500);
