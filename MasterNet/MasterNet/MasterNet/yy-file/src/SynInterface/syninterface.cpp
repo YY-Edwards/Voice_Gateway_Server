@@ -255,15 +255,15 @@ int MySynCond::CondWait(int waittime)const
 			wait_ret = pthread_cond_timedwait(&m_cond, &(m_condlock->GetMutex()), &outtime);
 		}
 		//fprintf(stderr, "pthread_cond_timedwait ret : %d\n", ret);
-		if (wait_ret == ETIMEDOUT)
-		{
-			ret = 1;
+	}
+	if (wait_ret == ETIMEDOUT)
+	{
+		ret = 1;
 
-		}
-		else if (wait_ret == 0)//waitcond
-		{
-			
-		}
+	}
+	else //flag or waitcond
+	{
+		ret =0;
 	}
 	m_condlock->Unlock();
 
