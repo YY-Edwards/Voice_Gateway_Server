@@ -144,19 +144,32 @@ int MySynSem::SemWait(int waittime)const
 	}
 
 #else
-	struct timespec ts;
-	ts.tv_nsec = waittime*1000*1000;
-	ts.tv_sec   = 0;
-	ret=sem_timedwait(&m_sem, &ts);
-	if ((ret < 0) && (errno == ETIMEDOUT))
+	struct timeval now;
+	struct timespec outtime;
+
+	gettimeofday(&now, NULL);
+	timeraddMS(&now, waittime);//ms级别
+	outtime.tv_sec = now.tv_sec;
+	outtime.tv_nsec = now.tv_usec * 1000;
+	while ((ret = sem_timedwait(&m_hSemaphore, &outtime) != 0) && errno == EINTR)//linux 下暂时未测试其效果
+		continue;
+
+	if (ret != 0)
 	{
-		ret = 1;
-	}
-	else if (ret < 0)
-	{
-		ret = -1;
+		if (errno == ETIMEDOUT)
+		{
+			ret = 1;
+			//timeout
+		}
+		else
+		{
+			ret = -1;
+			//failed
+		}
+		return ret;
 	}
 	else
+
 #endif	
 
 	return ret;
@@ -221,9 +234,39 @@ int MySynCond::CondWait(int waittime)const
 
 #else
 
+	int wait_ret = 0;
+	struct timeval now;
+	struct timespec outtime;
+
 	m_condlock->Lock();
-	ret = pthread_cond_wait(&m_cond, &(m_condlock->GetMutex()));//会意外苏醒，注意考虑此情况的处理机制
+
+	gettimeofday(&now, NULL);
+	timeraddMS(&now, waittime);//ms级别
+	outtime.tv_sec = now.tv_sec;
+	outtime.tv_nsec = now.tv_usec * 1000;
+
+	while (CD_Trigger == 0 && wait_ret != ETIMEDOUT){
+		//fprintf(stderr, "mulcastport poll  is ready\n");
+		//ret = pthread_cond_wait(&mulcast_poll_cond, &poll_cond_mutex);
+		if(0== waittime)
+			wait_ret = pthread_cond_wait(&m_cond, &(m_condlock->GetMutex()));//会意外苏醒，注意考虑此情况的处理机制
+		else
+		{
+			wait_ret = pthread_cond_timedwait(&m_cond, &(m_condlock->GetMutex()), &outtime);
+		}
+		//fprintf(stderr, "pthread_cond_timedwait ret : %d\n", ret);
+		if (wait_ret == ETIMEDOUT)
+		{
+			ret = 1;
+
+		}
+		else if (wait_ret == 0)//waitcond
+		{
+			
+		}
+	}
 	m_condlock->Unlock();
+
 
 #endif
 

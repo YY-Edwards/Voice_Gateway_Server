@@ -327,7 +327,7 @@ int JProtocol::RecoveryClientObjThreadFunc()
 	std::map<ClientParams_t, ClientObj *> ::iterator it;
 	int ret = 0;
 
-	while ((ret = clientqueue.TakeFromQueue(temp, len, 20)) >= 0)
+	while ((ret = clientqueue.TakeFromQueue(temp, (int&)len, 20)) >= 0)
 	{
 		if (set_thread_exit_flag)break;
 		if (ret == SYN_OBJECT_o)
