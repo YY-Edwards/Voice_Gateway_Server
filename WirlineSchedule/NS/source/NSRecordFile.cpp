@@ -31,6 +31,7 @@ NSRecordFile::NSRecordFile(NSWLPeer* peer)
 , m_peer(peer)
 //, m_pManager(pManager)
 , buffer((char*)malloc(MAX_RECORD_BUFFER_SIZE))
+, m_mutexFile(INITLOCKER())
 {
 	if (m_peer) m_peer->setRecordFile(this);
 	GetLocalTime(&time);
@@ -64,6 +65,7 @@ NSRecordFile::~NSRecordFile()
 	}
 	free(buffer);
 	buffer = NULL;
+	DELETELOCKER(m_mutexFile);
 }
 
 void NSRecordFile::WriteVoiceFrame(const char* pAmbe, int size, bool needDongle /*= true*/)
@@ -250,7 +252,12 @@ void NSRecordFile::WriteToDb()
 	{
 		std::map < std::string, std::string > voiceRecord;
 		char temp[64] = { 0 };
-		if (0 == id)
+		if (0 == length)
+		{
+			/*do nothing because data length is zero*/
+			m_pLog->AddLog(Ns_Log_Info, "do nothing because data length is zero");
+		}
+		else if (0 == id)
 		{
 			if (!CreateNewFileByYearMonth())
 			{
@@ -258,15 +265,30 @@ void NSRecordFile::WriteToDb()
 			}
 			else
 			{
-				DWORD dwWrite, offset;
-				/*将音频数据写入文件*/
-				SetFilePointer(m_hOpenFile, 0, NULL, FILE_END);
-				offset = GetFileSize(m_hOpenFile, NULL);
-				if (FALSE == WriteFile(m_hOpenFile, buffer, length, &dwWrite, NULL))
-				{
-					m_pLog->AddLog(Ns_Log_Error, "Record WriteFile fail");
-				}
-				else
+				///*将音频数据写入文件*/
+				//TRYLOCK(m_mutexFile);
+				//SetFilePointer(m_hOpenFile, 0, NULL, FILE_END);
+				//offset = GetFileSize(m_hOpenFile, NULL);
+				//BOOL writeRlt = WriteFile(m_hOpenFile, buffer, length, &dwWrite, NULL);
+				//if (FALSE == writeRlt)
+				//{
+				//	m_pLog->AddLog(Ns_Log_Error, "Record WriteFile fail,GetLastError:%lu",GetLastError());
+				//	if (m_hOpenFile)
+				//	{
+				//		CloseHandle(m_hOpenFile);
+				//		m_hOpenFile = NULL;
+				//	}
+				//	RELEASELOCK(m_mutexFile);
+				//}
+				//else
+				//{
+				//	if (FALSE == FlushFileBuffers(m_hOpenFile))
+				//	{
+				//		m_pLog->AddLog(Ns_Log_Error, "FlushFileBuffers fail, GetLastError:%lu", GetLastError());
+				//	}
+				//	RELEASELOCK(m_mutexFile);
+				DWORD offset;
+				if (WirteDataToFile(offset))
 				{
 					/*插入此条数据记录*/
 					/*src_radio*/
@@ -346,21 +368,27 @@ void NSRecordFile::WriteToDb()
 
 BOOL NSRecordFile::CreateNewFileByYearMonth()
 {
+	TRYLOCK(m_mutexFile);
+	BOOL rlt = TRUE;
 	SYSTEMTIME t = { 0 };
 	GetLocalTime(&t);
 	wchar_t strFileName[PATH_FILE_MAXSIZE] = { 0 };
 	swprintf_s(strFileName, L"%s\\%04u%02u.bit", g_ambedata_path, t.wYear, t.wMonth);
-	if (0 == wcscmp(m_strCurrentFilePath, strFileName))
+	if (0 == wcscmp(m_strCurrentFilePath, strFileName) && NULL != m_hOpenFile)
 	{
-		return TRUE;
+		// do nothing
 	}
-	wcscpy_s(m_strCurrentFilePath, strFileName);
-	m_hOpenFile = CreateFile(m_strCurrentFilePath, GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_ALWAYS, NULL, NULL);
-	if (NULL == m_hOpenFile)
+	else
 	{
-		return FALSE;
+		wcscpy_s(m_strCurrentFilePath, strFileName);
+		m_hOpenFile = CreateFile(m_strCurrentFilePath, GENERIC_WRITE, FILE_SHARE_WRITE | FILE_SHARE_READ, NULL, OPEN_ALWAYS, NULL, NULL);
+		if (NULL == m_hOpenFile)
+		{
+			rlt = FALSE;
+		}
 	}
-	return TRUE;
+	RELEASELOCK(m_mutexFile);
+	return rlt;
 }
 
 int NSRecordFile::CallStatus()
@@ -371,6 +399,42 @@ int NSRecordFile::CallStatus()
 void NSRecordFile::setPeer(NSWLPeer* value)
 {
 	m_peer = value;
+}
+
+bool NSRecordFile::WirteDataToFile(DWORD &offset)
+{
+	bool rlt = true;
+	DWORD dwWrite;
+	/*将音频数据写入文件*/
+	TRYLOCK(m_mutexFile);
+	SetFilePointer(m_hOpenFile, 0, NULL, FILE_END);
+	offset = GetFileSize(m_hOpenFile, NULL);
+	BOOL writeRlt = WriteFile(m_hOpenFile, buffer, length, &dwWrite, NULL);
+	if (FALSE == writeRlt)
+	{
+		m_pLog->AddLog(Ns_Log_Error, "Record WriteFile fail,GetLastError:%lu", GetLastError());
+		if (m_hOpenFile)
+		{
+			CloseHandle(m_hOpenFile);
+			m_hOpenFile = NULL;
+		}
+		rlt = false;
+	}
+	else
+	{
+		if (FALSE == FlushFileBuffers(m_hOpenFile))
+		{
+			m_pLog->AddLog(Ns_Log_Error, "FlushFileBuffers fail, GetLastError:%lu", GetLastError());
+			if (m_hOpenFile)
+			{
+				CloseHandle(m_hOpenFile);
+				m_hOpenFile = NULL;
+			}
+			rlt = false;
+		}
+	}
+	RELEASELOCK(m_mutexFile);
+	return rlt;
 }
 
 //bool CRecordFile::TimeOutUpdateStatusToDb()
