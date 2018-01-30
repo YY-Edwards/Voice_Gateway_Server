@@ -25,14 +25,6 @@ MyMasterServer::MyMasterServer()
 
 MyMasterServer::~MyMasterServer()
 {
-	pThis = NULL;
-
-	std::cout << "Destory: MyMasterServer \n" << endl;
-
-}
-
-void MyMasterServer::Stop()
-{
 
 	if (fp != NULL)
 	{
@@ -41,10 +33,19 @@ void MyMasterServer::Stop()
 	}
 	if (mastergate != NULL)
 	{
-		mastergate->Stop();
 		delete mastergate;
 		mastergate = NULL;
 	}
+
+	pThis = NULL;
+
+	std::cout << "Destory: MyMasterServer \n" << endl;
+
+}
+
+void MyMasterServer::Stop()
+{
+	mastergate->Stop();
 
 	std::cout << "Stop MyMasterServer \n" << endl;
 
