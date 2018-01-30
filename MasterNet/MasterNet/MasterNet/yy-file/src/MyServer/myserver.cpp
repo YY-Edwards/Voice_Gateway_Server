@@ -1,20 +1,20 @@
 /*
-* myprotocol.cpp
+* myserver.cpp
 *
 * Created: 2018/01/03
 * Author: EDWARDS
 */
 #include "stdafx.h"
-#include "myprotocol.h"
+#include "myserver.h"
 
-JProtocol *JProtocol::pThis = NULL;
+MyServer *MyServer::pThis = NULL;
 
-JProtocol::JProtocol()
+MyServer::MyServer()
 {
 	 InitProtocolData();
 }
 
-JProtocol::~JProtocol()
+MyServer::~MyServer()
 {
 
 	std::map<ClientParams_t, ClientObj *> ::iterator it;
@@ -37,11 +37,11 @@ JProtocol::~JProtocol()
 
 	FreeSocketEnvironment();
 	pThis = NULL;
-	std::cout<<"Destory: JProtocol \n"<<std::endl;
+	std::cout<<"Destory: MyServer \n"<<std::endl;
 
 }
 
-void JProtocol::Stop()
+void MyServer::Stop()
 {
 	CloseMater();
 	SetThreadExitFlag();//通知线程退出
@@ -63,10 +63,10 @@ void JProtocol::Stop()
 	startfunc_is_finished = false;
 	set_thread_exit_flag = false;
 
-	std::cout << "Stop: JProtocol-thread\n" << std::endl;
+	std::cout << "Stop: MyServer-thread\n" << std::endl;
 }
 
-void JProtocol::InitProtocolData()
+void MyServer::InitProtocolData()
 {
 	pThis = this;
 
@@ -96,7 +96,7 @@ void JProtocol::InitProtocolData()
 	clientmap_locker = new CriSection();
 
 }
-void JProtocol::CloseMater()
+void MyServer::CloseMater()
 {
 	if (serversoc != INVALID_SOCKET)
 	{
@@ -108,13 +108,13 @@ void JProtocol::CloseMater()
 	std::cout<<"Close Server\n"<<std::endl;
 
 }
-void JProtocol::SetCallBackFunc(ClientsCallBackFuncs_t funcs)
+void MyServer::SetCallBackFunc(ClientsCallBackFuncs_t funcs)
 {
 	//回调设置
 	multicallbackfuncs.RequestCallBackFunc = funcs.RequestCallBackFunc;
 	memcpy(RTPcallBackfuncs, funcs.RTPcallbackfuncs, sizeof(funcs.RTPcallbackfuncs));
 }
-void JProtocol::Start()
+void MyServer::Start()
 {
 	bool status = false;
 	status = InitSocket();
@@ -132,7 +132,7 @@ void JProtocol::Start()
 	}
 
 }
-bool JProtocol::InitSocket()
+bool MyServer::InitSocket()
 {
 	if (mytcp_server != NULL)
 	{
@@ -206,21 +206,21 @@ bool JProtocol::InitSocket()
 	return true;
 
 }
-void JProtocol::CreateRecoveryClientObjThread()
+void MyServer::CreateRecoveryClientObjThread()
 {
 	recovery_thread_p = new MyCreateThread(RecoveryClientObjThread, this);
 
 }
-void JProtocol::CreateListenThread()
+void MyServer::CreateListenThread()
 {
 	{
 		listen_thread_p = new MyCreateThread(ListenThread, this);
 	}
 
 }
-int JProtocol::ListenThread(void* p)
+int MyServer::ListenThread(void* p)
 {
-	JProtocol *arg = (JProtocol*)p;
+	MyServer *arg = (MyServer*)p;
 	int return_value = 0;
 	if (arg != NULL)
 	{
@@ -228,7 +228,7 @@ int JProtocol::ListenThread(void* p)
 	}
 	return return_value;
 }
-int JProtocol::ListenThreadFunc()
+int MyServer::ListenThreadFunc()
 {
 	int return_value = 0;
 	ClientParams_t clientparams;
@@ -274,7 +274,7 @@ int JProtocol::ListenThreadFunc()
 	return return_value;
 
 }
-bool JProtocol::ConfigClientParams(ClientParams_t &clientparams)
+bool MyServer::ConfigClientParams(ClientParams_t &clientparams)
 {
 	std::map<ClientParams_t, ClientObj *> ::iterator it;
 	int numb = 0;
@@ -316,9 +316,9 @@ bool JProtocol::ConfigClientParams(ClientParams_t &clientparams)
 	return true;
 
 }
-int JProtocol::RecoveryClientObjThread(void* p)
+int MyServer::RecoveryClientObjThread(void* p)
 {
-	JProtocol *arg = (JProtocol*)p;
+	MyServer *arg = (MyServer*)p;
 	int return_value = 0;
 	if (arg != NULL)
 	{
@@ -326,7 +326,7 @@ int JProtocol::RecoveryClientObjThread(void* p)
 	}
 	return return_value;
 }
-int JProtocol::RecoveryClientObjThreadFunc()
+int MyServer::RecoveryClientObjThreadFunc()
 {
 	int return_value = 0;
 	int len = 0;
@@ -390,26 +390,26 @@ int JProtocol::RecoveryClientObjThreadFunc()
 	return return_value;
 
 }
-void JProtocol::NotifyRecoveryClienObj(ClientParams_t clientparams)
+void MyServer::NotifyRecoveryClienObj(ClientParams_t clientparams)
 {
 	if (pThis == NULL)exit(-1);
 	pThis->NotifyDeleleClienObjFunc(clientparams);
 
 }
-void JProtocol::NotifyDeleleClienObjFunc(ClientParams_t clientparams)
+void MyServer::NotifyDeleleClienObjFunc(ClientParams_t clientparams)
 {
 
 	clientqueue.PushToQueue(&clientparams, sizeof(ClientParams_t));
 
 	std::cout << "#push clientqueue# \n" << std::endl;
 }
-bool JProtocol::CloseSocket(HSocket sockfd)
+bool MyServer::CloseSocket(HSocket sockfd)
 {
 	closesocket(sockfd);
 	return true;
 
 }
-int JProtocol::PhySocketSendData(HSocket Objsoc, char *buff, int send_len)
+int MyServer::PhySocketSendData(HSocket Objsoc, char *buff, int send_len)
 {
 	int count = 0;
 	transresult_t rt; 
@@ -444,7 +444,7 @@ int JProtocol::PhySocketSendData(HSocket Objsoc, char *buff, int send_len)
 
 
 }
-int JProtocol::SendDataToTheThirdParty(HSocket fd, std::string buff)
+int MyServer::SendDataToTheThirdParty(HSocket fd, std::string buff)
 {
 	int return_value = 0;
 	int send_len = 0;
@@ -505,7 +505,7 @@ int JProtocol::SendDataToTheThirdParty(HSocket fd, std::string buff)
 	Objsoc = INVALID_SOCKET;
 	return return_value;
 }
-void JProtocol::ConnectReply(HSocket dst_fd, std::string status, std::string reason)
+void MyServer::ConnectReply(HSocket dst_fd, std::string status, std::string reason)
 {
 	
 	Json::Value send_root;
@@ -535,7 +535,7 @@ void JProtocol::ConnectReply(HSocket dst_fd, std::string status, std::string rea
 	std::cout<<"Send ConnectReply\n"<<std::endl;
 
 }
-void JProtocol::ConfigReply(HSocket dst_fd, Listening_Reply_Params_Channels_t channel_params)
+void MyServer::ConfigReply(HSocket dst_fd, Listening_Reply_Params_Channels_t channel_params)
 {
 	Json::Value send_root;
 	Json::Value send_arrayObj1;
@@ -581,7 +581,7 @@ void JProtocol::ConfigReply(HSocket dst_fd, Listening_Reply_Params_Channels_t ch
 
 
 }
-void JProtocol::QueryReply(HSocket dst_fd, int channel1_value, int channel2_value)
+void MyServer::QueryReply(HSocket dst_fd, int channel1_value, int channel2_value)
 {
 	Json::Value send_root;
 	Json::Value send_arrayObj1;
@@ -627,7 +627,7 @@ void JProtocol::QueryReply(HSocket dst_fd, int channel1_value, int channel2_valu
 	std::cout<<"Send QueryReply\n"<<std::endl;
 
 }
-void JProtocol::CallRequestReply(HSocket dst_fd, std::string status, std::string reason)
+void MyServer::CallRequestReply(HSocket dst_fd, std::string status, std::string reason)
 {
 	Json::Value send_root;
 	Json::Value send_arrayObj;
@@ -652,7 +652,7 @@ void JProtocol::CallRequestReply(HSocket dst_fd, std::string status, std::string
 	std::cout<<"Send CallRequestReply\n"<<std::endl;
 
 }
-void JProtocol::CallReleaseReply(HSocket dst_fd, std::string status, std::string reason)
+void MyServer::CallReleaseReply(HSocket dst_fd, std::string status, std::string reason)
 {
 	Json::Value send_root;
 	Json::Value send_arrayObj;
@@ -677,7 +677,7 @@ void JProtocol::CallReleaseReply(HSocket dst_fd, std::string status, std::string
 	std::cout<<"Send CallReleaseReply\n"<<std::endl;
 
 }
-void JProtocol::CallStartNotify(HSocket dst_fd, int src, int dst, std::string channel)
+void MyServer::CallStartNotify(HSocket dst_fd, int src, int dst, std::string channel)
 {
 	Json::Value send_root;
 	Json::Value send_arrayObj;
@@ -704,7 +704,7 @@ void JProtocol::CallStartNotify(HSocket dst_fd, int src, int dst, std::string ch
 	std::cout<<"Send CallStartNotify\n"<<std::endl;
 
 }
-void JProtocol::CallEndNotify(HSocket dst_fd, int src, int dst, std::string channel)
+void MyServer::CallEndNotify(HSocket dst_fd, int src, int dst, std::string channel)
 {
 	Json::Value send_root;
 	Json::Value send_arrayObj;
@@ -730,7 +730,7 @@ void JProtocol::CallEndNotify(HSocket dst_fd, int src, int dst, std::string chan
 	std::cout<<"Send CallEndNotify\n"<<std::endl;
 
 }
-std::string JProtocol::CreateGuid()
+std::string MyServer::CreateGuid()
 {
 	std::string strGuid = "", strValue;
 	srand((unsigned)clock()); /*播种子*/

@@ -1,14 +1,14 @@
 
 /*
-* myprotocol.h
+* myserver.h
 *
 * Created: 2018/01/03
 * Author: EDWARDS
 */
 
 
-#ifndef MYPROTOCOL_H
-#define MYPROTOCOL_H
+#ifndef MYSERVER_H
+#define MYSERVER_H
 
 #include "common.h"
 #include "myrtp.h"
@@ -19,11 +19,11 @@
 #include <time.h>
 
 
-class JProtocol
+class MyServer
 {
 public:
-	JProtocol();
-	~JProtocol();
+	MyServer();
+	~MyServer();
 
 
 	/*
@@ -118,7 +118,7 @@ private:
 	int RecoveryClientObjThreadFunc();
 
 
-	static JProtocol * pThis;
+	static MyServer * pThis;
 	static void NotifyRecoveryClienObj(ClientParams_t clientparams);
 	void NotifyDeleleClienObjFunc(ClientParams_t clientparams);
 	FifoQueue clientqueue;

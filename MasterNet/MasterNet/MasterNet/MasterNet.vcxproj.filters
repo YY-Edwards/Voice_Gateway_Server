@@ -40,9 +40,6 @@
     <Filter Include="NS\include\yyfile\fifoqueue">
       <UniqueIdentifier>{adee88e4-c6fb-455c-80f0-f24e91fc8639}</UniqueIdentifier>
     </Filter>
-    <Filter Include="NS\include\yyfile\myprotocol">
-      <UniqueIdentifier>{5a6b1782-cd43-4d90-81a5-0a44d3d51f5e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="NS\include\yyfile\myrtp">
       <UniqueIdentifier>{b044183c-b744-4409-9207-d642d5cec450}</UniqueIdentifier>
     </Filter>
@@ -64,9 +61,6 @@
     <Filter Include="NS\source\yyfile\fifoqueue">
       <UniqueIdentifier>{9cccffb2-0ebb-4968-89bf-96c748206379}</UniqueIdentifier>
     </Filter>
-    <Filter Include="NS\source\yyfile\myprotocol">
-      <UniqueIdentifier>{20a0a4c6-d5f1-475a-85ec-526ef24d9caa}</UniqueIdentifier>
-    </Filter>
     <Filter Include="NS\source\yyfile\myrtp">
       <UniqueIdentifier>{5af8eba0-50e4-44e2-ac49-386664113848}</UniqueIdentifier>
     </Filter>
@@ -75,6 +69,12 @@
     </Filter>
     <Filter Include="NS\source\yyfile\syninterface">
       <UniqueIdentifier>{5cd74c5c-6c0c-4a37-b6d4-4a03f9f2f0e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\include\yyfile\myserver">
+      <UniqueIdentifier>{5a6b1782-cd43-4d90-81a5-0a44d3d51f5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="NS\source\yyfile\myserver">
+      <UniqueIdentifier>{20a0a4c6-d5f1-475a-85ec-526ef24d9caa}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -186,9 +186,6 @@
     <ClInclude Include="yy-file\src\FifoQueue\fifoqueue.h">
       <Filter>NS\include\yyfile\fifoqueue</Filter>
     </ClInclude>
-    <ClInclude Include="yy-file\src\MyProtocol\myprotocol.h">
-      <Filter>NS\include\yyfile\myprotocol</Filter>
-    </ClInclude>
     <ClInclude Include="yy-file\src\MyRTP\myrtp.h">
       <Filter>NS\include\yyfile\myrtp</Filter>
     </ClInclude>
@@ -203,6 +200,9 @@
     </ClInclude>
     <ClInclude Include="yy-file\src\mymaster.h">
       <Filter>NS\include\yyfile</Filter>
+    </ClInclude>
+    <ClInclude Include="yy-file\src\MyServer\myserver.h">
+      <Filter>NS\include\yyfile\myserver</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -281,9 +281,6 @@
     <ClCompile Include="yy-file\src\FifoQueue\fifoqueue.cpp">
       <Filter>NS\source\yyfile\fifoqueue</Filter>
     </ClCompile>
-    <ClCompile Include="yy-file\src\MyProtocol\myprotocol.cpp">
-      <Filter>NS\source\yyfile\myprotocol</Filter>
-    </ClCompile>
     <ClCompile Include="yy-file\src\MyRTP\myrtp.cpp">
       <Filter>NS\source\yyfile\myrtp</Filter>
     </ClCompile>
@@ -295,6 +292,9 @@
     </ClCompile>
     <ClCompile Include="yy-file\src\mymaster.cpp">
       <Filter>NS\source\yyfile</Filter>
+    </ClCompile>
+    <ClCompile Include="yy-file\src\MyServer\myserver.cpp">
+      <Filter>NS\source\yyfile\myserver</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

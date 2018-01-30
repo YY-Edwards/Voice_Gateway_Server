@@ -3,22 +3,22 @@
 
 #include "myinclude.h"
 
-class MyMasterServer
+class MyMasterGate
 {
 public:
-	MyMasterServer();
-	~MyMasterServer();
+	MyMasterGate();
+	~MyMasterGate();
 
 	void Start();
 	void Stop();
 
 private:
 
-	static MyMasterServer *pThis;
+	static MyMasterGate *pThis;
 
 	ClientsCallBackFuncs_t clients_callback_funcs;
 
-	JProtocol *mastergate;
+	MyServer *p_myserver;
 
 	//protocol callbackfunc
 	static void  MasterOnData(int command, ResponeData data);

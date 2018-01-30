@@ -1,9 +1,9 @@
 #include "stdafx.h"
 #include "mymaster.h"
 
-MyMasterServer *MyMasterServer::pThis = NULL;
+MyMasterGate *MyMasterGate::pThis = NULL;
 
-MyMasterServer::MyMasterServer()
+MyMasterGate::MyMasterGate()
 {
 	pThis = this;
 	fp = NULL;
@@ -16,14 +16,14 @@ MyMasterServer::MyMasterServer()
 	clients_callback_funcs.RTPcallbackfuncs[4].RecvVoiceDataFunc = SpecialGroup5Voice;
 	clients_callback_funcs.RTPcallbackfuncs[5].RecvVoiceDataFunc = SpecialGroup6Voice;//OBJ3
 
-	mastergate = new JProtocol;
+	p_myserver = new MyServer;
 
 
 
 
 }
 
-MyMasterServer::~MyMasterServer()
+MyMasterGate::~MyMasterGate()
 {
 
 	if (fp != NULL)
@@ -31,33 +31,33 @@ MyMasterServer::~MyMasterServer()
 		fclose(fp);
 		fp = NULL;
 	}
-	if (mastergate != NULL)
+	if (p_myserver != NULL)
 	{
-		delete mastergate;
-		mastergate = NULL;
+		delete p_myserver;
+		p_myserver = NULL;
 	}
 
 	pThis = NULL;
 
-	std::cout << "Destory: MyMasterServer \n" << endl;
+	std::cout << "Destory: MyMasterGate \n" << endl;
 
 }
 
-void MyMasterServer::Stop()
+void MyMasterGate::Stop()
 {
-	mastergate->Stop();
+	p_myserver->Stop();
 
-	std::cout << "Stop MyMasterServer \n" << endl;
+	std::cout << "Stop MyMasterGate \n" << endl;
 
 }
 
 
-void MyMasterServer::SpecialGroup1Voice(ResponeRTPData data)
+void MyMasterGate::SpecialGroup1Voice(ResponeRTPData data)
 {
 	if (pThis == NULL)exit(-1);
 	pThis->SpecialGroup1VoiceFunc(data);
 }
-void MyMasterServer::SpecialGroup1VoiceFunc(ResponeRTPData data)
+void MyMasterGate::SpecialGroup1VoiceFunc(ResponeRTPData data)
 {
 
 	static int count = 0;
@@ -68,12 +68,12 @@ void MyMasterServer::SpecialGroup1VoiceFunc(ResponeRTPData data)
 
 }
 
-void MyMasterServer::SpecialGroup2Voice(ResponeRTPData data)
+void MyMasterGate::SpecialGroup2Voice(ResponeRTPData data)
 {
 	if (pThis == NULL)exit(-1);
 	pThis->SpecialGroup2VoiceFunc(data);
 }
-void MyMasterServer::SpecialGroup2VoiceFunc(ResponeRTPData data)
+void MyMasterGate::SpecialGroup2VoiceFunc(ResponeRTPData data)
 {
 
 	static int count = 0;
@@ -84,12 +84,12 @@ void MyMasterServer::SpecialGroup2VoiceFunc(ResponeRTPData data)
 
 }
 
-void MyMasterServer::SpecialGroup3Voice(ResponeRTPData data)
+void MyMasterGate::SpecialGroup3Voice(ResponeRTPData data)
 {
 	if (pThis == NULL)exit(-1);
 	pThis->SpecialGroup3VoiceFunc(data);
 }
-void MyMasterServer::SpecialGroup3VoiceFunc(ResponeRTPData data)
+void MyMasterGate::SpecialGroup3VoiceFunc(ResponeRTPData data)
 {
 
 	static int count = 0;
@@ -100,12 +100,12 @@ void MyMasterServer::SpecialGroup3VoiceFunc(ResponeRTPData data)
 
 }
 
-void MyMasterServer::SpecialGroup4Voice(ResponeRTPData data)
+void MyMasterGate::SpecialGroup4Voice(ResponeRTPData data)
 {
 	if (pThis == NULL)exit(-1);
 	pThis->SpecialGroup4VoiceFunc(data);
 }
-void MyMasterServer::SpecialGroup4VoiceFunc(ResponeRTPData data)
+void MyMasterGate::SpecialGroup4VoiceFunc(ResponeRTPData data)
 {
 
 	static int count = 0;
@@ -116,12 +116,12 @@ void MyMasterServer::SpecialGroup4VoiceFunc(ResponeRTPData data)
 
 }
 
-void MyMasterServer::SpecialGroup5Voice(ResponeRTPData data)
+void MyMasterGate::SpecialGroup5Voice(ResponeRTPData data)
 {
 	if (pThis == NULL)exit(-1);
 	pThis->SpecialGroup5VoiceFunc(data);
 }
-void MyMasterServer::SpecialGroup5VoiceFunc(ResponeRTPData data)
+void MyMasterGate::SpecialGroup5VoiceFunc(ResponeRTPData data)
 {
 
 	static int count = 0;
@@ -132,12 +132,12 @@ void MyMasterServer::SpecialGroup5VoiceFunc(ResponeRTPData data)
 
 }
 
-void MyMasterServer::SpecialGroup6Voice(ResponeRTPData data)
+void MyMasterGate::SpecialGroup6Voice(ResponeRTPData data)
 {
 	if (pThis == NULL)exit(-1);
 	pThis->SpecialGroup6VoiceFunc(data);
 }
-void MyMasterServer::SpecialGroup6VoiceFunc(ResponeRTPData data)
+void MyMasterGate::SpecialGroup6VoiceFunc(ResponeRTPData data)
 {
 
 	static int count = 0;
@@ -148,40 +148,40 @@ void MyMasterServer::SpecialGroup6VoiceFunc(ResponeRTPData data)
 
 }
 
-void MyMasterServer::Start()
+void MyMasterGate::Start()
 {
 
-	mastergate->SetCallBackFunc(clients_callback_funcs);//设置回调函数
+	p_myserver->SetCallBackFunc(clients_callback_funcs);//设置回调函数
 
-	mastergate->Start();//启动master
+	p_myserver->Start();//启动master
 
 	int src = 0xffff;
 	int dst = 0xabcd;
 	std::string channel = "channel0";
 	// TODO:  在此添加控件通知处理程序代码
-	//if (mastergate != NULL)
+	//if (p_myserver != NULL)
 	//{
-	//	if (mastergate->IsMaterInitComplete())mastergate->CallStartNotify(0, src, dst, channel);
+	//	if (p_myserver->IsMaterInitComplete())p_myserver->CallStartNotify(0, src, dst, channel);
 
 	//}
 
-	//if (mastergate != NULL)
+	//if (p_myserver != NULL)
 	//{
-	//	if (mastergate->IsMaterInitComplete())mastergate->CallEndNotify(0, src, dst, channel);
+	//	if (p_myserver->IsMaterInitComplete())p_myserver->CallEndNotify(0, src, dst, channel);
 
 	//}
 
 
 }
 
-void MyMasterServer::MasterOnData(int command, ResponeData data)
+void MyMasterGate::MasterOnData(int command, ResponeData data)
 {
 
 	if (pThis == NULL)exit(-1);
 	pThis->MasterOnDataFunc(command, data);
 
 }
-void MyMasterServer::MasterOnDataFunc(int command, ResponeData data)
+void MyMasterGate::MasterOnDataFunc(int command, ResponeData data)
 {
 	std::string c_status = "success";
 	Listening_Reply_Params_Channels_t channel_params;
@@ -194,7 +194,7 @@ void MyMasterServer::MasterOnDataFunc(int command, ResponeData data)
 	case CONNECT:
 		if (data.CPRO_State == PROTOCOL_UNCONNECTEDWAITINGSTATUS)
 		{
-			mastergate->ConnectReply(data.socket_fd, "success", "fine!");
+			p_myserver->ConnectReply(data.socket_fd, "success", "fine!");
 			if (1)/*PTT Notice Enable*/
 			{
 
@@ -202,7 +202,7 @@ void MyMasterServer::MasterOnDataFunc(int command, ResponeData data)
 		}
 		else
 		{
-			mastergate->ConnectReply(data.socket_fd, "fail", "Already connected ");
+			p_myserver->ConnectReply(data.socket_fd, "fail", "Already connected ");
 		}
 		break;
 
@@ -259,13 +259,13 @@ void MyMasterServer::MasterOnDataFunc(int command, ResponeData data)
 
 		}
 
-			mastergate->ConfigReply(data.socket_fd, channel_params);
+			p_myserver->ConfigReply(data.socket_fd, channel_params);
 		break;
 
 	case QUERY:
 		if (data.CPRO_State != PROTOCOL_UNCONNECTEDWAITINGSTATUS)
 		{
-			mastergate->QueryReply(data.socket_fd, data.channel1_group_id, data.channel2_group_id);
+			p_myserver->QueryReply(data.socket_fd, data.channel1_group_id, data.channel2_group_id);
 		}
 		break;
 
@@ -274,11 +274,11 @@ void MyMasterServer::MasterOnDataFunc(int command, ResponeData data)
 		if (data.CPRO_State == PROTOCOL_CONNECTED)
 		{
 
-			mastergate->CallRequestReply(data.socket_fd, "success", "");
+			p_myserver->CallRequestReply(data.socket_fd, "success", "");
 			if (c_status == "success")
 			{
 				std::cout << "Start to send RTP Voice\n" << endl;
-				mastergate->CallStartNotify(data.socket_fd, data.src_id, data.dst_id, data.channel_id);
+				p_myserver->CallStartNotify(data.socket_fd, data.src_id, data.dst_id, data.channel_id);
 
 				/*if ((data.channel_id == "channel1") && channel1RTP != NULL)
 					channel1RTP->SendRTPPayloadData(sendVoiceBuff, 24);
@@ -293,11 +293,11 @@ void MyMasterServer::MasterOnDataFunc(int command, ResponeData data)
 	case CALLRELEASE:
 		if (data.CPRO_State == PROTOCOL_CONNECTED)
 		{
-			mastergate->CallReleaseReply(data.socket_fd, "success", "");
+			p_myserver->CallReleaseReply(data.socket_fd, "success", "");
 			if (c_status == "success")
 			{
 				std::cout << "Stop sending RTP Voice\n" << endl;
-				mastergate->CallEndNotify(data.socket_fd, data.src_id, data.dst_id, data.channel_id);
+				p_myserver->CallEndNotify(data.socket_fd, data.src_id, data.dst_id, data.channel_id);
 			}
 		}
 		break;

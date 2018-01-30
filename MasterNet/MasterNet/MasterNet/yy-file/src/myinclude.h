@@ -2,7 +2,7 @@
 #define MYINCLUDE_H
 
 //#include "common.h"
-#include "myprotocol.h"
+#include "myserver.h"
 
 
 #endif
