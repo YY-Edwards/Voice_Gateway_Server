@@ -10,6 +10,7 @@ public:
 	~MyMasterServer();
 
 	void Start();
+	void Stop();
 
 private:
 

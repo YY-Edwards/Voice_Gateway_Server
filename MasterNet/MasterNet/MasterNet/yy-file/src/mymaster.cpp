@@ -25,7 +25,15 @@ MyMasterServer::MyMasterServer()
 
 MyMasterServer::~MyMasterServer()
 {
-	
+	pThis = NULL;
+
+	std::cout << "Destory: MyMasterServer \n" << endl;
+
+}
+
+void MyMasterServer::Stop()
+{
+
 	if (fp != NULL)
 	{
 		fclose(fp);
@@ -33,13 +41,15 @@ MyMasterServer::~MyMasterServer()
 	}
 	if (mastergate != NULL)
 	{
+		mastergate->Stop();
 		delete mastergate;
 		mastergate = NULL;
 	}
 
-	std::cout << "exit class: MyMasterServer \n" << endl;
+	std::cout << "Stop MyMasterServer \n" << endl;
 
 }
+
 
 void MyMasterServer::SpecialGroup1Voice(ResponeRTPData data)
 {

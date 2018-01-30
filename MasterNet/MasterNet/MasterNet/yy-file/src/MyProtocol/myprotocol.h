@@ -30,6 +30,8 @@ public:
 	TCP_CMD 协议解析开始
 	*/
 	void Start();
+
+	void Stop();
 	
 	/*
 	回调接口

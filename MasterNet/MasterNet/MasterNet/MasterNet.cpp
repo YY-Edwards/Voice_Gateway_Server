@@ -8,7 +8,7 @@
 int _tmain(int argc, _TCHAR* argv[])
 {
 	char operat='\0';
-	MyMasterServer *master_server = new MyMasterServer;;
+	MyMasterServer master_server;
 
 	std::cout << "Please input control cmd:\n" << endl;
 
@@ -19,7 +19,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		case '1'://do something by yangyi
 		{
 			std::cout << "yy is debugging...\n" << endl;
-			master_server->Start();
+			master_server.Start();
 
 		}
 			break;
@@ -28,11 +28,8 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 	}
 
-	if (master_server != NULL)
-	{
-		delete master_server;
-		std::cout << "Master Server Over!" << endl;
-	}
+	master_server.Stop();
+	std::cout << "Master Server Over!" << endl;
 
 	return 0;
 }

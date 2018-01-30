@@ -16,23 +16,6 @@ JProtocol::JProtocol()
 
 JProtocol::~JProtocol()
 {
-	CloseMater();
-	SetThreadExitFlag();//通知线程退出
-
-	if (recovery_thread_p != NULL)
-	{
-		delete recovery_thread_p;
-		recovery_thread_p = NULL;
-	}
-
-	{
-		if (listen_thread_p != NULL)
-		{
-			delete listen_thread_p;
-			listen_thread_p = NULL;
-		}
-
-	}
 
 	std::map<ClientParams_t, ClientObj *> ::iterator it;
 	while (clientmap.size()>0)
@@ -53,8 +36,34 @@ JProtocol::~JProtocol()
 	}
 
 	FreeSocketEnvironment();
+	pThis = NULL;
 	std::cout<<"Destory: JProtocol \n"<<std::endl;
 
+}
+
+void JProtocol::Stop()
+{
+	CloseMater();
+	SetThreadExitFlag();//通知线程退出
+	if (recovery_thread_p != NULL)
+	{
+		delete recovery_thread_p;
+		recovery_thread_p = NULL;
+	}
+
+	{
+		if (listen_thread_p != NULL)
+		{
+			delete listen_thread_p;
+			listen_thread_p = NULL;
+		}
+
+	}
+	listenIsopen = false;
+	startfunc_is_finished = false;
+	set_thread_exit_flag = false;
+
+	std::cout << "Stop: JProtocol-thread\n" << std::endl;
 }
 
 void JProtocol::InitProtocolData()
