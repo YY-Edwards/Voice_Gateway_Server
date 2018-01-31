@@ -138,13 +138,12 @@ ClientObj::~ClientObj()
 }
 void ClientObj::CreatProtocolParseThread()
 {
-	process_client_thread_p = new MyCreateThread(ProcessClientReqThread, this);
-
+	parse_thread_p = new MyCreateThread(ProtocolParseThread, this);
 }
 
 void ClientObj::CreateProcessClientReqThread()
 {
-	parse_thread_p = new MyCreateThread(ProtocolParseThread, this);
+	process_client_thread_p = new MyCreateThread(ProcessClientReqThread, this);
 }
 int ClientObj::ProtocolParseThread(void *p)
 {
@@ -401,37 +400,64 @@ int ClientObj::ProcessClientReqThreadFunc()
 {
 	
 	int return_value = 0;
+	//创建并初始化select需要的参数(这里仅监视read)，并把sock添加到fd_set中
+	fd_set readfds;
+	struct timeval timeout;
+	timeout.tv_sec = SELECT_TIMEOUT;
+	timeout.tv_usec = 0;
 
 	//设置clientfd超时
-	SocketTimeOut(clientparams.socket_fd, socketoption.recvtimeout, socketoption.sendtimeout, socketoption.lingertimeout);
+	//SocketTimeOut(clientparams.socket_fd, socketoption.recvtimeout, socketoption.sendtimeout, socketoption.lingertimeout);
+
+	//设置socket_fd为non-blocking
+	SocketBlock(clientparams.socket_fd, 0);
+
 	std::cout << "Connected\n" << std::endl;
 	while (!set_thread_exit_flag)
 	{
-		SocketRecv(clientparams.socket_fd, &recvbuff[0], 512, rt);
-		if (rt.nbytes > 0)
+		FD_ZERO(&readfds);
+		FD_SET(clientparams.socket_fd, &readfds);
+		return_value = select(0, &readfds, NULL, NULL, &timeout);
+		if (return_value < 0)
 		{
-			if ((recvbuff[0] == 'Q') && rt.nbytes == 1)//测试用
-			{
-				return_value = 0;
-				break;
-			}
-
-			return_value = StickDismantleProtocol(clientparams.socket_fd, &recvbuff[0], rt.nbytes, temp_option);
-			memset(&recvbuff[0], 0, BUFLENGTH);//clear recvbuf[BUFLENGTH];
-
-		}
-		else if ((rt.nbytes == -1) && (rt.nresult == 1))
-		{
-			std::cout << "SocketRecv Timeout\n" << std::endl;
-		}
-		else if ((rt.nresult == -1))
-		{
-			std::cout << "Client close socket\n" << std::endl;
+			std::cout << "select Client fail\n" << std::endl;
 			return_value = -1;
 			break;
 		}
+		else if (return_value == 0)
+		{
+			//std::cout << "select Client timeout\n" << std::endl;
+			continue;//timeout
+		}
 		else
 		{
+
+			SocketRecv(clientparams.socket_fd, &recvbuff[0], 512, rt);
+			if (rt.nbytes > 0)
+			{
+				if ((recvbuff[0] == 'Q') && rt.nbytes == 1)//测试用
+				{
+					return_value = 0;
+					break;
+				}
+
+				return_value = StickDismantleProtocol(clientparams.socket_fd, &recvbuff[0], rt.nbytes, temp_option);
+				memset(&recvbuff[0], 0, BUFLENGTH);//clear recvbuf[BUFLENGTH];
+
+			}
+			else if ((rt.nbytes == -1) && (rt.nresult == 1))
+			{
+				std::cout << "SocketRecv Timeout\n" << std::endl;
+			}
+			else if ((rt.nresult == -1))
+			{
+				std::cout << "Client close socket\n" << std::endl;
+				return_value = -1;
+				break;
+			}
+			else
+			{
+			}
 		}
 
 	}

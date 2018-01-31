@@ -151,6 +151,9 @@ bool MyServer::InitSocket()
 		std::cout << "The server SetReuseAddr fail!\n" << std::endl;
 	}
 
+	//设置sock为non-blocking
+	mytcp_server->SetBlock(0);
+
 	if (SocketBind(serversoc, &my_addr) == SOCKET_ERROR)
 	{
 		std::cout << "SocketBind fail!\n" << std::endl;
@@ -228,8 +231,131 @@ int MyServer::ListenThread(void* p)
 	}
 	return return_value;
 }
+
+int MyServer::updateMaxfd(fd_set fds, int maxfd)
+{
+	int i;
+	int new_maxfd = 0;
+	for (i = 0; i <= maxfd; i++) {
+		if (FD_ISSET(i, &fds) && i > new_maxfd) {
+			new_maxfd = i;
+		}
+	}
+	return new_maxfd;
+}
+
+
 int MyServer::ListenThreadFunc()
 {
+
+#if 1//测试用select,non-blocking模型
+
+	//创建并初始化select需要的参数(这里仅监视read)，并把sock添加到fd_set中
+
+	fd_set readfds;
+	fd_set readfds_bak; //backup for readfds(由于每次select之后会更新readfds，因此需要backup)
+	struct timeval timeout;
+	int maxfd;
+	maxfd = serversoc;
+	FD_ZERO(&readfds);
+	FD_ZERO(&readfds_bak);
+	FD_SET(serversoc, &readfds_bak);
+
+	//循环接受client请求
+	int return_value = 0;
+	ClientParams_t clientparams;
+	clientparams.socket_fd = INVALID_SOCKET;
+	//socklen_t client_addr_len;
+	//char client_ip_str[INET_ADDRSTRLEN];
+	int res;
+	std::cout << "The server is waiting for a newest connection \n" << std::endl;
+	while (!set_thread_exit_flag) {
+
+		//注意select之后readfds和timeout的值都会被修改，因此每次都进行重置
+		readfds = readfds_bak;
+		maxfd = updateMaxfd(readfds, maxfd);        //更新maxfd
+		timeout.tv_sec = SELECT_TIMEOUT;
+		timeout.tv_usec = 0;
+		//printf("selecting maxfd=%d\n", maxfd);
+
+		//select(这里没有设置writefds和errorfds，如有需要可以设置)
+		res = select(maxfd + 1, &readfds, NULL, NULL, &timeout);
+		if (res == -1) 
+		{
+			return_value = -1;
+			std::cout << "Server select fail!\n"<< std::endl;
+			break;
+			//perror("select failed");
+			//exit(EXIT_FAILURE);
+		} else if (res == 0) 
+		{
+			//fprintf(stderr, "no socket ready for read within %d secs\n", SELECT_TIMEOUT);
+			continue;
+		}
+
+		//检查每个socket，并进行读(如果是serversoc则accept)
+		//for (i = 0; i <= maxfd; i++) 
+		{	//检查serversoc, 有则accept
+
+			if (!FD_ISSET(serversoc, &readfds))
+			{
+				continue;
+			}
+			//可读的socket
+			//if (i == serversoc) //当前是server的socket，不进行读写而是accept新连接
+			{
+				clientparams.socket_fd = SocketAccept(serversoc, (sockaddr_in*)&(clientparams.remote_addr));
+				if (clientparams.socket_fd == INVALID_SOCKET) 
+				{
+					return_value = -1;
+					std::cout << "Accept fail! and exit ListenThreadFunc: 0x" << hex << GetCurrentThreadId() << std::endl;
+					break;
+					//perror("accept failed");
+				}
+
+				//if (!inet_ntop(AF_INET, &(clientparams.remote_addr.sin_addr), client_ip_str, sizeof(client_ip_str)))
+				//{
+				//	//perror("inet_ntop failed");
+				//	std::cout << "inet_ntop failed!\n" << std::endl;
+				//	break;
+				//}
+				//printf("accept a client from: %s\n", client_ip_str);
+
+				if (clientmap.size() < MAX_CLIENT_COUNT)
+				{
+					client_numb++;
+
+					ConfigClientParams(clientparams);//动态分配RTP端口，回调地址
+
+					ClientObj *clientobj_p = new ClientObj(clientparams, multicallbackfuncs);
+
+					clientmap_locker->Lock();
+					clientmap[clientparams] = clientobj_p;
+					clientmap_locker->Unlock();
+					std::cout << "Create a ClientObj finished\n" << std::endl;
+				}
+
+				//把new_sock添加到select的侦听中
+				if (clientparams.socket_fd > maxfd) {
+					maxfd = clientparams.socket_fd;
+				}
+				//FD_SET(clientparams.socket_fd, &readfds_bak);
+			}
+			//else {
+			//	//当前是client连接的socket，可以写(read from client)
+			//	printf("close new_sock=%d done\n", i);
+			//	//将当前的socket从select的侦听中移除
+			//	//FD_CLR(i, &readfds_bak);
+			//}
+		}
+	}
+
+	return 0;
+
+#endif
+
+#if 0//多线程模型，需要处理zoom线程
+
 	int return_value = 0;
 	ClientParams_t clientparams;
 	clientparams.socket_fd = INVALID_SOCKET;
@@ -273,6 +399,8 @@ int MyServer::ListenThreadFunc()
 
 	return return_value;
 
+
+#endif
 }
 bool MyServer::ConfigClientParams(ClientParams_t &clientparams)
 {
@@ -416,28 +544,47 @@ int MyServer::PhySocketSendData(HSocket Objsoc, char *buff, int send_len)
 	rt.nbytes = 0;
 	rt.nresult = 0;
 
-	do
+	//创建并初始化select需要的参数(这里仅监视write)，并把Objsoc添加到fd_set中
+	fd_set writefds;
+	struct timeval timeout;
+	timeout.tv_sec = SELECT_TIMEOUT;
+	timeout.tv_usec = 0;
+	int return_value = 0;
+
+	FD_ZERO(&writefds);
+	FD_SET(Objsoc, &writefds);
+	while((return_value = select(0, NULL, &writefds, NULL, &timeout)) == 0);
+	if (return_value < 0)
 	{
-		SocketSend(Objsoc, &buff[count], (send_len - count), rt);
-		if ((rt.nbytes > 0))
-		{
-			//TRACE(("send length is %d\n"), rt.nbytes);
-			count += rt.nbytes;
-		}
-		else if ((rt.nbytes == -1) && (rt.nresult == 1))
-		{
-			std::cout<<"SocketSend Timeout\n"<<std::endl;
+		std::cout << "select Client fail\n" << std::endl;
+		return_value = -1;
+	}
+	else
+	{
 
-		}
-		else if ((rt.nbytes == -1) && (rt.nresult == -1))
+		do
 		{
-			std::cout<<"Client close socket\n"<<std::endl;
-			count = -1;
-			return count;
-		}
+			SocketSend(Objsoc, &buff[count], (send_len - count), rt);
+			if ((rt.nbytes > 0))
+			{
+				//TRACE(("send length is %d\n"), rt.nbytes);
+				count += rt.nbytes;
+			}
+			else if ((rt.nbytes == -1) && (rt.nresult == 1))
+			{
+				std::cout << "SocketSend Timeout\n" << std::endl;
+
+			}
+			else if ((rt.nbytes == -1) && (rt.nresult == -1))
+			{
+				std::cout << "Client close socket\n" << std::endl;
+				count = -1;
+				return count;
+			}
 
 
-	} while ((send_len - count) != 0);
+		} while ((send_len - count) != 0);
+	}
 
 	count = 0;
 	return count;

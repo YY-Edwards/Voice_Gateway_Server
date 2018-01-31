@@ -140,7 +140,8 @@ void SocketRecv(HSocket hs, char *ptr, int nbytes, transresult_t &rt)
 	rt.nresult = 0;
 	if (!ptr || nbytes<1) return;
 
-	rt.nbytes = recv(hs, ptr, nbytes, BLOCKREADWRITE);
+	//rt.nbytes = recv(hs, ptr, nbytes, BLOCKREADWRITE); 
+	rt.nbytes = recv(hs, ptr, nbytes, NONBLOCKREADWRITE);
 	if (rt.nbytes>0)
 	{
 		return;

@@ -166,6 +166,8 @@ private:
 
 	bool ConfigClientParams(ClientParams_t &clientparams);
 
+	//º¯Êý£º¸üÐÂmaxfd
+	int updateMaxfd(fd_set fds, int maxfd);
 
 
 };

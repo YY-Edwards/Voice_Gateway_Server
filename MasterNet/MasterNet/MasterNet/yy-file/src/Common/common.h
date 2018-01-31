@@ -47,6 +47,7 @@ using namespace std;
 
 #define						MAX_CLIENT_COUNT						3
 #define						TIMEOUT_VALUE							10*1000
+#define 					SELECT_TIMEOUT							5       //selectµÄtimeout seconds
 
 #ifdef WIN32
 typedef  CRITICAL_SECTION GOCRITICAL_SECTION;
