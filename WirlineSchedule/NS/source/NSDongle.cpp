@@ -821,6 +821,16 @@ void NSDongle::handleEndWork()
 			}
 			else
 			{
+				if (g_pNSManager)
+				{
+					int size_dongle = g_pNSManager->SizeDongle() - 1;
+					size_dongle = (size_dongle < 0) ? 0 : size_dongle;
+					g_pNSManager->setSizeDongle(size_dongle);
+					onsystemstatuschange_info_t info = { 0 };
+					info.type = System_DongleCount;
+					info.value = size_dongle;
+					NS_SafeSystemStatusChangeEvent(&info);
+				}
 				m_pLog->AddLog(Ns_Log_Error, "%s is bad,maybe you need Re-plug dongle device.if invalid,please replace dongle device", Name());
 			}
 			if (m_pCurHanleRing)
