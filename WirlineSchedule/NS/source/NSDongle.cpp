@@ -823,6 +823,7 @@ void NSDongle::handleEndWork()
 			{
 				if (g_pNSManager)
 				{
+					/*减少当前的dongle数量*/
 					int size_dongle = g_pNSManager->SizeDongle() - 1;
 					size_dongle = (size_dongle < 0) ? 0 : size_dongle;
 					g_pNSManager->setSizeDongle(size_dongle);
