@@ -221,7 +221,7 @@ MySynCond::~MySynCond()
 
 
 }
-int MySynCond::CondWait(int waittime)const
+int MySynCond::CondWait(bool trigger_flag, int waittime)const
 {
 	int ret = 0;
 
@@ -245,14 +245,12 @@ int MySynCond::CondWait(int waittime)const
 	outtime.tv_sec = now.tv_sec;
 	outtime.tv_nsec = now.tv_usec * 1000;
 
-	while (CD_Trigger == 0 && wait_ret != ETIMEDOUT){
-		//fprintf(stderr, "mulcastport poll  is ready\n");
-		//ret = pthread_cond_wait(&mulcast_poll_cond, &poll_cond_mutex);
-		if(0== waittime)
-			wait_ret = pthread_cond_wait(&m_cond, &(m_condlock->GetMutex()));//会意外苏醒，注意考虑此情况的处理机制
+	while (trigger_flag == false && wait_ret != ETIMEDOUT){
+		if(0 == waittime)
+			wait_ret = pthread_cond_wait(&m_cond, &(m_mutex->GetMutex()));//会意外苏醒，注意考虑此情况的处理机制
 		else
 		{
-			wait_ret = pthread_cond_timedwait(&m_cond, &(m_condlock->GetMutex()), &outtime);
+			wait_ret = pthread_cond_timedwait(&m_cond, &(m_mutex->GetMutex()), &outtime);
 		}
 		//fprintf(stderr, "pthread_cond_timedwait ret : %d\n", ret);
 	}
@@ -310,11 +308,11 @@ MyCreateThread::MyCreateThread(void *func, void *ptr)
 }
 #else
 
-MyCreateThread::MyCreateThread(pthread_t  *thread, void *func, void *ptr)
+MyCreateThread::MyCreateThread(void *(*func), void *ptr)
 :thread_handle(NULL)
 {
 	int err =0;
-	err = pthread_create(&thread_handle, NULL, func, ptr);
+	err = pthread_create(&thread_handle, NULL, (void *(*start_rtn))func, ptr);
 	if (err != 0){
 		fprintf(stderr, "func create fail...\n");
 	}

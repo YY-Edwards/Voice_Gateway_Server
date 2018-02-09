@@ -59,7 +59,7 @@ class ICond
 public:
 	virtual ~ICond() {}
 
-	virtual int CondWait(int waittime) const = 0;
+	virtual int CondWait(bool trigger_flag, int waittime) const = 0;
 	virtual void CondTrigger(bool isbroadcast) const = 0;
 };
 
@@ -118,7 +118,7 @@ public:
 	MySynCond ();
 	~MySynCond ();
 
-	virtual int CondWait(int waittime) const;
+	virtual int CondWait(bool trigger_flag, int waittime) const;
 	virtual void CondTrigger(bool isbroadcast) const;
 
 
@@ -144,7 +144,7 @@ public:
 
 #else
 
-	MyCreateThread(pthread_t  *thread, void *func, void *ptr);
+	MyCreateThread(void *(*func), void *ptr);
 	pthread_t GetThreadHandle(){ return thread_handle; }
 
 #endif

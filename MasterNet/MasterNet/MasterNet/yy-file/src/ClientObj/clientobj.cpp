@@ -402,10 +402,18 @@ int ClientObj::ProcessClientReqThreadFunc()
 	int return_value = 0;
 	//创建并初始化select需要的参数(这里仅监视read)，并把sock添加到fd_set中
 	fd_set readfds;
+#if WIN32
+
 	struct timeval timeout;
-	timeout.tv_sec = SELECT_TIMEOUT;
 	timeout.tv_usec = 0;
 
+#else
+	struct timespec timeout;
+	timeout.tv_nsec = 0;
+
+#endif
+
+	timeout.tv_sec = SELECT_TIMEOUT;
 	//设置clientfd超时
 	//SocketTimeOut(clientparams.socket_fd, socketoption.recvtimeout, socketoption.sendtimeout, socketoption.lingertimeout);
 
@@ -417,7 +425,11 @@ int ClientObj::ProcessClientReqThreadFunc()
 	{
 		FD_ZERO(&readfds);
 		FD_SET(clientparams.socket_fd, &readfds);
-		return_value = select(0, &readfds, NULL, NULL, &timeout);
+#if WIN32
+		return_value = select(0, &readfds, NULL, NULL, &timeout);//注意linux/windows下次函数的功能有巨大差异，不同平台运行时，请注意：如linux下timeout需要重复初始化，函数返回后重置为0。
+#else
+		return_value = pselect(0, &readfds, NULL, NULL, &timeout, NULL);
+#endif
 		if (return_value < 0)
 		{
 			std::cout << "select Client fail\n" << std::endl;
