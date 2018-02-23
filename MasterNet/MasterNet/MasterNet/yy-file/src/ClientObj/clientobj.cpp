@@ -175,7 +175,7 @@ int ClientObj::ProtocolParseThreadFunc()
 		if (set_thread_exit_flag)break;
 		if (SYN_OBJECT_o == return_value)
 		{
-			sscanf(queue_data, "%4D", &client_fd);
+			sscanf(queue_data, "%4d", &client_fd);
 			memcpy(json_data, &queue_data[sizeof(HSocket)], sizeof(json_data));
 			if (reader.parse(json_data, val))//Parse JSON buff
 			{
@@ -492,7 +492,7 @@ Start:
 	if ((option.data[0] == PROTOCOL_HEAD) && (recv_length >= 5) && (option.bytes_remained == 0))//protocol start
 	{
 		memcpy((void*)len_str.c_str(), &option.data[1], PROTOCOL_PACKAGE_LENGTH_SIZE);
-		sscanf(len_str.c_str(), "%D", &option.pro_length);//string->int
+		sscanf(len_str.c_str(), "%d", &option.pro_length);//string->int
 
 		option.bytes_remained = option.pro_length - (recv_length - 5);
 

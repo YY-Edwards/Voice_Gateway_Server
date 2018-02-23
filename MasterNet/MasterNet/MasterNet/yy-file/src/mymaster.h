@@ -14,6 +14,9 @@ public:
 
 private:
 
+	std::string channel;
+	const char *getRemoteServerIP();
+
 	static MyMasterGate *pThis;
 
 	ClientsCallBackFuncs_t clients_callback_funcs;

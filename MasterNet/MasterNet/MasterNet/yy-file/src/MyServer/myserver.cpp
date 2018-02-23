@@ -553,7 +553,7 @@ int MyServer::PhySocketSendData(HSocket Objsoc, char *buff, int send_len)
 
 	FD_ZERO(&writefds);
 	FD_SET(Objsoc, &writefds);
-	while((return_value = select(0, NULL, &writefds, NULL, &timeout)) == 0);
+	while((return_value = select(0, NULL, &writefds, NULL, &timeout)) == 0);//×¢Òâ£ºÎ´¿¼ÂÇÍË³öÂß¼­
 	if (return_value < 0)
 	{
 		std::cout << "select Client fail\n" << std::endl;

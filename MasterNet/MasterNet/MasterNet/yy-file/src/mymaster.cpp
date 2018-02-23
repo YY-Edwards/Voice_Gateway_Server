@@ -148,6 +148,11 @@ void MyMasterGate::SpecialGroup6VoiceFunc(ResponeRTPData data)
 
 }
 
+const char *MyMasterGate::getRemoteServerIP()
+{
+	return channel.c_str();
+
+}
 void MyMasterGate::Start()
 {
 
@@ -157,7 +162,12 @@ void MyMasterGate::Start()
 
 	int src = 0xffff;
 	int dst = 0xabcd;
-	std::string channel = "channel0";
+
+	channel = "192.168.2.7";
+	printf("ServerIP:%s\n", channel.c_str());
+	const char *temp = getRemoteServerIP();
+	printf("ServerIP:%s\n", temp);
+
 	// TODO:  在此添加控件通知处理程序代码
 	//if (p_myserver != NULL)
 	//{
