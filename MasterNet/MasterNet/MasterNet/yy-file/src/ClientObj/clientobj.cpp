@@ -491,8 +491,9 @@ Start:
 
 	if ((option.data[0] == PROTOCOL_HEAD) && (recv_length >= 5) && (option.bytes_remained == 0))//protocol start
 	{
-		memcpy((void*)len_str.c_str(), &option.data[1], PROTOCOL_PACKAGE_LENGTH_SIZE);
-		sscanf(len_str.c_str(), "%d", &option.pro_length);//string->int
+		//memcpy((void*)len_str.c_str(), &option.data[1], PROTOCOL_PACKAGE_LENGTH_SIZE);
+		//sscanf(len_str.c_str(), "%d", &option.pro_length);//string->int
+		sscanf(&option.data[1], "%4d", &option.pro_length);//string->int
 
 		option.bytes_remained = option.pro_length - (recv_length - 5);
 
