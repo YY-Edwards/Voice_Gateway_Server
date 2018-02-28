@@ -21,7 +21,7 @@
 #pragma pack(push, 1)
 typedef struct{
 	char		data[512];
-	uint8_t		len;
+	int			len;
 
 }fifoqueue_t;
 
