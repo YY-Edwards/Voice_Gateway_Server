@@ -1,6 +1,8 @@
 #ifndef WLNSRECORDFILE_H
 #define WLNSRECORDFILE_H
 
+#include "mutex.h"
+
 #define PATH_FILE_MAXSIZE 1024
 
 class NSLog;
