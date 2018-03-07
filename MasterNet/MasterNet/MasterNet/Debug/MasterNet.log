@@ -1,4 +1,4 @@
-﻿生成启动时间为 2018/2/23 23:15:09。
+﻿生成启动时间为 2018/3/7 14:39:33。
      1>项目“F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\MasterNet.vcxproj”在节点 2 上(Rebuild 个目标)。
      1>ClCompile:
          E:\Program x86C\Microsoft Visual Studio 12.0\VC\bin\CL.exe /c /I"F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet" /I"F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\lib\JsonWrap\include\json" /I"F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\lib\jrtplib\include\jrtplib3" /I"F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\src" /I"F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\src\SynInterface" /I"F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\src\SocketWrap" /I"F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\src\MyRTP" /I"F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\src\MyServer" /I"F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\src\FifoQueue" /I"F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\src\Common" /I"F:\VS2013\C++\RTP_MatserVoice\VoiceMaster-remote-git\TrboX 3.0\MasterNet\MasterNet\MasterNet\yy-file\src\ClientObj" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D WIN32 /D _DEBUG /D _CONSOLE /D _LIB /D _UNICODE /D UNICODE /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"stdafx.h" /Fp"Debug\MasterNet.pch" /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
@@ -370,4 +370,4 @@
 
 生成成功。
 
-已用时间 00:00:25.55
+已用时间 00:00:33.64
