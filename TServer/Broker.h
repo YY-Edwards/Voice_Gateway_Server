@@ -129,6 +129,7 @@ public:
 	static DWORD WINAPI clientConnectStatusThread(LPVOID lpParam);
 	void setDeviceStatusByType(int type, int value);
 	void sendLicenseToWlClient();
+	char* getSerial();
 protected:
 	CBroker();
 	~CBroker();
@@ -170,6 +171,7 @@ private:
 	int isLastLEStatus;
 	int isLastWireLanStatus;
 	void clientConnectStatus();
+	char serial[16];
 	std::mutex    sendLock;
 	std::mutex    DeviceStatusLock;
 	std::mutex    threadLock;

@@ -1816,6 +1816,9 @@ void CManager::onSystemStatusChange(onsystemstatuschange_info_t* info)
 	case System_DatabaseStatus:
 		break;
 	case System_DongleCount:
+	{
+							   setDongleCount(m_pModelNs->SizeDongle());
+	}
 		break;
 	case System_MicphoneStatus:
 		break;

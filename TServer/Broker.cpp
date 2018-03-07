@@ -62,7 +62,7 @@ CBroker::CBroker()
 	isLastSpeakerStatus = 1;
 	isLastLEStatus=1;
 	isLastWireLanStatus = 1;
-
+	memset(serial, 0, 16);
 }
 
 
@@ -435,9 +435,11 @@ bool CBroker::getLic(std::string license)
 	if (strcmp(s.licType, lic.licType)==0)
 	if (s.deviceType == lic.deviceType)
 	{
+		
 		std::string temp = lic.radioSerial;
 		if (strcmp(s.radioSerial, lic.radioSerial) == 0 && temp.length() == 10)
 		{
+			memcpy(serial, s.radioSerial,16);
 			if (lic.isEver == 1)      //IsEver:是否永久，1:永久，0：试用
 			{
 				licenseStatus = true;    // 授权成功
@@ -466,6 +468,7 @@ bool CBroker::getLic(std::string license)
 		}
 		else if (strcmp(s.repeaterSerial, lic.repeaterSerial)==0)
 		{
+			memcpy(serial, s.repeaterSerial, 16);
 			std::string temp1 = lic.repeaterSerial;
 			if (temp1.length() == 10)
 			{
@@ -904,4 +907,8 @@ void CBroker::sendLicenseToWlClient()
 	}
 	std::string strConnect = CSettings::instance()->getRequest("wlLicense", "wl", m_wirelanClient->getCallId(), content);
 	m_wirelanClient->send(strConnect.c_str(), strConnect.size());
+}
+char* CBroker::getSerial()
+{
+	return serial;
 }

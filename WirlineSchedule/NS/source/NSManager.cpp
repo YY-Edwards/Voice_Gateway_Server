@@ -46,7 +46,8 @@ int NSManager::Initialize()
 	//m_ppNet = &pNet;
 	com_use_t result = { 0 };
 	WDK_WhoAllVidPid(VID_PID, &result);
-	setSizeDongle(result.num);
+	//setSizeDongle(result.num);
+	int size_dongle = result.num;
 	for (int i = 0; i < result.num; i++)
 	{
 		/*加载dongle并初始化*/
@@ -59,6 +60,7 @@ int NSManager::Initialize()
 		NSDongle* p = new NSDongle(this);
 		if (WL_OK != p->Initialize(&dongle))
 		{
+			size_dongle--;
 			delete p;
 		}
 		else
@@ -67,6 +69,7 @@ int NSManager::Initialize()
 			AddIdleDonglesItem(p);
 		}
 	}
+	setSizeDongle(size_dongle);
 	if (0 == result.num)
 	{
 		//LOG_ERR("AMBE DONGLE ZERO");
@@ -317,7 +320,8 @@ void NSManager::handleUsbAdd()
 {
 	com_use_t result = { 0 };
 	WDK_WhoAllVidPid(VID_PID, &result);
-	setSizeDongle(result.num);
+	//setSizeDongle(result.num);
+	int size_dongle = result.num;
 	for (int i = 0; i < result.num; i++)
 	{
 		NSDongle* rlt = FindDonglesItem(result.coms[i], &FuncFindDonglesItem);
@@ -334,6 +338,7 @@ void NSManager::handleUsbAdd()
 			NSDongle* p = new NSDongle(this);
 			if (WL_OK != p->Initialize(&dongle))
 			{
+				size_dongle--;
 				delete p;
 			}
 			else
@@ -343,13 +348,15 @@ void NSManager::handleUsbAdd()
 			}
 		}
 	}
+	setSizeDongle(size_dongle);
 }
 
 void NSManager::handleUsbDel()
 {
 	com_use_t result = { 0 };
 	WDK_WhoAllVidPid(VID_PID, &result);
-	setSizeDongle(result.num);
+	//setSizeDongle(result.num);
+	int size_dongle = result.num;
 	TRYLOCK(m_mutexDongles);
 	pLinkItem header = m_dongles;
 	pLinkItem item = m_dongles;
@@ -402,6 +409,7 @@ void NSManager::handleUsbDel()
 		}
 	}
 	RELEASELOCK(m_mutexDongles);
+	setSizeDongle(size_dongle);
 }
 
 void NSManager::clearIdleDongles()
