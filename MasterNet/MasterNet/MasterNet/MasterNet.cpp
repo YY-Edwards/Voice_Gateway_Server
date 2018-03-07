@@ -2,7 +2,8 @@
 //
 
 #include "stdafx.h"
-#include "mymaster.h"
+//#include "mymaster.h"
+#include "yy-file\src\mymaster.h"
 
 
 int _tmain(int argc, _TCHAR* argv[])

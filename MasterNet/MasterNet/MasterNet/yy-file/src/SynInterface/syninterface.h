@@ -4,10 +4,11 @@
 * Created: 2017/12/19
 * Author: EDWARDS
 */
+
 #ifndef _SYNINTERFACE_H
 #define _SYNINTERFACE_H
 
-#include "common.h"
+#include "..\Common\common.h"
 
 #ifdef WIN32
 #include <Windows.h>
@@ -15,6 +16,8 @@
 #include <pthread.h>
 #include <semaphore.h> 
 #endif
+
+
 
 class ILock;
 class ISem;

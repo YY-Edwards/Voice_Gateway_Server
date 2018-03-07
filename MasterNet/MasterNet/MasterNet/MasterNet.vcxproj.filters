@@ -180,9 +180,6 @@
     <ClInclude Include="yy-file\src\ClientObj\clientobj.h">
       <Filter>NS\include\yyfile\clientobj</Filter>
     </ClInclude>
-    <ClInclude Include="yy-file\src\Common\common.h">
-      <Filter>NS\include\yyfile\common</Filter>
-    </ClInclude>
     <ClInclude Include="yy-file\src\FifoQueue\fifoqueue.h">
       <Filter>NS\include\yyfile\fifoqueue</Filter>
     </ClInclude>
@@ -203,6 +200,9 @@
     </ClInclude>
     <ClInclude Include="yy-file\src\MyServer\myserver.h">
       <Filter>NS\include\yyfile\myserver</Filter>
+    </ClInclude>
+    <ClInclude Include="yy-file\src\Common\common.h">
+      <Filter>NS\include\yyfile\common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

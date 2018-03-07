@@ -10,12 +10,12 @@
 #ifndef MYSERVER_H
 #define MYSERVER_H
 
-#include "common.h"
-#include "myrtp.h"
-#include "json.h"
-#include "fifoqueue.h"
-#include "socketwrap.h"
-#include "clientobj.h"
+#include "..\Common\common.h"
+#include "..\MyRTP\myrtp.h"
+#include "..\..\lib\JsonWrap\include\json\json.h"
+#include "..\Fifoqueue\fifoqueue.h"
+#include "..\Socketwrap\socketwrap.h"
+#include "..\Clientobj\clientobj.h"
 #include <time.h>
 
 

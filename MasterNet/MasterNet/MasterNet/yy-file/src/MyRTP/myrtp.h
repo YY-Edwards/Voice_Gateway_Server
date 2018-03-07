@@ -7,14 +7,13 @@
 #ifndef myrtp_h_
 #define myrtp_h_ 
 
-
-#include "rtpsession.h"
-#include "rtppacket.h"
-#include "rtpudpv4transmitter.h"
-#include "rtpipv4address.h"
-#include "rtpsessionparams.h"
-#include "rtperrors.h"
-#include "rtpsourcedata.h"
+#include "..\..\lib\jrtplib\include\jrtplib3\rtpsession.h"
+#include "..\..\lib\jrtplib\include\jrtplib3\rtppacket.h"
+#include "..\..\lib\jrtplib\include\jrtplib3\rtpudpv4transmitter.h"
+#include "..\..\lib\jrtplib\include\jrtplib3\rtpipv4address.h"
+#include "..\..\lib\jrtplib\include\jrtplib3\rtpsessionparams.h"
+#include "..\..\lib\jrtplib\include\jrtplib3\rtperrors.h"
+#include "..\..\lib\jrtplib\include\jrtplib3\rtpsourcedata.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <iostream>
@@ -22,8 +21,8 @@
 #include <stdbool.h>
 #include <stdint.h>
 #include <process.h>
-#include "common.h"
-#include "syninterface.h"
+#include "..\Common\common.h"
+#include "..\SynInterface\syninterface.h"
 
 using namespace jrtplib;
 using namespace std;

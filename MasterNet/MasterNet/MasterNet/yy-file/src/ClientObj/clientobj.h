@@ -10,12 +10,12 @@
 #ifndef CLIENTOBJ_H
 #define CLIENTOBJ_H
 
-#include "common.h"
-#include "myrtp.h"
-#include "json.h"
-#include "fifoqueue.h"
-#include "socketwrap.h"
-#include "syninterface.h"
+#include "..\Common\common.h"
+#include "..\MyRTP\myrtp.h"
+#include "..\..\lib\JsonWrap\include\json\json.h"
+#include "..\Fifoqueue\fifoqueue.h"
+#include "..\Socketwrap\socketwrap.h"
+#include "..\SynInterface\syninterface.h"
 #include <time.h>
 
 #pragma pack(push, 1)

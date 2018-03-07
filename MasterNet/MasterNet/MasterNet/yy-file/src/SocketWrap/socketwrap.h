@@ -1,7 +1,7 @@
 #ifndef _SOCKWRAP_H_  
 #define _SOCKWRAP_H_  
 
-#include "common.h"  
+#include "..\Common\common.h"
 
 #ifdef WIN32  
 typedef SOCKET HSocket;

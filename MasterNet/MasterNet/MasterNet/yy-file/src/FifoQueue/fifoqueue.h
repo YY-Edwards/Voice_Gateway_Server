@@ -7,7 +7,7 @@
 
 #ifndef fifoqueue_h_
 #define fifoqueue_h_
-#include "common.h"
+#include "..\Common\common.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -15,7 +15,7 @@
 #include <list>
 #include <queue>
 #include <stdint.h>
-#include "syninterface.h"
+#include "..\SynInterface\syninterface.h"
 
 #define FIFODEEP  40
 #pragma pack(push, 1)
