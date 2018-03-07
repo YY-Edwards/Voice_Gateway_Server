@@ -45,7 +45,10 @@ private:
 	NSWLPeer* m_peer;//此条语音记录的产生者
 	//NSManager* m_pManager;
 	//char* m_fullBuffer;
+	LOCKERTYPE m_mutexFile;
 
 	BOOL CreateNewFileByYearMonth();
+	/*将AMBE数据写入文件*/
+	bool WirteDataToFile(DWORD &offset);
 };
 #endif

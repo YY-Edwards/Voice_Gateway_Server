@@ -23,16 +23,32 @@ void queryDeviceAction(CRemotePeer* pRemote, const std::string& param, uint64_t 
 		std::string tempRepeater(s.repeaterSerial);
 		if (!tempRadio.empty())
 		{
+			if (1==CBroker::instance()->getLicenseStatus())
+			{
+				args["DeviceSerial"] = CBroker::instance()->getSerial();
+			}
+			else
+			{
+				args["DeviceSerial"] = s.radioSerial;
+			}
 			args["DeviceType"] = s.deviceType;
-			args["DeviceSerial"] = s.radioSerial;
+			
 			args["DeviceMode"] = s.radioMode;
 	
 			strResp = CRpcJsonParser::buildResponse("success", callId, 201, "", args);
 		}
 		else if (!tempRepeater.empty())
 		{
+			if (1 == CBroker::instance()->getLicenseStatus())
+			{
+				args["DeviceSerial"] = CBroker::instance()->getSerial();
+			}
+			else
+			{
+				args["DeviceSerial"] = s.repeaterSerial;
+			}
 			args["DeviceType"] = s.deviceType;
-			args["DeviceSerial"] = s.repeaterSerial;
+			
 			args["DeviceMode"] = s.repeaterMode;
 			strResp = CRpcJsonParser::buildResponse("success", callId, 201, "", args);
 		}

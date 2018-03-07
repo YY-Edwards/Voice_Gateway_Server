@@ -26,6 +26,7 @@ public:
 	void HandleAmbeData(void* pData, unsigned long length);
 	int SizeDongle();
 	int SizeIdleDongle();
+	void setSizeDongle(int value);
 private:
 	//TIMECAPS m_theTimeCaps;
 	LOCKERTYPE m_mutexDongles;//dongle池互斥锁
@@ -36,7 +37,6 @@ private:
 	//NSNetBase** m_ppNet;
 	int m_sizeDongle;
 
-	void setSizeDongle(int value);
 	/*处理Usb设备增加事件*/
 	void handleUsbAdd();
 	/*处理Usb设备拔出事件*/
