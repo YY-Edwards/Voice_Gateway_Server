@@ -308,7 +308,7 @@ int MyServer::ListenThreadFunc()
 				if (clientparams.socket_fd == INVALID_SOCKET) 
 				{
 					return_value = -1;
-					std::cout << "Accept fail! and exit ListenThreadFunc: 0x" << hex << GetCurrentThreadId() << std::endl;
+					std::cout << "Accept fail! and exit ListenThreadFunc: 0x" << hex << listen_thread_p->GetPthreadID() << std::endl;
 					break;
 					//perror("accept failed");
 				}
@@ -350,6 +350,7 @@ int MyServer::ListenThreadFunc()
 		}
 	}
 
+	std::cout << "exit ListenThreadFunc: 0x" << hex << listen_thread_p->GetPthreadID() << std::endl;
 	return 0;
 
 #endif
@@ -514,7 +515,7 @@ int MyServer::RecoveryClientObjThreadFunc()
 		}
 	}
 
-	std::cout << "exit RecoveryClientThreadFunc: 0x" << hex << GetCurrentThreadId() << std::endl;
+	std::cout << "exit RecoveryClientThreadFunc: 0x" << hex << recovery_thread_p->GetPthreadID() << std::endl;
 	return return_value;
 
 }

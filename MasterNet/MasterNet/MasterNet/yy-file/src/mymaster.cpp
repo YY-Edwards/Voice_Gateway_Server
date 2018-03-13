@@ -160,6 +160,13 @@ void MyMasterGate::Start()
 
 	p_myserver->Start();//Æô¶¯master
 
+	//std::map<int, string> old_m;
+	//std::map<int, string> new_m;
+	//old_m[1] = "hello";
+	//new_m = old_m;
+	//new_m[2] = "nihao";
+	//new_m[1] = "quit";
+
 	int src = 0xffff;
 	int dst = 0xabcd;
 

@@ -234,7 +234,7 @@ int ClientObj::ProtocolParseThreadFunc()
 	}
 
 	//TRACE((" exit ProtocolParseThreadFunc : 0x%x\n"), GetCurrentThreadId());
-	std::cout << "exit ProtocolParseThreadFunc : 0x" << hex << GetCurrentThreadId()<< std::endl;
+	std::cout << "exit ProtocolParseThreadFunc : 0x" << hex << process_client_thread_p->GetPthreadID()<< std::endl;
 	return return_value;
 }
 void ClientObj::DataProcessFunc()
@@ -390,7 +390,7 @@ int ClientObj::ProcessClientReqThread(void *p)
 	{
 		return_value = arg->ProcessClientReqThreadFunc();
 	}
-	std::cout << "Notifying the upper App and exit ProcessClientReqThreadFunc : 0x" << hex << GetCurrentThreadId() << std::endl;
+	std::cout << "Notifying the upper App and exit ProcessClientReqThreadFunc : 0x" << hex << arg->process_client_thread_p->GetPthreadID() << std::endl;
 
 	arg->deOBJ(arg->NotifyDeleteCallBackFunc, arg->clientparams);//通知上层应用删除clientObj对象
 

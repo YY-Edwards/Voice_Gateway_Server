@@ -148,9 +148,22 @@ public:
 #else
 
 	MyCreateThread(void *(*func), void *ptr);
-	pthread_t GetThreadHandle(){ return thread_handle; }
 
 #endif
+
+	/*
+	获取线程ID
+	*/
+	int GetPthreadID()
+	{
+		#ifdef WIN32
+			return GetCurrentThreadId();
+		#else
+			return pthread_self();
+		#endif
+
+	}
+
 	/*
 	回收线程
 	*/
